@@ -41,7 +41,7 @@ namespace PicView.ImageHandling
             return await GetImageSizeAsync(fileInfo).ConfigureAwait(false);
         }
 
-        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null)
+        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
         {
             if (string.IsNullOrWhiteSpace(file)) { return false; }
             if (File.Exists(file) == false) { return false; }
@@ -82,6 +82,10 @@ namespace PicView.ImageHandling
 
                 if (destination is null)
                 {
+                    if (ext is not null)
+                    {
+                        Path.ChangeExtension(file, ext);
+                    }
                     await magick.WriteAsync(file).ConfigureAwait(false);
                 }
                 else
@@ -91,6 +95,10 @@ namespace PicView.ImageHandling
                     if (Directory.Exists(dir) == false)
                     {
                         Directory.CreateDirectory(dir);
+                    }
+                    if (ext is not null)
+                    {
+                        Path.ChangeExtension(destination, ext);
                     }
                     await magick.WriteAsync(destination).ConfigureAwait(false);
                 }
@@ -118,7 +126,14 @@ namespace PicView.ImageHandling
                 {
                     return true;
                 }
-                imageOptimizer.Compress(x);
+                try
+                {
+                    imageOptimizer.Compress(x);
+                }
+                catch (System.Exception)
+                {
+                    return true;
+                }
             }
 
             return true;

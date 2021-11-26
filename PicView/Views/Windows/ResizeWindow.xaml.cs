@@ -166,6 +166,24 @@ namespace PicView.Views.Windows
                         quality = q;
                     }
 
+                    string? ext;
+                    if (webp.IsSelected)
+                    {
+                        ext = ".webp";
+                    }
+                    else if (png.IsSelected)
+                    {
+                        ext = ".png";
+                    }
+                    else if (jpg.IsSelected)
+                    {
+                        ext = ".jpg";
+                    }
+                    else
+                    {
+                        ext = null;
+                    }
+
                     if (toResize)
                     {
                         if (PercentageResize.IsSelected && int.TryParse(PercentageBox.Text, out var number))
@@ -221,14 +239,14 @@ namespace PicView.Views.Windows
 
                     ProgressBar.Maximum = thumbs.Count > 0 ? sourceFileist.Count * thumbs.Count : sourceFileist.Count;
 
-                    await BatchFunctions.RunAsync(sourceFileist, resizeAmount, quality, percentage, compress, outputFolder, toResize, LogTextBox, ProgressBar).ConfigureAwait(false);
+                    await BatchFunctions.RunAsync(sourceFileist, resizeAmount, quality, ext, percentage, compress, outputFolder, toResize, LogTextBox, ProgressBar).ConfigureAwait(false);
 
                     Parallel.For(0, thumbs.Count, async i =>
                     {
                         var thumbLoc = thumbs[i].directory + @"\" + Path.GetFileName(sourceFileist[i]);
                         if (string.IsNullOrWhiteSpace(thumbLoc) == false)
                         {
-                            await BatchFunctions.RunAsync(sourceFileist, thumbs[i].size, quality, thumbs[i].percentage, compress, thumbLoc, true, LogTextBox, ProgressBar).ConfigureAwait(false);
+                            await BatchFunctions.RunAsync(sourceFileist, thumbs[i].size, quality, ext, thumbs[i].percentage, compress, thumbLoc, true, LogTextBox, ProgressBar).ConfigureAwait(false);
                         }
                     });
                 };
