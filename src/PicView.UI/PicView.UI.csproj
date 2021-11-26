@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ApplicationIcon>Assets\icon__Q6k_icon.ico</ApplicationIcon>
+		<PackageIcon>PicViewIcon.png</PackageIcon>
+	</PropertyGroup>
+	<ItemGroup>
+		<Folder Include="Models\" />
+		<AvaloniaResource Include="Assets\**" />
+		<AvaloniaResource Remove="Assets\icon__Q6k_icon.ico" />
+		<AvaloniaResource Remove="Assets\logo.png" />
+		<None Remove=".gitignore" />
+		<None Remove="Assets\icon__Q6k_icon.ico" />
+		<None Remove="Resources\icon__Q6k_icon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Assets\icon__Q6k_icon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.10" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.10" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="Assets\icon__Q6k_icon.ico" />
+		<Resource Include="Resources\icon__Q6k_icon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Assets\PicViewIcon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="LockScreen\" />
+    <Folder Include="Explorer\" />
+    <Folder Include="Screen\" />
+    <Folder Include="Wallpaper\" />
+    <Folder Include="Taskbar\" />
+  </ItemGroup>
+
+</Project>
