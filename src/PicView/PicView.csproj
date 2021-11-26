@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ApplicationIcon>Assets\PicView\icon__Q6k_icon.ico</ApplicationIcon>
+		<PackageIcon>PicViewIcon.png</PackageIcon>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyName>PicView</AssemblyName>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
+	<ItemGroup>
+		<Folder Include="Assets\Fonts\" />
+		<Folder Include="Assets\SvgIcons\" />
+		<Folder Include="Styles\Themes\Dark\" />
+		<Folder Include="Models\" />
+		<AvaloniaResource Include="Assets\**" />
+		<AvaloniaResource Include="Assets\Fonts\*" />
+	</ItemGroup>
+	<ItemGroup>
+	  <AvaloniaXaml Include="Styles\Text.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaXaml>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Assets\PicView\icon__Q6k_icon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.11-rc.1" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.11-rc.1" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.11-rc.1" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="Assets\icon__Q6k_icon.ico" />
+		<Resource Include="Resources\icon__Q6k_icon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Assets\PicView\PicViewIcon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+</Project>

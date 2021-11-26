@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.UI", "PicView.UI\PicView.UI.csproj", "{22426C51-1FC3-4B5A-BCA6-8DBE918A30D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView", "PicView\PicView.csproj", "{22426C51-1FC3-4B5A-BCA6-8DBE918A30D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.Win32", "PicView.Win32\PicView.Win32.csproj", "{445786E7-3F3B-4711-A348-DDC7593D9862}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Win32", "PicView.Win32\PicView.Win32.csproj", "{445786E7-3F3B-4711-A348-DDC7593D9862}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.MacOS", "PicView.MacOS\PicView.MacOS.csproj", "{A1A51DED-F4F0-4C1B-AA87-20229CB31293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.MacOS", "PicView.MacOS\PicView.MacOS.csproj", "{A1A51DED-F4F0-4C1B-AA87-20229CB31293}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.Tests", "PicView.Tests\PicView.Tests.csproj", "{98069EF0-C2E0-4301-BE4E-96C7E76EA9BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Tests", "PicView.Tests\PicView.Tests.csproj", "{98069EF0-C2E0-4301-BE4E-96C7E76EA9BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

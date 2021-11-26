@@ -357,3 +357,5 @@ MigrationBackup/
 
 .vs/
 *.sou
+
+.idea/

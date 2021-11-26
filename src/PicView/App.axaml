@@ -7,6 +7,7 @@
 	</Application.DataTemplates>
 
 	<Application.Styles>
-		<FluentTheme Mode="Dark"/>
+		<StyleInclude Source="/Styles/Text.xaml" />
 	</Application.Styles>
+
 </Application>

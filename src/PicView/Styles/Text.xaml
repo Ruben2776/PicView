@@ -1,0 +1,7 @@
+﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style Selector="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <!--<Setter Property="FontFamily" Value="avares://PicView/Assets/Fonts#IBM Plex Mono SemiBold" />-->
+    </Style>
+</Styles>
