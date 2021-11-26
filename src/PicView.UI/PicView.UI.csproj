@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ApplicationIcon>Assets\icon__Q6k_icon.ico</ApplicationIcon>
 		<PackageIcon>PicViewIcon.png</PackageIcon>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
 		<Folder Include="Models\" />
@@ -16,7 +17,7 @@
 		<None Remove="Resources\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Include="Assets\icon__Q6k_icon.ico" />
+		<Content Include="Assets\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.10" />
