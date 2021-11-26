@@ -11,7 +11,6 @@
     <Folder Include="Explorer\" />
     <Folder Include="Screen\" />
     <Folder Include="Wallpaper\" />
-    <Folder Include="Taskbar\" />
   </ItemGroup>
 
 </Project>

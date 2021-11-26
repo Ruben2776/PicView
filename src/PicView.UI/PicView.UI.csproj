@@ -6,8 +6,10 @@
 		<ApplicationIcon>Assets\icon__Q6k_icon.ico</ApplicationIcon>
 		<PackageIcon>PicViewIcon.png</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyName>PicView</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
+		<Folder Include="Assets\Styles\" />
 		<Folder Include="Models\" />
 		<AvaloniaResource Include="Assets\**" />
 		<AvaloniaResource Remove="Assets\icon__Q6k_icon.ico" />
