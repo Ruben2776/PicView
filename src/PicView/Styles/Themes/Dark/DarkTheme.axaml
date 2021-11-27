@@ -6,9 +6,21 @@
 
 	<Styles.Resources>
 
+		<!--  Main Color  -->
+		<Color x:Key="MainColor">#FFf6f4f4</Color>
+		<SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
+
+		<!--  Icon Color  -->
+		<Color x:Key="IconColor">#eeebebeb</Color>
+		<SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
+
 		<!--  Border Brush  -->
 		<Color x:Key="BorderColor">#FF3A3A3A</Color>
 		<SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+
+		<!--  Background Color Fade  -->
+		<Color x:Key="BackgroundColorFade">#A5171717</Color>
+		<SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
 
 	</Styles.Resources>
 

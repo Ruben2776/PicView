@@ -13,7 +13,9 @@
         Title="{Binding Title}"
 		TransparencyLevelHint="AcrylicBlur"
 		Background="Transparent"
-		ExtendClientAreaToDecorationsHint="True">
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="NoChrome"
+		ExtendClientAreaTitleBarHeightHint="-1">
 
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
@@ -21,7 +23,7 @@
 
 	<Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="4">
 		<DockPanel>
-			<uc:TitleBox DockPanel.Dock="Top" />
+			<uc:WinTitleBar DockPanel.Dock="Top" />
 			<Rectangle DockPanel.Dock="Top" Height="1" Fill="{StaticResource BorderBrush}" />
 			<uc:PicBox />
 		</DockPanel>

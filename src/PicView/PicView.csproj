@@ -34,8 +34,8 @@
 		<Resource Include="Resources\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="UserControls\TitleBox.axaml.cs">
-	    <DependentUpon>TitleBox.axaml</DependentUpon>
+	  <Compile Update="Views\CustomTitleBars\WinTitleBar.axaml.cs">
+	    <DependentUpon>WinTitleBar.axaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="UserControls\PicBox.axaml.cs">
 	    <DependentUpon>PicBox.axaml</DependentUpon>
