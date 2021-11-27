@@ -3,10 +3,9 @@
         xmlns:vm="using:PicView.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:uc="using:PicView.UserControls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PicView.Views.MainWindow"
-		Width="462"
-		Height="400"
 		MinWidth="462"
 		MinHeight="400"
 		WindowStartupLocation="CenterScreen"
@@ -20,9 +19,11 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<DockPanel>
-		<TextBlock Text="{Binding Title}" HorizontalAlignment="Center" Margin="5"/>
-	</DockPanel>
-
-
+	<Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="4">
+		<DockPanel>
+			<uc:TitleBox DockPanel.Dock="Top" />
+			<Rectangle DockPanel.Dock="Top" Height="1" Fill="{StaticResource BorderBrush}" />
+			<uc:PicBox />
+		</DockPanel>
+	</Border>
 </Window>

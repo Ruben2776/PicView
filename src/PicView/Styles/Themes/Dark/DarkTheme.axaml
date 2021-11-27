@@ -1,11 +1,15 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="PicView.Styles.Themes.DarkTheme">
-	<Design.PreviewWith>
-		<Border Padding="20">
-			<!-- Add Controls for Previewer Here -->
-		</Border>
-	</Design.PreviewWith>
 
 	<!-- Add Styles Here -->
 	<FluentTheme Mode="Dark"/>
+
+	<Styles.Resources>
+
+		<!--  Border Brush  -->
+		<Color x:Key="BorderColor">#FF3A3A3A</Color>
+		<SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+
+	</Styles.Resources>
+
 </Styles>

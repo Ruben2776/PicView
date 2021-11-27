@@ -6,6 +6,6 @@ namespace PicView.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public static string Title => "No image loaded - PicView";
+        public static string Title => "No image loaded";
     }
 }
