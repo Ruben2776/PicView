@@ -2,9 +2,7 @@
 using PicView.FileHandling;
 using PicView.UILogic;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -14,7 +12,7 @@ namespace PicView.ImageHandling
 {
     internal static class BatchFunctions
     {
-        internal static async Task RunAsync(List<string> sourceFileist,
+        internal static void Run(FileInfo sourceFile,
                                             int resizeAmount,
                                             int quality,
                                             string? ext,
@@ -23,49 +21,51 @@ namespace PicView.ImageHandling
                                             string outputFolder,
                                             bool toResize,
                                             TextBox LogTextBox,
-                                            ProgressBar progressBar) => await Task.Run(() =>
+                                            ProgressBar progressBar)
         {
-            Parallel.For(0, sourceFileist.Count, async i =>
-            {
-                var sourceFile = new FileInfo(sourceFileist[i]);
-                var destination = outputFolder + sourceFile.Name;
-                var sb = new StringBuilder();
+            string? destination = outputFolder is null ? null : outputFolder + @"/" + sourceFile.Name;
 
-                if (toResize)
+            var sb = new StringBuilder();
+
+            if (Directory.Exists(outputFolder) == false)
+            {
+                Directory.CreateDirectory(outputFolder);
+            }
+
+            if (toResize)
+            {
+                _ = doResize(LogTextBox, progressBar, sb, sourceFile, resizeAmount, quality, percentage, destination, compress, ext).ConfigureAwait(false);
+            }
+            else if (compress.HasValue)
+            {
+                if (sourceFile.DirectoryName == outputFolder)
                 {
-                    _ = doResize(LogTextBox, progressBar, sb, sourceFile, resizeAmount, quality, percentage, destination, compress, ext).ConfigureAwait(false);
+                    _ = ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
+                    var newSize = FileFunctions.GetSizeReadable(new FileInfo(sourceFile.FullName).Length);
+                    sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length))
+                        .Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
                 }
-                else if (compress.HasValue)
+                else if (ext is null)
                 {
-                    if (sourceFile.DirectoryName == outputFolder)
+                    if (quality is 100)
                     {
-                        await ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
-                        var newSize = FileFunctions.GetSizeReadable(new FileInfo(sourceFile.FullName).Length);
-                        sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length))
-                            .Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
+                        File.Copy(sourceFile.FullName, destination, true);
+                        _ = ImageFunctions.OptimizeImageAsync(destination).ConfigureAwait(false);
                     }
                     else
                     {
-                        if (Directory.Exists(outputFolder) == false)
-                        {
-                            Directory.CreateDirectory(outputFolder);
-                        }
-                        if (quality is 100)
-                        {
-                            File.Copy(sourceFile.FullName, destination, true);
-                        }
-                        else
-                        {
-                            // Change quality
-                        }
-                        await ImageFunctions.OptimizeImageAsync(destination).ConfigureAwait(false);
+                        _ = SaveImages.SaveImageAsync(0, false, null, sourceFile.FullName, destination, null, false).ConfigureAwait(false);
                     }
-
-
-                    report(LogTextBox, progressBar, sb);
                 }
-            });
-        });
+                else
+                {
+                    destination = Path.ChangeExtension(destination, ext);
+                    _ = SaveImages.SaveImageAsync(0, false, null, sourceFile.FullName, destination, null, false).ConfigureAwait(false);
+                }
+
+                report(LogTextBox, progressBar, sb);
+            }
+        }
 
         static async Task doResize(TextBox LogTextBox,
                                    ProgressBar progressBar,

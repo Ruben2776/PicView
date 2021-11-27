@@ -57,6 +57,7 @@ namespace PicView.Views.Windows
                     {
                         SourceFolderInput.Text = newFolder;
                     }
+                    Focus();
                 };
 
                 OutputFolderButton.FileMenuButton.Click += (_, _) =>
@@ -66,6 +67,7 @@ namespace PicView.Views.Windows
                     {
                         OutputFolderInput.Text = newFolder;
                     }
+                    Focus();
                 };
 
                 ThumbnailsComboBox.SelectionChanged += delegate
@@ -239,16 +241,24 @@ namespace PicView.Views.Windows
 
                     ProgressBar.Maximum = thumbs.Count > 0 ? sourceFileist.Count * thumbs.Count : sourceFileist.Count;
 
-                    await BatchFunctions.RunAsync(sourceFileist, resizeAmount, quality, ext, percentage, compress, outputFolder, toResize, LogTextBox, ProgressBar).ConfigureAwait(false);
-
-                    Parallel.For(0, thumbs.Count, async i =>
+                    await Task.Run(() =>
                     {
-                        var thumbLoc = thumbs[i].directory + @"\" + Path.GetFileName(sourceFileist[i]);
-                        if (string.IsNullOrWhiteSpace(thumbLoc) == false)
+                        Parallel.For(0, sourceFileist.Count, i =>
                         {
-                            await BatchFunctions.RunAsync(sourceFileist, thumbs[i].size, quality, ext, thumbs[i].percentage, compress, thumbLoc, true, LogTextBox, ProgressBar).ConfigureAwait(false);
-                        }
+                            FileInfo fileInfo;
+                            lock (sourceFileist)
+                            {
+                                fileInfo = new FileInfo(sourceFileist[i]);
+                            }
+
+                            BatchFunctions.Run(fileInfo, resizeAmount, quality, ext, percentage, compress, outputFolder, toResize, LogTextBox, ProgressBar);
+                            for (int x = 0; x < thumbs.Count; x++)
+                            {
+                                BatchFunctions.Run(fileInfo, thumbs[x].size, quality, ext, thumbs[x].percentage, compress, thumbs[x].directory, true, LogTextBox, ProgressBar);
+                            }
+                        });
                     });
+
                 };
 
                 CancelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CancelText); };

@@ -158,7 +158,7 @@
 
             <Button
                 x:Name="FileProperties"
-                Width="128"
+                Width="125"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}"

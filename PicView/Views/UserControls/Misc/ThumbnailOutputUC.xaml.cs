@@ -14,16 +14,17 @@ namespace PicView.Views.UserControls
             OutPutStringBox.Text = folderPath + @"\" + filename;
             ValueBox.Text = value;
 
-            OutputFolderButton.FileMenuButton.Click += (_, _) => 
+            OutputFolderButton.FileMenuButton.Click += (_, _) =>
             {
                 var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
                 if (string.IsNullOrWhiteSpace(newFolder) == false)
                 {
                     OutPutStringBox.Text = newFolder;
                 }
+                UILogic.ConfigureWindows.GetResizeWindow.Focus();
             };
 
             Windows.ResizeWindow.SetTextboxDragEvent(OutPutStringBox);
-         }
+        }
     }
 }
