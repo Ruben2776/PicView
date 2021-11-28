@@ -124,7 +124,7 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal static Task RetrieveFilelistAsync(FileInfo fileInfo) => Task.Run(async () =>
+        internal static Task RetrieveFilelistAsync(FileInfo? fileInfo) => Task.Run(async () =>
         {
             if (fileInfo is null)
             {
@@ -134,15 +134,13 @@ namespace PicView.FileHandling
             // Check if to load from archive
             if (SupportedFiles.IsSupportedArchives(fileInfo.FullName))
             {
-                if (!Extract(fileInfo.FullName)) // Start extracting logic
+                if (Extract(fileInfo.FullName)) { return; }
+                if (Error_Handling.CheckOutOfRange() == false)
                 {
-                    if (Error_Handling.CheckOutOfRange() == false)
-                    {
-                        Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
-                    }
-
-                    await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                    Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
                 }
+
+                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
 

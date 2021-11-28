@@ -47,25 +47,21 @@ namespace PicView.Shortcuts
 
             #region CroppingKeys
 
-            if (GetCropppingTool != null)
+            if (GetCropppingTool is {IsVisible: true})
             {
-                if (GetCropppingTool.IsVisible)
+                switch (e.Key)
                 {
-                    if (e.Key == Key.Escape)
-                    {
+                    case Key.Escape:
                         CropFunctions.CloseCrop();
                         e.Handled = true;
                         return;
-                    }
-
-                    if (e.Key == Key.Enter)
-                    {
+                    case Key.Enter:
                         await CropFunctions.PerformCropAsync().ConfigureAwait(false);
                         e.Handled = true;
                         return;
-                    }
-                    e.Handled = true;
-                    return;
+                    default:
+                        e.Handled = true;
+                        return;
                 }
             }
 
