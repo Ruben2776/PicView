@@ -10,6 +10,7 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
 	<ItemGroup>
+		<Folder Include="Assets\Fonts" />
 		<Folder Include="Assets\SvgIcons\" />
 		<Folder Include="Models\" />
 		<AvaloniaResource Include="Assets\**" />
@@ -28,6 +29,9 @@
 		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.11-rc.1" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.1" />
 		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.10.4" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="Resources\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Styles\Themes\Dark\FluentDark.cs">

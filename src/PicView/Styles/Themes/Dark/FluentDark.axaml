@@ -1,31 +1,42 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="PicView.Styles.Themes.FluentDark">
+<Styles
+    x:Class="PicView.Styles.Themes.FluentDark"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-	<!-- Add Styles Here -->
-	<FluentTheme Mode="Dark"/>
+    <!--  Add Styles Here  -->
+    <FluentTheme Mode="Dark" />
 
-	<Styles.Resources>
+    <Styles.Resources>
 
-		<!--  Main Color  -->
-		<Color x:Key="MainColor">#FFf6f4f4</Color>
-		<SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
+        <!--  Accent Color  -->
+        <Color x:Key="AccentColor">#D8FF5A12</Color>
+        <SolidColorBrush Color="{DynamicResource AccentColor}" x:Key="AccentColorBrush" />
 
-		<!--  Icon Color  -->
-		<Color x:Key="IconColor">#eeebebeb</Color>
-		<SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
+        <!--  Main Color  -->
+        <Color x:Key="MainColor">#FFf6f4f4</Color>
+        <SolidColorBrush Color="{StaticResource MainColor}" x:Key="MainColorBrush" />
 
-		<!--  Border Brush  -->
-		<Color x:Key="BorderColor">#FF3A3A3A</Color>
-		<SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+        <!--  Icon Color  -->
+        <Color x:Key="IconColor">#eeebebeb</Color>
+        <SolidColorBrush Color="{StaticResource IconColor}" x:Key="IconColorBrush" />
 
-		<!--  Background Color Fade  -->
-		<Color x:Key="BackgroundColorFade">#2D171717</Color>
-		<SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
-		
-		<!--  Window Background Color  -->
-		<Color x:Key="WindowBackgroundColor">#8E212121</Color>
-		<SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />
+        <!--  Border Brush  -->
+        <Color x:Key="BorderColor">#FF3A3A3A</Color>
+        <SolidColorBrush Color="{StaticResource BorderColor}" x:Key="BorderBrush" />
 
-	</Styles.Resources>
+        <!--  Background Color Fade  -->
+        <Color x:Key="BackgroundColorFade">#2D171717</Color>
+        <SolidColorBrush Color="{StaticResource BackgroundColorFade}" x:Key="BackgroundColorBrushFade" />
+
+        <!--  Background Subtle Highlight  -->
+        <Color x:Key="BackgroundSubtleHighlight">#1f1c1c</Color>
+        <SolidColorBrush Color="{StaticResource BackgroundSubtleHighlight}" x:Key="BackgroundSubtleHighlightBrush" />
+
+        <!--  Window Background Color  -->
+        <Color x:Key="WindowBackgroundColor">#8E212121</Color>
+        <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" x:Key="WindowBackgroundColorBrush" />
+
+
+    </Styles.Resources>
 
 </Styles>
