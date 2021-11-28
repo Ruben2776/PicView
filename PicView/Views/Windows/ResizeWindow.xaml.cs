@@ -6,6 +6,8 @@ using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -19,10 +21,11 @@ using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows
 {
+
     public partial class ResizeWindow : Window
     {
         bool running;
-        System.Collections.Generic.List<BatchFunctions.ThumbNailHolder> thumbs = new();
+        readonly System.Collections.Generic.List<BatchFunctions.ThumbNailHolder> thumbs = new();
         public ResizeWindow()
         {
             Title = Application.Current.Resources["BatchResize"] + " - PicView";
@@ -144,122 +147,7 @@ namespace PicView.Views.Windows
                 StartButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(StartText); };
                 StartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(StartBrush); };
 
-                StartButton.MouseLeftButtonDown += async delegate
-                {
-                    LogTextBox.Text = String.Empty;
-                    running = true;
-
-                    bool toResize = NoResize.IsSelected == false;
-                    int resizeAmount = 0;
-                    Percentage? percentage = null;
-                    int quality = 100;
-                    bool? compress = null;
-                    if (LosslessCompressionChoice.IsSelected)
-                    {
-                        compress = true;
-                    }
-                    else if (LossyCompressionChoice.IsSelected)
-                    {
-                        compress = false;
-                    }
-
-                    if (int.TryParse(QualityPercentage.Text, out var q))
-                    {
-                        quality = q;
-                    }
-
-                    string? ext;
-                    if (webp.IsSelected)
-                    {
-                        ext = ".webp";
-                    }
-                    else if (png.IsSelected)
-                    {
-                        ext = ".png";
-                    }
-                    else if (jpg.IsSelected)
-                    {
-                        ext = ".jpg";
-                    }
-                    else
-                    {
-                        ext = null;
-                    }
-
-                    if (toResize)
-                    {
-                        if (PercentageResize.IsSelected && int.TryParse(PercentageBox.Text, out var number))
-                        {
-                            percentage = new Percentage(number);
-                        }
-                        else
-                        {
-                            if (WidthResize.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
-                            {
-                                resizeAmount = resizeWidth;
-                            }
-                            else if (HeightResize.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
-                            {
-                                resizeAmount = resizeHeight;
-                            }
-                        }
-                    }
-
-                    bool sameDir = false;
-                    if (Error_Handling.CheckOutOfRange() == false)
-                    {
-                        sameDir = Path.GetDirectoryName(Navigation.Pics[0]) == Path.GetDirectoryName(SourceFolderInput.Text);
-                    }
-
-                    var sourceFileist = sameDir ? Navigation.Pics : FileLists.FileList(new FileInfo(SourceFolderInput.Text));
-                    string outputFolder = OutputFolderInput.Text + @"\";
-                    var cancelToken = new CancellationTokenSource();
-                    int thumbSize = 0;
-                    Percentage? thumbPercentage = null;
-
-                    for (int i = 0; i < GeneratedThumbnailsContainer.Children.Count; i++)
-                    {
-                        var container = (UserControls.ThumbnailOutputUC)GeneratedThumbnailsContainer.Children[i];
-                        if (container == null) { continue; }
-                        if (container.Percentage.IsSelected && int.TryParse(container.ValueBox.Text, out var number))
-                        {
-                            thumbPercentage = new Percentage(number);
-                        }
-                        else
-                        {
-                            if (container.WidthBox.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
-                            {
-                                thumbSize = resizeWidth;
-                            }
-                            else if (container.HeightBox.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
-                            {
-                                thumbSize = resizeHeight;
-                            }
-                        }
-                        thumbs.Add(new BatchFunctions.ThumbNailHolder(container.OutPutStringBox.Text, thumbSize, thumbPercentage));
-                    }
-
-                    ProgressBar.Maximum = thumbs.Count > 0 ? sourceFileist.Count * thumbs.Count : sourceFileist.Count;
-
-                    await Task.Run(() =>
-                    {
-                        Parallel.For(0, sourceFileist.Count, i =>
-                        {
-                            FileInfo fileInfo;
-                            lock (sourceFileist)
-                            {
-                                fileInfo = new FileInfo(sourceFileist[i]);
-                            }
-
-                            BatchFunctions.Run(fileInfo, resizeAmount, quality, ext, percentage, compress, outputFolder, toResize, LogTextBox, ProgressBar);
-                            for (int x = 0; x < thumbs.Count; x++)
-                            {
-                                BatchFunctions.Run(fileInfo, thumbs[x].size, quality, ext, thumbs[x].percentage, compress, thumbs[x].directory, true, LogTextBox, ProgressBar);
-                            }
-                        });
-                    });
-
-                };
+                StartButton.MouseLeftButtonDown += async (_, _) => await Load().ConfigureAwait(false);
 
                 CancelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CancelText); };
                 CancelButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CancelBrush); };
@@ -268,6 +156,191 @@ namespace PicView.Views.Windows
 
                 CancelButton.MouseLeftButtonDown += (_, _) => running = false;
             };
+        }
+
+        async Task Load()
+        {
+            running = true;
+            CancellationTokenSource source = new CancellationTokenSource();
+            Task task = Task.Run(() => Loop(source.Token), source.Token);
+            try
+            {
+                await task.ConfigureAwait(false);
+                running = false;
+            }
+            catch (TaskCanceledException)
+            {
+                Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                {
+                    LogTextBox.Text = string.Empty;
+                    ProgressBar.Value = 0;
+                });
+            }
+            finally { source.Dispose(); }
+        }
+
+        void Loop(CancellationToken cancellationToken)
+        {
+            running = true;
+
+            bool toResize = false;
+            int width = 0, height = 0;
+            Percentage? percentage = null;
+
+            int quality = 100;
+            bool? compress = null;
+
+            string? ext = null;
+
+            bool sameDir = false;
+
+            var cancelToken = new CancellationTokenSource();
+
+            int thumbW = 0, thumbH = 0;
+            Percentage? thumbPercentage = null;
+
+            List<string>? sourceFileist = null;
+            string outputFolder = "";
+
+            Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+            {
+                LogTextBox.Text = String.Empty;
+
+                toResize = NoResize.IsSelected == false;
+                int width = 0, height = 0;
+                Percentage? percentage = null;
+                int quality = 100;
+
+
+                if (LosslessCompressionChoice.IsSelected)
+                {
+                    compress = true;
+                }
+                else if (LossyCompressionChoice.IsSelected)
+                {
+                    compress = false;
+                }
+
+                if (int.TryParse(QualityPercentage.Text, out var q))
+                {
+                    quality = q;
+                }
+
+                if (webp.IsSelected)
+                {
+                    ext = ".webp";
+                }
+                else if (png.IsSelected)
+                {
+                    ext = ".png";
+                }
+                else if (jpg.IsSelected)
+                {
+                    ext = ".jpg";
+                }
+                else
+                {
+                    ext = null;
+                }
+
+                if (toResize)
+                {
+                    if (PercentageResize.IsSelected && int.TryParse(PercentageBox.Text, out var number))
+                    {
+                        percentage = new Percentage(number);
+                    }
+                    else
+                    {
+                        if (WidthResize.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
+                        {
+                            width = resizeWidth;
+                        }
+                        else if (HeightResize.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
+                        {
+                            height = resizeHeight;
+                        }
+                    }
+                }
+
+                if (Error_Handling.CheckOutOfRange() == false)
+                {
+                    sameDir = Path.GetDirectoryName(Navigation.Pics[0]) == Path.GetDirectoryName(SourceFolderInput.Text);
+                }
+
+                sourceFileist = sameDir ? Navigation.Pics : FileLists.FileList(new FileInfo(SourceFolderInput.Text));
+                outputFolder = OutputFolderInput.Text + @"\";
+
+                for (int i = 0; i < GeneratedThumbnailsContainer.Children.Count; i++)
+                {
+                    var container = (UserControls.ThumbnailOutputUC)GeneratedThumbnailsContainer.Children[i];
+                    if (container == null) { continue; }
+                    if (container.Percentage.IsSelected && int.TryParse(container.ValueBox.Text, out var number))
+                    {
+                        thumbPercentage = new Percentage(number);
+                    }
+                    else
+                    {
+                        if (container.WidthBox.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
+                        {
+                            thumbW = resizeWidth;
+                        }
+                        else if (container.HeightBox.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
+                        {
+                            thumbH = resizeHeight;
+                        }
+                    }
+                    thumbs.Add(new BatchFunctions.ThumbNailHolder(container.OutPutStringBox.Text, thumbW, thumbH, thumbPercentage));
+                }
+
+                ProgressBar.Maximum = sourceFileist.Count;
+            });
+
+            Parallel.For(0, sourceFileist.Count, i =>
+            {
+                if (sourceFileist is null)
+                {
+                    return;
+                }
+                FileInfo fileInfo;
+                lock (sourceFileist)
+                {
+                    fileInfo = new FileInfo(sourceFileist[i]);
+                }
+                StringBuilder sb = new();
+                sb.Append(BatchFunctions.Run(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize));
+
+                for (int x = 0; x < thumbs.Count; x++)
+                {
+                    sb.Append(BatchFunctions.Run(fileInfo, thumbs[x].width, thumbs[x].height, quality, ext, thumbs[x].percentage, compress, thumbs[x].directory, true));
+                }
+
+                if (running is false)
+                {
+                    cancelToken.Cancel();
+                }
+
+                if (cancelToken.IsCancellationRequested)
+                {
+                    if (sourceFileist is not null)
+                    {
+                        sourceFileist.Clear();
+                        sourceFileist = null;
+                    }
+                    Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                    {
+                        LogTextBox.Text = string.Empty;
+                        ProgressBar.Value = 0;
+                    });
+                    return;
+                }
+
+                Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                {
+                    LogTextBox.Text += sb.ToString();
+                    LogTextBox.ScrollToEnd();
+                    ProgressBar.Value++;
+                });
+            });
         }
 
         internal static void SetTextboxDragEvent(TextBox textBox)

@@ -9,6 +9,7 @@
     AllowDrop="False"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1.2"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
@@ -303,6 +304,7 @@
                 BorderThickness="1.5"
                 Effect="{StaticResource MenuShadowButtonBorder}"
                 MaxLines="9999"
+                Text="{Binding model.LogText, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                 TextWrapping="Wrap"
                 ToolTip="{x:Null}"
                 VerticalScrollBarVisibility="Visible" />

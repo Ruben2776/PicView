@@ -12,16 +12,7 @@ namespace PicView.ImageHandling
 {
     internal static class BatchFunctions
     {
-        internal static void Run(FileInfo sourceFile,
-                                            int resizeAmount,
-                                            int quality,
-                                            string? ext,
-                                            Percentage? percentage,
-                                            bool? compress,
-                                            string outputFolder,
-                                            bool toResize,
-                                            TextBox LogTextBox,
-                                            ProgressBar progressBar)
+        internal static string Run(FileInfo sourceFile, int width, int height, int quality, string? ext, Percentage? percentage, bool? compress, string outputFolder, bool toResize)
         {
             string? destination = outputFolder is null ? null : outputFolder + @"/" + sourceFile.Name;
 
@@ -34,86 +25,135 @@ namespace PicView.ImageHandling
 
             if (toResize)
             {
-                _ = doResize(LogTextBox, progressBar, sb, sourceFile, resizeAmount, quality, percentage, destination, compress, ext).ConfigureAwait(false);
-            }
-            else if (compress.HasValue)
-            {
-                if (sourceFile.DirectoryName == outputFolder)
+                sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).Append(" 🠚 ");
+
+                try
                 {
-                    _ = ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
-                    var newSize = FileFunctions.GetSizeReadable(new FileInfo(sourceFile.FullName).Length);
-                    sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length))
-                        .Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
-                }
-                else if (ext is null)
-                {
-                    if (quality is 100)
+                    using var readStream = new FileStream(sourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+                    using var magick = new MagickImage(readStream)
                     {
-                        File.Copy(sourceFile.FullName, destination, true);
-                        _ = ImageFunctions.OptimizeImageAsync(destination).ConfigureAwait(false);
+                        ColorSpace = ColorSpace.Transparent,
+                        Quality = quality,
+                    };
+
+                    if (percentage is not null)
+                    {
+                        magick.Resize(percentage.Value);
                     }
                     else
                     {
-                        _ = SaveImages.SaveImageAsync(0, false, null, sourceFile.FullName, destination, null, false).ConfigureAwait(false);
+                        magick.Resize(width, height);
                     }
+
+                    if (destination is null)
+                    {
+                        if (ext is not null)
+                        {
+                            destination = Path.ChangeExtension(sourceFile.FullName, ext);
+                            using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
+                            magick.Write(saveStream);
+                            DeleteFiles.TryDeleteFile(sourceFile.FullName, true);
+                            if (compress.HasValue)
+                            {
+                                Optimize(compress.Value, destination);
+                            }
+                        }
+                        else
+                        {
+                            using var overwriteStream = new FileStream(sourceFile.FullName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
+                            magick.Write(overwriteStream);
+                            if (compress.HasValue)
+                            {
+                                Optimize(compress.Value, sourceFile.FullName);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (ext is not null)
+                        {
+                            if (File.Exists(destination))
+                            {
+                                DeleteFiles.TryDeleteFile(destination, true);
+                            }
+                            destination = Path.ChangeExtension(destination, ext);
+                        }
+
+                        using var overwriteStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
+                        magick.Write(overwriteStream);
+                        if (compress.HasValue)
+                        {
+                            Optimize(compress.Value, destination);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
+                }
+
+                var destinationFile = new FileInfo(destination);
+                sb.Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(destinationFile.Length)).
+                    Append(' ').AppendLine(Environment.NewLine);
+
+                return sb.ToString();
+            }
+
+            if (compress.HasValue == false) { return String.Empty; }
+
+            if (sourceFile.DirectoryName == outputFolder)
+            {
+                _ = ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
+                var newSize = FileFunctions.GetSizeReadable(new FileInfo(sourceFile.FullName).Length);
+                sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length))
+                    .Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
+            }
+            else if (ext is null)
+            {
+                if (quality is 100)
+                {
+                    File.Copy(sourceFile.FullName, destination, true);
                 }
                 else
                 {
-                    destination = Path.ChangeExtension(destination, ext);
                     _ = SaveImages.SaveImageAsync(0, false, null, sourceFile.FullName, destination, null, false).ConfigureAwait(false);
                 }
 
-                report(LogTextBox, progressBar, sb);
-            }
-        }
-
-        static async Task doResize(TextBox LogTextBox,
-                                   ProgressBar progressBar,
-                                   StringBuilder sb,
-                                   FileInfo? sourceFile,
-                                   int resizeAmount,
-                                   int quality = 100,
-                                   Percentage? percentage = null,
-                                   string? destination = null,
-                                   bool? compress = null,
-                                   string? ext = null)
-        {
-            var success = await ImageSizeFunctions.ResizeImageAsync(sourceFile.FullName, resizeAmount, resizeAmount, quality, percentage, destination, compress, ext).ConfigureAwait(false);
-            if (success is false) { return; }
-
-            var destinationFile = new FileInfo(destination);
-            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).Append(" 🠚 ")
-                .Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(destinationFile.Length)).
-                Append(' ').AppendLine(Environment.NewLine);
-
-            report(LogTextBox, progressBar, sb);
-        }
-
-        static void report(TextBox LogTextBox, ProgressBar progressBar, StringBuilder sb)
-        {
-            ConfigureWindows.GetResizeWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-            {
-                LogTextBox.Text += sb.ToString();
-                progressBar.Value++;
-                LogTextBox.ScrollToEnd();
-
-                if (progressBar.Value == progressBar.Maximum)
+                if (compress.HasValue)
                 {
-                    LogTextBox.Text += Environment.NewLine + "Completed";
+                    Optimize(compress.Value, destination);
                 }
-            });
+            }
+            else
+            {
+                destination = Path.ChangeExtension(destination, ext);
+                _ = SaveImages.SaveImageAsync(0, false, null, sourceFile.FullName, destination, null, false).ConfigureAwait(false);
+            }
+
+            return sb.ToString();
+        }
+
+        static void Optimize(bool lossless, string file)
+        {
+            ImageOptimizer imageOptimizer = new()
+            {
+                OptimalCompression = lossless
+            };
+            imageOptimizer.Compress(file);
         }
 
         internal class ThumbNailHolder
         {
             internal string directory;
-            internal int size;
+            internal int width;
+            internal int height;
             internal Percentage? percentage;
 
-            internal ThumbNailHolder(string directory, int size, Percentage? percentage)
+            internal ThumbNailHolder(string directory, int width, int height, Percentage? percentage)
             {
                 this.directory = directory;
-                this.size = size;
+                this.width = width;
+                this.height = height;
                 this.percentage = percentage;
             }
         }
