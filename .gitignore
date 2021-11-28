@@ -354,3 +354,6 @@ MigrationBackup/
 
 # Visual Studio Code user specific files
 .vscode/
+
+# Rider
+*.idea.
