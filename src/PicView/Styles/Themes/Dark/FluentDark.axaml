@@ -1,5 +1,5 @@
-﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="PicView.Styles.Themes.DarkTheme">
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="PicView.Styles.Themes.FluentDark">
 
 	<!-- Add Styles Here -->
 	<FluentTheme Mode="Dark"/>
@@ -19,8 +19,12 @@
 		<SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
 
 		<!--  Background Color Fade  -->
-		<Color x:Key="BackgroundColorFade">#A5171717</Color>
+		<Color x:Key="BackgroundColorFade">#2D171717</Color>
 		<SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
+		
+		<!--  Window Background Color  -->
+		<Color x:Key="WindowBackgroundColor">#8E212121</Color>
+		<SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />
 
 	</Styles.Resources>
 

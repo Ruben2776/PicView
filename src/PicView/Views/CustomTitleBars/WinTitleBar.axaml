@@ -29,6 +29,11 @@
 				Stretch="Fill"
 				Fill="{StaticResource IconColor}">
 			</Path>
+			<Button.Styles>
+				<Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+					<Setter Property="Background" Value="#BFE61918"/>
+				</Style>
+			</Button.Styles>
 		</Button>
 		<Rectangle
 			Width="1"
@@ -69,7 +74,7 @@
 		<TextBox Text="{Binding Title}"
 				 TextAlignment="Center"
 				 FontWeight="Bold"
-				 FontSize="12"
+				 FontSize="13"
 				 IsTabStop="False"
 				 Background="{StaticResource BackgroundColorFade}"
 				 BorderThickness="0"

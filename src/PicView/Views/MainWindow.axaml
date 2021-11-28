@@ -1,31 +1,43 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:PicView.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:uc="using:PicView.UserControls"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="PicView.Views.MainWindow"
-		MinWidth="462"
-		MinHeight="400"
-		WindowStartupLocation="CenterScreen"
-		SizeToContent="WidthAndHeight"
-        Title="{Binding Title}"
-		TransparencyLevelHint="AcrylicBlur"
-		Background="Transparent"
-		ExtendClientAreaToDecorationsHint="True"
-		ExtendClientAreaChromeHints="NoChrome"
-		ExtendClientAreaTitleBarHeightHint="-1">
+<Window
+    Background="{StaticResource WindowBackgroundColor}"
+    ExtendClientAreaChromeHints="NoChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    ExtendClientAreaToDecorationsHint="True"
+    MinHeight="400"
+    MinWidth="462"
+    SizeToContent="WidthAndHeight"
+    Title="{Binding Title}"
+    TransparencyLevelHint="AcrylicBlur"
+    UseLayoutRounding="True"
+    WindowStartupLocation="CenterScreen"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:PicView.UserControls"
+    xmlns:vm="using:PicView.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-	<Design.DataContext>
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
 
-	<Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="4">
-		<DockPanel>
-			<uc:WinTitleBar DockPanel.Dock="Top" />
-			<Rectangle DockPanel.Dock="Top" Height="1" Fill="{StaticResource BorderBrush}" />
-			<uc:PicBox />
-		</DockPanel>
-	</Border>
+    <Border
+        BorderBrush="{StaticResource BorderBrush}"
+        BorderThickness="1"
+        ClipToBounds="True"
+        CornerRadius="5"
+        Padding="1">
+        <DockPanel>
+            <uc:WinTitleBar DockPanel.Dock="Top" />
+            <Rectangle
+                DockPanel.Dock="Top"
+                Fill="{StaticResource BorderBrush}"
+                Height="1" />
+            <uc:PicBox />
+        </DockPanel>
+    </Border>
 </Window>

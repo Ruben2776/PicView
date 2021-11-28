@@ -6,7 +6,7 @@ namespace PicView.UserControls
 {
     public partial class WinTitleBar : UserControl
     {
-        private Button closeButton;
+        Button closeButton;
 
         public WinTitleBar()
         {

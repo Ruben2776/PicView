@@ -11,7 +11,6 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Folder Include="Assets\SvgIcons\" />
-		<Folder Include="Styles\Themes\Dark\" />
 		<Folder Include="Models\" />
 		<AvaloniaResource Include="Assets\**" />
 		<AvaloniaResource Include="Assets\Fonts\*" />
@@ -28,12 +27,12 @@
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.11-rc.1" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.1" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.10.4" />
 	</ItemGroup>
 	<ItemGroup>
-		<Resource Include="Assets\icon__Q6k_icon.ico" />
-		<Resource Include="Resources\icon__Q6k_icon.ico" />
-	</ItemGroup>
-	<ItemGroup>
+	  <Compile Update="Styles\Themes\Dark\FluentDark.cs">
+	    <DependentUpon>FluentDark.axaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\CustomTitleBars\WinTitleBar.axaml.cs">
 	    <DependentUpon>WinTitleBar.axaml</DependentUpon>
 	  </Compile>

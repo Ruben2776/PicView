@@ -18,7 +18,7 @@ namespace PicView
         private void LoadTheme()
         {
             // TODO add more themes that can be switched
-            Styles.Add(new DarkTheme());
+            Styles.Add(new FluentDark());
         }
 
         public override void OnFrameworkInitializationCompleted()
