@@ -356,4 +356,4 @@ MigrationBackup/
 .vscode/
 
 # Rider
-*.idea.
+*/.idea.
