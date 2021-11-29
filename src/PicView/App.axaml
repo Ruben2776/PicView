@@ -1,13 +1,14 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:PicView"
-             x:Class="PicView.App">
-	<Application.DataTemplates>
-		<local:ViewLocator/>
-	</Application.DataTemplates>
+<Application
+    x:Class="PicView.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:local="using:PicView"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
 
-	<Application.Styles>
-		<StyleInclude Source="/Styles/Text.xaml" />
-	</Application.Styles>
+    <Application.Styles>
+        <StyleInclude Source="/Styles/Text.xaml" />
+    </Application.Styles>
 
 </Application>

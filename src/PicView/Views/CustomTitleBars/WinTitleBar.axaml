@@ -1,4 +1,5 @@
 <UserControl
+    Background="{StaticResource WindowBackgroundColor}"
     x:Class="PicView.UserControls.WinTitleBar"
     xmlns="https://github.com/avaloniaui"
     xmlns:vm="using:PicView.ViewModels"
@@ -43,6 +44,7 @@
             Background="Transparent"
             DockPanel.Dock="Left"
             Height="30"
+            Margin="0"
             Name="SearchButton"
             Width="30">
             <Path
@@ -120,11 +122,14 @@
         <TextBox
             AcceptsReturn="True"
             AcceptsTab="False"
-            Background="{StaticResource BackgroundColorFade}"
+            Background="{StaticResource BackgroundSubtleHighlightBrush}"
             BorderThickness="0"
-            FontWeight="SemiBold"
+            FontSize="12"
+            FontWeight="Bold"
             IsTabStop="False"
             Text="{Binding Title}"
-            TextAlignment="Center" />
+            TextAlignment="Center"
+            VerticalAlignment="Center"
+            VerticalContentAlignment="Center" />
     </DockPanel>
 </UserControl>

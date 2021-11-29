@@ -2,6 +2,6 @@
 
     <Style Selector="TextBox">
         <Setter Property="FontSize" Value="13" />
-        <Setter Property="FontFamily" Value="IBM Plex Mono Medium" />
+        <!--<Setter Property="FontFamily" Value="IBM Plex Mono Medium" />-->
     </Style>
 </Styles>

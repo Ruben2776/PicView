@@ -29,12 +29,26 @@
         <SolidColorBrush Color="{StaticResource BackgroundColorFade}" x:Key="BackgroundColorBrushFade" />
 
         <!--  Background Subtle Highlight  -->
-        <Color x:Key="BackgroundSubtleHighlight">#1f1c1c</Color>
+        <Color x:Key="BackgroundSubtleHighlight">#FF1F1C1C</Color>
         <SolidColorBrush Color="{StaticResource BackgroundSubtleHighlight}" x:Key="BackgroundSubtleHighlightBrush" />
 
+        <!--  Background Color Fade  Subtle  -->
+        <Color x:Key="BackgroundColorFadeSubtle">#BE222222</Color>
+        <SolidColorBrush Color="{StaticResource BackgroundColorFadeSubtle}" x:Key="BackgroundColorBrushFadeSubtle" />
+
         <!--  Window Background Color  -->
-        <Color x:Key="WindowBackgroundColor">#8E212121</Color>
+        <Color x:Key="WindowBackgroundColor">#CC161413</Color>
         <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" x:Key="WindowBackgroundColorBrush" />
+
+        <ImageBrush
+            BitmapInterpolationMode="HighQuality"
+            DestinationRect="0,0,50,50"
+            Opacity=".9"
+            Source="\Assets\noisy-texture-200x200-o4-d31-c-161616-t0.png"
+            SourceRect="0,0,100,100"
+            Stretch="Fill"
+            TileMode="FlipXY"
+            x:Key="NoiseBg" />
 
 
     </Styles.Resources>

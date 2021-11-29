@@ -1,11 +1,13 @@
 <Window
     Background="{StaticResource WindowBackgroundColor}"
+    BorderThickness="0"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
     ExtendClientAreaToDecorationsHint="True"
     MinHeight="400"
     MinWidth="462"
     SizeToContent="WidthAndHeight"
+    SystemDecorations="None"
     Title="{Binding Title}"
     TransparencyLevelHint="AcrylicBlur"
     UseLayoutRounding="True"
@@ -39,16 +41,17 @@
                 Height="1" />
 
             <Border
+                Background="{StaticResource WindowBackgroundColor}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="0,1,0,0"
                 DockPanel.Dock="Bottom"
                 Height="25">
                 <Grid x:Name="LowerBar">
                     <Canvas
-                        Background="{StaticResource BackgroundColorFade}"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
                         Height="25"
                         HorizontalAlignment="Center"
-                        Width="400">
+                        Width="397">
 
                         <Button
                             Background="Transparent"
@@ -106,8 +109,8 @@
                         </Button>
 
                         <Canvas
-                            Background="{StaticResource BackgroundColorFade}"
-                            Canvas.Left="109"
+                            Background="{StaticResource BackgroundColorBrushFadeSubtle}"
+                            Canvas.Left="109.5"
                             Height="25"
                             Width="180">
 
@@ -163,7 +166,7 @@
                             Background="Transparent"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,0,1,0"
-                            Canvas.Left="345"
+                            Canvas.Left="343"
                             Focusable="False"
                             Height="25"
                             Width="55">
@@ -193,7 +196,7 @@
 
 
 
-            <uc:PicBox />
+            <uc:PicBox Background="{StaticResource NoiseBg}" />
         </DockPanel>
     </Border>
 </Window>
