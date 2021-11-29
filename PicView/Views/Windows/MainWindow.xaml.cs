@@ -118,6 +118,14 @@ namespace PicView.Views.Windows
                 Activated += (_, _) => ConfigureSettings.ConfigColors.MainWindowFocus();
 
                 Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => UILogic.Sizing.WindowSizing.SystemEvents_DisplaySettingsChanged();
+
+                TitleBar.MouseLeftButtonDown += (_, e) =>
+                {
+                    if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                    {
+                        DragMove();
+                    }
+                };
             };
         }
 
