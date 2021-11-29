@@ -14,7 +14,7 @@ namespace PicView.ImageHandling
     {
         internal static string Run(FileInfo sourceFile, int width, int height, int quality, string? ext, Percentage? percentage, bool? compress, string outputFolder, bool toResize)
         {
-            string? destination = outputFolder is null ? null : outputFolder + @"/" + sourceFile.Name;
+            var destination = outputFolder is null ? null : outputFolder + @"/" + sourceFile.Name;
 
             var sb = new StringBuilder();
 
@@ -29,8 +29,8 @@ namespace PicView.ImageHandling
 
                 try
                 {
-                    using var readStream = new FileStream(sourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-                    using var magick = new MagickImage(readStream)
+                    using var filestream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);
+                    using var magick = new MagickImage(filestream)
                     {
                         ColorSpace = ColorSpace.Transparent,
                         Quality = quality,
@@ -60,8 +60,7 @@ namespace PicView.ImageHandling
                         }
                         else
                         {
-                            using var overwriteStream = new FileStream(sourceFile.FullName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
-                            magick.Write(overwriteStream);
+                            magick.Write(filestream);
                             if (compress.HasValue)
                             {
                                 Optimize(compress.Value, sourceFile.FullName);
@@ -101,7 +100,7 @@ namespace PicView.ImageHandling
 
             if (compress.HasValue == false) { return String.Empty; }
 
-            if (sourceFile.DirectoryName == outputFolder)
+            if (sourceFile.DirectoryName + @"\" == outputFolder)
             {
                 _ = ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
                 var newSize = FileFunctions.GetSizeReadable(new FileInfo(sourceFile.FullName).Length);
@@ -133,13 +132,20 @@ namespace PicView.ImageHandling
             return sb.ToString();
         }
 
-        static void Optimize(bool lossless, string file)
+        static bool Optimize(bool lossless, string file)
         {
             ImageOptimizer imageOptimizer = new()
             {
                 OptimalCompression = lossless
             };
-            imageOptimizer.Compress(file);
+            try
+            {
+                return imageOptimizer.Compress(file);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         internal class ThumbNailHolder
