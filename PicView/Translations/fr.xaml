@@ -205,12 +205,12 @@
 
     <system:String x:Key="Ascending">Ascendant</system:String>
     <system:String x:Key="Descending">Descendant</system:String>
-    
+
     <!--  Settings  -->
     <system:String x:Key="Settings">Options</system:String>
     <system:String x:Key="Scrolling">Défilement</system:String>
     <system:String x:Key="Looping">Boucle</system:String>
-    <system:String x:Key="FitToWindow">Ajuster à la fenêtre / à l'image"</system:String>
+    <system:String x:Key="FitToWindow">Ajuster à la fenêtre / à l'image&quot;</system:String>
     <system:String x:Key="ShowHideUI">Afficher/masquer l'interface</system:String>
     <system:String x:Key="ChangeBackground">Modifier l'arrière plan</system:String>
     <system:String x:Key="ChangeBackgroundTooltip">Changer la couleur d'arrière-plan pour les images avec un fond transparent</system:String>
@@ -368,4 +368,24 @@
     <system:String x:Key="ResizeImage">Redimensionner l'image</system:String>
 
     <system:String x:Key="BatchResize">Lot redimensionner</system:String>
+
+    <system:String x:Key="SourceFolder">Source folder</system:String>
+    <system:String x:Key="OutputFolder">Output folder</system:String>
+
+    <system:String x:Key="ConvertTo">Convert to</system:String>
+    <system:String x:Key="NoConversion">No conversion</system:String>
+
+    <system:String x:Key="Compression">Compression</system:String>
+    <system:String x:Key="Lossless">Lossless</system:String>
+    <system:String x:Key="Lossy">Lossy</system:String>
+
+    <system:String x:Key="Qaulity">Quality</system:String>
+    <system:String x:Key="Percentage">Percentage</system:String>
+
+    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
+    <system:String x:Key="Thumbnail">Thumb</system:String>
+
+    <system:String x:Key="Start">Start</system:String>
+    <system:String x:Key="Cancel">Cancel</system:String>
+
 </ResourceDictionary>

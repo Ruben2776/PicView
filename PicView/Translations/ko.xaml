@@ -205,7 +205,7 @@
 
     <system:String x:Key="Ascending">오름차순</system:String>
     <system:String x:Key="Descending">내림차순</system:String>
-    
+
     <!--  Settings  -->
     <system:String x:Key="Settings">설정</system:String>
     <system:String x:Key="Scrolling">스크롤</system:String>
@@ -368,4 +368,24 @@
     <system:String x:Key="ResizeImage">이미지 크기를 조정하십시오</system:String>
 
     <system:String x:Key="BatchResize">이미지 크기 조정 대량</system:String>
+
+    <system:String x:Key="SourceFolder">Source folder</system:String>
+    <system:String x:Key="OutputFolder">Output folder</system:String>
+
+    <system:String x:Key="ConvertTo">Convert to</system:String>
+    <system:String x:Key="NoConversion">No conversion</system:String>
+
+    <system:String x:Key="Compression">Compression</system:String>
+    <system:String x:Key="Lossless">Lossless</system:String>
+    <system:String x:Key="Lossy">Lossy</system:String>
+
+    <system:String x:Key="Qaulity">Quality</system:String>
+    <system:String x:Key="Percentage">Percentage</system:String>
+
+    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
+    <system:String x:Key="Thumbnail">Thumb</system:String>
+
+    <system:String x:Key="Start">Start</system:String>
+    <system:String x:Key="Cancel">Cancel</system:String>
+
 </ResourceDictionary>

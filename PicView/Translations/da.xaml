@@ -368,4 +368,24 @@
     <system:String x:Key="ResizeImage">Ændre billedets størrelse</system:String>
 
     <system:String x:Key="BatchResize">Batch Billedstørrelse</system:String>
+
+    <system:String x:Key="SourceFolder">Source folder</system:String>
+    <system:String x:Key="OutputFolder">Output folder</system:String>
+
+    <system:String x:Key="ConvertTo">Convert to</system:String>
+    <system:String x:Key="NoConversion">No conversion</system:String>
+
+    <system:String x:Key="Compression">Compression</system:String>
+    <system:String x:Key="Lossless">Lossless</system:String>
+    <system:String x:Key="Lossy">Lossy</system:String>
+
+    <system:String x:Key="Qaulity">Quality</system:String>
+    <system:String x:Key="Percentage">Percentage</system:String>
+
+    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
+    <system:String x:Key="Thumbnail">Thumb</system:String>
+
+    <system:String x:Key="Start">Start</system:String>
+    <system:String x:Key="Cancel">Cancel</system:String>
+
 </ResourceDictionary>

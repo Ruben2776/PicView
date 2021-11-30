@@ -7,7 +7,7 @@
     <system:String x:Key="Loading">Ładowanie...</system:String>
     <system:String x:Key="NoImage">Brak obrazu</system:String>
     <system:String x:Key="Files">pliki</system:String>
-	<system:String x:Key="File">plik</system:String>
+    <system:String x:Key="File">plik</system:String>
     <system:String x:Key="PercentComplete">% ukończono...</system:String>
     <system:String x:Key="CropMessage">Wciśnij Esc aby zamknąć, Enter aby zapisać</system:String>
     <system:String x:Key="ClipboardImage">Zdjęcie ze schowka</system:String>
@@ -51,7 +51,7 @@
 
     <!--  Info window, window management  -->
     <system:String x:Key="WindowManagement">Zarządzanie oknem</system:String>
-	<system:String x:Key="InfoWindow">Okno z informacją</system:String>
+    <system:String x:Key="InfoWindow">Okno z informacją</system:String>
     <system:String x:Key="SettingsWindow">Okno z ustawieniami</system:String>
     <system:String x:Key="EscCloseTooltip">Zamyka obecnie otwarte okno/menu</system:String>
     <system:String x:Key="CloseApp">Zamyka aplikację</system:String>
@@ -67,9 +67,9 @@
     <system:String x:Key="Teal">Ciemny błękit</system:String>
 
     <system:String x:Key="Lime">Limonkowy</system:String>
-	<system:String x:Key="Green">Zielony</system:String>
-	<system:String x:Key="Golden">Złoty</system:String>
-	<system:String x:Key="Orange">Pomarańczowy</system:String>
+    <system:String x:Key="Green">Zielony</system:String>
+    <system:String x:Key="Golden">Złoty</system:String>
+    <system:String x:Key="Orange">Pomarańczowy</system:String>
 
     <system:String x:Key="Red">Czerwony</system:String>
     <system:String x:Key="Pink">Różowy</system:String>
@@ -83,13 +83,13 @@
     <system:String x:Key="ChangingThemeRequiresRestart">* Zmiana motywu wymaga restartu programu</system:String>
 
     <!--  Settings window, wallpaper  -->
-	<system:String x:Key="SetCurrentImageAsWallpaper">Ustaw zdjęcie jako tapetę:</system:String>
+    <system:String x:Key="SetCurrentImageAsWallpaper">Ustaw zdjęcie jako tapetę:</system:String>
 
     <system:String x:Key="Fill">Wypełnij</system:String>
     <system:String x:Key="Center">Wycentruj</system:String>
     <system:String x:Key="Fit">Dopasuj</system:String>
     <system:String x:Key="Tile">Kafelek</system:String>
-	<system:String x:Key="Stretch">Rozciągnij</system:String>
+    <system:String x:Key="Stretch">Rozciągnij</system:String>
 
     <!--  Settings window, language  -->
     <system:String x:Key="Language">Język</system:String>
@@ -97,7 +97,7 @@
 
     <!--  Settings window, Gallery layout  -->
     <system:String x:Key="FullscreenGalleryLayout">Pełnoekranowa galeria</system:String>
-	<system:String x:Key="Vertical">Pionowy</system:String>
+    <system:String x:Key="Vertical">Pionowy</system:String>
     <system:String x:Key="Horizontal">Poziomy</system:String>
 
     <!--  Settings window, mouse  -->
@@ -149,7 +149,7 @@
     <system:String x:Key="SmoothMagnify">Gładkie wyostrzenie</system:String>
 
     <system:String x:Key="Pivot">Pivot</system:String>
-	<system:String x:Key="PaperFold">Złożenie</system:String>
+    <system:String x:Key="PaperFold">Złożenie</system:String>
     <system:String x:Key="PencilSketch">Szkic ołówkiem</system:String>
 
     <system:String x:Key="Sketch">Szkic</system:String>
@@ -180,25 +180,25 @@
     <!--  File related  -->
     <system:String x:Key="Open">Otwórz</system:String>
     <system:String x:Key="OpenWith">Otwórz przy pomocy...</system:String>
-	<system:String x:Key="OpenFileDialog">Wybierz plik</system:String>
+    <system:String x:Key="OpenFileDialog">Wybierz plik</system:String>
     <system:String x:Key="OpenLastFile">Otwórz ostatni plik</system:String>
     <system:String x:Key="ShowInFolder">Pokaż w folderze</system:String>
     <system:String x:Key="Save">Zapisz</system:String>
-	<system:String x:Key="SaveImage">Zapisz obraz</system:String>
+    <system:String x:Key="SaveImage">Zapisz obraz</system:String>
     <system:String x:Key="Print">Drukuj</system:String>
-	<system:String x:Key="RecentFiles">Ostatnie pliki</system:String>
-	<system:String x:Key="FileProperties">Ustawienia pliku</system:String>
-	<system:String x:Key="DeleteFile">Usuń plik</system:String>
+    <system:String x:Key="RecentFiles">Ostatnie pliki</system:String>
+    <system:String x:Key="FileProperties">Ustawienia pliku</system:String>
+    <system:String x:Key="DeleteFile">Usuń plik</system:String>
     <system:String x:Key="Folder">Folder</system:String>
-	<system:String x:Key="FullPath">Pełna ścieżka</system:String>
-	<system:String x:Key="RenameFile">Zmień nazwę</system:String>
+    <system:String x:Key="FullPath">Pełna ścieżka</system:String>
+    <system:String x:Key="RenameFile">Zmień nazwę</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Posortuj pliki po</system:String>
-	<system:String x:Key="FileName">Nazwie</system:String>
-	<system:String x:Key="FileSize">Rozmiarze</system:String>
-	<system:String x:Key="CreationTime">Czasie stworzenia</system:String>
-	<system:String x:Key="FileExtension">Rozszerzeniu</system:String>
+    <system:String x:Key="FileName">Nazwie</system:String>
+    <system:String x:Key="FileSize">Rozmiarze</system:String>
+    <system:String x:Key="CreationTime">Czasie stworzenia</system:String>
+    <system:String x:Key="FileExtension">Rozszerzeniu</system:String>
     <system:String x:Key="LastAccessTime">Czasie ostatniego dostępu</system:String>
     <system:String x:Key="LastWriteTime">Czasie ostatniego zapisu</system:String>
     <system:String x:Key="Random">Losowo</system:String>
@@ -211,7 +211,7 @@
     <system:String x:Key="Scrolling">Przewijanie</system:String>
     <system:String x:Key="Looping">Zapętlanie</system:String>
     <system:String x:Key="FitToWindow">Dopasuj do okna/obrazu</system:String>
-	<system:String x:Key="ShowHideUI">Pokaż/ukryj interfejs</system:String>
+    <system:String x:Key="ShowHideUI">Pokaż/ukryj interfejs</system:String>
     <system:String x:Key="ChangeBackground">Zmień tło</system:String>
     <system:String x:Key="ChangeBackgroundTooltip">Zmień kolor tła dla obrazów z transparentnym tłem</system:String>
 
@@ -220,11 +220,11 @@
     <system:String x:Key="AddedToClipboard">dodano do schowka</system:String>
 
     <!--  Copy file  -->
-	<system:String x:Key="CopyFile">Kopiuj plik</system:String>
+    <system:String x:Key="CopyFile">Kopiuj plik</system:String>
     <system:String x:Key="FileCopy">Dodano plik do schowka</system:String>
     <system:String x:Key="FileCopyPath">Kopiuj ścieżkę do pliku</system:String>
     <system:String x:Key="FileCopyPathMessage">Ścieżka do pliku dodana do schowka</system:String>
-	<system:String x:Key="FileCutMessage">Wycięto plik</system:String>
+    <system:String x:Key="FileCutMessage">Wycięto plik</system:String>
 
     <!--  Copy image  -->
     <system:String x:Key="CopyImage">Skopiuj obraz</system:String>
@@ -238,10 +238,10 @@
     <system:String x:Key="FileCut">Wytnij plik</system:String>
 
     <!--  Image info  -->
-	<system:String x:Key="ImageInfo">Szczegóły obrazu</system:String>
+    <system:String x:Key="ImageInfo">Szczegóły obrazu</system:String>
     <system:String x:Key="Image">Obraz</system:String>
     <system:String x:Key="Width">Szerokość</system:String>
-	<system:String x:Key="Height">Wysokość</system:String>
+    <system:String x:Key="Height">Wysokość</system:String>
     <system:String x:Key="Date">Data</system:String>
     <system:String x:Key="Created">Utworzony</system:String>
     <system:String x:Key="Modified">Zmodyfikowany</system:String>
@@ -252,12 +252,12 @@
     <system:String x:Key="Resolution">Rozdzielczość</system:String>
     <system:String x:Key="Dpi">DPI</system:String>
     <system:String x:Key="DiskSize">Rozmiar na dysku</system:String>
-	<system:String x:Key="AspectRatio">Stosunek</system:String>
+    <system:String x:Key="AspectRatio">Stosunek</system:String>
     <system:String x:Key="Portrait">Portretowy</system:String>
     <system:String x:Key="Landscape">Krajobrazowy</system:String>
     <system:String x:Key="Square">Kwadrat</system:String>
     <system:String x:Key="PrintSizeIn">Rozmiar wydruku (cale)</system:String>
-	<system:String x:Key="PrintSizeCm">Rozmiar wydruku (cm)</system:String>
+    <system:String x:Key="PrintSizeCm">Rozmiar wydruku (cm)</system:String>
     <system:String x:Key="Centimeters">centymetrów</system:String>
     <system:String x:Key="Inches">cali</system:String>
     <system:String x:Key="BitDepth">Bitów głębkości koloru</system:String>
@@ -287,7 +287,7 @@
     <!--  Error messages  -->
     <system:String x:Key="SavingFileFailed">Zapis pliku nie powiódł się</system:String>
     <system:String x:Key="UnexpectedError">Wystąpił nieznany błąd</system:String>
-	<system:String x:Key="NoImages">Brak obrazów</system:String>
+    <system:String x:Key="NoImages">Brak obrazów</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">Wystąpił błąd podczas przenoszenia pliku</system:String>
 
     <!--  Drag and drop  -->
@@ -301,9 +301,9 @@
     <!--  Edit  -->
     <system:String x:Key="Crop">Przytnij</system:String>
     <system:String x:Key="RotateRight">Obróć w prawo</system:String>
-	<system:String x:Key="RotateLeft">Obróć w lewo</system:String>
+    <system:String x:Key="RotateLeft">Obróć w lewo</system:String>
     <system:String x:Key="Flip">Przeróć poziomo</system:String>
-	<system:String x:Key="Unflip">Cofnij przewracanie</system:String>
+    <system:String x:Key="Unflip">Cofnij przewracanie</system:String>
 
     <!--  Archives  -->
     <system:String x:Key="BadArchive">Archiwum nie mogło być przetworzone</system:String>
@@ -311,17 +311,17 @@
 
     <!--  Delete file messages  -->
     <system:String x:Key="SentFileToRecycleBin">Przenieś plik do kosza</system:String>
-	<system:String x:Key="DeletedFile">Usunięto</system:String>
+    <system:String x:Key="DeletedFile">Usunięto</system:String>
     <system:String x:Key="AnErrorOccuredWhenDeleting">Wystąpił błąd podczas usuwania</system:String>
 
     <!--  Scaling messages  -->
-	<system:String x:Key="AutoFitWindowMessage">Okno automatycznie dopasowujące</system:String>
+    <system:String x:Key="AutoFitWindowMessage">Okno automatycznie dopasowujące</system:String>
     <system:String x:Key="AutoFitWindowFillHeight">Okno automatycznie dopasowujące, dopasowanie wysokości</system:String>
     <system:String x:Key="NormalWindowBehavior">Domyślne zachowanie okna</system:String>
     <system:String x:Key="NormalWindowBehaviorFillHeight">Domyślne zachowanie okna, dopasowanie wysokości</system:String>
 
     <system:String x:Key="ScrollingEnabled">Przewijanie włączone</system:String>
-	<system:String x:Key="ScrollingDisabled">Przewijanie wyłączone</system:String>
+    <system:String x:Key="ScrollingDisabled">Przewijanie wyłączone</system:String>
 
     <!--  Misc messages  -->
     <system:String x:Key="ConvertedToBase64">Zamieniono na Base64</system:String>
@@ -339,15 +339,15 @@
     <system:String x:Key="AdjustZoomLevel">Dostosuj poziom przybliżenia</system:String>
 
     <system:String x:Key="PasteImageFromClipholder">Wklej zdjęcie ze schowka</system:String>
-	<system:String x:Key="SendCurrentImageToRecycleBin">Przenieś obecne zdjęcie do kosza</system:String>
+    <system:String x:Key="SendCurrentImageToRecycleBin">Przenieś obecne zdjęcie do kosza</system:String>
     <system:String x:Key="StartSlideshow">Rozpocznij pokaz</system:String>
     <system:String x:Key="CloseGallery">Zamknij galerię</system:String>
 
     <!--  Menu buttons text  -->
-	<system:String x:Key="ShowFullscreenGallery">Pokaż pełnokrenową galerię</system:String>
+    <system:String x:Key="ShowFullscreenGallery">Pokaż pełnokrenową galerię</system:String>
     <system:String x:Key="ShowHorizontalGallery">Pokaż poziomą galerię</system:String>
 
-	<system:String x:Key="FillImageHeight">Dopasuj zdjęcie do wysokości</system:String>
+    <system:String x:Key="FillImageHeight">Dopasuj zdjęcie do wysokości</system:String>
 
     <system:String x:Key="OptimizeImage">Optymalizuj zdjęcie</system:String>
 
@@ -368,4 +368,24 @@
     <system:String x:Key="ResizeImage">Zmiana rozmiaru obrazu</system:String>
 
     <system:String x:Key="BatchResize">Resize wsadowe</system:String>
+
+    <system:String x:Key="SourceFolder">Source folder</system:String>
+    <system:String x:Key="OutputFolder">Output folder</system:String>
+
+    <system:String x:Key="ConvertTo">Convert to</system:String>
+    <system:String x:Key="NoConversion">No conversion</system:String>
+
+    <system:String x:Key="Compression">Compression</system:String>
+    <system:String x:Key="Lossless">Lossless</system:String>
+    <system:String x:Key="Lossy">Lossy</system:String>
+
+    <system:String x:Key="Qaulity">Quality</system:String>
+    <system:String x:Key="Percentage">Percentage</system:String>
+
+    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
+    <system:String x:Key="Thumbnail">Thumb</system:String>
+
+    <system:String x:Key="Start">Start</system:String>
+    <system:String x:Key="Cancel">Cancel</system:String>
+
 </ResourceDictionary>

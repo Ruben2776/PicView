@@ -69,7 +69,7 @@
         <StackPanel Margin="0,0,0,15">
 
             <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
-                <TextBlock Text="Source folder" />
+                <TextBlock Text="{StaticResource SourceFolder}" />
                 <TextBox
                     x:Name="SourceFolderInput"
                     Width="298"
@@ -84,7 +84,7 @@
                 Margin="0,0,0,10"
                 AllowDrop="True"
                 Orientation="Horizontal">
-                <TextBlock Text="Output folder" />
+                <TextBlock Text="{StaticResource OutputFolder}" />
                 <TextBox
                     x:Name="OutputFolderInput"
                     Width="298"
@@ -98,9 +98,9 @@
 
 
             <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
-                <TextBlock Text="Convert to" />
+                <TextBlock Text="{StaticResource ConvertTo}" />
                 <ComboBox MinWidth="130">
-                    <ComboBoxItem Content="No conversion" IsSelected="True" />
+                    <ComboBoxItem Content="{StaticResource NoConversion}" IsSelected="True" />
                     <ComboBoxItem Name="webp" Content=".webp" />
                     <ComboBoxItem Name="jpg" Content=".jpg" />
                     <ComboBoxItem Name="png" Content=".png" />
@@ -231,7 +231,7 @@
                     </Style>
                 </StackPanel.Style>
 
-                <TextBlock Text="Percentage" />
+                <TextBlock Text="{StaticResource Percentage}" />
 
                 <TextBox
                     x:Name="PercentageBox"
@@ -246,7 +246,7 @@
 
             <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
 
-                <TextBlock Text="Generate Thumbnails" />
+                <TextBlock Text="{StaticResource GenerateThumbnails}" />
                 <ComboBox
                     x:Name="ThumbnailsComboBox"
                     Width="65"
@@ -337,7 +337,7 @@
                     <Label
                         x:Name="StartButton"
                         Padding="20,7,20,7"
-                        Content="Start"
+                        Content="{StaticResource Start}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Label.Background>
                             <SolidColorBrush x:Name="StartBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -361,7 +361,7 @@
                     <Label
                         x:Name="CancelButton"
                         Padding="10,7,10,7"
-                        Content="Cancel"
+                        Content="{StaticResource Cancel}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Label.Background>
                             <SolidColorBrush x:Name="CancelBrush" Color="{StaticResource BackgroundColorAlt}" />

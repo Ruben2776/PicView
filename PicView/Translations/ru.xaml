@@ -368,4 +368,24 @@
     <system:String x:Key="ResizeImage">Изменить размер изображения</system:String>
 
     <system:String x:Key="BatchResize">Групповое изменение размера</system:String>
+
+    <system:String x:Key="SourceFolder">Источник папки</system:String>
+    <system:String x:Key="OutputFolder">Папки вывода</system:String>
+
+    <system:String x:Key="ConvertTo">Преобразовать в</system:String>
+    <system:String x:Key="NoConversion">Нет преобразования</system:String>
+
+    <system:String x:Key="Compression">Сжатие</system:String>
+    <system:String x:Key="Lossless">Без потерь</system:String>
+    <system:String x:Key="Lossy">Потеря</system:String>
+
+    <system:String x:Key="Qaulity">Качественный</system:String>
+    <system:String x:Key="Percentage">Процент</system:String>
+
+    <system:String x:Key="GenerateThumbnails">Генерировать миниатюры</system:String>
+    <system:String x:Key="Thumbnail">Thumb</system:String>
+
+    <system:String x:Key="Start">Начинать</system:String>
+    <system:String x:Key="Cancel">Отмена</system:String>
+
 </ResourceDictionary>
