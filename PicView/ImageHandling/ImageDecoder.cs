@@ -165,7 +165,6 @@ namespace PicView.ImageHandling
                 filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
                 data = new byte[filestream.Length];
                 await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
-                await filestream.DisposeAsync().ConfigureAwait(false);
 
                 magickImage.Read(data);
                 magickImage.Settings.Format = magickFormat;
@@ -174,6 +173,8 @@ namespace PicView.ImageHandling
             }
             catch (Exception e)
             {
+                filestream?.Dispose();
+                magickImage?.Dispose();
 #if DEBUG
                 Trace.WriteLine($"{nameof(getTransparentBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
@@ -195,7 +196,7 @@ namespace PicView.ImageHandling
 
             try
             {
-                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
                 data = new byte[filestream.Length];
                 await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
                 await filestream.DisposeAsync().ConfigureAwait(false);
