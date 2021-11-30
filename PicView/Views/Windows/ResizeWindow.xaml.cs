@@ -300,6 +300,22 @@ namespace PicView.Views.Windows
                 {
                     return;
                 }
+
+                if (running is false)
+                {
+                    cancelToken.Cancel();
+                    if (sourceFileist is not null)
+                    {
+                        sourceFileist.Clear();
+                        sourceFileist = null;
+                    }
+                    Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                    {
+                        ProgressBar.Value = 0;
+                    });
+                    return;
+                }
+
                 FileInfo fileInfo;
                 lock (sourceFileist)
                 {
@@ -310,12 +326,22 @@ namespace PicView.Views.Windows
 
                 for (int x = 0; x < thumbs.Count; x++)
                 {
-                    sb.Append(BatchFunctions.Run(fileInfo, thumbs[x].width, thumbs[x].height, quality, ext, thumbs[x].percentage, compress, thumbs[x].directory, true));
-                }
+                    if (running is false)
+                    {
+                        cancelToken.Cancel();
+                        if (sourceFileist is not null)
+                        {
+                            sourceFileist.Clear();
+                            sourceFileist = null;
+                        }
+                        Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                        {
+                            ProgressBar.Value = 0;
+                        });
+                        return;
+                    }
 
-                if (running is false)
-                {
-                    cancelToken.Cancel();
+                    sb.Append(BatchFunctions.Run(fileInfo, thumbs[x].width, thumbs[x].height, quality, ext, thumbs[x].percentage, compress, thumbs[x].directory, true));
                 }
 
                 if (cancelToken.IsCancellationRequested)
@@ -327,7 +353,6 @@ namespace PicView.Views.Windows
                     }
                     Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
                     {
-                        LogTextBox.Text = string.Empty;
                         ProgressBar.Value = 0;
                     });
                     return;

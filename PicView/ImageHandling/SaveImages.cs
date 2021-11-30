@@ -68,5 +68,48 @@ namespace PicView.ImageHandling
             catch (Exception) { return false; }
             return true;
         }
+
+        internal static bool SaveImage(Stream? stream, string path, string? destination, int? width, int? height, int? quality, string? ext)
+        {
+            try
+            {
+                using MagickImage magickImage = new();
+
+                if (stream is not null)
+                {
+                    magickImage.Read(stream);
+                }
+                else if (path is not null)
+                {
+                    magickImage.Read(path);
+                }
+                else { return false; }
+
+                if (quality is not null)
+                {
+                    magickImage.Quality = quality.Value;
+                }
+
+                if (width is not null)
+                {
+                    magickImage.Resize(width.Value, 0);
+                }
+                else if (height is not null)
+                {
+                    magickImage.Resize(0, height.Value);
+                }
+
+                if (destination is not null)
+                {
+                    magickImage.Write(ext is not null ? Path.ChangeExtension(destination, ext) : destination);
+                }
+                else
+                {
+                    magickImage.Write(ext is not null ? Path.ChangeExtension(path, ext) : path);
+                }
+            }
+            catch (Exception) { return false; }
+            return true;
+        }
     }
 }
