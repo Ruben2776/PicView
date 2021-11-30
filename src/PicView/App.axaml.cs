@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using PicView.Styles.Themes;
+using PicView.Styles.Themes.Dark;
 using PicView.ViewModels;
 using PicView.Views;
 
@@ -25,10 +26,8 @@ namespace PicView
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = new MainWindowViewModel(),
-                };
+                var w = desktop.MainWindow = new MainWindow();
+                w.DataContext = new MainWindowViewModel(w);
             }
 
             base.OnFrameworkInitializationCompleted();

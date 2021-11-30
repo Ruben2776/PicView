@@ -1,5 +1,5 @@
 <Styles
-    x:Class="PicView.Styles.Themes.FluentDark"
+    x:Class="PicView.Styles.Themes.Dark.FluentDark"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 

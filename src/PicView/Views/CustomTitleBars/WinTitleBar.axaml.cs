@@ -1,36 +1,27 @@
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Input;
+using Avalonia.Markup.Xaml;
 
-namespace PicView.UserControls
+namespace PicView.Views.CustomTitleBars
 {
     public partial class WinTitleBar : UserControl
     {
-        Button closeButton;
-
         public WinTitleBar()
         {
             InitializeComponent();
-            closeButton = this.FindControl<Button>("CloseButton");
-
-            closeButton.Click += (_, _) => CloseWindow();
 
             PointerPressed += (_, e) => MoveWindow(e);
         }
 
-        private void CloseWindow()
-        {
-            Window hostWindow = (Window)VisualRoot;
-            hostWindow.Close();
-        }
-
         private void MoveWindow(PointerPressedEventArgs e)
         {
+            if (VisualRoot is null) { return; }
+            
             Window hostWindow = (Window)VisualRoot;
-            hostWindow.BeginMoveDrag(e);
+            hostWindow?.BeginMoveDrag(e);
         }
 
-        void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }
