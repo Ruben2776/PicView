@@ -207,10 +207,6 @@ namespace PicView.Views.Windows
                 LogTextBox.Text = String.Empty;
 
                 toResize = NoResize.IsSelected == false;
-                int width = 0, height = 0;
-                Percentage? percentage = null;
-                int quality = 100;
-
 
                 if (LosslessCompressionChoice.IsSelected)
                 {
@@ -221,7 +217,10 @@ namespace PicView.Views.Windows
                     compress = false;
                 }
 
-                if (int.TryParse(QualityPercentage.Text, out var q))
+                var selectedQ = QualityPercentage.SelectedItem as ComboBoxItem;
+                var parseQ = selectedQ.Content.ToString();
+                parseQ = parseQ.Remove(parseQ.Length - 1);
+                if (int.TryParse(parseQ, out var q))
                 {
                     quality = q;
                 }

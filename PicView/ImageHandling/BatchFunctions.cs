@@ -23,10 +23,10 @@ namespace PicView.ImageHandling
                 Directory.CreateDirectory(outputFolder);
             }
 
+            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).Append(" 🠚 ");
+
             if (toResize)
             {
-                sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).Append(" 🠚 ");
-
                 try
                 {
                     using var filestream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
@@ -42,24 +43,17 @@ namespace PicView.Editing.Crop
 
         internal static async Task PerformCropAsync()
         {
-            var saveCrop = await SaveCrop().ConfigureAwait(false);
-            if (saveCrop == false)
+            var sameFile = await SaveCrop().ConfigureAwait(false);
+            if (sameFile)
             {
-                return;
+                Preloader.Remove(Navigation.FolderIndex);
+                await LoadPic.LoadPiFromFileAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                if (Pics.Count == 0)
-                {
-                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-                }
-                else
-                {
-                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
-                }
                 CloseCrop();
-            });    
+            });
         }
 
         internal static void CloseCrop()
@@ -97,15 +91,30 @@ namespace PicView.Editing.Crop
 
         internal static async Task<bool> SaveCrop()
         {
-            var fileName = Pics.Count == 0 ? Path.GetRandomFileName()
-                : Path.GetFileName(Pics[FolderIndex]);
+            string filename;
+            string? directory;
+            if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
+            {
+                filename = Path.GetRandomFileName();
+                directory = null;
+            }
+            else
+            {
+                filename = Path.GetFileName(Pics[FolderIndex]);
+                directory = Path.GetDirectoryName(filename);
+            }
 
             var Savedlg = new SaveFileDialog
             {
                 Filter = Open_Save.FilterFiles,
                 Title = $"{Application.Current.Resources["SaveImage"]} - {SetTitle.AppName}",
-                FileName = fileName
+                FileName = filename,
             };
+
+            if (directory is not null)
+            {
+                Savedlg.InitialDirectory = directory;
+            }
 
             if (!Savedlg.ShowDialog().HasValue)
             {
@@ -119,7 +128,11 @@ namespace PicView.Editing.Crop
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
             var success = await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
-            return success;
+            if (success)
+            {
+                return Savedlg.FileName == Pics[FolderIndex];
+            }
+            return false;
         }
 
         /// <summary>
