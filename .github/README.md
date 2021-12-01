@@ -53,6 +53,7 @@ German by <a href="https://github.com/Brotbox">Brotbox</a> <i>(needs updates)</i
 Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
 French by <a href="https://www.challenger-systems.com/2021/11/picview-156.html">Sylvain LOUIS</a> <br>
 Italian by <a href="https://github.com/franpoli">franpoli</a> <br>
+Russian by <a href="https://github.com/andude10">andude10</a> <br>
 English and Danish by me<br>
 
 **Looking for translators!**
