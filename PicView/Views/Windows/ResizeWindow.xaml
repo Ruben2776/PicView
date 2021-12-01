@@ -160,11 +160,11 @@
                 <ComboBox x:Name="ResizeComboBox" Width="130">
                     <ComboBoxItem
                         x:Name="NoResize"
-                        Content="No Resize"
+                        Content="{StaticResource NoResize}"
                         IsSelected="True" />
                     <ComboBoxItem x:Name="WidthResize" Content="{StaticResource Width}" />
                     <ComboBoxItem x:Name="HeightResize" Content="{StaticResource Height}" />
-                    <ComboBoxItem x:Name="PercentageResize" Content="Percentage" />
+                    <ComboBoxItem x:Name="PercentageResize" Content="{StaticResource Percentage}" />
                 </ComboBox>
             </StackPanel>
 

@@ -366,6 +366,7 @@
 
     <system:String x:Key="Resize">크기를 조정하십시오</system:String>
     <system:String x:Key="ResizeImage">이미지 크기를 조정하십시오</system:String>
+    <system:String x:Key="NoResize">No resize</system:String>
 
     <system:String x:Key="BatchResize">이미지 크기 조정 대량</system:String>
 

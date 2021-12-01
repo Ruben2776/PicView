@@ -366,6 +366,7 @@
 
     <system:String x:Key="Resize">Cambiar de tamaño</system:String>
     <system:String x:Key="ResizeImage">Cambiar el tamaño de la imagen</system:String>
+    <system:String x:Key="NoResize">No resize</system:String>
 
     <system:String x:Key="BatchResize">Cambio de tamaño por lotes</system:String>
 

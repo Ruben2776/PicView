@@ -366,26 +366,27 @@
 
     <system:String x:Key="Resize">调整大小</system:String>
     <system:String x:Key="ResizeImage">调整图像大小</system:String>
+    <system:String x:Key="NoResize">没有调整大小</system:String>
 
     <system:String x:Key="BatchResize">图像批量调整大小</system:String>
 
-    <system:String x:Key="SourceFolder">Source folder</system:String>
-    <system:String x:Key="OutputFolder">Output folder</system:String>
+    <system:String x:Key="SourceFolder">源文件夹</system:String>
+    <system:String x:Key="OutputFolder">导出目录</system:String>
 
-    <system:String x:Key="ConvertTo">Convert to</system:String>
-    <system:String x:Key="NoConversion">No conversion</system:String>
+    <system:String x:Key="ConvertTo">转换成</system:String>
+    <system:String x:Key="NoConversion">没有转换</system:String>
 
-    <system:String x:Key="Compression">Compression</system:String>
-    <system:String x:Key="Lossless">Lossless</system:String>
-    <system:String x:Key="Lossy">Lossy</system:String>
+    <system:String x:Key="Compression">压缩</system:String>
+    <system:String x:Key="Lossless">无损</system:String>
+    <system:String x:Key="Lossy">有损</system:String>
 
-    <system:String x:Key="Qaulity">Quality</system:String>
-    <system:String x:Key="Percentage">Percentage</system:String>
+    <system:String x:Key="Qaulity">质量</system:String>
+    <system:String x:Key="Percentage">百分比</system:String>
 
     <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
     <system:String x:Key="Thumbnail">Thumb</system:String>
 
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Start">启动</system:String>
+    <system:String x:Key="Cancel">取消</system:String>
 
 </ResourceDictionary>

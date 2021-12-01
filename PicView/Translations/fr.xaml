@@ -366,6 +366,7 @@
 
     <system:String x:Key="Resize">Redimensionnement</system:String>
     <system:String x:Key="ResizeImage">Redimensionner l'image</system:String>
+    <system:String x:Key="NoResize">No resize</system:String>
 
     <system:String x:Key="BatchResize">Lot redimensionner</system:String>
 

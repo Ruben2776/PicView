@@ -366,6 +366,7 @@
 
     <system:String x:Key="Resize">Zmień rozmiar</system:String>
     <system:String x:Key="ResizeImage">Zmiana rozmiaru obrazu</system:String>
+    <system:String x:Key="NoResize">No resize</system:String>
 
     <system:String x:Key="BatchResize">Resize wsadowe</system:String>
 

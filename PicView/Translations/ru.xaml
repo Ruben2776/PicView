@@ -366,6 +366,7 @@
 
     <system:String x:Key="Resize">Изменить размер</system:String>
     <system:String x:Key="ResizeImage">Изменить размер изображения</system:String>
+    <system:String x:Key="NoResize">Нет изменений</system:String>
 
     <system:String x:Key="BatchResize">Групповое изменение размера</system:String>
 
