@@ -25,9 +25,7 @@
     <Border
         BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1"
-        ClipToBounds="True"
-        CornerRadius="5"
-        Padding="1">
+        CornerRadius="2">
         <DockPanel>
             <customTitleBars:WinTitleBar DockPanel.Dock="Top" />
             <Rectangle

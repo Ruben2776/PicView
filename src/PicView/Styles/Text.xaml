@@ -1,7 +1,7 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style Selector="TextBox">
-        <Setter Property="FontSize" Value="13" />
-        <!--<Setter Property="FontFamily" Value="IBM Plex Mono Medium" />-->
+    <Style Selector="TextBox, Label, Button">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontFamily" Value="avares://PicView/Assets/Fonts#Roboto" />
     </Style>
 </Styles>

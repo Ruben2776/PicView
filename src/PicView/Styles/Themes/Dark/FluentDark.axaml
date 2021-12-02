@@ -42,10 +42,10 @@
 
         <ImageBrush
             BitmapInterpolationMode="HighQuality"
-            DestinationRect="0,0,50,50"
+            DestinationRect="0,0,100,100"
             Opacity=".9"
             Source="\Assets\noisy-texture-200x200-o4-d31-c-161616-t0.png"
-            SourceRect="0,0,100,100"
+            SourceRect="0,0,200,200"
             Stretch="Fill"
             TileMode="FlipXY"
             x:Key="NoiseBg" />

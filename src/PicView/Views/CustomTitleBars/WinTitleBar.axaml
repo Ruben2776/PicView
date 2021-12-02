@@ -121,7 +121,6 @@
 
         <TextBlock
             Background="{StaticResource BackgroundSubtleHighlightBrush}"
-            FontFamily="Inter"
             FontSize="12"
             FontWeight="Bold"
             Height="30"

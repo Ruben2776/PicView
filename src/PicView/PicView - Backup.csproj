@@ -17,7 +17,6 @@
 		<AvaloniaResource Include="Assets\Fonts\*" />
 	</ItemGroup>
 	<ItemGroup>
-	  <AvaloniaXaml Include="Styles\Button.xaml" />
 	  <AvaloniaXaml Include="Styles\Text.xaml" />
 	</ItemGroup>
 	<ItemGroup>
@@ -30,6 +29,9 @@
 		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.11-rc.1" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.1" />
 		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.11.1-rc.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="Resources\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Styles\Themes\Dark\FluentDark.cs">
@@ -46,9 +48,6 @@
 		<None Update="Assets\PicView\PicViewIcon.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
-		</None>
-		<None Update="ContextMenus\MainCM.xaml">
-		  <Generator>MSBuild:Compile</Generator>
 		</None>
 	</ItemGroup>
 </Project>
