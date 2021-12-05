@@ -22,7 +22,7 @@
     <system:String x:Key="NewWindow">Nouvelle fenêtre</system:String>
 
     <!--  About window  -->
-    <system:String x:Key="About">About</system:String>
+    <system:String x:Key="About">À propos</system:String>
     <system:String x:Key="InfoWindowTitle">Infos et raccourcis</system:String>
     <system:String x:Key="ApplicationShortcuts">Raccourcis d'application</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Enregistré au prochain démarrage)</system:String>
@@ -351,7 +351,7 @@
 
     <system:String x:Key="OptimizeImage">Optimiser l'image</system:String>
 
-    <system:String x:Key="Effects">Effets d'ombrage</system:String>
+    <system:String x:Key="Effects">Effets</system:String>
     <system:String x:Key="EffectsTooltip">Afficher la fenêtre des effets d'image</system:String>
 
     <system:String x:Key="CropPicture">Recadrer l'image</system:String>
@@ -362,31 +362,31 @@
     <system:String x:Key="ColorPickerToolTooltip">Choisir la couleur de l'image</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">Montrer la fenêtre de redimensionnement</system:String>
+    <system:String x:Key="ShowResizeWindow">Afficher la fenêtre de redimensionnement</system:String>
 
-    <system:String x:Key="Resize">Redimensionnement</system:String>
+    <system:String x:Key="Resize">Redimensionner</system:String>
     <system:String x:Key="ResizeImage">Redimensionner l'image</system:String>
-    <system:String x:Key="NoResize">No resize</system:String>
+    <system:String x:Key="NoResize">Pas de redimensionnement</system:String>
 
-    <system:String x:Key="BatchResize">Lot redimensionner</system:String>
+    <system:String x:Key="BatchResize">Redimensionner par lot</system:String>
 
-    <system:String x:Key="SourceFolder">Source folder</system:String>
-    <system:String x:Key="OutputFolder">Output folder</system:String>
+    <system:String x:Key="SourceFolder">Dossier Source</system:String>
+    <system:String x:Key="OutputFolder">Dossier de sortie</system:String>
 
-    <system:String x:Key="ConvertTo">Convert to</system:String>
-    <system:String x:Key="NoConversion">No conversion</system:String>
+    <system:String x:Key="ConvertTo">Convertir en</system:String>
+    <system:String x:Key="NoConversion">Pas de Conversion</system:String>
 
     <system:String x:Key="Compression">Compression</system:String>
-    <system:String x:Key="Lossless">Lossless</system:String>
-    <system:String x:Key="Lossy">Lossy</system:String>
+    <system:String x:Key="Lossless">Sans pertes</system:String>
+    <system:String x:Key="Lossy">Avec perte</system:String>
 
-    <system:String x:Key="Qaulity">Quality</system:String>
-    <system:String x:Key="Percentage">Percentage</system:String>
+    <system:String x:Key="Qaulity">Qualité</system:String>
+    <system:String x:Key="Percentage">Pourcentage</system:String>
 
-    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
-    <system:String x:Key="Thumbnail">Thumb</system:String>
+    <system:String x:Key="GenerateThumbnails">Générer des miniatures</system:String>
+    <system:String x:Key="Thumbnail">Miniature</system:String>
 
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Start">Démarrer</system:String>
+    <system:String x:Key="Cancel">Annuler</system:String>
 
 </ResourceDictionary>
