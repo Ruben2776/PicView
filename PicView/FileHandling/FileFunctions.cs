@@ -14,7 +14,7 @@ namespace PicView.FileHandling
     {
         internal static void ShowFileProperties()
         {
-            if (ChangeImage.Error_Handling.CheckOutOfRange()) { return; }
+            if (ChangeImage.ErrorHandling.CheckOutOfRange()) { return; }
 
             SystemIntegration.NativeMethods.ShowFileProperties(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
         }

@@ -18,6 +18,7 @@ namespace PicView.UILogic
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="index"></param>
+        /// <param name="fileInfo"></param>
         /// <returns></returns>
         private static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
@@ -35,13 +36,13 @@ namespace PicView.UILogic
 
             if (fileInfo.Exists == false)
             {
-                _ = ChangeImage.Error_Handling.ReloadAsync();
+                _ = ChangeImage.ErrorHandling.ReloadAsync();
                 return null;
             }
 
-            if (index != ChangeImage.Navigation.FolderIndex || Pics?.Count < index || index >= Pics.Count)
+            if (index != FolderIndex || Pics?.Count < index || index >= Pics.Count)
             {
-                return new string[]
+                return new[]
                 {
                     (string)Application.Current.Resources["UnexpectedError"],
                     (string)Application.Current.Resources["UnexpectedError"],
@@ -88,7 +89,7 @@ namespace PicView.UILogic
             var titleString = TitleString(width, height, index, fileInfo);
             if (titleString == null)
             {
-                _ = ChangeImage.Error_Handling.ReloadAsync();
+                _ = ChangeImage.ErrorHandling.ReloadAsync();
                 return;
             }
 
@@ -148,7 +149,7 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            string? path = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            var path = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 

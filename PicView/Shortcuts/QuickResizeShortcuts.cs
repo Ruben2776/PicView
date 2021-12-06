@@ -144,7 +144,7 @@ namespace PicView.Shortcuts
                 var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height, 0).ConfigureAwait(false);
                 if (resize)
                 {
-                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    await ChangeImage.ErrorHandling.ReloadAsync().ConfigureAwait(false);
                 }
                 else
                 {
@@ -156,13 +156,13 @@ namespace PicView.Shortcuts
                 var tryWidth = await FirePercentageAsync(widthText, file).ConfigureAwait(false);
                 if (tryWidth)
                 {
-                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    await ChangeImage.ErrorHandling.ReloadAsync().ConfigureAwait(false);
                     return false;
                 }
                 var tryHeight = await FirePercentageAsync(heightText, file).ConfigureAwait(false);
                 if (tryHeight)
                 {
-                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    await ChangeImage.ErrorHandling.ReloadAsync().ConfigureAwait(false);
                 }
                 else
                 {
@@ -180,7 +180,7 @@ namespace PicView.Shortcuts
                 var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
                 if (resize)
                 {
-                    await ChangeImage.Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    await ChangeImage.ErrorHandling.ReloadAsync().ConfigureAwait(false);
                 }
                 return true;
             }

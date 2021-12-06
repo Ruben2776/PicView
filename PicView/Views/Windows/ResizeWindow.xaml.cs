@@ -44,7 +44,7 @@ namespace PicView.Views.Windows
             {
                 Owner = null; // Remove owner, so that minizing mainwindow will not minize this
 
-                if (Error_Handling.CheckOutOfRange() == false)
+                if (ErrorHandling.CheckOutOfRange() == false)
                 {
                     SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
                     OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
@@ -261,7 +261,7 @@ namespace PicView.Views.Windows
                     }
                 }
 
-                if (Error_Handling.CheckOutOfRange() == false)
+                if (ErrorHandling.CheckOutOfRange() == false)
                 {
                     sameDir = Path.GetDirectoryName(Navigation.Pics[0]) == Path.GetDirectoryName(SourceFolderInput.Text);
                 }
@@ -341,7 +341,7 @@ namespace PicView.Views.Windows
                         return;
                     }
 
-                    sb.Append(BatchFunctions.Run(fileInfo, thumbs[x].width, thumbs[x].height, quality, ext, thumbs[x].percentage, compress, thumbs[x].directory, true));
+                    sb.Append(BatchFunctions.Run(fileInfo, thumbs[x].Width, thumbs[x].Height, quality, ext, thumbs[x].Percentage, compress, thumbs[x].Directory, true));
                 }
 
                 if (cancelToken.IsCancellationRequested)

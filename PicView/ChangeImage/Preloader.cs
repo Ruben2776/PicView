@@ -16,15 +16,15 @@ namespace PicView.ChangeImage
     {
         internal class PreloadValue
         {
-            internal BitmapSource? bitmapSource;
-            internal bool isLoading;
-            internal FileInfo? fileInfo;
+            internal BitmapSource? BitmapSource;
+            internal bool IsLoading;
+            internal FileInfo? FileInfo;
 
             internal PreloadValue(BitmapSource? bitmap, bool loading, FileInfo? fileInfo)
             {
-                bitmapSource = bitmap;
-                isLoading = loading;
-                this.fileInfo = fileInfo;
+                BitmapSource = bitmap;
+                IsLoading = loading;
+                FileInfo = fileInfo;
             }
         }
 
@@ -32,12 +32,14 @@ namespace PicView.ChangeImage
         /// Preloader list of BitmapSources
         /// </summary>
         private static readonly ConcurrentDictionary<
-            string, PreloadValue> Sources = new ConcurrentDictionary<string, PreloadValue>();
+            string, PreloadValue> Sources = new();
 
         /// <summary>
         /// Add file to preloader from index. Returns true if new value added.
         /// </summary>
         /// <param name="i">Index of Pics</param>
+        /// <param name="fileInfo"></param>
+        /// <param name="bitmapSource"></param>
         internal static async Task<bool> AddAsync(int i, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
             if (i >= Pics?.Count) { return false; }
@@ -48,27 +50,18 @@ namespace PicView.ChangeImage
             }
 
             var preloadValue = new PreloadValue(null, true, null);
-            if (preloadValue is null) { return false; }
 
-            if (Sources.TryAdd(Navigation.Pics[i], preloadValue))
+            if (!Sources.TryAdd(Pics[i], preloadValue)) { return false; }
+            
+            await Task.Run(async () =>
             {
-                await Task.Run(async () =>
-                {
-                    if (fileInfo is null)
-                    {
-                        fileInfo = new FileInfo(Navigation.Pics[i]);
-                    }
-                    if (bitmapSource is null)
-                    {
-                        bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                    }
-                    preloadValue.bitmapSource = bitmapSource;
-                    preloadValue.isLoading = false;
-                    preloadValue.fileInfo = fileInfo;
-                }).ConfigureAwait(false);
-                return true;
-            }
-            return false;
+                fileInfo ??= new FileInfo(Pics[i]);
+                bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                preloadValue.BitmapSource = bitmapSource;
+                preloadValue.IsLoading = false;
+                preloadValue.FileInfo = fileInfo;
+            }).ConfigureAwait(false);
+            return true;
         }
 
         /// <summary>
@@ -90,16 +83,16 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (!Contains(Navigation.Pics[key]))
+            if (!Contains(Pics[key]))
             {
                 return;
             }
 
             try
             {
-                _ = Sources[Navigation.Pics[key]];
+                _ = Sources[Pics[key]];
 #if DEBUG
-                if (!Sources.TryRemove(Navigation.Pics[key], out _))
+                if (!Sources.TryRemove(Pics[key], out _))
                 {
                     Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
                 }
@@ -126,12 +119,7 @@ namespace PicView.ChangeImage
         {
             if (file == null || name == null) { return false; }
 
-            if (Sources.TryRemove(file, out var preloadValue) == false)
-            {
-                return false;
-            }
-
-            return Sources.TryAdd(name, preloadValue);
+            return Sources.TryRemove(file, out var preloadValue) && Sources.TryAdd(name, preloadValue);
         }
 
         /// <summary>
@@ -173,12 +161,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool Contains(string key)
         {
-            if (Sources.IsEmpty)
-            {
-                return false;
-            }
-
-            return Sources.ContainsKey(key);
+            return !Sources.IsEmpty && Sources.ContainsKey(key);
         }
 
         /// <summary>

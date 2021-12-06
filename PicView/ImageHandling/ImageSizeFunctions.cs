@@ -37,7 +37,7 @@ namespace PicView.ImageHandling
 
         internal static async Task<Size?> GetImageSizeAsync(string file)
         {
-            FileInfo fileInfo = new FileInfo(file);
+            FileInfo fileInfo = new(file);
             return await GetImageSizeAsync(fileInfo).ConfigureAwait(false);
         }
 
@@ -113,27 +113,25 @@ namespace PicView.ImageHandling
 
             magick.Dispose();
 
-            if (compress.HasValue)
+            if (!compress.HasValue) return true;
+            ImageOptimizer imageOptimizer = new()
             {
-                ImageOptimizer imageOptimizer = new()
-                {
-                    OptimalCompression = compress.Value,
-                };
+                OptimalCompression = compress.Value,
+            };
 
-                var x = destination is null ? file : destination;
+            var x = destination ?? file;
 
-                if (imageOptimizer.IsSupported(x) == false)
-                {
-                    return true;
-                }
-                try
-                {
-                    imageOptimizer.Compress(x);
-                }
-                catch (System.Exception)
-                {
-                    return true;
-                }
+            if (imageOptimizer.IsSupported(x) == false)
+            {
+                return true;
+            }
+            try
+            {
+                imageOptimizer.Compress(x);
+            }
+            catch (System.Exception)
+            {
+                return true;
             }
 
             return true;

@@ -128,19 +128,19 @@ namespace PicView.FileHandling
         {
             if (fileInfo is null)
             {
-                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
             // Check if to load from archive
             if (SupportedFiles.IsSupportedArchives(fileInfo.FullName))
             {
                 if (Extract(fileInfo.FullName)) { return; }
-                if (Error_Handling.CheckOutOfRange() == false)
+                if (ErrorHandling.CheckOutOfRange() == false)
                 {
                     Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
                 }
 
-                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
 
@@ -148,7 +148,7 @@ namespace PicView.FileHandling
             Navigation.Pics = FileList(fileInfo);
             if (Navigation.Pics == null)
             {
-                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
         });

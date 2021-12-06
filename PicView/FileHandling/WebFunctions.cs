@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Error_Handling;
+using static PicView.ChangeImage.ErrorHandling;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
@@ -27,7 +27,7 @@ namespace PicView.FileHandling
                 SetTitle.SetLoadingString();
             });
 
-            Error_Handling.ChangeFolder(true);
+            ErrorHandling.ChangeFolder(true);
 
             string destination;
 

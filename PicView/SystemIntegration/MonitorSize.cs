@@ -69,18 +69,20 @@ namespace PicView.SystemIntegration
 
             //get the available area of the monitor
             var workArea = currentMonitor.WorkingArea;
-            var MonitorWidth = currentMonitor.Bounds.Width * dpiScaling;
-            var MonitorHeight = currentMonitor.Bounds.Height * dpiScaling;
+            var monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
+            var monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
             // Update values for lower resolutions
-            if (MonitorWidth < 1850 * dpiScaling)
+            if (!(monitorWidth < 1850 * dpiScaling))
             {
-                Application.Current.Resources["LargeButtonHeight"] = 30 * dpiScaling;
-                Application.Current.Resources["ButtonHeight"] = 22 * dpiScaling;
-                Application.Current.Resources["StandardPadding"] = new Thickness(15, 8, 5, 8);
+                return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea);
             }
 
-            return new MonitorSize(MonitorWidth, MonitorHeight, dpiScaling, workArea);
+            Application.Current.Resources["LargeButtonHeight"] = 30 * dpiScaling;
+            Application.Current.Resources["ButtonHeight"] = 22 * dpiScaling;
+            Application.Current.Resources["StandardPadding"] = new Thickness(15, 8, 5, 8);
+
+            return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea);
         }
     }
 }

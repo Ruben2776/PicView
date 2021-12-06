@@ -110,7 +110,7 @@ namespace PicView.FileHandling
 
             if (Pics.Count <= 0)
             {
-                Error_Handling.UnexpectedError();
+                ErrorHandling.UnexpectedError();
                 return;
             }
 

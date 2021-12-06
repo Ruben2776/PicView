@@ -184,7 +184,7 @@ namespace PicView.ChangeImage
         static MenuItem menuItem(string filePath, int i)
         {
             bool selected;
-            if (Error_Handling.CheckOutOfRange())
+            if (ErrorHandling.CheckOutOfRange())
             {
                 selected = false;
             }

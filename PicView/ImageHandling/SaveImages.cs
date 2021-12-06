@@ -69,7 +69,7 @@ namespace PicView.ImageHandling
             return true;
         }
 
-        internal static bool SaveImage(Stream? stream, string path, string? destination, int? width, int? height, int? quality, string? ext)
+        internal static bool SaveImage(Stream? stream, string? path, string? destination, int? width, int? height, int? quality, string? ext)
         {
             try
             {

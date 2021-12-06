@@ -34,14 +34,14 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static async Task<bool> TryFitImageAsync()
         {
-            if (Error_Handling.CheckOutOfRange() == false)
+            if (ErrorHandling.CheckOutOfRange() == false)
             {
                 if (Pics?.Count > FolderIndex)
                 {
                     var preloadValue = ChangeImage.Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
                     if (preloadValue != null)
                     {
-                        var pic = preloadValue.bitmapSource;
+                        var pic = preloadValue.BitmapSource;
                         if (pic != null)
                         {
                             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>

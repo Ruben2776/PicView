@@ -22,7 +22,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                TheButton.Click += async (_, _) => await Error_Handling.ReloadAsync();
+                TheButton.Click += async (_, _) => await ErrorHandling.ReloadAsync();
             };
         }
     }

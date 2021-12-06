@@ -67,11 +67,11 @@ namespace PicView.ImageHandling
                         preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
                         await UILogic.ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                         {
-                            preloadValue.bitmapSource = ImageDecoder.GetRenderedBitmapFrame();
+                            preloadValue.BitmapSource = ImageDecoder.GetRenderedBitmapFrame();
                         });
                     }
                 }
-                while (preloadValue.isLoading)
+                while (preloadValue.IsLoading)
                 {
                     await Task.Delay(200).ConfigureAwait(false);
 
@@ -80,7 +80,7 @@ namespace PicView.ImageHandling
 
                 if (preloadValue == null) { return null; }
 
-                bitmapSource = preloadValue.bitmapSource;
+                bitmapSource = preloadValue.BitmapSource;
             }
             else
             {

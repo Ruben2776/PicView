@@ -94,7 +94,7 @@ namespace PicView.ChangeImage
         internal static int GetImageIterateIndex(bool forward = true, bool end = false)
         {
             // Exit if not intended to change picture
-            if (Error_Handling.CheckOutOfRange())
+            if (ErrorHandling.CheckOutOfRange())
             {
                 return -1;
             }
@@ -172,7 +172,7 @@ namespace PicView.ChangeImage
                     return;
                 }
 
-                if (Error_Handling.CheckOutOfRange())
+                if (ErrorHandling.CheckOutOfRange())
                 {
                     return;
                 }
@@ -190,7 +190,7 @@ namespace PicView.ChangeImage
             }
             else // Alternative interface buttons
             {
-                if (Error_Handling.CheckOutOfRange())
+                if (ErrorHandling.CheckOutOfRange())
                 {
                     return;
                 }

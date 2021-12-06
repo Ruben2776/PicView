@@ -40,14 +40,14 @@ namespace PicView.SystemIntegration
             var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            if (effectApplied || ChangeImage.Error_Handling.CheckOutOfRange())
+            if (effectApplied || ChangeImage.ErrorHandling.CheckOutOfRange())
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, async () =>
                 {
                     await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, destination, null, effectApplied).ConfigureAwait(false);
                 });
             }
-            else if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
+            else if (ChangeImage.ErrorHandling.CheckOutOfRange() == false)
             {
                 await SaveImages.SaveImageAsync(Rotateint, Flipped, null, Pics[FolderIndex], destination, null, effectApplied).ConfigureAwait(false);
             }

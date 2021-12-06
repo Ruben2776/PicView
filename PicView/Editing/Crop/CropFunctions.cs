@@ -93,7 +93,7 @@ namespace PicView.Editing.Crop
         {
             string filename;
             string? directory;
-            if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
+            if (ChangeImage.ErrorHandling.CheckOutOfRange() == false)
             {
                 filename = Path.GetRandomFileName();
                 directory = null;

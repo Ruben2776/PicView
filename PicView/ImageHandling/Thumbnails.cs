@@ -17,7 +17,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
         {
-            if (ChangeImage.Error_Handling.CheckOutOfRange())
+            if (ChangeImage.ErrorHandling.CheckOutOfRange())
             {
                 return null;
             }
@@ -34,10 +34,7 @@ namespace PicView.ImageHandling
             }
             else
             {
-                if (fileInfo is null)
-                {
-                    fileInfo = new FileInfo(Pics[x]);
-                }
+                fileInfo ??= new FileInfo(Pics[x]);
                 pic = GetBitmapSourceThumb(fileInfo);
             }
 
@@ -72,12 +69,7 @@ namespace PicView.ImageHandling
                     break;
             }
 
-            if (fileInfo.Length > 5e+6)
-            {
-                return null;
-            }
-
-            return GetMagickImageThumb(fileInfo);
+            return fileInfo.Length > 5e+6 ? null : GetMagickImageThumb(fileInfo);
         }
 
         /// <summary>
@@ -89,9 +81,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, byte quality = 100, int size = 500)
         {
-            BitmapSource pic;
-
-            using MagickImage magickImage = new MagickImage
+            using MagickImage magickImage = new()
             {
                 Quality = quality,
                 ColorSpace = ColorSpace.Transparent
@@ -103,16 +93,11 @@ namespace PicView.ImageHandling
                 if (exifData != null)
                 {
                     // Create thumbnail from exif information
-                    using (MagickImage thumbnail = (MagickImage)exifData.CreateThumbnail())
-                    {
-                        // Check if exif profile contains thumbnail and save it
-                        if (thumbnail != null)
-                        {
-                            var bitmapSource = thumbnail.ToBitmapSource();
-                            bitmapSource.Freeze();
-                            return bitmapSource;
-                        }
-                    }
+                    using var thumbnail = (MagickImage)exifData.CreateThumbnail()!;
+                    // Check if exif profile contains thumbnail and save it
+                    var bitmapSource = thumbnail.ToBitmapSource();
+                    bitmapSource.Freeze();
+                    return bitmapSource;
                 }
 
                 magickImage.AdaptiveResize(size, size);
@@ -126,7 +111,7 @@ namespace PicView.ImageHandling
 #else
                 catch (MagickException) { return null; }
 #endif
-            pic = magickImage.ToBitmapSource();
+            BitmapSource pic = magickImage.ToBitmapSource();
             pic.Freeze();
             return pic;
         }
@@ -138,8 +123,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static BitmapSource GetWindowsThumbnail(string path)
         {
-            BitmapSource pic;
-            pic = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+            BitmapSource pic = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
             pic.Freeze();
             return pic;
         }

@@ -126,7 +126,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            string check = Error_Handling.CheckIfLoadableString(s);
+            string check = ErrorHandling.CheckIfLoadableString(s);
             switch (check)
             {
                 default: _ = LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Error_Handling;
+using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
@@ -159,7 +159,7 @@ namespace PicView.ChangeImage
                     SetLoadingString();
                 });
 
-                string check = Error_Handling.CheckIfLoadableString(path);
+                string check = ErrorHandling.CheckIfLoadableString(path);
                 switch (check)
                 {
                     default: await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
@@ -210,7 +210,7 @@ namespace PicView.ChangeImage
 
             LoadingPreview(fileInfo);
 
-            bool folderChanged = await Error_Handling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
+            bool folderChanged = await ErrorHandling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
             await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             if (Pics?.Count > 0)
@@ -257,7 +257,7 @@ namespace PicView.ChangeImage
             var fileInfo = new FileInfo(folder);
             if (fileInfo is null)
             {
-                Error_Handling.UnexpectedError();
+                ErrorHandling.UnexpectedError();
                 return;
             }
 
@@ -277,12 +277,12 @@ namespace PicView.ChangeImage
                 UC.ToggleStartUpUC(true);
             });
 
-            if (Error_Handling.CheckOutOfRange() == false)
+            if (ErrorHandling.CheckOutOfRange() == false)
             {
                 BackupPath = Pics[FolderIndex];
             }
 
-            bool folderChanged = await Error_Handling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
+            bool folderChanged = await ErrorHandling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
 
             if (FreshStartup is false || folderChanged)
             {
@@ -293,7 +293,7 @@ namespace PicView.ChangeImage
 
             if (Pics.Count < 0) // TODO make function to find first folder with pics, when not browsing recursively
             {
-                await Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
 
@@ -341,7 +341,7 @@ namespace PicView.ChangeImage
             var preloadValue = Preloader.Get(Navigation.Pics[index]);
 
             // Initate loading behavior, if needed
-            if (preloadValue == null || preloadValue.isLoading)
+            if (preloadValue == null || preloadValue.IsLoading)
             {
                 // Show a thumbnail while loading
                 BitmapSource? thumb = null;
@@ -368,7 +368,7 @@ namespace PicView.ChangeImage
                         }
                         catch (Exception)
                         {
-                            Error_Handling.UnexpectedError();
+                            ErrorHandling.UnexpectedError();
                             return;
                         }
                     }
@@ -416,14 +416,14 @@ namespace PicView.ChangeImage
                         return;
                     }
 
-                    if (preloadValue.bitmapSource is null)
+                    if (preloadValue.BitmapSource is null)
                     {
-                        preloadValue.bitmapSource = ImageFunctions.ImageErrorMessage();
+                        preloadValue.BitmapSource = ImageFunctions.ImageErrorMessage();
                     }
                 }
                 else
                 {
-                    while (preloadValue.isLoading)
+                    while (preloadValue.IsLoading)
                     {
                         // Make loading skippable
                         if (FolderIndex != index)
@@ -443,11 +443,11 @@ namespace PicView.ChangeImage
                         // Wait for finnished result
                         await Task.Delay(20).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
                     }
-                    if (preloadValue.bitmapSource == null) // Show image error, unload if showing image error somehow fails
+                    if (preloadValue.BitmapSource == null) // Show image error, unload if showing image error somehow fails
                     {
                         preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false, null);
 
-                        if (preloadValue == null || preloadValue.bitmapSource == null)
+                        if (preloadValue == null || preloadValue.BitmapSource == null)
                         {
                             await Preloader.PreLoad(index).ConfigureAwait(false);
                             return;
@@ -470,7 +470,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            UpdatePic(index, preloadValue.bitmapSource, preloadValue.fileInfo);
+            UpdatePic(index, preloadValue.BitmapSource, preloadValue.FileInfo);
 
             // Update PicGallery selected item, if needed
             if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
@@ -500,7 +500,7 @@ namespace PicView.ChangeImage
 
             if (ConfigureWindows.GetImageInfoWindow is not null)
             {
-                _ = ImageInfo.UpdateValuesAsync(preloadValue.fileInfo).ConfigureAwait(false);
+                _ = ImageInfo.UpdateValuesAsync(preloadValue.FileInfo).ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive
@@ -528,7 +528,7 @@ namespace PicView.ChangeImage
                     bitmapSource = ImageFunctions.ImageErrorMessage();
                     if (bitmapSource is null)
                     {
-                        Error_Handling.UnexpectedError();
+                        ErrorHandling.UnexpectedError();
                         return;
                     }
                 }
@@ -657,7 +657,7 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    Error_Handling.UnexpectedError();
+                    ErrorHandling.UnexpectedError();
                     return;
                 }
 

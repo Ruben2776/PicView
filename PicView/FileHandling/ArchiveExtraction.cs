@@ -37,11 +37,11 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool Extract(string path)
         {
-            string winRar = "WinRAR.exe";
-            string winRarPath = "\\WinRAR\\WinRAR.exe";
+            const string winRar = "WinRAR.exe";
+            const string winRarPath = "\\WinRAR\\WinRAR.exe";
 
-            string sevenzip = "7z.exe";
-            string sevenzipPath = "\\7-Zip\\7z.exe";
+            const string sevenzip = "7z.exe";
+            const string sevenzipPath = "\\7-Zip\\7z.exe";
 
             var appNames = new string[] { winRar, sevenzip };
             var appPathNames = new string[] { winRarPath, sevenzipPath };
@@ -100,7 +100,7 @@ namespace PicView.FileHandling
             else { return false; }
 
             // Create backup
-            if (Error_Handling.CheckOutOfRange() == false)
+            if (ErrorHandling.CheckOutOfRange() == false)
             {
                 Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
             }
@@ -161,7 +161,7 @@ namespace PicView.FileHandling
                 }
                 else
                 {
-                    await ChangeImage.Error_Handling.ReloadAsync(true).ConfigureAwait(false);
+                    await ChangeImage.ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 }
             };
 
@@ -192,27 +192,25 @@ namespace PicView.FileHandling
             }
 
             // Set extracted files to Pics
-            if (Directory.Exists(TempFilePath))
+            if (!Directory.Exists(TempFilePath)) { return false; }
+            
+            var directory = Directory.GetDirectories(TempFilePath);
+            if (directory.Length > 0)
             {
-                var directory = Directory.GetDirectories(TempFilePath);
-                if (directory.Length > 0)
-                {
-                    TempFilePath = directory[0];
-                }
-
-                var extractedFiles = FileList(new FileInfo(TempFilePath));
-                if (extractedFiles.Count > 0)
-                {
-                    Pics = extractedFiles;
-                }
-                else
-                {
-                    return false;
-                }
-
-                return true;
+                TempFilePath = directory[0];
             }
-            return false;
+
+            var extractedFiles = FileList(new FileInfo(TempFilePath));
+            if (extractedFiles.Count > 0)
+            {
+                Pics = extractedFiles;
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

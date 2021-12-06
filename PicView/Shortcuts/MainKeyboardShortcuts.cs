@@ -5,7 +5,7 @@ using PicView.UILogic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.ChangeImage.Error_Handling;
+using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;
 using static PicView.FileHandling.DeleteFiles;
@@ -120,7 +120,7 @@ namespace PicView.Shortcuts
                             return;
                         }
                     }
-                    if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                     }
@@ -140,7 +140,7 @@ namespace PicView.Shortcuts
 
                 case Key.Up:
                 case Key.W:
-                    if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                     }
@@ -155,7 +155,7 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.Down:
-                    if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
                     }
@@ -187,7 +187,7 @@ namespace PicView.Shortcuts
                         GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
                         return;
                     }
-                    if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
                     }
@@ -385,7 +385,7 @@ namespace PicView.Shortcuts
                         }
                         else
                         {
-                            ConfigureWindows.ImageInfoWindow();
+                            ImageInfoWindow();
                         }
                         break;
 
@@ -418,7 +418,7 @@ namespace PicView.Shortcuts
                     case Key.E:
                         if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            if (ChangeImage.Error_Handling.CheckOutOfRange() == false)
+                            if (CheckOutOfRange() == false)
                             {
                                 OpenWith(Pics[FolderIndex]);
                             }
@@ -442,7 +442,7 @@ namespace PicView.Shortcuts
                         }
                         else
                         {
-                            ConfigureWindows.ResizeWindow();
+                            ResizeWindow();
                         }
                         break;
 

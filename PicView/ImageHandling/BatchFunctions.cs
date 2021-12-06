@@ -98,7 +98,9 @@ namespace PicView.ImageHandling
                 return sb.ToString();
             }
 
-            if (compress.HasValue == false) { return String.Empty; }
+            if (compress.HasValue == false) { return string.Empty; }
+
+            var success = false;
 
             if (sourceFile.DirectoryName + @"\" == outputFolder)
             {
@@ -112,12 +114,17 @@ namespace PicView.ImageHandling
                 }
                 else
                 {
-                    SaveImages.SaveImage(null, sourceFile.FullName, destination, null, null, quality, ext);
+                    success = SaveImages.SaveImage(null, sourceFile.FullName, destination, null, null, quality, ext);
                 }
             }
             else
             {
-                SaveImages.SaveImage(null, sourceFile.FullName, destination, null, null, quality, ext);
+                success = SaveImages.SaveImage(null, sourceFile.FullName, destination, null, null, quality, ext);
+            }
+
+            if (success is false)
+            {
+                return string.Empty;
             }
 
             Optimize(compress.Value, destination);
@@ -146,17 +153,17 @@ namespace PicView.ImageHandling
 
         internal class ThumbNailHolder
         {
-            internal string directory;
-            internal int width;
-            internal int height;
-            internal Percentage? percentage;
+            internal readonly string Directory;
+            internal readonly int Width;
+            internal readonly int Height;
+            internal readonly Percentage? Percentage;
 
             internal ThumbNailHolder(string directory, int width, int height, Percentage? percentage)
             {
-                this.directory = directory;
-                this.width = width;
-                this.height = height;
-                this.percentage = percentage;
+                Directory = directory;
+                Width = width;
+                Height = height;
+                Percentage = percentage;
             }
         }
     }

@@ -30,9 +30,9 @@ namespace PicView.ConfigureSettings
 
             FileInfo fileInfo;
             var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
-            if (preloadValue is not null && preloadValue.fileInfo is not null)
+            if (preloadValue is not null && preloadValue.FileInfo is not null)
             {
-                fileInfo = preloadValue.fileInfo;
+                fileInfo = preloadValue.FileInfo;
             }
             else
             {

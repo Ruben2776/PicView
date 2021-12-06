@@ -42,7 +42,7 @@ namespace PicView.Views.UserControls
 
         internal static async Task GoToPicEventAsync(object sender, RoutedEventArgs e)
         {
-            if (ChangeImage.Error_Handling.CheckOutOfRange())
+            if (ChangeImage.ErrorHandling.CheckOutOfRange())
             {
                 return;
             }

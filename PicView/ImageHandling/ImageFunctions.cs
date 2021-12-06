@@ -14,7 +14,7 @@ namespace PicView.ImageHandling
     {
         internal static async Task<bool> SetRating(ushort rating) => await Task.Run(() =>
         {
-            if (Error_Handling.CheckOutOfRange())
+            if (ErrorHandling.CheckOutOfRange())
             {
                 return false;
             }
@@ -39,7 +39,7 @@ namespace PicView.ImageHandling
 
         internal static async Task OptimizeImageAsyncWithErrorChecking()
         {
-            if (Error_Handling.CheckOutOfRange()) { return; }
+            if (ErrorHandling.CheckOutOfRange()) { return; }
 
             bool toCenter = false;
 
@@ -80,10 +80,10 @@ namespace PicView.ImageHandling
             }
 
             var fileInfo = new System.IO.FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            var readablePrevSize = FileHandling.FileFunctions.GetSizeReadable(preloadValue.fileInfo.Length);
+            var readablePrevSize = FileHandling.FileFunctions.GetSizeReadable(preloadValue.FileInfo.Length);
             var readableNewSize = FileHandling.FileFunctions.GetSizeReadable(fileInfo.Length);
 
-            var originalValue = preloadValue.fileInfo.Length;
+            var originalValue = preloadValue.FileInfo.Length;
             var decreasedValue = fileInfo.Length;
             if (originalValue != decreasedValue)
             {

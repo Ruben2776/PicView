@@ -72,14 +72,14 @@ namespace PicView.Views.Windows
                 SubDirRadio.Click += async delegate
                 {
                     Properties.Settings.Default.IncludeSubDirectories = !Properties.Settings.Default.IncludeSubDirectories;
-                    if (Error_Handling.CheckOutOfRange()) { return; }
+                    if (ErrorHandling.CheckOutOfRange()) { return; }
                     var preloadValue = Preloader.Get((ChangeImage.Navigation.Pics[Navigation.FolderIndex]));
                     if (preloadValue is null) { return; }
-                    await FileHandling.FileLists.RetrieveFilelistAsync(preloadValue.fileInfo).ConfigureAwait(false);
+                    await FileHandling.FileLists.RetrieveFilelistAsync(preloadValue.FileInfo).ConfigureAwait(false);
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
-                        SetTitle.SetTitleString(preloadValue.bitmapSource.PixelWidth, preloadValue.bitmapSource.PixelHeight,
-                            Navigation.FolderIndex, preloadValue.fileInfo);
+                        SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
+                            Navigation.FolderIndex, preloadValue.FileInfo);
                     });
 
                     Properties.Settings.Default.Save();

@@ -9,7 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using static PicView.ChangeImage.Error_Handling;
+using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Rotation;

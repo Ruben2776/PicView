@@ -35,20 +35,20 @@ namespace PicView.ChangeImage
             var preloadValue = Preloader.Get(Pics[index]);
             if (preloadValue != null)
             {
-                if (preloadValue.isLoading)
+                if (preloadValue.IsLoading)
                 {
                     do
                     {
                         await Task.Delay(50);
-                    } while (preloadValue.isLoading);
+                    } while (preloadValue.IsLoading);
                 }
-                if (preloadValue.bitmapSource is not null)
+                if (preloadValue.BitmapSource is not null)
                 {
-                    pic = preloadValue.bitmapSource;
+                    pic = preloadValue.BitmapSource;
                 }
-                if (preloadValue.fileInfo is not null)
+                if (preloadValue.FileInfo is not null)
                 {
-                    fileInfo = preloadValue.fileInfo;
+                    fileInfo = preloadValue.FileInfo;
                 }
             }
             else
@@ -71,7 +71,7 @@ namespace PicView.ChangeImage
                 pic = ImageFunctions.ImageErrorMessage();
                 if (pic is null)
                 {
-                    Error_Handling.UnexpectedError();
+                    ErrorHandling.UnexpectedError();
                     return;
                 }
             }
@@ -100,25 +100,18 @@ namespace PicView.ChangeImage
                 preloadValue = Preloader.Get(Pics[FolderIndex]);
                 if (preloadValue is null)
                 {
-                    await Error_Handling.ReloadAsync().ConfigureAwait(false);
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
                     return;
                 }
-                if (preloadValue.bitmapSource is not null)
-                {
-                    pic = preloadValue.bitmapSource;
-                }
-                else
-                {
-                    pic = ImageFunctions.ImageErrorMessage();
-                }
+                pic = preloadValue.BitmapSource ?? ImageFunctions.ImageErrorMessage();
             }
             else
             {
-                await Error_Handling.ReloadAsync().ConfigureAwait(false);
+                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
                 return;
             }
 
-            LoadPic.UpdatePic(FolderIndex, pic, preloadValue.fileInfo);
+            LoadPic.UpdatePic(FolderIndex, pic, preloadValue.FileInfo);
         }
     }
 }

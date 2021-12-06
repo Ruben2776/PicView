@@ -13,7 +13,7 @@ using static PicView.FileHandling.DeleteFiles;
 
 namespace PicView.ChangeImage
 {
-    internal static class Error_Handling
+    internal static class ErrorHandling
     {
         /// <summary>
         /// Returns true, if navigating will result in out of rang exception
@@ -209,7 +209,7 @@ namespace PicView.ChangeImage
             if (File.Exists(path))
             {
                 var fileInfo = new FileInfo(path);
-                await resetValues(fileInfo).ConfigureAwait(false);
+                await ResetValues(fileInfo).ConfigureAwait(false);
                 await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
             }
             else if (Directory.Exists(path))
@@ -221,7 +221,7 @@ namespace PicView.ChangeImage
                     index = FolderIndex;
                 }
 
-                await resetValues(fileInfo).ConfigureAwait(false);
+                await ResetValues(fileInfo).ConfigureAwait(false);
                 await LoadPic.LoadPicFromFolderAsync(fileInfo, index).ConfigureAwait(false);
             }
             else if (Base64.IsBase64String(path))
@@ -242,7 +242,7 @@ namespace PicView.ChangeImage
             }
         }
 
-        private static async Task resetValues(FileInfo fileInfo)
+        private static async Task ResetValues(FileInfo fileInfo)
         {
             if (fileInfo is null)
             {
