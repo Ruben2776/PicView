@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.MacOS", "PicView.Ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Tests", "PicView.Tests\PicView.Tests.csproj", "{98069EF0-C2E0-4301-BE4E-96C7E76EA9BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.Data", "PicView.Data\PicView.Data.csproj", "{A04A4B4F-1C70-4607-898A-13C448A9B593}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{98069EF0-C2E0-4301-BE4E-96C7E76EA9BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98069EF0-C2E0-4301-BE4E-96C7E76EA9BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98069EF0-C2E0-4301-BE4E-96C7E76EA9BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A04A4B4F-1C70-4607-898A-13C448A9B593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A04A4B4F-1C70-4607-898A-13C448A9B593}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A04A4B4F-1C70-4607-898A-13C448A9B593}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A04A4B4F-1C70-4607-898A-13C448A9B593}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
