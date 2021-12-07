@@ -1,6 +1,13 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style Selector="Button.accent:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource BackgroundHoverHighlight}" />
+        <Style.Animations>
+            <Animation Duration="0:0:0.45">
+                <KeyFrame Cue="100%">
+                    <Setter Property="Background" Value="{StaticResource BackgroundHoverHighlight}" />
+                </KeyFrame>
+            </Animation>
+        </Style.Animations>
     </Style>
 </Styles>

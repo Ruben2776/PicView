@@ -7,9 +7,4 @@
         <local:ViewLocator />
     </Application.DataTemplates>
 
-    <Application.Styles>
-        <StyleInclude Source="/Styles/Text.xaml" />
-        <StyleInclude Source="/Styles/Button.xaml" />
-    </Application.Styles>
-
 </Application>

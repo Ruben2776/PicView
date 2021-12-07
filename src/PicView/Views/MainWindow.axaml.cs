@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Animation.Animators;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
