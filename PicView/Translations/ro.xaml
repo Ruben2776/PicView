@@ -1,0 +1,392 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  Text in the title bar  -->
+    <system:String x:Key="Loading">Se încarcă...</system:String>
+    <system:String x:Key="NoImage">Nicio imagine încărcată</system:String>
+    <system:String x:Key="Files">fișiere</system:String>
+    <system:String x:Key="File">fișier</system:String>
+    <system:String x:Key="PercentComplete">% finalizat...</system:String>
+    <system:String x:Key="CropMessage">Apasă Esc pentru a închide, Enter pentru a salva</system:String>
+    <system:String x:Key="ClipboardImage">Imagine din memoria temporară</system:String>
+    <system:String x:Key="Base64Image">Imagine Base64</system:String>
+
+    <!--  Generic Window  -->
+    <system:String x:Key="Close">Închidere</system:String>
+    <system:String x:Key="RestoreDown">Restabilire în jos</system:String>
+    <system:String x:Key="Maximize">Maximizare</system:String>
+    <system:String x:Key="Minimize">Minimizare</system:String>
+    <system:String x:Key="Fullscreen">Ecran complet</system:String>
+    <system:String x:Key="NewWindow">Fereastră nouă</system:String>
+
+    <!--  About window  -->
+    <system:String x:Key="About">Despre</system:String>
+    <system:String x:Key="InfoWindowTitle">Informații și comenzi rapide</system:String>
+    <system:String x:Key="ApplicationShortcuts">Comenzi rapide ale aplicației</system:String>
+    <system:String x:Key="SavedOnNextStartUp">(Salvată pentru următoarea pornire)</system:String>
+    <system:String x:Key="ImageControl">Controlul imaginii</system:String>
+    <system:String x:Key="FileManagement">Gestionarea fișierelor</system:String>
+    <system:String x:Key="DragFileTo">Glisează fișierul către Windows Explorer sau altă aplicație/navigator</system:String>
+    <system:String x:Key="DragImage">Glisare imagine</system:String>
+    <system:String x:Key="AdditionalFunctions">Funcții suplimentare</system:String>
+    <system:String x:Key="Reload">Reîncărcare</system:String>
+    <system:String x:Key="Credits">Contribuții</system:String>
+    <system:String x:Key="IconsUsed">Pictograme utilizate:</system:String>
+    <system:String x:Key="GithubRepo">Depozit GitHub</system:String>
+    <system:String x:Key="ViewLicenseFile">Vizualizare fișier de licență</system:String>
+    <system:String x:Key="Version">Versiune:</system:String>
+
+    <!--  Info window, window scaling  -->
+    <system:String x:Key="WindowScaling">Scalare fereastră</system:String>
+    <system:String x:Key="NormalWindow">Fereastră normală</system:String>
+    <system:String x:Key="FillHeight">⇔ Umplere înălțime</system:String>
+    <system:String x:Key="AutoFitWindow">Potrivire automată fereastră</system:String>
+
+    <!--  info window, interface configuration  -->
+    <system:String x:Key="InterfaceConfiguration">Configurare interfață</system:String>
+    <system:String x:Key="HideShowInterface">Ascunde/arată interfața</system:String>
+    <system:String x:Key="ToggleFullscreen">Comutare la ecran complet</system:String>
+
+    <!--  Info window, window management  -->
+    <system:String x:Key="WindowManagement">Gestionarea ferestrei</system:String>
+    <system:String x:Key="InfoWindow">Fereastră cu informații</system:String>
+    <system:String x:Key="SettingsWindow">Fereastră cu setări</system:String>
+    <system:String x:Key="EscCloseTooltip">Închide fereastra/meniul deschis în prezent</system:String>
+    <system:String x:Key="CloseApp">Închide întreaga aplicație</system:String>
+    <system:String x:Key="MoveWindow">Mută fereastra</system:String>
+    <system:String x:Key="CenterWindow">Centrare fereastră</system:String>
+
+    <!--  Settings window, colors  -->
+    <system:String x:Key="HighlightColor">Culoare de evidențiere</system:String>
+
+    <system:String x:Key="Blue">Albastru</system:String>
+    <system:String x:Key="Cyan">Cyan</system:String>
+    <system:String x:Key="Aqua">Turcoaz</system:String>
+    <system:String x:Key="Teal">Albastru-verzui</system:String>
+
+    <system:String x:Key="Lime">Verde-limetă</system:String>
+    <system:String x:Key="Green">Verde</system:String>
+    <system:String x:Key="Golden">Auriu</system:String>
+    <system:String x:Key="Orange">Portocaliu</system:String>
+
+    <system:String x:Key="Red">Roșu</system:String>
+    <system:String x:Key="Pink">Roz</system:String>
+    <system:String x:Key="Magenta">Magenta</system:String>
+    <system:String x:Key="Purple">Mov</system:String>
+
+    <!--  Settings window, theme  -->
+    <system:String x:Key="Theme">Temă</system:String>
+    <system:String x:Key="DarkTheme">Temă întunecată</system:String>
+    <system:String x:Key="LightTheme">Temă luminoasă</system:String>
+    <system:String x:Key="ChangingThemeRequiresRestart">* Modificarea temei necesită repornire</system:String>
+
+    <!--  Settings window, wallpaper  -->
+    <system:String x:Key="SetCurrentImageAsWallpaper">Setează imaginea curentă ca fundal:</system:String>
+
+    <system:String x:Key="Fill">Umplere</system:String>
+    <system:String x:Key="Center">Centrare</system:String>
+    <system:String x:Key="Fit">Potrivire</system:String>
+    <system:String x:Key="Tile">Împărțire</system:String>
+    <system:String x:Key="Stretch">Întindere</system:String>
+
+    <!--  Settings window, language  -->
+    <system:String x:Key="Language">Limbă</system:String>
+    <system:String x:Key="ChangingLanguageRequiresRestart">* Modificarea limbii necesită repornire&quot;</system:String>
+
+    <!--  Settings window, Gallery layout  -->
+    <system:String x:Key="FullscreenGalleryLayout">Aspectul galeriei pe ecran complet</system:String>
+    <system:String x:Key="Vertical">Vertical</system:String>
+    <system:String x:Key="Horizontal">Orizontal</system:String>
+
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">Ctrl pentru a transfoca, defilare pentru a naviga</system:String>
+    <system:String x:Key="ScrollToZoom">Transfocare cu rotița mausului, navigare cu Ctrl</system:String>
+    <system:String x:Key="HorizontalScroll">Defilare orizontală</system:String>
+    <system:String x:Key="Reverse">Inversă</system:String>
+    <system:String x:Key="Forward">Înainte</system:String>
+
+    <!--  Settings window, misc  -->
+    <system:String x:Key="GeneralSettings">Setări generale</system:String>
+    <system:String x:Key="UISettings">Setări interfață</system:String>
+    <system:String x:Key="MiscSettings">Alte setări</system:String>
+    <system:String x:Key="SearchSubdirectory">Căutare subdirectoare</system:String>
+    <system:String x:Key="StayTopMost">Rămâi deasupra celorlalte ferestre</system:String>
+    <system:String x:Key="StayCentered">Păstrează fereastra centrată</system:String>
+    <system:String x:Key="ColoredWindowBorder">Chenar colorat al ferestrei</system:String>
+    <system:String x:Key="ShowButtonsInHiddenUI">Arată butoanele în interfața ascunsă</system:String>
+    <system:String x:Key="Apply">Aplicare</system:String>
+    <system:String x:Key="AdjustTimingForSlideshow">Ajustare viteză de transfocare</system:String>
+    <system:String x:Key="AdjustTimingForZoom">Adjust zooming speed</system:String>
+    <system:String x:Key="SecAbbreviation">Sec.</system:String>
+    <system:String x:Key="RestartApp">Repornește aplicația</system:String>
+    <system:String x:Key="CheckForUpdates">Caută actualizări</system:String>
+
+    <!--  Effects Window  -->
+    <system:String x:Key="NegativeColors">Culori negative</system:String>
+    <system:String x:Key="BlackAndWhite">Negru și alb</system:String>
+    <system:String x:Key="ColorTone">Ton de culoare</system:String>
+
+    <system:String x:Key="OldMovie">Film vechi</system:String>
+    <system:String x:Key="Bloom">Strălucire</system:String>
+    <system:String x:Key="Gloom">Întunecare</system:String>
+
+    <system:String x:Key="Monochrome">Monocrom</system:String>
+    <system:String x:Key="WaveWarper">Deformare cu unde</system:String>
+    <system:String x:Key="Underwater">Subacvatic</system:String>
+
+    <system:String x:Key="BandedSwirl">Vârtej cu benzi</system:String>
+    <system:String x:Key="Ripple">Undă</system:String>
+    <system:String x:Key="RippleAlt">Undă alternativă</system:String>
+
+    <system:String x:Key="Blur">Estompare</system:String>
+    <system:String x:Key="DirectionalBlur">Estompare direcțională</system:String>
+    <system:String x:Key="TelescopicBlur">Estompare telescopică</system:String>
+
+    <system:String x:Key="Pixelate">Pixelare</system:String>
+    <system:String x:Key="Embossed">În relief</system:String>
+    <system:String x:Key="SmoothMagnify">Amplificare lină</system:String>
+
+    <system:String x:Key="Pivot">Pivot</system:String>
+    <system:String x:Key="PaperFold">Pliant de hârtie</system:String>
+    <system:String x:Key="PencilSketch">Schiță cu creionul</system:String>
+
+    <system:String x:Key="Sketch">Schiță</system:String>
+    <system:String x:Key="ToneMapping">Mapare de ton</system:String>
+    <system:String x:Key="FrostyOutline">Conturare glacială</system:String>
+
+    <system:String x:Key="Bands">Benzi</system:String>
+    <system:String x:Key="GlassTile">Dale din sticlă</system:String>
+
+    <!--  Navigation related  -->
+    <system:String x:Key="Navigation">Navigare</system:String>
+    <system:String x:Key="NextImage">Imaginea următoare</system:String>
+    <system:String x:Key="PrevImage">Imaginea anterioară</system:String>
+    <system:String x:Key="LastImage">Ultima imagine</system:String>
+    <system:String x:Key="FirstImage">Prima imagine</system:String>
+    <system:String x:Key="ToggleLooping">Comutare repetare</system:String>
+    <system:String x:Key="Slideshow">Prezentare</system:String>
+
+    <!--  Zoom related  -->
+    <system:String x:Key="Zoom">Transfocare</system:String>
+    <system:String x:Key="ZoomIn">Apropiere</system:String>
+    <system:String x:Key="ZoomOut">Depărtare</system:String>
+    <system:String x:Key="Pan">Panoramare</system:String>
+    <system:String x:Key="MouseDrag">Glisare cu mausul</system:String>
+    <system:String x:Key="ResetZoom">Resetare transfocare</system:String>
+    <system:String x:Key="ToggleScroll">Comutare defilare</system:String>
+
+    <!--  File related  -->
+    <system:String x:Key="Open">Deschidere</system:String>
+    <system:String x:Key="OpenWith">Deschidere cu....</system:String>
+    <system:String x:Key="OpenFileDialog">Selectează un fișier</system:String>
+    <system:String x:Key="OpenLastFile">Deschide ultimul fișier</system:String>
+    <system:String x:Key="ShowInFolder">Arată în dosar</system:String>
+    <system:String x:Key="Save">Salvare</system:String>
+    <system:String x:Key="SaveImage">Salvare imagine</system:String>
+    <system:String x:Key="Print">Imprimare</system:String>
+    <system:String x:Key="RecentFiles">Fișiere recente</system:String>
+    <system:String x:Key="FileProperties">Proprietățile fișierului</system:String>
+    <system:String x:Key="DeleteFile">Ștergere fișier</system:String>
+    <system:String x:Key="Folder">Dosar</system:String>
+    <system:String x:Key="FullPath">Cale completă</system:String>
+    <system:String x:Key="RenameFile">Redenumire fișier</system:String>
+
+    <!--  Sort files  -->
+    <system:String x:Key="SortFilesBy">Sortare fișiere după</system:String>
+    <system:String x:Key="FileName">Denumirea fișierului</system:String>
+    <system:String x:Key="FileSize">Dimensiunea fișierului</system:String>
+    <system:String x:Key="CreationTime">Data creării</system:String>
+    <system:String x:Key="FileExtension">Extensia fișierului</system:String>
+    <system:String x:Key="LastAccessTime">Data ultimei accesări</system:String>
+    <system:String x:Key="LastWriteTime">Data ultimei scrieri</system:String>
+    <system:String x:Key="Random">Aleatoriu</system:String>
+
+    <system:String x:Key="Ascending">Crescător</system:String>
+    <system:String x:Key="Descending">Descrescător</system:String>
+
+    <!--  Settings  -->
+    <system:String x:Key="Settings">Setări</system:String>
+    <system:String x:Key="Scrolling">Defilare</system:String>
+    <system:String x:Key="Looping">Repetare</system:String>
+    <system:String x:Key="FitToWindow">Potrivire la fereastră/imagine</system:String>
+    <system:String x:Key="ShowHideUI">Arată/ascunde interfața</system:String>
+    <system:String x:Key="ChangeBackground">Modificare fundal</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">Schimbarea culorii de fundal pentru imaginile cu fundal transparent</system:String>
+
+    <!--  Copy related  -->
+    <system:String x:Key="Copy">Copiere</system:String>
+    <system:String x:Key="AddedToClipboard">adăugat în memoria temporară</system:String>
+
+    <!--  Copy file  -->
+    <system:String x:Key="CopyFile">Copiere fișier</system:String>
+    <system:String x:Key="FileCopy">Fișier adăugat în memoria temporară</system:String>
+    <system:String x:Key="FileCopyPath">Copiere cale fișier</system:String>
+    <system:String x:Key="FileCopyPathMessage">Calea fișierului a fost adăugată în memoria temporară</system:String>
+    <system:String x:Key="FileCutMessage">Fișier adăugat în memoria temporară în vederea mutării</system:String>
+
+    <!--  Copy image  -->
+    <system:String x:Key="CopyImage">Copiere imagine</system:String>
+    <system:String x:Key="CopiedImage">Imagine copiată în memoria temporară</system:String>
+    <system:String x:Key="CopyImageTooltip">Copiere ca imagine din memoria temporară</system:String>
+
+    <!--  Paste  -->
+    <system:String x:Key="FilePaste">Lipire fișier</system:String>
+
+    <!--  Cut  -->
+    <system:String x:Key="FileCut">Tăiere fișier</system:String>
+
+    <!--  Image info  -->
+    <system:String x:Key="ImageInfo">Informații imagine</system:String>
+    <system:String x:Key="Image">Imagine</system:String>
+    <system:String x:Key="Width">Lățime</system:String>
+    <system:String x:Key="Height">Înălțime</system:String>
+    <system:String x:Key="Date">Dată</system:String>
+    <system:String x:Key="Created">Creată</system:String>
+    <system:String x:Key="Modified">Modificată</system:String>
+    <system:String x:Key="Size">Dimensiune</system:String>
+    <system:String x:Key="Pixels">pixeli</system:String>
+    <system:String x:Key="SizeMp">Dimensiune (mp)</system:String>
+    <system:String x:Key="MegaPixels">megapixeli</system:String>
+    <system:String x:Key="Resolution">Rezoluție</system:String>
+    <system:String x:Key="Dpi">DPI</system:String>
+    <system:String x:Key="DiskSize">Mărime disc</system:String>
+    <system:String x:Key="AspectRatio">Raport aspect</system:String>
+    <system:String x:Key="Portrait">Portret</system:String>
+    <system:String x:Key="Landscape">Peisaj</system:String>
+    <system:String x:Key="Square">Pătrat</system:String>
+    <system:String x:Key="PrintSizeIn">Dimensiune imprimare (in)</system:String>
+    <system:String x:Key="PrintSizeCm">Dimensiune imprimare (cm)</system:String>
+    <system:String x:Key="Centimeters">centimetri</system:String>
+    <system:String x:Key="Inches">țoli</system:String>
+    <system:String x:Key="BitDepth">Adâncimea biților</system:String>
+    <system:String x:Key="SizeTooltip">Introdu dimensiunea dorită în pixeli sau în procent.</system:String>
+
+    <!--  Keyboard key names  -->
+    <system:String x:Key="Del">Del</system:String>
+    <system:String x:Key="Ctrl">Ctrl</system:String>
+    <system:String x:Key="Shift">Shift</system:String>
+    <system:String x:Key="Alt">Alt</system:String>
+    <system:String x:Key="Space">Spațiu</system:String>
+    <system:String x:Key="Enter">Enter</system:String>
+    <system:String x:Key="Esc">Esc</system:String>
+    <system:String x:Key="NumpadPlus">Tastă numerică +</system:String>
+    <system:String x:Key="NumpadMinus">Tastă numerică -</system:String>
+    <!--  Mouse key names  -->
+    <system:String x:Key="MouseWheel">Rotiță maus</system:String>
+    <system:String x:Key="MouseKeyForward">Tastă maus înainte</system:String>
+    <system:String x:Key="MouseKeyBack">Tastă mausă înapoi</system:String>
+    <system:String x:Key="DoubleClick">Dublu clic</system:String>
+    <!--  Arrow key names  -->
+    <system:String x:Key="Left">Stânga</system:String>
+    <system:String x:Key="Right">Dreapta</system:String>
+    <system:String x:Key="Up">Sus</system:String>
+    <system:String x:Key="Down">Jos</system:String>
+
+    <!--  Error messages  -->
+    <system:String x:Key="SavingFileFailed">Salvarea fișierului a eșuat</system:String>
+    <system:String x:Key="UnexpectedError">A apărut o eroare necunoscută</system:String>
+    <system:String x:Key="NoImages">Fără imagini</system:String>
+    <system:String x:Key="AnErrorOccuredMovingFile">A apărut o eroare la mutarea fișierului</system:String>
+
+    <!--  Drag and drop  -->
+    <system:String x:Key="DragOverString">Fixează pentru a încărca imaginea</system:String>
+
+    <!--  Wallpaper  -->
+    <system:String x:Key="SetAs">Setare ca....</system:String>
+    <system:String x:Key="SetAsWallpaper">Setare ca fundal</system:String>
+    <system:String x:Key="SetAsLockScreenImage">Setare ca imagine pentru ecranul de blocare</system:String>
+
+    <!--  Edit  -->
+    <system:String x:Key="Crop">Decupare</system:String>
+    <system:String x:Key="RotateRight">Rotire la dreapta</system:String>
+    <system:String x:Key="RotateLeft">Rotire la stânga</system:String>
+    <system:String x:Key="Flip">Răsturnare orizontală</system:String>
+    <system:String x:Key="Unflip">Anulare răsturnare</system:String>
+
+    <!--  Archives  -->
+    <system:String x:Key="BadArchive">Arhiva nu a putut fi procesată</system:String>
+    <system:String x:Key="PasswordArchive">Arhiva protejată cu parolă nu este acceptată</system:String>
+
+    <!--  Delete file messages  -->
+    <system:String x:Key="SentFileToRecycleBin">Fișier trimis la coșul de reciclare</system:String>
+    <system:String x:Key="DeletedFile">Fișier șters</system:String>
+    <system:String x:Key="AnErrorOccuredWhenDeleting">A apărut o eroare în timpul ștergerii</system:String>
+
+    <!--  Scaling messages  -->
+    <system:String x:Key="AutoFitWindowMessage">Potrivire automată fereastră</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">Potrivire automată fereastră, întindere la înălțime</system:String>
+    <system:String x:Key="NormalWindowBehavior">Comportamentul normal al ferestrei</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">Comportamentul normal al ferestrei, întindere spre înălțime</system:String>
+
+    <system:String x:Key="ScrollingEnabled">Defilare activată</system:String>
+    <system:String x:Key="ScrollingDisabled">Defilare dezactivată</system:String>
+
+    <!--  Misc messages  -->
+    <system:String x:Key="ConvertedToBase64">CConvertit în base64</system:String>
+    <system:String x:Key="LoopingEnabled">Repetare activată</system:String>
+    <system:String x:Key="LoopingDisabled">Repetare dezactivată</system:String>
+    <system:String x:Key="Applying">Se aplică</system:String>
+
+    <!--  Button hover tooltips  -->
+    <system:String x:Key="ShowInfoWindow">Arată fereastra cu informații</system:String>
+    <system:String x:Key="ShowAllSettingsWindow">Arată fereastra cu toate setările</system:String>
+
+    <system:String x:Key="ToggleBackgroundColor">&quot;Comută culoarea de fundal</system:String>
+    <system:String x:Key="ShowImageGallery">Arată galeria de imagini</system:String>
+    <system:String x:Key="GoToImageAtSpecifiedIndex">Mergi la imagine la indexul specificat</system:String>
+    <system:String x:Key="AdjustZoomLevel">Ajustare nivel de transfocare</system:String>
+
+    <system:String x:Key="PasteImageFromClipholder">Lipire imagine din memoria temporară</system:String>
+    <system:String x:Key="SendCurrentImageToRecycleBin">Trimite imaginea curentă la coșul de reciclare</system:String>
+    <system:String x:Key="StartSlideshow">Pornire prezentare</system:String>
+    <system:String x:Key="CloseGallery">Închide galeria</system:String>
+
+    <!--  Menu buttons text  -->
+    <system:String x:Key="ShowFullscreenGallery">Arată galeria pe tot ecranul</system:String>
+    <system:String x:Key="ShowHorizontalGallery">Arată galeria pe orizontală</system:String>
+
+    <system:String x:Key="FillImageHeight">Umple înălțimea imaginii</system:String>
+
+    <system:String x:Key="OptimizeImage">Optimizare imagine</system:String>
+
+    <system:String x:Key="Effects">Efecte</system:String>
+    <system:String x:Key="EffectsTooltip">Arată fereastra cu efectele imaginii</system:String>
+
+    <system:String x:Key="CropPicture">Decupare imagine</system:String>
+
+    <system:String x:Key="ShowImageInfo">Arată informațiile imaginii</system:String>
+
+    <system:String x:Key="ColorPickerTool">&quot;Selector de culoare</system:String>
+    <system:String x:Key="ColorPickerToolTooltip">Alegere culoare din imagine</system:String>
+
+    <!--  Resize Window  -->
+    <system:String x:Key="ShowResizeWindow">Arată fereastra de redimensionare</system:String>
+
+    <system:String x:Key="Resize">Redimensionare</system:String>
+    <system:String x:Key="ResizeImage">Redimensionare imagine</system:String>
+    <system:String x:Key="NoResize">Fără redimensionare</system:String>
+
+    <system:String x:Key="BatchResize">Redimensionare lot</system:String>
+
+    <system:String x:Key="SourceFolder">Dosar sursă</system:String>
+    <system:String x:Key="OutputFolder">Dosar de ieșire</system:String>
+
+    <system:String x:Key="ConvertTo">Conversie în</system:String>
+    <system:String x:Key="NoConversion">Fără conversie</system:String>
+
+    <system:String x:Key="Compression">Compresie</system:String>
+    <system:String x:Key="Lossless">Fără pierderi</system:String>
+    <system:String x:Key="Lossy">Cu pierderi</system:String>
+
+    <system:String x:Key="Qaulity">Calitate</system:String>
+    <system:String x:Key="Percentage">Procentaj</system:String>
+
+    <system:String x:Key="GenerateThumbnails">Generare miniaturi</system:String>
+    <system:String x:Key="Thumbnail">Miniatură</system:String>
+
+    <system:String x:Key="Start">Pornire</system:String>
+    <system:String x:Key="Cancel">Anulare</system:String>
+
+</ResourceDictionary>

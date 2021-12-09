@@ -11,6 +11,7 @@
         pl,
         fr,
         it,
-        ru
+        ru,
+        ro
     }
 }
