@@ -24,12 +24,12 @@
 		<Content Include="Assets\PicView\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.11-rc.1" />
+		<PackageReference Include="Avalonia" Version="0.10.11-rc.2" />
 		<PackageReference Include="Avalonia.Desktop" Version="0.10.11-rc.1" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.11-rc.2" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.11-rc.1" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.1" />
-		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.11.1-rc.1" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.2" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.11.2-rc.2" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Styles\Themes\Dark\FluentDark.cs">
@@ -40,6 +40,22 @@
 	  </Compile>
 	  <Compile Update="UserControls\PicBox.axaml.cs">
 	    <DependentUpon>PicBox.axaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\CustomControls\Menus\FileMenu.axaml.cs">
+	    <DependentUpon>FileMenu.axaml</DependentUpon>
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\CustomControls\Menus\ImageMenu.axaml.cs">
+	    <DependentUpon>ImageMenu.axaml</DependentUpon>
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\CustomControls\Menus\SettingsMenu.axaml.cs">
+	    <DependentUpon>SettingsMenu.axaml</DependentUpon>
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\CustomControls\Menus\ToolsMenu.axaml.cs">
+	    <DependentUpon>ToolsMenu.axaml</DependentUpon>
+	    <SubType>Code</SubType>
 	  </Compile>
 	</ItemGroup>
 	<ItemGroup>
