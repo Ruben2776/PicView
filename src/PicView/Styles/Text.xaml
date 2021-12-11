@@ -6,7 +6,7 @@
     </Style>
     <Style Selector="TextBlock">
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource MainColor}" />
         <Setter Property="FontFamily" Value="avares://PicView/Assets/Fonts#Roboto" />
     </Style>
 </Styles>

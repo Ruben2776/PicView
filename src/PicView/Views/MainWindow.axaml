@@ -23,19 +23,19 @@
     </Design.DataContext>
 
     <Border
-        BorderBrush="{StaticResource BorderBrush}"
+        BorderBrush="{StaticResource BorderColor}"
         BorderThickness="1"
         CornerRadius="2">
         <DockPanel>
             <customTitleBars:WinTitleBar DockPanel.Dock="Top" />
             <Rectangle
                 DockPanel.Dock="Top"
-                Fill="{StaticResource BorderBrush}"
+                Fill="{StaticResource BorderColor}"
                 Height="1" />
 
             <Border
                 Background="Transparent"
-                BorderBrush="{StaticResource BorderBrush}"
+                BorderBrush="{StaticResource BorderColor}"
                 BorderThickness="0,1,0,0"
                 DockPanel.Dock="Bottom"
                 Height="25">
@@ -47,8 +47,8 @@
                         Width="397">
 
                         <Button
-                            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
+                            Background="{StaticResource BackgroundSubtleHighlight}"
+                            BorderBrush="{StaticResource BorderColor}"
                             BorderThickness="1,0,1,1"
                             Focusable="False"
                             Height="25"
@@ -63,8 +63,8 @@
                         </Button>
 
                         <Button
-                            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
+                            Background="{StaticResource BackgroundSubtleHighlight}"
+                            BorderBrush="{StaticResource BorderColor}"
                             BorderThickness="0,0,1,1"
                             Canvas.Left="55"
                             Focusable="False"
@@ -102,14 +102,14 @@
                         </Button>
 
                         <Canvas
-                            Background="{StaticResource BackgroundColorBrushFadeSubtle}"
+                            Background="{StaticResource BackgroundColorFadeSubtle}"
                             Canvas.Left="109.5"
                             Height="25"
                             Width="180">
 
                             <Button
                                 Background="Transparent"
-                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderBrush="{StaticResource BorderColor}"
                                 BorderThickness="0,0,1,1"
                                 Focusable="False"
                                 Height="25"
@@ -124,7 +124,7 @@
 
                             <Button
                                 Background="Transparent"
-                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderBrush="{StaticResource BorderColor}"
                                 BorderThickness="0,0,1,1"
                                 Canvas.Left="90"
                                 Focusable="False"
@@ -140,8 +140,8 @@
                         </Canvas>
 
                         <Button
-                            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
+                            Background="{StaticResource BackgroundSubtleHighlight}"
+                            BorderBrush="{StaticResource BorderColor}"
                             BorderThickness="0,0,1,1"
                             Canvas.Left="289"
                             Focusable="False"
@@ -156,8 +156,8 @@
                         </Button>
 
                         <Button
-                            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
+                            Background="{StaticResource BackgroundSubtleHighlight}"
+                            BorderBrush="{StaticResource BorderColor}"
                             BorderThickness="0,0,1,1"
                             Canvas.Left="343"
                             Focusable="False"

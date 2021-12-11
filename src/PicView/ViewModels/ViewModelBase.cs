@@ -7,5 +7,6 @@ namespace PicView.ViewModels
 {
     public class ViewModelBase : ReactiveObject
     {
+        
     }
 }

@@ -11,8 +11,8 @@
     <DockPanel LastChildFill="True">
 
         <Border
-            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-            BorderBrush="{StaticResource BorderBrush}"
+            Background="{StaticResource BackgroundSubtleHighlight}"
+            BorderBrush="{StaticResource BorderColor}"
             BorderThickness="0,0,1,0"
             Height="30">
             <Image
@@ -24,8 +24,8 @@
         </Border>
 
         <Button
-            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-            BorderBrush="{StaticResource BorderBrush}"
+            Background="{StaticResource BackgroundSubtleHighlight}"
+            BorderBrush="{StaticResource BorderColor}"
             BorderThickness="0,0,1,0"
             DockPanel.Dock="Left"
             Height="30"
@@ -41,8 +41,8 @@
         </Button>
 
         <Button
-            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-            BorderBrush="{StaticResource BorderBrush}"
+            Background="{StaticResource BackgroundSubtleHighlight}"
+            BorderBrush="{StaticResource BorderColor}"
             BorderThickness="0,0,1,0"
             DockPanel.Dock="Left"
             Height="30"
@@ -58,7 +58,7 @@
         </Button>
 
         <Button
-            Background="{StaticResource BackgroundSubtleHighlightBrush}"
+            Background="{StaticResource BackgroundSubtleHighlight}"
             Command="{Binding ExitCommand}"
             DockPanel.Dock="Right"
             Height="30"
@@ -72,8 +72,8 @@
         </Button>
 
         <Button
-            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-            BorderBrush="{StaticResource BorderBrush}"
+            Background="{StaticResource BackgroundSubtleHighlight}"
+            BorderBrush="{StaticResource BorderColor}"
             BorderThickness="0,0,1,0"
             DockPanel.Dock="Right"
             Height="30"
@@ -88,8 +88,8 @@
         </Button>
 
         <Button
-            Background="{StaticResource BackgroundSubtleHighlightBrush}"
-            BorderBrush="{StaticResource BorderBrush}"
+            Background="{StaticResource BackgroundSubtleHighlight}"
+            BorderBrush="{StaticResource BorderColor}"
             BorderThickness="1,0,1,0"
             Command="{Binding MinimizeCommand}"
             DockPanel.Dock="Right"
@@ -104,7 +104,7 @@
         </Button>
 
         <TextBlock
-            Background="{StaticResource BackgroundSubtleHighlightBrush}"
+            Background="{StaticResource BackgroundSubtleHighlight}"
             FontSize="12"
             FontWeight="Bold"
             Height="30"

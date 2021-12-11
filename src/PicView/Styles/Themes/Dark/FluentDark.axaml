@@ -7,39 +7,29 @@
 
         <!--  Accent Color  -->
         <Color x:Key="AccentColor">#D8FF5A12</Color>
-        <SolidColorBrush Color="{DynamicResource AccentColor}" x:Key="AccentColorBrush" />
 
         <!--  Main Color  -->
         <Color x:Key="MainColor">#FFf6f4f4</Color>
-        <SolidColorBrush Color="{StaticResource MainColor}" x:Key="MainColorBrush" />
 
         <!--  Icon Color  -->
         <Color x:Key="IconColor">#eeebebeb</Color>
-        <SolidColorBrush Color="{StaticResource IconColor}" x:Key="IconColorBrush" />
 
         <!--  Border Brush  -->
         <Color x:Key="BorderColor">#FF3A3A3A</Color>
-        <SolidColorBrush Color="{StaticResource BorderColor}" x:Key="BorderBrush" />
-
         <!--  Background Color Fade  -->
         <Color x:Key="BackgroundColorFade">#2D171717</Color>
-        <SolidColorBrush Color="{StaticResource BackgroundColorFade}" x:Key="BackgroundColorBrushFade" />
 
         <!--  Background Subtle Highlight  -->
         <Color x:Key="BackgroundSubtleHighlight">#691F1C1C</Color>
-        <SolidColorBrush Color="{StaticResource BackgroundSubtleHighlight}" x:Key="BackgroundSubtleHighlightBrush" />
 
         <!--  Background Color Fade  Subtle  -->
         <Color x:Key="BackgroundColorFadeSubtle">#BE222222</Color>
-        <SolidColorBrush Color="{StaticResource BackgroundColorFadeSubtle}" x:Key="BackgroundColorBrushFadeSubtle" />
 
         <!--  Window Background Color  -->
         <Color x:Key="WindowBackgroundColor">#CC161413</Color>
-        <SolidColorBrush Color="{StaticResource WindowBackgroundColor}" x:Key="WindowBackgroundColorBrush" />
 
         <!--  Background Hover Highlight  -->
         <Color x:Key="BackgroundHoverHighlight">#644B4B4B</Color>
-        <SolidColorBrush Color="{StaticResource BackgroundHoverHighlight}" x:Key="BackgroundHoverHighlightBrush" />
 
 
         <ImageBrush
