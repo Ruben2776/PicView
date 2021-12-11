@@ -12,7 +12,6 @@
 	<ItemGroup>
 		<Folder Include="Assets\Fonts" />
 		<Folder Include="Assets\SvgIcons\" />
-		<Folder Include="Models\" />
 		<AvaloniaResource Include="Assets\**" />
 		<AvaloniaResource Include="Assets\Fonts\*" />
 	</ItemGroup>
@@ -30,6 +29,7 @@
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.2" />
 		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.11.2-rc.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Styles\Themes\Dark\FluentDark.cs">
@@ -66,5 +66,14 @@
 		<None Update="ContextMenus\MainCM.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</None>
+		<None Update="Settings\appsettings.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="appstate.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\PicView.Data\PicView.Data.csproj" />
 	</ItemGroup>
 </Project>
