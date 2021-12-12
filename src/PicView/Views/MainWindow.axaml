@@ -13,7 +13,8 @@
     WindowStartupLocation="CenterScreen"
     x:Class="PicView.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars" Opened="TopLevel_OnOpened"
+    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars" 
+    Opened="TopLevel_OnOpened"
     xmlns:uc="using:PicView.CustomControls"
     xmlns:vm="using:PicView.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -189,7 +190,11 @@
             
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <Border x:Name="ImageBorder">
-                    <Image x:Name="MainImage" Stretch="Uniform" Source="{Binding Pic}"  />
+                    <Image x:Name="MainImage"
+                           Stretch="Fill"
+                           Source="{Binding Pic}"
+                           Width="{Binding Width}"
+                           Height="{Binding Height}"/>
                 </Border>
                 
             </ScrollViewer>

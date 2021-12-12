@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="LockScreen\" />
     <Folder Include="Explorer\" />
-    <Folder Include="Screen\" />
     <Folder Include="Wallpaper\" />
   </ItemGroup>
 

@@ -1,9 +1,9 @@
-﻿using System.Reactive;
-using Avalonia.Controls.ApplicationLifetimes;
+﻿using System.Drawing;
 using ReactiveUI;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Size = Avalonia.Size;
 
 namespace PicView.ViewModels
 {
@@ -25,7 +25,10 @@ namespace PicView.ViewModels
                 if (pic is not null)
                 {
                     Pic = pic;
-                    Title = "Loaded";
+                    var size = Data.Sizing.ImageSize.GetScaledImageSize(pic.Size.Width, pic.Size.Height, window);
+                    Width = size.Width;
+                    Height = size.Height;
+                    Title = $"{size.Width} x {size.Height}";
                 }
                 else
                 {
@@ -45,13 +48,26 @@ namespace PicView.ViewModels
             set => this.RaiseAndSetIfChanged(ref _title, value);
         }
         
-        private IImage _pic;
-        public IImage Pic
+        private IImage? _pic;
+        public IImage? Pic
         {
             get => _pic;
             set => this.RaiseAndSetIfChanged(ref _pic, value);
         }
 
+        private double _width;
+        public double Width
+        {
+            get => _width;
+            set => this.RaiseAndSetIfChanged(ref _width, value);
+        }
+        
+        private double _height;
+        public double Height
+        {
+            get => _height;
+            set => this.RaiseAndSetIfChanged(ref _height, value);
+        }
 
 
     }
