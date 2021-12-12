@@ -123,11 +123,11 @@ namespace PicView.UILogic.Sizing
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-            double padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
+            var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
 
             if (GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                /// Extra padding for picgallery required
+                // Extra padding for picgallery required
                 padding += PicGalleryItem_Size - 50;
                 maxWidth = Math.Min(monitorWidth - padding, width);
                 maxHeight = Math.Min(monitorHeight, height);
@@ -146,12 +146,12 @@ namespace PicView.UILogic.Sizing
                 }
                 else
                 {
-                    /// Use padding for shown interface
+                    // Use padding for shown interface
                     maxWidth = Math.Min(monitorWidth - padding, width);
                     maxHeight = Math.Min(monitorHeight - padding, height);
                 }
             }
-            else /// Get max width and height, based on window size
+            else // Get max width and height, based on window size
             {
                 if (Properties.Settings.Default.FillImage)
                 {
@@ -189,8 +189,8 @@ namespace PicView.UILogic.Sizing
             }
             else
             {
-                /// Fit image by aspect ratio calculation
-                /// and update values
+                // Fit image by aspect ratio calculation
+                // and update values
                 GetMainWindow.MainImage.Width = XWidth = width * AspectRatio;
                 GetMainWindow.MainImage.Height = XHeight = height * AspectRatio;
 
@@ -201,7 +201,7 @@ namespace PicView.UILogic.Sizing
             // Calculate window position
             if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
             {
-                /// Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
+                // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
                 var interfaceSize = (GetMainWindow.Logo.ActualWidth + 13) + GetMainWindow.MinButton.ActualWidth
                     + GetMainWindow.FullscreenButton.ActualWidth + GetMainWindow.CloseButton.ActualWidth * MonitorInfo.DpiScaling;
 
@@ -239,7 +239,7 @@ namespace PicView.UILogic.Sizing
                 }
                 else
                 {
-                    /// Fix title width to window size
+                    // Fix title width to window size
                     GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
                 }
             }
@@ -250,28 +250,28 @@ namespace PicView.UILogic.Sizing
             }
         }
 
-        ///
-        ///
-        ///               _.._   _..---.
-        ///             .-"    ;-"       \
-        ///            /      /           |
-        ///           |      |       _=   |
-        ///           ;   _.-'\__.-')     |
-        ///            `-'      |   |    ;
-        ///                     |  /;   /      _,
-        ///                   .-.;.-=-./-""-.-` _`
-        ///                  /   |     \     \-` `,
-        ///                 |    |      |     |
-        ///                 |____|______|     |
-        ///                  \0 / \0   /      /
-        ///               .--.-""-.`--'     .'
-        ///              (#   )          ,  \
-        ///              ('--'          /\`  \
-        ///               \       ,,  .'      \
-        ///                `-._    _.'\        \
-        ///       jgs          `""`    \        \
-        ///
-        ///       So much math!
-        ///
+        //
+        //
+        //               _.._   _..---.
+        //             .-"    ;-"       \
+        //            /      /           |
+        //           |      |       _=   |
+        //           ;   _.-'\__.-')     |
+        //            `-'      |   |    ;
+        //                    |  /;   /      _,
+        //                  .-.;.-=-./-""-.-` _`
+        //                 /   |     \     \-` `,
+        //                |    |      |     |
+        //                |____|______|     |
+        //                 \0 / \0   /      /
+        //              .--.-""-.`--'     .'
+        //             (#   )          ,  \
+        //             ('--'          /\`  \
+        //              \       ,,  .'      \
+        //               `-._    _.'\        \
+        //      jgs          `""`    \        \
+        //
+        //      So much math!
+        //
     }
 }

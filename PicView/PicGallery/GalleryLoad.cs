@@ -233,7 +233,7 @@ namespace PicView.PicGallery
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
             {
-                bool selected = i == index;
+                var selected = i == index;
                 var item = new PicGalleryItem(null, i, selected);
                 item.MouseLeftButtonDown += async delegate
                 {
@@ -242,28 +242,24 @@ namespace PicView.PicGallery
 
                 UC.GetPicGallery.Container.Children.Add(item);
 
-                if (selected)
-                {
-                    GalleryNavigation.SelectedGalleryItem = i;
-                    Timers.PicGalleryTimerHack();
-                }
+                if (!selected) { return; }
+                GalleryNavigation.SelectedGalleryItem = i;
+                Timers.PicGalleryTimerHack();
             }));
         }
 
         internal static async Task UpdatePic(int i)
         {
-            if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1)
+            if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
             {
                 GalleryFunctions.Clear();
                 await Load().ConfigureAwait(false); // restart when changing directory
                 return;
             }
 
-            var pic = Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size);
-            if (pic == null)
-            {
-                pic = ImageFunctions.ImageErrorMessage();
-            }
+            var pic = 
+                Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size) 
+                ?? ImageFunctions.ImageErrorMessage();
             UpdatePic(i, pic);
         }
 
@@ -273,7 +269,7 @@ namespace PicView.PicGallery
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, new Action(async () =>
                 {
-                    if (ChangeImage.Navigation.Pics?.Count < ChangeImage.Navigation.FolderIndex || ChangeImage.Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
+                    if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                     {
                         GalleryFunctions.Clear();
                         await Load().ConfigureAwait(false); // restart when changing directory

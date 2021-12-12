@@ -167,50 +167,37 @@ namespace PicView.FileHandling
             char prefix;
             double value;
 
-            if (i >= 0x40000000) // Gigabyte
+            switch (i)
             {
-                prefix = 'G';
-                value = i >> 20;
+                // Gigabyte
+                case >= 0x40000000:
+                    prefix = 'G';
+                    value = i >> 20;
+                    break;
+                // Megabyte
+                case >= 0x100000:
+                    prefix = 'M';
+                    value = i >> 10;
+                    break;
+                // Kilobyte
+                case >= 0x400:
+                    prefix = 'K';
+                    value = i;
+                    break;
+                default:
+                    return i.ToString(sign + "0 B", CultureInfo.CurrentCulture); // Byte
             }
-            else if (i >= 0x100000) // Megabyte
-            {
-                prefix = 'M';
-                value = i >> 10;
-            }
-            else if (i >= 0x400) // Kilobyte
-            {
-                prefix = 'K';
-                value = i;
-            }
-            else
-            {
-                return i.ToString(sign + "0 B", CultureInfo.CurrentCulture); // Byte
-            }
-            value /= 1024;
+            value /= 1024; // Divide by 1024 to get fractional value
 
             return sign + value.ToString("0.## ", CultureInfo.CurrentCulture) + prefix + 'B';
         }
 
-        internal static bool FilePathHasInvalidChars(string path)
-        {
-            return !string.IsNullOrEmpty(path) && path.IndexOfAny(Path.GetInvalidPathChars()) >= 0;
-        }
-
-        internal static string MakeValidFileName(string name)
-        {
-            string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-            string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-
-            return Regex.Replace(name, invalidRegStr, "_");
-        }
-
         internal static string Shorten(string name, int amount)
         {
-            if (name.Length >= 25)
-            {
-                name = name.Substring(0, amount);
-                name += "...";
-            }
+            if (name.Length < 25) { return name; }
+            
+            name = name[..amount];
+            name += "...";
             return name;
         }
 
@@ -218,8 +205,8 @@ namespace PicView.FileHandling
         {
             try
             {
-                var UserConfig = ConfigurationManager.OpenExeConfiguration(userLevel);
-                return UserConfig.FilePath;
+                var userConfig = ConfigurationManager.OpenExeConfiguration(userLevel);
+                return userConfig.FilePath;
             }
             catch (ConfigurationException e)
             {

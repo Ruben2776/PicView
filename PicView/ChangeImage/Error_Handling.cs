@@ -21,11 +21,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool CheckOutOfRange()
         {
-            if (Pics?.Count < FolderIndex || Pics?.Count < 1 || UILogic.UC.GetCropppingTool != null && UILogic.UC.GetCropppingTool.IsVisible)
-            {
-                return true;
-            }
-            return false;
+            return Pics?.Count < FolderIndex || Pics?.Count < 1 || UILogic.UC.GetCropppingTool is { IsVisible: true };
         }
 
         internal static void UnexpectedError()
@@ -62,19 +58,18 @@ namespace PicView.ChangeImage
                 folderChanged = true;
             }
 
-            if (UC.GetPicGallery is not null && folderChanged)
+            if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
+            
+            if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
             {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
+                    // Remove children before loading new
+                    if (UC.GetPicGallery.Container.Children.Count > 0)
                     {
-                        // Remove children before loading new
-                        if (UC.GetPicGallery.Container.Children.Count > 0)
-                        {
-                            UC.GetPicGallery.Container.Children.Clear();
-                        }
-                    }));
-                }
+                        UC.GetPicGallery.Container.Children.Clear();
+                    }
+                }));
             }
             return folderChanged;
         }
@@ -97,12 +92,7 @@ namespace PicView.ChangeImage
             {
                 return "base64";
             }
-
-            if (FileFunctions.FilePathHasInvalidChars(s))
-            {
-                FileFunctions.MakeValidFileName(s);
-            }
-
+            
             s = s.Replace("\"", "");
             s = s.Trim();
 
@@ -158,10 +148,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task ReloadAsync(bool fromBackup = false)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                SetTitle.SetLoadingString();
-            });
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
 
             string? path = null;
             if (fromBackup)
@@ -230,7 +217,7 @@ namespace PicView.ChangeImage
             }
             else if (Clipboard.ContainsImage())
             {
-                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["Base64Image"]);
+                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {
@@ -287,10 +274,7 @@ namespace PicView.ChangeImage
             UC.ToggleStartUpUC(!showStartup);
 
             FreshStartup = true;
-            if (Pics != null)
-            {
-                Pics.Clear();
-            }
+            Pics?.Clear();
 
             Preloader.Clear();
             GalleryFunctions.Clear();
@@ -306,7 +290,10 @@ namespace PicView.ChangeImage
             {
                 _ = SystemIntegration.Taskbar.NoProgress();
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
     }
 }
