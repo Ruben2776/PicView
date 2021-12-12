@@ -1,9 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.11-rc.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Avalonia.Visuals">
+			<HintPath>..\..\..\..\..\Temp\.nuget-packages\avalonia\0.10.11-rc.2\lib\netcoreapp2.0\Avalonia.Visuals.dll</HintPath>
+		</Reference>
+		<Reference Include="SkiaSharp">
+			<HintPath>..\..\..\..\..\Temp\.nuget-packages\skiasharp\2.88.0-preview.155\lib\netstandard2.0\SkiaSharp.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Animation.Animators;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using PicView.ViewModels;
 
 namespace PicView.Views
 {
@@ -18,6 +19,11 @@ namespace PicView.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private void TopLevel_OnOpened(object? sender, EventArgs e)
+        {
+            (DataContext as MainWindowViewModel)?.LoadCommand.Execute(null);
         }
     }
 }

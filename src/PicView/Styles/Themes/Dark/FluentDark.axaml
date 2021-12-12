@@ -6,7 +6,7 @@
     <Styles.Resources>
 
         <!--  Accent Color  -->
-        <Color x:Key="AccentColor">#D8FF5A12</Color>
+        <Color x:Key="AccentColor">#C8FF5A12</Color>
 
         <!--  Main Color  -->
         <Color x:Key="MainColor">#FFf6f4f4</Color>
@@ -16,6 +16,7 @@
 
         <!--  Border Brush  -->
         <Color x:Key="BorderColor">#FF3A3A3A</Color>
+        
         <!--  Background Color Fade  -->
         <Color x:Key="BackgroundColorFade">#2D171717</Color>
 
@@ -30,7 +31,6 @@
 
         <!--  Background Hover Highlight  -->
         <Color x:Key="BackgroundHoverHighlight">#644B4B4B</Color>
-
 
         <ImageBrush
             BitmapInterpolationMode="HighQuality"

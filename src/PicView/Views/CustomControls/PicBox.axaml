@@ -2,9 +2,9 @@
     x:Class="PicView.CustomControls.PicBox"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Border x:Name="ImageBorder">
-            <Image />
-        </Border>
-    </ScrollViewer>
+	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+		<Border x:Name="ImageBorder" Width="700" Height="900">
+			<Image x:Name="MainImage" Stretch="Uniform" />
+		</Border>
+	</ScrollViewer>
 </UserControl>
