@@ -18,17 +18,19 @@
 	<ItemGroup>
 	  <AvaloniaXaml Include="Styles\Button.xaml" />
 	  <AvaloniaXaml Include="Styles\Text.xaml" />
+	  <None Remove="Styles\Scrollbar.xaml" />
+	  <AvaloniaXaml Include="Styles\Scrollbar.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Assets\PicView\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.11-rc.2" />
+		<PackageReference Include="Avalonia.Controls.PanAndZoom" Version="10.11.1-rc.2" />
 		<PackageReference Include="Avalonia.Desktop" Version="0.10.11-rc.1" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.11-rc.2" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.2" />
-		<PackageReference Include="Avalonia.SKPictureImage" Version="0.10.6.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 	<ItemGroup>

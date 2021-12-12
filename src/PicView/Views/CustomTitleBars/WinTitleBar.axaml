@@ -108,6 +108,7 @@
             Foreground="{StaticResource MainColor}" 
             CaretBrush="{StaticResource MainColor}"
             SelectionBrush="{DynamicResource AccentColor}"
+            PointerPressed="MoveWindow"
             FontSize="12"
             FontWeight="Bold"
             Height="30"

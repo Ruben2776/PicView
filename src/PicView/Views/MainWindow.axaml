@@ -13,10 +13,9 @@
     WindowStartupLocation="CenterScreen"
     x:Class="PicView.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars" 
-    Opened="TopLevel_OnOpened"
-    xmlns:uc="using:PicView.CustomControls"
+    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars"
     xmlns:vm="using:PicView.ViewModels"
+    Opened="TopLevel_OnOpened"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
@@ -189,13 +188,13 @@
             </Border>
             
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <Border x:Name="ImageBorder">
+                <ZoomBorder PanButton="Left" Stretch="Uniform" EnableConstrains="True">
                     <Image x:Name="MainImage"
-                           Stretch="Fill"
+                           Stretch="Uniform"
                            Source="{Binding Pic}"
                            Width="{Binding Width}"
-                           Height="{Binding Height}"/>
-                </Border>
+                           Height="{Binding Height}" />
+                </ZoomBorder>
                 
             </ScrollViewer>
         </DockPanel>

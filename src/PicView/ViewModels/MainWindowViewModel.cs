@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using ReactiveUI;
+﻿using ReactiveUI;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -12,9 +11,7 @@ namespace PicView.ViewModels
         public MainWindowViewModel(Window window)
         {
             ExitCommand = ReactiveCommand.Create(window.Close);
-
             MinimizeCommand = ReactiveCommand.Create(() => window.WindowState = WindowState.Minimized);
-            
             LoadCommand = ReactiveCommand.Create(async () =>
             {
                 var args = Environment.GetCommandLineArgs();
@@ -25,10 +22,11 @@ namespace PicView.ViewModels
                 if (pic is not null)
                 {
                     Pic = pic;
-                    var size = Data.Sizing.ImageSize.GetScaledImageSize(pic.Size.Width, pic.Size.Height, window);
-                    Width = size.Width;
-                    Height = size.Height;
-                    Title = $"{size.Width} x {size.Height}";
+                    var (width, height) =
+                        Data.Sizing.ImageSizeHelper.GetScaledImageSize(pic.Size.Width, pic.Size.Height, window);
+                    Width = width;
+                    Height = height;
+                    Title = $"{width} x {height}";
                 }
                 else
                 {
@@ -38,7 +36,6 @@ namespace PicView.ViewModels
         }
         public ICommand ExitCommand { get; }
         public ICommand MinimizeCommand { get; }
-        
         public ICommand LoadCommand { get; }
         
         private string _title = "Loading...";
@@ -68,7 +65,5 @@ namespace PicView.ViewModels
             get => _height;
             set => this.RaiseAndSetIfChanged(ref _height, value);
         }
-
-
     }
 }

@@ -10,14 +10,14 @@ namespace PicView.Views.CustomTitleBars
         {
             InitializeComponent();
 
-            PointerPressed += (_, e) => MoveWindow(e);
+            PointerPressed += MoveWindow;
         }
 
-        private void MoveWindow(PointerPressedEventArgs e)
+        private void MoveWindow(object? sender, PointerPressedEventArgs e)
         {
             if (VisualRoot is null) { return; }
             
-            Window hostWindow = (Window)VisualRoot;
+            var hostWindow = (Window)VisualRoot;
             hostWindow?.BeginMoveDrag(e);
         }
 
