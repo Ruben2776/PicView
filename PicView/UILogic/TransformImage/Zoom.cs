@@ -310,7 +310,7 @@ namespace PicView.UILogic.TransformImage
             double newTranslateValueY = zoomValue != 1 ? absoluteY - relative.Y * zoomValue : 0;
 
 
-            var duration = new Duration(TimeSpan.FromSeconds(.3));
+            var duration = new Duration(TimeSpan.FromSeconds(.25));
 
             var scaleAnim = new DoubleAnimation(zoomValue, duration)
             {
