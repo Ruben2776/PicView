@@ -276,17 +276,22 @@ namespace PicView.Views.Windows
                     if (container.Percentage.IsSelected && int.TryParse(container.ValueBox.Text, out var number))
                     {
                         thumbPercentage = new Percentage(number);
+                        thumbW = 0;
+                        thumbH = 0;
                     }
                     else
                     {
-                        if (container.WidthBox.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
+                        if (container.WidthBox.IsSelected && int.TryParse(container.ValueBox.Text, out var resizeWidth))
                         {
                             thumbW = resizeWidth;
+                            thumbH = 0;
                         }
-                        else if (container.HeightBox.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
+                        else if (container.HeightBox.IsSelected && int.TryParse(container.ValueBox.Text, out var resizeHeight))
                         {
+                            thumbW = 0;
                             thumbH = resizeHeight;
                         }
+                        thumbPercentage = null;
                     }
                     thumbs.Add(new BatchFunctions.ThumbNailHolder(container.OutPutStringBox.Text, thumbW, thumbH, thumbPercentage));
                 }
