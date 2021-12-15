@@ -2,12 +2,6 @@
 
     <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="Background" Value="{StaticResource BackgroundHoverHighlight}" />
-        <Style.Animations>
-            <Animation Duration="0:0:0.45">
-                <KeyFrame Cue="100%">
-                    <Setter Property="Background" Value="{StaticResource BackgroundHoverHighlight}" />
-                </KeyFrame>
-            </Animation>
-        </Style.Animations>
+        <Setter Property="BorderBrush" Value="{StaticResource BackgroundHoverHighlight}" />
     </Style>
 </Styles>

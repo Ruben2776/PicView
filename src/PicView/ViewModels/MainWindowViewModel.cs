@@ -1,17 +1,27 @@
-﻿using ReactiveUI;
+﻿using System.Reactive;
+using System.Reactive.Linq;
+using System.Runtime.Serialization;
+using ReactiveUI;
 using System.Windows.Input;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using PicView.Views;
 using Size = Avalonia.Size;
 
 namespace PicView.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public MainWindowViewModel(Window window)
+        public MainWindowViewModel()
         {
-            ExitCommand = ReactiveCommand.Create(window.Close);
-            MinimizeCommand = ReactiveCommand.Create(() => window.WindowState = WindowState.Minimized);
+            if (Avalonia.Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            
+            ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
+            MinimizeCommand = ReactiveCommand.Create(() => desktop.MainWindow.WindowState = WindowState.Minimized);
             LoadCommand = ReactiveCommand.Create(async () =>
             {
                 var args = Environment.GetCommandLineArgs();
@@ -23,7 +33,7 @@ namespace PicView.ViewModels
                 {
                     Pic = pic;
                     var (width, height) =
-                        Data.Sizing.ImageSizeHelper.GetScaledImageSize(pic.Size.Width, pic.Size.Height, window);
+                        Data.Sizing.ImageSizeHelper.GetScaledImageSize(pic.Size.Width, pic.Size.Height, desktop.MainWindow);
                     Width = width;
                     Height = height;
                     Title = $"{width} x {height}";
@@ -34,9 +44,9 @@ namespace PicView.ViewModels
                 }
             });
         }
-        public ICommand ExitCommand { get; }
-        public ICommand MinimizeCommand { get; }
-        public ICommand LoadCommand { get; }
+        public ICommand? ExitCommand { get; }
+        public ICommand? MinimizeCommand { get; }
+        public ICommand? LoadCommand { get; }
         
         private string _title = "Loading...";
         public string Title
