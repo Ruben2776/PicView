@@ -17,10 +17,19 @@
     xmlns:vm="using:PicView.ViewModels"
     Opened="TopLevel_OnOpened"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
+    
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
+    
+    <Window.KeyBindings>
+        <KeyBinding Command="{Binding Next}" Gesture="Right"/>
+        <KeyBinding Command="{Binding Next}" Gesture="D"/>
+        
+        <KeyBinding Command="{Binding Prev}" Gesture="Left"/>
+        <KeyBinding Command="{Binding Next}" Gesture="A"/>
+    </Window.KeyBindings>
+
 
     <Border
         BorderBrush="{StaticResource BorderColor}"
@@ -123,6 +132,7 @@
                             </Button>
 
                             <Button
+                                Command="{Binding Next}"
                                 Background="Transparent"
                                 BorderBrush="{StaticResource BorderColor}"
                                 BorderThickness="0,0,1,1"
@@ -188,13 +198,13 @@
             </Border>
             
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <ZoomBorder PanButton="Left" Stretch="Uniform" EnableConstrains="True">
+                <Border>
                     <Image x:Name="MainImage"
                            Stretch="Uniform"
                            Source="{Binding Pic}"
                            Width="{Binding Width}"
                            Height="{Binding Height}" />
-                </ZoomBorder>
+                </Border>
                 
             </ScrollViewer>
         </DockPanel>

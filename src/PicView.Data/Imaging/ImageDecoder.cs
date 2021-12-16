@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Media;
+using Avalonia.Media.Imaging;
 
 namespace PicView.Data.Imaging
 {
@@ -9,7 +10,7 @@ namespace PicView.Data.Imaging
         /// </summary>
         /// <param name="fileInfo">Cannot be null</param>
         /// <returns></returns>
-        public static async Task<Avalonia.Media.IImage?> ReturnPicAsync(FileInfo fileInfo)
+        public static async Task<IImage?> GetPicAsync(FileInfo fileInfo)
         {
             if (fileInfo == null) { return null; }
             if (fileInfo.Length <= 0) { return null; }

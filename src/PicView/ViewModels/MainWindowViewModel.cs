@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using PicView.Navigation;
 using PicView.Views;
 using Size = Avalonia.Size;
 
@@ -22,31 +23,57 @@ namespace PicView.ViewModels
             
             ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
             MinimizeCommand = ReactiveCommand.Create(() => desktop.MainWindow.WindowState = WindowState.Minimized);
+            
+            Next = ReactiveCommand.Create(async () =>
+            {
+                Iterator ??= new ImageIterator();
+                
+                Pic = await Iterator.Next().ConfigureAwait(false);
+                SetValues(desktop);
+            });
+            
+            Prev = ReactiveCommand.Create(async () =>
+            {
+                Iterator ??= new ImageIterator();
+                
+                Pic = await Iterator.Prev().ConfigureAwait(false);
+                SetValues(desktop);
+            });
+            
             LoadCommand = ReactiveCommand.Create(async () =>
             {
                 var args = Environment.GetCommandLineArgs();
-                if (args.Length < 1) { return; }
+                if (args.Length < 1)
+                {
+                    Iterator = new ImageIterator();
+                    return;
+                }
                 
                 FileInfo fileInfo = new(args[1]);
-                var pic = await Data.Imaging.ImageDecoder.ReturnPicAsync(fileInfo).ConfigureAwait(false);
-                if (pic is not null)
-                {
-                    Pic = pic;
-                    var (width, height) =
-                        Data.Sizing.ImageSizeHelper.GetScaledImageSize(pic.Size.Width, pic.Size.Height, desktop.MainWindow);
-                    Width = width;
-                    Height = height;
-                    Title = $"{width} x {height}";
-                }
-                else
-                {
-                    Title = "No image loaded";
-                }
+                Iterator = new ImageIterator(fileInfo);
+                Pic = await Iterator.GetPicFromFileAsync(fileInfo).ConfigureAwait(false);
+                SetValues(desktop);
             });
+        }
+
+        private void SetValues(IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var (width, height) =
+                Data.Sizing.ImageSizeHelper.GetScaledImageSize(Pic.Size.Width, Pic.Size.Height, desktop.MainWindow);
+            Width = width;
+            Height = height;
+            Title = $"{Pic.Size.Width} x {Pic.Size.Height}";
         }
         public ICommand? ExitCommand { get; }
         public ICommand? MinimizeCommand { get; }
         public ICommand? LoadCommand { get; }
+        
+        private ImageIterator? Iterator { get; set; }
+        
+        public ICommand? Next { get; }
+        public ICommand? Prev { get; }
+        public ICommand? First { get; }
+        public ICommand? Last { get; }
         
         private string _title = "Loading...";
         public string Title
