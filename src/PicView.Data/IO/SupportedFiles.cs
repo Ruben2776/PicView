@@ -1,18 +1,27 @@
-﻿namespace PicView.Data.IO;
+﻿using System;
+using System.IO;
+
+namespace PicView.Data.IO;
 
 public static class SupportedFiles
     {
+        public static bool IsSupportedFile(string file)
+        {
+            var supported = CheckIsSupportedFile(file);
+            return supported is not null;
+        }
+        
         /// <summary>
         /// Check if supported:
         /// Returns true if common files,
         /// False if uncommon,
         /// Null if unsupported
         /// </summary>
-        /// <param name="ext">File extension</param>
+        /// <param name="file">File extension</param>
         /// <returns></returns>
-        public static bool? IsSupportedFile(string file)
+        public static bool? CheckIsSupportedFile(string file)
         {
-            string ext = Path.GetExtension(file);
+            var ext = Path.GetExtension(file);
             switch (ext)
             {
                 // Standards
@@ -95,16 +104,10 @@ public static class SupportedFiles
             }
         }
 
-        public static bool IsSupportedExt(string file)
-        {
-            var supported = IsSupportedFile(file);
-            return supported is not null;
-        }
-
         /// <summary>
         /// Returns true if supported archive
         /// </summary>
-        /// <param name="ext"></param>
+        /// <param name="file"></param>
         /// <returns></returns>
         public static bool IsSupportedArchives(string file)
         {
@@ -114,7 +117,7 @@ public static class SupportedFiles
         /// <summary>
         /// Returns true if supported archive
         /// </summary>
-        /// <param name="ext"></param>
+        /// <param name="fileInfo"></param>
         /// <returns></returns>
         public static bool IsSupportedArchives(FileInfo fileInfo)
         {

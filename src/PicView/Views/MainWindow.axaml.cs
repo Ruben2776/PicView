@@ -2,6 +2,8 @@ using System.Reactive.Disposables;
 using Avalonia;
 using Avalonia.Animation.Animators;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Input.Raw;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using Avalonia.Win32;
@@ -46,6 +48,18 @@ namespace PicView.Views
                   Position = screen.WorkingArea.CenterRect(rect).Position;
                 }
             });
+        }
+
+        private void InputElement_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+        {
+            if (e.Delta.Y > 0)
+            {
+                (DataContext as MainWindowViewModel)?.Prev?.Execute(null);
+            }
+            else
+            {
+                (DataContext as MainWindowViewModel)?.Next?.Execute(null);
+            }
         }
     }
 }

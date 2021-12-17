@@ -103,44 +103,23 @@
             </Viewbox>
         </Button>
 
-        <TextBox
+        <TextBlock
             Background="{StaticResource BackgroundSubtleHighlight}"
-            Foreground="{StaticResource MainColor}" 
-            CaretBrush="{StaticResource MainColor}"
-            SelectionBrush="{DynamicResource AccentColor}"
+            Foreground="{StaticResource MainColor}"
             PointerPressed="MoveWindow"
             FontSize="12"
             FontWeight="Bold"
             Height="30"
+            MaxWidth="{Binding TitleWidth}"
             IsTabStop="False"
             Padding="3,6,3,6"
             Text="{Binding Title}"
+            TextTrimming="CharacterEllipsis"
             TextAlignment="Center"
             VerticalAlignment="Center">
-            <TextBox.Styles>
-                <!--<Style Selector="TextBox">
-                    <Setter Property="Template">
-                            <ControlTemplate>
-                                <Border
-                                    x:Name="bg"
-                                    Padding="5,5,5,5"
-                                    BorderBrush="{DynamicResource AccentColor}"
-                                    BorderThickness="1">
-                                    <ScrollViewer />
-                                </Border>
-                            </ControlTemplate>
-                        </Setter>
-                    </Style>-->
-                
-                <!--<Style Selector="TextBox:checked /template/ Border#bg">
-                    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=AccentColor}"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                </Style>
-                
-                <Style Selector="TextBox">
-                    
-                </Style>-->
-            </TextBox.Styles>
-        </TextBox>
+            <ToolTip.Tip>
+                <TextBlock Text="{Binding Tooltip}" />
+            </ToolTip.Tip>
+        </TextBlock>
     </DockPanel>
 </UserControl>

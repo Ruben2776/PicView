@@ -26,8 +26,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.11-rc.2" />
-		<PackageReference Include="Avalonia.Controls.PanAndZoom" Version="10.11.1-rc.2" />
-		<PackageReference Include="Avalonia.Desktop" Version="0.10.11-rc.1" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.11-rc.2" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.11-rc.2" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.2" />

@@ -1,4 +1,7 @@
-﻿using Avalonia.Media;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 
 namespace PicView.Data.Imaging
@@ -12,7 +15,7 @@ namespace PicView.Data.Imaging
         /// <returns></returns>
         public static async Task<IImage?> GetPicAsync(FileInfo fileInfo)
         {
-            if (fileInfo == null) { return null; }
+            if (fileInfo == null) { throw new Exception(); }
             if (fileInfo.Length <= 0) { return null; }
 
             switch (fileInfo.Extension)
@@ -30,7 +33,7 @@ namespace PicView.Data.Imaging
                     return await Task.FromResult(GetBitmap(fileInfo)).ConfigureAwait(false);
 
                 default:
-                    return null;
+                    return null; // TODO create method to return an image symbolising corrupted image 
             }
         }
 

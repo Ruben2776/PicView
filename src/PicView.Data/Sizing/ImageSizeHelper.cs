@@ -5,21 +5,24 @@ namespace PicView.Data.Sizing;
 
 public static class ImageSizeHelper
 {
-    public static Size GetScaledImageSize(double width, double height, Control control)
+    public static double[] GetScaledImageSize(double width, double height, int rotation, Window window)
     {
-        if (width <= 0 || height <= 0) { return new Size(0,0); }
+        if (width <= 0 || height <= 0) { throw new InvalidOperationException(); }
 
         double maxWidth, maxHeight;
-        var screen = Screen.ScreenHelper.GetScreen(control);
+        var screen = Screen.ScreenHelper.GetScreen(window);
 
-        var padding = screen.Bounds.Height - (screen.WorkingArea.Height - 55) + screen.Bounds.Width - screen.WorkingArea.Width;
+        var padding = 
+            screen.Bounds.Height - (screen.WorkingArea.Height - 55) + screen.Bounds.Width - screen.WorkingArea.Width;
         
         maxWidth = Math.Min(screen.WorkingArea.Width - padding, width);
         maxHeight = Math.Min(screen.WorkingArea.Height - padding, height);
         
         var aspectRatio = Math.Min(maxWidth / width, maxHeight / height);
 
-        return new Size(width * aspectRatio, height * aspectRatio);
-
+        var interfaceSize = 190;
+        var x = rotation is 0 or 180 ? Math.Max(maxWidth, window.MinWidth) : Math.Max(maxHeight, window.MinHeight);
+        var titleMaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+        return new[] { width * aspectRatio, height * aspectRatio, titleMaxWidth };
     }
 }

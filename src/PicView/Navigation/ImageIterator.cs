@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using System.Diagnostics;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PicView.Data.Imaging;
 using PicView.Data.IO;
@@ -7,83 +8,89 @@ namespace PicView.Navigation
 {
     public class ImageIterator
     {
-        public static int FolderIndex { get; private set; }
-        static List<string> Pics { get; set; }
+        public int FolderIndex { get; private set; }
+        public List<string>? Pics { get; }
+        public bool Reverse { get; private set; }
         
-        public ImageIterator()
-        {
-            Pics = new List<string>();
-        }
+        public Preloader Preloader { get; }
 
         public ImageIterator(FileInfo fileInfo)
         {
-            Pics = FileListHelper.GetFileList(fileInfo, SortFilesBy.Name) ?? throw new NotImplementedException();;
+            Pics = FileListHelper.GetFileList(fileInfo, SortFilesBy.Name) ?? throw new Exception();;
+            Preloader = new Preloader();
         }
         
         public async Task<IImage> GetPicFromFileAsync(FileInfo fileInfo)
         {
-            return await ImageDecoder.GetPicAsync(fileInfo).ConfigureAwait(false) ?? throw new NotImplementedException();;
+            return await ImageDecoder.GetPicAsync(fileInfo).ConfigureAwait(false)
+                   ?? throw new InvalidOperationException();
         }
 
-        public async Task<IImage> GetPicAtIndex(int index)
+        public async Task PreloadAsync()
+        {
+            await Preloader.PreLoad(
+                FolderIndex, Reverse, Pics ?? throw new Exception()).ConfigureAwait(false);
+        }
+
+        public Preloader.PreloadValue GetPicAtIndex(int index)
         {
             FolderIndex = index;
-            return await ImageDecoder.GetPicAsync(new FileInfo(Pics[index])).ConfigureAwait(false) ?? throw new NotImplementedException();;
+            return Preloader.Get(index) ?? throw new InvalidOperationException();
         }
     
-        public async Task<IImage>  Next()
+        public Preloader.PreloadValue Next()
         {
-            return await GetPicAtIndex(GetImageIterateIndex()).ConfigureAwait(false);
+            return GetPicAtIndex(GetImageIterateIndex(NavigateTo.Next));
         }
 
-        public async Task<IImage>  Prev()
+        public Preloader.PreloadValue Prev()
         {
-            return await GetPicAtIndex(GetImageIterateIndex(false)).ConfigureAwait(false);
+            return GetPicAtIndex(GetImageIterateIndex(NavigateTo.Prev));
         }
         
-        public async Task<IImage>  Last()
+        public Preloader.PreloadValue Last()
         {
-            return await GetPicAtIndex(GetImageIterateIndex(false, true)).ConfigureAwait(false);
+            return GetPicAtIndex(GetImageIterateIndex(NavigateTo.Last));
         }
 
-        public async Task<IImage>  First()
+        public Preloader.PreloadValue First()
         {
-            return await GetPicAtIndex(GetImageIterateIndex(true, true)).ConfigureAwait(false);
+            return GetPicAtIndex(GetImageIterateIndex(NavigateTo.First));
         }
         
-        private static int GetImageIterateIndex(bool forward = true, bool end = false)
+        public int GetImageIterateIndex(NavigateTo navigateTo)
         {
+#if DEBUG
+            Debug.Assert(Pics != null, nameof(Pics) + " != null");
+#endif
+            
             var next = FolderIndex;
 
-            if (end) // Go to first or last
+            switch (navigateTo)
             {
-                next = forward ? Pics.Count - 1 : 0;
-            }
-            else // Go to next or previous
-            {
-                if (forward)
-                {
+                case NavigateTo.Next:
                     // Go to next if able
                     if (FolderIndex + 1 == Pics?.Count)
                     {
                         return -1;
                     }
-
-                    next++;
-                }
-                else
-                {
+                    Reverse = false;
+                    return next + 1;
+                case NavigateTo.Prev:
                     // Go to prev if able
                     if (next - 1 < 0)
                     {
                         return -1;
                     }
-
-                    next--;
-                }
+                    Reverse = true;
+                    return next - 1;
+                case NavigateTo.First:
+                    return 0;
+                case NavigateTo.Last:
+                    return -1;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(navigateTo), navigateTo, null);
             }
-
-            return next;
         }
     }
 }

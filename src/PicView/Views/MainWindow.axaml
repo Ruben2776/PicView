@@ -7,13 +7,13 @@
     MinHeight="400"
     MinWidth="462"
     SizeToContent="WidthAndHeight"
-    Title="{Binding Title}"
+    Title="{Binding WindowTitle}"
     TransparencyLevelHint="AcrylicBlur"
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
     x:Class="PicView.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars"
+    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars" PointerWheelChanged="InputElement_OnPointerWheelChanged"
     xmlns:vm="using:PicView.ViewModels"
     Opened="TopLevel_OnOpened"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -23,11 +23,16 @@
     </Design.DataContext>
     
     <Window.KeyBindings>
+        <KeyBinding Command="{Binding ExitCommand}" Gesture="Escape"/>
+        
         <KeyBinding Command="{Binding Next}" Gesture="Right"/>
         <KeyBinding Command="{Binding Next}" Gesture="D"/>
         
         <KeyBinding Command="{Binding Prev}" Gesture="Left"/>
-        <KeyBinding Command="{Binding Next}" Gesture="A"/>
+        <KeyBinding Command="{Binding Prev}" Gesture="A"/>
+        
+        <KeyBinding Command="{Binding Last}" Gesture="Ctrl + Left"/>
+        <KeyBinding Command="{Binding First}" Gesture="Ctrl + A"/>
     </Window.KeyBindings>
 
 
@@ -117,6 +122,7 @@
                             Width="180">
 
                             <Button
+                                Command="{Binding Prev}"
                                 Background="Transparent"
                                 BorderBrush="{StaticResource BorderColor}"
                                 BorderThickness="0,0,1,1"
