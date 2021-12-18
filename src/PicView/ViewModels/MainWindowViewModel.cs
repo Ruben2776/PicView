@@ -4,9 +4,11 @@ using System.Reactive.Linq;
 using System.Runtime.Serialization;
 using ReactiveUI;
 using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using PicView.Data.Imaging;
 using PicView.Navigation;
 using PicView.Views;
 
@@ -16,7 +18,7 @@ namespace PicView.ViewModels
     {
         public MainWindowViewModel()
         {
-            if (Avalonia.Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             {
                 return;
             }
@@ -25,99 +27,54 @@ namespace PicView.ViewModels
             MinimizeCommand = ReactiveCommand.Create(() =>
                 desktop.MainWindow.WindowState = WindowState.Minimized);
 
-            Next = ReactiveCommand.Create(async () =>
-            {
-                if (Iterator is null) { return; }
-
-                var preloadValue = LoadImage(NavigateTo.Next);
-                
-                SetValues(desktop, preloadValue.FileInfo ?? throw new InvalidOperationException());
-                
-                await Iterator.PreloadAsync().ConfigureAwait(false);
-            });
+            Task NextTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.Next));
+            Next = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) NextTask);
             
-            Prev = ReactiveCommand.Create(async () =>
-            {
-                if (Iterator is null) { return; }
-
-                var preloadValue = LoadImage(NavigateTo.Prev);
-                
-                SetValues(desktop, preloadValue.FileInfo ?? throw new InvalidOperationException());
-                
-                await Iterator.PreloadAsync().ConfigureAwait(false);
-            });
+            Task PrevTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.Prev));
+            Prev = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) PrevTask);
             
-            Last = ReactiveCommand.Create(async () =>
-            {
-                if (Iterator is null) { return; }
-                
-                var preloadValue = LoadImage(NavigateTo.Last);
-                
-                SetValues(desktop, preloadValue.FileInfo ?? throw new InvalidOperationException());
-                
-                await Iterator.PreloadAsync().ConfigureAwait(false);
-            });
+            Task LastTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.Last));
+            Last = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) LastTask);
             
-            First = ReactiveCommand.Create(async () =>
-            {
-                if (Iterator is null) { return; }
-                
-                var preloadValue = LoadImage(NavigateTo.First);
-                
-                SetValues(desktop, preloadValue.FileInfo ?? throw new InvalidOperationException());
-                
-                await Iterator.PreloadAsync().ConfigureAwait(false);
-            });
+            Task FirstTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.First));
+            First = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) FirstTask);
             
-            LoadCommand = ReactiveCommand.Create(async () =>
-            {
-                var args = Environment.GetCommandLineArgs();
-                if (args.Length < 1) { return; }
-                
-                FileInfo fileInfo = new(args[1]);
-                Iterator = new ImageIterator(fileInfo);
-                Pic = await Iterator.GetPicFromFileAsync(fileInfo).ConfigureAwait(false);
-                SetValues(desktop, fileInfo);
-
-                await Iterator.PreloadAsync().ConfigureAwait(false);
-            });
+            LoadCommand = ReactiveCommand.Create(LoadTask);
         }
 
-        private Preloader.PreloadValue LoadImage(NavigateTo navigateTo)
+        private async Task LoadTask()
         {
-            var preloadValue = navigateTo switch
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length < 1) { return; }
+                
+            FileInfo fileInfo = new(args[1]);
+            Iterator = new ImageIterator(fileInfo);
+            var values = await Iterator.GetValuesFromFileAsync(fileInfo).ConfigureAwait(false);
+            await SetValues(values).ConfigureAwait(false);
+        }
+        
+        private async Task SetValues(ImageIterator.Values? values)
+        {
+            if (values is null) { return; }
+            
+            values.Image ??= await ImageDecoder.GetPicAsync(values.FileInfo).ConfigureAwait(false);
+            
+            Pic = values.Image;
+                
+            if (values.Sizes != null)
             {
-                NavigateTo.Next => Iterator?.Next() ?? throw new InvalidOperationException(),
-                NavigateTo.Prev => Iterator?.Prev() ?? throw new InvalidOperationException(),
-                NavigateTo.First => Iterator?.First() ?? throw new InvalidOperationException(),
-                NavigateTo.Last => Iterator?.Last() ?? throw new InvalidOperationException(),
-                _ => throw new ArgumentOutOfRangeException(nameof(navigateTo), navigateTo, null)
-            };
-            while (preloadValue.IsLoading)
-            {
-                WindowTitle = 
-                    Title = 
-                        Tooltip = "Loading...";
+                Width = values.Sizes[0];
+                Height = values.Sizes[1];
+                TitleWidth = values.Sizes[2];
             }
 
-            Pic = preloadValue.Image;
-            return preloadValue;
-        }
-
-        private void SetValues(IClassicDesktopStyleApplicationLifetime desktop, FileInfo fileInfo)
-        {
-            if (Pic == null || Iterator?.Pics == null) { throw new Exception(); }
+            WindowTitle = values?.Titles[0] ?? "Loading...";
+            Title = values?.Titles[1] ?? "Loading...";
+            Tooltip = values?.Titles[2] ?? "Loading...";
             
-            var sizes = 
-                Data.Sizing.ImageSizeHelper.GetScaledImageSize(Pic.Size.Width, Pic.Size.Height, 0, desktop.MainWindow);
-            TitleWidth = sizes[2];
-            Width = sizes[0];
-            Height = sizes[1];
-            var data = Data.TextData.TitleHelper.TitleString(
-                (int)Pic.Size.Width, (int)Pic.Size.Height, Iterator.FolderIndex, fileInfo, Iterator.Pics);
-            WindowTitle = data[0];
-            Title = data[1];
-            Tooltip = data[2];
+            if (Iterator is null) { return; }
+            
+            await Iterator.PreloadAsync().ConfigureAwait(false);
         }
         
         public ICommand? ExitCommand { get; }
@@ -126,7 +83,7 @@ namespace PicView.ViewModels
         
         private ImageIterator? Iterator { get; set; }
         
-        public ICommand? Next { get; }
+        public ReactiveCommand<ImageIterator.Values?, Unit>? Next { get; }
         public ICommand? Prev { get; }
         public ICommand? First { get; }
         public ICommand? Last { get; }

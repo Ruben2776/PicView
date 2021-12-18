@@ -13,7 +13,8 @@
     WindowStartupLocation="CenterScreen"
     x:Class="PicView.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars" PointerWheelChanged="InputElement_OnPointerWheelChanged"
+    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars" 
+    PointerWheelChanged="InputElement_OnPointerWheelChanged"
     xmlns:vm="using:PicView.ViewModels"
     Opened="TopLevel_OnOpened"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

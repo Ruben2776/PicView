@@ -39,6 +39,7 @@ namespace PicView.Navigation
         /// Add file to preloader from index. Returns true if new value added.
         /// </summary>
         /// <param name="i">Index of Pics</param>
+        /// <param name="pics"></param>
         /// <param name="fileInfo"></param>
         /// <param name="image"></param>
         public async Task<bool> AddAsync(int i, List<string> pics, FileInfo? fileInfo = null, IImage? image = null)
@@ -168,7 +169,7 @@ namespace PicView.Navigation
         /// <param name="index"></param>
         /// <param name="reverse"></param>
         /// <param name="pics"></param>
-        public Task PreLoad(int index, bool reverse, List<string> pics) => Task.Run(() =>
+        public Task PreLoad(int index, bool reverse, List<string> pics) => Task.Run(async() =>
         {
             var loadInfront = pics.Count >= 10 ? 5 : 3;
             var loadBehind = pics.Count >= 10 ? 3 : 2;
@@ -181,14 +182,14 @@ namespace PicView.Navigation
                 for (var i = index - 1; i > endPoint; i--)
                 {
                     if (pics.Count == 0 || pics.Count == _sources.Count) { return; }
-                    _ = AddAsync(i % pics.Count, pics).ConfigureAwait(false);
+                    await AddAsync(i % pics.Count, pics).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (var i = index + 1; i < (index + 1) + loadBehind; i++)
                 {
                     if (pics.Count == 0 || pics.Count == _sources.Count) { return; }
-                    _ = AddAsync(i % pics.Count, pics).ConfigureAwait(false);
+                    await AddAsync(i % pics.Count, pics).ConfigureAwait(false);
                 }
 
                 //Clean up in front
@@ -205,13 +206,13 @@ namespace PicView.Navigation
                 for (var i = index + 1; i < (index + 1) + loadInfront; i++)
                 {
                     if (pics.Count == 0 || pics.Count == _sources.Count) { return; }
-                    _ = AddAsync(i % pics.Count, pics).ConfigureAwait(false);
+                    await AddAsync(i % pics.Count, pics).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (var i = index - 1; i > endPoint; i--)
                 {
                     if (pics.Count == 0 || pics.Count == _sources.Count) { return; }
-                    _ = AddAsync(i % pics.Count, pics).ConfigureAwait(false);
+                    await AddAsync(i % pics.Count, pics).ConfigureAwait(false);
                 }
 
                 //Clean up behind

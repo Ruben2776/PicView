@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 
 namespace PicView.Data.Sizing;
 
@@ -19,10 +21,24 @@ public static class ImageSizeHelper
         maxHeight = Math.Min(screen.WorkingArea.Height - padding, height);
         
         var aspectRatio = Math.Min(maxWidth / width, maxHeight / height);
-
+        
         var interfaceSize = 190;
-        var x = rotation is 0 or 180 ? Math.Max(maxWidth, window.MinWidth) : Math.Max(maxHeight, window.MinHeight);
-        var titleMaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+        double titleMaxWidth = 0;
+        
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            var x = rotation is 0 or 180 ? Math.Max(maxWidth, window.MinWidth) : Math.Max(maxHeight, window.MinHeight);
+            titleMaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var x = rotation is 0 or 180 ? Math.Max(maxWidth, window.MinWidth) : Math.Max(maxHeight, window.MinHeight);
+                titleMaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+            }, Avalonia.Threading.DispatcherPriority.Normal).Wait();
+        }
+        
         return new[] { width * aspectRatio, height * aspectRatio, titleMaxWidth };
     }
 }
