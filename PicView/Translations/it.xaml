@@ -370,23 +370,25 @@
 
     <system:String x:Key="BatchResize">Batch ridimensiona</system:String>
 
-    <system:String x:Key="SourceFolder">Source folder</system:String>
-    <system:String x:Key="OutputFolder">Output folder</system:String>
+    <system:String x:Key="SourceFolder">Cartella di origine</system:String>
+    <system:String x:Key="OutputFolder">Cartella di uscita</system:String>
 
-    <system:String x:Key="ConvertTo">Convert to</system:String>
-    <system:String x:Key="NoConversion">No conversion</system:String>
+    <system:String x:Key="ConvertTo">Convertire in</system:String>
+    <system:String x:Key="NoConversion">Nessuna conversione</system:String>
 
-    <system:String x:Key="Compression">Compression</system:String>
-    <system:String x:Key="Lossless">Lossless</system:String>
-    <system:String x:Key="Lossy">Lossy</system:String>
+    <system:String x:Key="Compression">Compressione</system:String>
+    <system:String x:Key="Lossless">Senza perdita</system:String>
+    <system:String x:Key="Lossy">Con perdita</system:String>
 
-    <system:String x:Key="Qaulity">Quality</system:String>
-    <system:String x:Key="Percentage">Percentage</system:String>
+    <system:String x:Key="Qaulity">Qualità</system:String>
+    <system:String x:Key="Percentage">Percentuale</system:String>
 
-    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
-    <system:String x:Key="Thumbnail">Thumb</system:String>
+    <system:String x:Key="GenerateThumbnails">Genera le miniature</system:String>
+    <system:String x:Key="Thumbnail">Miniature</system:String>
 
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Start">Inizio</system:String>
+    <system:String x:Key="Cancel">Annulla</system:String>
+
+    <system:String x:Key="None">Nessuno</system:String>
 
 </ResourceDictionary>

@@ -376,9 +376,9 @@
     <system:String x:Key="ConvertTo">Konverter til</system:String>
     <system:String x:Key="NoConversion">Ingen konvertering</system:String>
 
-    <system:String x:Key="Compression">Compression</system:String>
-    <system:String x:Key="Lossless">Lossless</system:String>
-    <system:String x:Key="Lossy">Lossy</system:String>
+    <system:String x:Key="Compression">Kompression</system:String>
+    <system:String x:Key="Lossless">Ingen tab af kvalited</system:String>
+    <system:String x:Key="Lossy">Delvis tab af kvalitet</system:String>
 
     <system:String x:Key="Qaulity">Kvalitet</system:String>
     <system:String x:Key="Percentage">Procent</system:String>
@@ -388,5 +388,7 @@
 
     <system:String x:Key="Start">Start</system:String>
     <system:String x:Key="Cancel">Annuler</system:String>
+
+    <system:String x:Key="None">Ingen</system:String>
 
 </ResourceDictionary>

@@ -366,27 +366,29 @@
 
     <system:String x:Key="Resize">Zmień rozmiar</system:String>
     <system:String x:Key="ResizeImage">Zmiana rozmiaru obrazu</system:String>
-    <system:String x:Key="NoResize">No resize</system:String>
+    <system:String x:Key="NoResize">Brak zmiany</system:String>
 
     <system:String x:Key="BatchResize">Resize wsadowe</system:String>
 
-    <system:String x:Key="SourceFolder">Source folder</system:String>
-    <system:String x:Key="OutputFolder">Output folder</system:String>
+    <system:String x:Key="SourceFolder">Folder źródłowy</system:String>
+    <system:String x:Key="OutputFolder">Folder wyjściowy</system:String>
 
-    <system:String x:Key="ConvertTo">Convert to</system:String>
-    <system:String x:Key="NoConversion">No conversion</system:String>
+    <system:String x:Key="ConvertTo">Konwertuj na</system:String>
+    <system:String x:Key="NoConversion">Brak konwersji</system:String>
 
-    <system:String x:Key="Compression">Compression</system:String>
-    <system:String x:Key="Lossless">Lossless</system:String>
-    <system:String x:Key="Lossy">Lossy</system:String>
+    <system:String x:Key="Compression">Kompresja</system:String>
+    <system:String x:Key="Lossless">Bezstratny</system:String>
+    <system:String x:Key="Lossy">Z stratą</system:String>
 
-    <system:String x:Key="Qaulity">Quality</system:String>
-    <system:String x:Key="Percentage">Percentage</system:String>
+    <system:String x:Key="Qaulity">Jakość</system:String>
+    <system:String x:Key="Percentage">Odsetek</system:String>
 
-    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
-    <system:String x:Key="Thumbnail">Thumb</system:String>
+    <system:String x:Key="GenerateThumbnails">Generuj miniatury</system:String>
+    <system:String x:Key="Thumbnail">Miniatura</system:String>
 
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Start">Początek</system:String>
+    <system:String x:Key="Cancel">Anuluj</system:String>
+
+    <system:String x:Key="None">Nic</system:String>
 
 </ResourceDictionary>

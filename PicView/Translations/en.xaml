@@ -389,4 +389,6 @@
     <system:String x:Key="Start">Start</system:String>
     <system:String x:Key="Cancel">Cancel</system:String>
 
+    <system:String x:Key="None">None</system:String>
+
 </ResourceDictionary>

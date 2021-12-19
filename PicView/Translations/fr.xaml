@@ -389,4 +389,6 @@
     <system:String x:Key="Start">Démarrer</system:String>
     <system:String x:Key="Cancel">Annuler</system:String>
 
+    <system:String x:Key="None">Rien</system:String>
+
 </ResourceDictionary>

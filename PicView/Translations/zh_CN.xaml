@@ -383,10 +383,12 @@
     <system:String x:Key="Qaulity">质量</system:String>
     <system:String x:Key="Percentage">百分比</system:String>
 
-    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
-    <system:String x:Key="Thumbnail">Thumb</system:String>
+    <system:String x:Key="GenerateThumbnails">生成缩略图</system:String>
+    <system:String x:Key="Thumbnail">微型</system:String>
 
     <system:String x:Key="Start">启动</system:String>
     <system:String x:Key="Cancel">取消</system:String>
+
+    <system:String x:Key="None">没有任何</system:String>
 
 </ResourceDictionary>

@@ -96,7 +96,7 @@
     <system:String x:Key="ChangingLanguageRequiresRestart">* Cambiar el lenguaje requiere reabrir el programa</system:String>
 
     <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">Fullscreen gallery layout</system:String>
+    <system:String x:Key="FullscreenGalleryLayout">Diseño de la galería</system:String>
     <system:String x:Key="Vertical">Vertical</system:String>
     <system:String x:Key="Horizontal">Horizontal</system:String>
 
@@ -181,7 +181,7 @@
     <system:String x:Key="Open">Abrir</system:String>
     <system:String x:Key="OpenWith">Abrir con...</system:String>
     <system:String x:Key="OpenFileDialog">Abrir selector de archivo</system:String>
-    <system:String x:Key="OpenLastFile">Open last file</system:String>
+    <system:String x:Key="OpenLastFile">Abrir ultimo archivo</system:String>
     <system:String x:Key="ShowInFolder">Mostrar en carpeta</system:String>
     <system:String x:Key="Save">Guardar</system:String>
     <system:String x:Key="SaveImage">Guardar Imagen</system:String>
@@ -370,23 +370,25 @@
 
     <system:String x:Key="BatchResize">Cambio de tamaño por lotes</system:String>
 
-    <system:String x:Key="SourceFolder">Source folder</system:String>
-    <system:String x:Key="OutputFolder">Output folder</system:String>
+    <system:String x:Key="SourceFolder">Carpeta de origen</system:String>
+    <system:String x:Key="OutputFolder">Carpeta de salida</system:String>
 
-    <system:String x:Key="ConvertTo">Convert to</system:String>
-    <system:String x:Key="NoConversion">No conversion</system:String>
+    <system:String x:Key="ConvertTo">Convertir a</system:String>
+    <system:String x:Key="NoConversion">Sin conversión</system:String>
 
-    <system:String x:Key="Compression">Compression</system:String>
+    <system:String x:Key="Compression">Compresión</system:String>
     <system:String x:Key="Lossless">Lossless</system:String>
     <system:String x:Key="Lossy">Lossy</system:String>
 
-    <system:String x:Key="Qaulity">Quality</system:String>
-    <system:String x:Key="Percentage">Percentage</system:String>
+    <system:String x:Key="Qaulity">Calidad</system:String>
+    <system:String x:Key="Percentage">Porcentaje</system:String>
 
-    <system:String x:Key="GenerateThumbnails">Generate thumbnails</system:String>
-    <system:String x:Key="Thumbnail">Thumb</system:String>
+    <system:String x:Key="GenerateThumbnails">Generar miniaturas</system:String>
+    <system:String x:Key="Thumbnail">Miniatura</system:String>
 
-    <system:String x:Key="Start">Start</system:String>
-    <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Start">Comienzo</system:String>
+    <system:String x:Key="Cancel">Cancelar</system:String>
+
+    <system:String x:Key="None">Ninguna</system:String>
 
 </ResourceDictionary>

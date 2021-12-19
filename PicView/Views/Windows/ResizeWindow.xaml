@@ -120,14 +120,14 @@
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Style>
-                <TextBlock Text="Compression" />
+                <TextBlock Text="{StaticResource Compression}" />
                 <ComboBox MinWidth="130">
                     <ComboBoxItem
                         x:Name="LosslessCompressionChoice"
-                        Content="Lossless"
+                        Content="{StaticResource Lossless}"
                         IsSelected="True" />
-                    <ComboBoxItem x:Name="LossyCompressionChoice" Content="Lossy" />
-                    <ComboBoxItem Content="No compression" />
+                    <ComboBoxItem x:Name="LossyCompressionChoice" Content="{StaticResource Lossy}" />
+                    <ComboBoxItem Content="{StaticResource None}" />
                 </ComboBox>
             </StackPanel>
 

@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:system="clr-namespace:System;assembly=mscorlib"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <!--  Text in the title bar  -->
     <system:String x:Key="Loading">Se încarcă...</system:String>
@@ -388,5 +388,7 @@
 
     <system:String x:Key="Start">Pornire</system:String>
     <system:String x:Key="Cancel">Anulare</system:String>
+
+    <system:String x:Key="None">Nici unul</system:String>
 
 </ResourceDictionary>
