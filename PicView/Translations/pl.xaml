@@ -22,7 +22,7 @@
     <system:String x:Key="NewWindow">Nowe okno</system:String>
 
     <!--  About window  -->
-    <system:String x:Key="About">About</system:String>
+    <system:String x:Key="About">Informacje</system:String>
     <system:String x:Key="InfoWindowTitle">Informacje i skróty</system:String>
     <system:String x:Key="ApplicationShortcuts">Skróty aplikacji</system:String>
     <system:String x:Key="SavedOnNextStartUp">(Zapisano do następnego uruchomienia)</system:String>
@@ -103,7 +103,7 @@
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Wciśnij Ctrl aby przybliżyć, użyj kółka myszy aby się poruszać</system:String>
     <system:String x:Key="ScrollToZoom">Użyj kółka myszy, aby przybliżyć, wciśnij Ctrl, aby się poruszać</system:String>
-    <system:String x:Key="HorizontalScroll">Zwój poziomy</system:String>
+    <system:String x:Key="HorizontalScroll">Przewijanie w poziomie</system:String>
     <system:String x:Key="Reverse">Odwrócić</system:String>
     <system:String x:Key="Forward">Do przodu</system:String>
 
@@ -213,7 +213,7 @@
     <system:String x:Key="FitToWindow">Dopasuj do okna/obrazu</system:String>
     <system:String x:Key="ShowHideUI">Pokaż/ukryj interfejs</system:String>
     <system:String x:Key="ChangeBackground">Zmień tło</system:String>
-    <system:String x:Key="ChangeBackgroundTooltip">Zmień kolor tła dla obrazów z transparentnym tłem</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">Zmień kolor tła dla obrazów z przezroczystym tłem</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Kopiuj</system:String>
@@ -261,18 +261,18 @@
     <system:String x:Key="Centimeters">centymetrów</system:String>
     <system:String x:Key="Inches">cali</system:String>
     <system:String x:Key="BitDepth">Bitów głębkości koloru</system:String>
-    <system:String x:Key="SizeTooltip">Wprowadź wybrany rozmiar w pikselach lub procentach.</system:String>
+    <system:String x:Key="SizeTooltip">Wprowadź rozmiar w pikselach lub procentach.</system:String>
 
     <!--  Keyboard key names  -->
-    <system:String x:Key="Del">Usuń</system:String>
+    <system:String x:Key="Del">Del</system:String>
     <system:String x:Key="Ctrl">Ctrl</system:String>
     <system:String x:Key="Shift">Shift</system:String>
     <system:String x:Key="Alt">Alt</system:String>
     <system:String x:Key="Space">Spacja</system:String>
     <system:String x:Key="Enter">Enter</system:String>
     <system:String x:Key="Esc">Esc</system:String>
-    <system:String x:Key="NumpadPlus">Numpad +</system:String>
-    <system:String x:Key="NumpadMinus">Numpad -</system:String>
+    <system:String x:Key="NumpadPlus">Klawisz &quot;+&quot; klawiatury numerycznej</system:String>
+    <system:String x:Key="NumpadMinus">Klawisz &quot;-&quot; klawiatury numerycznej</system:String>
     <!--  Mouse key names  -->
     <system:String x:Key="MouseWheel">Kółko myszy</system:String>
     <system:String x:Key="MouseKeyForward">Przycisk myszy wprzód</system:String>
@@ -351,7 +351,7 @@
 
     <system:String x:Key="OptimizeImage">Optymalizuj zdjęcie</system:String>
 
-    <system:String x:Key="Effects">Efekty cieniowania</system:String>
+    <system:String x:Key="Effects">Efekty</system:String>
     <system:String x:Key="EffectsTooltip">Pokaż okno z efektami zdjęć</system:String>
 
     <system:String x:Key="CropPicture">Przytnij zdjęcie</system:String>
@@ -365,7 +365,7 @@
     <system:String x:Key="ShowResizeWindow">Pokaż okno Zmiana rozmiaru</system:String>
 
     <system:String x:Key="Resize">Zmień rozmiar</system:String>
-    <system:String x:Key="ResizeImage">Zmiana rozmiaru obrazu</system:String>
+    <system:String x:Key="ResizeImage">Zmień rozmiar obrazu</system:String>
     <system:String x:Key="NoResize">Brak zmiany</system:String>
 
     <system:String x:Key="BatchResize">Resize wsadowe</system:String>
@@ -374,19 +374,19 @@
     <system:String x:Key="OutputFolder">Folder wyjściowy</system:String>
 
     <system:String x:Key="ConvertTo">Konwertuj na</system:String>
-    <system:String x:Key="NoConversion">Brak konwersji</system:String>
+    <system:String x:Key="NoConversion">Bez konwersji</system:String>
 
     <system:String x:Key="Compression">Kompresja</system:String>
-    <system:String x:Key="Lossless">Bezstratny</system:String>
-    <system:String x:Key="Lossy">Z stratą</system:String>
+    <system:String x:Key="Lossless">Bezstratna</system:String>
+    <system:String x:Key="Lossy">Stratna</system:String>
 
     <system:String x:Key="Qaulity">Jakość</system:String>
-    <system:String x:Key="Percentage">Odsetek</system:String>
+    <system:String x:Key="Percentage">Procent</system:String>
 
     <system:String x:Key="GenerateThumbnails">Generuj miniatury</system:String>
     <system:String x:Key="Thumbnail">Miniatura</system:String>
 
-    <system:String x:Key="Start">Początek</system:String>
+    <system:String x:Key="Start">Rozpocznij</system:String>
     <system:String x:Key="Cancel">Anuluj</system:String>
 
     <system:String x:Key="None">Nic</system:String>
