@@ -25,11 +25,11 @@
 		<Content Include="Assets\PicView\icon__Q6k_icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.11-rc.2" />
-		<PackageReference Include="Avalonia.Desktop" Version="0.10.11-rc.2" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.11-rc.2" />
+		<PackageReference Include="Avalonia" Version="0.10.11" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.11" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11-rc.2" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 	<ItemGroup>

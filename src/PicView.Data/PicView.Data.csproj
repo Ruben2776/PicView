@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.11-rc.2" />
+		<PackageReference Include="Avalonia" Version="0.10.11" />
 	</ItemGroup>
 
 	<ItemGroup>

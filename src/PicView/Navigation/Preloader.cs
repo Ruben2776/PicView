@@ -78,7 +78,7 @@ namespace PicView.Navigation
                 key = Math.Abs(key);
             }
 
-            else if (key >= pics?.Count)
+            else if (key >= pics.Count)
             {
 #if DEBUG
                 Trace.WriteLine("Preloader " + nameof(Remove) + " key null, " + key);
@@ -97,7 +97,7 @@ namespace PicView.Navigation
 #if DEBUG
                 if (!_sources.TryRemove(key, out _))
                 {
-                    Trace.WriteLine($"Failed to Remove {key} from Preloader, index {pics?[key]}");
+                    Trace.WriteLine($"Failed to Remove {key} from Preloader, index {pics[key]}");
                 }
 #else
             _sources.TryRemove(key, out _);
@@ -107,12 +107,11 @@ namespace PicView.Navigation
             catch (Exception e)
             {
                 Trace.WriteLine("Preloader " + nameof(Remove) + "exception" + Environment.NewLine + e.Message);
-                return;
             }
 #else
             catch (Exception)
             {
-                return;
+                
             }
 #endif
 
@@ -171,7 +170,7 @@ namespace PicView.Navigation
         /// <param name="pics"></param>
         public Task PreLoad(int index, bool reverse, List<string> pics) => Task.Run(async() =>
         {
-            var loadInfront = pics.Count >= 10 ? 5 : 3;
+            var loadInfront = pics.Count >= 10 ? 4 : 2;
             var loadBehind = pics.Count >= 10 ? 3 : 2;
 
             int endPoint;

@@ -62,7 +62,7 @@ namespace PicView.Navigation
             FolderIndex = index;
 
             var preloadValue = Preloader.Get(index);
-            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
                 preloadValue?.Image is null)
             {
                 return null;

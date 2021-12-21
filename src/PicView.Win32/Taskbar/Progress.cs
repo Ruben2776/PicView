@@ -4,7 +4,7 @@
     {
         public static void SetProgress(int value)
         {
-
+            
         }
 
         public static void Reset()

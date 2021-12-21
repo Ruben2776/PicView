@@ -13,28 +13,13 @@
     WindowStartupLocation="CenterScreen"
     x:Class="PicView.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars" 
-    PointerWheelChanged="InputElement_OnPointerWheelChanged"
+    xmlns:customTitleBars="clr-namespace:PicView.Views.CustomTitleBars"
     xmlns:vm="using:PicView.ViewModels"
-    Opened="TopLevel_OnOpened"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
-    
-    <Window.KeyBindings>
-        <KeyBinding Command="{Binding ExitCommand}" Gesture="Escape"/>
-        
-        <KeyBinding Command="{Binding Next}" Gesture="Right"/>
-        <KeyBinding Command="{Binding Next}" Gesture="D"/>
-        
-        <KeyBinding Command="{Binding Prev}" Gesture="Left"/>
-        <KeyBinding Command="{Binding Prev}" Gesture="A"/>
-        
-        <KeyBinding Command="{Binding Last}" Gesture="Ctrl + Left"/>
-        <KeyBinding Command="{Binding First}" Gesture="Ctrl + A"/>
-    </Window.KeyBindings>
 
 
     <Border
@@ -53,6 +38,7 @@
                 BorderBrush="{StaticResource BorderColor}"
                 BorderThickness="0,1,0,0"
                 DockPanel.Dock="Bottom"
+                PointerPressed="MoveWindow"
                 Height="25">
                 <Grid x:Name="LowerBar">
                     <Canvas

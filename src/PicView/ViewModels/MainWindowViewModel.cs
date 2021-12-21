@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Runtime.Serialization;
+﻿using System.Reactive;
 using ReactiveUI;
 using System.Windows.Input;
 using Avalonia;
@@ -10,7 +7,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using PicView.Data.Imaging;
 using PicView.Navigation;
-using PicView.Views;
 
 namespace PicView.ViewModels
 {
@@ -18,7 +14,7 @@ namespace PicView.ViewModels
     {
         public MainWindowViewModel()
         {
-            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             {
                 return;
             }
@@ -28,16 +24,16 @@ namespace PicView.ViewModels
                 desktop.MainWindow.WindowState = WindowState.Minimized);
 
             Task NextTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.Next));
-            Next = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) NextTask);
+            Next = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values, Task>) NextTask);
             
             Task PrevTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.Prev));
-            Prev = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) PrevTask);
+            Prev = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values, Task>) PrevTask);
             
             Task LastTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.Last));
-            Last = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) LastTask);
+            Last = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values, Task>) LastTask);
             
             Task FirstTask(ImageIterator.Values _) => SetValues(Iterator?.GetValues(NavigateTo.First));
-            First = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values?, Task>) FirstTask);
+            First = ReactiveCommand.CreateFromTask((Func<ImageIterator.Values, Task>) FirstTask);
             
             LoadCommand = ReactiveCommand.Create(LoadTask);
         }
@@ -68,9 +64,9 @@ namespace PicView.ViewModels
                 TitleWidth = values.Sizes[2];
             }
 
-            WindowTitle = values?.Titles[0] ?? "Loading...";
-            Title = values?.Titles[1] ?? "Loading...";
-            Tooltip = values?.Titles[2] ?? "Loading...";
+            WindowTitle = values.Titles[0];
+            Title = values.Titles[1];
+            Tooltip = values.Titles[2];
             
             if (Iterator is null) { return; }
             
@@ -83,10 +79,10 @@ namespace PicView.ViewModels
         
         private ImageIterator? Iterator { get; set; }
         
-        public ReactiveCommand<ImageIterator.Values?, Unit>? Next { get; }
-        public ICommand? Prev { get; }
-        public ICommand? First { get; }
-        public ICommand? Last { get; }
+        public ReactiveCommand<ImageIterator.Values, Unit> Next { get; }
+        public ReactiveCommand<ImageIterator.Values, Unit> Prev { get; }
+        public ReactiveCommand<ImageIterator.Values, Unit> First { get; }
+        public ReactiveCommand<ImageIterator.Values, Unit> Last { get; }
 
         private string _windowTitle = "PicView";
         public string WindowTitle

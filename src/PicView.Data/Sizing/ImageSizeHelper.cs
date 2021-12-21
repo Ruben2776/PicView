@@ -22,7 +22,7 @@ public static class ImageSizeHelper
         
         var aspectRatio = Math.Min(maxWidth / width, maxHeight / height);
         
-        var interfaceSize = 190;
+        var interfaceSize = 195;
         double titleMaxWidth = 0;
         
         if (Dispatcher.UIThread.CheckAccess())
@@ -36,7 +36,7 @@ public static class ImageSizeHelper
             {
                 var x = rotation is 0 or 180 ? Math.Max(maxWidth, window.MinWidth) : Math.Max(maxHeight, window.MinHeight);
                 titleMaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
-            }, Avalonia.Threading.DispatcherPriority.Normal).Wait();
+            }, DispatcherPriority.Normal).Wait();
         }
         
         return new[] { width * aspectRatio, height * aspectRatio, titleMaxWidth };

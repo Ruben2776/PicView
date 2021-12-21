@@ -1,19 +1,14 @@
-using System.Reactive.Disposables;
 using Avalonia;
-using Avalonia.Animation.Animators;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Input.Raw;
 using Avalonia.Markup.Xaml;
-using Avalonia.Platform;
 using Avalonia.ReactiveUI;
-using Avalonia.Win32;
+using PicView.Shortcuts;
 using PicView.ViewModels;
-using ReactiveUI;
 
 namespace PicView.Views
 {
-    public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
+    public class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         public MainWindow()
         {
@@ -21,6 +16,7 @@ namespace PicView.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+            Opened += (_,_) => TopLevel_OnOpened();
         }
 
         private void InitializeComponent()
@@ -28,10 +24,11 @@ namespace PicView.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void TopLevel_OnOpened(object? sender, EventArgs e)
+        private void TopLevel_OnOpened()
         {
             (DataContext as MainWindowViewModel)?.LoadCommand?.Execute(null);
             
+            // Keep window position when resizing
             ClientSizeProperty.Changed.Subscribe(size =>
             {
                 var x = (size.OldValue.Value.Width - size.NewValue.Value.Width) / 2;
@@ -39,18 +36,19 @@ namespace PicView.Views
 
                 Position = new PixelPoint(Position.X + (int)x, Position.Y + (int)y);
             });
+            
+            var vm = (DataContext as MainWindowViewModel);
+            KeyDown += (_, e) => MainShortcuts.HandleKeyDown(vm, e);
+            KeyUp += (_, e) => MainShortcuts.HandleKeyUp(vm, e);
+            PointerWheelChanged += (_, e) => MainShortcuts.HandlePointerWheel(vm, e);
         }
-
-        private void InputElement_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+        
+        private void MoveWindow(object? sender, PointerPressedEventArgs e)
         {
-            if (e.Delta.Y > 0)
-            {
-                (DataContext as MainWindowViewModel)?.Prev?.Execute(null);
-            }
-            else
-            {
-                (DataContext as MainWindowViewModel)?.Next?.Execute(null);
-            }
+            if (VisualRoot is null) { return; }
+            
+            var hostWindow = (Window)VisualRoot;
+            hostWindow.BeginMoveDrag(e);
         }
     }
 }
