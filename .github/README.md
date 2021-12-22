@@ -54,6 +54,7 @@ Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><b
 French by <a href="https://www.challenger-systems.com/2021/11/picview-156.html">Sylvain LOUIS</a> <br>
 Italian by <a href="https://github.com/franpoli">franpoli</a> <br>
 Russian by <a href="https://github.com/andude10">andude10</a> <br>
+Romanian by <a href="https://crowdin.com/profile/lmg">M. Gabriel Lup</a> <br>
 English and Danish by me<br>
 
 **Looking for translators!**
