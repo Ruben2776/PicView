@@ -12,7 +12,6 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenButtonBrush); };
             MouseEnter += delegate
             {
                 if (Properties.Settings.Default.Fullscreen)

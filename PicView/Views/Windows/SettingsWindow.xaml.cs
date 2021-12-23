@@ -85,13 +85,6 @@ namespace PicView.Views.Windows
                     Properties.Settings.Default.Save();
                 };
 
-                // BorderColorRadio
-                BorderRadio.Click += UpdateUIValues.SetBorderColorEnabled;
-                if (Properties.Settings.Default.WindowBorderColorEnabled)
-                {
-                    BorderRadio.IsChecked = true;
-                }
-
                 WallpaperApply.MouseLeftButtonDown += async delegate
                 {
                     var x = WallpaperStyle.Fill;
@@ -252,188 +245,163 @@ namespace PicView.Views.Windows
             TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
             // BlueRadio
-            BlueRadio.PreviewMouseLeftButtonDown += BlueRadio_PreviewMouseLeftButtonDown;
             BlueRadio.MouseEnter += BlueRadio_MouseEnter;
             BlueRadio.MouseLeave += BlueRadio_MouseLeave;
             BlueRadio.Click += Blue;
 
             // PinkRadio
-            PinkRadio.PreviewMouseLeftButtonDown += PinkRadio_PreviewMouseLeftButtonDown;
             PinkRadio.MouseEnter += PinkRadio_MouseEnter;
             PinkRadio.MouseLeave += PinkRadio_MouseLeave;
             PinkRadio.Click += Pink;
 
             // OrangeRadio
-            OrangeRadio.PreviewMouseLeftButtonDown += OrangeRadio_PreviewMouseLeftButtonDown;
             OrangeRadio.MouseEnter += OrangeRadio_MouseEnter;
             OrangeRadio.MouseLeave += OrangeRadio_MouseLeave;
             OrangeRadio.Click += Orange;
 
             // GreenRadio
-            GreenRadio.PreviewMouseLeftButtonDown += GreenRadio_PreviewMouseLeftButtonDown;
             GreenRadio.MouseEnter += GreenRadio_MouseEnter;
             GreenRadio.MouseLeave += GreenRadio_MouseLeave;
             GreenRadio.Click += Green;
 
             // RedRadio
-            RedRadio.PreviewMouseLeftButtonDown += RedRadio_PreviewMouseLeftButtonDown;
             RedRadio.MouseEnter += RedRadio_MouseEnter;
             RedRadio.MouseLeave += RedRadio_MouseLeave;
             RedRadio.Click += Red;
 
             // TealRadio
-            TealRadio.PreviewMouseLeftButtonDown += TealRadio_PreviewMouseLeftButtonDown;
             TealRadio.MouseEnter += TealRadio_MouseEnter;
             TealRadio.MouseLeave += TealRadio_MouseLeave;
             TealRadio.Click += Teal;
 
             // AquaRadio
-            AquaRadio.PreviewMouseLeftButtonDown += AquaRadio_PreviewMouseLeftButtonDown;
             AquaRadio.MouseEnter += AquaRadio_MouseEnter;
             AquaRadio.MouseLeave += AquaRadio_MouseLeave;
             AquaRadio.Click += Aqua;
 
             // GoldenRadio
-            GoldenRadio.PreviewMouseLeftButtonDown += GoldenRadio_PreviewMouseLeftButtonDown;
             GoldenRadio.MouseEnter += GoldenRadio_MouseEnter;
             GoldenRadio.MouseLeave += GoldenRadio_MouseLeave;
             GoldenRadio.Click += Golden;
 
             // PurpleRadio
-            PurpleRadio.PreviewMouseLeftButtonDown += PurpleRadio_PreviewMouseLeftButtonDown;
             PurpleRadio.MouseEnter += PurpleRadio_MouseEnter;
             PurpleRadio.MouseLeave += PurpleRadio_MouseLeave;
             PurpleRadio.Click += Purple;
 
             // CyanRadio
-            CyanRadio.PreviewMouseLeftButtonDown += CyanRadio_PreviewMouseLeftButtonDown;
             CyanRadio.MouseEnter += CyanRadio_MouseEnter;
             CyanRadio.MouseLeave += CyanRadio_MouseLeave;
             CyanRadio.Click += Cyan;
 
             // MagentaRadio
-            MagentaRadio.PreviewMouseLeftButtonDown += MagentaRadio_PreviewMouseLeftButtonDown;
             MagentaRadio.MouseEnter += MagentaRadio_MouseEnter;
             MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
             MagentaRadio.Click += Magenta;
 
             // LimeRadio
             LimeRadio.Click += Lime;
-            LimeRadio.PreviewMouseLeftButtonDown += LimeRadio_PreviewMouseLeftButtonDown;
             LimeRadio.MouseEnter += LimeRadio_MouseEnter;
             LimeRadio.MouseLeave += Lime_MouseLeave;
 
             // WallpaperApply
             WallpaperApply.MouseEnter += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
-                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
+                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                //WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             WallpaperApply.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
-                WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                //colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
+                //WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // RestartTheme
             ThemeRestart.MouseEnter += delegate
             {
-                colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = MainColor;
+                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                //ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             ThemeRestart.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                colorAnimation.To = MainColor;
-                ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                //colorAnimation.To = MainColor;
+                //ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // LanguageRestart
             LanguageRestart.MouseEnter += delegate
             {
-                colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = MainColor;
+                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                //LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             LanguageRestart.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                colorAnimation.To = MainColor;
-                LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                //colorAnimation.To = MainColor;
+                //LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // DarkThemeRadio
-            DarkThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DarkThemeText); };
             DarkThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(DarkThemeText); };
             DarkThemeRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(DarkThemeBrush); };
             DarkThemeRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(DarkThemeText); };
             DarkThemeRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(DarkThemeBrush); };
 
             // LightThemeRadio
-            LightThemeRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(LightThemeText); };
             LightThemeRadio.MouseEnter += delegate { ButtonMouseOverAnim(LightThemeText); };
             LightThemeRadio.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(LightThemeBrush); };
             LightThemeRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(LightThemeText); };
             LightThemeRadio.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(LightThemeBrush); };
 
             // SubDirRadio
-            SubDirRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SubDirText); };
             SubDirRadio.MouseEnter += delegate { ButtonMouseOverAnim(SubDirText); };
             SubDirRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(SubDirText); };
 
             // TopmostRadio
-            TopmostRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(TopMostDirText); };
             TopmostRadio.MouseEnter += delegate { ButtonMouseOverAnim(TopMostDirText); };
             TopmostRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(TopMostDirText); };
 
             // CenterRadio
-            CenterRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CenterubDirText); };
             CenterRadio.MouseEnter += delegate { ButtonMouseOverAnim(CenterubDirText); };
             CenterRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(CenterubDirText); };
 
-            // BorderRadio
-            BorderRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BorderBrushText); };
-            BorderRadio.MouseEnter += delegate { ButtonMouseOverAnim(BorderBrushText); };
-            BorderRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(BorderBrushText); };
-
             // AltUIRadio
-            AltUIRadio.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(AltUIText); };
             AltUIRadio.MouseEnter += delegate { ButtonMouseOverAnim(AltUIText); };
             AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
 
 
 
             // ScrollZoom
-            ScrollZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ScrollZoomText); };
             ScrollZoom.MouseEnter += delegate
             {
-                colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = MainColor;
+                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                //ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             ScrollZoom.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                colorAnimation.To = MainColor;
-                ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                //colorAnimation.To = MainColor;
+                //ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // CtrlZoom
-            CtrlZoom.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(CtrlZoomText); };
             CtrlZoom.MouseEnter += delegate
             {
-                colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = MainColor;
+                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                //CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             CtrlZoom.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                colorAnimation.To = MainColor;
-                CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                //colorAnimation.To = MainColor;
+                //CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             if (!Properties.Settings.Default.DarkTheme)
@@ -621,11 +589,6 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void BlueRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(BlueBrush, 1);
-        }
-
         // Pink
         private void PinkRadio_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -649,11 +612,6 @@ namespace PicView.Views.Windows
                 PinkBrush,
                 2
             );
-        }
-
-        private void PinkRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(PinkBrush, 2);
         }
 
         // Orange
@@ -681,11 +639,6 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void OrangeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(OrangeBrush, 3);
-        }
-
         // Green
         private void GreenRadio_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -709,11 +662,6 @@ namespace PicView.Views.Windows
                 GreenBrush,
                 4
             );
-        }
-
-        private void GreenRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GreenBrush, 4);
         }
 
         // Red
@@ -741,11 +689,6 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void RedRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(RedBrush, 5);
-        }
-
         // Teal
         private void TealRadio_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -769,11 +712,6 @@ namespace PicView.Views.Windows
                 TealBrush,
                 6
             );
-        }
-
-        private void TealRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(TealBrush, 6);
         }
 
         // Aqua
@@ -801,11 +739,6 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void AquaRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(AquaBrush, 7);
-        }
-
         // Golden
         private void GoldenRadio_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -829,11 +762,6 @@ namespace PicView.Views.Windows
                 GoldenBrush,
                 8
             );
-        }
-
-        private void GoldenRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(GoldenBrush, 8);
         }
 
         // Purple
@@ -861,11 +789,6 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void PurpleRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(PurpleBrush, 9);
-        }
-
         // Cyan
         private void CyanRadio_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -889,11 +812,6 @@ namespace PicView.Views.Windows
                 CyanBrush,
                 10
             );
-        }
-
-        private void CyanRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(CyanBrush, 10);
         }
 
         // Magenta
@@ -921,11 +839,6 @@ namespace PicView.Views.Windows
             );
         }
 
-        private void MagentaRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(MagentaBrush, 11);
-        }
-
         // Lime
         private void Lime_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -949,11 +862,6 @@ namespace PicView.Views.Windows
                 LimeBrush,
                 12
             );
-        }
-
-        private void LimeRadio_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(LimeBrush, 12);
         }
 
         #endregion EventHandlers

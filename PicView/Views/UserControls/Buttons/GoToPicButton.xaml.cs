@@ -21,7 +21,6 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GoToPicBrush);
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush, false);
                 TheButton.Click += async (s, x) => await GoToPicEventAsync(s, x).ConfigureAwait(false);

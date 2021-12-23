@@ -114,7 +114,6 @@ namespace PicView.PicGallery
 
                 ShowNavigation(false);
                 ShowTopandBottom(false);
-                ConfigureSettings.ConfigColors.UpdateColor(true);
                 ConfigureWindows.GetMainWindow.Focus();
             }
             else
@@ -257,8 +256,8 @@ namespace PicView.PicGallery
                 return;
             }
 
-            var pic = 
-                Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size) 
+            var pic =
+                Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size)
                 ?? ImageFunctions.ImageErrorMessage();
             UpdatePic(i, pic);
         }

@@ -108,7 +108,6 @@ namespace PicView.Views.Windows
             MainBackground.MouseLeftButtonDown += (_, _) => DragMove();
 
             // FileProperties
-            FileProperties.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(FilePropertiesFill);
             FileProperties.MouseEnter += (_, _) => ButtonMouseOverAnim(FilePropertiesFill);
             FileProperties.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FilePropertiesBrush);
             FileProperties.MouseLeave += (_, _) => ButtonMouseLeaveAnim(FilePropertiesFill);
@@ -116,7 +115,6 @@ namespace PicView.Views.Windows
             FileProperties.Click += (_, _) => FileHandling.FileFunctions.ShowFileProperties();
 
             // Delete
-            Delete.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(DeleteFill);
             Delete.MouseEnter += (_, _) => ButtonMouseOverAnim(DeleteFill);
             Delete.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(DeleteBrush);
             Delete.MouseLeave += (_, _) => ButtonMouseLeaveAnim(DeleteFill);
@@ -124,7 +122,6 @@ namespace PicView.Views.Windows
             Delete.Click += async (_, _) => await FileHandling.DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift)).ConfigureAwait(false);
 
             // OpenWith
-            OpenWith.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(OpenWithFill);
             OpenWith.MouseEnter += (_, _) => ButtonMouseOverAnim(OpenWithFill);
             OpenWith.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(OpenWithBrush);
             OpenWith.MouseLeave += (_, _) => ButtonMouseLeaveAnim(OpenWithFill);
@@ -132,7 +129,6 @@ namespace PicView.Views.Windows
             OpenWith.Click += (_, _) => FileHandling.Open_Save.OpenWith(Pics[FolderIndex]);
 
             // ShowInFolder
-            ShowInFolder.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(ShowInFolderFill);
             ShowInFolder.MouseEnter += (_, _) => ButtonMouseOverAnim(ShowInFolderFill);
             ShowInFolder.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ShowInFolderBrush);
             ShowInFolder.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ShowInFolderFill);
@@ -140,7 +136,6 @@ namespace PicView.Views.Windows
             ShowInFolder.Click += (_, _) => FileHandling.Open_Save.Open_In_Explorer();
 
             // Optimize Image
-            OptimizeImageButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(OptimizeImageFill);
             OptimizeImageButton.MouseEnter += (_, _) => ButtonMouseOverAnim(OptimizeImageFill);
             OptimizeImageButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(OptimizeImageBrush);
             OptimizeImageButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(OptimizeImageFill);
@@ -148,7 +143,6 @@ namespace PicView.Views.Windows
             OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
 
             // ExpandButton
-            ExpandButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(chevronDownBrush);
             ExpandButton.MouseEnter += (_, _) => ButtonMouseOverAnim(chevronDownBrush);
             ExpandButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ExpandButtonBg);
             ExpandButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(chevronDownBrush);

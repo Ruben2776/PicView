@@ -22,11 +22,6 @@ namespace PicView.Views.UserControls
                 Canvas.SetLeft(Arrow, 12);
             }
 
-            PreviewMouseLeftButtonDown += delegate
-            {
-                MouseOverAnimations.AltInterfacePreviewMouseOver(PolyFill, BorderBrushKey);
-            };
-
             MouseEnter += delegate
             {
                 MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);

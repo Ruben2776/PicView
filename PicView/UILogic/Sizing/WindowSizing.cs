@@ -229,7 +229,6 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.Left = MonitorInfo.WorkArea.Left;
 
             GetMainWindow.WindowState = WindowState.Maximized;
-            ConfigureSettings.ConfigColors.UpdateColor(true);
 
             _ = TryFitImageAsync();
         }

@@ -55,15 +55,15 @@ namespace PicView.Views.UserControls
                 // ApplyButton
                 ApplyButton.MouseEnter += delegate
                 {
-                    colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
-                    colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                    ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    //colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
+                    //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                    //ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
                 ApplyButton.MouseLeave += delegate
                 {
-                    colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                    colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
-                    ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
+                    //colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
+                    //ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                 };
 
                 ApplyButton.MouseLeftButtonDown += async (_, _) => await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);

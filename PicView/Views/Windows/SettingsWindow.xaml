@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Width="325"
-    BorderBrush="{DynamicResource WindowBorderColorBrush}"
+    BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
@@ -436,25 +436,6 @@
                         VerticalAlignment="Center"
                         Content="{StaticResource MiscSettings}"
                         Foreground="{StaticResource MainColorBrush}" />
-
-                    <CheckBox
-                        x:Name="BorderRadio"
-                        Margin="7,0,0,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                Focusable="False"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                FontSize="13"
-                                Text="{StaticResource ColoredWindowBorder}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
-                    </CheckBox>
 
                     <CheckBox
                         x:Name="AltUIRadio"

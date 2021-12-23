@@ -29,48 +29,15 @@ namespace PicView.ConfigureSettings
         /// Update color values for brushes and window border
         /// </summary>
         /// <param name="remove">Remove border?</param>
-        internal static void UpdateColor(bool remove = false)
+        internal static void UpdateColor()
         {
-            if (remove)
-            {
-                Application.Current.Resources["WindowBorderColorBrush"] = new SolidColorBrush((Color)Application.Current.Resources["WindowBorderColor"]);
-                return;
-            }
-
             var getColor = AnimationHelper.GetPrefferedColorOver();
             var getColorBrush = new SolidColorBrush(getColor);
 
             Application.Current.Resources["ChosenColor"] = getColor;
             Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 
-            if (Properties.Settings.Default.WindowBorderColorEnabled)
-            {
-                try
-                {
-                    Application.Current.Resources["WindowBorderColorBrush"] = getColorBrush;
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine(nameof(UpdateColor) + " threw exception:  " + e.Message);
-#endif
-                }
-            }
-
             Properties.Settings.Default.Save();
-        }
-
-        internal static void SetColors()
-        {
-            MainColor = (Color)Application.Current.Resources["IconColor"];
-            BackgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
-
-            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
-            {
-                return;
-            }
-
-            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
         }
 
         #endregion Update and set colors
@@ -87,9 +54,6 @@ namespace PicView.ConfigureSettings
             w.TitleText.Background = fadeColor2;
             w.LowerBar.Background = fadeColor2;
 
-            var x = (SolidColorBrush)w.Logo.TryFindResource("LogoBrush");
-            x.Color = fadeColor1.Color;
-
             if (ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryHorizontal || ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryVertical)
             {
                 ConfigureWindows.GetFakeWindow.ActuallyVisible = false;
@@ -105,9 +69,6 @@ namespace PicView.ConfigureSettings
             w.TitleText.InnerTextBox.Foreground = main1;
             w.TitleText.Background = main2;
             w.LowerBar.Background = main2;
-
-            var x = (SolidColorBrush)w.Logo.TryFindResource("LogoBrush");
-            x.Color = main1.Color;
         }
 
         #endregion

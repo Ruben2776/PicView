@@ -53,28 +53,24 @@ namespace PicView.Views.UserControls
             #region Animation events
 
             // Toggle Scroll
-            ToggleScrollBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleScrollFill); };
             ToggleScrollBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleScrollFill); };
             ToggleScrollBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleScrollBrush); };
             ToggleScrollBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleScrollFill); };
             ToggleScrollBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleScrollBrush); };
 
             // Toggle Loop
-            ToggleLoopingBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleLoopFill); };
             ToggleLoopingBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleLoopFill); };
             ToggleLoopingBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleLoopBrush); };
             ToggleLoopingBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleLoopFill); };
             ToggleLoopingBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleLoopBrush); };
 
             // Set Fit
-            SetFitBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SetFitFill); };
             SetFitBorder.MouseEnter += delegate { ButtonMouseOverAnim(SetFitFill); };
             SetFitBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetFitBrush); };
             SetFitBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(SetFitFill); };
             SetFitBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetFitBrush); };
 
             // ToggleFill
-            ToggleFillBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleFillFill); };
             ToggleFillBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleFillFill); };
             ToggleFillBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
             ToggleFillBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };

@@ -125,16 +125,6 @@ namespace PicView.Views.UserControls
             };
             OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
 
-            BgBorder.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(IconBrush1);
-                PreviewMouseButtonDownAnim(IconBrush2);
-                PreviewMouseButtonDownAnim(IconBrush3);
-                PreviewMouseButtonDownAnim(IconBrush4);
-                PreviewMouseButtonDownAnim(IconBrush5);
-                PreviewMouseButtonDownAnim(BgText);
-            };
-
             BgBorder.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(IconBrush1);

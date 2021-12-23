@@ -36,55 +36,53 @@ namespace PicView.UILogic.Sizing
         {
             if (ErrorHandling.CheckOutOfRange() == false)
             {
-                if (Pics?.Count > FolderIndex)
+                if (!(Pics?.Count > FolderIndex)) { return false; }
+                var preloadValue = Preloader.Get(Pics[FolderIndex]);
+                if (preloadValue != null)
                 {
-                    var preloadValue = ChangeImage.Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
-                    if (preloadValue != null)
+                    var pic = preloadValue.BitmapSource;
+                    if (pic != null)
                     {
-                        var pic = preloadValue.BitmapSource;
-                        if (pic != null)
+                        await GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                         {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                            {
-                                FitImage(pic.PixelWidth, pic.PixelHeight);
-                            });
-                            return true;
-                        }
+                            FitImage(pic.PixelWidth, pic.PixelHeight);
+                        });
+                        return true;
                     }
-                    else
+                }
+                else
+                {
+                    var size = await ImageSizeFunctions.GetImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
+                    if (size.HasValue)
                     {
-                        var size = await ImageSizeFunctions.GetImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
-                        if (size.HasValue)
+                        await GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                         {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                            {
-                                FitImage(size.Value.Width, size.Value.Height);
-                            });
+                            FitImage(size.Value.Width, size.Value.Height);
+                        });
 
-                            return true;
-                        }
-                        else if (GetMainWindow.MainImage.Source != null)
+                        return true;
+                    }
+                    else if (GetMainWindow.MainImage.Source != null)
+                    {
+                        await GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                         {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                            {
-                                FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-                            });
-                            return true;
-                        }
-                        else if (XWidth > 0 && XHeight > 0)
+                            FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+                        });
+                        return true;
+                    }
+                    else if (XWidth > 0 && XHeight > 0)
+                    {
+                        await GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                         {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-                            {
-                                FitImage(XWidth, XHeight);
-                            });
-                            return true;
-                        }
+                            FitImage(XWidth, XHeight);
+                        });
+                        return true;
                     }
                 }
             }
             else if (XWidth > 0 && XHeight > 0)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     FitImage(XWidth, XHeight);
                 });
@@ -92,7 +90,7 @@ namespace PicView.UILogic.Sizing
             }
             else
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
                 {
                     if (GetMainWindow.MainImage.Source != null)
                     {
@@ -202,8 +200,7 @@ namespace PicView.UILogic.Sizing
             if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
             {
                 // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
-                var interfaceSize = (GetMainWindow.Logo.ActualWidth + 13) + GetMainWindow.MinButton.ActualWidth
-                    + GetMainWindow.FullscreenButton.ActualWidth + GetMainWindow.CloseButton.ActualWidth * MonitorInfo.DpiScaling;
+                var interfaceSize = 195;
 
                 var autoWidth = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualWidth : XWidth;
                 var autoHeight = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualHeight : XHeight;
@@ -215,7 +212,7 @@ namespace PicView.UILogic.Sizing
                 }
                 else if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
-                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - (autoHeight + GalleryNavigation.PicGalleryItem_Size + UC.GetPicGallery.Margin.Bottom + 4 * MonitorInfo.DpiScaling)) / 2 + MonitorInfo.WorkArea.Top;
+                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - (autoHeight + PicGalleryItem_Size + UC.GetPicGallery.Margin.Bottom + 4 * MonitorInfo.DpiScaling)) / 2 + MonitorInfo.WorkArea.Top;
                     GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - autoWidth) / 2 + MonitorInfo.WorkArea.Left;
 
                 }

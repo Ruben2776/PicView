@@ -17,7 +17,6 @@ namespace PicView.Views.UserControls
             {
                 TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive));
 
-                PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(MinButtonBrush);
                 MouseEnter += (s, x) => ButtonMouseOverAnim(MinButtonBrush, true);
 
                 if (!Properties.Settings.Default.DarkTheme)

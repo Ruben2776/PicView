@@ -13,13 +13,6 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            SelectFile.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(folderBrush1);
-                PreviewMouseButtonDownAnim(folderBrush2);
-                PreviewMouseButtonDownAnim(selectBrush);
-            };
-
             SelectFile.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(folderBrush1);
@@ -36,14 +29,6 @@ namespace PicView.Views.UserControls
 
             SelectFile.Click += async (_, _) => await FileHandling.Open_Save.OpenAsync().ConfigureAwait(false);
 
-
-            OpenLastFileButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(lastBrush1);
-                PreviewMouseButtonDownAnim(lastBrush2);
-                PreviewMouseButtonDownAnim(lastBrush);
-            };
-
             OpenLastFileButton.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(lastBrush1);
@@ -59,13 +44,6 @@ namespace PicView.Views.UserControls
             };
 
             OpenLastFileButton.Click += async (_, _) => await ChangeImage.History.OpenLastFileAsync().ConfigureAwait(false);
-
-
-            PasteButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(pasteBrush);
-                PreviewMouseButtonDownAnim(pasteTxt);
-            };
 
             PasteButton.MouseEnter += delegate
             {

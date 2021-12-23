@@ -13,11 +13,6 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            PreviewMouseLeftButtonDown += delegate
-            {
-                MouseOverAnimations.AltInterfacePreviewMouseOver(PolyFill, BorderBrushKey);
-            };
-
             MouseEnter += delegate
             {
                 MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);

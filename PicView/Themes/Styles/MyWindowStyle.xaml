@@ -14,6 +14,7 @@
                         <Border
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
                             Opacity=".9"
                             Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
                     </Grid>
@@ -25,7 +26,7 @@
                 <WindowChrome
                     CaptionHeight="0"
                     CornerRadius="0"
-                    GlassFrameThickness="1"
+                    GlassFrameThickness="0"
                     ResizeBorderThickness="9"
                     UseAeroCaptionButtons="False" />
             </Setter.Value>

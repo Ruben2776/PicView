@@ -130,7 +130,6 @@ namespace PicView.UILogic.Loading
         {
             // Update values
             ConfigureWindows.GetMainWindow.FolderButton.BackgroundEvents();
-            ConfigureSettings.ConfigColors.SetColors();
             ConfigureWindows.GetMainWindow.AllowDrop = true;
 
             LoadClickArrow(true);

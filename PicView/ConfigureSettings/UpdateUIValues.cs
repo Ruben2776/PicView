@@ -189,12 +189,5 @@ namespace PicView.ConfigureSettings
 
             await ScaleImage.TryFitImageAsync().ConfigureAwait(false);
         }
-
-        internal static void SetBorderColorEnabled(object sender, RoutedEventArgs e)
-        {
-            bool value = !Properties.Settings.Default.WindowBorderColorEnabled;
-            Properties.Settings.Default.WindowBorderColorEnabled = value;
-            ConfigColors.UpdateColor(!value);
-        }
     }
 }

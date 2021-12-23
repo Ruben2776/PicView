@@ -24,15 +24,6 @@ namespace PicView.Animations
         private static readonly ColorAnimation ccAnim2 = new ColorAnimation { Duration = TimeSpan.FromSeconds(.2) };
         private static readonly SolidColorBrush borderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"];
 
-        internal static void AltInterfacePreviewMouseOver(Brush foreground, Brush border)
-        {
-            var alpha = AnimationHelper.GetPrefferedColorOver();
-            ccAnim.From = alpha;
-            ccAnim.To = AnimationHelper.GetPrefferedColorDown();
-            foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
-            AnimationHelper.MouseOverColorEvent(alpha.A, alpha.R, alpha.G, alpha.B, border, true);
-        }
-
         internal static void AltInterfaceMouseOver(Brush foreground, Brush background, Brush border)
         {
             ccAnim.From = (Color)Application.Current.Resources["IconColor"];
@@ -76,11 +67,6 @@ namespace PicView.Animations
         #endregion ALtInterface hover anims
 
         #region 1x
-
-        internal static void PreviewMouseButtonDownAnim(Brush brush, bool alpha = false)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, alpha);
-        }
 
         internal static void ButtonMouseOverAnim(Brush brush, bool transparent = false, bool alpha = false)
         {
@@ -136,12 +122,6 @@ namespace PicView.Animations
 
         #region 2x
 
-        internal static void PreviewMouseButtonDownAnim(Brush brush, Brush brush2, bool alpha = false)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, alpha);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush2, alpha);
-        }
-
         internal static void ButtonMouseOverAnim(Brush brush, Brush brush2, bool transparent = false, bool alpha = false)
         {
             ButtonMouseOverAnim(brush, transparent, alpha);
@@ -157,13 +137,6 @@ namespace PicView.Animations
         #endregion 2x
 
         #region 3x
-
-        internal static void PreviewMouseButtonDownAnim(Brush brush, Brush brush2, Brush brush3, bool alpha = false)
-        {
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush, alpha);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush2, alpha);
-            AnimationHelper.PreviewMouseLeftButtonDownColorEvent(brush3, alpha);
-        }
 
         internal static void ButtonMouseOverAnim(Brush brush, Brush brush2, Brush brush3, bool transparent = false, bool alpha = false)
         {

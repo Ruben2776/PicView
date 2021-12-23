@@ -5,18 +5,19 @@
     <Canvas
         x:Name="TheButton"
         Width="90"
-        Height="30"
+        Height="25"
         FocusVisualStyle="{x:Null}"
         Focusable="False">
         <Canvas.Background>
             <SolidColorBrush x:Name="RightButtonBrush" Color="Transparent" />
         </Canvas.Background>
         <Path
-            x:Name="RightArrow"
+            Canvas.Left="35.166"
+            Canvas.Top="1"
             Width="19.669"
             Height="23"
             Data="F1M0.002,31.062L0,0 27.01,15.534z"
-            Stretch="Fill" Canvas.Left="35.166" Canvas.Top="3.69">
+            Stretch="Fill">
             <Path.Fill>
                 <SolidColorBrush x:Name="RightArrowFill" Color="{StaticResource IconColor}" />
             </Path.Fill>

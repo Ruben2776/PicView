@@ -13,7 +13,6 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CloseButtonBrush);
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
                 MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CloseButtonBrush, false);
 

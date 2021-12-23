@@ -17,13 +17,6 @@ namespace PicView.Views.UserControls
             {
                 MouseLeftButtonDown += async (_, _) => await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
 
-                PreviewMouseLeftButtonDown += delegate
-                {
-                    MouseOverAnimations.AltInterfacePreviewMouseOver(ImagePath1Fill, BorderBrushKey);
-                    MouseOverAnimations.AltInterfacePreviewMouseOver(ImagePath2Fill, BorderBrushKey);
-                    MouseOverAnimations.AltInterfacePreviewMouseOver(ImagePath3Fill, BorderBrushKey);
-                };
-
                 MouseEnter += delegate
                 {
                     MouseOverAnimations.AltInterfaceMouseOver(ImagePath1Fill, CanvasBGcolor, BorderBrushKey);
