@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
-    BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
@@ -109,7 +108,7 @@
                     Background="{DynamicResource BorderBrushAlt}"
                     Content="{StaticResource Apply}">
                     <Label.Foreground>
-                        <SolidColorBrush x:Name="ApplyBrush" Color="{DynamicResource ChosenColor}" />
+                        <SolidColorBrush x:Name="ApplyBrush" Color="{StaticResource MainColor}" />
                     </Label.Foreground>
                 </Label>
 

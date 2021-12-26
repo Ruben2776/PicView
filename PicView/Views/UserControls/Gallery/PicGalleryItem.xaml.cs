@@ -42,7 +42,7 @@ namespace PicView.Views.UserControls
 
             if (selected)
             {
-                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOver());
+                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColor());
                 innerborder.Width = innerborder.Height = PicGalleryItem_Size;
             }
         }

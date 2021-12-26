@@ -31,7 +31,7 @@ namespace PicView.ConfigureSettings
         /// <param name="remove">Remove border?</param>
         internal static void UpdateColor()
         {
-            var getColor = AnimationHelper.GetPrefferedColorOver();
+            var getColor = AnimationHelper.GetPrefferedColor();
             var getColorBrush = new SolidColorBrush(getColor);
 
             Application.Current.Resources["ChosenColor"] = getColor;

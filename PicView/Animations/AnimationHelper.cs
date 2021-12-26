@@ -72,7 +72,7 @@ namespace PicView.Animations
 
         internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
         {
-            colorAnimation.From = GetPrefferedColorOver();
+            colorAnimation.From = GetPrefferedColor();
             colorAnimation.To = Color.FromArgb(a, r, g, b);
             brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
@@ -80,7 +80,7 @@ namespace PicView.Animations
         internal static void MouseOverColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
         {
             colorAnimation.From = Color.FromArgb(a, r, g, b);
-            colorAnimation.To = GetPrefferedColorOver();
+            colorAnimation.To = GetPrefferedColor();
             brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
@@ -151,7 +151,7 @@ namespace PicView.Animations
 
         #region Return Color
 
-        internal static Color GetPrefferedColorOver()
+        internal static Color GetPrefferedColor()
         {
             return Properties.Settings.Default.ColorTheme switch
             {

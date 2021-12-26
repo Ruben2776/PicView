@@ -27,7 +27,7 @@ namespace PicView.Animations
         internal static void AltInterfaceMouseOver(Brush foreground, Brush background, Brush border)
         {
             ccAnim.From = (Color)Application.Current.Resources["IconColor"];
-            ccAnim.To = AnimationHelper.GetPrefferedColorOver();
+            ccAnim.To = AnimationHelper.GetPrefferedColor();
 
             foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
 
@@ -46,7 +46,7 @@ namespace PicView.Animations
 
         internal static void AltInterfaceMouseLeave(Brush foreground, Brush background, Brush border)
         {
-            ccAnim.From = AnimationHelper.GetPrefferedColorOver();
+            ccAnim.From = AnimationHelper.GetPrefferedColor();
             ccAnim.To = (Color)Application.Current.Resources["IconColor"];
 
             foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
