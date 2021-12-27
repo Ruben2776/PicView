@@ -77,10 +77,10 @@ namespace PicView.Shortcuts
             if (widthBox == null || heightBox == null) { return; }
             if (e?.Key == Key.Tab) { return; } // Fixes weird bug
 
-            double originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-            double originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+            var originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+            var originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
 
-            double aspectRatio = originalWidth / originalHeight;
+            var aspectRatio = originalWidth / originalHeight;
 
             if (aspectRatio <= 0) { return; }
 
@@ -89,12 +89,12 @@ namespace PicView.Shortcuts
                 if (widthBoxChanged)
                 {
                     var newHeight = Math.Round(width / aspectRatio);
-                    heightBox.Text = newHeight.ToString();
+                    heightBox.Text = newHeight.ToString(CultureInfo.CurrentCulture);
                 }
                 else
                 {
                     var newWidth = Math.Round(height / aspectRatio);
-                    widthBox.Text = newWidth.ToString();
+                    widthBox.Text = newWidth.ToString(CultureInfo.CurrentCulture);
                 }
             }
             else
@@ -112,15 +112,15 @@ namespace PicView.Shortcuts
                 }
 
                 // Determine if % character
-                string text = widthBoxChanged ? widthBox.Text : heightBox.Text;
-                percentageValue = returnPercentageFromString(text);
+                var text = widthBoxChanged ? widthBox.Text : heightBox.Text;
+                percentageValue = ReturnPercentageFromString(text);
                 if (percentageValue <= 0) { return; }
 
-                if (widthBoxChanged && returnPercentageFromString(widthBox.Text) > 0)
+                if (widthBoxChanged && ReturnPercentageFromString(widthBox.Text) > 0)
                 {
                     heightBox.Text = widthBox.Text;
                 }
-                else if (returnPercentageFromString(heightBox.Text) > 0)
+                else if (ReturnPercentageFromString(heightBox.Text) > 0)
                 {
                     widthBox.Text = heightBox.Text;
                 }
@@ -136,9 +136,9 @@ namespace PicView.Shortcuts
             }
         }
 
-        static async Task<bool> FireResizeAsync(string widthText, string heightText)
+        private static async Task<bool> FireResizeAsync(string widthText, string heightText)
         {
-            string file = ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
+            var file = ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
             if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
             {
                 var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height, 0).ConfigureAwait(false);
@@ -148,7 +148,7 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
                 }
             }
             else // handle if it contains percentage
@@ -166,7 +166,7 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    UILogic.Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
                 }
             }
             return true;
@@ -174,29 +174,25 @@ namespace PicView.Shortcuts
 
         static async Task<bool> FirePercentageAsync(string text, string file)
         {
-            var percentage = returnPercentageFromString(text);
-            if (percentage > 0)
+            var percentage = ReturnPercentageFromString(text);
+            if (!(percentage > 0)) { return false; }
+            
+            var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
+            if (resize)
             {
-                var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new ImageMagick.Percentage(percentage)).ConfigureAwait(false);
-                if (resize)
-                {
-                    await ChangeImage.ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                }
-                return true;
+                await ChangeImage.ErrorHandling.ReloadAsync().ConfigureAwait(false);
             }
-            return false;
+            return true;
         }
 
-        static double returnPercentageFromString(string text)
+        static double ReturnPercentageFromString(string text)
         {
             foreach (Match match in Regex.Matches(text, @"(\d+)%")) // Find % sign
             {
-                if (match.Success)
+                if (!match.Success) { continue; }
+                if (double.TryParse(match.Groups[1].Value, out double percentage))
                 {
-                    if (double.TryParse(match.Groups[1].Value, out double percentage))
-                    {
-                        return percentage;
-                    }
+                    return percentage;
                 }
             }
             return 0;

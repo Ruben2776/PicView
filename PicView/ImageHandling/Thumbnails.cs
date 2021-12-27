@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using PicView.Views.UserControls;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -51,7 +52,7 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, byte quality = 100, int size = 500)
+        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, byte quality = 100, int size = 500, bool checkSize = false)
         {
             switch (fileInfo.Extension)
             {
@@ -69,7 +70,13 @@ namespace PicView.ImageHandling
                     break;
             }
 
-            return fileInfo.Length > 5e+6 ? null : GetMagickImageThumb(fileInfo);
+            if (checkSize)
+            {
+                return fileInfo.Length > 5e+6 ? null : GetMagickImageThumb(fileInfo, quality, size);
+            }
+
+            var thumb = GetMagickImageThumb(fileInfo, quality, size);
+            return thumb ??= ImageFunctions.ImageErrorMessage();
         }
 
         /// <summary>
@@ -103,13 +110,13 @@ namespace PicView.ImageHandling
                 magickImage.AdaptiveResize(size, size);
             }
 #if DEBUG
-            catch (MagickException e)
+            catch (Exception e)
             {
                 Trace.WriteLine("GetMagickImage returned " + fileInfo + " null, \n" + e.Message);
                 return null;
             }
 #else
-                catch (MagickException) { return null; }
+                catch (Exception) { return null; }
 #endif
             BitmapSource pic = magickImage.ToBitmapSource();
             pic.Freeze();

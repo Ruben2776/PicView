@@ -204,12 +204,6 @@ namespace PicView.UILogic.TransformImage
         /// <param name="i">increment</param>
         internal static void Zoom(bool increment)
         {
-            /// Don't zoom when gallery is open
-            if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-            {
-                return;
-            }
-
             // Disable zoom for crop
             // TODO integrate zoom for crop
             if (UC.GetCropppingTool != null && UC.GetCropppingTool.IsVisible)

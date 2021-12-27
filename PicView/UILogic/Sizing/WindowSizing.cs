@@ -23,12 +23,12 @@ namespace PicView.UILogic.Sizing
         {
             if (Properties.Settings.Default.AutoFitWindow)
             {
-                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                ConfigureWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
+                GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
 
-                if (UC.GetGripButton is not null)
+                if (GetGripButton is not null)
                 {
-                    UC.GetGripButton.Visibility = Visibility.Collapsed;
+                    GetGripButton.Visibility = Visibility.Collapsed;
                 }
 
                 if (GetQuickSettingsMenu != null)
@@ -36,19 +36,19 @@ namespace PicView.UILogic.Sizing
                     GetQuickSettingsMenu.SetFit.IsChecked = true;
                 }
 
-                ConfigureWindows.GetMainWindow.WindowState = WindowState.Normal;
+                GetMainWindow.WindowState = WindowState.Normal;
             }
             else
             {
-                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
-                ConfigureWindows.GetMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+                GetMainWindow.SizeToContent = SizeToContent.Manual;
+                GetMainWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
 
-                if (UC.GetGripButton is null)
+                if (GetGripButton is null)
                 {
-                    UC.GetGripButton = new Views.UserControls.GripButton();
-                    ConfigureWindows.GetMainWindow.LowerBar.Children.Add(UC.GetGripButton);
+                    GetGripButton = new Views.UserControls.GripButton();
+                    GetMainWindow.LowerBar.Children.Add(GetGripButton);
                 }
-                UC.GetGripButton.Visibility = Visibility.Visible;
+                GetGripButton.Visibility = Visibility.Visible;
 
                 if (GetQuickSettingsMenu != null)
                 {
@@ -71,7 +71,7 @@ namespace PicView.UILogic.Sizing
                 return;
             }
 
-            if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Maximized) // Reset back to previous state from maximized
+            if (GetMainWindow.WindowState == WindowState.Maximized) // Reset back to previous state from maximized
             {
                 var mousePos = GetMainWindow.PointToScreen(Mouse.GetPosition(GetMainWindow));
                 GetMainWindow.Top = mousePos.Y;
@@ -127,9 +127,9 @@ namespace PicView.UILogic.Sizing
         /// <param name="e"></param>
         internal static void Restore_From_Move()
         {
-            ConfigureWindows.GetMainWindow.WindowState = WindowState.Normal;
+            GetMainWindow.WindowState = WindowState.Normal;
             Properties.Settings.Default.Maximized = false;
-            UC.GetGripButton.Visibility = Visibility.Visible;
+            GetGripButton.Visibility = Visibility.Visible;
 
             // Reset margin
             GetMainWindow.TitleBar.Margin = new Thickness(0);
@@ -192,8 +192,8 @@ namespace PicView.UILogic.Sizing
                 else
                 {
                     SetLastWindowSize();
-                    ConfigureWindows.GetMainWindow.ParentContainer.Width = ConfigureWindows.GetMainWindow.Width;
-                    ConfigureWindows.GetMainWindow.ParentContainer.Height = ConfigureWindows.GetMainWindow.Height;
+                    GetMainWindow.ParentContainer.Width = GetMainWindow.Width;
+                    GetMainWindow.ParentContainer.Height = GetMainWindow.Height;
                 }
 
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
@@ -201,11 +201,6 @@ namespace PicView.UILogic.Sizing
                     Slideshow.SlideTimer.Enabled = false;
                 }
                 ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
-
-                if (ConfigureWindows.GetFakeWindow is not null)
-                {
-                    ConfigureWindows.GetFakeWindow.Hide();
-                }
 
                 _ = TryFitImageAsync();
             }
@@ -218,19 +213,16 @@ namespace PicView.UILogic.Sizing
 
             GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
             GetMainWindow.SizeToContent = SizeToContent.Manual;
-            GetMainWindow.WindowState = WindowState.Maximized;
-            GetMainWindow.Width = MonitorInfo.Width;
-            GetMainWindow.Height = MonitorInfo.Height;
+            GetMainWindow.Width = MonitorInfo.WorkArea.Width;
+            GetMainWindow.Height = MonitorInfo.WorkArea.Height;
 
-            // Fix buttons appearing out of window
-            GetMainWindow.ParentContainer.Margin = new Thickness(8);
-
-            GetMainWindow.Top = MonitorInfo.WorkArea.Top;
-            GetMainWindow.Left = MonitorInfo.WorkArea.Left;
-
-            GetMainWindow.WindowState = WindowState.Maximized;
+            GetMainWindow.MainImageBorder.Width = GetMainWindow.Width;
+            GetMainWindow.MainImageBorder.Height = GetMainWindow.Height;
 
             _ = TryFitImageAsync();
+
+            GetMainWindow.Top = 0;
+            GetMainWindow.Left = 0;
         }
 
         internal static void SetMaximized()
@@ -244,9 +236,9 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.TitleBar.Margin = new Thickness(8, 8, 8, 0);
             GetMainWindow.LowerBar.Margin = new Thickness(8, 0, 8, 8);
 
-            if (UC.GetGripButton is not null)
+            if (GetGripButton is not null)
             {
-                UC.GetGripButton.Visibility = Visibility.Collapsed;
+                GetGripButton.Visibility = Visibility.Collapsed;
             }
 
             GetMainWindow.TitleText.MaxWidth = MonitorInfo.WorkArea.Width - 192 * MonitorInfo.DpiScaling;
@@ -265,18 +257,18 @@ namespace PicView.UILogic.Sizing
 
         internal static void SetLastWindowSize()
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            GetMainWindow.Dispatcher.Invoke(() =>
             {
-                ConfigureWindows.GetMainWindow.Top = Properties.Settings.Default.Top;
-                ConfigureWindows.GetMainWindow.Left = Properties.Settings.Default.Left;
-                ConfigureWindows.GetMainWindow.Width = Properties.Settings.Default.Width;
-                ConfigureWindows.GetMainWindow.Height = Properties.Settings.Default.Height;
+                GetMainWindow.Top = Properties.Settings.Default.Top;
+                GetMainWindow.Left = Properties.Settings.Default.Left;
+                GetMainWindow.Width = Properties.Settings.Default.Width;
+                GetMainWindow.Height = Properties.Settings.Default.Height;
             });
         }
 
         internal static void SetWindowSize()
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            GetMainWindow.Dispatcher.Invoke(() =>
             {
                 Properties.Settings.Default.Top = GetMainWindow.Top;
                 Properties.Settings.Default.Left = GetMainWindow.Left;
@@ -293,7 +285,7 @@ namespace PicView.UILogic.Sizing
 
         internal static void MainWindow_StateChanged()
         {
-            switch (ConfigureWindows.GetMainWindow.WindowState)
+            switch (GetMainWindow.WindowState)
             {
                 case WindowState.Normal:
                     if (Properties.Settings.Default.Fullscreen)
@@ -338,26 +330,13 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.Hide(); // Make it feel faster
 
             // Close Extra windows when closing
-            if (GetFakeWindow != null)
-            {
-                GetFakeWindow.Close();
-            }
-            if (GetInfoWindow != null)
-            {
-                GetInfoWindow.Close();
-            }
-            if (GetImageInfoWindow != null)
-            {
-                GetImageInfoWindow.Close();
-            }
-            if (GetEffectsWindow != null)
-            {
-                GetEffectsWindow.Close();
-            }
-            if (GetSettingsWindow != null)
-            {
-                GetSettingsWindow.Close();
-            }
+            GetInfoWindow?.Close();
+
+            GetImageInfoWindow?.Close();
+
+            GetEffectsWindow?.Close();
+
+            GetSettingsWindow?.Close();
 
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {

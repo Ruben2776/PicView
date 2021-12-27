@@ -133,7 +133,7 @@ namespace PicView.UILogic.Sizing
             else if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 maxWidth = Math.Min(monitorWidth - padding, width);
-                maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size_s, height);
+                maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size, height);
             }
             else if (Properties.Settings.Default.AutoFitWindow) // If non resizeable behaviour
             {
@@ -196,49 +196,42 @@ namespace PicView.UILogic.Sizing
                 GetMainWindow.ParentContainer.Height = double.NaN;
             }
 
-            // Calculate window position
-            if (GetMainWindow.WindowState == System.Windows.WindowState.Normal)
+            // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
+            var interfaceSize = 195;
+
+            if (GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
-                var interfaceSize = 195;
-
-                var autoWidth = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualWidth : XWidth;
-                var autoHeight = Properties.Settings.Default.AutoFitWindow ? GetMainWindow.ActualHeight : XHeight;
-
-                if (GalleryFunctions.IsVerticalFullscreenOpen)
+                GetMainWindow.MainImage.Margin = new System.Windows.Thickness(0, 0, PicGalleryItem_Size, 0);
+            }
+            else if (GalleryFunctions.IsHorizontalFullscreenOpen)
+            {
+                GetMainWindow.MainImage.Margin = new System.Windows.Thickness(0, 0, 0, PicGalleryItem_Size);
+            }
+            else if (Properties.Settings.Default.AutoFitWindow)
+            {
+                if (Properties.Settings.Default.KeepCentered)
                 {
-                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - autoHeight) / 2 + MonitorInfo.WorkArea.Top;
-                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - (autoWidth + UC.GetPicGallery.Width)) / 2 + MonitorInfo.WorkArea.Left;
+                    CenterWindowOnScreen();
                 }
-                else if (GalleryFunctions.IsHorizontalFullscreenOpen)
-                {
-                    GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - (autoHeight + PicGalleryItem_Size + UC.GetPicGallery.Margin.Bottom + 4 * MonitorInfo.DpiScaling)) / 2 + MonitorInfo.WorkArea.Top;
-                    GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - autoWidth) / 2 + MonitorInfo.WorkArea.Left;
 
-                }
-                else if (Properties.Settings.Default.AutoFitWindow)
+                // Update mainWindow.TitleBar width to dynamically fit new size
+                var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+                if (Properties.Settings.Default.ScrollEnabled)
                 {
-                    if (Properties.Settings.Default.KeepCentered)
-                    {
-                        CenterWindowOnScreen();
-                    }
-
-                    // Update mainWindow.TitleBar width to dynamically fit new size
-                    var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
-                    if (Properties.Settings.Default.ScrollEnabled)
-                    {
-                        GetMainWindow.TitleText.MaxWidth = x;
-                    }
-                    else
-                    {
-                        GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
-                    }
+                    GetMainWindow.TitleText.MaxWidth = x;
                 }
                 else
                 {
-                    // Fix title width to window size
-                    GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
+                    GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
                 }
+
+                GetMainWindow.MainImage.Margin = new System.Windows.Thickness(0);
+            }
+            else
+            {
+                // Fix title width to window size
+                GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
+                GetMainWindow.MainImage.Margin = new System.Windows.Thickness(0);
             }
 
             if (ZoomLogic.translateTransform is not null && ZoomLogic.translateTransform?.X != 0d)

@@ -42,12 +42,13 @@ namespace PicView.PicGallery
 
             if (fullscreen)
             {
+                WindowSizing.RenderFullscreen();
+
                 if (Properties.Settings.Default.FullscreenGalleryHorizontal)
                 {
                     // Set size
                     GalleryNavigation.SetSize(22);
                     UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
-                    UC.GetPicGallery.Height = (GalleryNavigation.PicGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
 
                     // Set alignment
                     UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
@@ -59,10 +60,9 @@ namespace PicView.PicGallery
                     UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
 
                     // Set style
-                    UC.GetPicGallery.Margin = new Thickness(0, 0, 0, 10);
+                    UC.GetPicGallery.Margin = new Thickness(0);
                     UC.GetPicGallery.border.BorderThickness = new Thickness(0, 0, 0, 0);
                     UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
-                    UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 5);
 
                     // Make sure bools are correct
                     GalleryFunctions.IsHorizontalOpen = false;
@@ -72,7 +72,7 @@ namespace PicView.PicGallery
                 else
                 {
                     // Set size
-                    GalleryNavigation.SetSize(18);
+                    GalleryNavigation.SetSize(22);
                     UC.GetPicGallery.Width = (GalleryNavigation.PicGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
                     UC.GetPicGallery.Height = WindowSizing.MonitorInfo.WorkArea.Height;
 
@@ -97,20 +97,14 @@ namespace PicView.PicGallery
                         UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
                     }
 
-                    UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 0);
-
                     // Make sure bools are correct
                     GalleryFunctions.IsHorizontalOpen = false;
                     GalleryFunctions.IsHorizontalFullscreenOpen = false;
                     GalleryFunctions.IsVerticalFullscreenOpen = true;
                 }
 
-                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                ConfigureWindows.GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
-
 
                 UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
-                UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 0);
 
                 ShowNavigation(false);
                 ShowTopandBottom(false);
@@ -118,29 +112,11 @@ namespace PicView.PicGallery
             }
             else
             {
+                // Set size
                 GalleryNavigation.SetSize(17);
 
-                if (UC.GetPicGallery.Container.Children.Count > 0)
-                {
-                    for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
-                    {
-                        var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                        item.outterborder.Width = item.outterborder.Height = GalleryNavigation.PicGalleryItem_Size;
-                        item.innerborder.Width = item.innerborder.Height = GalleryNavigation.PicGalleryItem_Size_s;
-                    }
-                }
-
-                // Set size
-                if (Properties.Settings.Default.Fullscreen)
-                {
-                    UC.GetPicGallery.Width = WindowSizing.MonitorInfo.Width;
-                    UC.GetPicGallery.Height = WindowSizing.MonitorInfo.Height;
-                }
-                else
-                {
-                    UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                }
+                UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
 
                 // Set alignment
                 UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -149,6 +125,7 @@ namespace PicView.PicGallery
                 // Set scrollbar visibility and orientation
                 UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
                 UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                
                 UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
 
                 // Set style
@@ -158,33 +135,30 @@ namespace PicView.PicGallery
                 UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
 
 
-                // Make sure bools are correct
+                // Make sure booleans are correct
                 GalleryFunctions.IsHorizontalOpen = true;
                 GalleryFunctions.IsHorizontalFullscreenOpen = false;
                 GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
 
 
-            if (UC.GetPicGallery.Container.Children.Count > 0)
+            if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
+            var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
+            
+            if (Math.Abs(tempItem.Border.Height - GalleryNavigation.PicGalleryItem_Size) < 1) { return; }
+            
+            for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
             {
-                var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
-                if (tempItem.innerborder.Width != GalleryNavigation.PicGalleryItem_Size)
-                {
-                    for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
-                    {
-                        var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                        item.outterborder.Width = item.outterborder.Height = GalleryNavigation.PicGalleryItem_Size;
-                        item.innerborder.Width = item.innerborder.Height = GalleryNavigation.PicGalleryItem_Size_s;
-                    }
-                }
+                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                item.Border.Height = GalleryNavigation.PicGalleryItem_Size_s;
             }
         }
 
         internal static async Task Load()
         {
             IsLoading = true;
-            CancellationTokenSource source = new CancellationTokenSource();
-            Task task = Task.Run(() => Loop(source.Token), source.Token);
+            var source = new CancellationTokenSource();
+            var task = Task.Run(() => Loop(source.Token), source.Token);
             try
             {
                 await task.ConfigureAwait(false);
@@ -218,13 +192,16 @@ namespace PicView.PicGallery
                 Add(i, index);
             }
 
-            Parallel.For(0, count, async i =>
+            Parallel.For(0, count, i =>
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                 }
-                await UpdatePic(i).ConfigureAwait(false);
+                else
+                {
+                    _= UpdatePic(i).ConfigureAwait(false);
+                }
             });
         }
 
@@ -256,31 +233,35 @@ namespace PicView.PicGallery
                 return;
             }
 
-            var pic =
+            var pic = await Task.FromResult(
                 Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size)
-                ?? ImageFunctions.ImageErrorMessage();
+                ?? ImageFunctions.ImageErrorMessage());
             UpdatePic(i, pic);
         }
 
-        internal static void UpdatePic(int i, BitmapSource? pic)
+        internal static void UpdatePic(int i, BitmapSource pic)
         {
             try
             {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, new Action(async () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
                 {
                     if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                     {
                         GalleryFunctions.Clear();
-                        await Load().ConfigureAwait(false); // restart when changing directory
+                        Load().ConfigureAwait(false); // restart when changing directory
                         return;
                     }
+                    
                     var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                     item.img.Source = pic;
+
+                    item.Width =  GalleryNavigation.PicGalleryItem_Size * pic.PixelWidth / pic.PixelHeight;
+                    item.Height = GalleryNavigation.PicGalleryItem_Size;
                 }));
             }
             catch (Exception)
             {
-                return; // Suppress task cancellation
+                // Suppress task cancellation
             }
         }
     }

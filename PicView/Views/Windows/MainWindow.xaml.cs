@@ -94,6 +94,23 @@ namespace PicView.Views.Windows
                 FunctionMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(EffectsMenuBg);
                 FunctionMenuButton.Click += Toggle_Functions_menu;
 
+                //GalleryButton
+                GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
+                GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
+                GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBrush);
+                GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
+                GalleryButton.Click += async (_, _) =>
+                {
+                    if (PicGallery.GalleryFunctions.IsHorizontalOpen)
+                    {
+                        PicGallery.GalleryToggle.CloseHorizontalGallery();
+                    }
+                    else if (PicGallery.GalleryFunctions.IsVerticalFullscreenOpen == false && PicGallery.GalleryFunctions.IsHorizontalFullscreenOpen == false)
+                    {
+                        await PicGallery.GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+                    }
+                };
+
                 // TitleText
                 TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
                 TitleText.InnerTextBox.PreviewKeyDown += async (sender, e) => await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(sender, e).ConfigureAwait(false);

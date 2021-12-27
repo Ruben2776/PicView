@@ -53,11 +53,6 @@ namespace PicView.ConfigureSettings
             w.TitleText.InnerTextBox.Foreground = fadeColor1;
             w.TitleText.Background = fadeColor2;
             w.LowerBar.Background = fadeColor2;
-
-            if (ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryHorizontal || ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryVertical)
-            {
-                ConfigureWindows.GetFakeWindow.ActuallyVisible = false;
-            }
         }
 
         internal static void MainWindowFocus()

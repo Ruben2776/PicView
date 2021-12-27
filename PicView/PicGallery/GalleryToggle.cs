@@ -1,7 +1,9 @@
 ﻿using PicView.Animations;
 using PicView.UILogic;
+using PicView.Views.UserControls.Gallery;
 using PicView.Views.Windows;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -43,15 +45,6 @@ namespace PicView.PicGallery
                 GetMinus.Visibility =
                 GetRestorebutton.Visibility =
                 GetGalleryShortcut.Visibility = Visibility.Hidden;
-
-                if (GetFakeWindow != null)
-                {
-                    if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
-                    {
-                        GetFakeWindow.grid.Children.Remove(GetPicGallery);
-                        GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
-                    }
-                }
             });
 
             await LoadAndScrollToAsync().ConfigureAwait(false);
@@ -73,68 +66,35 @@ namespace PicView.PicGallery
                 {
                     IsHorizontalFullscreenOpen = true;
                     IsVerticalFullscreenOpen = IsHorizontalOpen = false;
+
+                    var check = from x in ConfigureWindows.GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
+                                select x;
+                    foreach (var item in check)
+                    {
+                        ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(item);
+                    }
+
+                    ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(new PicGalleryTopButtonsV2
+                    {
+                    });
                 }
                 else
                 {
                     IsVerticalFullscreenOpen = true;
                     IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+
+                    var check = from x in ConfigureWindows.GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
+                                select x;
+                    foreach (var item in check)
+                    {
+                        ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(item);
+                    }
+
+                    ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(new PicGalleryTopButtons
+                    {
+                    });
                 }
 
-                if (GetFakeWindow == null)
-                {
-                    GetFakeWindow = new FakeWindow()
-                    {
-                        WindowStyle = WindowStyle.None,
-                        ShowInTaskbar = false,
-                        ShowActivated = false
-                    };
-
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                    else
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                }
-                else
-                {
-                    GetFakeWindow.grid.Children.RemoveAt(0);
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                    else
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                }
-
-                // Switch gallery container to the correct window
-                if (GetMainWindow.ParentContainer.Children.Contains(GetPicGallery))
-                {
-                    GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                    GetFakeWindow.grid.Children.Add(GetPicGallery);
-                }
-                else if (!GetFakeWindow.grid.Children.Contains(GetPicGallery))
-                {
-                    GetFakeWindow.grid.Children.Add(GetPicGallery);
-                }
-
-                GetFakeWindow.Show();
                 GetMainWindow.Focus();
 
                 // Fix not showing up opacity bug..
@@ -197,10 +157,9 @@ namespace PicView.PicGallery
 
         internal static void CloseFullscreenGallery()
         {
-            if (ConfigureWindows.GetFakeWindow is null) { return; }
-
             IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
-            GetFakeWindow.Hide();
+
+            GetPicGallery.Visibility = Visibility.Collapsed;
 
             ConfigureSettings.ConfigColors.UpdateColor();
 
@@ -222,6 +181,20 @@ namespace PicView.PicGallery
             if (GetMainWindow.MainImage.Source is not null)
             {
                 UILogic.Sizing.ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+            }
+
+            var check = from x in ConfigureWindows.GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
+                        select x;
+            if (check.Any())
+            {
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(check.ElementAt(0));
+            }
+
+            var check2 = from x in ConfigureWindows.GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
+                         select x;
+            if (check2.Any())
+            {
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(check2.ElementAt(0));
             }
         }
 

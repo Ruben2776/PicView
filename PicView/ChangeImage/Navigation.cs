@@ -82,13 +82,13 @@ namespace PicView.ChangeImage
                 return;
             }
 
+            // Go to the image!
+            await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+
             if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
                 GalleryNavigation.SetSelected(prev, false);
             }
-
-            // Go to the image!
-            await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
         }
 
         internal static int GetImageIterateIndex(bool forward = true, bool end = false)

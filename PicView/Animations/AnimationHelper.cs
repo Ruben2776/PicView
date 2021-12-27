@@ -176,47 +176,6 @@ namespace PicView.Animations
 
         #region Size Animation
 
-        internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
-        {
-            if (item.Id == Navigation.FolderIndex || item.Id == PicGallery.GalleryNavigation.SelectedGalleryItem)
-            {
-                return;
-            }
-            if (item.innerborder.Width > PicGallery.GalleryNavigation.PicGalleryItem_Size_s && unHover == false)
-            {
-                // Make sure it is not run consecutively
-                return;
-            }
-
-            var da = new DoubleAnimation
-            {
-                FillBehavior = FillBehavior.Stop,
-                AccelerationRatio = 0.4,
-                DecelerationRatio = 0.6
-            };
-            da.Completed += delegate
-            {
-                item.innerborder.Width = to;
-                item.innerborder.Height = to;
-            };
-
-            if (unHover)
-            {
-                da.From = from;
-                da.To = to;
-                da.Duration = TimeSpan.FromSeconds(.3);
-            }
-            else
-            {
-                da.From = from;
-                da.To = to;
-                da.Duration = TimeSpan.FromSeconds(.25);
-            }
-
-            item.innerborder.BeginAnimation(FrameworkElement.WidthProperty, da);
-            item.innerborder.BeginAnimation(FrameworkElement.HeightProperty, da);
-        }
-
         internal static void HeightAnimation(FrameworkElement element, double from, double to, bool reverse)
         {
             var da = new DoubleAnimation

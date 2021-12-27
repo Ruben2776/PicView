@@ -49,44 +49,34 @@ namespace PicView.UILogic.Loading
 
         internal static void ContentRenderedEvent()
         {
+            if (Properties.Settings.Default.StartInFullscreenGallery)
+            {
+                _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+            }
+
+            // Determine prefered UI for startup
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                Sizing.WindowSizing.Fullscreen_Restore(true);
+            }
+
+            else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
+            {
+                SetLastWindowSize();
+            }
+            else
+            {
+                UILogic.Sizing.WindowSizing.SetWindowBehavior();
+            }
+
             // Load image if possible
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 1)
             {
-                // Determine proper startup size
-                if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width != 0)
-                {
-                    SetLastWindowSize();
-                }
-                else if (Properties.Settings.Default.AutoFitWindow)
-                {
-                    SetWindowBehavior();
-                }
-
-                Unload(true); // Load clean setup when starting up without arguments
+                Unload(true); // Load clean setup when starting up without arguments            
             }
             else
             {
-                if (Properties.Settings.Default.StartInFullscreenGallery)
-                {
-                    _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
-                }
-
-                // Determine prefered UI for startup
-                if (Properties.Settings.Default.Fullscreen)
-                {
-                    Sizing.WindowSizing.Fullscreen_Restore(true);
-                }
-
-                else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
-                {
-                    SetLastWindowSize();
-                }
-                else
-                {
-                    UILogic.Sizing.WindowSizing.SetWindowBehavior();
-                }
-
                 _ = ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }

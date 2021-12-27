@@ -4,26 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Margin="5,0,0,0"
     d:DesignHeight="300"
     d:DesignWidth="300"
     FocusVisualStyle="{x:Null}"
     Focusable="False"
     mc:Ignorable="d">
     <Border
-        x:Name="outterborder"
-        Width="230"
-        Height="230"
+        x:Name="Border"
+        Background="{StaticResource BackgroundColorBrushAlt}"
+        BorderBrush="{StaticResource BorderBrush}"
+        BorderThickness="1"
+        CornerRadius="4"
         FocusVisualStyle="{x:Null}"
         Focusable="False">
-        <Border
-            x:Name="innerborder"
-            Width="200"
-            Height="200"
-            Background="{StaticResource BackgroundColorBrushAlt}"
-            BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="2"
-            FocusVisualStyle="{x:Null}"
-            Focusable="False">
             <Image
                 x:Name="img"
                 FocusVisualStyle="{x:Null}"
@@ -31,5 +25,4 @@
                 RenderOptions.BitmapScalingMode="Linear"
                 Stretch="UniformToFill" />
         </Border>
-    </Border>
 </UserControl>

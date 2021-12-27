@@ -5,7 +5,6 @@ namespace PicView.UILogic
 {
     internal static class ConfigureWindows
     {
-        internal static FakeWindow? GetFakeWindow { get; set; }
         internal static SettingsWindow? GetSettingsWindow { get; set; }
         internal static InfoWindow? GetInfoWindow { get; set; }
         internal static EffectsWindow? GetEffectsWindow { get; set; }
