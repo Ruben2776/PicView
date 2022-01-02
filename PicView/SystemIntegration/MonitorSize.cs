@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Interop;
+using WpfScreenHelper;
 
 namespace PicView.SystemIntegration
 {
@@ -61,7 +63,7 @@ namespace PicView.SystemIntegration
         internal static MonitorSize GetMonitorSize()
         {
             // https://stackoverflow.com/a/32599760
-            var currentMonitor = WpfScreenHelper.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+            var currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow).Handle);
 
             //find out if the app is being scaled by the monitor
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);

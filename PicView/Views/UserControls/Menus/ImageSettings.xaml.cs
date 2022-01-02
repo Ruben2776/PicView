@@ -1,6 +1,7 @@
-﻿using PicView.PicGallery;
+﻿using PicView.Animations;
+using PicView.PicGallery;
+using PicView.Properties;
 using PicView.UILogic;
-using PicView.Animations;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -14,7 +15,7 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            switch (Properties.Settings.Default.UserLanguage)
+            switch (Settings.Default.UserLanguage)
             {
                 case "ru":
                 case "pl":
@@ -50,9 +51,9 @@ namespace PicView.Views.UserControls
             {
                 UC.Close_UserControls();
 
-                if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                if (Settings.Default.FullscreenGalleryVertical == false && Settings.Default.FullscreenGalleryHorizontal == false)
                 {
-                    Properties.Settings.Default.FullscreenGalleryHorizontal = true;
+                    Settings.Default.FullscreenGalleryHorizontal = true;
                 }
 
                 await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);

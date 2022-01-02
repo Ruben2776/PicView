@@ -1,9 +1,8 @@
-﻿using PicView.ChangeImage;
-using PicView.Views.UserControls;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using PicView.Properties;
 
 namespace PicView.Animations
 {
@@ -27,7 +26,6 @@ namespace PicView.Animations
             }
             catch (Exception)
             {
-                return;
             }
         }
 
@@ -107,18 +105,18 @@ namespace PicView.Animations
         {
             colorAnimation.From = colortheme switch
             {
-                2 => Properties.Settings.Default.Pink,
-                3 => Properties.Settings.Default.Orange,
-                4 => Properties.Settings.Default.Green,
-                5 => Properties.Settings.Default.Red,
-                6 => Properties.Settings.Default.Teal,
-                7 => Properties.Settings.Default.Aqua,
-                8 => Properties.Settings.Default.Golden,
-                9 => Properties.Settings.Default.Purple,
-                10 => Properties.Settings.Default.Cyan,
-                11 => Properties.Settings.Default.Magenta,
-                12 => Properties.Settings.Default.Lime,
-                _ => Properties.Settings.Default.Blue,
+                2 => Settings.Default.Pink,
+                3 => Settings.Default.Orange,
+                4 => Settings.Default.Green,
+                5 => Settings.Default.Red,
+                6 => Settings.Default.Teal,
+                7 => Settings.Default.Aqua,
+                8 => Settings.Default.Golden,
+                9 => Settings.Default.Purple,
+                10 => Settings.Default.Cyan,
+                11 => Settings.Default.Magenta,
+                12 => Settings.Default.Lime,
+                _ => Settings.Default.Blue,
             };
             colorAnimation.To = Color.FromArgb(a, r, g, b);
             brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
@@ -129,18 +127,18 @@ namespace PicView.Animations
             colorAnimation.From = Color.FromArgb(a, r, g, b);
             colorAnimation.To = colortheme switch
             {
-                2 => Properties.Settings.Default.Pink,
-                3 => Properties.Settings.Default.Orange,
-                4 => Properties.Settings.Default.Green,
-                5 => Properties.Settings.Default.Red,
-                6 => Properties.Settings.Default.Teal,
-                7 => Properties.Settings.Default.Aqua,
-                8 => Properties.Settings.Default.Golden,
-                9 => Properties.Settings.Default.Purple,
-                10 => Properties.Settings.Default.Cyan,
-                11 => Properties.Settings.Default.Magenta,
-                12 => Properties.Settings.Default.Lime,
-                _ => Properties.Settings.Default.Blue,
+                2 => Settings.Default.Pink,
+                3 => Settings.Default.Orange,
+                4 => Settings.Default.Green,
+                5 => Settings.Default.Red,
+                6 => Settings.Default.Teal,
+                7 => Settings.Default.Aqua,
+                8 => Settings.Default.Golden,
+                9 => Settings.Default.Purple,
+                10 => Settings.Default.Cyan,
+                11 => Settings.Default.Magenta,
+                12 => Settings.Default.Lime,
+                _ => Settings.Default.Blue,
             };
             brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
@@ -153,20 +151,20 @@ namespace PicView.Animations
 
         internal static Color GetPrefferedColor()
         {
-            return Properties.Settings.Default.ColorTheme switch
+            return Settings.Default.ColorTheme switch
             {
-                2 => Properties.Settings.Default.Pink,
-                3 => Properties.Settings.Default.Orange,
-                4 => Properties.Settings.Default.Green,
-                5 => Properties.Settings.Default.Red,
-                6 => Properties.Settings.Default.Teal,
-                7 => Properties.Settings.Default.Aqua,
-                8 => Properties.Settings.Default.Golden,
-                9 => Properties.Settings.Default.Purple,
-                10 => Properties.Settings.Default.Cyan,
-                11 => Properties.Settings.Default.Magenta,
-                12 => Properties.Settings.Default.Lime,
-                _ => Properties.Settings.Default.Blue,
+                2 => Settings.Default.Pink,
+                3 => Settings.Default.Orange,
+                4 => Settings.Default.Green,
+                5 => Settings.Default.Red,
+                6 => Settings.Default.Teal,
+                7 => Settings.Default.Aqua,
+                8 => Settings.Default.Golden,
+                9 => Settings.Default.Purple,
+                10 => Settings.Default.Cyan,
+                11 => Settings.Default.Magenta,
+                12 => Settings.Default.Lime,
+                _ => Settings.Default.Blue,
             };
         }
 

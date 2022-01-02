@@ -1,10 +1,11 @@
-﻿using ImageMagick;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using ImageMagick;
+using PicView.UILogic;
 
 namespace PicView.ImageHandling
 {
@@ -31,7 +32,7 @@ namespace PicView.ImageHandling
         static BitmapSource? Base64FromBytes(byte[] binaryData)
         {
             using MagickImage magick = new MagickImage();
-            var mrs = new MagickReadSettings()
+            var mrs = new MagickReadSettings
             {
                 Density = new Density(300, 300),
                 BackgroundColor = MagickColors.Transparent,
@@ -63,7 +64,7 @@ namespace PicView.ImageHandling
         internal static async Task<string> ConvertToBase64()
         {
             BitmapFrame? frame = null;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 frame = ImageDecoder.GetRenderedBitmapFrame();
             });

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using PicView.UILogic;
 
 namespace PicView.Shortcuts
 {
@@ -12,7 +13,7 @@ namespace PicView.Shortcuts
             {
                 case Key.Escape:
                     window.Hide();
-                    UILogic.ConfigureWindows.GetMainWindow.Focus();
+                    ConfigureWindows.GetMainWindow.Focus();
                     break;
 
                 case Key.S:
@@ -26,8 +27,6 @@ namespace PicView.Shortcuts
                     if (scrollViewer == null) { return; }
                     scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 10);
                     break;
-
-                default: break;
             }
         }
 

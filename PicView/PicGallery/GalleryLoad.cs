@@ -1,9 +1,5 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls;
-using System;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +7,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls;
 using static PicView.UILogic.HideInterfaceLogic;
 
 namespace PicView.PicGallery
@@ -44,7 +46,7 @@ namespace PicView.PicGallery
             {
                 WindowSizing.RenderFullscreen();
 
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                if (Settings.Default.FullscreenGalleryHorizontal)
                 {
                     // Set size
                     GalleryNavigation.SetSize(22);
@@ -88,7 +90,7 @@ namespace PicView.PicGallery
                     // Set style
                     UC.GetPicGallery.Margin = new Thickness(0, 0, 0, 0);
                     UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
-                    if (Properties.Settings.Default.DarkTheme)
+                    if (Settings.Default.DarkTheme)
                     {
                         UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
                     }
@@ -234,7 +236,7 @@ namespace PicView.PicGallery
             }
 
             var pic = await Task.FromResult(
-                Thumbnails.GetBitmapSourceThumb(new System.IO.FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size)
+                Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size)
                 ?? ImageFunctions.ImageErrorMessage());
             UpdatePic(i, pic);
         }
@@ -254,9 +256,11 @@ namespace PicView.PicGallery
                     
                     var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                     item.img.Source = pic;
+                    
+                    item.Width = item.Border.Width = GalleryNavigation.PicGalleryItem_Size * pic.PixelWidth / pic.PixelHeight;
+                    item.Height = item.Border.Height = GalleryNavigation.PicGalleryItem_Size;
 
-                    item.Width =  GalleryNavigation.PicGalleryItem_Size * pic.PixelWidth / pic.PixelHeight;
-                    item.Height = GalleryNavigation.PicGalleryItem_Size;
+                    
                 }));
             }
             catch (Exception)

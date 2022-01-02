@@ -1,14 +1,17 @@
-﻿using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using XamlAnimatedGif;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.ArchiveExtraction;
@@ -18,6 +21,7 @@ using static PicView.UILogic.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
+using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ChangeImage
 {
@@ -33,11 +37,11 @@ namespace PicView.ChangeImage
         {
             if (File.Exists(file) == false)
             {
-                if (Properties.Settings.Default.AutoFitWindow)
+                if (Settings.Default.AutoFitWindow)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
-                        UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                        WindowSizing.SetWindowBehavior();
                     });
                 }
                 await LoadPicFromStringAsync(file, false).ConfigureAwait(false);
@@ -76,7 +80,7 @@ namespace PicView.ChangeImage
                     {
                         if (fileInfo.Extension == ".gif")
                         {
-                            XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
+                            AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
                         }
                         else
                         {
@@ -138,7 +142,7 @@ namespace PicView.ChangeImage
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
-                UC.ToggleStartUpUC(true);
+                ToggleStartUpUC(true);
             });
 
             if (checkExists && File.Exists(path))
@@ -159,13 +163,13 @@ namespace PicView.ChangeImage
                     SetLoadingString();
                 });
 
-                string check = ErrorHandling.CheckIfLoadableString(path);
+                string check = CheckIfLoadableString(path);
                 switch (check)
                 {
-                    default: await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
+                    default: await LoadPiFromFileAsync(check).ConfigureAwait(false); return;
                     case "web": await WebFunctions.PicWeb(path).ConfigureAwait(false); return;
-                    case "base64": await LoadPic.LoadBase64PicAsync(path).ConfigureAwait(false); return;
-                    case "directory": await LoadPic.LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
+                    case "base64": await LoadBase64PicAsync(path).ConfigureAwait(false); return;
+                    case "directory": await LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
                     case "": ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => { Unload(true); }); return;
                 }
             }
@@ -189,7 +193,7 @@ namespace PicView.ChangeImage
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
             {
-                UC.ToggleStartUpUC(true);
+                ToggleStartUpUC(true);
             });
 
             if (fileInfo.Exists == false)
@@ -210,8 +214,8 @@ namespace PicView.ChangeImage
 
             LoadingPreview(fileInfo);
 
-            bool folderChanged = await ErrorHandling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
-            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            bool folderChanged = await CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
+            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             if (Pics?.Count > 0)
             {
@@ -257,7 +261,7 @@ namespace PicView.ChangeImage
             var fileInfo = new FileInfo(folder);
             if (fileInfo is null)
             {
-                ErrorHandling.UnexpectedError();
+                UnexpectedError();
                 return;
             }
 
@@ -274,26 +278,26 @@ namespace PicView.ChangeImage
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 SetLoadingString();
-                UC.ToggleStartUpUC(true);
+                ToggleStartUpUC(true);
             });
 
-            if (ErrorHandling.CheckOutOfRange() == false)
+            if (CheckOutOfRange() == false)
             {
                 BackupPath = Pics[FolderIndex];
             }
 
-            bool folderChanged = await ErrorHandling.CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
+            bool folderChanged = await CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
 
             if (FreshStartup is false || folderChanged)
             {
                 Preloader.Clear();
             }
 
-            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             if (Pics.Count < 0) // TODO make function to find first folder with pics, when not browsing recursively
             {
-                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                await ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
 
@@ -338,7 +342,7 @@ namespace PicView.ChangeImage
             }
 
             FolderIndex = index;
-            var preloadValue = Preloader.Get(Navigation.Pics[index]);
+            var preloadValue = Preloader.Get(Pics[index]);
 
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.IsLoading)
@@ -362,13 +366,13 @@ namespace PicView.ChangeImage
                         {
                             var x = index - 1 >= 0 ? index - 1 : 0;
                             fileInfo = new FileInfo(Pics[x]);
-                            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+                            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
                             await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
                             return;
                         }
                         catch (Exception)
                         {
-                            ErrorHandling.UnexpectedError();
+                            UnexpectedError();
                             return;
                         }
                     }
@@ -404,10 +408,10 @@ namespace PicView.ChangeImage
 
                 if (preloadValue is null)
                 {
-                    bool added = await Preloader.AddAsync(index, fileInfo, null).ConfigureAwait(false);
+                    bool added = await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
                     if (added)
                     {
-                        preloadValue = Preloader.Get(Navigation.Pics[index]);
+                        preloadValue = Preloader.Get(Pics[index]);
                     }
 
                     if (preloadValue is null)
@@ -528,22 +532,22 @@ namespace PicView.ChangeImage
                     bitmapSource = ImageFunctions.ImageErrorMessage();
                     if (bitmapSource is null)
                     {
-                        ErrorHandling.UnexpectedError();
+                        UnexpectedError();
                         return;
                     }
                 }
 
                 // Scroll to top if scroll enabled
-                if (Properties.Settings.Default.ScrollEnabled)
+                if (Settings.Default.ScrollEnabled)
                 {
                     ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
                 }
 
                 // Reset transforms if needed
-                if (UILogic.TransformImage.Rotation.Flipped || UILogic.TransformImage.Rotation.Rotateint != 0)
+                if (Rotation.Flipped || Rotation.Rotateint != 0)
                 {
-                    UILogic.TransformImage.Rotation.Flipped = false;
-                    UILogic.TransformImage.Rotation.Rotateint = 0;
+                    Rotation.Flipped = false;
+                    Rotation.Rotateint = 0;
                     if (GetQuickSettingsMenu is not null && GetQuickSettingsMenu.FlipButton is not null)
                     {
                         GetQuickSettingsMenu.FlipButton.TheButton.IsChecked = false;
@@ -556,7 +560,7 @@ namespace PicView.ChangeImage
                 string? ext = fileInfo is null ? Path.GetExtension(Pics?[index]) : fileInfo.Extension;
                 if (ext is not null && ext.Equals(".gif", StringComparison.OrdinalIgnoreCase))
                 {
-                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
+                    AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
                 }
                 else
                 {
@@ -579,7 +583,7 @@ namespace PicView.ChangeImage
             {
                 Unload(false);
 
-                if (Properties.Settings.Default.ScrollEnabled)
+                if (Settings.Default.ScrollEnabled)
                 {
                     ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
                 }
@@ -591,7 +595,7 @@ namespace PicView.ChangeImage
 
                 CloseToolTipMessage();
 
-                UC.ToggleStartUpUC(true);
+                ToggleStartUpUC(true);
             });
 
             _ = Taskbar.NoProgress().ConfigureAwait(false);
@@ -609,14 +613,14 @@ namespace PicView.ChangeImage
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
-                SetTitle.SetLoadingString();
+                SetLoadingString();
             });
 
             UpdatePic(imageName, bitmap);
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
-                UC.ToggleStartUpUC(true);
+                ToggleStartUpUC(true);
             });
         }
 
@@ -632,9 +636,9 @@ namespace PicView.ChangeImage
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
             {
-                UC.ToggleStartUpUC(true);
+                ToggleStartUpUC(true);
 
-                if (Properties.Settings.Default.ScrollEnabled)
+                if (Settings.Default.ScrollEnabled)
                 {
                     ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
                 }
@@ -647,7 +651,7 @@ namespace PicView.ChangeImage
                         FitImage(imageSize.Value.Width, imageSize.Value.Height);
                         SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, imageName);
                     }
-                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
+                    AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
                 }
                 else if (bitmapSource != null)
                 {
@@ -657,7 +661,7 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    ErrorHandling.UnexpectedError();
+                    UnexpectedError();
                     return;
                 }
 

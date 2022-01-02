@@ -1,11 +1,13 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System;
+﻿using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.ProcessHandling;
+using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -54,7 +56,7 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void Copyfile(string path)
         {
-            var paths = new System.Collections.Specialized.StringCollection { path };
+            var paths = new StringCollection { path };
             Clipboard.SetFileDropList(paths);
             ShowTooltipMessage(Application.Current.Resources["FileCopy"]);
         }
@@ -103,7 +105,7 @@ namespace PicView.FileHandling
                     {
                         for (int i = 1; i < files.Length; i++)
                         {
-                            ProcessHandling.ProcessLogic.StartProcessWithFileArgument(files[i]);
+                            ProcessLogic.StartProcessWithFileArgument(files[i]);
                         }
                     }
                     return;
@@ -148,12 +150,12 @@ namespace PicView.FileHandling
                 return;
             }
 
-            var x = new System.Collections.Specialized.StringCollection
+            var x = new StringCollection
             {
                 Pics[FolderIndex]
             };
 
-            byte[] moveEffect = new byte[] { 2, 0, 0, 0 };
+            byte[] moveEffect = { 2, 0, 0, 0 };
             using (var dropEffect = new MemoryStream())
             {
                 dropEffect.Write(moveEffect, 0, moveEffect.Length);

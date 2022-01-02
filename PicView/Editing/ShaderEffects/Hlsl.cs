@@ -13,17 +13,16 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
-
 namespace PicView.Editing.HlslEffects
 {
 
     /// <summary>An effect that inverts all colors.</summary>
     public class InvertColorEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(InvertColorEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(InvertColorEffect), 0);
         public InvertColorEffect()
         {
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/InvertColorEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -44,12 +43,12 @@ namespace PicView.Editing.HlslEffects
     /// <summary>A transition effect </summary>
     public class Transition_RippleEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(Transition_RippleEffect), 0);
-        public static readonly DependencyProperty Texture2Property = ShaderEffect.RegisterPixelShaderSamplerProperty("Texture2", typeof(Transition_RippleEffect), 1);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(Transition_RippleEffect), 0);
+        public static readonly DependencyProperty Texture2Property = RegisterPixelShaderSamplerProperty("Texture2", typeof(Transition_RippleEffect), 1);
         public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register("Progress", typeof(double), typeof(Transition_RippleEffect), new UIPropertyMetadata(((double)(30D)), PixelShaderConstantCallback(0)));
         public Transition_RippleEffect()
         {
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/Transition_RippleEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -95,7 +94,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that blends between partial desaturation and a two-color ramp.</summary>
     public class ColorToneEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(ColorToneEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(ColorToneEffect), 0);
         public static readonly DependencyProperty DesaturationProperty = DependencyProperty.Register("Desaturation", typeof(double), typeof(ColorToneEffect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty TonedProperty = DependencyProperty.Register("Toned", typeof(double), typeof(ColorToneEffect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty LightColorProperty = DependencyProperty.Register("LightColor", typeof(Color), typeof(ColorToneEffect), new UIPropertyMetadata(Color.FromArgb(255, 255, 255, 0), PixelShaderConstantCallback(2)));
@@ -107,7 +106,7 @@ namespace PicView.Editing.HlslEffects
             Desaturation = intensity / 100;
             Toned = intensity / 200;
 
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/ColorToneEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -181,11 +180,11 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that turns the input into shades of a single color.</summary>
     public class MonochromeEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(MonochromeEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(MonochromeEffect), 0);
         public static readonly DependencyProperty FilterColorProperty = DependencyProperty.Register("FilterColor", typeof(Color), typeof(MonochromeEffect), new UIPropertyMetadata(Color.FromArgb(255, 255, 255, 0), PixelShaderConstantCallback(0)));
         public MonochromeEffect()
         {
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/MonochromeEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -219,7 +218,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that superimposes rippling waves upon the input.</summary>
     public class RippleEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(RippleEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(RippleEffect), 0);
         public static readonly DependencyProperty CenterProperty = DependencyProperty.Register("Center", typeof(Point), typeof(RippleEffect), new UIPropertyMetadata(new Point(0.5D, 0.5D), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty AmplitudeProperty = DependencyProperty.Register("Amplitude", typeof(double), typeof(RippleEffect), new UIPropertyMetadata(((double)(0.1D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty FrequencyProperty = DependencyProperty.Register("Frequency", typeof(double), typeof(RippleEffect), new UIPropertyMetadata(((double)(70D)), PixelShaderConstantCallback(2)));
@@ -228,7 +227,7 @@ namespace PicView.Editing.HlslEffects
         public RippleEffect(double intensity)
         {
             Amplitude = intensity / 100;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/RippleEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -314,14 +313,14 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that swirls the input in a spiral.</summary>
     public class SwirlEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(SwirlEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(SwirlEffect), 0);
         public static readonly DependencyProperty CenterProperty = DependencyProperty.Register("Center", typeof(Point), typeof(SwirlEffect), new UIPropertyMetadata(new Point(0.5D, 0.5D), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty SpiralStrengthProperty = DependencyProperty.Register("SpiralStrength", typeof(double), typeof(SwirlEffect), new UIPropertyMetadata(((double)(10D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty AspectRatioProperty = DependencyProperty.Register("AspectRatio", typeof(double), typeof(SwirlEffect), new UIPropertyMetadata(((double)(1.5D)), PixelShaderConstantCallback(2)));
         public SwirlEffect(double intensity)
         {
             SpiralStrength = intensity / 250;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/SwirlEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -381,7 +380,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that intensifies bright regions.</summary>
     public class BloomEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(BloomEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(BloomEffect), 0);
         public static readonly DependencyProperty BloomIntensityProperty = DependencyProperty.Register("BloomIntensity", typeof(double), typeof(BloomEffect), new UIPropertyMetadata(((double)(1D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty BaseIntensityProperty = DependencyProperty.Register("BaseIntensity", typeof(double), typeof(BloomEffect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty BloomSaturationProperty = DependencyProperty.Register("BloomSaturation", typeof(double), typeof(BloomEffect), new UIPropertyMetadata(((double)(1D)), PixelShaderConstantCallback(2)));
@@ -389,7 +388,7 @@ namespace PicView.Editing.HlslEffects
         public BloomEffect(double intensity)
         {
             BaseIntensity = intensity / 50;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/BloomEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -462,7 +461,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that applies defogging, exposure, gamma, vignette, and blue shift corrections.</summary>
     public class ToneMappingEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(ToneMappingEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(ToneMappingEffect), 0);
         public static readonly DependencyProperty DefogProperty = DependencyProperty.Register("Defog", typeof(double), typeof(ToneMappingEffect), new UIPropertyMetadata(((double)(0.01D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty FogColorProperty = DependencyProperty.Register("FogColor", typeof(Color), typeof(ToneMappingEffect), new UIPropertyMetadata(Color.FromArgb(255, 255, 255, 255), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty ExposureProperty = DependencyProperty.Register("Exposure", typeof(double), typeof(ToneMappingEffect), new UIPropertyMetadata(((double)(0.2D)), PixelShaderConstantCallback(2)));
@@ -474,7 +473,7 @@ namespace PicView.Editing.HlslEffects
         public ToneMappingEffect(double intensity)
         {
             Exposure = intensity / 110;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/ToneMappingEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -599,7 +598,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that intensifies dark regions.</summary>
     public class GloomEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(GloomEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(GloomEffect), 0);
         public static readonly DependencyProperty GloomIntensityProperty = DependencyProperty.Register("GloomIntensity", typeof(double), typeof(GloomEffect), new UIPropertyMetadata(((double)(1D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty BaseIntensityProperty = DependencyProperty.Register("BaseIntensity", typeof(double), typeof(GloomEffect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty GloomSaturationProperty = DependencyProperty.Register("GloomSaturation", typeof(double), typeof(GloomEffect), new UIPropertyMetadata(((double)(0.2D)), PixelShaderConstantCallback(2)));
@@ -607,7 +606,7 @@ namespace PicView.Editing.HlslEffects
         public GloomEffect(double intensity)
         {
             BaseIntensity = intensity / 70;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/GloomEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -679,7 +678,7 @@ namespace PicView.Editing.HlslEffects
     }
     public class TelescopicBlurPS3Effect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(TelescopicBlurPS3Effect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(TelescopicBlurPS3Effect), 0);
         public static readonly DependencyProperty CenterXProperty = DependencyProperty.Register("CenterX", typeof(double), typeof(TelescopicBlurPS3Effect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty CenterYProperty = DependencyProperty.Register("CenterY", typeof(double), typeof(TelescopicBlurPS3Effect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty ZoomBlurAmountProperty = DependencyProperty.Register("ZoomBlurAmount", typeof(double), typeof(TelescopicBlurPS3Effect), new UIPropertyMetadata(((double)(2.5D)), PixelShaderConstantCallback(2)));
@@ -687,7 +686,7 @@ namespace PicView.Editing.HlslEffects
         public TelescopicBlurPS3Effect(double intensity)
         {
             ZoomBlurAmount = intensity / 18;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/TelescopicBlurPS3Effect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -760,12 +759,12 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that blurs the input using Poisson disk sampling.</summary>
     public class GrowablePoissonDiskEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(GrowablePoissonDiskEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(GrowablePoissonDiskEffect), 0);
         public static readonly DependencyProperty DiskRadiusProperty = DependencyProperty.Register("DiskRadius", typeof(double), typeof(GrowablePoissonDiskEffect), new UIPropertyMetadata(((double)(5D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty InputSizeProperty = DependencyProperty.Register("InputSize", typeof(Size), typeof(GrowablePoissonDiskEffect), new UIPropertyMetadata(new Size(600D, 400D), PixelShaderConstantCallback(1)));
         public GrowablePoissonDiskEffect()
         {
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/GrowablePoissonDiskEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -812,14 +811,14 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that blurs in a single direction.</summary>
     public class DirectionalBlurEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(DirectionalBlurEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(DirectionalBlurEffect), 0);
         public static readonly DependencyProperty AngleProperty = DependencyProperty.Register("Angle", typeof(double), typeof(DirectionalBlurEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty BlurAmountProperty = DependencyProperty.Register("BlurAmount", typeof(double), typeof(DirectionalBlurEffect), new UIPropertyMetadata(((double)(0.003D)), PixelShaderConstantCallback(1)));
         public DirectionalBlurEffect(double intensity)
         {
             intensity = intensity == 0 ? 1 : intensity;
             BlurAmount = intensity / 10000;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/DirectionalBlurEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -866,7 +865,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that swirls the input in alternating clockwise and counterclockwise bands.</summary>
     public class BandedSwirlEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(BandedSwirlEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(BandedSwirlEffect), 0);
         public static readonly DependencyProperty CenterProperty = DependencyProperty.Register("Center", typeof(Point), typeof(BandedSwirlEffect), new UIPropertyMetadata(new Point(0.5D, 0.5D), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty BandsProperty = DependencyProperty.Register("Bands", typeof(double), typeof(BandedSwirlEffect), new UIPropertyMetadata(((double)(10D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty StrengthProperty = DependencyProperty.Register("Strength", typeof(double), typeof(BandedSwirlEffect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(2)));
@@ -875,7 +874,7 @@ namespace PicView.Editing.HlslEffects
         {
             intensity = intensity == 0 ? 1 : intensity;
             Strength = intensity / 100;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/BandedSwirlEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -948,7 +947,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that creates bands of bright regions.</summary>
     public class BandsEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(BandsEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(BandsEffect), 0);
         public static readonly DependencyProperty BandDensityProperty = DependencyProperty.Register("BandDensity", typeof(double), typeof(BandsEffect), new UIPropertyMetadata(((double)(65D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty BandIntensityProperty = DependencyProperty.Register("BandIntensity", typeof(double), typeof(BandsEffect), new UIPropertyMetadata(((double)(0.056D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty IsRightSideBandProperty = DependencyProperty.Register("IsRightSideBand", typeof(double), typeof(BandsEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(2)));
@@ -956,7 +955,7 @@ namespace PicView.Editing.HlslEffects
         {
             intensity = intensity == 0 ? 1 : intensity;
             BandIntensity = intensity / 500;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/BandsEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1016,14 +1015,14 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that embosses the input.</summary>
     public class EmbossedEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(EmbossedEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(EmbossedEffect), 0);
         public static readonly DependencyProperty EmbossedAmountProperty = DependencyProperty.Register("EmbossedAmount", typeof(double), typeof(EmbossedEffect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(EmbossedEffect), new UIPropertyMetadata(((double)(0.003D)), PixelShaderConstantCallback(1)));
         public EmbossedEffect(double intensity)
         {
             intensity = intensity == 0 ? 1 : intensity;
             EmbossedAmount = intensity / 100;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/EmbossedEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1070,7 +1069,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect mimics the look of glass tiles.</summary>
     public class GlassTilesEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(GlassTilesEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(GlassTilesEffect), 0);
         public static readonly DependencyProperty TilesProperty = DependencyProperty.Register("Tiles", typeof(double), typeof(GlassTilesEffect), new UIPropertyMetadata(((double)(5D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty BevelWidthProperty = DependencyProperty.Register("BevelWidth", typeof(double), typeof(GlassTilesEffect), new UIPropertyMetadata(((double)(1D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty OffsetProperty = DependencyProperty.Register("Offset", typeof(double), typeof(GlassTilesEffect), new UIPropertyMetadata(((double)(1D)), PixelShaderConstantCallback(3)));
@@ -1079,7 +1078,7 @@ namespace PicView.Editing.HlslEffects
         {
             intensity = intensity == 0 ? 1 : intensity;
             Tiles = intensity / 10;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/GlassTilesEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1149,7 +1148,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that magnifies a circular region with a smooth boundary.</summary>
     public class MagnifySmoothEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(MagnifySmoothEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(MagnifySmoothEffect), 0);
         public static readonly DependencyProperty CenterPointProperty = DependencyProperty.Register("CenterPoint", typeof(Point), typeof(MagnifySmoothEffect), new UIPropertyMetadata(new Point(0.5D, 0.5D), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty InnerRadiusProperty = DependencyProperty.Register("InnerRadius", typeof(double), typeof(MagnifySmoothEffect), new UIPropertyMetadata(((double)(0.2D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty OuterRadiusProperty = DependencyProperty.Register("OuterRadius", typeof(double), typeof(MagnifySmoothEffect), new UIPropertyMetadata(((double)(0.4D)), PixelShaderConstantCallback(2)));
@@ -1161,7 +1160,7 @@ namespace PicView.Editing.HlslEffects
             InnerRadius = intensity / 800;
             OuterRadius = intensity / 300;
             MagnificationAmount = intensity / 150;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/MagnifySmoothEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1246,13 +1245,13 @@ namespace PicView.Editing.HlslEffects
     }
     public class PaperFoldEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(PaperFoldEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(PaperFoldEffect), 0);
         public static readonly DependencyProperty FoldAmountProperty = DependencyProperty.Register("FoldAmount", typeof(double), typeof(PaperFoldEffect), new UIPropertyMetadata(((double)(0.2D)), PixelShaderConstantCallback(0)));
         public PaperFoldEffect(double intensity)
         {
             intensity = intensity == 0 ? 1 : intensity;
             FoldAmount = intensity / 450;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/PaperFoldEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1286,14 +1285,14 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that pivots the output around a center point.</summary>
     public class PivotEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(PivotEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(PivotEffect), 0);
         public static readonly DependencyProperty PivotAmountProperty = DependencyProperty.Register("PivotAmount", typeof(double), typeof(PivotEffect), new UIPropertyMetadata(((double)(0.2D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty EdgeProperty = DependencyProperty.Register("Edge", typeof(double), typeof(PivotEffect), new UIPropertyMetadata(((double)(0.5D)), PixelShaderConstantCallback(1)));
         public PivotEffect(double intensity)
         {
             intensity = intensity == 0 ? 1 : intensity;
             PivotAmount = intensity / 500;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/PivotEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1339,7 +1338,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>Applies water defraction effect.</summary>
     public class UnderwaterEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(UnderwaterEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(UnderwaterEffect), 0);
         public static readonly DependencyProperty TimerProperty = DependencyProperty.Register("Timer", typeof(double), typeof(UnderwaterEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty RefractonProperty = DependencyProperty.Register("Refracton", typeof(double), typeof(UnderwaterEffect), new UIPropertyMetadata(((double)(50D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty VerticalTroughWidthProperty = DependencyProperty.Register("VerticalTroughWidth", typeof(double), typeof(UnderwaterEffect), new UIPropertyMetadata(((double)(23D)), PixelShaderConstantCallback(2)));
@@ -1349,7 +1348,7 @@ namespace PicView.Editing.HlslEffects
             intensity = intensity == 0 ? 1 : intensity;
             Wobble2 = intensity / 7;
             Refracton = intensity / 3;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/UnderwaterEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1421,13 +1420,13 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that applies a wave pattern to the inputSampler.</summary>
     public class WaveWarperEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(WaveWarperEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(WaveWarperEffect), 0);
         public static readonly DependencyProperty TimeProperty = DependencyProperty.Register("Time", typeof(double), typeof(WaveWarperEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty WaveSizeProperty = DependencyProperty.Register("WaveSize", typeof(double), typeof(WaveWarperEffect), new UIPropertyMetadata(((double)(64D)), PixelShaderConstantCallback(1)));
         public WaveWarperEffect(double intensity)
         {
             WaveSize = intensity;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/WaveWarperEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1473,7 +1472,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that turns the inputSampler into shades of a single color.</summary>
     public class FrostyOutlineEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(FrostyOutlineEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(FrostyOutlineEffect), 0);
         public static readonly DependencyProperty WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrostyOutlineEffect), new UIPropertyMetadata(((double)(500D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrostyOutlineEffect), new UIPropertyMetadata(((double)(300D)), PixelShaderConstantCallback(1)));
         public FrostyOutlineEffect(double intensity)
@@ -1481,7 +1480,7 @@ namespace PicView.Editing.HlslEffects
             intensity = intensity == 0 ? 1 : intensity;
             Width = intensity * 6;
             Height = intensity * 3;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/FrostyOutlineEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1528,17 +1527,17 @@ namespace PicView.Editing.HlslEffects
     /// <summary>Pixel shader which produces random scratches, noise and other FX like an old projector</summary>
     public class OldMovieEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(OldMovieEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(OldMovieEffect), 0);
         public static readonly DependencyProperty ScratchAmountProperty = DependencyProperty.Register("ScratchAmount", typeof(double), typeof(OldMovieEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty NoiseAmountProperty = DependencyProperty.Register("NoiseAmount", typeof(double), typeof(OldMovieEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(1)));
         public static readonly DependencyProperty RandomCoord1Property = DependencyProperty.Register("RandomCoord1", typeof(Point), typeof(OldMovieEffect), new UIPropertyMetadata(new Point(0D, 0D), PixelShaderConstantCallback(2)));
         public static readonly DependencyProperty RandomCoord2Property = DependencyProperty.Register("RandomCoord2", typeof(Point), typeof(OldMovieEffect), new UIPropertyMetadata(new Point(0D, 0D), PixelShaderConstantCallback(3)));
         public static readonly DependencyProperty FrameProperty = DependencyProperty.Register("Frame", typeof(double), typeof(OldMovieEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(4)));
-        public static readonly DependencyProperty NoiseSamplerProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("NoiseSampler", typeof(OldMovieEffect), 1);
+        public static readonly DependencyProperty NoiseSamplerProperty = RegisterPixelShaderSamplerProperty("NoiseSampler", typeof(OldMovieEffect), 1);
         public OldMovieEffect(double intensity)
         {
             ScratchAmount = intensity / 100;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/OldMovieEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1634,7 +1633,7 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An effect that turns the input into blocky pixels.</summary>
     public class PixelateEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(PixelateEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(PixelateEffect), 0);
         public static readonly DependencyProperty PixelCountsProperty = DependencyProperty.Register("PixelCounts", typeof(Size), typeof(PixelateEffect), new UIPropertyMetadata(new Size(50D, 40D), PixelShaderConstantCallback(0)));
         public static readonly DependencyProperty BrickOffsetProperty = DependencyProperty.Register("BrickOffset", typeof(double), typeof(PixelateEffect), new UIPropertyMetadata(((double)(0D)), PixelShaderConstantCallback(1)));
 
@@ -1651,7 +1650,7 @@ namespace PicView.Editing.HlslEffects
                 default: break;
             }
 
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/PixelateEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1699,13 +1698,13 @@ namespace PicView.Editing.HlslEffects
     /// <summary>An paper sketch effect.</summary>
     public class SketchGraniteEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(SketchGraniteEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(SketchGraniteEffect), 0);
         public static readonly DependencyProperty BrushSizeProperty = DependencyProperty.Register("BrushSize", typeof(double), typeof(SketchGraniteEffect), new UIPropertyMetadata(((double)(0.003D)), PixelShaderConstantCallback(0)));
         public SketchGraniteEffect(double intensity)
         {
             intensity = intensity == 0 ? 1 : intensity;
             BrushSize = intensity / 30000;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/SketchGraniteEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1739,13 +1738,13 @@ namespace PicView.Editing.HlslEffects
     /// <summary>A pencil stroke effect.</summary>
     public class SketchPencilStrokeEffect : ShaderEffect
     {
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(SketchPencilStrokeEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(SketchPencilStrokeEffect), 0);
         public static readonly DependencyProperty BrushSizeProperty = DependencyProperty.Register("BrushSize", typeof(double), typeof(SketchPencilStrokeEffect), new UIPropertyMetadata(((double)(0.005D)), PixelShaderConstantCallback(0)));
         public SketchPencilStrokeEffect(double intensity)
         {
             intensity = intensity == 0 ? 1 : intensity;
             BrushSize = intensity / 5000;
-            PixelShader pixelShader = new PixelShader(); string path = System.AppDomain.CurrentDomain.BaseDirectory;
+            PixelShader pixelShader = new PixelShader(); string path = AppDomain.CurrentDomain.BaseDirectory;
             pixelShader.UriSource = new Uri(path + "Editing/ShaderEffects/PsEffects/SketchPencilStrokeEffect.ps", UriKind.RelativeOrAbsolute);
             this.PixelShader = pixelShader;
 
@@ -1779,7 +1778,7 @@ namespace PicView.Editing.HlslEffects
 
     public class GrayscaleEffect : ShaderEffect
     {
-        private static PixelShader _pixelShader = new PixelShader() { UriSource = new Uri(System.AppDomain.CurrentDomain.BaseDirectory + "Editing/ShaderEffects/PsEffects/GrayscaleEffect.ps") };
+        private static PixelShader _pixelShader = new PixelShader() { UriSource = new Uri(AppDomain.CurrentDomain.BaseDirectory + "Editing/ShaderEffects/PsEffects/GrayscaleEffect.ps") };
 
         public GrayscaleEffect()
         {
@@ -1789,7 +1788,7 @@ namespace PicView.Editing.HlslEffects
             UpdateShaderValue(DesaturationFactorProperty);
         }
 
-        public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(GrayscaleEffect), 0);
+        public static readonly DependencyProperty InputProperty = RegisterPixelShaderSamplerProperty("Input", typeof(GrayscaleEffect), 0);
         public Brush Input
         {
             get { return (Brush)GetValue(InputProperty); }

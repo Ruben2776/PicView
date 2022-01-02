@@ -1,8 +1,9 @@
-﻿using ImageMagick;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using ImageMagick;
 
 namespace PicView.ImageHandling
 {
@@ -47,7 +48,7 @@ namespace PicView.ImageHandling
             if (File.Exists(file) == false) { return false; }
             if (width < 0 && percentage is not null || height < 0 && percentage is not null) { return false; }
 
-            var magick = new MagickImage()
+            var magick = new MagickImage
             {
                 ColorSpace = ColorSpace.Transparent
             };
@@ -129,7 +130,7 @@ namespace PicView.ImageHandling
             {
                 imageOptimizer.Compress(x);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return true;
             }

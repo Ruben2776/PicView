@@ -1,13 +1,16 @@
-﻿using ImageMagick;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using ImageMagick;
+using PicView.UILogic;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
+using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
 {
@@ -77,12 +80,12 @@ namespace PicView.ImageHandling
                 magickImage.Quality = 100;
 
                 // Apply transformation values
-                if (UILogic.TransformImage.Rotation.Flipped)
+                if (Rotation.Flipped)
                 {
                     magickImage.Flop();
                 }
 
-                magickImage.Rotate(UILogic.TransformImage.Rotation.Rotateint);
+                magickImage.Rotate(Rotation.Rotateint);
 
                 return magickImage;
             }
@@ -103,16 +106,16 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var sauce = UILogic.ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                var sauce = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
 
                 if (sauce == null)
                 {
                     return null;
                 }
 
-                var effect = UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect;
+                var effect = ConfigureWindows.GetMainWindow.MainImage.Effect;
 
-                var rectangle = new System.Windows.Shapes.Rectangle
+                var rectangle = new Rectangle
                 {
                     Fill = new ImageBrush(sauce),
                     Effect = effect

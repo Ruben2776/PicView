@@ -1,5 +1,4 @@
-﻿using PicView.UILogic;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
@@ -7,6 +6,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.SystemIntegration;
+using PicView.UILogic;
 
 namespace PicView.FileHandling
 {
@@ -14,9 +17,9 @@ namespace PicView.FileHandling
     {
         internal static void ShowFileProperties()
         {
-            if (ChangeImage.ErrorHandling.CheckOutOfRange()) { return; }
+            if (ErrorHandling.CheckOutOfRange()) { return; }
 
-            SystemIntegration.NativeMethods.ShowFileProperties(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+            NativeMethods.ShowFileProperties(Navigation.Pics[Navigation.FolderIndex]);
         }
 
         [DllImport("shell32.dll", SetLastError = true)]
@@ -48,7 +51,7 @@ namespace PicView.FileHandling
             }
             else
             {
-                fileArray = new IntPtr[] { nativeFile };
+                fileArray = new[] { nativeFile };
             }
 
             _= SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
@@ -111,43 +114,43 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static async Task<bool?> RenameFileWithErrorChecking(string newPath)
         {
-            if (!FileFunctions.RenameFile(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex], newPath))
+            if (!RenameFile(Navigation.Pics[Navigation.FolderIndex], newPath))
             {
                 return null;
             }
 
             // Check if the file is not in the same folder
-            if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]))
+            if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]))
             {
-                if (ChangeImage.Navigation.Pics.Count < 1)
+                if (Navigation.Pics.Count < 1)
                 {
-                    await ChangeImage.LoadPic.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
+                    await LoadPic.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
                     return false;
                 }
 
-                ChangeImage.Preloader.Remove(ChangeImage.Navigation.FolderIndex);
-                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
+                Preloader.Remove(Navigation.FolderIndex);
+                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
                 {
-                    UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
+                    UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
                 }
-                ChangeImage.Navigation.Pics.Remove(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
-                await ChangeImage.Navigation.NavigateToPicAsync(false).ConfigureAwait(false);
+                Navigation.Pics.Remove(Navigation.Pics[Navigation.FolderIndex]);
+                await Navigation.NavigateToPicAsync(false).ConfigureAwait(false);
                 return false;
             }
 
-            ChangeImage.Preloader.Rename(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex], newPath);
-            if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
+            Preloader.Rename(Navigation.Pics[Navigation.FolderIndex], newPath);
+            if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
             {
-                UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
+                UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
             }
-            ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] = newPath;
+            Navigation.Pics[Navigation.FolderIndex] = newPath;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
                 var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
 
-                SetTitle.SetTitleString((int)width, (int)height, ChangeImage.Navigation.FolderIndex, null);
+                SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
             });
 
             return true;

@@ -1,6 +1,9 @@
-﻿using PicView.PicGallery;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic.Sizing;
 using static PicView.Animations.FadeControls;
 
 namespace PicView.UILogic
@@ -13,12 +16,12 @@ namespace PicView.UILogic
         internal static void ToggleInterface()
         {
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen
-                || Properties.Settings.Default.Fullscreen)
+                || Settings.Default.Fullscreen)
             {
                 return;
             }
 
-            if (Properties.Settings.Default.ShowInterface)
+            if (Settings.Default.ShowInterface)
             {
                 if (ConfigureWindows.GetMainWindow.TitleBar.Visibility == Visibility.Visible)
                 {
@@ -37,17 +40,17 @@ namespace PicView.UILogic
             UC.Close_UserControls();
 
             // Recalculate to new size
-            var timer = new System.Timers.Timer(50) // If not fired in timer, calculation incorrect 
+            var timer = new Timer(50) // If not fired in timer, calculation incorrect 
             {
                 AutoReset = false,
                 Enabled = true,
             };
-            timer.Elapsed += (_, _) => _ = Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(true);
+            timer.Elapsed += (_, _) => _ = ScaleImage.TryFitImageAsync().ConfigureAwait(true);
         }
 
         internal static void ShowStandardInterface()
         {
-            Properties.Settings.Default.ShowInterface = true;
+            Settings.Default.ShowInterface = true;
 
             ShowTopandBottom(true);
             ShowNavigation(false);
@@ -65,7 +68,7 @@ namespace PicView.UILogic
             ShowNavigation(true);
             ShowShortcuts(true);
 
-            Properties.Settings.Default.ShowInterface = false;
+            Settings.Default.ShowInterface = false;
 
             if (ActivityTimer != null)
             {

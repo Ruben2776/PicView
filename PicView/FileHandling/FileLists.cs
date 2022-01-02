@@ -1,9 +1,10 @@
-﻿using PicView.ChangeImage;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using PicView.ChangeImage;
+using PicView.Properties;
 using PicView.SystemIntegration;
 using static PicView.FileHandling.ArchiveExtraction;
 
@@ -25,7 +26,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Sort and return list of supported files
         /// </summary>
-        internal static List<string>? FileList(FileInfo fileInfo) => Properties.Settings.Default.SortPreference switch
+        internal static List<string>? FileList(FileInfo fileInfo) => Settings.Default.SortPreference switch
         {
             0 => FileList(fileInfo, SortFilesBy.Name),
             1 => FileList(fileInfo, SortFilesBy.FileSize),
@@ -51,7 +52,7 @@ namespace PicView.FileHandling
 
             SearchOption searchOption;
 
-            if (Properties.Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)) // Don't search subdirectories when zipped
+            if (Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)) // Don't search subdirectories when zipped
             {
                 searchOption = SearchOption.AllDirectories;
             }
@@ -68,7 +69,7 @@ namespace PicView.FileHandling
                 default:
                 case SortFilesBy.Name: // Alphanumeric sort
                     var list = items.ToList();
-                    if (Properties.Settings.Default.Ascending)
+                    if (Settings.Default.Ascending)
                     {
                         list.Sort((x, y) => NativeMethods.StrCmpLogicalW(x, y));
                     }
@@ -79,27 +80,27 @@ namespace PicView.FileHandling
                     return list;
 
                 case SortFilesBy.FileSize:
-                    return Properties.Settings.Default.Ascending ? 
+                    return Settings.Default.Ascending ? 
                         items.OrderBy(f => new FileInfo(f).Length).ToList()
                         : items.OrderByDescending(f => new FileInfo(f).Length).ToList();
 
                 case SortFilesBy.Extension:
-                    return Properties.Settings.Default.Ascending ?
+                    return Settings.Default.Ascending ?
                         items.OrderBy(f => new FileInfo(f).Extension).ToList()
                         : items.OrderByDescending(f => new FileInfo(f).Extension).ToList();
 
                 case SortFilesBy.Creationtime:
-                    return Properties.Settings.Default.Ascending ?
+                    return Settings.Default.Ascending ?
                         items.OrderBy(f => new FileInfo(f).CreationTime).ToList()
                         : items.OrderByDescending(f => new FileInfo(f).CreationTime).ToList();
 
                 case SortFilesBy.Lastaccesstime:
-                    return Properties.Settings.Default.Ascending ?
+                    return Settings.Default.Ascending ?
                         items.OrderBy(f => new FileInfo(f).LastAccessTime).ToList()
                         : items.OrderByDescending(f => new FileInfo(f).LastAccessTime).ToList();
 
                 case SortFilesBy.Lastwritetime:
-                    return Properties.Settings.Default.Ascending
+                    return Settings.Default.Ascending
                         ? items.OrderBy(f => new FileInfo(f).LastWriteTime).ToList()
                         : items.OrderByDescending(f => new FileInfo(f).LastWriteTime).ToList();
 

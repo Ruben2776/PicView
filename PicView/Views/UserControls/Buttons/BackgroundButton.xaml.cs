@@ -1,5 +1,6 @@
-﻿using PicView.Animations;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PicView.Animations;
+using PicView.ConfigureSettings;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -32,7 +33,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
+                TheButton.Click += (_, _) => ConfigColors.ChangeBackground();
             };
         }
     }

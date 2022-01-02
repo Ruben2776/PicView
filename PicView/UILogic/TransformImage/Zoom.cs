@@ -1,10 +1,11 @@
-﻿using PicView.PicGallery;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using PicView.Properties;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic.TransformImage
@@ -131,7 +132,7 @@ namespace PicView.UILogic.TransformImage
             var newYproperty = origin.Y - dragMousePosition.Y;
 
             // Keep panning it in bounds 
-            if (Properties.Settings.Default.AutoFitWindow && Properties.Settings.Default.Fullscreen == false) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
+            if (Settings.Default.AutoFitWindow && Settings.Default.Fullscreen == false) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
                 var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
                 var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
@@ -214,7 +215,7 @@ namespace PicView.UILogic.TransformImage
             ZoomValue = scaleTransform.ScaleX;
 
             /// Determine zoom speed
-            var zoomSpeed = Properties.Settings.Default.ZoomSpeed;
+            var zoomSpeed = Settings.Default.ZoomSpeed;
 
             // Increase speed determined by how much is zoomed in
             // TODO improve it when zoomed greatly in
@@ -235,7 +236,6 @@ namespace PicView.UILogic.TransformImage
                 case > 1.6:
                     zoomSpeed += .5;
                     break;
-                default: break;
             }
 
             if (increment == false)
@@ -275,7 +275,7 @@ namespace PicView.UILogic.TransformImage
             {
                 Tooltip.CloseToolTipMessage();
             }
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
             {
                 /// Display updated values
                 if (Pics.Count == 0)

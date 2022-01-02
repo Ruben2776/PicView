@@ -1,12 +1,13 @@
-﻿using PicView.Editing.Crop.State;
-using PicView.Editing.Crop.Tools;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PicView.Editing.Crop.State;
+using PicView.Editing.Crop.Tools;
+using PicView.UILogic;
 
 namespace PicView.Editing.Crop
 {
@@ -49,7 +50,7 @@ namespace PicView.Editing.Crop
             }
 
             // Make sure menus are hidden when cropping
-            UILogic.UC.Close_UserControls();
+            UC.Close_UserControls();
 
             // Show context menu
             _ = new CropContextMenu();

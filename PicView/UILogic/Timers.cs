@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Timers;
+using System.Windows.Threading;
+using PicView.PicGallery;
 using static PicView.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
 
@@ -12,7 +14,7 @@ namespace PicView.UILogic
         {
             AutoScrollTimer.Elapsed += AutoScrollTimerEvent;
 
-            ActivityTimer = new Timer()
+            ActivityTimer = new Timer
             {
                 Interval = 6000,
                 AutoReset = true,
@@ -33,9 +35,9 @@ namespace PicView.UILogic
             {
                 try
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                     {
-                        PicGallery.GalleryNavigation.ScrollTo();
+                        GalleryNavigation.ScrollTo();
                     }));
                 }
                 catch (Exception)

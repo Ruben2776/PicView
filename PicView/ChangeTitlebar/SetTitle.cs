@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Windows;
+using PicView.ChangeImage;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.UILogic.TransformImage.ZoomLogic;
@@ -28,7 +30,7 @@ namespace PicView.UILogic
                 {
                     fileInfo = new FileInfo(Pics[index]);
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -36,7 +38,7 @@ namespace PicView.UILogic
 
             if (fileInfo.Exists == false)
             {
-                _ = ChangeImage.ErrorHandling.ReloadAsync();
+                _ = ErrorHandling.ReloadAsync();
                 return null;
             }
 
@@ -89,7 +91,7 @@ namespace PicView.UILogic
             var titleString = TitleString(width, height, index, fileInfo);
             if (titleString == null)
             {
-                _ = ChangeImage.ErrorHandling.ReloadAsync();
+                _ = ErrorHandling.ReloadAsync();
                 return;
             }
 

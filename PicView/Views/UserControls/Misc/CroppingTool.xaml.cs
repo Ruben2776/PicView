@@ -1,5 +1,5 @@
-﻿using PicView.Editing.Crop;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PicView.Editing.Crop;
 
 namespace PicView.Views.UserControls
 {

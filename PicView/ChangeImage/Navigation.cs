@@ -1,6 +1,8 @@
-﻿using PicView.PicGallery;
-using PicView.UILogic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic;
 
 namespace PicView.ChangeImage
 {
@@ -11,7 +13,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// List of file paths to supported files
         /// </summary>
-        internal static System.Collections.Generic.List<string>? Pics { get; set; }
+        internal static List<string>? Pics { get; set; }
 
         /// <summary>
         /// Counter used to get current index
@@ -116,7 +118,7 @@ namespace PicView.ChangeImage
                 if (forward)
                 {
                     // loop next
-                    if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+                    if (Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
                         next = FolderIndex == Pics?.Count - 1 ? 0 : FolderIndex + 1;
                     }
@@ -135,7 +137,7 @@ namespace PicView.ChangeImage
                 else
                 {
                     // Loop prev
-                    if (Properties.Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+                    if (Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                     {
                         next = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
                     }
@@ -185,7 +187,7 @@ namespace PicView.ChangeImage
                 else
                 {
                     LeftbuttonClicked = true;
-                    await NavigateToPicAsync(false, false).ConfigureAwait(false);
+                    await NavigateToPicAsync(false).ConfigureAwait(false);
                 }
             }
             else // Alternative interface buttons
@@ -203,7 +205,7 @@ namespace PicView.ChangeImage
                 else
                 {
                     ClickArrowLeftClicked = true;
-                    await NavigateToPicAsync(false, false).ConfigureAwait(false);
+                    await NavigateToPicAsync(false).ConfigureAwait(false);
                 }
             }
         }

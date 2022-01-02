@@ -1,9 +1,11 @@
-﻿using ImageMagick;
-using PicView.Views.UserControls;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
+using ImageMagick;
+using Microsoft.WindowsAPICodePack.Shell;
+using PicView.ChangeImage;
+using PicView.Views.UserControls;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -18,7 +20,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
         {
-            if (ChangeImage.ErrorHandling.CheckOutOfRange())
+            if (ErrorHandling.CheckOutOfRange())
             {
                 return null;
             }
@@ -66,8 +68,6 @@ namespace PicView.ImageHandling
                 case ".jfif":
                 case ".wbmp":
                     return GetWindowsThumbnail(fileInfo.FullName);
-                default:
-                    break;
             }
 
             if (checkSize)
@@ -130,7 +130,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static BitmapSource GetWindowsThumbnail(string path)
         {
-            BitmapSource pic = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+            BitmapSource pic = ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
             pic.Freeze();
             return pic;
         }

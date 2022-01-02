@@ -1,8 +1,10 @@
-﻿using PicView.PicGallery;
-using PicView.UILogic.Sizing;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using PicView.UILogic.Sizing;
 
 namespace PicView.UILogic.TransformImage
 {
@@ -18,12 +20,12 @@ namespace PicView.UILogic.TransformImage
         internal static async Task RotateAndMoveCursor(bool right, UIElement uIElement)
         {
             Rotate(right);
-            if (Properties.Settings.Default.AutoFitWindow == false) { return; }
+            if (Settings.Default.AutoFitWindow == false) { return; }
 
             // Move cursor after rotating
             await Task.Delay(50).ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
-            var p = uIElement.PointToScreen(new System.Windows.Point(25, 25));
-            SystemIntegration.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+            var p = uIElement.PointToScreen(new Point(25, 25));
+            NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace PicView.UILogic.TransformImage
         internal static void Rotate(bool right)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
-                Properties.Settings.Default.FullscreenGalleryHorizontal == false && GalleryFunctions.IsHorizontalOpen)
+                Settings.Default.FullscreenGalleryHorizontal == false && GalleryFunctions.IsHorizontalOpen)
             { return; }
 
             if (right)

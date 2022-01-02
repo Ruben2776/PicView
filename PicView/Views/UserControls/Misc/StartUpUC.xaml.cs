@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using PicView.ChangeImage;
+using PicView.FileHandling;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -27,7 +29,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(selectBrush);
             };
 
-            SelectFile.Click += async (_, _) => await FileHandling.Open_Save.OpenAsync().ConfigureAwait(false);
+            SelectFile.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
 
             OpenLastFileButton.MouseEnter += delegate
             {
@@ -43,7 +45,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(lastBrush);
             };
 
-            OpenLastFileButton.Click += async (_, _) => await ChangeImage.History.OpenLastFileAsync().ConfigureAwait(false);
+            OpenLastFileButton.Click += async (_, _) => await History.OpenLastFileAsync().ConfigureAwait(false);
 
             PasteButton.MouseEnter += delegate
             {
@@ -57,7 +59,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(pasteTxt);
             };
 
-            PasteButton.Click += (_, _) => FileHandling.Copy_Paste.Paste();
+            PasteButton.Click += (_, _) => Copy_Paste.Paste();
         }
 
         public void ResponsiveSize(double width)

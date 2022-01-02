@@ -1,9 +1,12 @@
-﻿using PicView.PicGallery;
-using PicView.UILogic;
-using PicView.UILogic.TransformImage;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.TransformImage;
 using static PicView.UILogic.UC;
 
 namespace PicView.Animations
@@ -21,7 +24,7 @@ namespace PicView.Animations
         /// <param name="show"></param>
         internal static async Task FadeAsync(bool show)
         {
-            if (Properties.Settings.Default.ShowInterface && Properties.Settings.Default.Fullscreen == false
+            if (Settings.Default.ShowInterface && Settings.Default.Fullscreen == false
                 || GetClickArrowRight == null
                 || GetClickArrowLeft == null
                 || Getx2 == null
@@ -34,7 +37,7 @@ namespace PicView.Animations
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (Action)(() =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
             {
                 if (GetCropppingTool != null)
                 {
@@ -44,7 +47,7 @@ namespace PicView.Animations
                     }
                 }
 
-                if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
+                if (Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);
                 }
@@ -85,7 +88,7 @@ namespace PicView.Animations
         /// <param name="show"></param>
         internal static void ScrollbarFade(bool show)
         {
-            var s = ConfigureWindows.GetMainWindow?.Scroller?.Template?.FindName("PART_VerticalScrollBar", ConfigureWindows.GetMainWindow?.Scroller) as System.Windows.Controls.Primitives.ScrollBar;
+            var s = ConfigureWindows.GetMainWindow?.Scroller?.Template?.FindName("PART_VerticalScrollBar", ConfigureWindows.GetMainWindow?.Scroller) as ScrollBar;
 
             if (show)
             {

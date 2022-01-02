@@ -1,8 +1,8 @@
-﻿using PicView.ChangeImage;
+﻿using System.Windows.Controls;
+using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.UILogic;
-using PicView.Animations;
-using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -46,7 +46,7 @@ namespace PicView.Views.UserControls
             CopyButton.TheButton.Click += delegate
             {
                 UC.Close_UserControls();
-                FileHandling.Copy_Paste.Copyfile();
+                Copy_Paste.Copyfile();
             };
 
             Open.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);

@@ -1,15 +1,15 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using PicView.UILogic.Loading;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.UILogic;
+using PicView.UILogic.Loading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.TransformImage.Rotation;
@@ -46,8 +46,8 @@ namespace PicView.Editing.Crop
             var sameFile = await SaveCrop().ConfigureAwait(false);
             if (sameFile)
             {
-                Preloader.Remove(Navigation.FolderIndex);
-                await LoadPic.LoadPiFromFileAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                Preloader.Remove(FolderIndex);
+                await LoadPic.LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -93,7 +93,7 @@ namespace PicView.Editing.Crop
         {
             string filename;
             string? directory;
-            if (ChangeImage.ErrorHandling.CheckOutOfRange() == false)
+            if (ErrorHandling.CheckOutOfRange() == false)
             {
                 filename = Path.GetRandomFileName();
                 directory = null;

@@ -1,7 +1,9 @@
 ﻿
 
-using PicView.UILogic;
 using System.Threading.Tasks;
+using System.Windows.Shell;
+using System.Windows.Threading;
+using PicView.UILogic;
 
 namespace PicView.SystemIntegration
 {
@@ -16,13 +18,13 @@ namespace PicView.SystemIntegration
         /// <param name="ii">size</param>
         internal static async Task Progress(double d)
         {
-            System.Windows.Shell.TaskbarItemInfo taskbar = new()
+            TaskbarItemInfo taskbar = new()
             {
-                ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal,
+                ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = d
             };
             taskbar.Freeze();
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
             });
@@ -33,13 +35,13 @@ namespace PicView.SystemIntegration
         /// </summary>
         internal static async Task NoProgress()
         {
-            System.Windows.Shell.TaskbarItemInfo taskbar = new()
+            TaskbarItemInfo taskbar = new()
             {
-                ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal,
+                ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = 0.0
             };
             taskbar.Freeze();
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
             });

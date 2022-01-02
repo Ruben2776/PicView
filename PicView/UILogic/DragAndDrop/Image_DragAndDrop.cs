@@ -1,12 +1,15 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.ProcessHandling;
-using PicView.Views.UserControls;
-using PicView.Views.UserControls.Misc;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.PicGallery;
+using PicView.ProcessHandling;
+using PicView.Properties;
+using PicView.Views.UserControls;
+using PicView.Views.UserControls.Misc;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Tooltip;
@@ -27,7 +30,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
-            if (PicGallery.GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsHorizontalOpen)
             {
                 return;
             }
@@ -50,7 +53,7 @@ namespace PicView.UILogic.DragAndDrop
             }
             else if (Directory.Exists(files[0]))
             {
-                if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
+                if (Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
                 {
                     // Folder
                     element = new FolderIcon();
@@ -124,12 +127,12 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static async Task Image_Drop(object sender, DragEventArgs e)
         {
-            if (PicGallery.GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsHorizontalOpen)
             {
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 RemoveDragOverlay();
             });
@@ -180,7 +183,7 @@ namespace PicView.UILogic.DragAndDrop
 
             await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, () =>
             {
                 // Don't show drop message any longer
                 CloseToolTipMessage();

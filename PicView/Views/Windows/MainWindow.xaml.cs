@@ -1,11 +1,19 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using Microsoft.Win32;
+using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.PicGallery;
+using PicView.Properties;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
+using PicView.Translations;
 using PicView.UILogic;
+using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Loading;
-using System.Windows;
-using System.Windows.Interop;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
@@ -16,35 +24,35 @@ namespace PicView.Views.Windows
         public MainWindow()
         {
             // Updates settings from older version to newer version
-            if (Properties.Settings.Default.CallUpgrade)
+            if (Settings.Default.CallUpgrade)
             {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.CallUpgrade = false;
+                Settings.Default.Upgrade();
+                Settings.Default.CallUpgrade = false;
             }
 
-            if (Properties.Settings.Default.DarkTheme == false)
+            if (Settings.Default.DarkTheme == false)
             {
-                ConfigureSettings.ConfigColors.ChangeToLightTheme();
+                ConfigColors.ChangeToLightTheme();
             }
             InitializeComponent();
 
-            if (Properties.Settings.Default.AutoFitWindow == false)
+            if (Settings.Default.AutoFitWindow == false)
             {
                 // Need to change startup location after initialize component
                 WindowStartupLocation = WindowStartupLocation.Manual;
-                if (Properties.Settings.Default.Width > 0)
+                if (Settings.Default.Width > 0)
                 {
                     SetLastWindowSize();
                 }
             }
-            Topmost = Properties.Settings.Default.TopMost;
+            Topmost = Settings.Default.TopMost;
 
             Loaded += (_, _) =>
             {
                 // Subscribe to Windows resized event || Need to be exactly on load
                 HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
-                source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
-                Translations.LoadLanguage.DetermineLanguage();
+                source.AddHook(NativeMethods.WndProc);
+                LoadLanguage.DetermineLanguage();
                 StartLoading.LoadedEvent();
             };
             ContentRendered += delegate
@@ -58,8 +66,8 @@ namespace PicView.Views.Windows
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
                 // Lowerbar
-                LowerBar.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
-                LowerBar.MouseLeftButtonDown += UILogic.Sizing.WindowSizing.MoveAlt;
+                LowerBar.Drop += async (sender, e) => await Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
+                LowerBar.MouseLeftButtonDown += MoveAlt;
 
                 MouseMove += async (_, _) => await HideInterfaceLogic.Interface_MouseMove().ConfigureAwait(false);
                 MouseLeave += async (_, _) => await HideInterfaceLogic.Interface_MouseLeave().ConfigureAwait(false);
@@ -69,8 +77,8 @@ namespace PicView.Views.Windows
                 ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
 
                 // ClickArrows
-                GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await ChangeImage.Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
-                GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await ChangeImage.Navigation.PicButtonAsync(true, true).ConfigureAwait(false);
+                GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
+                GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, true).ConfigureAwait(false);
 
                 // image_button
                 image_button.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(ImagePath1Fill, ImagePath2Fill, ImagePath3Fill);
@@ -87,7 +95,7 @@ namespace PicView.Views.Windows
                 image_button.Click += Toggle_image_menu;
 
                 //FunctionButton
-                var MagicBrush = TryFindResource("MagicBrush") as System.Windows.Media.SolidColorBrush;
+                var MagicBrush = TryFindResource("MagicBrush") as SolidColorBrush;
                 FunctionMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(MagicBrush);
                 FunctionMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(EffectsMenuBg);
                 FunctionMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(MagicBrush);
@@ -101,13 +109,13 @@ namespace PicView.Views.Windows
                 GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
                 GalleryButton.Click += async (_, _) =>
                 {
-                    if (PicGallery.GalleryFunctions.IsHorizontalOpen)
+                    if (GalleryFunctions.IsHorizontalOpen)
                     {
-                        PicGallery.GalleryToggle.CloseHorizontalGallery();
+                        GalleryToggle.CloseHorizontalGallery();
                     }
-                    else if (PicGallery.GalleryFunctions.IsVerticalFullscreenOpen == false && PicGallery.GalleryFunctions.IsHorizontalFullscreenOpen == false)
+                    else if (GalleryFunctions.IsVerticalFullscreenOpen == false && GalleryFunctions.IsHorizontalFullscreenOpen == false)
                     {
-                        await PicGallery.GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+                        await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
                     }
                 };
 
@@ -118,24 +126,24 @@ namespace PicView.Views.Windows
                 TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 
                 // ParentContainer
-                ParentContainer.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
-                ParentContainer.DragEnter += UILogic.DragAndDrop.Image_DragAndDrop.Image_DragEnter;
-                ParentContainer.DragLeave += UILogic.DragAndDrop.Image_DragAndDrop.Image_DragLeave;
+                ParentContainer.Drop += async (sender, e) => await Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
+                ParentContainer.DragEnter += Image_DragAndDrop.Image_DragEnter;
+                ParentContainer.DragLeave += Image_DragAndDrop.Image_DragLeave;
                 ParentContainer.PreviewMouseWheel += async (sender, e) => await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
                 CloseButton.TheButton.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
 
-                Closing += (_, _) => UILogic.Sizing.WindowSizing.Window_Closing();
-                StateChanged += (_, _) => UILogic.Sizing.WindowSizing.MainWindow_StateChanged();
+                Closing += (_, _) => Window_Closing();
+                StateChanged += (_, _) => MainWindow_StateChanged();
 
-                Deactivated += (_, _) => ConfigureSettings.ConfigColors.MainWindowUnfocus();
-                Activated += (_, _) => ConfigureSettings.ConfigColors.MainWindowFocus();
+                Deactivated += (_, _) => ConfigColors.MainWindowUnfocus();
+                Activated += (_, _) => ConfigColors.MainWindowFocus();
 
-                Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => UILogic.Sizing.WindowSizing.SystemEvents_DisplaySettingsChanged();
+                SystemEvents.DisplaySettingsChanged += (_, _) => SystemEvents_DisplaySettingsChanged();
 
                 TitleBar.MouseLeftButtonDown += (_, e) =>
                 {
-                    if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                    if (e.LeftButton == MouseButtonState.Pressed)
                     {
                         DragMove();
                     }
@@ -147,7 +155,7 @@ namespace PicView.Views.Windows
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged || Properties.Settings.Default.AutoFitWindow == false)
+            if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged || Settings.Default.AutoFitWindow == false)
             {
                 return;
             }

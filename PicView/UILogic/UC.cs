@@ -1,10 +1,11 @@
-﻿using PicView.ChangeImage;
+﻿using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Media.Animation;
+using PicView.ChangeImage;
 using PicView.PicGallery;
 using PicView.Views.UserControls;
 using PicView.Views.UserControls.Misc;
-using System;
-using System.Windows;
-using System.Windows.Media.Animation;
 
 namespace PicView.UILogic
 {
@@ -69,7 +70,7 @@ namespace PicView.UILogic
                     {
                         GetImageSettingsMenu.GoToPic.GoToPicBox.Text =
                             (Navigation.FolderIndex + 1)
-                            .ToString(System.Globalization.CultureInfo.CurrentCulture);
+                            .ToString(CultureInfo.CurrentCulture);
                     }
                 }
             }
@@ -391,7 +392,7 @@ namespace PicView.UILogic
             }
 
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
-            UC.GetStartUpUC.ResponsiveSize(ConfigureWindows.GetMainWindow.Width);
+            GetStartUpUC.ResponsiveSize(ConfigureWindows.GetMainWindow.Width);
         }
     }
 }

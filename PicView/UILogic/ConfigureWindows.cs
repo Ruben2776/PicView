@@ -1,5 +1,7 @@
-﻿using PicView.Views.Windows;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Controls;
+using PicView.Properties;
+using PicView.Views.Windows;
 
 namespace PicView.UILogic
 {
@@ -19,14 +21,14 @@ namespace PicView.UILogic
         /// <summary>
         /// Primary ContextMenu
         /// </summary>
-        internal static System.Windows.Controls.ContextMenu? MainContextMenu { get; set; }
+        internal static ContextMenu? MainContextMenu { get; set; }
 
         internal static bool IsMainWindowTopMost
         {
-            get { return Properties.Settings.Default.TopMost; }
+            get { return Settings.Default.TopMost; }
             set
             {
-                Properties.Settings.Default.TopMost = value;
+                Settings.Default.TopMost = value;
                 GetMainWindow.Topmost = value;
             }
         }
@@ -54,7 +56,7 @@ namespace PicView.UILogic
                     GetInfoWindow.Show();
                 }
             }
-            if (Properties.Settings.Default.Fullscreen)
+            if (Settings.Default.Fullscreen)
             {
                 GetInfoWindow.Topmost = true;
                 GetInfoWindow.BringIntoView();
@@ -87,7 +89,7 @@ namespace PicView.UILogic
                     GetSettingsWindow.Show();
                 }
             }
-            if (Properties.Settings.Default.Fullscreen)
+            if (Settings.Default.Fullscreen)
             {
                 GetSettingsWindow.Topmost = true;
                 GetSettingsWindow.BringIntoView();
@@ -120,7 +122,7 @@ namespace PicView.UILogic
                     GetEffectsWindow.Show();
                 }
             }
-            if (Properties.Settings.Default.Fullscreen)
+            if (Settings.Default.Fullscreen)
             {
                 GetEffectsWindow.Topmost = true;
                 GetEffectsWindow.BringIntoView();
@@ -153,7 +155,7 @@ namespace PicView.UILogic
                     GetImageInfoWindow.Show();
                 }
             }
-            if (Properties.Settings.Default.Fullscreen)
+            if (Settings.Default.Fullscreen)
             {
                 GetImageInfoWindow.Topmost = true;
                 GetImageInfoWindow.BringIntoView();
@@ -183,7 +185,7 @@ namespace PicView.UILogic
                     GetResizeWindow.Show();
                 }
             }
-            if (Properties.Settings.Default.Fullscreen)
+            if (Settings.Default.Fullscreen)
             {
                 GetResizeWindow.Topmost = true;
                 GetResizeWindow.BringIntoView();

@@ -1,7 +1,8 @@
-﻿using PicView.Animations;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.Animations;
+using PicView.UILogic.TransformImage;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -40,7 +41,7 @@ namespace PicView.Views.UserControls
 
                 TheButton.Click += delegate
                 {
-                    UILogic.TransformImage.Rotation.Flip();
+                    Rotation.Flip();
                 };
 
                 // Change FlipButton's icon when (un)checked

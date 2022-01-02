@@ -3,6 +3,9 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.Properties;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
@@ -21,7 +24,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static Point? AutoScrollPos { get; set; }
 
-        internal static readonly Timer AutoScrollTimer = new Timer()
+        internal static readonly Timer AutoScrollTimer = new Timer
         {
             Interval = 7,
             AutoReset = true,
@@ -35,8 +38,8 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static async Task SetScrollBehaviour(bool scrolling)
         {
-            Properties.Settings.Default.ScrollEnabled = scrolling;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            Settings.Default.ScrollEnabled = scrolling;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
@@ -44,10 +47,10 @@ namespace PicView.UILogic.TransformImage
 
             // TODO fix error when image is from web
 
-            if (ChangeImage.Navigation.Pics != null)
+            if (Navigation.Pics != null)
             {
                 await TryFitImageAsync().ConfigureAwait(false);
-                if (ChangeImage.Navigation.FreshStartup == false)
+                if (Navigation.FreshStartup == false)
                 {
                     ShowTooltipMessage(scrolling ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);
                 }

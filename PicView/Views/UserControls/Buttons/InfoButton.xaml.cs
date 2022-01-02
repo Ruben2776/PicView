@@ -1,5 +1,6 @@
-﻿using PicView.Animations;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PicView.Animations;
+using PicView.UILogic;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -26,7 +27,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += (_, _) => UILogic.ConfigureWindows.InfoWindow();
+                TheButton.Click += (_, _) => ConfigureWindows.InfoWindow();
             };
         }
     }

@@ -1,15 +1,14 @@
-﻿using Microsoft.Win32;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using System.Timers;
-using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Microsoft.Win32;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.TransformImage.Rotation;
 
@@ -40,14 +39,14 @@ namespace PicView.SystemIntegration
             var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            if (effectApplied || ChangeImage.ErrorHandling.CheckOutOfRange())
+            if (effectApplied || ErrorHandling.CheckOutOfRange())
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, async () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
                 {
                     await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, destination, null, effectApplied).ConfigureAwait(false);
                 });
             }
-            else if (ChangeImage.ErrorHandling.CheckOutOfRange() == false)
+            else if (ErrorHandling.CheckOutOfRange() == false)
             {
                 await SaveImages.SaveImageAsync(Rotateint, Flipped, null, Pics[FolderIndex], destination, null, effectApplied).ConfigureAwait(false);
             }

@@ -1,7 +1,11 @@
-﻿using PicView.PicGallery;
-using PicView.SystemIntegration;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using PicView.Views.UserControls;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.Sizing.ScaleImage;
@@ -21,7 +25,7 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void SetWindowBehavior()
         {
-            if (Properties.Settings.Default.AutoFitWindow)
+            if (Settings.Default.AutoFitWindow)
             {
                 GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                 GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
@@ -37,6 +41,13 @@ namespace PicView.UILogic.Sizing
                 }
 
                 GetMainWindow.WindowState = WindowState.Normal;
+
+                GetMainWindow.Width =
+                GetMainWindow.Height =
+                GetMainWindow.ParentContainer.Width =
+                GetMainWindow.ParentContainer.Height =
+                GetMainWindow.MainImageBorder.Width =
+                GetMainWindow.MainImageBorder.Height = double.NaN;
             }
             else
             {
@@ -45,7 +56,7 @@ namespace PicView.UILogic.Sizing
 
                 if (GetGripButton is null)
                 {
-                    GetGripButton = new Views.UserControls.GripButton();
+                    GetGripButton = new GripButton();
                     GetMainWindow.LowerBar.Children.Add(GetGripButton);
                 }
                 GetGripButton.Visibility = Visibility.Visible;
@@ -54,6 +65,9 @@ namespace PicView.UILogic.Sizing
                 {
                     GetQuickSettingsMenu.SetFit.IsChecked = false;
                 }
+
+                GetMainWindow.ParentContainer.Width = GetMainWindow.Width;
+                GetMainWindow.ParentContainer.Height = GetMainWindow.Height;
             }
         }
 
@@ -82,9 +96,9 @@ namespace PicView.UILogic.Sizing
 
             if (e.ClickCount == 2)
             {
-                if (Properties.Settings.Default.AutoFitWindow)
+                if (Settings.Default.AutoFitWindow)
                 {
-                    Properties.Settings.Default.AutoFitWindow = false;
+                    Settings.Default.AutoFitWindow = false;
                     SetWindowBehavior();
                 }
                 SetMaximized();
@@ -128,7 +142,7 @@ namespace PicView.UILogic.Sizing
         internal static void Restore_From_Move()
         {
             GetMainWindow.WindowState = WindowState.Normal;
-            Properties.Settings.Default.Maximized = false;
+            Settings.Default.Maximized = false;
             GetGripButton.Visibility = Visibility.Visible;
 
             // Reset margin
@@ -141,7 +155,7 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void Fullscreen_Restore(bool forceFullscreen = false)
         {
-            if (forceFullscreen || !Properties.Settings.Default.Fullscreen)
+            if (forceFullscreen || !Settings.Default.Fullscreen)
             {
                 // Show fullscreen logic
                 RenderFullscreen();
@@ -153,17 +167,17 @@ namespace PicView.UILogic.Sizing
                     GalleryNavigation.ScrollTo();
                 }
 
-                ShowNavigation(Properties.Settings.Default.ShowAltInterfaceButtons);
-                ShowShortcuts(Properties.Settings.Default.ShowAltInterfaceButtons);
+                ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
+                ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
 
-                Properties.Settings.Default.Fullscreen = true;
+                Settings.Default.Fullscreen = true;
             }
             else
             {
-                GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
-                Properties.Settings.Default.Fullscreen = false;
+                GetMainWindow.Topmost = Settings.Default.TopMost;
+                Settings.Default.Fullscreen = false;
 
-                if (Properties.Settings.Default.ShowInterface)
+                if (Settings.Default.ShowInterface)
                 {
                     ShowNavigation(false);
                     ShowTopandBottom(true);
@@ -176,31 +190,23 @@ namespace PicView.UILogic.Sizing
                     ShowShortcuts(true);
                 }
 
-                GetMainWindow.WindowState = WindowState.Normal;
                 // Reset margin from fullscreen
                 GetMainWindow.ParentContainer.Margin = new Thickness(0);
                 GetMainWindow.TitleBar.Margin = new Thickness(0);
                 GetMainWindow.LowerBar.Margin = new Thickness(0);
 
-                SetWindowBehavior();
-
-                if (Properties.Settings.Default.AutoFitWindow)
-                {
-                    GetMainWindow.Width =
-                    GetMainWindow.Height = double.NaN;
-                }
-                else
+                if (Settings.Default.AutoFitWindow == false)
                 {
                     SetLastWindowSize();
-                    GetMainWindow.ParentContainer.Width = GetMainWindow.Width;
-                    GetMainWindow.ParentContainer.Height = GetMainWindow.Height;
                 }
+
+                SetWindowBehavior();
+
 
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                 {
                     Slideshow.SlideTimer.Enabled = false;
                 }
-                ConfigureSettings.ConfigColors.UpdateColor(); // Regain border
 
                 _ = TryFitImageAsync();
             }
@@ -208,6 +214,8 @@ namespace PicView.UILogic.Sizing
 
         internal static void RenderFullscreen()
         {
+            SetWindowSize();
+
             ShowTopandBottom(false);
             GetMainWindow.Topmost = true;
 
@@ -243,7 +251,7 @@ namespace PicView.UILogic.Sizing
 
             GetMainWindow.TitleText.MaxWidth = MonitorInfo.WorkArea.Width - 192 * MonitorInfo.DpiScaling;
 
-            Properties.Settings.Default.Maximized = true;
+            Settings.Default.Maximized = true;
         }
 
         /// <summary>
@@ -259,10 +267,10 @@ namespace PicView.UILogic.Sizing
         {
             GetMainWindow.Dispatcher.Invoke(() =>
             {
-                GetMainWindow.Top = Properties.Settings.Default.Top;
-                GetMainWindow.Left = Properties.Settings.Default.Left;
-                GetMainWindow.Width = Properties.Settings.Default.Width;
-                GetMainWindow.Height = Properties.Settings.Default.Height;
+                GetMainWindow.Top = Settings.Default.Top;
+                GetMainWindow.Left = Settings.Default.Left;
+                GetMainWindow.Width = Settings.Default.Width;
+                GetMainWindow.Height = Settings.Default.Height;
             });
         }
 
@@ -270,12 +278,12 @@ namespace PicView.UILogic.Sizing
         {
             GetMainWindow.Dispatcher.Invoke(() =>
             {
-                Properties.Settings.Default.Top = GetMainWindow.Top;
-                Properties.Settings.Default.Left = GetMainWindow.Left;
-                Properties.Settings.Default.Height = GetMainWindow.Height;
-                Properties.Settings.Default.Width = GetMainWindow.Width;
+                Settings.Default.Top = GetMainWindow.Top;
+                Settings.Default.Left = GetMainWindow.Left;
+                Settings.Default.Height = GetMainWindow.Height;
+                Settings.Default.Width = GetMainWindow.Width;
 
-                Properties.Settings.Default.Save();
+                Settings.Default.Save();
             });
         }
 
@@ -288,7 +296,7 @@ namespace PicView.UILogic.Sizing
             switch (GetMainWindow.WindowState)
             {
                 case WindowState.Normal:
-                    if (Properties.Settings.Default.Fullscreen)
+                    if (Settings.Default.Fullscreen)
                     {
                         Fullscreen_Restore();
                     }
@@ -317,15 +325,15 @@ namespace PicView.UILogic.Sizing
         /// <param name="e"></param>
         internal static void Window_Closing()
         {
-            if (!Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen)
+            if (!Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen)
             {
-                Properties.Settings.Default.Top = GetMainWindow.Top;
-                Properties.Settings.Default.Left = GetMainWindow.Left;
-                Properties.Settings.Default.Height = GetMainWindow.Height;
-                Properties.Settings.Default.Width = GetMainWindow.Width;
+                Settings.Default.Top = GetMainWindow.Top;
+                Settings.Default.Left = GetMainWindow.Left;
+                Settings.Default.Height = GetMainWindow.Height;
+                Settings.Default.Width = GetMainWindow.Width;
             }
 
-            ChangeImage.Navigation.Pics.Clear(); // Make it cancel task
+            Navigation.Pics.Clear(); // Make it cancel task
 
             GetMainWindow.Hide(); // Make it feel faster
 
@@ -340,23 +348,23 @@ namespace PicView.UILogic.Sizing
 
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+                if (Settings.Default.FullscreenGalleryHorizontal || Settings.Default.FullscreenGalleryVertical)
                 {
-                    Properties.Settings.Default.StartInFullscreenGallery = true;
+                    Settings.Default.StartInFullscreenGallery = true;
                 }
                 else
                 {
-                    Properties.Settings.Default.StartInFullscreenGallery = false;
+                    Settings.Default.StartInFullscreenGallery = false;
                 }
             }
             else
             {
-                Properties.Settings.Default.StartInFullscreenGallery = false;
+                Settings.Default.StartInFullscreenGallery = false;
             }
 
-            Properties.Settings.Default.Save();
-            FileHandling.DeleteFiles.DeleteTempFiles();
-            ChangeImage.History.WriteToFile();
+            Settings.Default.Save();
+            DeleteFiles.DeleteTempFiles();
+            History.WriteToFile();
             Application.Current.Shutdown();
         }
     }

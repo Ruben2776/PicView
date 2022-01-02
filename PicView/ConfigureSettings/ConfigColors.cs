@@ -1,10 +1,10 @@
-﻿using PicView.Animations;
-using PicView.Library.Resources;
-using PicView.UILogic;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using PicView.Animations;
+using PicView.Library.Resources;
+using PicView.Properties;
+using PicView.UILogic;
 
 namespace PicView.ConfigureSettings
 {
@@ -37,7 +37,7 @@ namespace PicView.ConfigureSettings
             Application.Current.Resources["ChosenColor"] = getColor;
             Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
 
         #endregion Update and set colors
@@ -77,22 +77,22 @@ namespace PicView.ConfigureSettings
                 return;
             }
 
-            Properties.Settings.Default.BgColorChoice++;
+            Settings.Default.BgColorChoice++;
 
-            if (Properties.Settings.Default.BgColorChoice > 3)
+            if (Settings.Default.BgColorChoice > 3)
             {
-                Properties.Settings.Default.BgColorChoice = 0;
+                Settings.Default.BgColorChoice = 0;
             }
 
             ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
 
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
 
-        internal static Brush BackgroundColorBrush => Properties.Settings.Default.BgColorChoice switch
+        internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
         {
             0 => Brushes.Transparent,
-            1 => Properties.Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
+            1 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
             2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
             3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 56),
             _ => Brushes.Transparent,
@@ -109,7 +109,7 @@ namespace PicView.ConfigureSettings
                 Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
 
-            Properties.Settings.Default.DarkTheme = false;
+            Settings.Default.DarkTheme = false;
         }
 
         internal static void ChangeToDarkTheme()
@@ -119,7 +119,7 @@ namespace PicView.ConfigureSettings
                 Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
             };
 
-            Properties.Settings.Default.DarkTheme = true;
+            Settings.Default.DarkTheme = true;
         }
 
         #endregion Change Theme
@@ -128,73 +128,73 @@ namespace PicView.ConfigureSettings
 
         internal static void Blue(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 1;
+            Settings.Default.ColorTheme = 1;
             UpdateColor();
         }
 
         internal static void Pink(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 2;
+            Settings.Default.ColorTheme = 2;
             UpdateColor();
         }
 
         internal static void Orange(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 3;
+            Settings.Default.ColorTheme = 3;
             UpdateColor();
         }
 
         internal static void Green(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 4;
+            Settings.Default.ColorTheme = 4;
             UpdateColor();
         }
 
         internal static void Red(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 5;
+            Settings.Default.ColorTheme = 5;
             UpdateColor();
         }
 
         internal static void Teal(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 6;
+            Settings.Default.ColorTheme = 6;
             UpdateColor();
         }
 
         internal static void Aqua(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 7;
+            Settings.Default.ColorTheme = 7;
             UpdateColor();
         }
 
         internal static void Golden(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 8;
+            Settings.Default.ColorTheme = 8;
             UpdateColor();
         }
 
         internal static void Purple(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 9;
+            Settings.Default.ColorTheme = 9;
             UpdateColor();
         }
 
         internal static void Cyan(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 10;
+            Settings.Default.ColorTheme = 10;
             UpdateColor();
         }
 
         internal static void Magenta(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 11;
+            Settings.Default.ColorTheme = 11;
             UpdateColor();
         }
 
         internal static void Lime(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ColorTheme = 12;
+            Settings.Default.ColorTheme = 12;
             UpdateColor();
         }
 

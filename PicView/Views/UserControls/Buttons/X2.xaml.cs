@@ -1,8 +1,9 @@
-﻿using PicView.Animations;
-using PicView.PicGallery;
-using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using PicView.Animations;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic;
 
 namespace PicView.Views.UserControls
 {
@@ -22,9 +23,9 @@ namespace PicView.Views.UserControls
                 }
                 else if (GalleryFunctions.IsHorizontalOpen)
                 {
-                    PicView.PicGallery.GalleryToggle.CloseHorizontalGallery();
+                    GalleryToggle.CloseHorizontalGallery();
                 }
-                else if (Properties.Settings.Default.ShowInterface == false || Properties.Settings.Default.Fullscreen)
+                else if (Settings.Default.ShowInterface == false || Settings.Default.Fullscreen)
                 {
                     if (UC.GetPicGallery is null || UC.GetPicGallery.IsVisible == false)
                     {

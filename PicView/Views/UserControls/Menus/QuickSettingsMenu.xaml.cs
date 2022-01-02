@@ -1,6 +1,9 @@
-﻿using PicView.Animations;
+﻿using System.Windows.Controls;
+using PicView.Animations;
+using PicView.ConfigureSettings;
+using PicView.Editing.Crop;
+using PicView.Properties;
 using PicView.UILogic;
-using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 
@@ -21,21 +24,21 @@ namespace PicView.Views.UserControls
                 Close_UserControls();
             };
 
-            ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
-            ToggleScroll.Click += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
-            ToggleScrollBorder.MouseLeftButtonDown += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
+            ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
+            ToggleScroll.Click += (s, x) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
+            ToggleScrollBorder.MouseLeftButtonDown += (s, x) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
 
-            ToggleFill.IsChecked = Properties.Settings.Default.FillImage;
-            ToggleFill.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
-            ToggleFillBorder.MouseLeftButtonDown += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+            ToggleFill.IsChecked = Settings.Default.FillImage;
+            ToggleFill.Click += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+            ToggleFillBorder.MouseLeftButtonDown += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
 
-            ToggleLooping.IsChecked = Properties.Settings.Default.Looping;
-            ToggleLooping.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
-            ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
+            ToggleLooping.IsChecked = Settings.Default.Looping;
+            ToggleLooping.Click += (_, _) => UpdateUIValues.SetLooping();
+            ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetLooping();
 
-            SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
-            SetFit.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
-            SetFitBorder.MouseLeftButtonDown += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
+            SetFit.IsChecked = Settings.Default.AutoFitWindow;
+            SetFit.Click += async (s, e) => await UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
+            SetFitBorder.MouseLeftButtonDown += async (s, e) => await UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
 
             // CropButton
             CropButton.PreviewMouseLeftButtonDown += delegate
@@ -45,8 +48,8 @@ namespace PicView.Views.UserControls
 
             CropButton.Click += delegate
             {
-                UC.Close_UserControls();
-                Editing.Crop.CropFunctions.StartCrop();
+                Close_UserControls();
+                CropFunctions.StartCrop();
             };
 
 

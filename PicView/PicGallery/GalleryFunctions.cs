@@ -1,7 +1,4 @@
-﻿using PicView.ChangeImage;
-using PicView.UILogic;
-using PicView.Views.UserControls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.UILogic;
+using PicView.Views.UserControls;
 using static PicView.UILogic.UC;
 
 namespace PicView.PicGallery
@@ -46,7 +47,6 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery.Container.Children.Count <= 0)
                 {
-                    return;
                 }
             }));
 
@@ -55,7 +55,7 @@ namespace PicView.PicGallery
                 fileInfo = new FileInfo(Navigation.Pics[0]);
             }
 
-            var thumbs = new System.Collections.Generic.List<tempPics>();
+            var thumbs = new List<tempPics>();
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
             {
@@ -69,7 +69,7 @@ namespace PicView.PicGallery
             }));
 
             Navigation.Pics.Clear(); // Cancel task if running
-            await FileHandling.FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             try
             {

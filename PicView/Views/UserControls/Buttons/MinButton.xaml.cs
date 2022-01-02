@@ -1,8 +1,8 @@
-﻿using PicView.Animations;
-using PicView.UILogic;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using PicView.Animations;
+using PicView.Properties;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -19,7 +19,7 @@ namespace PicView.Views.UserControls
 
                 MouseEnter += (s, x) => ButtonMouseOverAnim(MinButtonBrush, true);
 
-                if (!Properties.Settings.Default.DarkTheme)
+                if (!Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }

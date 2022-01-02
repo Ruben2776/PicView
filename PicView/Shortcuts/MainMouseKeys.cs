@@ -1,9 +1,13 @@
-﻿using PicView.Editing;
-using PicView.PicGallery;
-using PicView.UILogic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using PicView.ChangeImage;
+using PicView.Editing;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.DragAndDrop;
+using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -32,7 +36,7 @@ namespace PicView.Shortcuts
             // Move window when Shift is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
-                UILogic.Sizing.WindowSizing.Move(sender, e);
+                WindowSizing.Move(sender, e);
                 return;
             }
 
@@ -54,7 +58,7 @@ namespace PicView.Shortcuts
                 return;
             }
             // Drag logic
-            if (Properties.Settings.Default.ScrollEnabled == false && GetMainWindow.MainImage.IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
+            if (Settings.Default.ScrollEnabled == false && GetMainWindow.MainImage.IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
             {
                 PreparePanImage(sender, e);
             }
@@ -73,19 +77,17 @@ namespace PicView.Shortcuts
                     else if (IsAutoScrolling)
                     {
                         StopAutoScroll();
-                        return;
                     }
                     break;
 
                 case MouseButton.Left:
                     if (Keyboard.Modifiers == ModifierKeys.Control)
                     {
-                        UILogic.DragAndDrop.DragToExplorer.DragFile(sender, e);
+                        DragToExplorer.DragFile(sender, e);
                     }
                     if (IsAutoScrolling)
                     {
                         StopAutoScroll();
-                        return;
                     }
                     break;
 
@@ -102,14 +104,12 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.XButton1:
-                    await ChangeImage.History.PrevAsync().ConfigureAwait(false);
+                    await History.PrevAsync().ConfigureAwait(false);
                     break;
 
                 case MouseButton.XButton2:
-                    await ChangeImage.History.NextAsync().ConfigureAwait(false);
+                    await History.NextAsync().ConfigureAwait(false);
                     break;
-
-                default: break;
             }
         }
 
@@ -192,12 +192,12 @@ namespace PicView.Shortcuts
             }
 
             // Determine horizontal scrolling direction
-            bool dir = Properties.Settings.Default.HorizontalReverseScroll ? e.Delta < 0 : e.Delta > 0;
+            bool dir = Settings.Default.HorizontalReverseScroll ? e.Delta < 0 : e.Delta > 0;
 
             // 1. Handle horizontal gallery
             if (GalleryFunctions.IsHorizontalOpen)
             {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                if (Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
                     await NavigateToPicAsync(dir).ConfigureAwait(false);
                 }
@@ -210,8 +210,8 @@ namespace PicView.Shortcuts
             }
 
             // 2. Handle scroll enabled and shift not held down
-            if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
-                && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
+            if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
+                                               && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
             {
                 var zoomSpeed = 40;
 
@@ -229,7 +229,7 @@ namespace PicView.Shortcuts
 
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
-                if (Properties.Settings.Default.CtrlZoom)
+                if (Settings.Default.CtrlZoom)
                 {
                     Zoom(e.Delta > 0);
                 }
@@ -240,7 +240,7 @@ namespace PicView.Shortcuts
             }
             else
             {
-                if (Properties.Settings.Default.CtrlZoom)
+                if (Settings.Default.CtrlZoom)
                 {
                     await NavigateToPicAsync(dir).ConfigureAwait(false);
                 }

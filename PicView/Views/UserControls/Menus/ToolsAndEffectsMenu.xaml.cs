@@ -1,9 +1,11 @@
-﻿using PicView.Animations;
+﻿using System.Windows.Controls;
+using System.Windows.Media;
+using PicView.Animations;
+using PicView.ConfigureSettings;
 using PicView.Editing;
 using PicView.ImageHandling;
+using PicView.Properties;
 using PicView.UILogic;
-using System.Windows.Controls;
-using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -17,7 +19,7 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            switch (Properties.Settings.Default.UserLanguage)
+            switch (Settings.Default.UserLanguage)
             {
                 case "ru":
                 case "pl":
@@ -147,7 +149,7 @@ namespace PicView.Views.UserControls
                 AnimationHelper.MouseLeaveBgTexColor(BgBrush);
             };
 
-            BgButton.Click += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
+            BgButton.Click += (_, _) => ConfigColors.ChangeBackground();
         }
     }
 }

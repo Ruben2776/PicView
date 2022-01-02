@@ -1,14 +1,15 @@
-﻿using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.UILogic;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
@@ -87,14 +88,14 @@ namespace PicView.FileHandling
         {
             IsDialogOpen = true;
 
-            var dlg = new OpenFileDialog()
+            var dlg = new OpenFileDialog
             {
                 Filter = FilterFiles,
                 Title = $"{Application.Current.Resources["OpenFileDialog"]} - {SetTitle.AppName}"
             };
             if (dlg.ShowDialog() == true)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     ToggleStartUpUC(true);
                 });
@@ -154,7 +155,7 @@ namespace PicView.FileHandling
                 randomized = true;
             }
 
-            var Savedlg = new SaveFileDialog()
+            var Savedlg = new SaveFileDialog
             {
                 Filter = FilterFiles,
                 Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
@@ -197,7 +198,7 @@ namespace PicView.FileHandling
                 await ReloadAsync().ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 Close_UserControls();
             });

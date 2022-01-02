@@ -1,9 +1,11 @@
-﻿using PicView.FileHandling;
-using PicView.UILogic.TransformImage;
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
+using PicView.FileHandling;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic.TransformImage;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic.DragAndDrop
@@ -16,8 +18,8 @@ namespace PicView.UILogic.DragAndDrop
                 || Keyboard.Modifiers != ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Keyboard.Modifiers == ModifierKeys.Alt
-                || PicGallery.GalleryFunctions.IsHorizontalOpen
-                || Properties.Settings.Default.Fullscreen
+                || GalleryFunctions.IsHorizontalOpen
+                || Settings.Default.Fullscreen
                 || Scroll.IsAutoScrolling
                 || ZoomLogic.IsZoomed)
             {
@@ -66,7 +68,7 @@ namespace PicView.UILogic.DragAndDrop
 
             FrameworkElement? senderElement = sender as FrameworkElement;
             DataObject dragObj = new DataObject();
-            dragObj.SetFileDropList(new StringCollection() { file });
+            dragObj.SetFileDropList(new StringCollection { file });
             DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
 
             e.Handled = true;

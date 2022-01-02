@@ -1,7 +1,8 @@
-﻿using PicView.ChangeImage;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using PicView.ChangeImage;
 
 namespace PicView.ProcessHandling
 {
@@ -24,11 +25,11 @@ namespace PicView.ProcessHandling
         }
         internal static string? GetPathToProcess()
         {
-            var GetAppPath = System.Environment.ProcessPath;
+            var GetAppPath = Environment.ProcessPath;
 
             if (Path.GetExtension(GetAppPath) == ".dll")
             {
-                GetAppPath = GetAppPath?.Replace(".dll", ".exe", System.StringComparison.InvariantCultureIgnoreCase);
+                GetAppPath = GetAppPath?.Replace(".dll", ".exe", StringComparison.InvariantCultureIgnoreCase);
             }
             return GetAppPath;
         }

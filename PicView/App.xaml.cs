@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Runtime;
+using System.Windows;
+using PicView.FileHandling;
 
 namespace PicView
 {
@@ -9,8 +11,8 @@ namespace PicView
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            System.Runtime.ProfileOptimization.SetProfileRoot(FileHandling.FileFunctions.GetWritingPath());
-            System.Runtime.ProfileOptimization.StartProfile("ProfileOptimization");
+            ProfileOptimization.SetProfileRoot(FileFunctions.GetWritingPath());
+            ProfileOptimization.StartProfile("ProfileOptimization");
         }
     }
 }

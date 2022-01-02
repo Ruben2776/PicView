@@ -1,7 +1,13 @@
-﻿using PicView.ConfigureSettings;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using PicView.Views.UserControls;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;
@@ -13,9 +19,9 @@ namespace PicView.UILogic.Loading
         internal static void AddContextMenus()
         {
             // Add main contextmenu
-            ConfigureWindows.MainContextMenu = (ContextMenu)Application.Current.Resources["mainCM"];
-            ConfigureWindows.GetMainWindow.ParentContainer.ContextMenu = ConfigureWindows.MainContextMenu;
-            ConfigureWindows.MainContextMenu.Opened += (_, _) => ChangeImage.History.RefreshRecentItemsMenu();
+            MainContextMenu = (ContextMenu)Application.Current.Resources["mainCM"];
+            GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
+            MainContextMenu.Opened += (_, _) => History.RefreshRecentItemsMenu();
 
             ///////////////////////////
             ///     Open           \\\\
@@ -51,43 +57,43 @@ namespace PicView.UILogic.Loading
             // FileName
             var FileNameMenu = (MenuItem)sortfilesbycm.Items[0];
             var FileNameHeader = (RadioButton)FileNameMenu.Header;
-            FileNameHeader.IsChecked = Properties.Settings.Default.SortPreference == 0;
+            FileNameHeader.IsChecked = Settings.Default.SortPreference == 0;
             FileNameHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false); };
 
             // FileSize
             var filesizeMenu = (MenuItem)sortfilesbycm.Items[1];
             var filesizeHeader = (RadioButton)filesizeMenu.Header;
-            filesizeHeader.IsChecked = Properties.Settings.Default.SortPreference == 1;
+            filesizeHeader.IsChecked = Settings.Default.SortPreference == 1;
             filesizeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
 
             // FileExtension
             var FileExtensionMenu = (MenuItem)sortfilesbycm.Items[2];
             var FileExtensionHeader = (RadioButton)FileExtensionMenu.Header;
-            FileExtensionHeader.IsChecked = Properties.Settings.Default.SortPreference == 3;
+            FileExtensionHeader.IsChecked = Settings.Default.SortPreference == 3;
             FileExtensionHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false); };
 
             // CreationTime
             var CreationTimeMenu = (MenuItem)sortfilesbycm.Items[3];
             var CreationTimeHeader = (RadioButton)CreationTimeMenu.Header;
-            CreationTimeHeader.IsChecked = Properties.Settings.Default.SortPreference == 2;
+            CreationTimeHeader.IsChecked = Settings.Default.SortPreference == 2;
             CreationTimeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
 
             // LastAccessTime
             var LastAccessTimeMenu = (MenuItem)sortfilesbycm.Items[4];
             var LastAccessTimeHeader = (RadioButton)LastAccessTimeMenu.Header;
-            LastAccessTimeHeader.IsChecked = Properties.Settings.Default.SortPreference == 4;
+            LastAccessTimeHeader.IsChecked = Settings.Default.SortPreference == 4;
             LastAccessTimeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false); };
 
             // LastWriteTime
             var LastWriteTimeMenu = (MenuItem)sortfilesbycm.Items[5];
             var LastWriteTimeHeader = (RadioButton)LastWriteTimeMenu.Header;
-            LastWriteTimeHeader.IsChecked = Properties.Settings.Default.SortPreference == 5;
+            LastWriteTimeHeader.IsChecked = Settings.Default.SortPreference == 5;
             LastWriteTimeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
 
             // Random
             var RandomMenu = (MenuItem)sortfilesbycm.Items[6];
             var RandomHeader = (RadioButton)RandomMenu.Header;
-            RandomHeader.IsChecked = Properties.Settings.Default.SortPreference == 6;
+            RandomHeader.IsChecked = Settings.Default.SortPreference == 6;
             RandomHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
 
             // 7 = seperator
@@ -95,20 +101,20 @@ namespace PicView.UILogic.Loading
             // Ascending
             var AscendingMenu = (MenuItem)sortfilesbycm.Items[8];
             var AscendingHeader = (RadioButton)AscendingMenu.Header;
-            AscendingHeader.IsChecked = Properties.Settings.Default.Ascending;
+            AscendingHeader.IsChecked = Settings.Default.Ascending;
             AscendingHeader.Click += async (_, _) =>
             {
-                Properties.Settings.Default.Ascending = true;
+                Settings.Default.Ascending = true;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
 
             // Descending
             var DescendingMenu = (MenuItem)sortfilesbycm.Items[9];
             var DescendingHeader = (RadioButton)DescendingMenu.Header;
-            DescendingHeader.IsChecked = Properties.Settings.Default.Ascending == false;
+            DescendingHeader.IsChecked = Settings.Default.Ascending == false;
             DescendingHeader.Click += async (_, _) =>
             {
-                Properties.Settings.Default.Ascending = false;
+                Settings.Default.Ascending = false;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
 
@@ -122,14 +128,14 @@ namespace PicView.UILogic.Loading
             // Looping
             var LoopingMenu = (MenuItem)settingscm.Items[0];
             var LoopingHeader = (CheckBox)LoopingMenu.Header;
-            LoopingHeader.IsChecked = Properties.Settings.Default.Looping;
+            LoopingHeader.IsChecked = Settings.Default.Looping;
             LoopingHeader.Click += (_, _) => UpdateUIValues.SetLooping();
             LoopingMenu.Click += (_, _) => { UpdateUIValues.SetLooping(); LoopingHeader.IsChecked = !LoopingHeader.IsChecked; };
 
             // Scrolling
             var ScrollingMenu = (MenuItem)settingscm.Items[1];
             var ScrollingHeader = (CheckBox)ScrollingMenu.Header;
-            ScrollingHeader.IsChecked = Properties.Settings.Default.ScrollEnabled;
+            ScrollingHeader.IsChecked = Settings.Default.ScrollEnabled;
             ScrollingHeader.Click += (_, _) => UpdateUIValues.SetScrolling();
             ScrollingMenu.Click += (_, _) => { UpdateUIValues.SetScrolling(); ScrollingHeader.IsChecked = !ScrollingHeader.IsChecked; };
 
@@ -137,7 +143,7 @@ namespace PicView.UILogic.Loading
             var ToogleUIMenu = (MenuItem)settingscm.Items[2];
             ToogleUIMenu.InputGestureText = $"{Application.Current.Resources["Alt"]} + Z";
             var ToogleUIHeader = (CheckBox)ToogleUIMenu.Header;
-            ToogleUIHeader.IsChecked = Properties.Settings.Default.ShowInterface;
+            ToogleUIHeader.IsChecked = Settings.Default.ShowInterface;
             ToogleUIHeader.Click += (_, _) => HideInterfaceLogic.ToggleInterface();
             ToogleUIMenu.Click += (_, _) => { HideInterfaceLogic.ToggleInterface(); ToogleUIHeader.IsChecked = !ToogleUIHeader.IsChecked; };
 
@@ -148,7 +154,7 @@ namespace PicView.UILogic.Loading
             // Topmost
             var TopmostMenu = (MenuItem)settingscm.Items[4];
             var TopmostHeader = (CheckBox)TopmostMenu.Header;
-            TopmostHeader.IsChecked = Properties.Settings.Default.TopMost;
+            TopmostHeader.IsChecked = Settings.Default.TopMost;
             TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
             TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
 
@@ -167,7 +173,7 @@ namespace PicView.UILogic.Loading
             SetWallpaperCm.Click += async (_, _) =>
             {
                 MainContextMenu.IsOpen = false;
-                await SystemIntegration.Wallpaper.SetWallpaperAsync(SystemIntegration.Wallpaper.WallpaperStyle.Fill).ConfigureAwait(false);
+                await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill).ConfigureAwait(false);
             };
 
 
@@ -175,7 +181,7 @@ namespace PicView.UILogic.Loading
             ///   ShowInFolder     \\\\
             ///////////////////////////
             var ShowInFolderCm = (MenuItem)MainContextMenu.Items[10];
-            ShowInFolderCm.Click += (_, _) => FileHandling.Open_Save.Open_In_Explorer();
+            ShowInFolderCm.Click += (_, _) => Open_In_Explorer();
 
 
             ///////////////////////////
@@ -184,19 +190,19 @@ namespace PicView.UILogic.Loading
             var ImageChoices = (MenuItem)MainContextMenu.Items[11];
 
             var ImageInfoCm = (MenuItem)ImageChoices.Items[0];
-            ImageInfoCm.Click += (_, _) => ConfigureWindows.ImageInfoWindow();
+            ImageInfoCm.Click += (_, _) => ImageInfoWindow();
 
             var FileProps = (MenuItem)ImageChoices.Items[1];
-            FileProps.Click += (_, _) => FileHandling.FileFunctions.ShowFileProperties();
+            FileProps.Click += (_, _) => FileFunctions.ShowFileProperties();
             FileProps.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + I";
 
             // 2 = seperator
 
             var ImageSize = (MenuItem)ImageChoices.Items[3];
-            ImageSize.Click += (_, _) => Views.UserControls.ResizeButton.ToggleQuickResize();
+            ImageSize.Click += (_, _) => ResizeButton.ToggleQuickResize();
 
             var BatchSize = (MenuItem)ImageChoices.Items[4];
-            BatchSize.Click += (_, _) => ConfigureWindows.ResizeWindow();
+            BatchSize.Click += (_, _) => ResizeWindow();
 
             // 12 = seperator
 
@@ -208,21 +214,21 @@ namespace PicView.UILogic.Loading
             // Copy file
             var copyFileCm = (MenuItem)CopyCm.Items[0];
             copyFileCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Shift"]} + C";
-            copyFileCm.Click += (_, _) => FileHandling.Copy_Paste.Copyfile();
+            copyFileCm.Click += (_, _) => Copy_Paste.Copyfile();
 
             // FileCopyPath
             var FileCopyPathCm = (MenuItem)CopyCm.Items[1];
             FileCopyPathCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Alt"]} + C";
-            FileCopyPathCm.Click += (_, _) => FileHandling.Copy_Paste.CopyFilePath();
+            FileCopyPathCm.Click += (_, _) => Copy_Paste.CopyFilePath();
 
             // CopyImage
             var CopyImageCm = (MenuItem)CopyCm.Items[2];
             CopyImageCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + C";
-            CopyImageCm.Click += (_, _) => FileHandling.Copy_Paste.CopyBitmap();
+            CopyImageCm.Click += (_, _) => Copy_Paste.CopyBitmap();
 
             // CopyBase64
             var CopyBase64Cm = (MenuItem)CopyCm.Items[3];
-            CopyBase64Cm.Click += async delegate { MainContextMenu.IsOpen = false; await ImageHandling.Base64.SendToClipboard().ConfigureAwait(false); };
+            CopyBase64Cm.Click += async delegate { MainContextMenu.IsOpen = false; await Base64.SendToClipboard().ConfigureAwait(false); };
 
 
             ///////////////////////////
@@ -230,7 +236,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var Cutcm = (MenuItem)MainContextMenu.Items[14];
             Cutcm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + X";
-            Cutcm.Click += (_, _) => { MainContextMenu.IsOpen = false; FileHandling.Copy_Paste.Cut(); };
+            Cutcm.Click += (_, _) => { MainContextMenu.IsOpen = false; Copy_Paste.Cut(); };
 
 
             ///////////////////////////
@@ -238,7 +244,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var pastecm = (MenuItem)MainContextMenu.Items[15];
             pastecm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + V";
-            pastecm.Click += (_, _) => { MainContextMenu.IsOpen = false; FileHandling.Copy_Paste.Paste(); };
+            pastecm.Click += (_, _) => { MainContextMenu.IsOpen = false; Copy_Paste.Paste(); };
 
             // 16 = seperator
 
@@ -246,7 +252,7 @@ namespace PicView.UILogic.Loading
             ///   Delete File       \\\\
             ///////////////////////////
             var Deletecm = (MenuItem)MainContextMenu.Items[17];
-            Deletecm.Click += async (_, _) => await FileHandling.DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)).ConfigureAwait(false);
+            Deletecm.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)).ConfigureAwait(false);
 
             // 18 = seperator
 
@@ -254,7 +260,7 @@ namespace PicView.UILogic.Loading
             ///   Close       \\\\
             ///////////////////////////
             var CloseCm = (MenuItem)MainContextMenu.Items[19];
-            CloseCm.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+            CloseCm.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
 
 
         }

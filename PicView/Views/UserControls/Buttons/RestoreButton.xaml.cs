@@ -1,6 +1,8 @@
-﻿using PicView.Animations;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using PicView.Animations;
+using PicView.Properties;
+using PicView.UILogic.Sizing;
 
 namespace PicView.Views.UserControls
 {
@@ -13,11 +15,11 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            TheButton.Click += delegate { UILogic.Sizing.WindowSizing.Fullscreen_Restore(); };
+            TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(); };
 
             MouseEnter += delegate
             {
-                if (!Properties.Settings.Default.Fullscreen)
+                if (!Settings.Default.Fullscreen)
                 {
                     ToolTip = Application.Current.Resources["Fullscreen"];
                 }

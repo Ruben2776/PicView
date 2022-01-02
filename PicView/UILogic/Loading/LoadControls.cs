@@ -1,7 +1,8 @@
-﻿using PicView.Views.UserControls;
-using PicView.Views.UserControls.Misc;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
+using PicView.Properties;
+using PicView.Views.UserControls;
+using PicView.Views.UserControls.Misc;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Loading
@@ -51,7 +52,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void Loadx2()
         {
-            Getx2 = new X2()
+            Getx2 = new X2
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -72,7 +73,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void LoadMinus()
         {
-            GetMinus = new Minus()
+            GetMinus = new Minus
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -93,7 +94,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void LoadRestoreButton()
         {
-            GetRestorebutton = new Restorebutton()
+            GetRestorebutton = new Restorebutton
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -114,7 +115,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void LoadGalleryShortcut()
         {
-            GetGalleryShortcut = new GalleryShortcut()
+            GetGalleryShortcut = new GalleryShortcut
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Bottom,
@@ -188,7 +189,7 @@ namespace PicView.UILogic.Loading
                 Margin = new Thickness(81, 0, 0, 0)
             };
 
-            GetQuickSettingsMenu.SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
+            GetQuickSettingsMenu.SetFit.IsChecked = Settings.Default.AutoFitWindow;
 
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetQuickSettingsMenu);
 
@@ -266,9 +267,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void LoadCroppingTool()
         {
-            GetCropppingTool = new CroppingTool
-            {
-            };
+            GetCropppingTool = new CroppingTool();
 
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCropppingTool);
 
@@ -282,9 +281,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void LoadColorPicker()
         {
-            GetColorPicker = new ColorPicker
-            {
-            };
+            GetColorPicker = new ColorPicker();
 
             ConfigureWindows.GetMainWindow.topLayer.Children.Add(GetColorPicker);
 

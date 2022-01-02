@@ -1,10 +1,11 @@
-﻿using ImageMagick;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using ImageMagick;
+using PicView.UILogic;
 
 namespace PicView.ImageHandling
 {
@@ -17,7 +18,7 @@ namespace PicView.ImageHandling
             {
                 if (hlsl)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         magickImage = ImageDecoder.GetRenderedMagickImage();
                     });
@@ -27,7 +28,7 @@ namespace PicView.ImageHandling
                 {
                     var encoder = new PngBitmapEncoder();
 
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
                     });

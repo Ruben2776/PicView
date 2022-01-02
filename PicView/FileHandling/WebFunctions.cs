@@ -1,12 +1,12 @@
-﻿using PicView.ChangeImage;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.UILogic;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.UILogic.Tooltip;
 
@@ -27,7 +27,7 @@ namespace PicView.FileHandling
                 SetTitle.SetLoadingString();
             });
 
-            ErrorHandling.ChangeFolder(true);
+            ChangeFolder(true);
 
             string destination;
 

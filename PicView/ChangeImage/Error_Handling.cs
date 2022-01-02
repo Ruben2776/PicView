@@ -1,13 +1,15 @@
-﻿using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 
@@ -21,7 +23,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool CheckOutOfRange()
         {
-            return Pics?.Count < FolderIndex || Pics?.Count < 1 || UILogic.UC.GetCropppingTool is { IsVisible: true };
+            return Pics?.Count < FolderIndex || Pics?.Count < 1 || UC.GetCropppingTool is { IsVisible: true };
         }
 
         internal static void UnexpectedError()
@@ -60,7 +62,7 @@ namespace PicView.ChangeImage
 
             if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
             
-            if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+            if (Settings.Default.FullscreenGalleryHorizontal || Settings.Default.FullscreenGalleryVertical)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
                 {
@@ -88,11 +90,12 @@ namespace PicView.ChangeImage
             {
                 return "web";
             }
-            else if (Base64.IsBase64String(s))
+
+            if (Base64.IsBase64String(s))
             {
                 return "base64";
             }
-            
+
             s = s.Replace("\"", "");
             s = s.Trim();
 
@@ -101,14 +104,12 @@ namespace PicView.ChangeImage
                 return s;
             }
 
-            else if (Directory.Exists(s))
+            if (Directory.Exists(s))
             {
                 return "directory";
             }
-            else
-            {
-                return string.Empty;
-            }
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -163,11 +164,11 @@ namespace PicView.ChangeImage
             else if (CheckOutOfRange() == false)
             {
                 // Determine if browsing directories recursively or only update from single directory
-                if (string.IsNullOrWhiteSpace(Navigation.InitialPath) == false
-                    && Properties.Settings.Default.IncludeSubDirectories
-                    && Path.GetDirectoryName(Navigation.InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+                if (string.IsNullOrWhiteSpace(InitialPath) == false
+                    && Settings.Default.IncludeSubDirectories
+                    && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
                 {
-                    path = Navigation.InitialPath;
+                    path = InitialPath;
                 }
                 else
                 {
@@ -183,7 +184,7 @@ namespace PicView.ChangeImage
 
                 if (path == (string)Application.Current.Resources["Loading"])
                 {
-                    path = Navigation.InitialPath;
+                    path = InitialPath;
                 }
             }
 
@@ -288,7 +289,7 @@ namespace PicView.ChangeImage
 
             try
             {
-                _ = SystemIntegration.Taskbar.NoProgress();
+                _ = Taskbar.NoProgress();
             }
             catch
             {

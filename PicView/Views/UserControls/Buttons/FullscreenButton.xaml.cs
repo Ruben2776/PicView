@@ -1,7 +1,8 @@
-﻿using PicView.UILogic;
-using PicView.Animations;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using PicView.Animations;
+using PicView.Properties;
+using PicView.UILogic.Sizing;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -14,7 +15,7 @@ namespace PicView.Views.UserControls
 
             MouseEnter += delegate
             {
-                if (Properties.Settings.Default.Fullscreen)
+                if (Settings.Default.Fullscreen)
                 {
                     ToolTip = Application.Current.Resources["RestoreDown"];
                 }
@@ -33,10 +34,10 @@ namespace PicView.Views.UserControls
 
             TheButton.Click += delegate
             {
-                UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                WindowSizing.Fullscreen_Restore();
             };
 
-            if (!Properties.Settings.Default.DarkTheme)
+            if (!Settings.Default.DarkTheme)
             {
                 AnimationHelper.LightThemeMouseEvent(this, IconBrush);
             }

@@ -1,6 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+﻿using System.Windows.Controls;
+using PicView.FileHandling;
+using PicView.UILogic;
+using PicView.Views.Windows;
 
 namespace PicView.Views.UserControls
 {
@@ -16,15 +17,15 @@ namespace PicView.Views.UserControls
 
             OutputFolderButton.FileMenuButton.Click += (_, _) =>
             {
-                var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
+                var newFolder = Open_Save.SelectAndReturnFolder();
                 if (string.IsNullOrWhiteSpace(newFolder) == false)
                 {
                     OutPutStringBox.Text = newFolder;
                 }
-                UILogic.ConfigureWindows.GetResizeWindow.Focus();
+                ConfigureWindows.GetResizeWindow.Focus();
             };
 
-            Windows.ResizeWindow.SetTextboxDragEvent(OutPutStringBox);
+            ResizeWindow.SetTextboxDragEvent(OutPutStringBox);
         }
     }
 }

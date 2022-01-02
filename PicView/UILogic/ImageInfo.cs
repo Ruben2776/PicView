@@ -1,13 +1,14 @@
-﻿using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.Views.UserControls;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.Views.UserControls;
 
 namespace PicView.UILogic
 {
@@ -17,7 +18,7 @@ namespace PicView.UILogic
 
         internal static async Task RenameTask(KeyEventArgs e, TextBox textBox, string file)
         {
-            if (e.Key != System.Windows.Input.Key.Enter) { return; }
+            if (e.Key != Key.Enter) { return; }
 
             e.Handled = true;
             var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
@@ -39,9 +40,9 @@ namespace PicView.UILogic
         {
             if (fileInfo is null)
             {
-                if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Navigation.Pics.Count > ChangeImage.Navigation.FolderIndex)
+                if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex)
                 {
-                    fileInfo = new FileInfo(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+                    fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
                 }
             }
 
@@ -67,7 +68,7 @@ namespace PicView.UILogic
 
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                if (fileInfo is not null && ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
+                if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
                 {
                     return;
                 }

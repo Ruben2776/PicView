@@ -1,13 +1,15 @@
-﻿using PicView.Animations;
-using PicView.Editing.HlslEffects;
-using PicView.FileHandling;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using PicView.Animations;
+using PicView.Editing.HlslEffects;
+using PicView.FileHandling;
+using PicView.Shortcuts;
+using PicView.SystemIntegration;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows
@@ -22,7 +24,7 @@ namespace PicView.Views.Windows
             Width *= WindowSizing.MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
             {
-                WindowSizing.MonitorInfo = SystemIntegration.MonitorSize.GetMonitorSize();
+                WindowSizing.MonitorInfo = MonitorSize.GetMonitorSize();
                 MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
                 Width *= WindowSizing.MonitorInfo.DpiScaling;
             }
@@ -32,7 +34,7 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object? sender, EventArgs? e)
         {
-            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
+            KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
 
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };
@@ -162,23 +164,23 @@ namespace PicView.Views.Windows
             FrostyOutlineButton.MouseLeave += delegate { ButtonMouseLeaveAnim(FrostyOutlineText); };
 
             // SaveButton
-            SaveButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(SaveText); };
+            SaveButton.MouseEnter += delegate { ButtonMouseOverAnim(SaveText); };
             SaveButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
-            SaveButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(SaveText); };
+            SaveButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveText); };
             SaveButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
             SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync();
 
             // SetAsButton
-            SetAsButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(SetAsText); };
+            SetAsButton.MouseEnter += delegate { ButtonMouseOverAnim(SetAsText); };
             SetAsButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetAsBrush); };
-            SetAsButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(SetAsText); };
+            SetAsButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SetAsText); };
             SetAsButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetAsBrush); };
-            SetAsButton.Click += async (_, _) => await SystemIntegration.Wallpaper.SetWallpaperAsync(SystemIntegration.Wallpaper.WallpaperStyle.Fit).ConfigureAwait(false);
+            SetAsButton.Click += async (_, _) => await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fit).ConfigureAwait(false);
 
             // CopyButton
-            CopyButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CopyText); };
+            CopyButton.MouseEnter += delegate { ButtonMouseOverAnim(CopyText); };
             CopyButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CopyBrush); };
-            CopyButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CopyText); };
+            CopyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(CopyText); };
             CopyButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CopyBrush); };
             CopyButton.Click += (_, _) => Copy_Paste.CopyBitmap();
 
@@ -294,10 +296,8 @@ namespace PicView.Views.Windows
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         private void Negative()

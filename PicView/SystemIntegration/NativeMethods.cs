@@ -1,13 +1,15 @@
-﻿using Microsoft.Win32;
-using PicView.PicGallery;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows;
 using System.Windows.Interop;
+using Microsoft.Win32;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
 
 namespace PicView.SystemIntegration
 {
@@ -147,14 +149,14 @@ namespace PicView.SystemIntegration
         /// Executes when user manually resized window
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (Properties.Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 return IntPtr.Zero;
             }
 
             if (msg == WM_SIZING || msg == 0x0005)
             {
-                var w = UILogic.ConfigureWindows.GetMainWindow;
+                var w = ConfigureWindows.GetMainWindow;
                 if (w == null) { return IntPtr.Zero; }
 
                 if (w.MainImage.Source == null)
@@ -168,7 +170,7 @@ namespace PicView.SystemIntegration
                 {
                     if (w.WindowState == WindowState.Maximized)
                     {
-                        UILogic.Sizing.WindowSizing.Restore_From_Move();
+                        WindowSizing.Restore_From_Move();
                     }
                     if (w.MainImage.Source == null) { return IntPtr.Zero; }
 
@@ -333,13 +335,13 @@ namespace PicView.SystemIntegration
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int ReleaseDC(IntPtr window, IntPtr dc);
 
-        public static System.Drawing.Color GetColorAt(int x, int y)
+        public static Color GetColorAt(int x, int y)
         {
             IntPtr desk = GetDesktopWindow();
             IntPtr dc = GetWindowDC(desk);
             int a = (int)GetPixel(dc, x, y);
             _ = ReleaseDC(desk, dc);
-            return System.Drawing.Color.FromArgb(255, (a >> 0) & 0xff, (a >> 8) & 0xff, (a >> 16) & 0xff);
+            return Color.FromArgb(255, (a >> 0) & 0xff, (a >> 8) & 0xff, (a >> 16) & 0xff);
         }
 
         #endregion GetPixelColor

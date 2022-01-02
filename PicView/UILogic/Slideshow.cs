@@ -1,9 +1,11 @@
-﻿using PicView.Animations;
-using PicView.SystemIntegration;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using PicView.Animations;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic
@@ -29,9 +31,9 @@ namespace PicView.UILogic
 
             if (SlideTimer == null)
             {
-                SlideTimer = new Timer()
+                SlideTimer = new Timer
                 {
-                    Interval = Properties.Settings.Default.SlideTimer,
+                    Interval = Settings.Default.SlideTimer,
                     Enabled = true
                 };
                 SlideTimer.Elapsed += async delegate { await SlideTimer_Elapsed().ConfigureAwait(false); };
@@ -44,7 +46,7 @@ namespace PicView.UILogic
 
             if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
-                UILogic.Sizing.WindowSizing.RenderFullscreen();
+                WindowSizing.RenderFullscreen();
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
@@ -57,9 +59,9 @@ namespace PicView.UILogic
         {
             SlideTimer?.Stop();
 
-            if (!Properties.Settings.Default.Fullscreen)
+            if (!Settings.Default.Fullscreen)
             {
-                UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                WindowSizing.Fullscreen_Restore();
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS); // Allow screensaver again

@@ -1,9 +1,12 @@
-﻿using PicView.PicGallery;
-using PicView.SystemIntegration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
@@ -28,18 +31,18 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
-            if (Properties.Settings.Default.AutoFitWindow == false)
+            if (Settings.Default.AutoFitWindow == false)
             {
                 SetWindowBehavior();
             }
 
-            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
             // Set min size to DPI scaling
             ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
-            if (!Properties.Settings.Default.ShowInterface)
+            if (!Settings.Default.ShowInterface)
             {
                 ConfigureWindows.GetMainWindow.TitleBar.Visibility =
                    ConfigureWindows.GetMainWindow.LowerBar.Visibility
@@ -49,24 +52,24 @@ namespace PicView.UILogic.Loading
 
         internal static void ContentRenderedEvent()
         {
-            if (Properties.Settings.Default.StartInFullscreenGallery)
+            if (Settings.Default.StartInFullscreenGallery)
             {
                 _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
             }
 
             // Determine prefered UI for startup
-            if (Properties.Settings.Default.Fullscreen)
+            if (Settings.Default.Fullscreen)
             {
-                Sizing.WindowSizing.Fullscreen_Restore(true);
+                Fullscreen_Restore(true);
             }
 
-            else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
+            else if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)
             {
                 SetLastWindowSize();
             }
             else
             {
-                UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                SetWindowBehavior();
             }
 
             // Load image if possible
@@ -77,11 +80,11 @@ namespace PicView.UILogic.Loading
             }
             else
             {
-                _ = ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                _ = LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
 
-            ConfigureSettings.ConfigColors.UpdateColor();
+            ConfigColors.UpdateColor();
 
             // Add dictionaries
             Application.Current.Resources.MergedDictionaries.Add(
@@ -130,7 +133,7 @@ namespace PicView.UILogic.Loading
             LoadGalleryShortcut();
 
             // Update WindowStyle
-            if (!Properties.Settings.Default.ShowInterface)
+            if (!Settings.Default.ShowInterface)
             {
                 GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
@@ -148,7 +151,7 @@ namespace PicView.UILogic.Loading
                 GetRestorebutton.Visibility =
                 Visibility.Visible;
             }
-            else if (Properties.Settings.Default.Fullscreen)
+            else if (Settings.Default.Fullscreen)
             {
                 GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
@@ -177,7 +180,7 @@ namespace PicView.UILogic.Loading
 
             // Initilize Things!
             InitializeZoom();
-            ChangeImage.History.InstantiateFileHistory();
+            History.InstantiateFileHistory();
 
             // Add things!
             Timers.AddTimers();

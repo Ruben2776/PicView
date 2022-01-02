@@ -1,10 +1,4 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.Translations;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -13,6 +7,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using PicView.Animations;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.ProcessHandling;
+using PicView.Properties;
+using PicView.Shortcuts;
+using PicView.SystemIntegration;
+using PicView.Translations;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.SystemIntegration.Wallpaper;
@@ -28,7 +32,7 @@ namespace PicView.Views.Windows
             Width *= WindowSizing.MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
             {
-                WindowSizing.MonitorInfo = SystemIntegration.MonitorSize.GetMonitorSize();
+                WindowSizing.MonitorInfo = MonitorSize.GetMonitorSize();
                 MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
                 Width *= WindowSizing.MonitorInfo.DpiScaling;
             }
@@ -42,47 +46,47 @@ namespace PicView.Views.Windows
                 AddGenericEvents(colorAnimation);
 
                 // GalleryBox
-                if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                if (Settings.Default.FullscreenGalleryVertical == false && Settings.Default.FullscreenGalleryHorizontal == false)
                 {
-                    Properties.Settings.Default.FullscreenGalleryHorizontal = true;
-                    GalleryVertical.IsSelected = Properties.Settings.Default.FullscreenGalleryHorizontal;
+                    Settings.Default.FullscreenGalleryHorizontal = true;
+                    GalleryVertical.IsSelected = Settings.Default.FullscreenGalleryHorizontal;
                 }
                 else
                 {
-                    GalleryVertical.IsSelected = Properties.Settings.Default.FullscreenGalleryVertical;
-                    GalleryHorizontal.IsSelected = Properties.Settings.Default.FullscreenGalleryHorizontal;
+                    GalleryVertical.IsSelected = Settings.Default.FullscreenGalleryVertical;
+                    GalleryHorizontal.IsSelected = Settings.Default.FullscreenGalleryHorizontal;
                 }
 
                 GalleryBox.SelectionChanged += delegate
                 {
                     if (GalleryVertical.IsSelected)
                     {
-                        Properties.Settings.Default.FullscreenGalleryVertical = true;
-                        Properties.Settings.Default.FullscreenGalleryHorizontal = false;
+                        Settings.Default.FullscreenGalleryVertical = true;
+                        Settings.Default.FullscreenGalleryHorizontal = false;
                     }
                     else
                     {
-                        Properties.Settings.Default.FullscreenGalleryHorizontal = true;
-                        Properties.Settings.Default.FullscreenGalleryVertical = false;
+                        Settings.Default.FullscreenGalleryHorizontal = true;
+                        Settings.Default.FullscreenGalleryVertical = false;
                     }
                 };
 
                 // SubDirRadio
-                SubDirRadio.IsChecked = Properties.Settings.Default.IncludeSubDirectories;
+                SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
                 SubDirRadio.Click += async delegate
                 {
-                    Properties.Settings.Default.IncludeSubDirectories = !Properties.Settings.Default.IncludeSubDirectories;
+                    Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
                     if (ErrorHandling.CheckOutOfRange()) { return; }
-                    var preloadValue = Preloader.Get((ChangeImage.Navigation.Pics[Navigation.FolderIndex]));
+                    var preloadValue = Preloader.Get((Navigation.Pics[Navigation.FolderIndex]));
                     if (preloadValue is null) { return; }
-                    await FileHandling.FileLists.RetrieveFilelistAsync(preloadValue.FileInfo).ConfigureAwait(false);
+                    await FileLists.RetrieveFilelistAsync(preloadValue.FileInfo).ConfigureAwait(false);
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
                             Navigation.FolderIndex, preloadValue.FileInfo);
                     });
 
-                    Properties.Settings.Default.Save();
+                    Settings.Default.Save();
                 };
 
                 WallpaperApply.MouseLeftButtonDown += async delegate
@@ -96,27 +100,27 @@ namespace PicView.Views.Windows
                     await SetWallpaperAsync(x).ConfigureAwait(false);
                 };
 
-                SlideshowSlider.Value = Properties.Settings.Default.SlideTimer / 1000;
-                SlideshowSlider.ValueChanged += (_, e) => Properties.Settings.Default.SlideTimer = e.NewValue * 1000;
+                SlideshowSlider.Value = Settings.Default.SlideTimer / 1000;
+                SlideshowSlider.ValueChanged += (_, e) => Settings.Default.SlideTimer = e.NewValue * 1000;
 
-                ZoomSlider.Value = Properties.Settings.Default.ZoomSpeed;
+                ZoomSlider.Value = Settings.Default.ZoomSpeed;
                 txtZoomSlide.Text = Math.Round(ZoomSlider.Value * 100).ToString();
-                ZoomSlider.ValueChanged += (_, e) => { Properties.Settings.Default.ZoomSpeed = e.NewValue; txtZoomSlide.Text = Math.Round(e.NewValue * 100).ToString(); };
+                ZoomSlider.ValueChanged += (_, e) => { Settings.Default.ZoomSpeed = e.NewValue; txtZoomSlide.Text = Math.Round(e.NewValue * 100).ToString(); };
 
-                LightThemeRadio.IsChecked = !Properties.Settings.Default.DarkTheme;
-                DarkThemeRadio.IsChecked = Properties.Settings.Default.DarkTheme;
+                LightThemeRadio.IsChecked = !Settings.Default.DarkTheme;
+                DarkThemeRadio.IsChecked = Settings.Default.DarkTheme;
 
                 DarkThemeRadio.Click += delegate
                 {
                     ChangeToDarkTheme();
                     LightThemeRadio.IsChecked = false;
-                    Properties.Settings.Default.Save();
+                    Settings.Default.Save();
                 };
                 LightThemeRadio.Click += delegate
                 {
                     ChangeToLightTheme();
                     DarkThemeRadio.IsChecked = false;
-                    Properties.Settings.Default.Save();
+                    Settings.Default.Save();
                 };
 
                 foreach (var language in Enum.GetValues(typeof(Languages)))
@@ -126,7 +130,7 @@ namespace PicView.Views.Windows
                         LanguageBox.Items.Add(new ComboBoxItem
                         {
                             Content = new CultureInfo(language.ToString()).DisplayName,
-                            IsSelected = language.ToString() == Properties.Settings.Default.UserLanguage,
+                            IsSelected = language.ToString() == Settings.Default.UserLanguage,
                         });
                     }
                     catch (Exception e)
@@ -144,36 +148,36 @@ namespace PicView.Views.Windows
                 };
 
                 // ScrollDirection
-                Reverse.IsSelected = Properties.Settings.Default.HorizontalReverseScroll;
-                Reverse.Selected += (_, _) => Properties.Settings.Default.HorizontalReverseScroll = !Properties.Settings.Default.HorizontalReverseScroll;
+                Reverse.IsSelected = Settings.Default.HorizontalReverseScroll;
+                Reverse.Selected += (_, _) => Settings.Default.HorizontalReverseScroll = !Settings.Default.HorizontalReverseScroll;
 
-                Forward.IsSelected = !Properties.Settings.Default.HorizontalReverseScroll;
-                Forward.Selected += (_, _) => Properties.Settings.Default.HorizontalReverseScroll = !Properties.Settings.Default.HorizontalReverseScroll;
+                Forward.IsSelected = !Settings.Default.HorizontalReverseScroll;
+                Forward.Selected += (_, _) => Settings.Default.HorizontalReverseScroll = !Settings.Default.HorizontalReverseScroll;
 
-                AltUIRadio.IsChecked = Properties.Settings.Default.ShowAltInterfaceButtons;
+                AltUIRadio.IsChecked = Settings.Default.ShowAltInterfaceButtons;
                 AltUIRadio.Click += delegate
                 {
-                    Properties.Settings.Default.ShowAltInterfaceButtons = !Properties.Settings.Default.ShowAltInterfaceButtons;
+                    Settings.Default.ShowAltInterfaceButtons = !Settings.Default.ShowAltInterfaceButtons;
                 };
 
-                CtrlZoom.IsChecked = Properties.Settings.Default.CtrlZoom;
-                ScrollZoom.IsChecked = !Properties.Settings.Default.CtrlZoom;
+                CtrlZoom.IsChecked = Settings.Default.CtrlZoom;
+                ScrollZoom.IsChecked = !Settings.Default.CtrlZoom;
 
-                CtrlZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = true;
-                ScrollZoom.Checked += (_, _) => Properties.Settings.Default.CtrlZoom = false;
+                CtrlZoom.Checked += (_, _) => Settings.Default.CtrlZoom = true;
+                ScrollZoom.Checked += (_, _) => Settings.Default.CtrlZoom = false;
 
-                ThemeRestart.MouseLeftButtonDown += (_, _) => ProcessHandling.ProcessLogic.RestartApp();
-                LanguageRestart.MouseLeftButtonDown += (_, _) => ProcessHandling.ProcessLogic.RestartApp();
+                ThemeRestart.MouseLeftButtonDown += (_, _) => ProcessLogic.RestartApp();
+                LanguageRestart.MouseLeftButtonDown += (_, _) => ProcessLogic.RestartApp();
 
-                TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Properties.Settings.Default.TopMost;
+                TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !Settings.Default.TopMost;
                 TopmostRadio.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
-                TopmostRadio.IsChecked = Properties.Settings.Default.TopMost;
+                TopmostRadio.IsChecked = Settings.Default.TopMost;
 
-                CenterRadio.Checked += (_, _) => Properties.Settings.Default.KeepCentered = true;
-                CenterRadio.Unchecked += (_, _) => Properties.Settings.Default.KeepCentered = false;
-                CenterRadio.IsChecked = Properties.Settings.Default.KeepCentered;
+                CenterRadio.Checked += (_, _) => Settings.Default.KeepCentered = true;
+                CenterRadio.Unchecked += (_, _) => Settings.Default.KeepCentered = false;
+                CenterRadio.IsChecked = Settings.Default.KeepCentered;
 
-                switch (Properties.Settings.Default.ColorTheme)
+                switch (Settings.Default.ColorTheme)
                 {
                     case 1:
                         BlueRadio.IsChecked = true;
@@ -231,7 +235,7 @@ namespace PicView.Views.Windows
 
         private void AddGenericEvents(ColorAnimation colorAnimation)
         {
-            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
+            KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
 
             MouseLeftButtonDown += (_, e) =>
             { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
@@ -404,7 +408,7 @@ namespace PicView.Views.Windows
                 //CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
-            if (!Properties.Settings.Default.DarkTheme)
+            if (!Settings.Default.DarkTheme)
             {
                 BlueRadio.MouseEnter += delegate
                 {

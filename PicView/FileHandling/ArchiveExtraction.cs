@@ -1,8 +1,10 @@
-﻿using PicView.ChangeImage;
-using PicView.SystemIntegration;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
+using PicView.ChangeImage;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 
@@ -43,8 +45,8 @@ namespace PicView.FileHandling
             const string sevenzip = "7z.exe";
             const string sevenzipPath = "\\7-Zip\\7z.exe";
 
-            var appNames = new string[] { winRar, sevenzip };
-            var appPathNames = new string[] { winRarPath, sevenzipPath };
+            var appNames = new[] { winRar, sevenzip };
+            var appPathNames = new[] { winRarPath, sevenzipPath };
 
             string? getextractPath = GetExtractApp(appPathNames, appNames);
 
@@ -102,7 +104,7 @@ namespace PicView.FileHandling
             // Create backup
             if (ErrorHandling.CheckOutOfRange() == false)
             {
-                Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
+                BackupPath = Pics[FolderIndex];
             }
 
             var arguments = winrar ?
@@ -146,7 +148,7 @@ namespace PicView.FileHandling
             {
                 if (SetDirectory())
                 {
-                    if (Navigation.FolderIndex > 0)
+                    if (FolderIndex > 0)
                     {
                         await LoadPic.LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
                     }
@@ -154,14 +156,14 @@ namespace PicView.FileHandling
                     // Add zipped files as recent file
                     History.Add(TempZipFile);
 
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                    if (Settings.Default.FullscreenGalleryHorizontal)
                     {
-                        await PicGallery.GalleryLoad.Load().ConfigureAwait(false);
+                        await GalleryLoad.Load().ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await ChangeImage.ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                    await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 }
             };
 

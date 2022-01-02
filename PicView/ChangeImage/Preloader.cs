@@ -1,10 +1,10 @@
-﻿using PicView.ImageHandling;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using PicView.ImageHandling;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
@@ -104,7 +104,6 @@ namespace PicView.ChangeImage
             catch (Exception e)
             {
                 Trace.WriteLine("Preloader " + nameof(Remove) + "exception" + Environment.NewLine + e.Message);
-                return;
             }
 #else
             catch (Exception)

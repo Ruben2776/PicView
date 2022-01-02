@@ -1,5 +1,6 @@
-﻿using PicView.Animations;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PicView.Animations;
+using PicView.UILogic;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls
@@ -27,8 +28,8 @@ namespace PicView.Views.UserControls
 
                 TheButton.Click += (_, _) =>
                 {
-                    UILogic.UC.Close_UserControls();
-                    UILogic.ConfigureWindows.ImageInfoWindow();
+                    UC.Close_UserControls();
+                    ConfigureWindows.ImageInfoWindow();
                 };
             };
         }

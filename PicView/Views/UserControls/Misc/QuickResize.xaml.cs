@@ -1,7 +1,4 @@
-﻿using PicView.Animations;
-using PicView.Shortcuts;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +6,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using PicView.Animations;
+using PicView.Shortcuts;
+using PicView.UILogic;
 
 namespace PicView.Views.UserControls
 {
@@ -93,7 +93,7 @@ namespace PicView.Views.UserControls
             var content = ((ComboBoxItem)PercentageBox.SelectedItem).Content as string;
             if (content == null) { return; }
 
-            var value = decimal.Parse(content.TrimEnd(new char[] { '%', ' ' })) / 100M; // Convert from percentage to decimal
+            var value = decimal.Parse(content.TrimEnd('%', ' ')) / 100M; // Convert from percentage to decimal
 
             QuickResizeShortcuts.QuickResizeAspectRatio(WidthBox, HeightBox, true, null, (double)value);
         }
@@ -101,7 +101,7 @@ namespace PicView.Views.UserControls
         public void Show()
         {
             Visibility = Visibility.Visible;
-            Animations.AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
+            AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
             WidthBox.Text = ConfigureWindows.GetMainWindow.MainImage.Source?.Width.ToString();
             HeightBox.Text = ConfigureWindows.GetMainWindow.MainImage?.Source?.Height.ToString();
 
@@ -119,7 +119,7 @@ namespace PicView.Views.UserControls
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
-                Animations.AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
+                AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
             });
 
             var timer = new Timer(601) { AutoReset = false, Enabled = true };

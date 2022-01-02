@@ -1,12 +1,8 @@
-﻿using ImageMagick;
-using PicView.FileHandling;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Threading;
+using ImageMagick;
+using PicView.FileHandling;
 
 namespace PicView.ImageHandling
 {

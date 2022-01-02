@@ -1,10 +1,17 @@
-﻿using PicView.Editing;
-using PicView.Editing.Crop;
-using PicView.PicGallery;
-using PicView.UILogic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.Editing;
+using PicView.Editing.Crop;
+using PicView.FileHandling;
+using PicView.PicGallery;
+using PicView.ProcessHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;
@@ -120,7 +127,7 @@ namespace PicView.Shortcuts
                             return;
                         }
                     }
-                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                     }
@@ -140,7 +147,7 @@ namespace PicView.Shortcuts
 
                 case Key.Up:
                 case Key.W:
-                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                     }
@@ -155,7 +162,7 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.Down:
-                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
                     }
@@ -187,7 +194,7 @@ namespace PicView.Shortcuts
                         GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
                         return;
                     }
-                    if (Properties.Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                     {
                         GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
                     }
@@ -213,8 +220,6 @@ namespace PicView.Shortcuts
                         Zoom(false);
                     }
                     return;
-
-                default: break;
             }
 
             #endregion Keys where it can be held down
@@ -263,9 +268,9 @@ namespace PicView.Shortcuts
                         {
                             GetSettingsWindow.Hide();
                         }
-                        else if (Properties.Settings.Default.Fullscreen)
+                        else if (Settings.Default.Fullscreen)
                         {
-                            UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                            WindowSizing.Fullscreen_Restore();
                         }
                         else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
                         {
@@ -285,7 +290,7 @@ namespace PicView.Shortcuts
                     case Key.B:
                         if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            ConfigureSettings.ConfigColors.ChangeBackground();
+                            ConfigColors.ChangeBackground();
                         }
                         break;
 
@@ -312,7 +317,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                ConfigureSettings.UpdateUIValues.SetScrolling();
+                                UpdateUIValues.SetScrolling();
                             }
                         }
                         break;
@@ -328,7 +333,7 @@ namespace PicView.Shortcuts
                     case Key.J:
                         if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            Views.UserControls.ResizeButton.ToggleQuickResize();
+                            ResizeButton.ToggleQuickResize();
                         }
                         break;
 
@@ -376,11 +381,11 @@ namespace PicView.Shortcuts
                         {
                             if (altDown)
                             {
-                                Views.UserControls.ResizeButton.ToggleQuickResize();
+                                ResizeButton.ToggleQuickResize();
                             }
                             else
                             {
-                                FileHandling.FileFunctions.ShowFileProperties();
+                                FileFunctions.ShowFileProperties();
                             }
                         }
                         else
@@ -411,7 +416,7 @@ namespace PicView.Shortcuts
 
                     // L
                     case Key.L:
-                        ConfigureSettings.UpdateUIValues.SetLooping();
+                        UpdateUIValues.SetLooping();
                         break;
 
                     // E
@@ -431,14 +436,14 @@ namespace PicView.Shortcuts
 
                     // T
                     case Key.T:
-                        ConfigureSettings.UpdateUIValues.SetTopMost();
+                        UpdateUIValues.SetTopMost();
                         break;
 
                     // N
                     case Key.N:
                         if (ctrlDown)
                         {
-                            ProcessHandling.ProcessLogic.StartNewProcess();
+                            ProcessLogic.StartNewProcess();
                         }
                         else
                         {
@@ -468,43 +473,43 @@ namespace PicView.Shortcuts
                                 return;
                             }
                         }
-                        UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
+                        WindowSizing.CenterWindowOnScreen();
                         break;
 
                     // 1
                     case Key.D1:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
-                        || Properties.Settings.Default.Fullscreen) { break; }
+                        || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, false).ConfigureAwait(false);
+                        await UpdateUIValues.SetScalingBehaviourAsync(true, false).ConfigureAwait(false);
                         break;
 
                     // 2
                     case Key.D2:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
-                        || Properties.Settings.Default.Fullscreen) { break; }
+                        || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(true, true).ConfigureAwait(false);
+                        await UpdateUIValues.SetScalingBehaviourAsync(true, true).ConfigureAwait(false);
                         break;
 
                     // 3
                     case Key.D3:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
-                        || Properties.Settings.Default.Fullscreen) { break; }
+                        || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, false).ConfigureAwait(false);
+                        await UpdateUIValues.SetScalingBehaviourAsync(false, false).ConfigureAwait(false);
                         break;
 
                     // 4
                     case Key.D4:
                         if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
-                        || Properties.Settings.Default.Fullscreen) { break; }
+                        || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"]);
-                        await ConfigureSettings.UpdateUIValues.SetScalingBehaviourAsync(false, true).ConfigureAwait(false);
+                        await UpdateUIValues.SetScalingBehaviourAsync(false, true).ConfigureAwait(false);
                         break;
 
                     // F1
@@ -552,7 +557,7 @@ namespace PicView.Shortcuts
 
                     // F11
                     case Key.F11:
-                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                        WindowSizing.Fullscreen_Restore();
                         break;
 
                     // Home
@@ -572,9 +577,6 @@ namespace PicView.Shortcuts
                             await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
                         }
                         break;
-
-
-                    default: break;
                 }
             }
 
@@ -597,9 +599,9 @@ namespace PicView.Shortcuts
                 }
                 else if (e.SystemKey == Key.Enter) // Doesn't work..
                 {
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                    if (Settings.Default.FullscreenGalleryHorizontal == false)
                     {
-                        UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                        WindowSizing.Fullscreen_Restore();
                     }
                 }
                 return;
@@ -615,10 +617,8 @@ namespace PicView.Shortcuts
                     {
                         return;
                     }
-                    _ = ChangeImage.FastPic.FastPicUpdateAsync().ConfigureAwait(false);
+                    _ = FastPic.FastPicUpdateAsync().ConfigureAwait(false);
                     return;
-
-                default: break;
             }
         }
     }

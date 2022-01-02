@@ -1,6 +1,7 @@
-﻿using PicView.UILogic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
+using PicView.FileHandling;
+using PicView.UILogic;
 
 namespace PicView
 {
@@ -15,7 +16,7 @@ namespace PicView
             else if (e.Key == Key.Escape)
             {
                 EditTitleBar.Refocus();
-                FileHandling.Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
+                Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
             }
         }
     }

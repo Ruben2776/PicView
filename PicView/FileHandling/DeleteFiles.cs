@@ -1,11 +1,12 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using PicView.ChangeImage;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
+using Microsoft.VisualBasic.FileIO;
+using PicView.ChangeImage;
+using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -97,12 +98,12 @@ namespace PicView.FileHandling
             // Sync with preloader
             Preloader.Remove(FolderIndex);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 // Sync with gallery
-                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
+                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > FolderIndex)
                 {
-                    UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
+                    UC.GetPicGallery.Container.Children.RemoveAt(FolderIndex);
                 }
             });
 

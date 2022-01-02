@@ -1,5 +1,4 @@
-﻿using PicView.FileHandling;
-using PicView.UILogic;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,6 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
+using PicView.FileHandling;
+using PicView.UILogic;
 
 namespace PicView.ChangeImage
 {
@@ -29,7 +31,7 @@ namespace PicView.ChangeImage
                 {
                     listToRead = new StreamReader(path);
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return; // Putting in try catch prevents error when file list is empty
                 }
@@ -51,7 +53,7 @@ namespace PicView.ChangeImage
                     using FileStream fs = File.Create(path);
                     fs.Seek(0, SeekOrigin.Begin);
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return;
                 }
@@ -86,7 +88,7 @@ namespace PicView.ChangeImage
                 // Close the stream and reclaim memory
                 streamWriter.Close();
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 // Putting in try catch prevents error when file list is empty
             }
@@ -104,7 +106,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 UC.ToggleStartUpUC(true);
             });
@@ -190,7 +192,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                selected = filePath == ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
+                selected = filePath == Navigation.Pics[Navigation.FolderIndex];
             }
 
             var mainColor = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
@@ -208,7 +210,7 @@ namespace PicView.ChangeImage
             var header = Path.GetFileNameWithoutExtension(filePath);
             header = header.Length > 30 ? FileFunctions.Shorten(header, 30) : header;
 
-            var menuItem = new MenuItem()
+            var menuItem = new MenuItem
             {
                 Header = header,
                 ToolTip = filePath,

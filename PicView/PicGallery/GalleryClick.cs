@@ -1,11 +1,16 @@
-﻿using PicView.ChangeImage;
-using PicView.UILogic;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.ImageHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.Views.UserControls;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Sizing.ScaleImage;
@@ -31,22 +36,22 @@ namespace PicView.PicGallery
 
             ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
 
-            var z = GetPicGallery.Container.Children[id] as Views.UserControls.PicGalleryItem;
+            var z = GetPicGallery.Container.Children[id] as PicGalleryItem;
             ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
             Border? border = null;
             Image? image = null;
-            var size = await ImageHandling.ImageSizeFunctions.GetImageSizeAsync(Pics[id]).ConfigureAwait(true);
+            var size = await ImageSizeFunctions.GetImageSizeAsync(Pics[id]).ConfigureAwait(true);
             if (size.HasValue)
             {
                 GalleryFunctions.IsHorizontalOpen = false;
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
                     FitImage(size.Value.Width, size.Value.Height);
                 });
             }
 
             var from = GalleryNavigation.PicGalleryItem_Size;
-            var to = new double[] { XWidth, XHeight };
+            var to = new[] { XWidth, XHeight };
             var acceleration = 0.2;
             var deceleration = 0.4;
             var duration = TimeSpan.FromSeconds(.3);
@@ -73,7 +78,7 @@ namespace PicView.PicGallery
 
             da.Completed += async delegate
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     border.Opacity = 0;
                     GetPicGallery.grid.Children.Remove(border);
@@ -85,9 +90,9 @@ namespace PicView.PicGallery
                 await ItemClickAsync(id, false).ConfigureAwait(false);
             };
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                if (Properties.Settings.Default.AutoFitWindow)
+                if (Settings.Default.AutoFitWindow)
                 {
                     GetPicGallery.Width = XWidth;
                     GetPicGallery.Height = XHeight;
@@ -108,7 +113,7 @@ namespace PicView.PicGallery
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
 
-                image = new Image()
+                image = new Image
                 {
                     Source = GetThumb(id),
                     Stretch = Stretch.Fill,
@@ -117,9 +122,9 @@ namespace PicView.PicGallery
                 };
 
                 // Need to add border for background to pictures with transparent background
-                border = new Border()
+                border = new Border
                 {
-                    Background = ConfigureSettings.ConfigColors.BackgroundColorBrush
+                    Background = ConfigColors.BackgroundColorBrush
                 };
                 border.Child = image;
                 GetPicGallery.grid.Children.Add(border);
@@ -131,14 +136,14 @@ namespace PicView.PicGallery
 
         internal static async Task ItemClickAsync(int id, bool resize = true)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 // Deselect current item
                 GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
                 GalleryNavigation.SetSelected(FolderIndex, false);
 
                 // Restore interface elements if needed
-                if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen && Properties.Settings.Default.ShowAltInterfaceButtons)
+                if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen && Settings.Default.ShowAltInterfaceButtons)
                 {
                     HideInterfaceLogic.ShowNavigation(true);
                     HideInterfaceLogic.ShowShortcuts(true);

@@ -1,8 +1,11 @@
-﻿using PicView.FileHandling;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
+using PicView.FileHandling;
+using PicView.Properties;
+using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic
@@ -18,14 +21,14 @@ namespace PicView.UILogic
                 return;
             }
 
-            UILogic.Sizing.WindowSizing.Move(sender, e);
+            WindowSizing.Move(sender, e);
             Refocus();
             e.Handled = true; // Disable text clicking
         }
 
         internal static void Bar_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)
+            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
             {
                 e.Handled = true; // Disable text clicking
             }
@@ -33,7 +36,7 @@ namespace PicView.UILogic
 
         internal static void EditTitleBar_Text()
         {
-            if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)
+            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
             {
                 return;
             }
@@ -55,7 +58,7 @@ namespace PicView.UILogic
         /// <param name="e"></param>
         internal static void EditTitleBar_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (Pics == null || !Properties.Settings.Default.ShowInterface || Pics.Count == 0)
+            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
             {
                 return;
             }
@@ -86,7 +89,7 @@ namespace PicView.UILogic
             {
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
             }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
                 Refocus(false);
             });
