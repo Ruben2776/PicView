@@ -34,6 +34,7 @@ namespace PicView.Views.Windows
             {
                 ConfigColors.ChangeToLightTheme();
             }
+
             InitializeComponent();
 
             if (Settings.Default.AutoFitWindow == false)
@@ -50,13 +51,14 @@ namespace PicView.Views.Windows
             Loaded += (_, _) =>
             {
                 // Subscribe to Windows resized event || Need to be exactly on load
-                HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
-                source.AddHook(NativeMethods.WndProc);
+                HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle)
+                    ?.AddHook(NativeMethods.WndProc);
                 LoadLanguage.DetermineLanguage();
                 StartLoading.LoadedEvent();
             };
             ContentRendered += delegate
             {
+                NativeMethods.EnableBlur(this);
                 StartLoading.ContentRenderedEvent();
 
                 // keyboard and Mouse_Keys Keys
