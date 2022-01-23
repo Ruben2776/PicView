@@ -13,6 +13,7 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Gallery;
 using static PicView.UILogic.HideInterfaceLogic;
 
 namespace PicView.PicGallery
@@ -33,7 +34,7 @@ namespace PicView.PicGallery
         {
             if (UC.GetPicGallery == null)
             {
-                UC.GetPicGallery = new Views.UserControls.PicGallery
+                UC.GetPicGallery = new Views.UserControls.Gallery.PicGallery
                 {
                     Opacity = 0
                 };
@@ -133,7 +134,7 @@ namespace PicView.PicGallery
                 // Set style
                 UC.GetPicGallery.x2.Visibility = Visibility.Visible;
                 UC.GetPicGallery.Container.Margin = new Thickness(0, 65 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
-                UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 1);
+                UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
                 UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
 
 
@@ -147,12 +148,12 @@ namespace PicView.PicGallery
             if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
             var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
             
-            if (Math.Abs(tempItem.Border.Height - GalleryNavigation.PicGalleryItem_Size) < 1) { return; }
+            if (Math.Abs(tempItem.outterborder.Height - GalleryNavigation.PicGalleryItem_Size) < 1) { return; }
             
             for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
             {
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                item.Border.Height = GalleryNavigation.PicGalleryItem_Size_s;
+                item.innerborder.Height = GalleryNavigation.PicGalleryItem_Size_s;
             }
         }
 
@@ -256,11 +257,7 @@ namespace PicView.PicGallery
                     
                     var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                     item.img.Source = pic;
-                    
-                    item.Width = item.Border.Width = GalleryNavigation.PicGalleryItem_Size * pic.PixelWidth / pic.PixelHeight;
-                    item.Height = item.Border.Height = GalleryNavigation.PicGalleryItem_Size;
 
-                    
                 }));
             }
             catch (Exception)

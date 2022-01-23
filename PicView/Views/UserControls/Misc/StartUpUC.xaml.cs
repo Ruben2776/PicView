@@ -4,7 +4,7 @@ using PicView.ChangeImage;
 using PicView.FileHandling;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     /// <summary>
     /// Interaction logic for StartUpUC.xaml

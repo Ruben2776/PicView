@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using PicView.Shortcuts;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     /// <summary>
     /// Interaction logic for SexyToolTip.xaml

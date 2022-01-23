@@ -17,6 +17,7 @@ using PicView.ImageHandling;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Misc;
 using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows

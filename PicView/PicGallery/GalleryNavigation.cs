@@ -6,6 +6,7 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Gallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -183,13 +184,13 @@ namespace PicView.PicGallery
 
                 if (selected)
                 {
-                    nextItem.Border.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                    //nextItem.Border.Height = PicGalleryItem_Size;
+                    nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
+                    nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size;
                 }
                 else
                 {
-                    nextItem.Border.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                    //nextItem.Border.Height = PicGalleryItem_Size_s;
+                    nextItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
+                    nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size_s;
                 }
             });
         }

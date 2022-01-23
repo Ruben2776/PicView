@@ -1,8 +1,9 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.FileMenu"
+    x:Class="PicView.Views.UserControls.Menus.FileMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Canvas.ZIndex="3"
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
@@ -43,16 +44,16 @@
                 StrokeThickness="1" />
 
 
-            <uc:ReloadButton x:Name="ReloadButton" />
+            <buttons:ReloadButton x:Name="ReloadButton" />
 
-            <uc:RecycleButton
+            <buttons:RecycleButton
                 x:Name="RecycleButton"
                 Canvas.Left="52"
                 Canvas.Top="1"
                 Width="51"
                 Height="51" />
 
-            <uc:CopyButton
+            <buttons:CopyButton
                 x:Name="CopyButton"
                 Canvas.Left="104"
                 Canvas.Top="1"
@@ -60,14 +61,14 @@
                 Height="51"
                 ToolTip="{StaticResource CopyFile}" />
 
-            <uc:PasteButton
+            <buttons:PasteButton
                 x:Name="PasteButton"
                 Canvas.Left="156"
                 Canvas.Top="1"
                 Width="52" />
 
 
-            <uc:MenuCloseButton x:Name="CloseButton" Canvas.Left="207" />
+            <buttons:MenuCloseButton x:Name="CloseButton" Canvas.Left="207" />
 
             <Border
                 x:Name="OpenBorder"

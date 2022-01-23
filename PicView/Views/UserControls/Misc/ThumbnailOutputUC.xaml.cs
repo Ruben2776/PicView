@@ -3,7 +3,7 @@ using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.Views.Windows;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     public partial class ThumbnailOutputUC : UserControl
     {

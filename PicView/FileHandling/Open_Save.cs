@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using static PicView.ChangeImage.ErrorHandling;

@@ -5,6 +5,7 @@ using System.Windows.Media;
 using Microsoft.Win32;
 using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
 using PicView.PicGallery;
 using PicView.Properties;

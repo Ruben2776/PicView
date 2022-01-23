@@ -8,6 +8,7 @@ using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Buttons;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;

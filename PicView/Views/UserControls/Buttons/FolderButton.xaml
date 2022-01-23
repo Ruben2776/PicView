@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.FolderButton"
+    x:Class="PicView.Views.UserControls.Buttons.FolderButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Width="56"

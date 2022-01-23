@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.UILogic;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.UILogic.Tooltip;

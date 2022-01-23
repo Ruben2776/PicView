@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using PicView.ChangeTitlebar;
 using PicView.Properties;
 using static PicView.ChangeImage.Navigation;
 

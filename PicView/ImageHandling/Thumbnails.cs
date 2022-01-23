@@ -6,6 +6,7 @@ using ImageMagick;
 using Microsoft.WindowsAPICodePack.Shell;
 using PicView.ChangeImage;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Gallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 

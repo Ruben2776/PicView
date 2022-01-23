@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
 using PicView.Editing;
 using PicView.Editing.Crop;
@@ -12,6 +13,7 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Buttons;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;

@@ -4,7 +4,7 @@ using PicView.Animations;
 using PicView.UILogic;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class SlideshowButton : UserControl
     {

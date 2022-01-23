@@ -4,7 +4,7 @@ using PicView.ChangeImage;
 using PicView.Properties;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class ReloadButton : UserControl
     {

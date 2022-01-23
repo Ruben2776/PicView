@@ -4,7 +4,7 @@ using PicView.Animations;
 using PicView.ImageHandling;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Interaction logic for OptimizeButton.xaml

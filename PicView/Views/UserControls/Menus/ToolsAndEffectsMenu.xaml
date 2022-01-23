@@ -1,8 +1,9 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.ToolsAndEffectsMenu"
+    x:Class="PicView.Views.UserControls.Menus.ToolsAndEffectsMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Canvas.ZIndex="3"
     Foreground="{StaticResource MainColorBrush}">
 
@@ -450,7 +451,7 @@
                     </Button>
                 </Border>
 
-                <uc:MenuCloseButton
+                <buttons:MenuCloseButton
                     x:Name="CloseButton"
                     Canvas.Left="305"
                     Canvas.Top="-1"

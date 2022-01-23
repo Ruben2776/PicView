@@ -6,7 +6,7 @@ using PicView.UILogic;
 using PicView.UILogic.Loading;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class ResizeButton : UserControl
     {

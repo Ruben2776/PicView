@@ -2,7 +2,7 @@
 using PicView.Animations;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class FolderButton : UserControl
     {

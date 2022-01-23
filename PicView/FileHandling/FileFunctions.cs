@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 

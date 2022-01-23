@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Title="{StaticResource ResourceKey=InfoWindowTitle}"
     Height="378"
     MinHeight="378"
@@ -41,15 +43,15 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon />
+            <misc:Icon />
 
-            <uc:CloseButton
+            <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
                 DockPanel.Dock="Right" />
 
-            <uc:MinButton
+            <buttons:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
@@ -89,7 +91,7 @@
                         Height="40"
                         Margin="0,0,0,5"
                         Source="pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico" />
-                    <uc:Logo Height="40" Margin="0,0,0,-7" />
+                    <misc:Logo Height="40" Margin="0,0,0,-7" />
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <TextBlock>

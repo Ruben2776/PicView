@@ -3,6 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Title="{StaticResource Loading}"
     Width="462"
     Height="400"
@@ -29,7 +31,7 @@
             Background="{StaticResource FadeColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon x:Name="Logo" />
+            <misc:Icon x:Name="Logo" />
 
             <Rectangle
                 Width="1"
@@ -91,7 +93,7 @@
                 BorderThickness="0,1,1,0"
                 CornerRadius="0,4,0,0"
                 DockPanel.Dock="Right">
-                <uc:CloseButton
+                <buttons:CloseButton
                     x:Name="CloseButton"
                     Width="30"
                     Height="30" />
@@ -103,7 +105,7 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:FullscreenButton
+            <buttons:FullscreenButton
                 x:Name="FullscreenButton"
                 Width="30"
                 Height="30"
@@ -115,7 +117,7 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:MinButton
+            <buttons:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
@@ -127,7 +129,7 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:CustomTextBox x:Name="TitleText" Background="{StaticResource SubtleFadeBrush}" />
+            <misc:CustomTextBox x:Name="TitleText" Background="{StaticResource SubtleFadeBrush}" />
         </DockPanel>
 
         <Grid
@@ -152,7 +154,7 @@
                     Height="1"
                     Fill="{StaticResource BorderBrush}" />
 
-                <uc:FolderButton
+                <buttons:FolderButton
                     x:Name="FolderButton"
                     Canvas.Left="1"
                     Width="56"
@@ -258,9 +260,9 @@
                         Height="25"
                         Fill="{StaticResource BorderBrush}" />
 
-                    <uc:LeftButton x:Name="LeftButton" />
+                    <buttons:LeftButton x:Name="LeftButton" />
 
-                    <uc:RightButton x:Name="RightButton" Canvas.Left="91" />
+                    <buttons:RightButton x:Name="RightButton" Canvas.Left="91" />
                 </Canvas>
 
                 <Rectangle

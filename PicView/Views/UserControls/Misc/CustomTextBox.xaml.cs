@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     /// <summary>
     /// Interaction logic for CustomTextBox.xaml

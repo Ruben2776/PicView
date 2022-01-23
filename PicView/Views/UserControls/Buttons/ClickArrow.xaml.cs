@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using PicView.Animations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class ClickArrow : UserControl
     {

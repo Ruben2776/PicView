@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;

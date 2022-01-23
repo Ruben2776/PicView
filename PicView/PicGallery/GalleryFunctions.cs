@@ -10,6 +10,7 @@ using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Gallery;
 using static PicView.UILogic.UC;
 
 namespace PicView.PicGallery

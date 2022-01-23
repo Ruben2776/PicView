@@ -3,7 +3,7 @@ using PicView.Animations;
 using PicView.ChangeImage;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class LeftButton : UserControl
     {

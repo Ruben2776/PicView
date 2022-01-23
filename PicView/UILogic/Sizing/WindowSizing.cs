@@ -6,6 +6,7 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Buttons;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.Sizing.ScaleImage;

@@ -10,7 +10,7 @@ using PicView.Animations;
 using PicView.Shortcuts;
 using PicView.UILogic;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     public partial class QuickResize : UserControl
     {

@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Width="325"
     BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
@@ -26,15 +28,15 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon />
+            <misc:Icon />
 
-            <uc:CloseButton
+            <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
                 DockPanel.Dock="Right" />
 
-            <uc:MinButton
+            <buttons:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"

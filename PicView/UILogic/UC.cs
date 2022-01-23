@@ -3,8 +3,11 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media.Animation;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.PicGallery;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Buttons;
+using PicView.Views.UserControls.Menus;
 using PicView.Views.UserControls.Misc;
 
 namespace PicView.UILogic
@@ -23,7 +26,7 @@ namespace PicView.UILogic
         internal static X2? Getx2 { get; set; }
         internal static Minus? GetMinus { get; set; }
         internal static Restorebutton? GetRestorebutton { get; set; }
-        internal static Views.UserControls.PicGallery? GetPicGallery { get; set; }
+        internal static Views.UserControls.Gallery.PicGallery? GetPicGallery { get; set; }
         internal static GalleryShortcut? GetGalleryShortcut { get; set; }
         internal static CroppingTool? GetCropppingTool { get; set; }
         internal static ColorPicker? GetColorPicker { get; set; }

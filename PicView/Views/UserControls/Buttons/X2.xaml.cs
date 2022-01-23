@@ -5,7 +5,7 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Cool shady close button!

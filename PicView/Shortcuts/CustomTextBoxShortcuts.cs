@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Input;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
-using PicView.UILogic;
 
-namespace PicView
+namespace PicView.Shortcuts
 {
     internal static class CustomTextBoxShortcuts
     {

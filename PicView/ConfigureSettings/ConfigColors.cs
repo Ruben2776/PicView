@@ -2,8 +2,8 @@
 using System.Windows;
 using System.Windows.Media;
 using PicView.Animations;
-using PicView.Library.Resources;
 using PicView.Properties;
+using PicView.Themes.Resources;
 using PicView.UILogic;
 
 namespace PicView.ConfigureSettings

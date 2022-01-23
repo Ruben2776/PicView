@@ -5,7 +5,7 @@ using PicView.Properties;
 using PicView.UILogic.Sizing;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class FullscreenButton : UserControl
     {

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;

@@ -2,7 +2,7 @@
 using PicView.Animations;
 using PicView.PicGallery;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Cool shady close button!

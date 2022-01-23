@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using PicView.Editing.Crop;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     /// <summary>
     /// Interaction logic for CroppingTool.xaml

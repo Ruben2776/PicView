@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using PicView.ConfigureSettings;
 
-namespace PicView.Library.Resources
+namespace PicView.Themes.Resources
 {
     internal static class DrawingBrushes
     {

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using PicView.ProcessHandling;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     public partial class LinkTextBox : UserControl
     {

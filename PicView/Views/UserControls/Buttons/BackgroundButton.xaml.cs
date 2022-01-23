@@ -3,7 +3,7 @@ using PicView.Animations;
 using PicView.ConfigureSettings;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class BackGroundButton : UserControl
     {

@@ -11,6 +11,7 @@ using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Gallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Sizing.ScaleImage;

@@ -17,7 +17,7 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.Thumbnails;
-using static PicView.UILogic.SetTitle;
+using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;

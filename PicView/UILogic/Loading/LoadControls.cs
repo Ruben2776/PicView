@@ -2,6 +2,8 @@
 using System.Windows;
 using PicView.Properties;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Buttons;
+using PicView.Views.UserControls.Menus;
 using PicView.Views.UserControls.Misc;
 using static PicView.UILogic.UC;
 

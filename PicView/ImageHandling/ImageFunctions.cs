@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ImageMagick;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;

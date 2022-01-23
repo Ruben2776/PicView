@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     public partial class DragDropOverlayPic : UserControl
     {

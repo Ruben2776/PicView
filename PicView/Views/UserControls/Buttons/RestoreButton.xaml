@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Restorebutton"
+    x:Class="PicView.Views.UserControls.Buttons.Restorebutton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border BorderThickness="1,0,0,1">

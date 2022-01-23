@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;

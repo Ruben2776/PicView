@@ -5,10 +5,11 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using PicView.FileHandling;
 using PicView.Properties;
+using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 
-namespace PicView.UILogic
+namespace PicView.ChangeTitlebar
 {
     internal static class EditTitleBar
     {

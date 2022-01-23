@@ -9,6 +9,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Properties;

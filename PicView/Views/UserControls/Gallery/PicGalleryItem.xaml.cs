@@ -4,13 +4,11 @@ using System.Windows.Media;
 using PicView.Animations;
 using static PicView.PicGallery.GalleryNavigation;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Gallery
 {
-    /// <summary>
-    /// The usercontrol (UI element) of PicGallery
-    /// </summary>
     public partial class PicGalleryItem : UserControl
     {
+        internal int Id { get; set; }
         public PicGalleryItem(ImageSource? pic, int id, bool selected)
         {
             InitializeComponent();
@@ -20,21 +18,28 @@ namespace PicView.Views.UserControls
                 img.Source = pic;
             }
 
-            img.MouseEnter += (_, _) => Border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColor());
-            img.MouseLeave += (_, _) =>
-            { if (selected) { return; } Border.BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"]; };
+            Id = id;
 
-            if (selected)
-            {
-                Border.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColor());
-                Border.Height = PicGalleryItem_Size;
-            }
-            else
-            {
-                Border.Height = PicGalleryItem_Size_s;
-            }
+            outterborder.Width = outterborder.Height = PicGalleryItem_Size;
+            innerborder.Width = innerborder.Height = PicGalleryItem_Size_s;
 
-            Width = Height = PicGalleryItem_Size_s;
+            img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
+                this,
+                false,
+                PicGalleryItem_Size_s,
+                PicGalleryItem_Size
+            );
+
+            img.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
+                this,
+                true,
+                PicGalleryItem_Size,
+                PicGalleryItem_Size_s
+            );
+
+            if (!selected) return;
+            innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColor());
+            innerborder.Width = innerborder.Height = PicGalleryItem_Size;
         }
     }
 }

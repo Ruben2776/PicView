@@ -13,7 +13,7 @@ using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class GoToPicButton : UserControl
     {

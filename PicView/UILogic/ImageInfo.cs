@@ -9,6 +9,7 @@ using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Views.UserControls;
+using PicView.Views.UserControls.Misc;
 
 namespace PicView.UILogic
 {

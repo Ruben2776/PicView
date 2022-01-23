@@ -7,7 +7,7 @@ using PicView.UILogic;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Menus
 {
     /// <summary>
     /// Interaction logic for QuickSettingsMenu.xaml
