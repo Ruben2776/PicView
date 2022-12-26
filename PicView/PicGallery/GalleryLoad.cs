@@ -50,7 +50,7 @@ namespace PicView.PicGallery
                 if (Settings.Default.FullscreenGalleryHorizontal)
                 {
                     // Set size
-                    GalleryNavigation.SetSize(22);
+                    GalleryNavigation.SetSize(35);
                     UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
 
                     // Set alignment
@@ -66,6 +66,7 @@ namespace PicView.PicGallery
                     UC.GetPicGallery.Margin = new Thickness(0);
                     UC.GetPicGallery.border.BorderThickness = new Thickness(0, 0, 0, 0);
                     UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
+                    ConfigureWindows.GetMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.Transparent);
 
                     // Make sure bools are correct
                     GalleryFunctions.IsHorizontalOpen = false;
