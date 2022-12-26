@@ -57,27 +57,37 @@ namespace PicView.ImageHandling
 
         internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, byte quality = 100, int size = 500, bool checkSize = false)
         {
-            switch (fileInfo.Extension)
+            try
             {
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".gif":
-                case ".ico":
-                case ".jfif":
-                case ".wbmp":
-                    return GetWindowsThumbnail(fileInfo.FullName);
-            }
+                switch (fileInfo.Extension)
+                {
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".jpe":
+                    case ".png":
+                    case ".bmp":
+                    case ".gif":
+                    case ".ico":
+                    case ".jfif":
+                    case ".wbmp":
+                        return GetWindowsThumbnail(fileInfo.FullName);
+                }
 
-            if (checkSize)
+                if (checkSize)
+                {
+                    return fileInfo.Length > 5e+6 ? null : GetMagickImageThumb(fileInfo, quality, size);
+                }
+
+                var thumb = GetMagickImageThumb(fileInfo, quality, size);
+                return thumb ??= ImageFunctions.ImageErrorMessage();
+            }
+            catch (Exception e)
             {
-                return fileInfo.Length > 5e+6 ? null : GetMagickImageThumb(fileInfo, quality, size);
+#if DEBUG
+                Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
+#endif
+                return ImageFunctions.ImageErrorMessage();
             }
-
-            var thumb = GetMagickImageThumb(fileInfo, quality, size);
-            return thumb ??= ImageFunctions.ImageErrorMessage();
         }
 
         /// <summary>
@@ -129,11 +139,21 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="path">The path to the file</param>
         /// <returns></returns>
-        private static BitmapSource GetWindowsThumbnail(string path)
+        private static BitmapSource? GetWindowsThumbnail(string path)
         {
-            BitmapSource pic = ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
-            pic.Freeze();
-            return pic;
+            try
+            {
+                BitmapSource pic = ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+                pic.Freeze();
+                return pic;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(nameof(GetWindowsThumbnail) + " " + e.Message);
+#endif
+                return null;
+            }
         }
     }
 }

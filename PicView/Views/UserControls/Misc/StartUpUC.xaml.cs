@@ -59,7 +59,7 @@ namespace PicView.Views.UserControls.Misc
                 ButtonMouseLeaveAnim(pasteTxt);
             };
 
-            PasteButton.Click += (_, _) => Copy_Paste.Paste();
+            PasteButton.Click += (_, _) => Copy_Paste.PasteAsync();
         }
 
         public void ResponsiveSize(double width)

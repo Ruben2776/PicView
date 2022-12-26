@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using PicView.ChangeImage;
@@ -90,7 +91,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
-        internal static void Paste()
+        internal static async Task PasteAsync()
         {
             // file
             if (Clipboard.ContainsFileDropList()) // If Clipboard has one or more files
@@ -99,7 +100,7 @@ namespace PicView.FileHandling
 
                 if (files != null)
                 {
-                    _ = LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+                    await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
 
                     if (files.Length > 1)
                     {
@@ -115,7 +116,7 @@ namespace PicView.FileHandling
             // Clipboard Image
             if (Clipboard.ContainsImage())
             {
-                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await LoadPic.LoadPicFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
                 return;
             }
 

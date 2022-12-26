@@ -374,7 +374,7 @@ namespace PicView.Shortcuts
                     case Key.V:
                         if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
                         {
-                            Paste();
+                            PasteAsync();
                         }
                         break;
 

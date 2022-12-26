@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Shell;
 using System.Windows.Threading;
 using PicView.UILogic;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace PicView.SystemIntegration
 {
@@ -23,11 +24,7 @@ namespace PicView.SystemIntegration
                 ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = d
             };
-            taskbar.Freeze();
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-            {
-                ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
-            });
+            await SetAsync(taskbar).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -40,11 +37,23 @@ namespace PicView.SystemIntegration
                 ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = 0.0
             };
+            await SetAsync(taskbar).ConfigureAwait(false);
+        }
+
+        static async Task SetAsync(TaskbarItemInfo taskbar)
+        {
             taskbar.Freeze();
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+            try
             {
-                ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
-            });
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                {
+                    ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
+                });
+            }
+            catch (System.Exception)
+            {
+                // Catch task canceled exception
+            }
         }
 
         #endregion Progress

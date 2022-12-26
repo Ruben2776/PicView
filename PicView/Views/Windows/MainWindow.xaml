@@ -24,7 +24,7 @@
         <SolidColorBrush x:Key="MagicBrush" Color="{StaticResource IconColor}" />
     </Window.Resources>
 
-    <DockPanel Background="{StaticResource NoisyBg}" LastChildFill="True">
+    <DockPanel LastChildFill="True">
         <DockPanel
             x:Name="TitleBar"
             Height="30"
@@ -134,6 +134,7 @@
 
         <Grid
             x:Name="LowerBar"
+            Background="{StaticResource NoisyBg}"
             Height="25"
             DockPanel.Dock="Bottom">
 
@@ -424,7 +425,7 @@
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
 
-            <Grid x:Name="ParentContainer" AllowDrop="True">
+            <Grid x:Name="ParentContainer" Background="{StaticResource NoisyBg}" AllowDrop="True">
 
                 <ScrollViewer
                     x:Name="Scroller"

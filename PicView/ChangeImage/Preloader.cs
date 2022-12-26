@@ -55,7 +55,17 @@ namespace PicView.ChangeImage
             
             await Task.Run(async () =>
             {
-                fileInfo ??= new FileInfo(Pics[i]);
+                try
+                {
+                    fileInfo ??= new FileInfo(Pics[i]);
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine(e.Message);
+#endif
+                    return;
+                }
                 bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preloadValue.BitmapSource = bitmapSource;
                 preloadValue.IsLoading = false;
@@ -97,7 +107,7 @@ namespace PicView.ChangeImage
                     Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
                 }
 #else
-            Sources.TryRemove(Navigation.Pics[key], out _);
+                Sources.TryRemove(Navigation.Pics[key], out _);
 #endif
             }
 #if DEBUG
@@ -169,7 +179,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="reverse"></param>
-        internal static Task PreLoad(int index) => Task.Run(() =>
+        internal static Task PreLoad(int index) => Task.Run(async () =>
         {
             int loadInfront = Pics.Count >= 10 ? 5 : 3;
             int loadBehind = Pics.Count >= 10 ? 3 : 2;
@@ -182,14 +192,14 @@ namespace PicView.ChangeImage
                 for (int i = index - 1; i > endPoint; i--)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (int i = index + 1; i < (index + 1) + loadBehind; i++)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
@@ -206,13 +216,13 @@ namespace PicView.ChangeImage
                 for (int i = index + 1; i < (index + 1) + loadInfront; i++)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (int i = index - 1; i > endPoint; i--)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up behind

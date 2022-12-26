@@ -219,7 +219,7 @@ namespace PicView.ChangeImage
             }
             else if (Clipboard.ContainsImage())
             {
-                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await LoadPic.LoadPicFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {

@@ -245,7 +245,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var pastecm = (MenuItem)MainContextMenu.Items[15];
             pastecm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + V";
-            pastecm.Click += (_, _) => { MainContextMenu.IsOpen = false; Copy_Paste.Paste(); };
+            pastecm.Click += (_, _) => { MainContextMenu.IsOpen = false; Copy_Paste.PasteAsync(); };
 
             // 16 = seperator
 

@@ -106,18 +106,18 @@ namespace PicView.ChangeImage
 
             if (archive == false)
             {
-                _ = Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
-                _ = Preloader.AddAsync(FolderIndex, fileInfo, pic).ConfigureAwait(false);
+                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                await Preloader.AddAsync(FolderIndex, fileInfo, pic).ConfigureAwait(false);
             }
 
             if (FolderIndex > 0)
             {
-                _ = Taskbar.Progress((double)FolderIndex / Pics.Count).ConfigureAwait(false);
+                await Taskbar.Progress((double)FolderIndex / Pics.Count).ConfigureAwait(false);
             }
 
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                _ = GalleryLoad.Load().ConfigureAwait(false);
+                await GalleryLoad.Load().ConfigureAwait(false);
             }
 
             FreshStartup = false;
@@ -330,13 +330,23 @@ namespace PicView.ChangeImage
             if (Pics?.Count < index || Pics?.Count < 1)
             {
                 //  Prevent infinite loading when dropping folder and can't find file
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
+                try
                 {
-                    if (ConfigureWindows.GetMainWindow.TitleText.Text == (string)Application.Current.Resources["Loading"])
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
                     {
-                        await ReloadAsync(true).ConfigureAwait(false);
-                    }
-                });
+                        if (ConfigureWindows.GetMainWindow.TitleText.Text == (string)Application.Current.Resources["Loading"])
+                        {
+                            await ReloadAsync(true).ConfigureAwait(false);
+                        }
+                    });
+                        }
+                        catch (Exception e)
+                        {
+#if DEBUG
+                            System.Diagnostics.Trace.WriteLine(e.Message);
+#endif
+                            await ReloadAsync(true).ConfigureAwait(false);
+                        }
 
                 return;
             }
@@ -359,6 +369,14 @@ namespace PicView.ChangeImage
                     if (fileInfo.Exists)
                     {
                         thumb = GetBitmapSourceThumb(fileInfo);
+                        try 
+                        {
+                            thumb = GetBitmapSourceThumb(fileInfo);
+                        }
+                        catch (Exception)
+                        {
+                            thumb = null;
+                        }
                     }
                     else
                     {
@@ -372,8 +390,7 @@ namespace PicView.ChangeImage
                         }
                         catch (Exception)
                         {
-                            UnexpectedError();
-                            return;
+                            thumb = null;
                         }
                     }
                 }
@@ -391,11 +408,6 @@ namespace PicView.ChangeImage
                         // Set loading from translation service
                         SetLoadingString();
                         FreshStartup = false;
-                    }
-
-                    if (thumb != null)
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
                     }
 
                     // Don't allow image size to stretch the whole screen
@@ -444,6 +456,15 @@ namespace PicView.ChangeImage
                             return;
                         }
 
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                        {
+                            SetLoadingString();
+                            if (thumb is not null)
+                            {
+                                ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                            }
+                        });
+
                         // Wait for finnished result
                         await Task.Delay(20).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
                     }
@@ -470,7 +491,7 @@ namespace PicView.ChangeImage
                         GalleryNavigation.FullscreenGalleryNavigation();
                     });
                 }
-                await Preloader.PreLoad(index).ConfigureAwait(false);
+                //await Preloader.PreLoad(index).ConfigureAwait(false);
                 return;
             }
 
@@ -494,17 +515,17 @@ namespace PicView.ChangeImage
 
             if (Pics?.Count > 1)
             {
-                _ = Preloader.PreLoad(index).ConfigureAwait(false);
+                await Preloader.PreLoad(index).ConfigureAwait(false);
 
                 if (FolderIndex == index)
                 {
-                    _ = Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
+                    await Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
                 }
             }
 
             if (ConfigureWindows.GetImageInfoWindow is not null)
             {
-                _ = ImageInfo.UpdateValuesAsync(preloadValue.FileInfo).ConfigureAwait(false);
+                await ImageInfo.UpdateValuesAsync(preloadValue.FileInfo).ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive
@@ -514,9 +535,9 @@ namespace PicView.ChangeImage
             }
         }
 
-        #endregion
+#endregion
 
-        #region UpdatePic
+#region UpdatePic
 
         /// <summary>
         /// Update picture, size it and set the title from index
@@ -577,7 +598,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="imageName"></param>
         /// <param name="bitmapSource"></param>
-        internal static void UpdatePic(string imageName, BitmapSource bitmapSource)
+        internal static async Task UpdatePicAsync(string imageName, BitmapSource bitmapSource)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
@@ -598,10 +619,10 @@ namespace PicView.ChangeImage
                 ToggleStartUpUC(true);
             });
 
-            _ = Taskbar.NoProgress().ConfigureAwait(false);
+            await Taskbar.NoProgress().ConfigureAwait(false);
             FolderIndex = 0;
 
-            _ = ImageInfo.UpdateValuesAsync(null).ConfigureAwait(false);
+            await ImageInfo.UpdateValuesAsync(null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -609,14 +630,14 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="pic"></param>
         /// <param name="imageName"></param>
-        internal static void LoadPicFromBitmap(BitmapSource bitmap, string imageName)
+        internal static async Task LoadPicFromBitmapAsync(BitmapSource bitmap, string imageName)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
                 SetLoadingString();
             });
 
-            UpdatePic(imageName, bitmap);
+            await UpdatePicAsync(imageName, bitmap);
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
@@ -697,10 +718,10 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            UpdatePic(b64, pic);
+            await UpdatePicAsync(b64, pic).ConfigureAwait(false);
         }
 
-        #endregion
+#endregion
 
         static void LoadingPreview(FileInfo fileInfo)
         {
