@@ -177,22 +177,22 @@
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
-    <PackageReference Include="Magick.NET-Q16-OpenMP-x64" Version="9.0.0" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.13">
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.6" />
+    <PackageReference Include="Magick.NET-Q16-OpenMP-x64" Version="12.2.2" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="6.1.3">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.13" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="6.1.3" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.155">
+    <PackageReference Include="SkiaSharp" Version="2.88.3">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.155" />
-    <PackageReference Include="WpfScreenHelper" Version="1.1.0" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.0.2" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
+    <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -426,11 +426,12 @@
     <AssemblyVersion>1.6.6.0</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Fast Picture Viewer with compact UI that can be hidden. </Description>
     <PackageTags>picture-viewer,desktop-app,</PackageTags>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
