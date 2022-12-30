@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
-using PicView.ChangeTitlebar;
+﻿using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
@@ -11,6 +6,11 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 
@@ -62,7 +62,7 @@ namespace PicView.ChangeImage
             }
 
             if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
-            
+
             if (Settings.Default.FullscreenGalleryHorizontal || Settings.Default.FullscreenGalleryVertical)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
@@ -272,6 +272,8 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
             ConfigureWindows.GetMainWindow.MainImage.Width = 0;
             ConfigureWindows.GetMainWindow.MainImage.Height = 0;
+
+            WindowSizing.SetWindowBehavior();
 
             UC.ToggleStartUpUC(!showStartup);
 

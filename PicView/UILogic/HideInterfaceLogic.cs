@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using System.Timers;
-using System.Windows;
-using PicView.PicGallery;
+﻿using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
 using static PicView.Animations.FadeControls;
 
 namespace PicView.UILogic

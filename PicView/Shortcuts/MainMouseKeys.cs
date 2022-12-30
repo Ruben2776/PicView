@@ -1,14 +1,13 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.Editing;
 using PicView.PicGallery;
 using PicView.Properties;
-using PicView.UILogic;
 using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Sizing;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.TransformImage.Scroll;

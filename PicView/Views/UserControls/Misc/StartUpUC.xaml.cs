@@ -1,7 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.FileHandling;
+using System.Windows;
+using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Misc
@@ -59,7 +59,7 @@ namespace PicView.Views.UserControls.Misc
                 ButtonMouseLeaveAnim(pasteTxt);
             };
 
-            PasteButton.Click += (_, _) => Copy_Paste.PasteAsync();
+            PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
         }
 
         public void ResponsiveSize(double width)

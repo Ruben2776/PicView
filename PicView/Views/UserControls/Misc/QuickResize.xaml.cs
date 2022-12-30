@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PicView.Animations;
+using PicView.Shortcuts;
+using PicView.UILogic;
+using System;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,9 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using PicView.Animations;
-using PicView.Shortcuts;
-using PicView.UILogic;
 
 namespace PicView.Views.UserControls.Misc
 {

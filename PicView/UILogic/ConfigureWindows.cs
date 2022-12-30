@@ -1,7 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using PicView.Properties;
+﻿using PicView.Properties;
 using PicView.Views.Windows;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace PicView.UILogic
 {

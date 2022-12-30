@@ -1,8 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
@@ -15,6 +11,10 @@ using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Loading;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
@@ -57,10 +57,11 @@ namespace PicView.Views.Windows
                 LoadLanguage.DetermineLanguage();
                 StartLoading.LoadedEvent();
             };
-            ContentRendered += delegate
+
+            ContentRendered += async delegate
             {
                 NativeMethods.EnableBlur(this);
-                StartLoading.ContentRenderedEvent();
+                await StartLoading.ContentRenderedEventAsync();
 
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);

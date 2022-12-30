@@ -1,8 +1,8 @@
-﻿using System;
+﻿using ImageMagick;
+using PicView.FileHandling;
+using System;
 using System.IO;
 using System.Text;
-using ImageMagick;
-using PicView.FileHandling;
 
 namespace PicView.ImageHandling
 {

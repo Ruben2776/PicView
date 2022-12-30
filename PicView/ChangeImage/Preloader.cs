@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PicView.ImageHandling;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using PicView.ImageHandling;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
@@ -52,7 +52,7 @@ namespace PicView.ChangeImage
             var preloadValue = new PreloadValue(null, true, null);
 
             if (!Sources.TryAdd(Pics[i], preloadValue)) { return false; }
-            
+
             await Task.Run(async () =>
             {
                 try

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.TransformImage;
+using System;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.TransformImage;
 using static PicView.UILogic.UC;
 
 namespace PicView.Animations

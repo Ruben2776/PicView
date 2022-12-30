@@ -1,14 +1,14 @@
-﻿using System;
+﻿using ImageMagick;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.UILogic;
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ImageMagick;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
 
 namespace PicView.Shortcuts
 {
@@ -178,7 +178,7 @@ namespace PicView.Shortcuts
         {
             var percentage = ReturnPercentageFromString(text);
             if (!(percentage > 0)) { return false; }
-            
+
             var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new Percentage(percentage)).ConfigureAwait(false);
             if (resize)
             {

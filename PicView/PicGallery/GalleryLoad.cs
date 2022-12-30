@@ -1,4 +1,10 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls.Gallery;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,13 +13,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls;
-using PicView.Views.UserControls.Gallery;
 using static PicView.UILogic.HideInterfaceLogic;
 
 namespace PicView.PicGallery
@@ -129,7 +128,7 @@ namespace PicView.PicGallery
                 // Set scrollbar visibility and orientation
                 UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
                 UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                
+
                 UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
 
                 // Set style
@@ -148,9 +147,9 @@ namespace PicView.PicGallery
 
             if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
             var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
-            
+
             if (Math.Abs(tempItem.outterborder.Height - GalleryNavigation.PicGalleryItem_Size) < 1) { return; }
-            
+
             for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
             {
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
@@ -204,7 +203,7 @@ namespace PicView.PicGallery
                 }
                 else
                 {
-                    _= UpdatePic(i).ConfigureAwait(false);
+                    _ = UpdatePic(i).ConfigureAwait(false);
                 }
             });
         }
@@ -255,7 +254,7 @@ namespace PicView.PicGallery
                         Load().ConfigureAwait(false); // restart when changing directory
                         return;
                     }
-                    
+
                     var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                     item.img.Source = pic;
 

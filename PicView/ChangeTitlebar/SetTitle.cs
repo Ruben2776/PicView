@@ -1,9 +1,9 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using PicView.UILogic;
+using System;
 using System.IO;
 using System.Text;
 using System.Windows;
-using PicView.ChangeImage;
-using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileFunctions;
 using static PicView.UILogic.TransformImage.ZoomLogic;

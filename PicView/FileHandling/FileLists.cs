@@ -1,11 +1,11 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using PicView.ChangeImage;
-using PicView.Properties;
-using PicView.SystemIntegration;
 using static PicView.FileHandling.ArchiveExtraction;
 
 namespace PicView.FileHandling
@@ -80,7 +80,7 @@ namespace PicView.FileHandling
                     return list;
 
                 case SortFilesBy.FileSize:
-                    return Settings.Default.Ascending ? 
+                    return Settings.Default.Ascending ?
                         items.OrderBy(f => new FileInfo(f).Length).ToList()
                         : items.OrderByDescending(f => new FileInfo(f).Length).ToList();
 

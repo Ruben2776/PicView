@@ -1,4 +1,8 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.SystemIntegration;
+using PicView.UILogic;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
@@ -7,10 +11,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.SystemIntegration;
-using PicView.UILogic;
 
 namespace PicView.FileHandling
 {
@@ -55,7 +55,7 @@ namespace PicView.FileHandling
                 fileArray = new[] { nativeFile };
             }
 
-            _= SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
+            _ = SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
 
             Marshal.FreeCoTaskMem(nativeFolder);
             if (nativeFile != IntPtr.Zero)
@@ -199,7 +199,7 @@ namespace PicView.FileHandling
         internal static string Shorten(string name, int amount)
         {
             if (name.Length < 25) { return name; }
-            
+
             name = name[..amount];
             name += "...";
             return name;

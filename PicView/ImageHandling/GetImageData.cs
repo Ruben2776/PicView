@@ -1,4 +1,10 @@
-﻿using System;
+﻿using ImageMagick;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using PicView.ChangeImage;
+using PicView.UILogic;
+using PicView.UILogic.TransformImage;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -6,12 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using ImageMagick;
-using Microsoft.WindowsAPICodePack.Shell;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using PicView.ChangeImage;
-using PicView.UILogic;
-using PicView.UILogic.TransformImage;
 
 namespace PicView.ImageHandling
 {

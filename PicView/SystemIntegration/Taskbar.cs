@@ -1,10 +1,9 @@
 ﻿
 
+using PicView.UILogic;
 using System.Threading.Tasks;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using PicView.UILogic;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace PicView.SystemIntegration
 {

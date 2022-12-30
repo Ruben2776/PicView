@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PicView.Animations;
+using System;
 using System.Windows;
 using System.Windows.Media.Animation;
-using PicView.Animations;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic

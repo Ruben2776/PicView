@@ -1,6 +1,6 @@
-﻿using System.Runtime;
+﻿using PicView.FileHandling;
+using System.Runtime;
 using System.Windows;
-using PicView.FileHandling;
 
 namespace PicView
 {

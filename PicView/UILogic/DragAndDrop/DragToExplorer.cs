@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Input;
-using PicView.ChangeTitlebar;
+﻿using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.TransformImage;
+using System;
+using System.Collections.Specialized;
+using System.Windows;
+using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic.DragAndDrop

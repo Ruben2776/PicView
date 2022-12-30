@@ -1,4 +1,12 @@
-﻿using System;
+﻿using ImageMagick;
+using PicView.Animations;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.Shortcuts;
+using PicView.SystemIntegration;
+using PicView.Views.UserControls.Misc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,15 +17,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using ImageMagick;
-using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.Views.UserControls;
-using PicView.Views.UserControls.Misc;
 using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows

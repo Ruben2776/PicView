@@ -1,10 +1,10 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Media;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.Properties;
 using PicView.Themes.Resources;
 using PicView.UILogic;
+using System;
+using System.Windows;
+using System.Windows.Media;
 
 namespace PicView.ConfigureSettings
 {

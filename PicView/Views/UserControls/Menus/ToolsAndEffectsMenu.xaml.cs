@@ -1,11 +1,11 @@
-﻿using System.Windows.Controls;
-using System.Windows.Media;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Editing;
 using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.UILogic;
+using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Menus

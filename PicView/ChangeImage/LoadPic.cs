@@ -1,23 +1,23 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
+using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
 using static PicView.ImageHandling.Thumbnails;
-using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
@@ -35,15 +35,13 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task QuickLoadAsync(string file)
         {
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                WindowSizing.SetWindowBehavior();
+            });
+
             if (File.Exists(file) == false)
             {
-                if (Settings.Default.AutoFitWindow)
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        WindowSizing.SetWindowBehavior();
-                    });
-                }
                 await LoadPicFromStringAsync(file, false).ConfigureAwait(false);
                 return;
             }
@@ -339,14 +337,14 @@ namespace PicView.ChangeImage
                             await ReloadAsync(true).ConfigureAwait(false);
                         }
                     });
-                        }
-                        catch (Exception e)
-                        {
+                }
+                catch (Exception e)
+                {
 #if DEBUG
-                            System.Diagnostics.Trace.WriteLine(e.Message);
+                    System.Diagnostics.Trace.WriteLine(e.Message);
 #endif
-                            await ReloadAsync(true).ConfigureAwait(false);
-                        }
+                    await ReloadAsync(true).ConfigureAwait(false);
+                }
 
                 return;
             }
@@ -369,7 +367,7 @@ namespace PicView.ChangeImage
                     if (fileInfo.Exists)
                     {
                         thumb = GetBitmapSourceThumb(fileInfo);
-                        try 
+                        try
                         {
                             thumb = GetBitmapSourceThumb(fileInfo);
                         }
@@ -535,9 +533,9 @@ namespace PicView.ChangeImage
             }
         }
 
-#endregion
+        #endregion
 
-#region UpdatePic
+        #region UpdatePic
 
         /// <summary>
         /// Update picture, size it and set the title from index
@@ -721,7 +719,7 @@ namespace PicView.ChangeImage
             await UpdatePicAsync(b64, pic).ConfigureAwait(false);
         }
 
-#endregion
+        #endregion
 
         static void LoadingPreview(FileInfo fileInfo)
         {

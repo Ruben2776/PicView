@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
@@ -50,11 +52,11 @@ namespace PicView.UILogic.Loading
             }
         }
 
-        internal static void ContentRenderedEvent()
+        internal static async Task ContentRenderedEventAsync()
         {
             if (Settings.Default.StartInFullscreenGallery)
             {
-                _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
             }
 
             // Determine prefered UI for startup
@@ -80,7 +82,7 @@ namespace PicView.UILogic.Loading
             }
             else
             {
-                _ = LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                await LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
 
@@ -115,8 +117,11 @@ namespace PicView.UILogic.Loading
                 }
             );
 
-            // Load UI and events
-            AddUIElementsAndUpdateValues();
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+            {
+                // Load UI and events
+                AddUIElementsAndUpdateValues();
+            }));
         }
 
         private static void AddUIElementsAndUpdateValues()

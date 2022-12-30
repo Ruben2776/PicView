@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using PicView.Properties;
+using PicView.Views.UserControls.Gallery;
+using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using PicView.ChangeImage;
-using PicView.Properties;
-using PicView.Views.UserControls.Gallery;
 
 namespace PicView.Animations
 {
@@ -175,7 +175,7 @@ namespace PicView.Animations
         #endregion Color stuff
 
         #region Size Animation
-        
+
         internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
         {
             if (item.Id == Navigation.FolderIndex || item.Id == PicGallery.GalleryNavigation.SelectedGalleryItem)

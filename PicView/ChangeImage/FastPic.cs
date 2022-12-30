@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using PicView.ImageHandling;
+using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Media.Imaging;
-using PicView.ImageHandling;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage

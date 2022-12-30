@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PicView.Properties;
+using System;
 using System.Globalization;
 using System.Windows;
-using PicView.Properties;
 
 namespace PicView.Translations
 {
@@ -52,15 +52,15 @@ namespace PicView.Translations
                 case "it":
                     source = new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative);
                     break;
-                
+
                 case "ru":
                     source = new Uri(@"/PicView;component/Translations/ru.xaml", UriKind.Relative);
                     break;
-                
+
                 case "ro":
                     source = new Uri(@"/PicView;component/Translations/ro.xaml", UriKind.Relative);
                     break;
-                
+
                 default:
                     source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);
                     break;

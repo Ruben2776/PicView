@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.Windows

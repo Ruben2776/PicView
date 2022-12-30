@@ -1,10 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
+using System;
+using System.Diagnostics;
+using System.IO;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 
@@ -195,7 +195,7 @@ namespace PicView.FileHandling
 
             // Set extracted files to Pics
             if (!Directory.Exists(TempFilePath)) { return false; }
-            
+
             var directory = Directory.GetDirectories(TempFilePath);
             if (directory.Length > 0)
             {

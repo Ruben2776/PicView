@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Windows;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
+using System;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic

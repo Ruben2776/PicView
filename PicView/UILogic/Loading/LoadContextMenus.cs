@@ -1,14 +1,13 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.SystemIntegration;
-using PicView.Views.UserControls;
 using PicView.Views.UserControls.Buttons;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;
@@ -245,7 +244,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var pastecm = (MenuItem)MainContextMenu.Items[15];
             pastecm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + V";
-            pastecm.Click += (_, _) => { MainContextMenu.IsOpen = false; Copy_Paste.PasteAsync(); };
+            pastecm.Click += async delegate { MainContextMenu.IsOpen = false; await Copy_Paste.PasteAsync().ConfigureAwait(false); };
 
             // 16 = seperator
 

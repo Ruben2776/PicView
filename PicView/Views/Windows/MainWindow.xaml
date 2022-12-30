@@ -2,9 +2,8 @@
     x:Class="PicView.Views.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
-    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     Title="{StaticResource Loading}"
     Width="462"
     Height="400"
@@ -25,6 +24,7 @@
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
+        
         <DockPanel
             x:Name="TitleBar"
             Height="30"
@@ -88,16 +88,11 @@
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
-            <Border
-                BorderBrush="{StaticResource FadeColorBrush}"
-                BorderThickness="0,1,1,0"
-                CornerRadius="0,4,0,0"
-                DockPanel.Dock="Right">
-                <buttons:CloseButton
-                    x:Name="CloseButton"
-                    Width="30"
-                    Height="30" />
-            </Border>
+            <buttons:CloseButton
+                x:Name="CloseButton"
+                Width="30"
+                Height="30"
+                DockPanel.Dock="Right" />
 
             <Rectangle
                 Width="1"
@@ -134,8 +129,8 @@
 
         <Grid
             x:Name="LowerBar"
-            Background="{StaticResource NoisyBg}"
             Height="25"
+            Background="{StaticResource NoisyBg}"
             DockPanel.Dock="Bottom">
 
             <Canvas
@@ -425,7 +420,10 @@
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
 
-            <Grid x:Name="ParentContainer" Background="{StaticResource NoisyBg}" AllowDrop="True">
+            <Grid
+                x:Name="ParentContainer"
+                AllowDrop="True"
+                Background="{StaticResource NoisyBg}">
 
                 <ScrollViewer
                     x:Name="Scroller"

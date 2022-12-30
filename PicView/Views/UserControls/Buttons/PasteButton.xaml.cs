@@ -1,7 +1,7 @@
-﻿using System.Windows.Controls;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.FileHandling;
 using PicView.Properties;
+using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons
@@ -22,7 +22,7 @@ namespace PicView.Views.UserControls.Buttons
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                TheButton.Click += (_, _) => Copy_Paste.PasteAsync();
+                TheButton.Click += async delegate { await Copy_Paste.PasteAsync().ConfigureAwait(false); };
             };
         }
     }

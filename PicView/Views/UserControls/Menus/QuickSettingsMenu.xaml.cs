@@ -1,9 +1,9 @@
-﻿using System.Windows.Controls;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Editing.Crop;
 using PicView.Properties;
 using PicView.UILogic;
+using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 

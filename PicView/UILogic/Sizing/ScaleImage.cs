@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.TransformImage;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;

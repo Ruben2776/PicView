@@ -1,12 +1,11 @@
-﻿using System;
+﻿using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls.Gallery;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls;
-using PicView.Views.UserControls.Gallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -79,7 +78,7 @@ namespace PicView.PicGallery
             if (GalleryFunctions.IsHorizontalOpen)
             {
                 if (GetPicGallery.Container.Children.Count < FolderIndex) { return; }
-                
+
                 var selectedScrollTo = GetPicGallery.Container.Children[FolderIndex].TranslatePoint(new Point(), GetPicGallery.Container);
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(selectedScrollTo.X - (Horizontal_items / 2) * PicGalleryItem_Size + (PicGalleryItem_Size_s / 2));
 

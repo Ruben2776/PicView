@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PicView.PicGallery;
+using System;
 using System.Timers;
 using System.Windows.Threading;
-using PicView.PicGallery;
 using static PicView.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
 

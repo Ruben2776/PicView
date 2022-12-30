@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.UILogic;
+using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.TransformImage.Rotation;
 
@@ -50,8 +50,8 @@ namespace PicView.SystemIntegration
             {
                 await SaveImages.SaveImageAsync(Rotateint, Flipped, null, Pics[FolderIndex], destination, null, effectApplied).ConfigureAwait(false);
             }
-            
-           SetDesktopWallpaper(destination, style);
+
+            SetDesktopWallpaper(destination, style);
         }
 
         /// <summary>

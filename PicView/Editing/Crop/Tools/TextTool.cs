@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using PicView.ConfigureSettings;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using PicView.ConfigureSettings;
 
 namespace PicView.Editing.Crop.Tools
 {

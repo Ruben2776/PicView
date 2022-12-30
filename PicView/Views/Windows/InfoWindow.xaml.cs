@@ -1,4 +1,9 @@
-﻿using System;
+﻿using AutoUpdaterDotNET;
+using PicView.Animations;
+using PicView.Shortcuts;
+using PicView.SystemIntegration;
+using PicView.UILogic.Sizing;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
@@ -6,11 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using AutoUpdaterDotNET;
-using PicView.Animations;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.UILogic.Sizing;
 
 namespace PicView.Views.Windows
 {

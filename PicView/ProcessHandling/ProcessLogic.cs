@@ -1,8 +1,8 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using PicView.ChangeImage;
 
 namespace PicView.ProcessHandling
 {

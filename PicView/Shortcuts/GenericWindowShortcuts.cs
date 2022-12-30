@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using PicView.UILogic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using PicView.UILogic;
 
 namespace PicView.Shortcuts
 {

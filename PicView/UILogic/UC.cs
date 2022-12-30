@@ -1,14 +1,13 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Media.Animation;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.PicGallery;
-using PicView.Views.UserControls;
 using PicView.Views.UserControls.Buttons;
 using PicView.Views.UserControls.Menus;
 using PicView.Views.UserControls.Misc;
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace PicView.UILogic
 {

@@ -1,8 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Buttons
 {

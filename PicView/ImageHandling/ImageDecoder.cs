@@ -1,4 +1,8 @@
-﻿using System;
+﻿using ImageMagick;
+using PicView.UILogic;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -6,10 +10,6 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using ImageMagick;
-using PicView.UILogic;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
 using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling

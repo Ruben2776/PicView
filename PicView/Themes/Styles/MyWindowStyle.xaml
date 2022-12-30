@@ -14,8 +14,7 @@
                         <Border
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6"
-                            Opacity=".9"
+                            CornerRadius="0" 
                             Visibility="{Binding IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource bool2VisibilityConverter}}" />
                     </Grid>
                 </ControlTemplate>
@@ -27,7 +26,7 @@
                     CaptionHeight="0"
                     CornerRadius="0"
                     GlassFrameThickness="0"
-                    ResizeBorderThickness="9"
+                    ResizeBorderThickness="6"
                     UseAeroCaptionButtons="False" />
             </Setter.Value>
         </Setter>

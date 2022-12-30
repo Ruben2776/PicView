@@ -1,12 +1,11 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
-using PicView.Views.UserControls;
 using PicView.Views.UserControls.Buttons;
+using System.Windows;
+using System.Windows.Input;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.Sizing.ScaleImage;

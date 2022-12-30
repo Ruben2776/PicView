@@ -1,9 +1,9 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons

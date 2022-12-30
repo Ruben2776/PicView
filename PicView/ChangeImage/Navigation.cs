@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using PicView.PicGallery;
+﻿using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PicView.ChangeImage
 {

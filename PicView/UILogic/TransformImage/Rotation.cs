@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using PicView.PicGallery;
+﻿using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 
 namespace PicView.UILogic.TransformImage
 {

@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
 using PicView.Editing;
@@ -12,8 +9,10 @@ using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using PicView.Views.UserControls;
 using PicView.Views.UserControls.Buttons;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;
@@ -56,7 +55,7 @@ namespace PicView.Shortcuts
 
             #region CroppingKeys
 
-            if (GetCropppingTool is {IsVisible: true})
+            if (GetCropppingTool is { IsVisible: true })
             {
                 switch (e.Key)
                 {
@@ -374,7 +373,7 @@ namespace PicView.Shortcuts
                     case Key.V:
                         if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
                         {
-                            PasteAsync();
+                            await PasteAsync().ConfigureAwait(false);
                         }
                         break;
 

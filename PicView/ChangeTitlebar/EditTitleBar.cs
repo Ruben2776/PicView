@@ -1,12 +1,12 @@
-﻿using System.IO;
+﻿using PicView.FileHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using PicView.FileHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeTitlebar

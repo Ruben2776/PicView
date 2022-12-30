@@ -7,10 +7,10 @@
         Margin="0,0,0,95"
         HorizontalAlignment="Center"
         VerticalAlignment="Bottom"
-        Background="{StaticResource BackgroundColorBrushAlt}"
+        Background="{StaticResource BackgroundColorBrushFade}"
         BorderBrush="{StaticResource BorderBrush}"
-        BorderThickness="2"
-        CornerRadius="7">
+        BorderThickness="1"
+        CornerRadius="6">
         <TextBlock
             x:Name="ToolTipUIText"
             MaxWidth="438"
