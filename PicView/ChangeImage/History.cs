@@ -106,11 +106,6 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                UC.ToggleStartUpUC(true);
-            });
-
             await LoadPic.LoadPicFromStringAsync(fileHistory.Last()).ConfigureAwait(false);
         }
 

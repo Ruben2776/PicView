@@ -156,7 +156,9 @@ namespace PicView.PicGallery
 
         internal static void CloseFullscreenGallery()
         {
-            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+            Properties.Settings.Default.FullscreenGalleryVertical =
+                Properties.Settings.Default.FullscreenGalleryHorizontal =
+                IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
             GetPicGallery.Visibility = Visibility.Collapsed;
 

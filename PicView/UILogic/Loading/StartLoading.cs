@@ -54,31 +54,45 @@ namespace PicView.UILogic.Loading
 
         internal static async Task ContentRenderedEventAsync()
         {
-            if (Settings.Default.StartInFullscreenGallery)
+            var args = Environment.GetCommandLineArgs();
+
+            if (Settings.Default.StartInFullscreenGallery && args.Length <= 0)
             {
                 await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
             }
 
             // Determine prefered UI for startup
-            if (Settings.Default.Fullscreen)
+            if (Settings.Default.Fullscreen && args.Length <= 0)
             {
-                Fullscreen_Restore(true);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                {
+                    Fullscreen_Restore(true);
+                }));
             }
 
             else if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)
             {
-                SetLastWindowSize();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                {
+                    SetLastWindowSize();
+                }));
             }
             else
             {
-                SetWindowBehavior();
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                {
+                    SetWindowBehavior();
+                }));
             }
 
             // Load image if possible
-            var args = Environment.GetCommandLineArgs();
+
             if (args.Length == 1)
             {
-                Unload(true); // Load clean setup when starting up without arguments            
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                {
+                    Unload(true); // Load clean setup when starting up without arguments       
+                }));
             }
             else
             {

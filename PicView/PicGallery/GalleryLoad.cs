@@ -63,9 +63,7 @@ namespace PicView.PicGallery
 
                     // Set style
                     UC.GetPicGallery.Margin = new Thickness(0);
-                    UC.GetPicGallery.border.BorderThickness = new Thickness(0, 0, 0, 0);
-                    UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
-                    ConfigureWindows.GetMainWindow.ParentContainer.Background = new SolidColorBrush(Colors.Transparent);
+                    UC.GetPicGallery.border.BorderThickness = new Thickness(1);
 
                     // Make sure bools are correct
                     GalleryFunctions.IsHorizontalOpen = false;

@@ -17,7 +17,7 @@
     <SolidColorBrush x:Key="MainColorFadedBrush" Color="{StaticResource MainColorFaded}" />
 
     <!--  Fade Color  -->
-    <Color x:Key="FadeColor">#81FBF8F8</Color>
+    <Color x:Key="FadeColor">#FFFBF8F8</Color>
     <SolidColorBrush x:Key="FadeColorBrush" Color="{StaticResource FadeColor}" />
 
     <!--  Subtle Fade Color  -->
@@ -26,7 +26,7 @@
 
     <!--  Border Brush  -->
     <Color x:Key="BorderColor">#78AEAEAE</Color>
-    <Color x:Key="BorderColorAlt">DarkGray</Color>
+    <Color x:Key="BorderColorAlt">WhiteSmoke</Color>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 
@@ -46,11 +46,11 @@
 
     <DropShadowEffect
         x:Key="MenuShadowButtonBorder"
-        BlurRadius="7"
+        BlurRadius="2"
         Direction="358"
         RenderingBias="Quality"
         ShadowDepth="1"
-        Color="#3F000000" />
+        Color="#EEFFFFFF" />
 
     <!--  Texture  -->
     <ImageBrush

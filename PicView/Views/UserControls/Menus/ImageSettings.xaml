@@ -2,7 +2,6 @@
     x:Class="PicView.Views.UserControls.Menus.ImageSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
     xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Canvas.ZIndex="3">
     <StackPanel>
