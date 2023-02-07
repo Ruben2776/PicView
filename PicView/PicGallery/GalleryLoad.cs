@@ -193,18 +193,6 @@ namespace PicView.PicGallery
                 Add(i, index);
                 await UpdatePic(i).ConfigureAwait(false);
             }
-
-            //Parallel.For(0, count, i =>
-            //{
-            //    if (cancellationToken.IsCancellationRequested)
-            //    {
-            //        cancellationToken.ThrowIfCancellationRequested();
-            //    }
-            //    else
-            //    {
-            //        _ = UpdatePic(i).ConfigureAwait(false);
-            //    }
-            //});
         }
 
         internal static void Add(int i, int index)
