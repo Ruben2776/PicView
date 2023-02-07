@@ -195,7 +195,7 @@ namespace PicView.Shortcuts
             bool dir = Settings.Default.HorizontalReverseScroll ? e.Delta < 0 : e.Delta > 0;
 
             // 1. Handle horizontal gallery
-            if (GalleryFunctions.IsHorizontalOpen || Settings.Default.FullscreenGalleryHorizontal)
+            if (GalleryFunctions.IsHorizontalOpen)
             {
                 if (Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                 {
@@ -207,7 +207,7 @@ namespace PicView.Shortcuts
                     {
                         Zoom(e.Delta > 0);
                     }
-                    else if (GetPicGallery.IsMouseOver)
+                    else if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
                     {
                         GalleryNavigation.ScrollTo(sender, e);
                     }

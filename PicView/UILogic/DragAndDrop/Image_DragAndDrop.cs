@@ -80,7 +80,7 @@ namespace PicView.UILogic.DragAndDrop
                     }
                 }
                 // File
-                element = new DragDropOverlayPic(GetBitmapSourceThumb(new FileInfo(files[0]), 60, 300, true));
+                element = new DragDropOverlayPic(GetBitmapSourceThumb(new FileInfo(files[0]), 300, true));
             }
 
             // Tell that it's succeeded

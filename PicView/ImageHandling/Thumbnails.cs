@@ -54,7 +54,7 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, byte quality = 100, int size = 500, bool checkSize = false)
+        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, int size = 500, bool checkSize = false)
         {
             try
             {
@@ -74,10 +74,10 @@ namespace PicView.ImageHandling
 
                 if (checkSize)
                 {
-                    return fileInfo.Length > 5e+6 ? null : GetMagickImageThumb(fileInfo, quality, size);
+                    return fileInfo.Length > 2e+7 ? null : GetMagickImageThumb(fileInfo, size);
                 }
 
-                var thumb = GetMagickImageThumb(fileInfo, quality, size);
+                var thumb = GetMagickImageThumb(fileInfo, size);
                 return thumb ??= ImageFunctions.ImageErrorMessage();
             }
             catch (Exception e)
@@ -96,28 +96,17 @@ namespace PicView.ImageHandling
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, byte quality = 100, int size = 500)
+        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, int size = 500)
         {
-            using MagickImage magickImage = new()
-            {
-                Quality = quality,
-                ColorSpace = ColorSpace.Transparent
-            };
             try
             {
-                magickImage.Read(fileInfo);
-                var exifData = magickImage.GetExifProfile();
-                if (exifData != null)
+                using (MagickImage image = new MagickImage(fileInfo))
                 {
-                    // Create thumbnail from exif information
-                    using var thumbnail = (MagickImage)exifData.CreateThumbnail()!;
-                    // Check if exif profile contains thumbnail and save it
-                    var bitmapSource = thumbnail.ToBitmapSource();
-                    bitmapSource.Freeze();
-                    return bitmapSource;
+                    image.Thumbnail(new MagickGeometry(size, size));
+                    var bmp = image.ToBitmapSource();
+                    bmp.Freeze();
+                    return bmp;
                 }
-
-                magickImage.AdaptiveResize(size, size);
             }
 #if DEBUG
             catch (Exception e)
@@ -128,9 +117,6 @@ namespace PicView.ImageHandling
 #else
                 catch (Exception) { return null; }
 #endif
-            BitmapSource pic = magickImage.ToBitmapSource();
-            pic.Freeze();
-            return pic;
         }
 
         /// <summary>

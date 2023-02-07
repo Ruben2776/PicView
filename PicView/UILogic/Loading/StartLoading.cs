@@ -56,18 +56,32 @@ namespace PicView.UILogic.Loading
         {
             var args = Environment.GetCommandLineArgs();
 
-            if (Settings.Default.StartInFullscreenGallery && args.Length <= 0)
+            if (Settings.Default.StartInFullscreenGallery)
             {
-                await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                if (args.Length == 1)
+                {
+                    Settings.Default.StartInFullscreenGallery= false;
+                }
+                else
+                {
+                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                }
             }
 
             // Determine prefered UI for startup
-            if (Settings.Default.Fullscreen && args.Length <= 0)
+            if (Settings.Default.Fullscreen)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                if (args.Length == 1)
                 {
-                    Fullscreen_Restore(true);
-                }));
+                    Settings.Default.Fullscreen = false;
+                }
+                else
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        Fullscreen_Restore(true);
+                    }));
+                }
             }
 
             else if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)

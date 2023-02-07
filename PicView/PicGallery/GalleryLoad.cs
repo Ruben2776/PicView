@@ -159,7 +159,7 @@ namespace PicView.PicGallery
         {
             IsLoading = true;
             var source = new CancellationTokenSource();
-            var task = Task.Run(() => Loop(source.Token), source.Token);
+            var task = Task.Run(() => LoopAsync(source.Token), source.Token);
             try
             {
                 await task.ConfigureAwait(false);
@@ -176,7 +176,7 @@ namespace PicView.PicGallery
             finally { source.Dispose(); }
         }
 
-        static void Loop(CancellationToken cancellationToken)
+        static async Task LoopAsync(CancellationToken cancellationToken)
         {
             if (UC.GetPicGallery is null) { return; }
 
@@ -191,19 +191,20 @@ namespace PicView.PicGallery
                 }
 
                 Add(i, index);
+                await UpdatePic(i).ConfigureAwait(false);
             }
 
-            Parallel.For(0, count, i =>
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
-                else
-                {
-                    _ = UpdatePic(i).ConfigureAwait(false);
-                }
-            });
+            //Parallel.For(0, count, i =>
+            //{
+            //    if (cancellationToken.IsCancellationRequested)
+            //    {
+            //        cancellationToken.ThrowIfCancellationRequested();
+            //    }
+            //    else
+            //    {
+            //        _ = UpdatePic(i).ConfigureAwait(false);
+            //    }
+            //});
         }
 
         internal static void Add(int i, int index)
@@ -235,7 +236,7 @@ namespace PicView.PicGallery
             }
 
             var pic = await Task.FromResult(
-                Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), 70, (int)GalleryNavigation.PicGalleryItem_Size)
+                Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size)
                 ?? ImageFunctions.ImageErrorMessage());
             UpdatePic(i, pic);
         }
