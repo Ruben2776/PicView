@@ -25,6 +25,11 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void SetWindowBehavior()
         {
+            if (Properties.Settings.Default.Fullscreen)
+            {
+                return;
+            }
+
             if (Settings.Default.AutoFitWindow)
             {
                 GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
@@ -155,7 +160,7 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void Fullscreen_Restore(bool forceFullscreen = false)
         {
-            if (forceFullscreen || !Settings.Default.Fullscreen)
+            if (forceFullscreen || Settings.Default.Fullscreen == false)
             {
                 // Show fullscreen logic
                 RenderFullscreen();
@@ -357,7 +362,7 @@ namespace PicView.UILogic.Sizing
                     Settings.Default.StartInFullscreenGallery = false;
                 }
             }
-            else
+            else if (Properties.Settings.Default.Fullscreen == false) 
             {
                 Settings.Default.StartInFullscreenGallery = false;
             }

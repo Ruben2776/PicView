@@ -58,7 +58,7 @@ namespace PicView.UILogic.Loading
 
             if (Settings.Default.StartInFullscreenGallery)
             {
-                if (args.Length == 1)
+                if (args.Length <= 1)
                 {
                     Settings.Default.StartInFullscreenGallery= false;
                 }
@@ -71,7 +71,7 @@ namespace PicView.UILogic.Loading
             // Determine prefered UI for startup
             if (Settings.Default.Fullscreen)
             {
-                if (args.Length == 1)
+                if (args.Length <= 1)
                 {
                     Settings.Default.Fullscreen = false;
                 }
@@ -101,7 +101,7 @@ namespace PicView.UILogic.Loading
 
             // Load image if possible
 
-            if (args.Length == 1)
+            if (args.Length <= 1)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
                 {

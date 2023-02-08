@@ -563,10 +563,10 @@ namespace PicView.ChangeImage
                 }
 
                 // Reset transforms if needed
-                if (Rotation.Flipped || Rotation.Rotateint != 0)
+                if (Rotation.Flipped || Rotation.RotationAngle != 0)
                 {
                     Rotation.Flipped = false;
-                    Rotation.Rotateint = 0;
+                    Rotation.RotationAngle = 0;
                     if (GetQuickSettingsMenu is not null && GetQuickSettingsMenu.FlipButton is not null)
                     {
                         GetQuickSettingsMenu.FlipButton.TheButton.IsChecked = false;
