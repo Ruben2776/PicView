@@ -2,6 +2,7 @@
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -15,7 +16,7 @@ namespace PicView.UILogic.TransformImage
         /// <summary>
         /// Used to get and set image rotation by degrees
         /// </summary>
-        internal static int Rotateint { get; set; }
+        internal static double RotationAngle { get; set; }
 
         internal static async Task RotateAndMoveCursor(bool right, UIElement uIElement)
         {
@@ -28,18 +29,38 @@ namespace PicView.UILogic.TransformImage
             NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
         }
 
+        internal static void Rotate(bool keyDown, bool right)
+        {
+            if (keyDown)
+            {
+                Rotate((int)(right ? RotationAngle + 1 : RotationAngle - 1));
+            }
+            else
+            {
+                if (Rotation.IsValidRotation(RotationAngle))
+                {
+                    Rotate(right);
+                }
+                else
+                {
+                    RotationAngle = GetRoundedRotationDegrees(RotationAngle, right);
+                    Rotate(RotationAngle);
+                }
+            }
+        }
+
         /// <summary>
         /// Rotates the image the specified degrees
         /// </summary>
         /// <param name="r"></param>
-        internal static void Rotate(int r)
+        internal static void Rotate(double r)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
             {
                 return;
             }
 
-            var rt = new RotateTransform { Angle = Rotateint = r };
+            var rt = new RotateTransform { Angle = RotationAngle = r };
 
             ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
 
@@ -70,16 +91,16 @@ namespace PicView.UILogic.TransformImage
 
             if (right)
             {
-                Rotateint -= 90;
-                if (Rotateint < 0) { Rotateint += 360; }
+                RotationAngle -= 90;
+                if (RotationAngle < 0) { RotationAngle += 360; }
             }
             else
             {
-                Rotateint += 90;
-                if (Rotateint >= 360) { Rotateint -= 360; }
+                RotationAngle += 90;
+                if (RotationAngle >= 360) { RotationAngle -= 360; }
             }
 
-            Rotate(Rotateint);
+            Rotate(RotationAngle);
         }
 
         /// <summary>
@@ -107,10 +128,26 @@ namespace PicView.UILogic.TransformImage
                 Flipped = false;
             }
 
-            rt.Angle = Rotateint;
+            rt.Angle = RotationAngle;
             tg.Children.Add(flip);
             tg.Children.Add(rt);
             ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = tg;
+        }
+
+        internal static bool IsValidRotation(double rotationAngle)
+        {
+            rotationAngle = rotationAngle % 360;
+            return rotationAngle == 0 || rotationAngle == 90 || rotationAngle == 180 || rotationAngle == 270;
+        }
+
+        internal static int GetRoundedRotationDegrees(double rotationAngle, bool roundUp)
+        {
+            int roundedRotation = (int)Math.Round(rotationAngle / 90.0) * 90;
+            if (!roundUp && roundedRotation != rotationAngle)
+            {
+                roundedRotation -= 90;
+            }
+            return roundedRotation;
         }
     }
 }

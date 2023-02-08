@@ -9,6 +9,7 @@ using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using PicView.UILogic.TransformImage;
 using PicView.Views.UserControls.Buttons;
 using System.Threading.Tasks;
 using System.Windows;
@@ -158,7 +159,7 @@ namespace PicView.Shortcuts
                     }
                     else
                     {
-                        Rotate(false);
+                        Rotate(e.IsRepeat, false);
                     }
                     return;
 
@@ -175,12 +176,12 @@ namespace PicView.Shortcuts
                         }
                         else
                         {
-                            Rotate(true);
+                            Rotate(e.IsRepeat, true);
                         }
                     }
                     else
                     {
-                        Rotate(true);
+                        Rotate(e.IsRepeat, true);
                     }
                     return;
 

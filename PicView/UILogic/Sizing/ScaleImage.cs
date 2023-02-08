@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.Editing.Crop.State;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -168,14 +169,36 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            switch (Rotateint) // Standard aspect ratio calculation
+            //if (RotationAngle == 360 || RotationAngle == -360)
+            //{
+            //    RotationAngle = 0;
+            //}
+            switch (RotationAngle) // aspect ratio calculation
             {
                 case 0:
                 case 180:
+                //case 360:
+                //case -360:
                     AspectRatio = Math.Min(maxWidth / width, maxHeight / height);
                     break;
-                default:
+                case 90:
+                case 270:
                     AspectRatio = Math.Min(maxWidth / height, maxHeight / width);
+                    break;
+                default:
+                    var rotationRadians = RotationAngle * Math.PI / 180;
+                    var newWidth = Math.Abs(width * Math.Cos(rotationRadians)) + Math.Abs(height * Math.Sin(rotationRadians));
+                    var newHeight = Math.Abs(width * Math.Sin(rotationRadians)) + Math.Abs(height * Math.Cos(rotationRadians));
+                    var remainder = RotationAngle % 90;
+
+                    if (remainder > 45)
+                    {
+                        AspectRatio = Math.Min(maxWidth / newWidth, maxHeight / newHeight);
+                    }
+                    else
+                    {
+                        AspectRatio = Math.Min(maxWidth / newHeight, maxHeight / newWidth);
+                    }
                     break;
             }
 
@@ -220,7 +243,7 @@ namespace PicView.UILogic.Sizing
                 }
 
                 // Update mainWindow.TitleBar width to dynamically fit new size
-                var x = Rotateint == 0 || Rotateint == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+                var x = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
                 if (Settings.Default.ScrollEnabled)
                 {
                     GetMainWindow.TitleText.MaxWidth = x;

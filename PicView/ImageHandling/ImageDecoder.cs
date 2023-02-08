@@ -85,7 +85,7 @@ namespace PicView.ImageHandling
                     magickImage.Flop();
                 }
 
-                magickImage.Rotate(Rotation.Rotateint);
+                magickImage.Rotate(Rotation.RotationAngle);
 
                 return magickImage;
             }

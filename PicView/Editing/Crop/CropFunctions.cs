@@ -31,8 +31,8 @@ namespace PicView.Editing.Crop
                 LoadControls.LoadCroppingTool();
             }
 
-            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? XHeight : XWidth;
+            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
 
             ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
 
@@ -72,8 +72,8 @@ namespace PicView.Editing.Crop
 
         internal static void InitilizeCrop()
         {
-            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? XHeight : XWidth;
+            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
 
             CropService = new CropService(GetCropppingTool);
 
@@ -128,7 +128,7 @@ namespace PicView.Editing.Crop
             var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            var success = await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
+            var success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
             if (success)
             {
                 return Savedlg.FileName == Pics[FolderIndex];
@@ -152,7 +152,7 @@ namespace PicView.Editing.Crop
             x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
             y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
 
-            switch (Rotateint) // Degress the image has been rotated by
+            switch (RotationAngle) // Degress the image has been rotated by
             {
                 case 0:
                 case 180:

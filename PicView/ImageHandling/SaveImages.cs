@@ -11,7 +11,7 @@ namespace PicView.ImageHandling
 {
     internal static class SaveImages
     {
-        internal static async Task<bool> SaveImageAsync(int rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
+        internal static async Task<bool> SaveImageAsync(double rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
         {
             MagickImage? magickImage = new();
             try

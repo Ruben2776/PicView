@@ -181,11 +181,11 @@ namespace PicView.FileHandling
 
             if (Pics?.Count > FolderIndex)
             {
-                success = await SaveImages.SaveImageAsync(Rotateint, Flipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
             else if (source != null)
             {
-                success = await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
 
             if (success == false)
