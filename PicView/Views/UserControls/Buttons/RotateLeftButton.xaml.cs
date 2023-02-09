@@ -32,7 +32,7 @@ namespace PicView.Views.UserControls.Buttons
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(false, TheButton).ConfigureAwait(false);
+                TheButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(true, TheButton).ConfigureAwait(false);
             };
         }
     }

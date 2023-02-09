@@ -202,7 +202,7 @@ namespace PicView.Shortcuts
                     }
                     else
                     {
-                        Rotate(false);
+                        Rotate(e.IsRepeat, false);
                     }
                     return;
 

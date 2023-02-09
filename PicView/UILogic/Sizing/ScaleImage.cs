@@ -143,7 +143,7 @@ namespace PicView.UILogic.Sizing
             }
             else if (Settings.Default.AutoFitWindow) // If non resizeable behaviour
             {
-                if (Settings.Default.FillImage) // Max to monitor height if scaling enabled, else go by min pixel width
+                if (Settings.Default.FillImage && IsValidRotation(RotationAngle)) // Max to monitor height if scaling enabled, else go by min pixel width
                 {
                     maxWidth = monitorWidth;
                     maxHeight = monitorHeight;
@@ -157,7 +157,7 @@ namespace PicView.UILogic.Sizing
             }
             else // Get max width and height, based on window size
             {
-                if (Settings.Default.FillImage)
+                if (Settings.Default.FillImage && IsValidRotation(RotationAngle))
                 {
                     maxWidth = GetMainWindow.ParentContainer.ActualWidth;
                     maxHeight = GetMainWindow.ParentContainer.ActualHeight;
@@ -169,16 +169,10 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            //if (RotationAngle == 360 || RotationAngle == -360)
-            //{
-            //    RotationAngle = 0;
-            //}
             switch (RotationAngle) // aspect ratio calculation
             {
                 case 0:
                 case 180:
-                //case 360:
-                //case -360:
                     AspectRatio = Math.Min(maxWidth / width, maxHeight / height);
                     break;
                 case 90:
@@ -227,15 +221,7 @@ namespace PicView.UILogic.Sizing
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
             var interfaceSize = 195;
 
-            if (GalleryFunctions.IsVerticalFullscreenOpen)
-            {
-                GetMainWindow.MainImage.Margin = new Thickness(0, 0, PicGalleryItem_Size, 0);
-            }
-            else if (GalleryFunctions.IsHorizontalFullscreenOpen)
-            {
-                GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, PicGalleryItem_Size);
-            }
-            else if (Settings.Default.AutoFitWindow)
+            if (Settings.Default.AutoFitWindow)
             {
                 if (Settings.Default.KeepCentered)
                 {
@@ -252,8 +238,6 @@ namespace PicView.UILogic.Sizing
                 {
                     GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
                 }
-
-                GetMainWindow.MainImage.Margin = new Thickness(0);
             }
             else
             {
