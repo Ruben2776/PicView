@@ -134,31 +134,6 @@ namespace PicView.UILogic.TransformImage
             rotationAngle = rotationAngle % 360;
             return rotationAngle == 0 || rotationAngle == 90 || rotationAngle == 180 || rotationAngle == 270;
         }
-        internal static bool ShouldRoundUp(double rotationDegrees, bool roundUp)
-        {
-            double roundedRotation = RoundRotation(rotationDegrees);
-            return (roundedRotation == rotationDegrees) ? roundUp : !roundUp;
-        }
-
-        internal static double RoundRotation(double rotationDegrees)
-        {
-            double roundedRotation = rotationDegrees;
-            while (roundedRotation % 90 != 0)
-            {
-                roundedRotation++;
-            }
-            return roundedRotation % 360;
-        }
-
-        internal static int GetRoundedRotationDegrees(double rotationAngle, bool roundUp)
-        {
-            int roundedRotation = (int)Math.Round(rotationAngle / 90.0) * 90;
-            if (!roundUp && roundedRotation != rotationAngle)
-            {
-                roundedRotation -= 90;
-            }
-            return roundedRotation;
-        }
 
         public static int NextRotationAngle(double currentDegrees, bool roundUp)
         {
