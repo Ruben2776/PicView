@@ -66,6 +66,11 @@ namespace PicView.Shortcuts
 
         internal static async Task MouseButtonDownAsync(object sender, MouseButtonEventArgs e)
         {
+            if (GetFileHistory is null)
+            {
+                GetFileHistory = new FileHistory();
+            }
+
             switch (e.ChangedButton)
             {
                 case MouseButton.Right:
@@ -104,11 +109,11 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.XButton1:
-                    await History.PrevAsync().ConfigureAwait(false);
+                    await GetFileHistory.PrevAsync().ConfigureAwait(false);
                     break;
 
                 case MouseButton.XButton2:
-                    await History.NextAsync().ConfigureAwait(false);
+                    await GetFileHistory.NextAsync().ConfigureAwait(false);
                     break;
             }
         }

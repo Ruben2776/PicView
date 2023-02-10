@@ -3,6 +3,7 @@ using PicView.UILogic;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -23,38 +24,37 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo fileInfo)
         {
-            if (fileInfo == null) { return null; }
-            if (fileInfo.Length <= 0) { return null; }
+            if (fileInfo == null || fileInfo.Length <= 0) { return null; }
 
-            switch (fileInfo.Extension)
+            var extension = fileInfo.Extension.ToLowerInvariant();
+            switch (extension)
             {
-                case { } when fileInfo.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".jpe", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".jfif", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".ico", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".webp", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".wbmp", StringComparison.OrdinalIgnoreCase):
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                case ".jfif":
+                case ".ico":
+                case ".webp":
+                case ".wbmp":
                     return await GetWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
-                case { } when fileInfo.Extension.Equals(".tga", StringComparison.OrdinalIgnoreCase): // Make sure to to auto orient tga files https://github.com/Ruben2776/PicView/issues/22
+                case ".tga":
                     return await Task.FromResult(GetDefaultBitmapSource(fileInfo, true)).ConfigureAwait(false);
 
-                case { } when fileInfo.Extension.Equals(".svg", StringComparison.OrdinalIgnoreCase):
-                    // TODO convert to drawingimage instead.. maybe
-                    // TODO svgz only works in getDefaultBitmapSource, need to figure out how to fix white bg instead of transparent 
+                case ".svg":
                     return await GetTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
-                case { } when fileInfo.Extension.Equals(".b64", StringComparison.OrdinalIgnoreCase):
+                case ".b64":
                     return await Base64.Base64StringToBitmap(fileInfo).ConfigureAwait(false);
 
                 default:
                     return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
             }
         }
+
 
         #region Render Image From Source
         /// <summary>
@@ -193,23 +193,24 @@ namespace PicView.ImageHandling
 
         private static async Task<WriteableBitmap?> GetWriteableBitmapAsync(FileInfo fileInfo)
         {
-            FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
-            byte[] data;
-
             try
             {
-                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
-                data = new byte[filestream.Length];
-                await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
-                await filestream.DisposeAsync().ConfigureAwait(false);
+                using (var stream = File.OpenRead(fileInfo.FullName))
+                {
+                    var data = new byte[stream.Length];
+                    await stream.ReadAsync(data, 0, (int)stream.Length).ConfigureAwait(false);
+                    var sKBitmap = SKBitmap.Decode(data);
+                    if (sKBitmap is null)
+                    {
+                        return null;
+                    }
 
-                var sKBitmap = SKBitmap.Decode(data);
-                if (sKBitmap is null) { return null; }
+                    var skPic = sKBitmap.ToWriteableBitmap();
+                    skPic.Freeze();
+                    sKBitmap.Dispose();
+                    return skPic;
+                }
 
-                var skPic = sKBitmap.ToWriteableBitmap();
-                skPic.Freeze();
-                sKBitmap.Dispose();
-                return skPic;
             }
             catch (Exception e)
             {

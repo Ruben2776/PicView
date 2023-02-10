@@ -369,7 +369,7 @@ namespace PicView.UILogic.Sizing
 
             Settings.Default.Save();
             DeleteFiles.DeleteTempFiles();
-            History.WriteToFile();
+            Navigation.GetFileHistory.WriteToFile();
             Application.Current.Shutdown();
         }
     }

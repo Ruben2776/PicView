@@ -45,7 +45,7 @@ namespace PicView.Views.UserControls.Misc
                 ButtonMouseLeaveAnim(lastBrush);
             };
 
-            OpenLastFileButton.Click += async (_, _) => await History.OpenLastFileAsync().ConfigureAwait(false);
+            OpenLastFileButton.Click += async (_, _) => await Navigation.GetFileHistory.OpenLastFileAsync().ConfigureAwait(false);
 
             PasteButton.MouseEnter += delegate
             {

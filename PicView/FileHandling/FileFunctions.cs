@@ -14,7 +14,7 @@ using System.Windows.Threading;
 
 namespace PicView.FileHandling
 {
-    internal static class FileFunctions
+    internal static partial class FileFunctions
     {
         internal static void ShowFileProperties()
         {
@@ -227,7 +227,7 @@ namespace PicView.FileHandling
         {
             try
             {
-                var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var linkParser = MyRegex();
                 return linkParser.Match(value).ToString();
             }
             catch (Exception e)
@@ -239,5 +239,7 @@ namespace PicView.FileHandling
             }
         }
 
+        [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+        private static partial Regex MyRegex();
     }
 }

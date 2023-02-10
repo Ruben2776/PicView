@@ -62,8 +62,11 @@ namespace PicView.FileHandling
                     ConfigureWindows.GetMainWindow.Focus();
                 }
             });
-
-            History.Add(url);
+            if (Navigation.GetFileHistory is null)
+            {
+                Navigation.GetFileHistory = new FileHistory();
+            }
+            Navigation.GetFileHistory.Add(url);
             Navigation.InitialPath = url;
         }
 

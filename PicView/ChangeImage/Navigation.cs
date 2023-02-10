@@ -62,6 +62,8 @@ namespace PicView.ChangeImage
 
         internal static bool FastPicRunning { get; set; }
 
+        internal static FileHistory? GetFileHistory;
+
         #endregion Static fields
 
         #region Change navigation values

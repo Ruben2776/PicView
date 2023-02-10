@@ -134,12 +134,16 @@ namespace PicView.FileHandling
                 return;
             }
 
-            // Set files to Pics and get index
-            Navigation.Pics = FileList(fileInfo);
-            if (Navigation.Pics == null)
-            {
-                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
-            }
+            await Task.Run(() => {
+                // Set files to Pics and get index
+                Navigation.Pics = FileList(fileInfo);
+                if (Navigation.Pics == null)
+                {
+                    _= ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                }
+            });
+
+
         });
     }
 }

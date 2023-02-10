@@ -123,7 +123,12 @@ namespace PicView.ChangeImage
             // Add recent files, except when browing archive
             if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
             {
-                History.Add(Pics?[FolderIndex]);
+                if (GetFileHistory is null)
+                {
+                    GetFileHistory = new FileHistory();
+                }
+
+                GetFileHistory.Add(Pics?[FolderIndex]);
             }
         }
 
@@ -529,7 +534,11 @@ namespace PicView.ChangeImage
             // Add recent files, except when browing archive
             if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > index)
             {
-                History.Add(Pics?[index]);
+                if (GetFileHistory is null)
+                {
+                    GetFileHistory = new FileHistory();
+                }
+                GetFileHistory.Add(Pics?[index]);
             }
         }
 

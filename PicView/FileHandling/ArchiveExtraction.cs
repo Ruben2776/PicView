@@ -154,7 +154,7 @@ namespace PicView.FileHandling
                     }
 
                     // Add zipped files as recent file
-                    History.Add(TempZipFile);
+                    GetFileHistory.Add(TempZipFile);
 
                     if (Settings.Default.FullscreenGalleryHorizontal)
                     {

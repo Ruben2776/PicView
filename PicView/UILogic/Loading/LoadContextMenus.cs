@@ -18,10 +18,15 @@ namespace PicView.UILogic.Loading
     {
         internal static void AddContextMenus()
         {
+            if (GetFileHistory is null)
+            {
+                GetFileHistory = new FileHistory();
+            }
+
             // Add main contextmenu
             MainContextMenu = (ContextMenu)Application.Current.Resources["mainCM"];
             GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
-            MainContextMenu.Opened += (_, _) => History.RefreshRecentItemsMenu();
+            MainContextMenu.Opened += (_, _) => GetFileHistory.RefreshRecentItemsMenu();
 
             ///////////////////////////
             ///     Open           \\\\
