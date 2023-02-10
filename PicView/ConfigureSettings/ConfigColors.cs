@@ -40,6 +40,19 @@ namespace PicView.ConfigureSettings
             Settings.Default.Save();
         }
 
+        internal static void SetColors()
+        {
+            MainColor = (Color)Application.Current.Resources["IconColor"];
+            BackgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+
+            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
+            {
+                return;
+            }
+
+            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
+        }
+
         #endregion Update and set colors
 
         #region Window LostFocus style change
