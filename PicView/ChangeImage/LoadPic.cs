@@ -104,7 +104,7 @@ namespace PicView.ChangeImage
 
             if (archive == false)
             {
-                await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+                await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
                 await Preloader.AddAsync(FolderIndex, fileInfo, pic).ConfigureAwait(false);
             }
 
@@ -442,7 +442,7 @@ namespace PicView.ChangeImage
                         // Make loading skippable
                         if (FolderIndex != index)
                         {
-                            await Preloader.PreLoad(index).ConfigureAwait(false);
+                            await Preloader.PreLoadAsync(index).ConfigureAwait(false);
 
                             if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                             {
@@ -472,7 +472,7 @@ namespace PicView.ChangeImage
 
                         if (preloadValue == null || preloadValue.BitmapSource == null)
                         {
-                            await Preloader.PreLoad(index).ConfigureAwait(false);
+                            await Preloader.PreLoadAsync(index).ConfigureAwait(false);
                             return;
                         }
                     }
@@ -513,7 +513,7 @@ namespace PicView.ChangeImage
 
             if (Pics?.Count > 1)
             {
-                await Preloader.PreLoad(index).ConfigureAwait(false);
+                await Preloader.PreLoadAsync(index).ConfigureAwait(false);
 
                 if (FolderIndex == index)
                 {

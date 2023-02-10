@@ -115,44 +115,26 @@ namespace PicView.ChangeImage
             }
             else // Go to next or previous
             {
-                if (forward)
-                {
-                    // loop next
-                    if (Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
-                    {
-                        next = FolderIndex == Pics?.Count - 1 ? 0 : FolderIndex + 1;
-                    }
-                    else
-                    {
-                        // Go to next if able
-                        if (FolderIndex + 1 == Pics?.Count)
-                        {
-                            return -1;
-                        }
+                int indexChange = forward ? 1 : -1;
+                bool isSlideshowEnabled = Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled;
 
-                        next++;
-                    }
-                    Reverse = false;
+                if (Settings.Default.Looping || isSlideshowEnabled)
+                {
+                    next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
                 }
                 else
                 {
-                    // Loop prev
-                    if (Settings.Default.Looping || Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+                    int newIndex = FolderIndex + indexChange;
+                    if (newIndex >= 0 && newIndex < Pics.Count)
                     {
-                        next = FolderIndex == 0 ? Pics.Count - 1 : FolderIndex - 1;
+                        next = newIndex;
                     }
                     else
                     {
-                        // Go to prev if able
-                        if (next - 1 < 0)
-                        {
-                            return -1;
-                        }
-
-                        next--;
+                        return -1;
                     }
-                    Reverse = true;
                 }
+                Reverse = !forward;
             }
 
             return next;

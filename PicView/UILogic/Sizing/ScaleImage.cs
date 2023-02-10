@@ -243,7 +243,6 @@ namespace PicView.UILogic.Sizing
             {
                 // Fix title width to window size
                 GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
-                GetMainWindow.MainImage.Margin = new Thickness(0);
             }
 
             if (ZoomLogic.translateTransform is not null && ZoomLogic.translateTransform?.X != 0d)

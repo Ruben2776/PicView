@@ -3,6 +3,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -31,8 +33,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Preloader list of BitmapSources
         /// </summary>
-        private static readonly ConcurrentDictionary<
-            string, PreloadValue> Sources = new();
+        private static readonly ConcurrentDictionary<string, PreloadValue> Sources = new();
 
         /// <summary>
         /// Add file to preloader from index. Returns true if new value added.
@@ -40,37 +41,37 @@ namespace PicView.ChangeImage
         /// <param name="i">Index of Pics</param>
         /// <param name="fileInfo"></param>
         /// <param name="bitmapSource"></param>
-        internal static async Task<bool> AddAsync(int i, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
+        internal static async Task<bool> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
-            if (i >= Pics?.Count) { return false; }
-
-            if (i < 0)
+            if (index < 0 || index >= Pics.Count)
             {
-                i = Math.Abs(i);
+                return false;
+            }
+
+            if (Sources.ContainsKey(Pics[index]))
+            {
+                return false;
             }
 
             var preloadValue = new PreloadValue(null, true, null);
+            Sources.TryAdd(Pics[index], preloadValue);
 
-            if (!Sources.TryAdd(Pics[i], preloadValue)) { return false; }
-
-            await Task.Run(async () =>
+            try
             {
-                try
-                {
-                    fileInfo ??= new FileInfo(Pics[i]);
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine(e.Message);
-#endif
-                    return;
-                }
-                bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                fileInfo = fileInfo ?? new FileInfo(Pics[index]);
+                bitmapSource = bitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preloadValue.BitmapSource = bitmapSource;
                 preloadValue.IsLoading = false;
                 preloadValue.FileInfo = fileInfo;
-            }).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
+                return false;
+            }
+
             return true;
         }
 
@@ -179,7 +180,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="reverse"></param>
-        internal static Task PreLoad(int index) => Task.Run(async () =>
+        internal static Task PreLoadAsync(int currentIndex) => Task.Run(async () =>
         {
             int loadInfront = Pics.Count >= 10 ? 5 : 3;
             int loadBehind = Pics.Count >= 10 ? 3 : 2;
@@ -187,23 +188,23 @@ namespace PicView.ChangeImage
             int endPoint;
             if (Reverse)
             {
-                endPoint = index - 1 - loadInfront;
+                endPoint = currentIndex - 1 - loadInfront;
                 // Add first elements behind
-                for (int i = index - 1; i > endPoint; i--)
+                for (int i = currentIndex - 1; i > endPoint; i--)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
-                for (int i = index + 1; i < (index + 1) + loadBehind; i++)
+                for (int i = currentIndex + 1; i < (currentIndex + 1) + loadBehind; i++)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
-                for (int i = (index + 1) + loadBehind; i < (index + 1) + loadInfront; i++)
+                for (int i = (currentIndex + 1) + loadBehind; i < (currentIndex + 1) + loadInfront; i++)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     Remove(i % Pics.Count);
@@ -211,22 +212,22 @@ namespace PicView.ChangeImage
             }
             else
             {
-                endPoint = (index - 1) - loadBehind;
+                endPoint = (currentIndex - 1) - loadBehind;
                 // Add first elements
-                for (int i = index + 1; i < (index + 1) + loadInfront; i++)
+                for (int i = currentIndex + 1; i < (currentIndex + 1) + loadInfront; i++)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
-                for (int i = index - 1; i > endPoint; i--)
+                for (int i = currentIndex - 1; i > endPoint; i--)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up behind
-                for (int i = index - loadInfront; i <= endPoint; i++)
+                for (int i = currentIndex - loadInfront; i <= endPoint; i++)
                 {
                     if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
                     Remove(i % Pics.Count);

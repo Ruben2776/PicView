@@ -38,10 +38,10 @@ namespace PicView.ChangeImage
             {
                 if (preloadValue.IsLoading)
                 {
-                    do
+                    while (preloadValue.IsLoading)
                     {
-                        await Task.Delay(50);
-                    } while (preloadValue.IsLoading);
+                        await Task.Delay(50).ConfigureAwait(false);
+                    }
                 }
                 if (preloadValue.BitmapSource is not null)
                 {
@@ -79,7 +79,7 @@ namespace PicView.ChangeImage
 
             LoadPic.UpdatePic(FolderIndex, pic);
 
-            await Preloader.PreLoad(FolderIndex).ConfigureAwait(false);
+            await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
         }
 
         /// <summary>
