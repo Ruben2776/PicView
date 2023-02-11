@@ -72,14 +72,10 @@ namespace PicView.FileHandling
                 Close_UserControls();
                 FileExplorer.OpenFolderAndSelectFile(Path.GetDirectoryName(Pics?[FolderIndex]), Pics?[FolderIndex]); // https://stackoverflow.com/a/39427395
             }
-#if DEBUG
-            catch (InvalidCastException e)
+            catch (Exception e)
             {
-                Trace.WriteLine("Open_In_Explorer exception \n" + e.Message);
+                Tooltip.ShowTooltipMessage("Open_In_Explorer exception \n" + e.Message);
             }
-#else
-            catch (InvalidCastException) { }
-#endif
         }
 
         /// <summary>
@@ -112,10 +108,15 @@ namespace PicView.FileHandling
         {
             try
             {
-                using var process = new Process();
-                process.StartInfo.FileName = "openwith";
-                process.StartInfo.Arguments = $"\"{file}\"";
-                process.StartInfo.ErrorDialog = true;
+                using var process = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = "openwith",
+                        Arguments = $"\"{file}\"",
+                        ErrorDialog = true
+                    }
+                };
 
                 process.Start();
             }
@@ -123,7 +124,6 @@ namespace PicView.FileHandling
             {
 #if DEBUG
                 Trace.WriteLine("OpenWith exception \n" + e.Message);
-
 #endif
                 ShowTooltipMessage(e.Message, true);
             }

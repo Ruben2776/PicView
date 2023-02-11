@@ -59,7 +59,7 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool TryDeleteFile(string file, bool Recycle)
         {
-            /// Need to add function to remove from PicGallery
+            // TODO Need to add function to remove from PicGallery
             if (!File.Exists(file))
             {
                 return false;
@@ -98,7 +98,7 @@ namespace PicView.FileHandling
             // Sync with preloader
             Preloader.Remove(FolderIndex);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 // Sync with gallery
                 if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > FolderIndex)

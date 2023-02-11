@@ -108,11 +108,11 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        internal static Task RetrieveFilelistAsync(FileInfo? fileInfo) => Task.Run(async () =>
+        internal static Task RetrieveFilelistAsync(FileInfo? fileInfo) => Task.Run(() =>
         {
             if (fileInfo is null)
             {
-                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                _= ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
             // Check if to load from archive
@@ -124,20 +124,15 @@ namespace PicView.FileHandling
                     Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
                 }
 
-                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                _ = ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
-
-            await Task.Run(() => {
-                // Set files to Pics and get index
-                Navigation.Pics = FileList(fileInfo);
-                if (Navigation.Pics == null)
-                {
-                    _= ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
-                }
-            });
-
-
+            // Set files to Pics and get index
+            Navigation.Pics = FileList(fileInfo);
+            if (Navigation.Pics == null)
+            {
+                _ = ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+            }
         });
     }
 }

@@ -7,7 +7,7 @@ namespace PicView.FileHandling
 {
     internal static class SupportedFiles
     {
-        internal static List<string> FileExtensions = new List<string>
+        internal static readonly List<string> FileExtensions = new List<string>
         {
             ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".gif", ".jfif", ".ico", ".webp", ".wbmp",
             ".psd", ".psb",
@@ -19,7 +19,7 @@ namespace PicView.FileHandling
             ".pgm", ".ppm", ".cut", ".exr", ".dib", ".emf", ".wmf", ".wpg", ".pcx", ".xbm", ".xpm",
         };
 
-        internal static List<string> FileExtensionsArchives = new List<string>
+        internal static readonly List<string> FileExtensionsArchives = new List<string>
         {
             ".zip", ".7zip", ".7z", ".rar", ".cbr", ".cb7", ".cbt", ".cbz", ".xz", ".bzip2",
             ".gzip", ".tar", ".wim", ".iso", ".cab"

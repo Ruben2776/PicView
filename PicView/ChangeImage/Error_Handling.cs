@@ -84,10 +84,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static string CheckIfLoadableString(string s)
         {
-            bool result = Uri.TryCreate(s, UriKind.Absolute, out Uri? uriResult)
-                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-
-            if (result)
+            if (!string.IsNullOrWhiteSpace(FileHandling.FileFunctions.GetURL(s)))
             {
                 return "web";
             }
@@ -97,12 +94,17 @@ namespace PicView.ChangeImage
                 return "base64";
             }
 
-            s = s.Replace("\"", "");
-            s = s.Trim();
-
             if (File.Exists(s))
             {
                 return s;
+            }
+            else
+            {
+                s = s.Trim().Replace("\"", "");
+                if (File.Exists(s))
+                {
+                    return s;
+                }
             }
 
             if (Directory.Exists(s))

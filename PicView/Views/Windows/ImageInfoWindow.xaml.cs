@@ -114,7 +114,7 @@ namespace PicView.Views.Windows
             FileProperties.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FilePropertiesBrush);
             FileProperties.MouseLeave += (_, _) => ButtonMouseLeaveAnim(FilePropertiesFill);
             FileProperties.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FilePropertiesBrush);
-            FileProperties.Click += (_, _) => FileFunctions.ShowFileProperties();
+            FileProperties.Click += (_, _) => FileHandling.FileProperties.ShowFileProperties();
 
             // Delete
             Delete.MouseEnter += (_, _) => ButtonMouseOverAnim(DeleteFill);

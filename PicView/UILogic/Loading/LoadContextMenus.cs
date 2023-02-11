@@ -198,7 +198,7 @@ namespace PicView.UILogic.Loading
             ImageInfoCm.Click += (_, _) => ImageInfoWindow();
 
             var FileProps = (MenuItem)ImageChoices.Items[1];
-            FileProps.Click += (_, _) => FileFunctions.ShowFileProperties();
+            FileProps.Click += (_, _) => FileProperties.ShowFileProperties();
             FileProps.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + I";
 
             // 2 = seperator

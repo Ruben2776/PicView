@@ -387,7 +387,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                FileFunctions.ShowFileProperties();
+                                FileProperties.ShowFileProperties();
                             }
                         }
                         else

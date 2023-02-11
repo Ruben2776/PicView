@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.UILogic;
 using System;
 using System.IO;
@@ -60,7 +61,7 @@ namespace PicView.ChangeTitlebar
             s1.Append(fileInfo.Name).Append(' ').Append(index + 1).Append('/').Append(Pics.Count).Append(' ')
                 .Append(files).Append(" (").Append(width).Append(" x ").Append(height)
                 .Append(StringAspect(width, height))
-                .Append(GetSizeReadable(fileInfo.Length));
+                .Append(FileFunctions.GetSizeReadable(fileInfo.Length));
 
 
             if (!string.IsNullOrEmpty(ZoomPercentage))
@@ -152,7 +153,7 @@ namespace PicView.ChangeTitlebar
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            var path = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            var path = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 

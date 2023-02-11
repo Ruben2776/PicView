@@ -26,20 +26,24 @@ namespace PicView.PicGallery
     {
         internal static async Task ClickAsync(int id)
         {
-            ConfigureWindows.GetMainWindow.Focus();
-
             if (GalleryFunctions.IsHorizontalOpen == false)
             {
                 await ItemClickAsync(id).ConfigureAwait(false);
                 return;
             }
 
-            ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                ConfigureWindows.GetMainWindow.Focus();
+                ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
+                var z = GetPicGallery.Container.Children[id] as PicGalleryItem;
+                ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
 
-            var z = GetPicGallery.Container.Children[id] as PicGalleryItem;
-            ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
+            });
+
             Border? border = null;
             Image? image = null;
+
             var size = await ImageSizeFunctions.GetImageSizeAsync(Pics[id]).ConfigureAwait(true);
             if (size.HasValue)
             {

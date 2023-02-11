@@ -3,58 +3,48 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Media.Imaging;
-using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
 {
     internal static class FastPic
     {
-        static Timer? timer;
-        static bool updateSource;
+        private static Timer? _timer;
+        private static bool _updateSource;
 
         internal static async Task Run(int index)
         {
-            if (timer is null)
+            if (_timer is null)
             {
-                timer = new Timer(450)
+                _timer = new Timer(450)
                 {
                     AutoReset = false,
                     Enabled = true
                 };
             }
-            else if (timer.Enabled)
+            else if (_timer.Enabled)
             {
                 return;
             }
 
-            FolderIndex = index;
-            timer.Start();
+            Navigation.FolderIndex = index;
+            _timer.Start();
             FileInfo? fileInfo = null;
             BitmapSource? pic = null;
-            updateSource = false;
+            _updateSource = false;
 
-            var preloadValue = Preloader.Get(Pics[index]);
+            var preloadValue = Preloader.Get(Navigation.Pics[index]);
             if (preloadValue != null)
             {
                 if (preloadValue.IsLoading)
                 {
-                    while (preloadValue.IsLoading)
-                    {
-                        await Task.Delay(50).ConfigureAwait(false);
-                    }
+                    await WaitForLoading(preloadValue).ConfigureAwait(false);
                 }
-                if (preloadValue.BitmapSource is not null)
-                {
-                    pic = preloadValue.BitmapSource;
-                }
-                if (preloadValue.FileInfo is not null)
-                {
-                    fileInfo = preloadValue.FileInfo;
-                }
+                fileInfo = preloadValue.FileInfo;
+                pic = preloadValue.BitmapSource;
             }
             else
             {
-                fileInfo = new FileInfo(Pics[index]);
+                fileInfo = new FileInfo(Navigation.Pics[index]);
 
                 if (fileInfo.Length < 4e+6) // Load images that are less than 4mb
                 {
@@ -63,23 +53,21 @@ namespace PicView.ChangeImage
                 else
                 {
                     pic = Thumbnails.GetBitmapSourceThumb(fileInfo);
-                    updateSource = true; // Update it when key released
+                    _updateSource = true; // Update it when key released
                 }
             }
 
-            if (pic is null)
+            pic ??= ImageFunctions.ImageErrorMessage();
+            LoadPic.UpdatePic(index, pic);
+            await Preloader.PreLoadAsync(index).ConfigureAwait(false);
+        }
+
+        private static async Task WaitForLoading(Preloader.PreloadValue preloadValue)
+        {
+            while (preloadValue.IsLoading)
             {
-                pic = ImageFunctions.ImageErrorMessage();
-                if (pic is null)
-                {
-                    ErrorHandling.UnexpectedError();
-                    return;
-                }
+                await Task.Delay(50).ConfigureAwait(false);
             }
-
-            LoadPic.UpdatePic(FolderIndex, pic);
-
-            await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,23 +75,23 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task FastPicUpdateAsync()
         {
-            if (updateSource == false) { return; }
+            if (_updateSource is false) { return; }
 
             // Update picture in case it didn't load. Won't happen normally
 
-            timer = null;
+            _timer = null;
             BitmapSource? pic = null;
             Preloader.PreloadValue? preloadValue = null;
 
-            var exists = await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-            if (exists)
+            if (await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false))
             {
-                preloadValue = Preloader.Get(Pics[FolderIndex]);
+                preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
                 if (preloadValue is null)
                 {
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
                     return;
                 }
+
                 pic = preloadValue.BitmapSource ?? ImageFunctions.ImageErrorMessage();
             }
             else
@@ -112,7 +100,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            LoadPic.UpdatePic(FolderIndex, pic, preloadValue.FileInfo);
+            LoadPic.UpdatePic(Navigation.FolderIndex, pic, preloadValue.FileInfo);
         }
     }
 }

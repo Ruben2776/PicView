@@ -41,7 +41,7 @@ namespace PicView.FileHandling
             return Extract(path, extractAppPath, extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
         }
 
-        internal static string? GetExtractAppPath(string[] commonPaths, string[] appNames)
+        static string? GetExtractAppPath(string[] commonPaths, string[] appNames)
         {
             if (appNames == null || commonPaths == null)
             {

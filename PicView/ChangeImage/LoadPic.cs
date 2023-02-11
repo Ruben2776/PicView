@@ -6,6 +6,7 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -184,8 +185,20 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async Task LoadPiFromFileAsync(string path)
         {
-            var fileInfo = new FileInfo(path);
-            await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+            try
+            {
+                var fileInfo = new FileInfo(path);
+                await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine("OpenWith exception \n" + e.Message);
+
+#endif
+                Tooltip.ShowTooltipMessage(e);
+                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -199,7 +212,7 @@ namespace PicView.ChangeImage
                 ToggleStartUpUC(true);
             });
 
-            if (fileInfo.Exists == false)
+            if (fileInfo.Exists == false) // If file does not exist, try to load it if base64 or URL
             {
                 await LoadPicFromStringAsync(fileInfo.FullName, false, fileInfo).ConfigureAwait(false);
                 return;
@@ -346,7 +359,7 @@ namespace PicView.ChangeImage
                 catch (Exception e)
                 {
 #if DEBUG
-                    System.Diagnostics.Trace.WriteLine(e.Message);
+                    Trace.WriteLine(e.Message);
 #endif
                     await ReloadAsync(true).ConfigureAwait(false);
                 }

@@ -16,13 +16,6 @@ namespace PicView.FileHandling
 {
     internal static partial class FileFunctions
     {
-        internal static void ShowFileProperties()
-        {
-            if (ErrorHandling.CheckOutOfRange()) { return; }
-
-            FileProperties.Show(Navigation.Pics[Navigation.FolderIndex]);
-        }
-
         /// <summary>
         /// Returns true if directory
         /// </summary>
@@ -124,7 +117,7 @@ namespace PicView.FileHandling
         /// <param name="i">FileInfo.Length</param>
         /// <returns></returns>
         /// Credits to http://www.somacon.com/p576.php
-        internal static string GetSizeReadable(long i)
+        internal static string GetSizeReadable(this long i)
         {
             string sign = i < 0 ? "-" : string.Empty;
             char prefix;
@@ -155,7 +148,7 @@ namespace PicView.FileHandling
             return sign + value.ToString("0.## ", CultureInfo.CurrentCulture) + prefix + 'B';
         }
 
-        internal static string Shorten(string name, int amount)
+        internal static string Shorten(this string name, int amount)
         {
             if (name.Length < 25) { return name; }
 
@@ -182,12 +175,13 @@ namespace PicView.FileHandling
             return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
         }
 
-        internal static string GetURL(string value)
+        [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+        private static partial Regex URLregex();
+        internal static string GetURL(this string value)
         {
             try
             {
-                var linkParser = MyRegex();
-                return linkParser.Match(value).ToString();
+                return URLregex().Match(value).ToString();
             }
             catch (Exception e)
             {
@@ -198,7 +192,6 @@ namespace PicView.FileHandling
             }
         }
 
-        [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
-        private static partial Regex MyRegex();
+
     }
 }

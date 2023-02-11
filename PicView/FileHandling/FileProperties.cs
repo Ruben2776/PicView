@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicView.ChangeImage;
+using System;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -6,6 +7,13 @@ namespace PicView.FileHandling
 {
     internal class FileProperties
     {
+        internal static void ShowFileProperties()
+        {
+            if (ErrorHandling.CheckOutOfRange()) { return; }
+
+            Show(Navigation.Pics[Navigation.FolderIndex]);
+        }
+
         private const int SW_SHOW = 5;
         private const uint SEE_MASK_INVOKEIDLIST = 12;
 
@@ -13,7 +21,7 @@ namespace PicView.FileHandling
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
 
-        internal static bool Show(string filename)
+        private static bool Show(string filename)
         {
             var info = new SHELLEXECUTEINFO
             {
