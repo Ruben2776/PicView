@@ -62,12 +62,12 @@ namespace PicView.UILogic.DragAndDrop
                     return;
                 }
             }
-            else if (SupportedFiles.IsSupportedArchives(files[0]))
+            else if (SupportedFiles.IsArchive(files[0]))
             {
                 // Archive
                 element = new ZipIcon();
             }
-            else if (SupportedFiles.IsSupportedExt(files[0]))
+            else if (SupportedFiles.IsSupported(files[0]))
             {
                 // Check if same file
                 if (files.Length == 1 && Pics.Count > 0)
@@ -156,13 +156,13 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            if (SupportedFiles.IsSupportedExt(files[0]) == false)
+            if (SupportedFiles.IsSupported(files[0]) == false)
             {
                 if (Directory.Exists(files[0]))
                 {
                     await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
                 }
-                else if (SupportedFiles.IsSupportedArchives(files[0]))
+                else if (SupportedFiles.IsArchive(files[0]))
                 {
                     await LoadPic.LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
                 }

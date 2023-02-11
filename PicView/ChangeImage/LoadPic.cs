@@ -62,7 +62,7 @@ namespace PicView.ChangeImage
                 SetLoadingString();
             });
 
-            bool archive = SupportedFiles.IsSupportedArchives(fileInfo);
+            bool archive = fileInfo.Extension.Equals(fileInfo);
             BitmapSource? pic = null;
 
             if (archive is false)
@@ -730,7 +730,7 @@ namespace PicView.ChangeImage
 
         #endregion
 
-        static void LoadingPreview(FileInfo fileInfo)
+        internal static void LoadingPreview(FileInfo fileInfo)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {

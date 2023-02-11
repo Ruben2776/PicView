@@ -53,7 +53,7 @@ namespace PicView.UILogic.DragAndDrop
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
+                    Tooltip.ShowTooltipMessage(ex);
                     return;
                 }
 

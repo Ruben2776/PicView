@@ -114,7 +114,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="E"></param>
-        internal static async void AutoScrollTimerEvent(object sender, ElapsedEventArgs E)
+        internal static void AutoScrollTimerEvent(object sender, ElapsedEventArgs E)
         {
             // Error checking
             if (AutoScrollPos == null || AutoScrollOrigin == null)
@@ -123,7 +123,7 @@ namespace PicView.UILogic.TransformImage
             }
 
             // Start in dispatcher because timer is threaded
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
                 if (AutoScrollOrigin.HasValue && AutoScrollPos.HasValue)
                 {

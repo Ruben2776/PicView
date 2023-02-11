@@ -70,7 +70,7 @@ namespace PicView.FileHandling
             try
             {
                 Close_UserControls();
-                FileFunctions.OpenFolderAndSelectItem(Path.GetDirectoryName(Pics?[FolderIndex]), Pics?[FolderIndex]); // https://stackoverflow.com/a/39427395
+                FileExplorer.OpenFolderAndSelectFile(Path.GetDirectoryName(Pics?[FolderIndex]), Pics?[FolderIndex]); // https://stackoverflow.com/a/39427395
             }
 #if DEBUG
             catch (InvalidCastException e)

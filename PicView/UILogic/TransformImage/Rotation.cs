@@ -135,7 +135,7 @@ namespace PicView.UILogic.TransformImage
             return rotationAngle == 0 || rotationAngle == 90 || rotationAngle == 180 || rotationAngle == 270;
         }
 
-        public static int NextRotationAngle(double currentDegrees, bool roundUp)
+        internal static int NextRotationAngle(double currentDegrees, bool roundUp)
         {
             int nearestMultipleOf90 = (int)Math.Round(currentDegrees / 90.0) * 90;
             int nextRotationAngle = nearestMultipleOf90;

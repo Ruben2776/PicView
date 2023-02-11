@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace PicView.Shortcuts
 {
-    internal static class QuickResizeShortcuts
+    internal static partial class QuickResizeShortcuts
     {
         internal static async Task QuickResizePreviewKeys(KeyEventArgs e, string width, string height)
         {
@@ -189,7 +189,7 @@ namespace PicView.Shortcuts
 
         static double ReturnPercentageFromString(string text)
         {
-            foreach (Match match in Regex.Matches(text, @"(\d+)%")) // Find % sign
+            foreach (Match match in MyRegex().Matches(text)) // Find % sign
             {
                 if (!match.Success) { continue; }
                 if (double.TryParse(match.Groups[1].Value, out double percentage))
@@ -199,5 +199,8 @@ namespace PicView.Shortcuts
             }
             return 0;
         }
+
+        [GeneratedRegex("(\\d+)%")]
+        private static partial Regex MyRegex();
     }
 }

@@ -129,9 +129,9 @@ namespace PicView.UILogic.Sizing
 
             var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
 
+
             if (GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                // Extra padding for picgallery required
                 padding += PicGalleryItem_Size - 50;
                 maxWidth = Math.Min(monitorWidth - padding, width);
                 maxHeight = Math.Min(monitorHeight, height);
@@ -141,32 +141,17 @@ namespace PicView.UILogic.Sizing
                 maxWidth = Math.Min(monitorWidth - padding, width);
                 maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size, height);
             }
-            else if (Settings.Default.AutoFitWindow) // If non resizeable behaviour
+            else if (Settings.Default.AutoFitWindow)
             {
-                if (Settings.Default.FillImage && IsValidRotation(RotationAngle)) // Max to monitor height if scaling enabled, else go by min pixel width
-                {
-                    maxWidth = monitorWidth;
-                    maxHeight = monitorHeight;
-                }
-                else
-                {
-                    // Use padding for shown interface
-                    maxWidth = Math.Min(monitorWidth - padding, width);
-                    maxHeight = Math.Min(monitorHeight - padding, height);
-                }
+                maxWidth = Settings.Default.FillImage && IsValidRotation(RotationAngle) ? monitorWidth : Math.Min(monitorWidth - padding, width);
+                maxHeight = Settings.Default.FillImage && IsValidRotation(RotationAngle) ? monitorHeight : Math.Min(monitorHeight - padding, height);
             }
-            else // Get max width and height, based on window size
+            else
             {
-                if (Settings.Default.FillImage && IsValidRotation(RotationAngle))
-                {
-                    maxWidth = GetMainWindow.ParentContainer.ActualWidth;
-                    maxHeight = GetMainWindow.ParentContainer.ActualHeight;
-                }
-                else
-                {
-                    maxWidth = Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
-                    maxHeight = Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
-                }
+                maxWidth = Settings.Default.FillImage && IsValidRotation(RotationAngle) ?
+                    GetMainWindow.ParentContainer.ActualWidth : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
+                maxHeight = Settings.Default.FillImage && IsValidRotation(RotationAngle) ?
+                    GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
             }
 
             switch (RotationAngle) // aspect ratio calculation

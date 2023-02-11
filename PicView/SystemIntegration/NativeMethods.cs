@@ -14,7 +14,6 @@ using System.Windows.Interop;
 namespace PicView.SystemIntegration
 {
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
-    [SuppressUnmanagedCodeSecurity]
     internal static class NativeMethods
     {
         // Alphanumeric sort
@@ -31,104 +30,8 @@ namespace PicView.SystemIntegration
         internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam,
         string pvParam, uint fWinIni);
 
-        #region File properties
+        #region Disable Screensaver and Power options
 
-        // file properties
-        //http://stackoverflow.com/a/1936957
-
-        private const int SW_SHOW = 5;
-        private const uint SEE_MASK_INVOKEIDLIST = 12;
-
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        private static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
-
-        internal static bool ShowFileProperties(string Filename)
-        {
-            var info = new SHELLEXECUTEINFO();
-            info.cbSize = Marshal.SizeOf(info);
-            info.lpVerb = "properties";
-            info.lpParameters = "details";
-            info.lpFile = Filename;
-            info.nShow = SW_SHOW;
-            info.fMask = SEE_MASK_INVOKEIDLIST;
-            return ShellExecuteEx(ref info);
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        internal struct SHELLEXECUTEINFO : IEquatable<SHELLEXECUTEINFO>
-        {
-            public int cbSize;
-            public uint fMask;
-            public IntPtr hwnd;
-
-            [MarshalAs(UnmanagedType.LPTStr)]
-            public string lpVerb;
-
-            [MarshalAs(UnmanagedType.LPTStr)]
-            public string lpFile;
-
-            [MarshalAs(UnmanagedType.LPTStr)]
-            public string lpParameters;
-
-            [MarshalAs(UnmanagedType.LPTStr)]
-            public readonly string lpDirectory;
-
-            public int nShow;
-            public IntPtr hInstApp;
-            public IntPtr lpIDList;
-
-            [MarshalAs(UnmanagedType.LPTStr)]
-            public readonly string lpClass;
-
-            public IntPtr hkeyClass;
-            public readonly uint dwHotKey;
-            public IntPtr hIcon;
-            public IntPtr hProcess;
-
-            public override bool Equals(object obj)
-            {
-                return obj is SHELLEXECUTEINFO sHELLEXECUTEINFO && Equals(sHELLEXECUTEINFO);
-            }
-
-            public bool Equals(SHELLEXECUTEINFO other)
-            {
-                return cbSize == other.cbSize &&
-                       fMask == other.fMask &&
-                       EqualityComparer<IntPtr>.Default.Equals(hwnd, other.hwnd) &&
-                       lpVerb == other.lpVerb &&
-                       lpFile == other.lpFile &&
-                       lpParameters == other.lpParameters &&
-                       lpDirectory == other.lpDirectory &&
-                       nShow == other.nShow &&
-                       EqualityComparer<IntPtr>.Default.Equals(hInstApp, other.hInstApp) &&
-                       EqualityComparer<IntPtr>.Default.Equals(lpIDList, other.lpIDList) &&
-                       lpClass == other.lpClass &&
-                       EqualityComparer<IntPtr>.Default.Equals(hkeyClass, other.hkeyClass) &&
-                       dwHotKey == other.dwHotKey &&
-                       EqualityComparer<IntPtr>.Default.Equals(hIcon, other.hIcon) &&
-                       EqualityComparer<IntPtr>.Default.Equals(hProcess, other.hProcess);
-            }
-
-            public override int GetHashCode()
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        #endregion File properties
-
-        #region Remove from Alt + tab
-
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll")]
-        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        internal const int GWL_EX_STYLE = -20;
-        internal const int WS_EX_APPWINDOW = 0x00040000, WS_EX_TOOLWINDOW = 0x00000080;
-
-        // Disable Screensaver and Power options.
         internal const uint ES_CONTINUOUS = 0x80000000;
 
         internal const uint ES_SYSTEM_REQUIRED = 0x00000001;

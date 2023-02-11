@@ -198,7 +198,7 @@ namespace PicView.ImageHandling
                 using (var stream = File.OpenRead(fileInfo.FullName))
                 {
                     var data = new byte[stream.Length];
-                    await stream.ReadAsync(data, 0, (int)stream.Length).ConfigureAwait(false);
+                    await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
                     var sKBitmap = SKBitmap.Decode(data);
                     if (sKBitmap is null)
                     {

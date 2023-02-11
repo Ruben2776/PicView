@@ -43,26 +43,20 @@ namespace PicView.FileHandling
         /// </summary>
         private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
         {
-            if (fileInfo is null) { return null; }
+            if (fileInfo == null) { return null; }
 
-            var checkIfDir = FileFunctions.CheckIfDirectoryOrFile(fileInfo.FullName);
-            if (checkIfDir is null) { return null; }
+            var isDirectory = FileFunctions.CheckIfDirectoryOrFile(fileInfo.FullName);
+            if (!isDirectory.HasValue) { return null; }
 
-            var directory = checkIfDir.Value ? fileInfo.FullName : fileInfo.DirectoryName;
+            var directory = isDirectory.Value ? fileInfo.FullName : fileInfo.DirectoryName;
 
-            SearchOption searchOption;
-
-            if (Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)) // Don't search subdirectories when zipped
-            {
-                searchOption = SearchOption.AllDirectories;
-            }
-            else
-            {
-                searchOption = SearchOption.TopDirectoryOnly;
-            }
+            var searchOption = Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)
+                ? SearchOption.AllDirectories
+                : SearchOption.TopDirectoryOnly;
 
             var items = Directory.EnumerateFiles(directory, "*.*", searchOption)
-                .AsParallel().Where(SupportedFiles.IsSupportedExt);
+                .AsParallel()
+                .Where(f => SupportedFiles.FileExtensions.Any(ext => Path.GetExtension(f).Equals(ext, StringComparison.OrdinalIgnoreCase)));
 
             switch (sortFilesBy)
             {
@@ -122,7 +116,7 @@ namespace PicView.FileHandling
                 return;
             }
             // Check if to load from archive
-            if (SupportedFiles.IsSupportedArchives(fileInfo.FullName))
+            if (SupportedFiles.IsArchive(fileInfo.Extension))
             {
                 if (Extract(fileInfo.FullName)) { return; }
                 if (ErrorHandling.CheckOutOfRange() == false)
