@@ -443,6 +443,12 @@ namespace PicView.ChangeImage
                     await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
                     do
                     {
+                        // Ensure multiple instances are not running
+                        if (FolderIndex != index)
+                        {
+                            return;
+                        }
+
                         if (show)
                         {
                             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
@@ -458,13 +464,6 @@ namespace PicView.ChangeImage
 
                         // Wait for finnished result
                         await Task.Delay(50).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
-
-                        // Ensure multiple instances are not running
-                        if (FolderIndex != index)
-                        {
-                            Preloader.Remove(index);
-                            return;
-                        }
 
                     } while (!Preloader.Contains(Pics[index]));
                 }

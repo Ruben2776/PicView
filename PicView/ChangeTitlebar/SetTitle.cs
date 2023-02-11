@@ -2,6 +2,7 @@
 using PicView.FileHandling;
 using PicView.UILogic;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -26,62 +27,60 @@ namespace PicView.ChangeTitlebar
         /// <returns></returns>
         private static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
-            // Ensure multiple instances are not running
-            if (FolderIndex != index)
-            {
-                Preloader.Remove(index);
-                return new[]
-                {
-                    (string)Application.Current.Resources["Loading"],
-                    (string)Application.Current.Resources["Loading"],
-                    (string)Application.Current.Resources["Loading"]
-                };
-            }
-
+            // Check if file info is present or not
             if (fileInfo == null)
             {
                 try
                 {
                     fileInfo = new FileInfo(Pics[index]);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    return null;
+                    return ReturnError("FileInfo exception " + e.Message);
                 }
             }
 
-            if (fileInfo.Exists == false)
+            // Check if file exists or not
+            if (!fileInfo.Exists)
             {
                 _ = ErrorHandling.ReloadAsync();
                 return null;
             }
 
-            if (index != FolderIndex || Pics?.Count < index || index >= Pics.Count)
+            // Check index validity
+            if (Pics?.Count < index || index >= Pics.Count)
             {
-                return new[]
-                {
-                    (string)Application.Current.Resources["UnexpectedError"],
-                    (string)Application.Current.Resources["UnexpectedError"],
-                    (string)Application.Current.Resources["UnexpectedError"]
-                };
+                return ReturnError("index invalid");
             }
 
-            var files = Pics.Count == 1 ?
-                Application.Current.Resources["File"] : Application.Current.Resources["Files"];
+            var files = (string)(Pics.Count == 1 ?
+                Application.Current.Resources["File"] :
+                Application.Current.Resources["Files"]);
 
             var s1 = new StringBuilder(90);
-            s1.Append(fileInfo.Name).Append(' ').Append(index + 1).Append('/').Append(Pics.Count).Append(' ')
-                .Append(files).Append(" (").Append(width).Append(" x ").Append(height)
+            s1.Append(fileInfo.Name)
+                .Append(' ')
+                .Append(index + 1)
+                .Append('/')
+                .Append(Pics.Count)
+                .Append(' ')
+                .Append(files)
+                .Append(" (")
+                .Append(width)
+                .Append(" x ")
+                .Append(height)
                 .Append(StringAspect(width, height))
                 .Append(FileFunctions.GetSizeReadable(fileInfo.Length));
 
-
+            // Check if ZoomPercentage is not empty
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
-                s1.Append(", ").Append(ZoomPercentage);
+                s1.Append(", ")
+                    .Append(ZoomPercentage);
             }
 
-            s1.Append(" - ").Append(AppName);
+            s1.Append(" - ")
+                .Append(AppName);
 
             var array = new string[3];
             array[0] = s1.ToString();
@@ -91,6 +90,21 @@ namespace PicView.ChangeTitlebar
             array[2] = s1.ToString();
             return array;
         }
+
+        private static string[]? ReturnError(string exception)
+        {
+#if DEBUG
+            Trace.WriteLine(exception);
+#endif
+
+            return new[]
+            {
+                (string)Application.Current.Resources["UnexpectedError"],
+                (string)Application.Current.Resources["UnexpectedError"],
+                (string)Application.Current.Resources["UnexpectedError"]
+            };
+        }
+
 
         /// <summary>
         /// Sets title string with file name, folder position,
