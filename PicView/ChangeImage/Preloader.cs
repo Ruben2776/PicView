@@ -1,4 +1,5 @@
 ﻿using PicView.ImageHandling;
+using PicView.Properties;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -33,7 +34,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Preloader list of BitmapSources
         /// </summary>
-        private static readonly ConcurrentDictionary<string, PreloadValue> Sources = new();
+        private static readonly ConcurrentDictionary<string, PreloadValue> _preloadList = new();
 
         /// <summary>
         /// Add file to preloader from index. Returns true if new value added.
@@ -48,13 +49,13 @@ namespace PicView.ChangeImage
                 return false;
             }
 
-            if (Sources.ContainsKey(Pics[index]))
+            if (_preloadList.ContainsKey(Pics[index]))
             {
                 return false;
             }
 
             var preloadValue = new PreloadValue(null, true, null);
-            Sources.TryAdd(Pics[index], preloadValue);
+            _preloadList.TryAdd(Pics[index], preloadValue);
 
             try
             {
@@ -101,9 +102,9 @@ namespace PicView.ChangeImage
 
             try
             {
-                _ = Sources[Pics[key]];
+                _ = _preloadList[Pics[key]];
 #if DEBUG
-                if (!Sources.TryRemove(Pics[key], out _))
+                if (!_preloadList.TryRemove(Pics[key], out _))
                 {
                     Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
                 }
@@ -129,7 +130,7 @@ namespace PicView.ChangeImage
         {
             if (file == null || name == null) { return false; }
 
-            return Sources.TryRemove(file, out var preloadValue) && Sources.TryAdd(name, preloadValue);
+            return _preloadList.TryRemove(file, out var preloadValue) && _preloadList.TryAdd(name, preloadValue);
         }
 
         /// <summary>
@@ -137,12 +138,12 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Clear()
         {
-            if (Sources.IsEmpty)
+            if (_preloadList.IsEmpty)
             {
                 return;
             }
 
-            Sources.Clear();
+            _preloadList.Clear();
 #if DEBUG
             Trace.WriteLine("Cleared Preloader");
 #endif
@@ -161,7 +162,7 @@ namespace PicView.ChangeImage
                 return null;
             }
 
-            return Sources[key];
+            return _preloadList[key];
         }
 
         /// <summary>
@@ -171,8 +172,9 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool Contains(string key)
         {
-            return !Sources.IsEmpty && Sources.ContainsKey(key);
+            return !_preloadList.IsEmpty && _preloadList.ContainsKey(key);
         }
+
 
         /// <summary>
         /// Starts decoding images into memory,
@@ -182,6 +184,30 @@ namespace PicView.ChangeImage
         /// <param name="reverse"></param>
         internal static Task PreLoadAsync(int currentIndex) => Task.Run(async () =>
         {
+            //// Load next six elements
+            //for (var i = 0; i < 6; i++)
+            //{
+            //    var index = GetCircularIndex(currentIndex, Pics.Count);
+            //    await AddAsync(index).ConfigureAwait(false);
+            //    currentIndex = GetNextIndex(currentIndex, Pics.Count, Reverse);
+            //}
+
+            //// Load previous 3 elements and remove 1 value behind
+            //currentIndex = GetPreviousIndex(currentIndex, Pics.Count, Reverse);
+            //for (var i = 0; i < 3; i++)
+            //{
+            //    var index = GetCircularIndex(currentIndex, Pics.Count);
+            //    await AddAsync(index).ConfigureAwait(false);
+            //    currentIndex = GetPreviousIndex(currentIndex, Pics.Count, Reverse);
+            //}
+
+            //for (var i = 0; i < 6; i++)
+            //{
+            //    var index = GetCircularIndex(currentIndex, Pics.Count);
+            //    Remove(index);
+            //    currentIndex = GetPreviousIndex(currentIndex, Pics.Count, Reverse);
+            //}
+
             int loadInfront = Pics.Count >= 10 ? 5 : 3;
             int loadBehind = Pics.Count >= 10 ? 3 : 2;
 
@@ -192,21 +218,21 @@ namespace PicView.ChangeImage
                 // Add first elements behind
                 for (int i = currentIndex - 1; i > endPoint; i--)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
+                    if (Pics.Count == 0 || Pics.Count == _preloadList.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 // Add second elements
                 for (int i = currentIndex + 1; i < (currentIndex + 1) + loadBehind; i++)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
+                    if (Pics.Count == 0 || Pics.Count == _preloadList.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
                 //Clean up infront
                 for (int i = (currentIndex + 1) + loadBehind; i < (currentIndex + 1) + loadInfront; i++)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
+                    if (Pics.Count == 0 || Pics.Count == _preloadList.Count) { return; }
                     Remove(i % Pics.Count);
                 }
             }
@@ -216,23 +242,40 @@ namespace PicView.ChangeImage
                 // Add first elements
                 for (int i = currentIndex + 1; i < (currentIndex + 1) + loadInfront; i++)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
+                    if (Pics.Count == 0 || Pics.Count == _preloadList.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
                 // Add second elements behind
                 for (int i = currentIndex - 1; i > endPoint; i--)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
+                    if (Pics.Count == 0 || Pics.Count == _preloadList.Count) { return; }
                     await AddAsync(i % Pics.Count).ConfigureAwait(false);
                 }
 
+                endPoint = endPoint + loadBehind;
                 //Clean up behind
                 for (int i = currentIndex - loadInfront; i <= endPoint; i++)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
+                    if (Pics.Count == 0 || Pics.Count == _preloadList.Count) { return; }
                     Remove(i % Pics.Count);
                 }
             }
         });
+
+        //private static int GetNextIndex(int currentIndex, int listCount, bool reverse)
+        //{
+        //    return reverse ? (currentIndex - 1 + listCount) % listCount : (currentIndex + 1) % listCount;
+        //}
+
+        //private static int GetPreviousIndex(int currentIndex, int listCount, bool reverse)
+        //{
+        //    return GetNextIndex(currentIndex, listCount, reverse);
+        //}
+
+        //private static int GetCircularIndex(int currentIndex, int listCount)
+        //{
+        //    return currentIndex % listCount;
+        //}
+
     }
 }

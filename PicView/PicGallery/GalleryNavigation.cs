@@ -256,19 +256,22 @@ namespace PicView.PicGallery
 
         internal static void FullscreenGalleryNavigation()
         {
-            SetSelected(FolderIndex, true);
-            SelectedGalleryItem = FolderIndex;
-
-            if (Settings.Default.FullscreenGalleryHorizontal)
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
-            }
-            else
-            {
-                GetPicGallery.Scroller.ScrollToVerticalOffset(CenterScrollPosition);
-            }
+                SetSelected(FolderIndex, true);
+                SelectedGalleryItem = FolderIndex;
 
-            Tooltip.CloseToolTipMessage();
+                if (Settings.Default.FullscreenGalleryHorizontal)
+                {
+                    GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+                }
+                else
+                {
+                    GetPicGallery.Scroller.ScrollToVerticalOffset(CenterScrollPosition);
+                }
+
+                Tooltip.CloseToolTipMessage();
+            });
         }
 
         internal static void FullscreenGallerySelection(Direction direction)

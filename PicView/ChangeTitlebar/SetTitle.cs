@@ -26,6 +26,18 @@ namespace PicView.ChangeTitlebar
         /// <returns></returns>
         private static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
+            // Ensure multiple instances are not running
+            if (FolderIndex != index)
+            {
+                Preloader.Remove(index);
+                return new[]
+                {
+                    (string)Application.Current.Resources["Loading"],
+                    (string)Application.Current.Resources["Loading"],
+                    (string)Application.Current.Resources["Loading"]
+                };
+            }
+
             if (fileInfo == null)
             {
                 try

@@ -128,6 +128,7 @@ namespace PicView.UILogic.Sizing
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
             var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
+            var margin = 0d;
 
 
             if (GalleryFunctions.IsVerticalFullscreenOpen)
@@ -140,6 +141,7 @@ namespace PicView.UILogic.Sizing
             {
                 maxWidth = Math.Min(monitorWidth - padding, width);
                 maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size, height);
+                margin = PicGalleryItem_Size + 5;
             }
             else if (Settings.Default.AutoFitWindow)
             {
@@ -180,6 +182,8 @@ namespace PicView.UILogic.Sizing
                     }
                     break;
             }
+
+            GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
 
             if (Settings.Default.ScrollEnabled)
             {

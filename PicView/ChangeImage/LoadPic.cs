@@ -36,10 +36,13 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task QuickLoadAsync(string file)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            if (!GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                WindowSizing.SetWindowBehavior();
-            });
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                {
+                    WindowSizing.SetWindowBehavior();
+                });
+            }
 
             if (File.Exists(file) == false)
             {
@@ -411,7 +414,7 @@ namespace PicView.ChangeImage
                     }
                 }
 
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                 {
                     if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                     {
@@ -436,92 +439,70 @@ namespace PicView.ChangeImage
 
                 if (preloadValue is null)
                 {
-                    bool added = await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
-                    if (added)
+                    bool show = true;
+                    await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                    do
                     {
-                        preloadValue = Preloader.Get(Pics[index]);
-                    }
-
-                    if (preloadValue is null)
-                    {
-                        Preloader.Remove(index);
-                        return;
-                    }
-
-                    if (preloadValue.BitmapSource is null)
-                    {
-                        preloadValue.BitmapSource = ImageFunctions.ImageErrorMessage();
-                    }
-                }
-                else
-                {
-                    while (preloadValue.IsLoading)
-                    {
-                        // Make loading skippable
-                        if (FolderIndex != index)
+                        if (show)
                         {
-                            await Preloader.PreLoadAsync(index).ConfigureAwait(false);
-
-                            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+                            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                             {
-                                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                                SetLoadingString();
+                                if (thumb is not null)
                                 {
-                                    GalleryNavigation.FullscreenGalleryNavigation();
-                                });
-                            }
-                            return;
+                                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                                }
+                            });
+                            show = false;
                         }
-
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                        {
-                            SetLoadingString();
-                            if (thumb is not null)
-                            {
-                                ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                            }
-                        });
 
                         // Wait for finnished result
-                        await Task.Delay(20).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
-                    }
-                    if (preloadValue.BitmapSource == null) // Show image error, unload if showing image error somehow fails
-                    {
-                        preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false, null);
+                        await Task.Delay(50).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
 
-                        if (preloadValue == null || preloadValue.BitmapSource == null)
+                        // Ensure multiple instances are not running
+                        if (FolderIndex != index)
                         {
-                            await Preloader.PreLoadAsync(index).ConfigureAwait(false);
+                            Preloader.Remove(index);
                             return;
                         }
+
+                    } while (!Preloader.Contains(Pics[index]));
+                }
+
+                if (preloadValue is not null && preloadValue.BitmapSource is null && !preloadValue.IsLoading) // Show image error, unload if showing image error somehow fails
+                {
+                    preloadValue = new Preloader.PreloadValue(ImageFunctions.ImageErrorMessage(), false, null);
+
+                    if (preloadValue == null || preloadValue.BitmapSource == null)
+                    {
+                        await ReloadAsync(true).ConfigureAwait(false);
+                        return;
+                    }
+                }
+                if (preloadValue is null)
+                {
+                    preloadValue = Preloader.Get(Pics[index]);
+                    if (preloadValue is null)
+                    {
+                        await ReloadAsync(true).ConfigureAwait(false);
+                        return;
                     }
                 }
             }
 
-            // Make loading skippable
-            if (FolderIndex != index)
+            while (preloadValue.IsLoading)
             {
-                if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        GalleryNavigation.FullscreenGalleryNavigation();
-                    });
-                }
-                //await Preloader.PreLoad(index).ConfigureAwait(false);
-                return;
+                await Task.Delay(50).ConfigureAwait(false);
             }
 
             UpdatePic(index, preloadValue.BitmapSource, preloadValue.FileInfo);
 
-            // Update PicGallery selected item, if needed
             if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                {
-                    GalleryNavigation.FullscreenGalleryNavigation();
-                });
+                GalleryNavigation.FullscreenGalleryNavigation();
             }
-            else if (GetToolTipMessage is not null && GetToolTipMessage.IsVisible)
+
+            if (GetToolTipMessage is not null && GetToolTipMessage.IsVisible)
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
                 {

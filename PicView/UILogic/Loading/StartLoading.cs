@@ -56,6 +56,7 @@ namespace PicView.UILogic.Loading
         {
             var args = Environment.GetCommandLineArgs();
 
+            // Determine prefered UI for startup
             if (Settings.Default.StartInFullscreenGallery)
             {
                 if (args.Length <= 1)
@@ -67,9 +68,8 @@ namespace PicView.UILogic.Loading
                     await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                 }
             }
-
-            // Determine prefered UI for startup
-            if (Settings.Default.Fullscreen)
+            
+            else if (Settings.Default.Fullscreen)
             {
                 if (args.Length <= 1)
                 {
