@@ -56,7 +56,6 @@ namespace PicView.UILogic.DragAndDrop
                     Tooltip.ShowTooltipMessage(ex);
                     return;
                 }
-
             }
             else if (Pics.Count > FolderIndex)
             {

@@ -1,4 +1,5 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--  Chosen Color  -->
     <Color x:Key="ChosenColor">#F236BBFF</Color>
@@ -93,6 +94,4 @@
         G="210"
         R="210" />
     <SolidColorBrush x:Key="BackgroundHoverHighlightBrush" Color="{StaticResource BackgroundHoverHighlight}" />
-
-
 </ResourceDictionary>

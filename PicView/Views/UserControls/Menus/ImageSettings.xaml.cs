@@ -58,7 +58,6 @@ namespace PicView.Views.UserControls.Menus
 
                 await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
             };
-
         }
     }
 }

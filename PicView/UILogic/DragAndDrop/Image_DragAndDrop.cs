@@ -190,7 +190,7 @@ namespace PicView.UILogic.DragAndDrop
                 ConfigureWindows.GetMainWindow.Activate();
             });
 
-            // Open additional windows if multiple files dropped 
+            // Open additional windows if multiple files dropped
             if (files.Length > 0)
             {
                 for (int i = 1; i < files.Length; i++)

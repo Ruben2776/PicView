@@ -21,8 +21,8 @@ namespace PicView.ProcessHandling
                 Verb = "open"
             };
             Process.Start(ps);
-
         }
+
         internal static string? GetPathToProcess()
         {
             var GetAppPath = Environment.ProcessPath;
@@ -83,9 +83,9 @@ namespace PicView.ProcessHandling
             Process process = new()
             {
                 StartInfo =
-                        {
-                            FileName = pathToExe,
-                        }
+                {
+                    FileName = pathToExe,
+                }
             };
             process.Start();
         }

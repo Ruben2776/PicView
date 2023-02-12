@@ -5,16 +5,16 @@
     <UserControl.Resources>
         <SolidColorBrush x:Name="IconBrush" x:Key="IconBrush" Color="{StaticResource IconColor}" />
     </UserControl.Resources>
-    <Button 
+    <Button
         x:Name="TheButton"
-        Width="51" 
+        Width="51"
         Height="51">
         <Button.Background>
             <SolidColorBrush x:Name="ButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>
 
         <Canvas Width="51" Height="51">
-            <Image 
+            <Image
                 Height="20"
                 Canvas.Left="10"
                 Canvas.Top="15">
@@ -29,7 +29,7 @@
                 </Image.Source>
             </Image>
 
-            <Image 
+            <Image
                 Height="12"
                 Opacity=".8"
                 Canvas.Left="29"
@@ -44,8 +44,6 @@
                     </DrawingImage>
                 </Image.Source>
             </Image>
-
         </Canvas>
-
     </Button>
 </UserControl>

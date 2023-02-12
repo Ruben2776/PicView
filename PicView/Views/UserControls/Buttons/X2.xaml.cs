@@ -43,8 +43,6 @@ namespace PicView.Views.UserControls.Buttons
             {
                 MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
             };
-
-
         }
     }
 }

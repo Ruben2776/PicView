@@ -42,7 +42,6 @@ namespace PicView.ImageHandling
             }
         });
 
-
         internal static async Task OptimizeImageAsyncWithErrorChecking()
         {
             if (ErrorHandling.CheckOutOfRange()) { return; }
@@ -103,7 +102,6 @@ namespace PicView.ImageHandling
             {
                 Tooltip.ShowTooltipMessage("0%", toCenter);
             }
-
         }
 
         internal static async Task<bool> OptimizeImageAsync(string file, bool lossless = true) => await Task.Run(() =>
@@ -126,7 +124,6 @@ namespace PicView.ImageHandling
             {
                 return false;
             }
-
         });
 
         internal static RenderTargetBitmap? ImageErrorMessage()

@@ -21,11 +21,11 @@ using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows
 {
-
     public partial class ResizeWindow : Window
     {
-        bool running;
-        readonly List<BatchFunctions.ThumbNailHolder> thumbs = new();
+        private bool running;
+        private readonly List<BatchFunctions.ThumbNailHolder> thumbs = new();
+
         public ResizeWindow()
         {
             Title = Application.Current.Resources["BatchResize"] + " - PicView";
@@ -158,7 +158,7 @@ namespace PicView.Views.Windows
             };
         }
 
-        async Task Load()
+        private async Task Load()
         {
             running = true;
             CancellationTokenSource source = new CancellationTokenSource();
@@ -179,7 +179,7 @@ namespace PicView.Views.Windows
             finally { source.Dispose(); }
         }
 
-        void Loop(CancellationToken cancellationToken)
+        private void Loop(CancellationToken cancellationToken)
         {
             running = true;
 

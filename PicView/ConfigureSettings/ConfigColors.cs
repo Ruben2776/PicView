@@ -79,7 +79,7 @@ namespace PicView.ConfigureSettings
             w.LowerBar.Background = main2;
         }
 
-        #endregion
+        #endregion Window LostFocus style change
 
         #region Change background
 

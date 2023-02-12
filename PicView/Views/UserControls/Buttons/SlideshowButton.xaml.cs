@@ -28,7 +28,6 @@ namespace PicView.Views.UserControls.Buttons
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-
                 TheButton.Click += delegate
                 {
                     UC.Close_UserControls();
@@ -38,7 +37,6 @@ namespace PicView.Views.UserControls.Buttons
                 var s = Application.Current.Resources["StartSlideshow"] as string;
                 s += " [F5]";
                 ToolTip = s;
-
             };
         }
     }

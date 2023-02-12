@@ -379,8 +379,6 @@ namespace PicView.Views.Windows
             AltUIRadio.MouseEnter += delegate { ButtonMouseOverAnim(AltUIText); };
             AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
 
-
-
             // ScrollZoom
             ScrollZoom.MouseEnter += delegate
             {

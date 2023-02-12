@@ -295,10 +295,7 @@
                     </StackPanel>
                 </Border>
             </Border>
-
-
         </Canvas>
-
 
         <Rectangle
             Width="24"

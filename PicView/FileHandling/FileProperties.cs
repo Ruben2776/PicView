@@ -1,7 +1,6 @@
 ﻿using PicView.ChangeImage;
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace PicView.FileHandling
 {
@@ -42,19 +41,26 @@ namespace PicView.FileHandling
             public int cbSize;
             public uint fMask;
             public IntPtr hwnd;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public string lpVerb;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public string lpFile;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public string lpParameters;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public readonly string lpDirectory;
+
             public int nShow;
             public IntPtr hInstApp;
             public IntPtr lpIDList;
+
             [MarshalAs(UnmanagedType.LPTStr)]
             public readonly string lpClass;
+
             public IntPtr hkeyClass;
             public readonly uint dwHotKey;
             public IntPtr hIcon;

@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.Editing.Crop.State;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -130,7 +129,6 @@ namespace PicView.UILogic.Sizing
             var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
             var margin = 0d;
 
-
             if (GalleryFunctions.IsVerticalFullscreenOpen)
             {
                 padding += PicGalleryItem_Size - 50;
@@ -162,10 +160,12 @@ namespace PicView.UILogic.Sizing
                 case 180:
                     AspectRatio = Math.Min(maxWidth / width, maxHeight / height);
                     break;
+
                 case 90:
                 case 270:
                     AspectRatio = Math.Min(maxWidth / height, maxHeight / width);
                     break;
+
                 default:
                     var rotationRadians = RotationAngle * Math.PI / 180;
                     var newWidth = Math.Abs(width * Math.Cos(rotationRadians)) + Math.Abs(height * Math.Sin(rotationRadians));

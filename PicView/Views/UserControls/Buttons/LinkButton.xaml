@@ -9,7 +9,7 @@
         <Button.Background>
             <SolidColorBrush x:Name="CopyButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
         </Button.Background>
-        <Image             
+        <Image
             Width="16"
             Height="16"
             Stretch="Fill">
@@ -17,7 +17,7 @@
                 <DrawingImage>
                     <DrawingImage.Drawing>
                         <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M432,320L400,320A16,16,0,0,0,384,336L384,448 64,448 64,128 208,128A16,16,0,0,0,224,112L224,80A16,16,0,0,0,208,64L48,64A48,48,0,0,0,0,112L0,464A48,48,0,0,0,48,512L400,512A48,48,0,0,0,448,464L448,336A16,16,0,0,0,432,320z M488,0L360,0C338.63,0,327.95,25.91,343,41L378.73,76.73 135,320.37A24,24,0,0,0,135,354.37L157.67,377A24,24,0,0,0,191.67,377L435.28,133.32 471,169C486,184,512,173.5,512,152L512,24A24,24,0,0,0,488,0z" >
+                            <GeometryDrawing Geometry="F1 M512,512z M0,0z M432,320L400,320A16,16,0,0,0,384,336L384,448 64,448 64,128 208,128A16,16,0,0,0,224,112L224,80A16,16,0,0,0,208,64L48,64A48,48,0,0,0,0,112L0,464A48,48,0,0,0,48,512L400,512A48,48,0,0,0,448,464L448,336A16,16,0,0,0,432,320z M488,0L360,0C338.63,0,327.95,25.91,343,41L378.73,76.73 135,320.37A24,24,0,0,0,135,354.37L157.67,377A24,24,0,0,0,191.67,377L435.28,133.32 471,169C486,184,512,173.5,512,152L512,24A24,24,0,0,0,488,0z">
                                 <GeometryDrawing.Brush>
                                     <SolidColorBrush x:Name="IconBrush" Color="{StaticResource IconColor}" />
                                 </GeometryDrawing.Brush>

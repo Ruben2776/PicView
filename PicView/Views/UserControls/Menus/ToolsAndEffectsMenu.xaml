@@ -122,7 +122,6 @@
                                         </DrawingImage>
                                     </Image.Source>
                                 </Image>
-
                             </Canvas>
                         </StackPanel>
                     </Button>
@@ -458,7 +457,6 @@
                     Height="52" />
             </Canvas>
         </Border>
-
 
         <Rectangle
             Width="23"

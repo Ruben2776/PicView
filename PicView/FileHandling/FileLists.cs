@@ -112,7 +112,7 @@ namespace PicView.FileHandling
         {
             if (fileInfo is null)
             {
-                _= ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                _ = ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 return;
             }
             // Check if to load from archive

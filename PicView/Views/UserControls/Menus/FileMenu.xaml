@@ -42,7 +42,6 @@
                 Stroke="{DynamicResource BorderBrush}"
                 StrokeThickness="1" />
 
-
             <buttons:ReloadButton x:Name="ReloadButton" />
 
             <buttons:RecycleButton
@@ -65,7 +64,6 @@
                 Canvas.Left="156"
                 Canvas.Top="1"
                 Width="52" />
-
 
             <buttons:MenuCloseButton x:Name="CloseButton" Canvas.Left="207" />
 

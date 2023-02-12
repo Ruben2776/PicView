@@ -262,5 +262,4 @@ namespace PicView.Shortcuts
             }
         }
     }
-    
 }

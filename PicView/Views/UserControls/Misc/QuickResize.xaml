@@ -112,7 +112,6 @@
                         <SolidColorBrush x:Name="ApplyBrush" Color="{StaticResource MainColor}" />
                     </Label.Foreground>
                 </Label>
-
             </DockPanel>
         </Border>
     </Grid>

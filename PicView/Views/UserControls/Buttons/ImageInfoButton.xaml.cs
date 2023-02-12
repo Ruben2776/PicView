@@ -13,7 +13,6 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-
                 TheButton.MouseEnter += delegate
                 {
                     ButtonMouseOverAnim(IconBrush);

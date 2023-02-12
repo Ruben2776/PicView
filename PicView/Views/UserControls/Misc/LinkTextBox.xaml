@@ -28,5 +28,4 @@
             <buttons:LinkButton x:Name="linkButton" />
         </Border>
     </StackPanel>
-
 </UserControl>

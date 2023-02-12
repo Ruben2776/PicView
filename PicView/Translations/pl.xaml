@@ -390,5 +390,4 @@
     <system:String x:Key="Cancel">Anuluj</system:String>
 
     <system:String x:Key="None">Nic</system:String>
-
 </ResourceDictionary>

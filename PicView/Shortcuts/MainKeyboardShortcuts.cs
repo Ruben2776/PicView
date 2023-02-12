@@ -9,7 +9,6 @@ using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
 using PicView.Views.UserControls.Buttons;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,10 +63,12 @@ namespace PicView.Shortcuts
                         CropFunctions.CloseCrop();
                         e.Handled = true;
                         return;
+
                     case Key.Enter:
                         await CropFunctions.PerformCropAsync().ConfigureAwait(false);
                         e.Handled = true;
                         return;
+
                     default:
                         e.Handled = true;
                         return;

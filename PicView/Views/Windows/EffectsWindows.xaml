@@ -52,7 +52,6 @@
             DockPanel.Dock="Top"
             Fill="{StaticResource BorderBrush}" />
 
-
         <StackPanel>
 
             <WrapPanel
@@ -491,10 +490,7 @@
                         </TextBlock.Foreground>
                     </TextBlock>
                 </CheckBox>
-
-
             </WrapPanel>
-
 
             <Slider
                 x:Name="IntensitySlider"
@@ -581,11 +577,7 @@
                         </Button.Foreground>
                     </Button>
                 </Border>
-
-
             </StackPanel>
-
         </StackPanel>
-
     </DockPanel>
 </Window>

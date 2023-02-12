@@ -131,7 +131,7 @@ namespace PicView.ImageHandling
             return sb.ToString();
         }
 
-        static bool Optimize(bool lossless, string file)
+        private static bool Optimize(bool lossless, string file)
         {
             ImageOptimizer imageOptimizer = new()
             {

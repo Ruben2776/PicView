@@ -181,13 +181,11 @@ namespace PicView.UILogic.Loading
                 await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill).ConfigureAwait(false);
             };
 
-
             ///////////////////////////
             ///   ShowInFolder     \\\\
             ///////////////////////////
             var ShowInFolderCm = (MenuItem)MainContextMenu.Items[10];
             ShowInFolderCm.Click += (_, _) => Open_In_Explorer();
-
 
             ///////////////////////////
             ///   Image choices    \\\\
@@ -235,14 +233,12 @@ namespace PicView.UILogic.Loading
             var CopyBase64Cm = (MenuItem)CopyCm.Items[3];
             CopyBase64Cm.Click += async delegate { MainContextMenu.IsOpen = false; await Base64.SendToClipboard().ConfigureAwait(false); };
 
-
             ///////////////////////////
             ///   Cut File         \\\\
             ///////////////////////////
             var Cutcm = (MenuItem)MainContextMenu.Items[14];
             Cutcm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + X";
             Cutcm.Click += (_, _) => { MainContextMenu.IsOpen = false; Copy_Paste.Cut(); };
-
 
             ///////////////////////////
             ///   Paste File       \\\\
@@ -266,8 +262,6 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var CloseCm = (MenuItem)MainContextMenu.Items[19];
             CloseCm.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
-
-
         }
     }
 }

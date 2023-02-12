@@ -24,7 +24,7 @@
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
-        
+
         <DockPanel
             x:Name="TitleBar"
             Height="30"
@@ -414,8 +414,6 @@
                     Height="25"
                     Fill="{StaticResource BorderBrush}" />
             </Canvas>
-
-
         </Grid>
 
         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
@@ -481,9 +479,5 @@
                     IsHitTestVisible="False" />
             </Grid>
         </Border>
-
-
-
     </DockPanel>
-
 </Window>

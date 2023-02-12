@@ -7,7 +7,6 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.FileFunctions;
 using static PicView.UILogic.TransformImage.ZoomLogic;
 
 namespace PicView.ChangeTitlebar
@@ -96,7 +95,6 @@ namespace PicView.ChangeTitlebar
 #if DEBUG
             Trace.WriteLine(exception);
 #endif
-
             return new[]
             {
                 (string)Application.Current.Resources["UnexpectedError"],
@@ -104,7 +102,6 @@ namespace PicView.ChangeTitlebar
                 (string)Application.Current.Resources["UnexpectedError"]
             };
         }
-
 
         /// <summary>
         /// Sets title string with file name, folder position,

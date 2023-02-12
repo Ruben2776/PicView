@@ -1,8 +1,6 @@
 ﻿using PicView.FileHandling;
 using PicView.UILogic;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -10,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace PicView.ChangeImage
 {
@@ -134,7 +131,7 @@ namespace PicView.ChangeImage
             await LoadPic.LoadPicFromStringAsync(fileHistory[index]).ConfigureAwait(false);
         }
 
-        static MenuItem menuItem(string filePath, int i)
+        private static MenuItem menuItem(string filePath, int i)
         {
             bool selected;
             if (ErrorHandling.CheckOutOfRange())

@@ -86,7 +86,6 @@ namespace PicView.PicGallery
             for (int i = 0; i < Navigation.Pics.Count; i++)
             {
                 GalleryLoad.Add(i, Navigation.FolderIndex);
-
             }
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
@@ -117,7 +116,6 @@ namespace PicView.PicGallery
                 Trace.WriteLine("Cleared Gallery children");
 #endif
             }));
-
         }
     }
 }

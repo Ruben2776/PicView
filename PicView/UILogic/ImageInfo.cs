@@ -14,7 +14,7 @@ namespace PicView.UILogic
 {
     internal static class ImageInfo
     {
-        static object? rating;
+        private static object? rating;
 
         internal static async Task RenameTask(KeyEventArgs e, TextBox textBox, string file)
         {
@@ -386,7 +386,7 @@ namespace PicView.UILogic
             });
         }
 
-        static void Clear()
+        private static void Clear()
         {
             if (ConfigureWindows.GetImageInfoWindow is null) { return; }
 
@@ -464,6 +464,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 1:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.OutlineStar();
@@ -471,6 +472,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 2:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();
@@ -478,6 +480,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 3:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();
@@ -485,6 +488,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 4:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();
@@ -492,6 +496,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 5:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();

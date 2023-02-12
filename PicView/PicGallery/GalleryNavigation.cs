@@ -65,7 +65,6 @@ namespace PicView.PicGallery
 
         #endregion int calculations
 
-
         #region ScrollTo
 
         /// <summary>
@@ -207,6 +206,7 @@ namespace PicView.PicGallery
         }
 
         internal static int SelectedGalleryItem { get; set; }
+
         internal static void HorizontalNavigation(Direction direction)
         {
             var backup = SelectedGalleryItem;
@@ -216,12 +216,15 @@ namespace PicView.PicGallery
                 case Direction.Up:
                     SelectedGalleryItem--;
                     break;
+
                 case Direction.Down:
                     SelectedGalleryItem++;
                     break;
+
                 case Direction.Left:
                     SelectedGalleryItem = SelectedGalleryItem - Vertical_items;
                     break;
+
                 case Direction.Right:
                     SelectedGalleryItem = SelectedGalleryItem + Vertical_items;
                     break;
@@ -316,6 +319,6 @@ namespace PicView.PicGallery
             }
         }
 
-        #endregion
+        #endregion Horizontal Gallery Navigation
     }
 }

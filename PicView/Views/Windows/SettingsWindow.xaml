@@ -48,7 +48,6 @@
                 FontSize="14"
                 Text="{StaticResource Settings}"
                 TextAlignment="Center" />
-
         </DockPanel>
 
         <Rectangle
@@ -401,7 +400,6 @@
                             IsTabStop="False"
                             TextAlignment="Center" />
                     </StackPanel>
-
                 </StackPanel>
             </TabItem>
             <TabItem>

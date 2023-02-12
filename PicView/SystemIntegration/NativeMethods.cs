@@ -4,10 +4,8 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -40,12 +38,13 @@ namespace PicView.SystemIntegration
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint SetThreadExecutionState([In] uint esFlags);
 
-        #endregion Remove from Alt + tab
+        #endregion Disable Screensaver and Power options
 
         #region windproc
 
         // https://stackoverflow.com/a/60938929/13646636
         private const int WM_SIZING = 0x214;
+
         // Message list = https://wiki.winehq.org/List_Of_Windows_Messages
 
         /// Supress warnings about unused parameters, because they are required by OS.
@@ -117,6 +116,7 @@ namespace PicView.SystemIntegration
                 throw new NotImplementedException();
             }
         }
+
         private enum AccentState
         {
             ACCENT_DISABLED = 0,
@@ -166,6 +166,7 @@ namespace PicView.SystemIntegration
             public int SizeOfData;
 
 #pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
+
             public override bool Equals(object obj)
 #pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             {
@@ -259,7 +260,6 @@ namespace PicView.SystemIntegration
             object? result = fileKey.GetValue(string.Empty);
             if (result == null) { return null; }
             fileKey.Close();
-
 
             return (string)result;
         }

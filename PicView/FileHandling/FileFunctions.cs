@@ -1,13 +1,11 @@
 ﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
-using PicView.SystemIntegration;
 using PicView.UILogic;
 using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -109,7 +107,6 @@ namespace PicView.FileHandling
             return true;
         }
 
-
         /// <summary>
         /// Returns the human-readable file size for an arbitrary, 64-bit file size
         /// The default format is "0.### XB", e.g. "4.2 KB" or "1.434 GB"
@@ -140,6 +137,7 @@ namespace PicView.FileHandling
                     prefix = 'K';
                     value = i;
                     break;
+
                 default:
                     return i.ToString(sign + "0 B", CultureInfo.CurrentCulture); // Byte
             }
@@ -177,6 +175,7 @@ namespace PicView.FileHandling
 
         [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
         private static partial Regex URLregex();
+
         internal static string GetURL(this string value)
         {
             try
@@ -191,7 +190,5 @@ namespace PicView.FileHandling
                 return string.Empty;
             }
         }
-
-
     }
 }

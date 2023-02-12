@@ -41,6 +41,7 @@ namespace PicView.Shortcuts
                 case Key.Back:
                 case Key.Delete:
                     break;
+
                 case Key.Left:
                 case Key.Right:
                 case Key.Tab:
@@ -174,7 +175,7 @@ namespace PicView.Shortcuts
             return true;
         }
 
-        static async Task<bool> FirePercentageAsync(string text, string file)
+        private static async Task<bool> FirePercentageAsync(string text, string file)
         {
             var percentage = ReturnPercentageFromString(text);
             if (!(percentage > 0)) { return false; }
@@ -187,7 +188,7 @@ namespace PicView.Shortcuts
             return true;
         }
 
-        static double ReturnPercentageFromString(string text)
+        private static double ReturnPercentageFromString(string text)
         {
             foreach (Match match in MyRegex().Matches(text)) // Find % sign
             {

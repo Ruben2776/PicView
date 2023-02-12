@@ -29,7 +29,7 @@ namespace PicView.ImageHandling
             return await Task.FromResult(Base64FromBytes(binaryData)).ConfigureAwait(false);
         });
 
-        static BitmapSource? Base64FromBytes(byte[] binaryData)
+        private static BitmapSource? Base64FromBytes(byte[] binaryData)
         {
             using MagickImage magick = new MagickImage();
             var mrs = new MagickReadSettings

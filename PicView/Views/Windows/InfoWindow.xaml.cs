@@ -16,7 +16,7 @@ namespace PicView.Views.Windows
 {
     public partial class InfoWindow : Window
     {
-        double startheight, extendedheight;
+        private double startheight, extendedheight;
 
         public InfoWindow()
         {

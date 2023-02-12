@@ -5,6 +5,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace PicView.PicGallery
     internal static class GalleryLoad
     {
         internal static bool IsLoading { get; private set; }
+
         internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
         {
             // Add events and set fields, when it's loaded.
@@ -104,7 +106,6 @@ namespace PicView.PicGallery
                     GalleryFunctions.IsVerticalFullscreenOpen = true;
                 }
 
-
                 UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
 
                 ShowNavigation(false);
@@ -135,13 +136,11 @@ namespace PicView.PicGallery
                 UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
                 UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
 
-
                 // Make sure booleans are correct
                 GalleryFunctions.IsHorizontalOpen = true;
                 GalleryFunctions.IsHorizontalFullscreenOpen = false;
                 GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
-
 
             if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
             var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
@@ -176,7 +175,7 @@ namespace PicView.PicGallery
             finally { source.Dispose(); }
         }
 
-        static async Task LoopAsync(CancellationToken cancellationToken)
+        private static async Task LoopAsync(CancellationToken cancellationToken)
         {
             if (UC.GetPicGallery is null) { return; }
 
@@ -244,11 +243,13 @@ namespace PicView.PicGallery
 
                     var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                     item.img.Source = pic;
-
                 }));
             }
-            catch (Exception)
+            catch (Exception e)
             {
+#if DEBUG
+                Trace.WriteLine(e.Message);
+#endif
                 // Suppress task cancellation
             }
         }

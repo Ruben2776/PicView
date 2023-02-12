@@ -22,7 +22,6 @@ namespace PicView.ImageHandling
                     {
                         magickImage = ImageDecoder.GetRenderedMagickImage();
                     });
-
                 }
                 else if (bitmapSource is not null)
                 {

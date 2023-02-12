@@ -60,7 +60,6 @@
                 FontSize="13"
                 Text="{StaticResource BatchResize}"
                 TextAlignment="Center" />
-
         </DockPanel>
 
         <Rectangle
@@ -97,8 +96,6 @@
                 <buttons:FolderButton x:Name="OutputFolderButton" />
             </StackPanel>
 
-
-
             <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
                 <TextBlock Text="{StaticResource ConvertTo}" />
                 <ComboBox MinWidth="130">
@@ -108,8 +105,6 @@
                     <ComboBoxItem Name="png" Content=".png" />
                 </ComboBox>
             </StackPanel>
-
-
 
             <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
                 <StackPanel.Style>
@@ -297,7 +292,6 @@
                 <StackPanel x:Name="GeneratedThumbnailsContainer" />
             </ScrollViewer>
 
-
             <TextBox
                 x:Name="LogTextBox"
                 Height="150"
@@ -373,10 +367,7 @@
                         </Label.Foreground>
                     </Label>
                 </Border>
-
             </StackPanel>
-
         </StackPanel>
-
     </DockPanel>
 </Window>

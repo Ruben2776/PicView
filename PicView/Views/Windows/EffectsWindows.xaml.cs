@@ -184,7 +184,7 @@ namespace PicView.Views.Windows
             CopyButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CopyBrush); };
             CopyButton.Click += (_, _) => Copy_Paste.CopyBitmap();
 
-            #endregion
+            #endregion button events
         }
 
         private void IntensitySlider_ValueChanged()
@@ -277,7 +277,6 @@ namespace PicView.Views.Windows
             {
                 SketchPencilStrokeEffect();
             }
-
         }
 
         #region HLSL Shader Effects

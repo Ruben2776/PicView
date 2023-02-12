@@ -197,6 +197,5 @@ namespace PicView.UILogic
         }
 
         #endregion Windows
-
     }
 }

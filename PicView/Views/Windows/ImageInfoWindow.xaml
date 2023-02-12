@@ -140,7 +140,6 @@
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="2" />
         </Style>
-
     </Window.Resources>
 
     <DockPanel>
@@ -216,12 +215,10 @@
                 </Button.Background>
             </Button>
 
-
             <Rectangle
                 Width="1"
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
-
 
             <Button
                 x:Name="OpenWith"
@@ -301,7 +298,6 @@
                 Height="30"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
-
         </DockPanel>
 
         <Border
@@ -585,9 +581,7 @@
                                 </Border>
                             </StackPanel>
                         </StackPanel>
-
                     </StackPanel>
-
 
                     <StackPanel Margin="0,7,0,0" DockPanel.Dock="Bottom">
 
@@ -619,7 +613,6 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal" />
                     </StackPanel>
-
                 </DockPanel>
             </ScrollViewer>
         </Border>

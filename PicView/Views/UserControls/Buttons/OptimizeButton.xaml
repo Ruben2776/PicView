@@ -17,7 +17,7 @@
             Width="20"
             Height="20">
             <Image.Source>
-                <DrawingImage >
+                <DrawingImage>
                     <DrawingImage.Drawing>
                         <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
                             <GeometryDrawing Geometry="F1 M512,512z M0,0z M448,256C448,150 362,64 256,64 150,64 64,150 64,256 64,362 150,448 256,448 362,448 448,362 448,256z">

@@ -52,7 +52,6 @@ namespace PicView.Views.UserControls.Menus
                 CropFunctions.StartCrop();
             };
 
-
             #region Animation events
 
             // Toggle Scroll

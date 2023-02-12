@@ -3,7 +3,6 @@ using PicView.UILogic;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -55,8 +54,8 @@ namespace PicView.ImageHandling
             }
         }
 
-
         #region Render Image From Source
+
         /// <summary>
         /// Returns the currently viewed bitmap image to MagickImage
         /// </summary>
@@ -142,7 +141,7 @@ namespace PicView.ImageHandling
             }
         }
 
-        #endregion
+        #endregion Render Image From Source
 
         #region Private functions
 
@@ -210,7 +209,6 @@ namespace PicView.ImageHandling
                     sKBitmap.Dispose();
                     return skPic;
                 }
-
             }
             catch (Exception e)
             {
@@ -249,6 +247,6 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        #endregion
+        #endregion Private functions
     }
 }

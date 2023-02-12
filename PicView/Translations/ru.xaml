@@ -390,5 +390,4 @@
     <system:String x:Key="Cancel">Отмена</system:String>
 
     <system:String x:Key="None">Никто</system:String>
-
 </ResourceDictionary>

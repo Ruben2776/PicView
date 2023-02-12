@@ -82,8 +82,6 @@
 
             <StackPanel>
 
-
-
                 <StackPanel Margin="0,36,0,0">
 
                     <Image
@@ -184,7 +182,6 @@
                             </Label.Foreground>
                         </Label>
                     </Border>
-
                 </StackPanel>
 
                 <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
@@ -738,7 +735,6 @@
                             <TextBlock FontSize="12" Text="I" />
                         </StackPanel>
                     </Border>
-
                 </Grid>
 
                 <Label
@@ -1966,7 +1962,6 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,1,0" />
 
-
                     <Border
                         Grid.Row="3"
                         Grid.Column="0"
@@ -2000,14 +1995,13 @@
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="0,0,1,0" >
+                        BorderThickness="0,0,1,0">
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="12"
                             Text="F9" />
                     </Border>
-
 
                     <Border
                         Grid.Row="4"
@@ -2261,8 +2255,6 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
-
-
                 </Grid>
 
                 <Label
@@ -2483,7 +2475,6 @@
                         </Hyperlink>
                     </TextBlock>
                 </StackPanel>
-
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

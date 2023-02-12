@@ -207,7 +207,6 @@ namespace PicView.UILogic.Sizing
 
                 SetWindowBehavior();
 
-
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                 {
                     Slideshow.SlideTimer.Enabled = false;
@@ -306,9 +305,11 @@ namespace PicView.UILogic.Sizing
                         Fullscreen_Restore();
                     }
                     return;
+
                 case WindowState.Maximized:
                     SetMaximized();
                     return;
+
                 default:
                     return;
             }
@@ -362,7 +363,7 @@ namespace PicView.UILogic.Sizing
                     Settings.Default.StartInFullscreenGallery = false;
                 }
             }
-            else if (Properties.Settings.Default.Fullscreen == false) 
+            else if (Properties.Settings.Default.Fullscreen == false)
             {
                 Settings.Default.StartInFullscreenGallery = false;
             }

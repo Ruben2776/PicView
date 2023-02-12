@@ -40,7 +40,7 @@ namespace PicView.UILogic
             UC.Close_UserControls();
 
             // Recalculate to new size
-            var timer = new Timer(50) // If not fired in timer, calculation incorrect 
+            var timer = new Timer(50) // If not fired in timer, calculation incorrect
             {
                 AutoReset = false,
                 Enabled = true,

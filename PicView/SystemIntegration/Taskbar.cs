@@ -1,6 +1,4 @@
-﻿
-
-using PicView.UILogic;
+﻿using PicView.UILogic;
 using System.Threading.Tasks;
 using System.Windows.Shell;
 using System.Windows.Threading;
@@ -39,7 +37,7 @@ namespace PicView.SystemIntegration
             await SetAsync(taskbar).ConfigureAwait(false);
         }
 
-        static async Task SetAsync(TaskbarItemInfo taskbar)
+        private static async Task SetAsync(TaskbarItemInfo taskbar)
         {
             taskbar.Freeze();
             try

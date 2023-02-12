@@ -8,6 +8,7 @@ namespace PicView.Views.UserControls.Gallery
     public partial class PicGalleryItem : UserControl
     {
         internal int Id { get; set; }
+
         public PicGalleryItem(ImageSource? pic, int id, bool selected)
         {
             InitializeComponent();

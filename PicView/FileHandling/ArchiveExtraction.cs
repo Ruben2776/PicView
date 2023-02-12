@@ -41,7 +41,7 @@ namespace PicView.FileHandling
             return Extract(path, extractAppPath, extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
         }
 
-        static string? GetExtractAppPath(string[] commonPaths, string[] appNames)
+        private static string? GetExtractAppPath(string[] commonPaths, string[] appNames)
         {
             if (appNames == null || commonPaths == null)
             {
@@ -170,7 +170,6 @@ namespace PicView.FileHandling
 
             return true;
         }
-
 
         internal static bool CreateTempDirectory(string path)
         {

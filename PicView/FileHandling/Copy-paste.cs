@@ -151,7 +151,7 @@ namespace PicView.FileHandling
             data.SetData("Preferred DropEffect", dropEffect);
 
             Clipboard.Clear();
-            Clipboard.SetDataObject(data, true); 
+            Clipboard.SetDataObject(data, true);
             ShowTooltipMessage(Application.Current.Resources["FileCutMessage"]);
         }
     }

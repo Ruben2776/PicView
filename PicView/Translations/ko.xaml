@@ -390,5 +390,4 @@
     <system:String x:Key="Cancel">취소</system:String>
 
     <system:String x:Key="None">없음</system:String>
-
 </ResourceDictionary>

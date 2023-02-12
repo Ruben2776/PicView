@@ -78,7 +78,6 @@ namespace PicView.Animations
                 AnimationHelper.Fade(Getx2, opacity, timespan);
                 AnimationHelper.Fade(GetMinus, opacity, timespan);
                 AnimationHelper.Fade(GetRestorebutton, opacity, timespan);
-
             }));
         }
 
