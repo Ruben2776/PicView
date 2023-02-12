@@ -175,7 +175,7 @@ namespace PicView.ChangeImage
                 switch (check)
                 {
                     default: await LoadPiFromFileAsync(check).ConfigureAwait(false); return;
-                    case "web": await WebFunctions.PicWeb(path).ConfigureAwait(false); return;
+                    case "web": await HttpFunctions.LoadPicFromURL(path).ConfigureAwait(false); return;
                     case "base64": await LoadBase64PicAsync(path).ConfigureAwait(false); return;
                     case "directory": await LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
                     case "": ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => { Unload(true); }); return;

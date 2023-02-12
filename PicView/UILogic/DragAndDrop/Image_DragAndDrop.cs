@@ -145,7 +145,7 @@ namespace PicView.UILogic.DragAndDrop
                     string dataStr = Encoding.Unicode.GetString(data.ToArray());
                     string[] parts = dataStr.Split((char)10);
 
-                    await WebFunctions.PicWeb(parts[0]).ConfigureAwait(false);
+                    await HttpFunctions.LoadPicFromURL(parts[0]).ConfigureAwait(false);
                     return;
                 }
             }

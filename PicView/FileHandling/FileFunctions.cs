@@ -15,10 +15,12 @@ namespace PicView.FileHandling
     internal static partial class FileFunctions
     {
         /// <summary>
-        /// Returns true if directory
+        /// CheckIfDirectoryOrFile method checks if a given path is a directory or a file.
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
+        /// <param name="path">The path to check.</param>
+        /// <returns>
+        /// A nullable boolean indicating whether the given path is a directory (true), a file (false), or neither (null).
+        /// </returns>
         internal static bool? CheckIfDirectoryOrFile(string path)
         {
             try
@@ -32,6 +34,14 @@ namespace PicView.FileHandling
             }
         }
 
+        /// <summary>
+        /// RenameFile method renames a file.
+        /// </summary>
+        /// <param name="path">The original path of the file.</param>
+        /// <param name="newPath">The new path of the file.</param>
+        /// <returns>
+        /// A boolean indicating whether the file was successfully renamed or not.
+        /// </returns>
         internal static bool RenameFile(string path, string newPath)
         {
             try
@@ -146,6 +156,13 @@ namespace PicView.FileHandling
             return sign + value.ToString("0.## ", CultureInfo.CurrentCulture) + prefix + 'B';
         }
 
+        /// <summary>
+        /// Shortens the given string `name` to the given `amount` and appends "..." to it.
+        /// If the length of `name` is less than 25, returns `name` as it is.
+        /// </summary>
+        /// <param name="name">The string to shorten</param>
+        /// <param name="amount">The length to shorten the string to</param>
+        /// <returns>The shortened string</returns>
         internal static string Shorten(this string name, int amount)
         {
             if (name.Length < 25) { return name; }
@@ -155,6 +172,12 @@ namespace PicView.FileHandling
             return name;
         }
 
+        /// <summary>
+        /// Returns the file path of the default configuration file for the specified `userLevel`.
+        /// If there's a `ConfigurationException` thrown, returns the `Filename` from the exception.
+        /// </summary>
+        /// <param name="userLevel">The `userLevel` for which to get the configuration file</param>
+        /// <returns>The file path of the default configuration file</returns>
         internal static string GetDefaultExeConfigPath(ConfigurationUserLevel userLevel)
         {
             try
@@ -168,6 +191,10 @@ namespace PicView.FileHandling
             }
         }
 
+        /// <summary>
+        /// Returns the directory path of the default configuration file for the specified `userLevel` with PerUserRoamingAndLocal value.
+        /// </summary>
+        /// <returns>The directory path of the default configuration file</returns>
         internal static string? GetWritingPath()
         {
             return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
@@ -176,6 +203,12 @@ namespace PicView.FileHandling
         [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
         private static partial Regex URLregex();
 
+        /// <summary>
+        /// Returns the URL contained in the given string `value` by matching it against a regex pattern.
+        /// If there's an exception thrown, returns an empty string.
+        /// </summary>
+        /// <param name="value">The string to find the URL in</param>
+        /// <returns>The URL contained in the string, or an empty string if no URL is found or an exception is thrown</returns>
         internal static string GetURL(this string value)
         {
             try

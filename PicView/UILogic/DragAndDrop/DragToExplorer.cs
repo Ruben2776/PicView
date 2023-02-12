@@ -44,7 +44,7 @@ namespace PicView.UILogic.DragAndDrop
                     string url = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                     if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
                     {
-                        file = await WebFunctions.DownloadData(url, false).ConfigureAwait(false);
+                        file = await HttpFunctions.DownloadData(url, false).ConfigureAwait(false);
                     }
                     else
                     {
