@@ -29,6 +29,7 @@ namespace PicView.ChangeImage
     internal static class LoadPic
     {
         #region QuickLoad
+
         /// <summary>
         /// Quickly load image and then update values
         /// </summary>
@@ -136,7 +137,7 @@ namespace PicView.ChangeImage
             }
         }
 
-        #endregion
+        #endregion QuickLoad
 
         #region LoadPicAtValue
 
@@ -463,8 +464,7 @@ namespace PicView.ChangeImage
                         }
 
                         // Wait for finnished result
-                        await Task.Delay(50).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
-
+                        await Task.Delay(20).ConfigureAwait(false); // Using task delay makes it responsive and enables showing thumb whilst loading
                     } while (!Preloader.Contains(Pics[index]));
                 }
 
@@ -511,6 +511,7 @@ namespace PicView.ChangeImage
 
             if (Pics?.Count > 1)
             {
+                await Preloader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
                 await Preloader.PreLoadAsync(index).ConfigureAwait(false);
 
                 if (FolderIndex == index)
@@ -535,7 +536,7 @@ namespace PicView.ChangeImage
             }
         }
 
-        #endregion
+        #endregion LoadPicAtValue
 
         #region UpdatePic
 
@@ -693,8 +694,6 @@ namespace PicView.ChangeImage
             FolderIndex = 0;
 
             DeleteFiles.DeleteTempFiles();
-
-
         }
 
         /// <summary>
@@ -721,7 +720,7 @@ namespace PicView.ChangeImage
             await UpdatePicAsync(b64, pic).ConfigureAwait(false);
         }
 
-        #endregion
+        #endregion UpdatePic
 
         internal static void LoadingPreview(FileInfo fileInfo)
         {

@@ -1,11 +1,8 @@
 ﻿using PicView.ImageHandling;
-using PicView.Properties;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -53,12 +50,16 @@ namespace PicView.ChangeImage
             {
                 return false;
             }
-
-            var preloadValue = new PreloadValue(null, true, null);
-            _preloadList.TryAdd(Pics[index], preloadValue);
-
             try
             {
+                if (fileInfo is not null && bitmapSource is not null)
+                {
+                    return _preloadList.TryAdd(Pics[index], new PreloadValue(bitmapSource, false, fileInfo));
+                }
+
+                var preloadValue = new PreloadValue(null, true, null);
+                _preloadList.TryAdd(Pics[index], preloadValue);
+
                 fileInfo = fileInfo ?? new FileInfo(Pics[index]);
                 bitmapSource = bitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preloadValue.BitmapSource = bitmapSource;
@@ -86,7 +87,6 @@ namespace PicView.ChangeImage
             {
                 key = Math.Abs(key);
             }
-
             else if (key >= Pics?.Count)
             {
 #if DEBUG
@@ -123,7 +123,6 @@ namespace PicView.ChangeImage
                 return;
             }
 #endif
-
         }
 
         internal static bool Rename(string file, string name)
@@ -174,7 +173,6 @@ namespace PicView.ChangeImage
         {
             return !_preloadList.IsEmpty && _preloadList.ContainsKey(key);
         }
-
 
         /// <summary>
         /// Starts decoding images into memory,
@@ -230,7 +228,7 @@ namespace PicView.ChangeImage
                 }
 
                 //Clean up behind
-                endPoint = endPoint + loadBehind;             
+                endPoint = endPoint + loadBehind;
                 for (int i = currentIndex - loadInfront; i <= endPoint; i++)
                 {
                     if (Pics.Count == 0 || Pics.Count == _preloadList.Count) { return; }
@@ -238,6 +236,5 @@ namespace PicView.ChangeImage
                 }
             }
         });
-
     }
 }
