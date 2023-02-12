@@ -22,7 +22,7 @@ namespace PicView.Translations
             switch (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)
             {
                 case "da":
-                    source = new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative);
+                    source = new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative);
                     break;
 
                 case "de":
