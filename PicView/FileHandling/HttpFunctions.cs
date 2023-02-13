@@ -100,7 +100,7 @@ namespace PicView.FileHandling
             if (totalFileSize.HasValue && totalBytesDownloaded.HasValue && progressPercentage.HasValue)
             {
                 string percentComplete = (string)Application.Current.Resources["PercentComplete"];
-                string displayProgress = $"{(int)progressPercentage} {percentComplete}";
+                string displayProgress = $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
 
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(
                     DispatcherPriority.Normal,
@@ -160,13 +160,13 @@ namespace PicView.FileHandling
                     var totalBytesRead = 0L;
                     while (true)
                     {
-                        int bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length);
+                        int bytesRead = await contentStream.ReadAsync(buffer);
                         if (bytesRead == 0)
                         {
                             break;
                         }
 
-                        await fileStream.WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);
+                        await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead)).ConfigureAwait(false);
                         totalBytesRead += bytesRead;
 
                         if (totalDownloadSize.HasValue)

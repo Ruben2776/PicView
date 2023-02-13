@@ -39,7 +39,9 @@ namespace PicView.ConfigureSettings
 
             Settings.Default.Save();
         }
-
+        /// <summary>
+        /// Apply color varaibles from themes
+        /// </summary>
         internal static void SetColors()
         {
             MainColor = (Color)Application.Current.Resources["IconColor"];

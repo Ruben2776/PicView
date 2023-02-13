@@ -61,13 +61,14 @@ namespace PicView.UILogic.Loading
             {
                 if (args.Length <= 1)
                 {
-                    Settings.Default.StartInFullscreenGallery = false;
+                    Settings.Default.StartInFullscreenGallery= false;
                 }
                 else
                 {
                     await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                 }
             }
+            
             else if (Settings.Default.Fullscreen)
             {
                 if (args.Length <= 1)
@@ -82,6 +83,7 @@ namespace PicView.UILogic.Loading
                     }));
                 }
             }
+
             else if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
@@ -103,7 +105,7 @@ namespace PicView.UILogic.Loading
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
                 {
-                    Unload(true); // Load clean setup when starting up without arguments
+                    Unload(true); // Load clean setup when starting up without arguments       
                 }));
             }
             else

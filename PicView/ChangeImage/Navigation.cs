@@ -69,11 +69,12 @@ namespace PicView.ChangeImage
         #region Change navigation values
 
         /// <summary>
-        /// Goes to next, previous, first or last file in folder
+        /// Asynchronous method that navigates to the next/previous picture
         /// </summary>
-        /// <param name="forward">Whether it's forward or not</param>
-        /// <param name="end">Whether to go to last or first,
-        /// depending on the next value</param>
+        /// <param name="forward">Indicates whether to navigate to the next (true) or previous (false) picture. Defaults to true.</param>
+        /// <param name="end">Indicates whether to navigate to the first (false) or last (true) picture. Defaults to false.</param>
+        /// <param name="fastPic">Indicates whether to use FastPic navigation or not. Defaults to false.</param>
+        /// <returns></returns>
         internal static async Task NavigateToPicAsync(bool forward = true, bool end = false, bool fastPic = false)
         {
             int prev = FolderIndex;
@@ -95,6 +96,12 @@ namespace PicView.ChangeImage
             await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Calculates the index of the next/previous picture.
+        /// </summary>
+        /// <param name="forward">Indicates whether to navigate to the next (true) or previous (false) picture. Defaults to true.</param>
+        /// <param name="end">ndicates whether to navigate to the first (false) or last (true) picture. Defaults to false.</param>
+        /// <returns></returns>
         internal static int GetImageIterateIndex(bool forward = true, bool end = false)
         {
             // Exit if not intended to change picture

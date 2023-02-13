@@ -317,7 +317,7 @@ namespace PicView.ChangeImage
 
             if (Pics.Count < 0) // TODO make function to find first folder with pics, when not browsing recursively
             {
-                await ReloadAsync(true).ConfigureAwait(false);
+                await ReloadAsync().ConfigureAwait(false);
                 return;
             }
 
@@ -347,27 +347,9 @@ namespace PicView.ChangeImage
         /// <param name="index">The index of file to load from Pics</param>
         internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
         {
-            if (Pics?.Count < index || Pics?.Count < 1)
+            if (ErrorHandling.CheckOutOfRange())
             {
-                //  Prevent infinite loading when dropping folder and can't find file
-                try
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
-                    {
-                        if (ConfigureWindows.GetMainWindow.TitleText.Text == (string)Application.Current.Resources["Loading"])
-                        {
-                            await ReloadAsync(true).ConfigureAwait(false);
-                        }
-                    });
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine(e.Message);
-#endif
-                    await ReloadAsync(true).ConfigureAwait(false);
-                }
-
+                await ReloadAsync().ConfigureAwait(false);
                 return;
             }
 
@@ -377,45 +359,44 @@ namespace PicView.ChangeImage
             // Initate loading behavior, if needed
             if (preloadValue == null || preloadValue.IsLoading)
             {
-                // Show a thumbnail while loading
                 BitmapSource? thumb = null;
-
-                if (GalleryFunctions.IsHorizontalFullscreenOpen == false || GalleryFunctions.IsVerticalFullscreenOpen == false)
+                var fileExists = false;
+                if (!GalleryFunctions.IsHorizontalFullscreenOpen && !GalleryFunctions.IsVerticalFullscreenOpen)
                 {
                     if (fileInfo is null)
                     {
                         fileInfo = new FileInfo(Pics[FolderIndex]);
                     }
-                    if (fileInfo.Exists)
+                    fileExists = fileInfo.Exists;
+                    if (fileExists)
                     {
-                        thumb = GetBitmapSourceThumb(fileInfo);
                         try
                         {
                             thumb = GetBitmapSourceThumb(fileInfo);
                         }
                         catch (Exception)
                         {
-                            thumb = null;
+                            await ReloadAsync().ConfigureAwait(false);
+                            return;
                         }
                     }
                     else
                     {
                         try // Fix deleting files outside application
                         {
-                            var x = index - 1 >= 0 ? index - 1 : 0;
-                            fileInfo = new FileInfo(Pics[x]);
                             await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
-                            await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+                            await LoadPicAtIndexAsync(GetImageIterateIndex(Reverse, false)).ConfigureAwait(false);
                             return;
                         }
                         catch (Exception)
                         {
-                            thumb = null;
+                            await ReloadAsync().ConfigureAwait(false);
+                            return;
                         }
                     }
                 }
 
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
                     if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                     {
@@ -423,20 +404,13 @@ namespace PicView.ChangeImage
                         GalleryNavigation.FullscreenGalleryNavigation();
                     }
 
-                    if (FreshStartup)
-                    {
-                        // Set loading from translation service
-                        SetLoadingString();
-                        FreshStartup = false;
-                    }
-
-                    // Don't allow image size to stretch the whole screen
                     if (XWidth == 0)
                     {
                         ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
                         ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                     }
                 });
+
 
                 if (preloadValue is null)
                 {
@@ -454,7 +428,6 @@ namespace PicView.ChangeImage
                         {
                             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                             {
-                                SetLoadingString();
                                 if (thumb is not null)
                                 {
                                     ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
@@ -474,7 +447,7 @@ namespace PicView.ChangeImage
 
                     if (preloadValue == null || preloadValue.BitmapSource == null)
                     {
-                        await ReloadAsync(true).ConfigureAwait(false);
+                        await ReloadAsync().ConfigureAwait(false);
                         return;
                     }
                 }
@@ -483,7 +456,7 @@ namespace PicView.ChangeImage
                     preloadValue = Preloader.Get(Pics[index]);
                     if (preloadValue is null)
                     {
-                        await ReloadAsync(true).ConfigureAwait(false);
+                        await ReloadAsync().ConfigureAwait(false);
                         return;
                     }
                 }
@@ -534,6 +507,7 @@ namespace PicView.ChangeImage
                 }
                 GetFileHistory.Add(Pics?[index]);
             }
+            FreshStartup = false;
         }
 
         #endregion LoadPicAtValue
@@ -638,7 +612,7 @@ namespace PicView.ChangeImage
                 SetLoadingString();
             });
 
-            await UpdatePicAsync(imageName, bitmap);
+            await UpdatePicAsync(imageName, bitmap).ConfigureAwait(false);
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
