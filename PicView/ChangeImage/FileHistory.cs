@@ -70,6 +70,11 @@ namespace PicView.ChangeImage
 
         internal void Add(string fileName)
         {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return;
+            }
+
             lock (fileHistory) // index out of range exception when multiple threads accessing it
             {
                 if (fileHistory.Exists(e => e.EndsWith(fileName)))

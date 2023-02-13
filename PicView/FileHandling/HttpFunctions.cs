@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
 using PicView.UILogic;
 using System;
 using System.Diagnostics;

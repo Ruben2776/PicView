@@ -61,14 +61,14 @@ namespace PicView.UILogic.Loading
             {
                 if (args.Length <= 1)
                 {
-                    Settings.Default.StartInFullscreenGallery= false;
+                    Settings.Default.StartInFullscreenGallery = false;
                 }
                 else
                 {
                     await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                 }
             }
-            
+
             else if (Settings.Default.Fullscreen)
             {
                 if (args.Length <= 1)
@@ -110,7 +110,7 @@ namespace PicView.UILogic.Loading
             }
             else
             {
-                await LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
 

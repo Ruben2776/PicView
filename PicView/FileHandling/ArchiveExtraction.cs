@@ -133,7 +133,7 @@ namespace PicView.FileHandling
 
             process.EnableRaisingEvents = true;
             process.BeginOutputReadLine();
-            process.OutputDataReceived += delegate
+            process.OutputDataReceived += async (_, _) =>
             {
                 // Fix it if files are in sub directory
                 while (Pics.Count < 1 && !process.HasExited)
@@ -142,19 +142,20 @@ namespace PicView.FileHandling
                 }
                 if (Pics.Count >= 1 && !process.HasExited)
                 {
-                    LoadPic.LoadingPreview(new FileInfo(Pics[0]));
+                    //await LoadPic.LoadingPreviewAsync(new FileInfo(Pics[0])).ConfigureAwait(false);
                 }
             };
 
-            process.Exited += async delegate
+            process.Exited += async (_, _) =>
             {
                 if (SetDirectory())
                 {
-                    if (FolderIndex > 0)
-                    {
-                        await LoadPic.LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
-                    }
+                    await LoadPic.LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
 
+                    if (GetFileHistory is null)
+                    {
+                        GetFileHistory = new FileHistory();
+                    }
                     GetFileHistory.Add(TempZipFile);
 
                     if (Settings.Default.FullscreenGalleryHorizontal)

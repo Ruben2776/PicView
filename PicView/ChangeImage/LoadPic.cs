@@ -28,117 +28,6 @@ namespace PicView.ChangeImage
 {
     internal static class LoadPic
     {
-        #region QuickLoad
-
-        /// <summary>
-        /// Quickly load image and then update values
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        internal static async Task QuickLoadAsync(string file)
-        {
-            if (!GalleryFunctions.IsHorizontalFullscreenOpen)
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                {
-                    WindowSizing.SetWindowBehavior();
-                });
-            }
-
-            if (File.Exists(file) == false)
-            {
-                await LoadPicFromStringAsync(file, false).ConfigureAwait(false);
-                return;
-            }
-
-            await QuickLoadAsync(new FileInfo(file)).ConfigureAwait(false);
-            InitialPath = file;
-        }
-
-        /// <summary>
-        /// Quickly load image and then update values
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        internal static async Task QuickLoadAsync(FileInfo fileInfo)
-        {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-            {
-                SetLoadingString();
-            });
-
-            bool archive = fileInfo.Extension.Equals(fileInfo);
-            BitmapSource? pic = null;
-
-            if (archive is false)
-            {
-                pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                if (pic is null)
-                {
-                    pic = ImageFunctions.ImageErrorMessage();
-                }
-                else
-                {
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-                    {
-                        if (fileInfo.Extension == ".gif")
-                        {
-                            AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
-                        }
-                        else
-                        {
-                            ConfigureWindows.GetMainWindow.MainImage.Source = pic;
-                        }
-
-                        FitImage(pic.PixelWidth, pic.PixelHeight);
-                    });
-                }
-            }
-
-            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
-
-            FolderIndex = Pics.Count > 0 ? Pics.IndexOf(fileInfo.FullName) : 0;
-
-            if (pic is not null)
-            {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-                {
-                    SetTitleString(pic.PixelWidth, pic.PixelHeight, FolderIndex, fileInfo);
-                });
-            }
-
-            if (archive == false)
-            {
-                await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
-                await Preloader.AddAsync(FolderIndex, fileInfo, pic).ConfigureAwait(false);
-            }
-
-            if (FolderIndex > 0)
-            {
-                await Taskbar.Progress((double)FolderIndex / Pics.Count).ConfigureAwait(false);
-            }
-
-            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
-            {
-                await GalleryLoad.Load().ConfigureAwait(false);
-            }
-
-            FreshStartup = false;
-
-            // Add recent files, except when browing archive
-            if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
-            {
-                if (GetFileHistory is null)
-                {
-                    GetFileHistory = new FileHistory();
-                }
-
-                GetFileHistory.Add(Pics?[FolderIndex]);
-            }
-        }
-
-        #endregion QuickLoad
-
         #region LoadPicAtValue
 
         /// <summary>
@@ -160,8 +49,7 @@ namespace PicView.ChangeImage
                     fileInfo = new FileInfo(path);
                 }
 
-                LoadingPreview(fileInfo);
-
+                await LoadingPreviewAsync(fileInfo).ConfigureAwait(false);
                 await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
             }
             else
@@ -211,7 +99,8 @@ namespace PicView.ChangeImage
         /// <param name="path"></param>
         internal static async Task LoadPiFromFileAsync(FileInfo fileInfo)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+            await LoadingPreviewAsync(fileInfo).ConfigureAwait(false);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 ToggleStartUpUC(true);
             });
@@ -231,8 +120,6 @@ namespace PicView.ChangeImage
                 await LoadPicAtIndexAsync(Pics.IndexOf(fileInfo.FullName), fileInfo).ConfigureAwait(false);
                 return;
             }
-
-            LoadingPreview(fileInfo);
 
             bool folderChanged = await CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
             await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
@@ -396,7 +283,7 @@ namespace PicView.ChangeImage
                     }
                 }
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
                     if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
                     {
@@ -467,7 +354,7 @@ namespace PicView.ChangeImage
                 await Task.Delay(50).ConfigureAwait(false);
             }
 
-            UpdatePic(index, preloadValue.BitmapSource, preloadValue.FileInfo);
+            await UpdatePicAsync(index, preloadValue.BitmapSource, preloadValue.FileInfo).ConfigureAwait(false);
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
             {
@@ -519,9 +406,10 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bitmapSource"></param>
-        internal static void UpdatePic(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
+        internal static async Task UpdatePicAsync(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+            string? ext = fileInfo is null ? Path.GetExtension(Pics?[index]) : fileInfo.Extension;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 if (bitmapSource is null)
                 {
@@ -552,8 +440,7 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }
 
-                // Loads gif from XamlAnimatedGif if neccesary
-                string? ext = fileInfo is null ? Path.GetExtension(Pics?[index]) : fileInfo.Extension;
+                // Loads gif from XamlAnimatedGif if neccesary            
                 if (ext is not null && ext.Equals(".gif", StringComparison.OrdinalIgnoreCase))
                 {
                     AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
@@ -575,7 +462,7 @@ namespace PicView.ChangeImage
         /// <param name="bitmapSource"></param>
         internal static async Task UpdatePicAsync(string imageName, BitmapSource bitmapSource)
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 Unload(false);
 
@@ -607,11 +494,6 @@ namespace PicView.ChangeImage
         /// <param name="imageName"></param>
         internal static async Task LoadPicFromBitmapAsync(BitmapSource bitmap, string imageName)
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-            {
-                SetLoadingString();
-            });
-
             await UpdatePicAsync(imageName, bitmap).ConfigureAwait(false);
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
@@ -630,7 +512,7 @@ namespace PicView.ChangeImage
             FileInfo fileInfo = new FileInfo(file);
             BitmapSource? bitmapSource = isGif ? null : await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, async () =>
             {
                 ToggleStartUpUC(true);
 
@@ -696,16 +578,16 @@ namespace PicView.ChangeImage
 
         #endregion UpdatePic
 
-        internal static void LoadingPreview(FileInfo fileInfo)
+        internal static async Task LoadingPreviewAsync(FileInfo fileInfo)
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 // Set Loading
                 SetLoadingString();
 
                 if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
                 {
-                    BitmapSource? bitmapSource = GetBitmapSourceThumb(fileInfo);
+                    BitmapSource? bitmapSource = Thumbnails.GetBitmapSourceThumb(fileInfo);
                     if (bitmapSource != null)
                     {
                         ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
