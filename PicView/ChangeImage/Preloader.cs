@@ -1,10 +1,12 @@
 ﻿using PicView.ImageHandling;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
@@ -72,7 +74,11 @@ namespace PicView.ChangeImage
 #if DEBUG
                 if (!_preloadList.TryAdd(Pics[index], preloadValue))
                 {
-                    Trace.WriteLine($"Failed to Remove {Pics[index]} from Preloader, index {Pics?[index]}");
+                    Trace.WriteLine($"Failed to add {Pics[index]} from Preloader, index {index}");
+                }
+                else
+                {
+                    Trace.WriteLine($"Added {Pics[index]} from Preloader, index {index}");
                 }
 #else
                 _preloadList.TryAdd(Pics[index], preloadValue);
@@ -119,6 +125,9 @@ namespace PicView.ChangeImage
 
             if (!Contains(Pics[key]))
             {
+#if DEBUG
+                Trace.WriteLine($"No key at {key} ");
+#endif
                 return;
             }
 
@@ -129,6 +138,10 @@ namespace PicView.ChangeImage
                 if (!_preloadList.TryRemove(Pics[key], out _))
                 {
                     Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
+                }
+                else
+                {
+                    Trace.WriteLine($"Removed {Pics?[key]} from Preloader, index {key}");
                 }
 #else
                 _preloadList.TryRemove(Navigation.Pics[key], out _);
@@ -207,44 +220,57 @@ namespace PicView.ChangeImage
         /// <param name="currentIndex">The starting point for the iteration.</param>
         internal static Task PreLoadAsync(int currentIndex) => Task.Run(async () =>
         {
-            int nextSixStartingIndex, prevThreeStartingIndex;
+#if DEBUG
+            Trace.WriteLine($"Reverse is {Reverse}");
+#endif
+            int nextStartingIndex, prevStartingIndex, deleteIndex;
             int positiveIterations = 6;
             int negativeIterations = 3;
 
             if (!Reverse)
             {
-                nextSixStartingIndex = currentIndex;
-                prevThreeStartingIndex = currentIndex - negativeIterations;
-                if (prevThreeStartingIndex < 0)
+                nextStartingIndex = currentIndex;
+                prevStartingIndex = currentIndex - 1;
+                deleteIndex = prevStartingIndex - negativeIterations;
+
+                for (int i = 0; i < positiveIterations; i++)
                 {
-                    prevThreeStartingIndex = Pics.Count - (negativeIterations - currentIndex);
+                    int index = (nextStartingIndex + i) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
+                }
+                for (int i = 0; i < negativeIterations; i++)
+                {
+                    int index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
+                }
+                for (int i = 0; i < negativeIterations; i++)
+                {
+                    int index = (deleteIndex - i + Pics.Count) % Pics.Count;
+                    Remove(index);
                 }
             }
             else
             {
-                nextSixStartingIndex = currentIndex - positiveIterations;
-                if (nextSixStartingIndex < 0)
+                nextStartingIndex = currentIndex;
+                prevStartingIndex = currentIndex + 1;
+                deleteIndex = prevStartingIndex + positiveIterations;
+
+                for (int i = 0; i < positiveIterations; i++)
                 {
-                    nextSixStartingIndex = Pics.Count - (positiveIterations - currentIndex);
+                    int index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
                 }
-
-                prevThreeStartingIndex = currentIndex;
+                for (int i = 0; i < negativeIterations; i++)
+                {
+                    int index = (prevStartingIndex + i) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
+                }
+                for (int i = 0; i < negativeIterations; i++)
+                {
+                    int index = (deleteIndex + i) % Pics.Count;
+                    Remove(index);
+                }
             }
-
-            for (int i = 0; i < positiveIterations; i++)
-            {
-                int index = (nextSixStartingIndex + i) % Pics.Count;
-                await AddAsync(index).ConfigureAwait(false);
-            }
-
-            for (int i = 0; i < negativeIterations; i++)
-            {
-                int index = (prevThreeStartingIndex - i + Pics.Count) % Pics.Count;
-                await AddAsync(index).ConfigureAwait(false);
-            }
-
-            int removeIndex = (prevThreeStartingIndex - negativeIterations + Pics.Count) % Pics.Count;
-            Remove(removeIndex);
         });
     }
 }
