@@ -1,15 +1,9 @@
 ﻿using PicView.ImageHandling;
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Xml.Linq;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
@@ -46,9 +40,9 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
-        /// A concurrent dictionary containing the preloaded images
+        /// A dictionary containing the preloaded images
         /// </summary>
-        private static readonly ConcurrentDictionary<string, PreloadValue> _preloadList = new();
+        private static readonly Dictionary<string, PreloadValue> _preloadList = new();
 
         /// <summary>
         /// Adds a file to the preloader from the specified index. Returns true if a new value was added.
@@ -71,18 +65,7 @@ namespace PicView.ChangeImage
             try
             {
                 var preloadValue = new PreloadValue(null, true, null);
-#if DEBUG
-                if (!_preloadList.TryAdd(Pics[index], preloadValue))
-                {
-                    Trace.WriteLine($"Failed to add {Pics[index]} from Preloader, index {index}");
-                }
-                else
-                {
-                    Trace.WriteLine($"Added {Pics[index]} from Preloader, index {index}");
-                }
-#else
-                _preloadList.TryAdd(Pics[index], preloadValue);
-#endif
+                var add = _preloadList.TryAdd(Pics[index], preloadValue);
 
                 fileInfo = fileInfo ?? new FileInfo(Pics[index]);
                 bitmapSource = bitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
@@ -94,11 +77,8 @@ namespace PicView.ChangeImage
                 preloadValue.IsLoading = false;
                 preloadValue.FileInfo = fileInfo;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-#if DEBUG
-                Trace.WriteLine(e.Message);
-#endif
                 return false;
             }
 
@@ -117,47 +97,24 @@ namespace PicView.ChangeImage
             }
             else if (key >= Pics?.Count)
             {
-#if DEBUG
-                Trace.WriteLine("Preloader " + nameof(Remove) + " key null, " + key);
-#endif
                 return;
             }
 
             if (!Contains(Pics[key]))
             {
-#if DEBUG
-                Trace.WriteLine($"No key at {key} ");
-#endif
                 return;
             }
 
             try
             {
                 _ = _preloadList[Pics[key]];
-#if DEBUG
-                if (!_preloadList.TryRemove(Pics[key], out _))
-                {
-                    Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
-                }
-                else
-                {
-                    Trace.WriteLine($"Removed {Pics?[key]} from Preloader, index {key}");
-                }
-#else
-                _preloadList.TryRemove(Navigation.Pics[key], out _);
-#endif
+                _preloadList.Remove(Navigation.Pics[key], out _);
             }
-#if DEBUG
-            catch (Exception e)
-            {
-                Trace.WriteLine("Preloader " + nameof(Remove) + "exception" + Environment.NewLine + e.Message);
-            }
-#else
+
             catch (Exception)
             {
                 return;
             }
-#endif
         }
         /// <summary>
         ///  Renames the key of a specified file in the cache.
@@ -169,7 +126,7 @@ namespace PicView.ChangeImage
         {
             if (file == null || name == null) { return false; }
 
-            return _preloadList.TryRemove(file, out var preloadValue) && _preloadList.TryAdd(name, preloadValue);
+            return _preloadList.Remove(file, out var preloadValue) && _preloadList.TryAdd(name, preloadValue);
         }
 
         /// <summary>
@@ -177,15 +134,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Clear()
         {
-            if (_preloadList.IsEmpty)
-            {
-                return;
-            }
-
             _preloadList.Clear();
-#if DEBUG
-            Trace.WriteLine("Cleared Preloader");
-#endif
         }
 
         /// <summary>
@@ -196,12 +145,14 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static PreloadValue? Get(string key)
         {
-            if (!Contains(key))
+            if (_preloadList.TryGetValue(key, out var preloadValue))
+            {
+                return preloadValue;
+            }
+            else
             {
                 return null;
             }
-
-            return _preloadList[key];
         }
 
         /// <summary>
@@ -211,7 +162,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool Contains(string key)
         {
-            return !_preloadList.IsEmpty && _preloadList.ContainsKey(key);
+            return _preloadList.ContainsKey(key);
         }
 
         /// <summary>
@@ -220,9 +171,6 @@ namespace PicView.ChangeImage
         /// <param name="currentIndex">The starting point for the iteration.</param>
         internal static Task PreLoadAsync(int currentIndex) => Task.Run(async () =>
         {
-#if DEBUG
-            Trace.WriteLine($"Reverse is {Reverse}");
-#endif
             int nextStartingIndex, prevStartingIndex, deleteIndex;
             int positiveIterations = 6;
             int negativeIterations = 3;
