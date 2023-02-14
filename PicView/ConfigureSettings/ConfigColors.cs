@@ -2,6 +2,7 @@
 using PicView.Properties;
 using PicView.Themes.Resources;
 using PicView.UILogic;
+using PicView.Views.Windows;
 using System.Windows;
 using System.Windows.Media;
 
@@ -43,15 +44,14 @@ namespace PicView.ConfigureSettings
         /// </summary>
         internal static void SetColors()
         {
+            var mainWindow = ConfigureWindows.GetMainWindow;
             MainColor = (Color)Application.Current.Resources["IconColor"];
             BackgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
-            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
-            {
-                return;
-            }
+            if (mainWindow.MainImageBorder == null) return;
 
-            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
+            mainWindow.MainImageBorder.Background = BackgroundColorBrush;
+            mainWindow.ParentContainer.Background = ParentContainerBrush;
         }
 
         #endregion Update and set colors
@@ -86,19 +86,13 @@ namespace PicView.ConfigureSettings
 
         internal static void ChangeBackground()
         {
-            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
-            {
-                return;
-            }
+            var mainWindow = ConfigureWindows.GetMainWindow;
+            if (mainWindow.MainImageBorder == null) return;
 
-            Settings.Default.BgColorChoice++;
+            Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 5;
 
-            if (Settings.Default.BgColorChoice > 3)
-            {
-                Settings.Default.BgColorChoice = 0;
-            }
-
-            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
+            mainWindow.MainImageBorder.Background = BackgroundColorBrush;
+            mainWindow.ParentContainer.Background = ParentContainerBrush;
 
             Settings.Default.Save();
         }
@@ -106,10 +100,18 @@ namespace PicView.ConfigureSettings
         internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
         {
             0 => Brushes.Transparent,
-            1 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
-            2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
-            3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 56),
+            1 => Brushes.Transparent,
+            2 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
+            3 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
+            4 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 56),
             _ => Brushes.Transparent,
+        };
+
+        internal static Brush ParentContainerBrush => Settings.Default.BgColorChoice switch
+        {
+            0 => Application.Current.Resources["NoisyBg"] as ImageBrush ?? new ImageBrush(),
+            1 => Brushes.Transparent,
+            _ => Application.Current.Resources["NoisyBg"] as ImageBrush ?? new ImageBrush(),
         };
 
         #endregion Change background

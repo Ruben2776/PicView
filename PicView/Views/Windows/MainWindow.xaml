@@ -416,12 +416,11 @@
             </Canvas>
         </Grid>
 
-        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
+        <Border
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="0,1,0,1">
 
-            <Grid
-                x:Name="ParentContainer"
-                AllowDrop="True"
-                Background="{StaticResource NoisyBg}">
+            <Grid x:Name="ParentContainer" AllowDrop="True">
 
                 <ScrollViewer
                     x:Name="Scroller"
@@ -463,6 +462,7 @@
                         x:Name="MainImageBorder"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        Background="{StaticResource NoisyBg}"
                         Focusable="False">
                         <Image
                             x:Name="MainImage"

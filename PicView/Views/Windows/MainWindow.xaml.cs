@@ -60,7 +60,14 @@ namespace PicView.Views.Windows
 
             ContentRendered += async delegate
             {
-                NativeMethods.EnableBlur(this);
+                try
+                {
+                    WindowBlur.EnableBlur(this);
+                }
+                catch (Exception)
+                {
+
+                }
                 await StartLoading.ContentRenderedEventAsync();
 
                 // keyboard and Mouse_Keys Keys
