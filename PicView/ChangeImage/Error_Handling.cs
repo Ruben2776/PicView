@@ -150,51 +150,13 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task ReloadAsync(bool fromBackup = false)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
-
-            string? path = null;
-            if (fromBackup)
-            {
-                if (string.IsNullOrWhiteSpace(BackupPath))
-                {
-                    UnexpectedError();
-                    return;
-                }
-                path = BackupPath;
-            }
-            else if (CheckOutOfRange() == false)
-            {
-                // Determine if browsing directories recursively or only update from single directory
-                if (string.IsNullOrWhiteSpace(InitialPath) == false
-                    && Settings.Default.IncludeSubDirectories
-                    && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
-                {
-                    path = InitialPath;
-                }
-                else
-                {
-                    path = Pics[FolderIndex];
-                }
-            }
-            else
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
-                {
-                    path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                });
-
-                if (path == (string)Application.Current.Resources["Loading"])
-                {
-                    path = InitialPath;
-                }
-            }
-
+            string? path = fromBackup
+                ? BackupPath ?? null
+                : GetReloadPath();
             if (path == null)
             {
                 UnexpectedError();
-                return;
             }
-
             if (File.Exists(path))
             {
                 var fileInfo = new FileInfo(path);
@@ -203,15 +165,9 @@ namespace PicView.ChangeImage
             }
             else if (Directory.Exists(path))
             {
-                int index = 0;
                 var fileInfo = new FileInfo(path);
-                if (CheckOutOfRange() == false)
-                {
-                    index = FolderIndex;
-                }
-
                 await ResetValues(fileInfo).ConfigureAwait(false);
-                await LoadPic.LoadPicFromFolderAsync(fileInfo, index).ConfigureAwait(false);
+                await LoadPic.LoadPicFromFolderAsync(fileInfo, FolderIndex).ConfigureAwait(false);
             }
             else if (Base64.IsBase64String(path))
             {
@@ -228,6 +184,35 @@ namespace PicView.ChangeImage
             else
             {
                 UnexpectedError();
+            }
+
+            string? GetReloadPath()
+            {
+                if (CheckOutOfRange() == false)
+                {
+                    if (string.IsNullOrWhiteSpace(InitialPath) == false
+                        && Settings.Default.IncludeSubDirectories
+                        && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+                    {
+                        return InitialPath;
+                    }
+                    else
+                    {
+                        return Pics[FolderIndex];
+                    }
+                }
+                else
+                {
+                    return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
+                    {
+                        var path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                        if (path == (string)Application.Current.Resources["Loading"])
+                        {
+                            return InitialPath;
+                        }
+                        return path;
+                    });
+                }
             }
         }
 

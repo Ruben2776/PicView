@@ -13,6 +13,18 @@ namespace PicView.SystemIntegration
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
     internal static class NativeMethods
     {
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct Win32Point : IEquatable<Win32Point>
+        {
+            public int X;
+            public int Y;
+
+            public bool Equals(Win32Point other)
+            {
+                return X == other.X && Y == other.Y;
+            }
+        }
+
         // Alphanumeric sort
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         internal static extern int StrCmpLogicalW(string x, string y);
@@ -90,133 +102,6 @@ namespace PicView.SystemIntegration
         }
 
         #endregion windproc
-
-        #region Blur
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct Win32Point : IEquatable<Win32Point>
-        {
-            public int X;
-            public int Y;
-
-            public override bool Equals(object obj)
-            {
-                return obj is Win32Point point && Equals(point);
-            }
-
-            public bool Equals(Win32Point other)
-            {
-                return X == other.X &&
-                       Y == other.Y;
-            }
-
-            public override int GetHashCode()
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private enum AccentState
-        {
-            ACCENT_DISABLED = 0,
-            ACCENT_ENABLE_GRADIENT = 1,
-            ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
-            ACCENT_ENABLE_BLURBEHIND = 3,
-            ACCENT_INVALID_STATE = 4
-        }
-
-        private struct AccentPolicy : IEquatable<AccentPolicy>
-        {
-            public AccentState AccentState;
-            public int AccentFlags;
-            public int GradientColor;
-            public int AnimationId;
-
-            public override bool Equals(object obj)
-            {
-                return obj is AccentPolicy policy && Equals(policy);
-            }
-
-            public bool Equals(AccentPolicy other)
-            {
-                return AnimationId == other.AnimationId;
-            }
-
-            public static bool operator ==(AccentPolicy left, AccentPolicy right)
-            {
-                return left.Equals(right);
-            }
-
-            public static bool operator !=(AccentPolicy left, AccentPolicy right)
-            {
-                return !(left == right);
-            }
-
-            public override int GetHashCode()
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private struct WindowCompositionAttributeData : IEquatable<WindowCompositionAttributeData>
-        {
-            public WindowCompositionAttribute Attribute;
-            public IntPtr Data;
-            public int SizeOfData;
-
-#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
-
-            public override bool Equals(object obj)
-#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
-            {
-                return obj is WindowCompositionAttributeData data && Equals(data);
-            }
-
-            public bool Equals(WindowCompositionAttributeData other)
-            {
-                return Attribute == other.Attribute &&
-                       Data.Equals(other.Data) &&
-                       SizeOfData == other.SizeOfData;
-            }
-
-            public override int GetHashCode()
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private enum WindowCompositionAttribute
-        {
-            WCA_ACCENT_POLICY = 19
-        }
-
-        [DllImport("user32.dll")]
-        private static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
-
-        internal static void EnableBlur(Window window)
-        {
-            var windowHelper = new WindowInteropHelper(window);
-            var accent = new AccentPolicy
-            {
-                AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND
-            };
-
-            var accentStructSize = Marshal.SizeOf(accent);
-            var accentPtr = Marshal.AllocHGlobal(accentStructSize);
-            Marshal.StructureToPtr(accent, accentPtr, false);
-
-            var Data = new WindowCompositionAttributeData
-            {
-                Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY,
-                SizeOfData = accentStructSize,
-                Data = accentPtr
-            };
-
-            _ = SetWindowCompositionAttribute(windowHelper.Handle, ref Data);
-            Marshal.FreeHGlobal(accentPtr);
-        }
-
-        #endregion Blur
 
         #region GetPixelColor
 

@@ -131,7 +131,7 @@ namespace PicView.ChangeImage
                 FolderIndex = 0;
             }
 
-            if (FreshStartup is false || folderChanged)
+            if (FreshStartup is false || folderChanged) // Clear preloaded cache if needed
             {
                 Preloader.Clear();
             }

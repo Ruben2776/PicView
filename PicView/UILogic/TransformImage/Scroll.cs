@@ -33,19 +33,16 @@ namespace PicView.UILogic.TransformImage
         internal static bool IsAutoScrolling { get; set; }
 
         /// <summary>
-        /// Toggles scroll and displays it with TooltipStle
+        /// Toggles scroll and displays it with TooltipStyle
         /// </summary>
         internal static async Task SetScrollBehaviour(bool scrolling)
         {
             Settings.Default.ScrollEnabled = scrolling;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
             });
-
-            // TODO fix error when image is from web
-
             if (Navigation.Pics != null)
             {
                 await TryFitImageAsync().ConfigureAwait(false);
@@ -75,8 +72,6 @@ namespace PicView.UILogic.TransformImage
             GetAutoScrollSign.Visibility = Visibility.Visible;
             GetAutoScrollSign.Opacity = 1;
         }
-
-        // Auto scroll
 
         /// <summary>
         /// Starts the auto scroll feature and shows the sign on the ui
