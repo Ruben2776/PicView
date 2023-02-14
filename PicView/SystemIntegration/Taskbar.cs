@@ -1,5 +1,4 @@
 ﻿using PicView.UILogic;
-using System.Threading.Tasks;
 using System.Windows.Shell;
 using System.Windows.Threading;
 

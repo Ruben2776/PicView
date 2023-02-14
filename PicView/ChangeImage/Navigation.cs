@@ -1,8 +1,6 @@
 ﻿using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PicView.ChangeImage
 {
@@ -172,12 +170,12 @@ namespace PicView.ChangeImage
 
                 if (right)
                 {
-                    RightbuttonClicked = true;
+                    RightbuttonClicked = true; // Update flag to move cursor when resized
                     await NavigateToPicAsync().ConfigureAwait(false);
                 }
                 else
                 {
-                    LeftbuttonClicked = true;
+                    LeftbuttonClicked = true; // Update flag to move cursor when resized
                     await NavigateToPicAsync(false).ConfigureAwait(false);
                 }
             }
@@ -190,12 +188,12 @@ namespace PicView.ChangeImage
 
                 if (right)
                 {
-                    ClickArrowRightClicked = true;
+                    ClickArrowRightClicked = true; // Update flag to move cursor when resized
                     await NavigateToPicAsync().ConfigureAwait(false);
                 }
                 else
                 {
-                    ClickArrowLeftClicked = true;
+                    ClickArrowLeftClicked = true; // Update flag to move cursor when resized
                     await NavigateToPicAsync(false).ConfigureAwait(false);
                 }
             }

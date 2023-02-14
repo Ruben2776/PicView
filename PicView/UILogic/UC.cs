@@ -4,7 +4,6 @@ using PicView.PicGallery;
 using PicView.Views.UserControls.Buttons;
 using PicView.Views.UserControls.Menus;
 using PicView.Views.UserControls.Misc;
-using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media.Animation;

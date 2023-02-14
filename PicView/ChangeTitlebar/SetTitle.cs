@@ -1,7 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.UILogic;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;

@@ -5,7 +5,6 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Sizing;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.Navigation;

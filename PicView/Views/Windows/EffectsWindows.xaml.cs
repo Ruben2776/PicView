@@ -5,8 +5,6 @@ using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

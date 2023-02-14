@@ -1,7 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.Properties;
 using PicView.Views.UserControls.Gallery;
-using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;

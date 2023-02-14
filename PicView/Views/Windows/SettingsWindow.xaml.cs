@@ -9,7 +9,6 @@ using PicView.SystemIntegration;
 using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;

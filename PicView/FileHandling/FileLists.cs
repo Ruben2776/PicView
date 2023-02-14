@@ -1,11 +1,7 @@
 ﻿using PicView.ChangeImage;
 using PicView.Properties;
 using PicView.SystemIntegration;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using static PicView.FileHandling.ArchiveExtraction;
 
 namespace PicView.FileHandling

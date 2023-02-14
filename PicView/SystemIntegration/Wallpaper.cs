@@ -2,11 +2,9 @@
 using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;

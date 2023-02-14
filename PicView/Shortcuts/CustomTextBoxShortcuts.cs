@@ -1,6 +1,5 @@
 ﻿using PicView.ChangeTitlebar;
 using PicView.FileHandling;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PicView.Shortcuts

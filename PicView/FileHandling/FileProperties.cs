@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using System;
 using System.Runtime.InteropServices;
 
 namespace PicView.FileHandling

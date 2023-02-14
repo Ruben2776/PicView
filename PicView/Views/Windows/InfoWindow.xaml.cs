@@ -3,7 +3,6 @@ using PicView.Animations;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
-using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;

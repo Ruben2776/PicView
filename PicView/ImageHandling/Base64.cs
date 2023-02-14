@@ -1,8 +1,6 @@
 ﻿using ImageMagick;
 using PicView.UILogic;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;

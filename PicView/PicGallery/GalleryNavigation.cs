@@ -2,7 +2,6 @@
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
-using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;

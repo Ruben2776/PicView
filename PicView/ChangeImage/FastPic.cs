@@ -1,21 +1,19 @@
 ﻿using PicView.ImageHandling;
 using System.IO;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Media.Imaging;
 
 namespace PicView.ChangeImage
 {
     internal static class FastPic
     {
-        private static Timer? _timer;
+        private static System.Timers.Timer? _timer;
         private static bool _updateSource;
 
         internal static async Task Run(int index)
         {
             if (_timer is null)
             {
-                _timer = new Timer(450)
+                _timer = new System.Timers.Timer(450)
                 {
                     AutoReset = false,
                     Enabled = true

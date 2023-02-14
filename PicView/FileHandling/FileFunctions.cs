@@ -1,13 +1,11 @@
 ﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.UILogic;
-using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace PicView.FileHandling

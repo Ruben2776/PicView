@@ -2,9 +2,7 @@
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Views.UserControls.Misc;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

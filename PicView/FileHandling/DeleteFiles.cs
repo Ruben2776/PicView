@@ -1,10 +1,8 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using PicView.ChangeImage;
 using PicView.UILogic;
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;

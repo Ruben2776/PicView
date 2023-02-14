@@ -2,7 +2,6 @@
 using PicView.Properties;
 using PicView.Themes.Resources;
 using PicView.UILogic;
-using System;
 using System.Windows;
 using System.Windows.Media;
 

@@ -2,8 +2,6 @@
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
-using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 

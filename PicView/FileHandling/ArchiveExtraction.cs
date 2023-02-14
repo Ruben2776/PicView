@@ -2,7 +2,6 @@
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
-using System;
 using System.Diagnostics;
 using System.IO;
 using static PicView.ChangeImage.Navigation;

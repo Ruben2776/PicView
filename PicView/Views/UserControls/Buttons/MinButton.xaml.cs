@@ -1,6 +1,5 @@
 ﻿using PicView.Animations;
 using PicView.Properties;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;

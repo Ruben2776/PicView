@@ -1,8 +1,6 @@
 ﻿using PicView.Animations;
 using PicView.Shortcuts;
 using PicView.UILogic;
-using System;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -105,7 +103,7 @@ namespace PicView.Views.UserControls.Misc
             WidthBox.Text = ConfigureWindows.GetMainWindow.MainImage.Source?.Width.ToString();
             HeightBox.Text = ConfigureWindows.GetMainWindow.MainImage?.Source?.Height.ToString();
 
-            var timer = new Timer(401) { AutoReset = false, Enabled = true };
+            var timer = new System.Timers.Timer(401) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
@@ -122,7 +120,7 @@ namespace PicView.Views.UserControls.Misc
                 AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
             });
 
-            var timer = new Timer(601) { AutoReset = false, Enabled = true };
+            var timer = new System.Timers.Timer(601) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>

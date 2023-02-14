@@ -2,7 +2,6 @@
 using Microsoft.WindowsAPICodePack.Shell;
 using PicView.ChangeImage;
 using PicView.Views.UserControls.Gallery;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;

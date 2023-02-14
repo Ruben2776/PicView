@@ -2,10 +2,8 @@
 using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

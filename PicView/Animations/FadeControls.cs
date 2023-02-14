@@ -2,9 +2,6 @@
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.TransformImage;
-using System;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 using static PicView.UILogic.UC;
@@ -16,7 +13,7 @@ namespace PicView.Animations
         /// <summary>
         /// Timer used to hide interface and/or scrollbar
         /// </summary>
-        internal static Timer? ActivityTimer { get; set; }
+        internal static System.Timers.Timer? ActivityTimer { get; set; }
 
         /// <summary>
         /// Hides/shows interface elements with a fade animation

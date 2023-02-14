@@ -433,6 +433,7 @@
     <PackageTags>picture-viewer,desktop-app,</PackageTags>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

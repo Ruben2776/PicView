@@ -2,11 +2,8 @@
 using PicView.ImageHandling;
 using PicView.ProcessHandling;
 using PicView.UILogic;
-using System;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;

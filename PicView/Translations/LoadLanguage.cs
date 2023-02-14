@@ -1,5 +1,4 @@
 ﻿using PicView.Properties;
-using System;
 using System.Globalization;
 using System.Windows;
 

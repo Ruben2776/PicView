@@ -1,6 +1,5 @@
 ﻿using ImageMagick;
 using PicView.FileHandling;
-using System;
 using System.IO;
 using System.Text;
 

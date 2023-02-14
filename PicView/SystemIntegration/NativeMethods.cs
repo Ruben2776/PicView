@@ -3,7 +3,6 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;

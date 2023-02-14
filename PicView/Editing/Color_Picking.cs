@@ -2,7 +2,6 @@
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

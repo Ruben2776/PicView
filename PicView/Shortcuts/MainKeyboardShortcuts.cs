@@ -10,7 +10,6 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Buttons;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static PicView.ChangeImage.ErrorHandling;

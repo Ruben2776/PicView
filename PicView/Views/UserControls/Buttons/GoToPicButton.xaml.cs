@@ -4,7 +4,6 @@ using PicView.ConfigureSettings;
 using PicView.Properties;
 using PicView.UILogic;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

@@ -2,12 +2,8 @@
 using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.UILogic.UC;

@@ -1,6 +1,5 @@
 ﻿using PicView.ChangeImage;
 using PicView.Properties;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +23,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static Point? AutoScrollPos { get; set; }
 
-        internal static readonly Timer AutoScrollTimer = new Timer
+        internal static readonly System.Timers.Timer AutoScrollTimer = new System.Timers.Timer
         {
             Interval = 7,
             AutoReset = true,

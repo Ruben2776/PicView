@@ -2,9 +2,6 @@
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
-using System;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
 
@@ -15,7 +12,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Timer used for slideshow
         /// </summary>
-        internal static Timer? SlideTimer { get; set; }
+        internal static System.Timers.Timer? SlideTimer { get; set; }
 
         /// <summary>
         /// Maximize and removes Interface and start timer for slideshow.
@@ -31,7 +28,7 @@ namespace PicView.UILogic
 
             if (SlideTimer == null)
             {
-                SlideTimer = new Timer
+                SlideTimer = new System.Timers.Timer
                 {
                     Interval = Settings.Default.SlideTimer,
                     Enabled = true

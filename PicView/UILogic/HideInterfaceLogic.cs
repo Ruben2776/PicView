@@ -1,8 +1,6 @@
 ﻿using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using static PicView.Animations.FadeControls;
 
@@ -40,7 +38,7 @@ namespace PicView.UILogic
             UC.Close_UserControls();
 
             // Recalculate to new size
-            var timer = new Timer(50) // If not fired in timer, calculation incorrect
+            var timer = new System.Timers.Timer(50) // If not fired in timer, calculation incorrect
             {
                 AutoReset = false,
                 Enabled = true,

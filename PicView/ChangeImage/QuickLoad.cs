@@ -3,9 +3,7 @@ using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.LoadPic;
@@ -42,7 +40,7 @@ namespace PicView.ChangeImage
                 await LoadPicFromStringAsync(file, false, fileInfo).ConfigureAwait(false);
                 return;
             }
-            
+
             await LoadingPreviewAsync(fileInfo).ConfigureAwait(false);
             var pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
 
