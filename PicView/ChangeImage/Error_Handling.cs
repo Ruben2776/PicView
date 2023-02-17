@@ -171,11 +171,11 @@ namespace PicView.ChangeImage
             }
             else if (Base64.IsBase64String(path))
             {
-                await LoadPic.LoadBase64PicAsync(path).ConfigureAwait(false);
+                await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
             }
             else if (Clipboard.ContainsImage())
             {
-                await LoadPic.LoadPicFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await UpdateImage.UpdateImageFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]).ConfigureAwait(false);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {

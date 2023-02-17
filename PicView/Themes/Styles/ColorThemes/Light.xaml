@@ -1,16 +1,15 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--  Chosen Color  -->
     <Color x:Key="ChosenColor">#F236BBFF</Color>
     <SolidColorBrush x:Key="ChosenColorBrush" Color="{DynamicResource ChosenColor}" />
 
     <!--  Main Color  -->
-    <Color x:Key="MainColor">#3e3e3e</Color>
+    <Color x:Key="MainColor">#424242</Color>
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
     <!--  Icon Color  -->
-    <Color x:Key="IconColor">#414b49</Color>
+    <Color x:Key="IconColor">#424242</Color>
     <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
 
     <!--  Main Color faded  -->
@@ -18,11 +17,21 @@
     <SolidColorBrush x:Key="MainColorFadedBrush" Color="{StaticResource MainColorFaded}" />
 
     <!--  Fade Color  -->
-    <Color x:Key="FadeColor">#FFFBF8F8</Color>
+    <Color
+        x:Key="FadeColor"
+        A="255"
+        B="255"
+        G="255"
+        R="255" />
     <SolidColorBrush x:Key="FadeColorBrush" Color="{StaticResource FadeColor}" />
 
     <!--  Subtle Fade Color  -->
-    <Color x:Key="SubtleFadeColor">#F2FEFEFE</Color>
+    <Color
+        x:Key="SubtleFadeColor"
+        A="255"
+        B="245"
+        G="245"
+        R="245" />
     <SolidColorBrush x:Key="SubtleFadeBrush" Color="{StaticResource SubtleFadeColor}" />
 
     <!--  Border Brush  -->
@@ -56,11 +65,14 @@
     <!--  Texture  -->
     <ImageBrush
         x:Key="NoisyBg"
-        ImageSource="\Themes\Resources\img\noisy-texture-100x100-o3-d26-c-fcfcfc-t0.png"
-        Opacity=".95"
+        ImageSource="\Themes\Resources\img\noise-texture-100x100 (3).png"
+        Opacity=".5"
         TileMode="FlipXY"
         Viewport="0,0,100,100"
         ViewportUnits="Absolute" />
+
+    <!--  Menu background  -->
+    <SolidColorBrush x:Key="MenuBg" Color="White" />
 
     <!--  Background Color  -->
     <Color x:Key="BackgroundColor">#fff</Color>

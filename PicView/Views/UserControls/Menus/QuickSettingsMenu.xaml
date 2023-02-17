@@ -2,8 +2,8 @@
     x:Class="PicView.Views.UserControls.Menus.QuickSettingsMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
     xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
+    xmlns:uc="clr-namespace:PicView.Views.UserControls"
     Canvas.ZIndex="3"
     Foreground="{StaticResource MainColorBrush}"
     ToolTip="{StaticResource ShowImageInfo}">
@@ -22,6 +22,21 @@
                 BorderThickness="1"
                 CornerRadius="4" />
 
+            <Canvas
+                Width="358"
+                Height="52"
+                VerticalAlignment="Top"
+                Panel.ZIndex="-1"
+                Background="{StaticResource BackgroundColorBrushAlt}">
+                <Canvas.Effect>
+                    <DropShadowEffect
+                        BlurRadius="3"
+                        Direction="266"
+                        ShadowDepth="1"
+                        Color="{StaticResource AltInterface}" />
+                </Canvas.Effect>
+            </Canvas>
+
             <buttons:SettingsButton x:Name="SettingsButton" Width="111" />
 
             <buttons:InfoButton
@@ -32,15 +47,17 @@
             <buttons:ImageInfoButton
                 x:Name="ImageInfoButton"
                 Canvas.Left="204"
-                Width="50" Canvas.Top="1" />
+                Canvas.Top="1"
+                Width="50" />
 
             <Rectangle
                 Canvas.Left="203"
+                Canvas.Top="1"
                 Width="1"
                 Height="51"
                 Panel.ZIndex="1"
                 Stroke="{StaticResource BorderBrush}"
-                StrokeThickness="1" Canvas.Top="1" />
+                StrokeThickness="1" />
 
             <buttons:ResizeButton
                 x:Name="QuickResize"
@@ -49,11 +66,12 @@
 
             <Rectangle
                 Canvas.Left="254"
+                Canvas.Top="1"
                 Width="1"
                 Height="51"
                 Panel.ZIndex="1"
                 Stroke="{StaticResource BorderBrush}"
-                StrokeThickness="1" Canvas.Top="1" />
+                StrokeThickness="1" />
 
             <buttons:MenuCloseButton
                 x:Name="CloseButton"

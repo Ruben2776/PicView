@@ -192,26 +192,23 @@ namespace PicView.ImageHandling
         {
             try
             {
-                using (var stream = File.OpenRead(fileInfo.FullName))
-                {
-                    var data = new byte[stream.Length];
-                    await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
-                    var sKBitmap = SKBitmap.Decode(data);
-                    if (sKBitmap is null)
-                    {
-                        return null;
-                    }
+                using var stream = File.OpenRead(fileInfo.FullName);
+                var data = new byte[stream.Length];
+                await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
 
-                    var skPic = sKBitmap.ToWriteableBitmap();
-                    skPic.Freeze();
-                    sKBitmap.Dispose();
-                    return skPic;
-                }
+                var sKBitmap = SKBitmap.Decode(data);
+                if (sKBitmap is null) { return null; }
+
+                var skPic = sKBitmap.ToWriteableBitmap();
+                sKBitmap.Dispose();
+
+                skPic.Freeze();
+                return skPic;
             }
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception: \n {e.Message}");
 #endif
                 return null;
             }

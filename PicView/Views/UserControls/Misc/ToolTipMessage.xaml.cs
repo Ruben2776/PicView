@@ -3,9 +3,6 @@ using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Misc
 {
-    /// <summary>
-    /// Interaction logic for SexyToolTip.xaml
-    /// </summary>
     public partial class ToolTipMessage : UserControl
     {
         public ToolTipMessage()

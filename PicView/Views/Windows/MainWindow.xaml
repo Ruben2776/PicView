@@ -10,6 +10,7 @@
     MinWidth="462"
     MinHeight="400"
     AllowsTransparency="True"
+    Background="Transparent"
     BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
     Focusable="True"
@@ -28,10 +29,16 @@
         <DockPanel
             x:Name="TitleBar"
             Height="30"
-            Background="{StaticResource FadeColorBrush}"
+            Background="{StaticResource NoisyBg}"
             DockPanel.Dock="Top">
 
-            <misc:Icon x:Name="Logo" />
+            <misc:Icon
+                x:Name="Logo"
+                Width="39"
+                Height="30"
+                Margin="0"
+                Padding="0,2,0,2"
+                Background="{StaticResource SubtleFadeBrush}" />
 
             <Rectangle
                 Width="1"
@@ -44,7 +51,7 @@
                 Height="30"
                 DockPanel.Dock="Left">
                 <Button.Background>
-                    <SolidColorBrush x:Name="GalleryBg" Color="Transparent" />
+                    <SolidColorBrush x:Name="GalleryBg" Color="{StaticResource SubtleFadeColor}" />
                 </Button.Background>
                 <Image Width="17">
                     <Image.Source>
@@ -71,7 +78,8 @@
             <Button
                 Name="SearchShowButton"
                 Width="30"
-                Height="30">
+                Height="30"
+                Background="{StaticResource SubtleFadeBrush}">
                 <Path
                     Width="15"
                     Height="15"
@@ -92,6 +100,7 @@
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
+                Background="{StaticResource SubtleFadeBrush}"
                 DockPanel.Dock="Right" />
 
             <Rectangle
@@ -104,6 +113,7 @@
                 x:Name="FullscreenButton"
                 Width="30"
                 Height="30"
+                Background="{StaticResource SubtleFadeBrush}"
                 DockPanel.Dock="Right" />
 
             <Rectangle
@@ -116,6 +126,7 @@
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
+                Background="{StaticResource SubtleFadeBrush}"
                 DockPanel.Dock="Right" />
 
             <Rectangle
@@ -124,13 +135,16 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <misc:CustomTextBox x:Name="TitleText" Background="{StaticResource SubtleFadeBrush}" />
+            <misc:CustomTextBox
+                x:Name="TitleText"
+                Background="{StaticResource SubtleFadeBrush}"
+                Foreground="{StaticResource IconColorBrush}" />
         </DockPanel>
 
         <Grid
             x:Name="LowerBar"
             Height="25"
-            Background="{StaticResource NoisyBg}"
+            Background="{StaticResource SubtleFadeBrush}"
             DockPanel.Dock="Bottom">
 
             <Canvas
@@ -228,7 +242,7 @@
                     Canvas.Left="112"
                     Width="182"
                     Height="25"
-                    Background="{StaticResource SubtleFadeBrush}">
+                    Background="{StaticResource FadeColorBrush}">
 
                     <Rectangle
                         Canvas.Top="25"
@@ -417,6 +431,7 @@
         </Grid>
 
         <Border
+            Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="0,1,0,1">
 
@@ -462,7 +477,6 @@
                         x:Name="MainImageBorder"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Background="{StaticResource NoisyBg}"
                         Focusable="False">
                         <Image
                             x:Name="MainImage"

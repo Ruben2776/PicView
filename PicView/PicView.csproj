@@ -36,7 +36,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -155,8 +155,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <AppDesigner Include="Properties\" />
-    <None Remove="Themes\Resources\img\noisy-texture-100x100-o3-d26-c-fcfcfc-t0.png" />
-    <Resource Include="Themes\Resources\img\noisy-texture-100x100-o3-d26-c-fcfcfc-t0.png" />
+    <None Remove="Themes\Resources\img\noise-texture-100x100 %283%29.png" />
+    <Resource Include="Themes\Resources\img\noise-texture-100x100 (3).png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -192,7 +192,7 @@
     </PackageReference>
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.1.0" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -434,6 +434,7 @@
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

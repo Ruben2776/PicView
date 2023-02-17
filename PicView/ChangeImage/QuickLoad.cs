@@ -4,6 +4,7 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.IO;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.LoadPic;
@@ -29,10 +30,7 @@ namespace PicView.ChangeImage
 
             if (!GalleryFunctions.IsHorizontalFullscreenOpen) // Fix window sizing
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
-                {
-                    WindowSizing.SetWindowBehavior();
-                });
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, ResizeWindow);
             }
 
             if (!fileInfo.Exists) // If not file, try to load if URL or base64
@@ -42,34 +40,29 @@ namespace PicView.ChangeImage
             }
 
             await LoadingPreviewAsync(fileInfo).ConfigureAwait(false);
-            var pic = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            var size = await ImageSizeFunctions.GetImageSizeAsync(fileInfo).ConfigureAwait(false);
+            BitmapSource? bitmapSource = null;
 
-            if (pic is not null)
+            if (size.HasValue)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
-                {
-                    if (fileInfo.Extension.ToLowerInvariant() == ".gif")
-                    {
-                        AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
-                    }
-                    else
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Source = pic;
-                    }
-                    FitImage(pic.PixelWidth, pic.PixelHeight);
-                });
+                FitImage(size.Value.Width, size.Value.Height));
+            }
+
+            bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            if (bitmapSource != null)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () => SetMainImage(bitmapSource, fileInfo));         
             }
 
             await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
-            FolderIndex = Pics.Count > 0 ? Pics.IndexOf(fileInfo.FullName) : 0;
+            FolderIndex = Pics?.IndexOf(fileInfo.FullName) ?? 0;
 
-            if (pic is not null)
+            if (bitmapSource != null)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
-                {
-                    SetTitleString(pic.PixelWidth, pic.PixelHeight, FolderIndex, fileInfo);
-                });
+                    SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo));
             }
 
             if (FolderIndex > 0)
@@ -78,27 +71,39 @@ namespace PicView.ChangeImage
             }
 
             await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
-            await Preloader.AddAsync(FolderIndex, fileInfo, pic).ConfigureAwait(false);
+            await Preloader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
             if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
 
-            FreshStartup = false;
-
             // Add recent files, except when browing archive
             if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
             {
-                if (GetFileHistory is null)
-                {
-                    GetFileHistory = new FileHistory();
-                }
-
-                GetFileHistory.Add(Pics?[FolderIndex]);
+                GetFileHistory ??= new FileHistory();
+                GetFileHistory.Add(Pics[FolderIndex]);
             }
 
+            FreshStartup = false;
             InitialPath = file;
+        }
+
+        private static void ResizeWindow()
+        {
+            WindowSizing.SetWindowBehavior();
+        }
+
+        private static void SetMainImage(BitmapSource bitmapSource, FileInfo fileInfo)
+        {
+            if (fileInfo.Extension?.ToLowerInvariant() == ".gif")
+            {
+                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
+            }
+            else
+            {
+                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+            }
         }
     }
 }

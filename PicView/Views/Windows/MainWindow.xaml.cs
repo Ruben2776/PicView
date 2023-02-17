@@ -33,7 +33,7 @@ namespace PicView.Views.Windows
 
             if (Settings.Default.DarkTheme == false)
             {
-                ConfigColors.ChangeToLightTheme();
+                ConfigColors.ChangeTheme(false);
             }
 
             InitializeComponent();
@@ -63,6 +63,10 @@ namespace PicView.Views.Windows
                 try
                 {
                     WindowBlur.EnableBlur(this);
+                    if (!Settings.Default.DarkTheme)
+                    {
+                        ConfigColors.MainWindowUnfocusOrFocus(true);
+                    }
                 }
                 catch (Exception)
                 {
@@ -114,10 +118,27 @@ namespace PicView.Views.Windows
                 FunctionMenuButton.Click += Toggle_Functions_menu;
 
                 //GalleryButton
-                GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
-                GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
-                GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBrush);
-                GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
+                if (!Settings.Default.DarkTheme)
+                {
+                    var subtleFaceColor = (Color)Application.Current.TryFindResource("SubtleFadeColor");
+                    AnimationHelper.LightThemeMouseEvent(GalleryButton, GalleryBrush);
+                    GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBg, true);
+                    GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBg, true);
+                    GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
+                        subtleFaceColor.A,
+                        subtleFaceColor.R,
+                        subtleFaceColor.G,
+                        subtleFaceColor.B,
+                        GalleryBg, false
+                        );
+                }
+                else
+                {
+                    GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
+                    GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
+                    GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBrush);
+                    GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
+                }
                 GalleryButton.Click += async (_, _) =>
                 {
                     if (GalleryFunctions.IsHorizontalOpen)
@@ -129,6 +150,8 @@ namespace PicView.Views.Windows
                         await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
                     }
                 };
+
+
 
                 // TitleText
                 TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
@@ -147,8 +170,8 @@ namespace PicView.Views.Windows
                 Closing += (_, _) => Window_Closing();
                 StateChanged += (_, _) => MainWindow_StateChanged();
 
-                Deactivated += (_, _) => ConfigColors.MainWindowUnfocus();
-                Activated += (_, _) => ConfigColors.MainWindowFocus();
+                Deactivated += (_, _) => ConfigColors.MainWindowUnfocusOrFocus(false);
+                Activated += (_, _) => ConfigColors.MainWindowUnfocusOrFocus(true);
 
                 SystemEvents.DisplaySettingsChanged += (_, _) => SystemEvents_DisplaySettingsChanged();
 

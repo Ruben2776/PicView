@@ -56,7 +56,7 @@ namespace PicView.ChangeImage
             }
 
             pic ??= ImageFunctions.ImageErrorMessage();
-            await LoadPic.UpdatePicAsync(index, pic, fileInfo).ConfigureAwait(false);
+            await UpdateImage.UpdateImageAsync(index, pic, fileInfo).ConfigureAwait(false);
             await Preloader.PreLoadAsync(index).ConfigureAwait(false);
         }
 
@@ -98,7 +98,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            await LoadPic.UpdatePicAsync(Navigation.FolderIndex, pic, preloadValue.FileInfo).ConfigureAwait(false);
+            await UpdateImage.UpdateImageAsync(Navigation.FolderIndex, pic, preloadValue.FileInfo).ConfigureAwait(false);
         }
     }
 }

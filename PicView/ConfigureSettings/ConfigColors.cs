@@ -39,6 +39,7 @@ namespace PicView.ConfigureSettings
 
             Settings.Default.Save();
         }
+
         /// <summary>
         /// Apply color varaibles from themes
         /// </summary>
@@ -51,33 +52,27 @@ namespace PicView.ConfigureSettings
             if (mainWindow.MainImageBorder == null) return;
 
             mainWindow.MainImageBorder.Background = BackgroundColorBrush;
-            mainWindow.ParentContainer.Background = ParentContainerBrush;
         }
 
         #endregion Update and set colors
 
         #region Window LostFocus style change
 
-        internal static void MainWindowUnfocus()
+        internal static void MainWindowUnfocusOrFocus(bool isFocused)
         {
+            if (!Properties.Settings.Default.DarkTheme)
+            {
+                return;
+            }
             var w = ConfigureWindows.GetMainWindow;
-            var fadeColor1 = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
-            var fadeColor2 = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
+            var foregroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
+                                            : (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
+            var backgroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"]
+                                            : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
 
-            w.TitleText.InnerTextBox.Foreground = fadeColor1;
-            w.TitleText.Background = fadeColor2;
-            w.LowerBar.Background = fadeColor2;
-        }
-
-        internal static void MainWindowFocus()
-        {
-            var w = ConfigureWindows.GetMainWindow;
-            var main1 = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-            var main2 = (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"];
-
-            w.TitleText.InnerTextBox.Foreground = main1;
-            w.TitleText.Background = main2;
-            w.LowerBar.Background = main2;
+            w.TitleText.InnerTextBox.Foreground = foregroundColor;
+            w.TitleText.Background = backgroundColor;
+            w.LowerBar.Background = backgroundColor;
         }
 
         #endregion Window LostFocus style change
@@ -89,10 +84,9 @@ namespace PicView.ConfigureSettings
             var mainWindow = ConfigureWindows.GetMainWindow;
             if (mainWindow.MainImageBorder == null) return;
 
-            Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 5;
+            Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 4;
 
             mainWindow.MainImageBorder.Background = BackgroundColorBrush;
-            mainWindow.ParentContainer.Background = ParentContainerBrush;
 
             Settings.Default.Save();
         }
@@ -100,42 +94,28 @@ namespace PicView.ConfigureSettings
         internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
         {
             0 => Brushes.Transparent,
-            1 => Brushes.Transparent,
-            2 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
-            3 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
-            4 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 56),
+            1 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
+            2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
+            3 => Settings.Default.DarkTheme ?
+                DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 60)
+                : DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
             _ => Brushes.Transparent,
-        };
-
-        internal static Brush ParentContainerBrush => Settings.Default.BgColorChoice switch
-        {
-            0 => Application.Current.Resources["NoisyBg"] as ImageBrush ?? new ImageBrush(),
-            1 => Brushes.Transparent,
-            _ => Application.Current.Resources["NoisyBg"] as ImageBrush ?? new ImageBrush(),
         };
 
         #endregion Change background
 
         #region Change Theme
 
-        internal static void ChangeToLightTheme()
+        internal static void ChangeTheme(bool useDarkTheme)
         {
             Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
             {
-                Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
+                Source = new Uri(useDarkTheme ? 
+                @"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml" :
+                @"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
 
-            Settings.Default.DarkTheme = false;
-        }
-
-        internal static void ChangeToDarkTheme()
-        {
-            Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
-            {
-                Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
-            };
-
-            Settings.Default.DarkTheme = true;
+            Settings.Default.DarkTheme = useDarkTheme;
         }
 
         #endregion Change Theme

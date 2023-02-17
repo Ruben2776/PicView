@@ -44,7 +44,7 @@ namespace PicView.FileHandling
 
             var isGif = Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase);
 
-            await LoadPic.LoadPreparedPicAsync(destination, url, isGif).ConfigureAwait(false);
+            await UpdateImage.UpdateImageAsync(destination, url, isGif).ConfigureAwait(false);
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {

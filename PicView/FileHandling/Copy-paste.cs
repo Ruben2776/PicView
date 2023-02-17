@@ -105,7 +105,7 @@ namespace PicView.FileHandling
             }
             else if (Clipboard.ContainsImage())  // Clipboard Image
             {
-                await LoadPic.LoadPicFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await UpdateImage.UpdateImageFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
                 return;
             }
             else // text/string/adddress
@@ -120,7 +120,7 @@ namespace PicView.FileHandling
                     case "": return;
                     default: await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
                     case "web": await HttpFunctions.LoadPicFromURL(s).ConfigureAwait(false); return;
-                    case "base64": await LoadPic.LoadBase64PicAsync(s).ConfigureAwait(false); return;
+                    case "base64": await UpdateImage.UpdateImageFromBase64PicAsync(s).ConfigureAwait(false); return;
                     case "directory": await LoadPic.LoadPicFromFolderAsync(s).ConfigureAwait(false); return;
                 }
             }

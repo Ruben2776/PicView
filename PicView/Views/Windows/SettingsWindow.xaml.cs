@@ -112,13 +112,13 @@ namespace PicView.Views.Windows
 
                 DarkThemeRadio.Click += delegate
                 {
-                    ChangeToDarkTheme();
+                    ChangeTheme(true);
                     LightThemeRadio.IsChecked = false;
                     Settings.Default.Save();
                 };
                 LightThemeRadio.Click += delegate
                 {
-                    ChangeToLightTheme();
+                    ChangeTheme(false);
                     DarkThemeRadio.IsChecked = false;
                     Settings.Default.Save();
                 };
