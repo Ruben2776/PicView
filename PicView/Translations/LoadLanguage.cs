@@ -10,10 +10,7 @@ namespace PicView.Translations
         {
             if (Settings.Default.UserLanguage != "en")
             {
-                Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Translations/" + Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
-                };
+                TrySetSource(new Uri(@"/PicView;component/Translations/" + Settings.Default.UserLanguage + ".xaml", UriKind.Relative));
                 return;
             }
 
@@ -64,6 +61,11 @@ namespace PicView.Translations
                     source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);
                     break;
             }
+            TrySetSource(source);
+        }
+
+        private static void TrySetSource(Uri source)
+        {
             try
             {
                 Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
