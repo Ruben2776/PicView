@@ -4,8 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
         x:Name="TheButton"
-        Height="51"
-        BorderThickness="0"
+        Height="52"
+        BorderBrush="{StaticResource BorderBrush}"
+        BorderThickness="1"
         ToolTip="{StaticResource ShowInfoWindow}">
         <Button.Background>
             <SolidColorBrush x:Name="TheButtonBrush" Color="Transparent" />

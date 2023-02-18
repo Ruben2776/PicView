@@ -5,6 +5,7 @@ using PicView.UILogic;
 using PicView.Views.Windows;
 using System.Windows;
 using System.Windows.Media;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace PicView.ConfigureSettings
 {
@@ -122,77 +123,99 @@ namespace PicView.ConfigureSettings
 
         #region Set ColorTheme
 
-        internal static void Blue(object sender, RoutedEventArgs e)
+        public enum ColorOption
         {
-            Settings.Default.ColorTheme = 1;
+            Blue = 0,
+            Pink = 2,
+            Orange = 3,
+            Green = 4,
+            Red = 5,
+            Teal = 6,
+            Aqua = 7,
+            Golden = 8,
+            Purple = 9,
+            Cyan = 10,
+            Magenta = 11,
+            Lime = 12
+        }
+
+        internal static void UpdateColorThemeTo(ColorOption colorOption)
+        {
+            Settings.Default.ColorTheme = (int)colorOption;
             UpdateColor();
         }
 
-        internal static void Pink(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 2;
-            UpdateColor();
-        }
+        //internal static void Blue(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 1;
+        //    UpdateColor();
+        //}
 
-        internal static void Orange(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 3;
-            UpdateColor();
-        }
+        //internal static void Pink(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 2;
+        //    UpdateColor();
+        //}
 
-        internal static void Green(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 4;
-            UpdateColor();
-        }
+        //internal static void Orange(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 3;
+        //    UpdateColor();
+        //}
 
-        internal static void Red(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 5;
-            UpdateColor();
-        }
+        //internal static void Green(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 4;
+        //    UpdateColor();
+        //}
 
-        internal static void Teal(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 6;
-            UpdateColor();
-        }
+        //internal static void Red(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 5;
+        //    UpdateColor();
+        //}
 
-        internal static void Aqua(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 7;
-            UpdateColor();
-        }
+        //internal static void Teal(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 6;
+        //    UpdateColor();
+        //}
 
-        internal static void Golden(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 8;
-            UpdateColor();
-        }
+        //internal static void Aqua(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 7;
+        //    UpdateColor();
+        //}
 
-        internal static void Purple(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 9;
-            UpdateColor();
-        }
+        //internal static void Golden(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 8;
+        //    UpdateColor();
+        //}
 
-        internal static void Cyan(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 10;
-            UpdateColor();
-        }
+        //internal static void Purple(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 9;
+        //    UpdateColor();
+        //}
 
-        internal static void Magenta(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 11;
-            UpdateColor();
-        }
+        //internal static void Cyan(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 10;
+        //    UpdateColor();
+        //}
 
-        internal static void Lime(object sender, RoutedEventArgs e)
-        {
-            Settings.Default.ColorTheme = 12;
-            UpdateColor();
-        }
+        //internal static void Magenta(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 11;
+        //    UpdateColor();
+        //}
+
+        //internal static void Lime(object sender, RoutedEventArgs e)
+        //{
+        //    Settings.Default.ColorTheme = 12;
+        //    UpdateColor();
+        //}
 
         #endregion Set ColorTheme
     }

@@ -41,8 +41,18 @@
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 
     <!--  Alt Interface  -->
-    <Color x:Key="AltInterface">#A7222222</Color>
-    <Color x:Key="AltInterfaceW">#A72e2c2c</Color>
+    <Color
+        x:Key="AltInterface"
+        A="210"
+        B="245"
+        G="245"
+        R="245" />
+    <Color
+        x:Key="AltInterfaceW"
+        A="240"
+        B="255"
+        G="255"
+        R="255" />
     <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
     <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
 
@@ -95,7 +105,7 @@
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
     <!--  Background Subtle Highlight  -->
-    <Color x:Key="BackgroundSubtleHighlight">#FFF3F3EF</Color>
+    <Color x:Key="BackgroundSubtleHighlight">White</Color>
     <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundSubtleHighlight}" />
 
     <!--  Background Hover Highlight  -->

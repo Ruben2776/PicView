@@ -1,6 +1,7 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
+using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Properties;
@@ -251,103 +252,89 @@ namespace PicView.Views.Windows
             // BlueRadio
             BlueRadio.MouseEnter += BlueRadio_MouseEnter;
             BlueRadio.MouseLeave += BlueRadio_MouseLeave;
-            BlueRadio.Click += Blue;
+            BlueRadio.Click += (_,_) => UpdateColorThemeTo(ColorOption.Blue);
 
             // PinkRadio
             PinkRadio.MouseEnter += PinkRadio_MouseEnter;
             PinkRadio.MouseLeave += PinkRadio_MouseLeave;
-            PinkRadio.Click += Pink;
+            PinkRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Pink);
 
             // OrangeRadio
             OrangeRadio.MouseEnter += OrangeRadio_MouseEnter;
             OrangeRadio.MouseLeave += OrangeRadio_MouseLeave;
-            OrangeRadio.Click += Orange;
+            OrangeRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Orange);
 
             // GreenRadio
             GreenRadio.MouseEnter += GreenRadio_MouseEnter;
             GreenRadio.MouseLeave += GreenRadio_MouseLeave;
-            GreenRadio.Click += Green;
+            GreenRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Green);
 
             // RedRadio
             RedRadio.MouseEnter += RedRadio_MouseEnter;
             RedRadio.MouseLeave += RedRadio_MouseLeave;
-            RedRadio.Click += Red;
+            RedRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Red);
 
             // TealRadio
             TealRadio.MouseEnter += TealRadio_MouseEnter;
             TealRadio.MouseLeave += TealRadio_MouseLeave;
-            TealRadio.Click += Teal;
+            TealRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Teal);
 
             // AquaRadio
             AquaRadio.MouseEnter += AquaRadio_MouseEnter;
             AquaRadio.MouseLeave += AquaRadio_MouseLeave;
-            AquaRadio.Click += Aqua;
+            AquaRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Aqua);
 
             // GoldenRadio
             GoldenRadio.MouseEnter += GoldenRadio_MouseEnter;
             GoldenRadio.MouseLeave += GoldenRadio_MouseLeave;
-            GoldenRadio.Click += Golden;
+            GoldenRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Golden);
 
             // PurpleRadio
             PurpleRadio.MouseEnter += PurpleRadio_MouseEnter;
             PurpleRadio.MouseLeave += PurpleRadio_MouseLeave;
-            PurpleRadio.Click += Purple;
+            PurpleRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Purple);
 
             // CyanRadio
             CyanRadio.MouseEnter += CyanRadio_MouseEnter;
             CyanRadio.MouseLeave += CyanRadio_MouseLeave;
-            CyanRadio.Click += Cyan;
+            CyanRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Cyan);
 
             // MagentaRadio
             MagentaRadio.MouseEnter += MagentaRadio_MouseEnter;
             MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
-            MagentaRadio.Click += Magenta;
+            MagentaRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Magenta);
 
             // LimeRadio
-            LimeRadio.Click += Lime;
+            LimeRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Lime);
             LimeRadio.MouseEnter += LimeRadio_MouseEnter;
             LimeRadio.MouseLeave += Lime_MouseLeave;
-
-            // WallpaperApply
-            WallpaperApply.MouseEnter += delegate
-            {
-                //colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
-                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                //WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-            };
-            WallpaperApply.MouseLeave += delegate
-            {
-                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                //colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
-                //WallpaperApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-            };
 
             // RestartTheme
             ThemeRestart.MouseEnter += delegate
             {
-                //colorAnimation.From = MainColor;
-                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                //ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From = MainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             ThemeRestart.MouseLeave += delegate
             {
-                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                //colorAnimation.To = MainColor;
-                //ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = MainColor;
+                ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // LanguageRestart
             LanguageRestart.MouseEnter += delegate
             {
-                //colorAnimation.From = MainColor;
-                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                //LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From = MainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             LanguageRestart.MouseLeave += delegate
             {
-                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                //colorAnimation.To = MainColor;
-                //LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = MainColor;
+                LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // DarkThemeRadio
@@ -381,32 +368,33 @@ namespace PicView.Views.Windows
             // ScrollZoom
             ScrollZoom.MouseEnter += delegate
             {
-                //colorAnimation.From = MainColor;
-                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                //ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From =
+                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             ScrollZoom.MouseLeave += delegate
             {
-                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                //colorAnimation.To = MainColor;
-                //ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = MainColor;
+                ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
             // CtrlZoom
             CtrlZoom.MouseEnter += delegate
             {
-                //colorAnimation.From = MainColor;
-                //colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
-                //CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From = MainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             CtrlZoom.MouseLeave += delegate
             {
-                //colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                //colorAnimation.To = MainColor;
-                //CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = MainColor;
+                CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
-            if (!Settings.Default.DarkTheme)
+
+            if (!Settings.Default.DarkTheme) // Add white hover text on light theme
             {
                 BlueRadio.MouseEnter += delegate
                 {
