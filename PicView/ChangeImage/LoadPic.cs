@@ -372,8 +372,8 @@ namespace PicView.ChangeImage
 
             if (Pics?.Count > 1)
             {
-                await Preloader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
                 await Preloader.PreLoadAsync(index).ConfigureAwait(false);
+                await Preloader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
 
                 if (FolderIndex == index)
                 {
