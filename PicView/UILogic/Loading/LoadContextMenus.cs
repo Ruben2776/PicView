@@ -8,6 +8,7 @@ using PicView.Views.UserControls.Buttons;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;
@@ -163,10 +164,17 @@ namespace PicView.UILogic.Loading
             TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
             TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
 
-            // 5 = seperator
+            // Fill Image Height
+            var imageHeightMenu = (MenuItem)settingscm.Items[5];
+            var imageHeightHeader = (CheckBox)imageHeightMenu.Header;
+            imageHeightHeader.IsChecked = Settings.Default.FillImage;
+            imageHeightHeader.Click += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+            imageHeightMenu.Click += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+
+            // 6 = seperator
 
             // Settings
-            var SettingsMenu = (MenuItem)settingscm.Items[6];
+            var SettingsMenu = (MenuItem)settingscm.Items[7];
             SettingsMenu.Click += (_, _) => { AllSettingsWindow(); MainContextMenu.IsOpen = false; };
 
             // 8 = seperator
