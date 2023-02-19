@@ -2,21 +2,22 @@
     x:Class="PicView.Views.Windows.ImageInfoWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
     xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
-    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Title="{StaticResource ImageInfo}"
     Width="816"
     Height="385"
     d:Height="700"
+    AllowsTransparency="True"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
+    WindowStyle="None"
     mc:Ignorable="d">
 
     <Window.Resources>
@@ -302,7 +303,7 @@
 
         <Border
             x:Name="MainBackground"
-            Background="{StaticResource NoisyBg}"
+            Background="{StaticResource MenuBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1">
             <ScrollViewer

@@ -72,7 +72,7 @@ namespace PicView.Views.Windows
                 {
 
                 }
-                await StartLoading.ContentRenderedEventAsync();
+                await StartLoading.ContentRenderedEventAsync().ConfigureAwait(false);
 
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
@@ -117,10 +117,10 @@ namespace PicView.Views.Windows
                 FunctionMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(EffectsMenuBg);
                 FunctionMenuButton.Click += Toggle_Functions_menu;
 
+                var subtleFaceColor = (Color)Application.Current.TryFindResource("SubtleFadeColor");
                 //GalleryButton
                 if (!Settings.Default.DarkTheme)
                 {
-                    var subtleFaceColor = (Color)Application.Current.TryFindResource("SubtleFadeColor");
                     AnimationHelper.LightThemeMouseEvent(GalleryButton, GalleryBrush);
                     GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBg, true);
                     GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBg, true);
@@ -151,7 +151,52 @@ namespace PicView.Views.Windows
                     }
                 };
 
+                // RotateButton
+                if (!Settings.Default.DarkTheme)
+                {                  
+                    AnimationHelper.LightThemeMouseEvent(RotateButton, RotateBrush);
+                    RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBg, true);
+                    RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBg, true);
+                    RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
+                        subtleFaceColor.A,
+                        subtleFaceColor.R,
+                        subtleFaceColor.G,
+                        subtleFaceColor.B,
+                        RotateBg, false
+                        );
+                }
+                else
+                {
+                    RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBrush);
+                    RotateButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(RotateBg);
+                    RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBrush);
+                    RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(RotateBg);
+                }
+                RotateButton.Click += async (_, _) => 
+                    await UILogic.TransformImage.Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
 
+                // FlipButton
+                if (!Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(FlipButton, FlipBrush);
+                    FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBg, true);
+                    FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBg, true);
+                    FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
+                        subtleFaceColor.A,
+                        subtleFaceColor.R,
+                        subtleFaceColor.G,
+                        subtleFaceColor.B,
+                        FlipBg, false
+                        );
+                }
+                else
+                {
+                    FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBrush);
+                    FlipButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FlipBg);
+                    FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBrush);
+                    FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FlipBg);
+                }
+                FlipButton.Click += (_, _) => UILogic.TransformImage.Rotation.Flip();
 
                 // TitleText
                 TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;

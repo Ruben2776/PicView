@@ -2,6 +2,7 @@
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
+using PicView.SystemIntegration;
 using PicView.UILogic;
 using System.IO;
 using System.Windows;
@@ -25,6 +26,7 @@ namespace PicView.Views.Windows
             extendedheight = 750;
             ContentRendered += async (_, _) =>
             {
+                WindowBlur.EnableBlur(this);
                 Window_ContentRendered();
                 if (Pics.Count > FolderIndex)
                 {

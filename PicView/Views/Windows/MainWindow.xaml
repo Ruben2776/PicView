@@ -34,8 +34,7 @@
 
             <misc:Icon
                 x:Name="Logo"
-                Width="39"
-                Height="30"
+                Width="37"
                 Margin="0"
                 Padding="0,2,0,2"
                 Background="{StaticResource SubtleFadeBrush}" />
@@ -47,8 +46,7 @@
 
             <Button
                 Name="GalleryButton"
-                Width="30"
-                Height="30"
+                Width="29"
                 DockPanel.Dock="Left">
                 <Button.Background>
                     <SolidColorBrush x:Name="GalleryBg" Color="{StaticResource SubtleFadeColor}" />
@@ -75,18 +73,39 @@
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
-            <Button
-                Name="SearchShowButton"
-                Width="30"
-                Height="30"
-                Background="{StaticResource SubtleFadeBrush}">
+            <Button Name="RotateButton" Width="29">
+                <Button.Background>
+                    <SolidColorBrush x:Name="RotateBg" Color="{StaticResource SubtleFadeColor}" />
+                </Button.Background>
                 <Path
+                    Canvas.Top="19"
                     Width="15"
                     Height="15"
-                    Data="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                    Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
                     Stretch="Fill">
                     <Path.Fill>
-                        <SolidColorBrush x:Name="IconBrush" Color="{StaticResource IconColor}" />
+                        <SolidColorBrush x:Name="RotateBrush" Color="{StaticResource IconColor}" />
+                    </Path.Fill>
+                </Path>
+            </Button>
+
+            <Rectangle
+                Width="1"
+                Height="30"
+                Fill="{StaticResource BorderBrush}" />
+
+            <Button Name="FlipButton" Width="29">
+                <Button.Background>
+                    <SolidColorBrush x:Name="FlipBg" Color="{StaticResource SubtleFadeColor}" />
+                </Button.Background>
+                <Path
+                    x:Name="FlipPath"
+                    Width="13"
+                    Height="13"
+                    Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
+                    Stretch="Fill">
+                    <Path.Fill>
+                        <SolidColorBrush x:Name="FlipBrush" Color="{StaticResource IconColor}" />
                     </Path.Fill>
                 </Path>
             </Button>
@@ -99,7 +118,7 @@
             <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
-                Height="30"
+                Height="32"
                 Background="{StaticResource SubtleFadeBrush}"
                 DockPanel.Dock="Right" />
 
@@ -111,8 +130,7 @@
 
             <buttons:FullscreenButton
                 x:Name="FullscreenButton"
-                Width="30"
-                Height="30"
+                Width="32"
                 Background="{StaticResource SubtleFadeBrush}"
                 DockPanel.Dock="Right" />
 
@@ -124,8 +142,7 @@
 
             <buttons:MinButton
                 x:Name="MinButton"
-                Width="30"
-                Height="30"
+                Width="32"
                 Background="{StaticResource SubtleFadeBrush}"
                 DockPanel.Dock="Right" />
 
