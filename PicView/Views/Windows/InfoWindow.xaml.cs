@@ -84,6 +84,7 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
+            WindowBlur.EnableBlur(this);
             MouseLeftButtonDown += (_, e) =>
             { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 

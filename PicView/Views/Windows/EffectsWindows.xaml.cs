@@ -32,6 +32,7 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object? sender, EventArgs? e)
         {
+            WindowBlur.EnableBlur(this);
             KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
 
             // CloseButton

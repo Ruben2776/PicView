@@ -42,6 +42,7 @@ namespace PicView.Views.Windows
 
             ContentRendered += delegate
             {
+                WindowBlur.EnableBlur(this);
                 var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
                 AddGenericEvents(colorAnimation);

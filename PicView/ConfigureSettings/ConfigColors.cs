@@ -80,6 +80,11 @@ namespace PicView.ConfigureSettings
 
         #region Change background
 
+        /// <summary>
+        /// changes the background color of the main window.
+        /// It increments the BgColorChoice setting, which is used to determine the background color,
+        /// and sets the background color of the main window to the BackgroundColorBrush brush.
+        /// </summary>
         internal static void ChangeBackground()
         {
             var mainWindow = ConfigureWindows.GetMainWindow;
@@ -92,6 +97,11 @@ namespace PicView.ConfigureSettings
             Settings.Default.Save();
         }
 
+        /// <summary>
+        /// Returns a Brush object based on the BgColorChoice setting.
+        /// The BgColorChoice is used to determine the background color of the main window.
+        /// The method returns different brushes based on the value of BgColorChoice.
+        /// </summary>
         internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
         {
             0 => Brushes.Transparent,
@@ -107,6 +117,11 @@ namespace PicView.ConfigureSettings
 
         #region Change Theme
 
+        /// <summary>
+        /// changes the UI theme of the application to a light or dark theme. 
+        /// It updates the resource dictionary of the application with the specified theme.
+        /// </summary>
+        /// <param name="useDarkTheme"></param>
         internal static void ChangeTheme(bool useDarkTheme)
         {
             Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
@@ -139,83 +154,17 @@ namespace PicView.ConfigureSettings
             Lime = 12
         }
 
+        /// <summary>
+        /// Changes the color theme of the application. 
+        /// It takes a ColorOption value and updates the ColorTheme setting of the application to the corresponding value.
+        /// The method then calls the UpdateColor method, which updates the application's color scheme to match the new theme.
+        /// </summary>
+        /// <param name="colorOption"></param>
         internal static void UpdateColorThemeTo(ColorOption colorOption)
         {
             Settings.Default.ColorTheme = (int)colorOption;
             UpdateColor();
         }
-
-        //internal static void Blue(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 1;
-        //    UpdateColor();
-        //}
-
-        //internal static void Pink(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 2;
-        //    UpdateColor();
-        //}
-
-        //internal static void Orange(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 3;
-        //    UpdateColor();
-        //}
-
-        //internal static void Green(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 4;
-        //    UpdateColor();
-        //}
-
-        //internal static void Red(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 5;
-        //    UpdateColor();
-        //}
-
-        //internal static void Teal(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 6;
-        //    UpdateColor();
-        //}
-
-        //internal static void Aqua(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 7;
-        //    UpdateColor();
-        //}
-
-        //internal static void Golden(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 8;
-        //    UpdateColor();
-        //}
-
-        //internal static void Purple(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 9;
-        //    UpdateColor();
-        //}
-
-        //internal static void Cyan(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 10;
-        //    UpdateColor();
-        //}
-
-        //internal static void Magenta(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 11;
-        //    UpdateColor();
-        //}
-
-        //internal static void Lime(object sender, RoutedEventArgs e)
-        //{
-        //    Settings.Default.ColorTheme = 12;
-        //    UpdateColor();
-        //}
 
         #endregion Set ColorTheme
     }

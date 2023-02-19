@@ -38,6 +38,7 @@ namespace PicView.Views.Windows
 
             ContentRendered += (sender, e) =>
             {
+                WindowBlur.EnableBlur(this);
                 Owner = null; // Remove owner, so that minizing mainwindow will not minize this
 
                 if (ErrorHandling.CheckOutOfRange() == false)

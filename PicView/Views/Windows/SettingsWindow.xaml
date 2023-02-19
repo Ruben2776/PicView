@@ -51,11 +51,6 @@
                 TextAlignment="Center" />
         </DockPanel>
 
-        <Rectangle
-            Height="1"
-            DockPanel.Dock="Top"
-            Fill="{StaticResource BorderBrushAlt}" />
-
         <TabControl
             Padding="0"
             BorderBrush="{x:Null}"
@@ -85,7 +80,7 @@
                                         Grid.Row="1"
                                         Background="{StaticResource NoisyBg}"
                                         BorderBrush="{StaticResource BorderBrush}"
-                                        BorderThickness="1,0,1,1">
+                                        BorderThickness="0">
                                         <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
                                     </Border>
                                 </Grid>
@@ -101,12 +96,13 @@
                             <ControlTemplate TargetType="{x:Type TabItem}">
                                 <Grid Background="{StaticResource BackgroundSubtleHighlightBrush}">
                                     <Rectangle
+                                        Name="Border"
                                         Width="1"
                                         Height="35"
-                                        HorizontalAlignment="Left"
+                                        HorizontalAlignment="Right"
                                         Fill="{StaticResource BorderBrush}" />
                                     <Rectangle
-                                        Name="Border"
+                                        Name="AccentBorder"
                                         Height="2"
                                         VerticalAlignment="Bottom" />
                                     <Rectangle
@@ -124,8 +120,11 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Panel.ZIndex" Value="100" />
-                                        <Setter TargetName="Border" Property="Fill" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                                        <Setter TargetName="AccentBorder" Property="Fill" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                                         <Setter Property="Foreground" Value="{DynamicResource ChosenColorBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
