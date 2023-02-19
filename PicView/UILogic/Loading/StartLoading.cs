@@ -107,7 +107,7 @@ namespace PicView.UILogic.Loading
             }
             else
             {
-                await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                _= QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
 
