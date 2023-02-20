@@ -97,7 +97,7 @@
     <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
 
     <!--  Background Color Fade  Subtle  -->
-    <Color x:Key="BackgroundColorFadeSubtle">#BE222222</Color>
+    <Color x:Key="BackgroundColorFadeSubtle">#EE222222</Color>
     <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
 
     <!--  Background Subtle Highlight  -->

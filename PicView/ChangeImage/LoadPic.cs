@@ -144,7 +144,7 @@ namespace PicView.ChangeImage
 
             FreshStartup = false;
 
-            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
                 GalleryNavigation.SetSelected(FolderIndex, true);
@@ -214,7 +214,7 @@ namespace PicView.ChangeImage
                 await LoadPicAtIndexAsync(0).ConfigureAwait(false);
             }
 
-            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
@@ -245,7 +245,7 @@ namespace PicView.ChangeImage
             {
                 BitmapSource? thumb = null;
                 var fileExists = false;
-                if (!GalleryFunctions.IsHorizontalFullscreenOpen && !GalleryFunctions.IsVerticalFullscreenOpen)
+                if (!GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
                     if (fileInfo is null)
                     {
@@ -282,7 +282,7 @@ namespace PicView.ChangeImage
 
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
-                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+                    if (GalleryFunctions.IsHorizontalFullscreenOpen)
                     {
                         thumb = GetThumb(index, fileInfo);
                         GalleryNavigation.FullscreenGalleryNavigation();
@@ -357,7 +357,7 @@ namespace PicView.ChangeImage
 
             await UpdateImage.UpdateImageAsync(index, preloadValue.BitmapSource, preloadValue.FileInfo).ConfigureAwait(false);
 
-            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 GalleryNavigation.FullscreenGalleryNavigation();
             }

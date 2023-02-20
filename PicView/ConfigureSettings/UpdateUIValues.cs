@@ -69,7 +69,6 @@ namespace PicView.ConfigureSettings
         internal static void SetScrolling()
         {
             if (GalleryFunctions.IsHorizontalFullscreenOpen
-                || GalleryFunctions.IsVerticalFullscreenOpen
                 || GalleryFunctions.IsHorizontalOpen) { return; }
 
             var settingscm = MainContextMenu.Items[7] as MenuItem;
@@ -155,13 +154,13 @@ namespace PicView.ConfigureSettings
 
         internal static async Task SetAutoFitAsync(object sender, RoutedEventArgs e)
         {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen) { return; }
+            if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
             await SetScalingBehaviourAsync(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow, Settings.Default.FillImage).ConfigureAwait(false);
         }
 
         internal static async Task SetAutoFillAsync(object sender, RoutedEventArgs e)
         {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen) { return; }
+            if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
             await SetScalingBehaviourAsync(Settings.Default.AutoFitWindow, !Settings.Default.FillImage).ConfigureAwait(false);
         }
 

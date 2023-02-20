@@ -18,7 +18,7 @@ namespace PicView.PicGallery
         {
             PicGalleryItem_Size = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
 
-            PicGalleryItem_Size_s = PicGalleryItem_Size - 30;
+            PicGalleryItem_Size_s = !Properties.Settings.Default.FullscreenGalleryHorizontal ? PicGalleryItem_Size - 20 : PicGalleryItem_Size - 10;
         }
 
         internal static double PicGalleryItem_Size { get; private set; }
@@ -52,11 +52,6 @@ namespace PicView.PicGallery
                 if (GetPicGallery.Container.Children.Count <= SelectedGalleryItem) { return 0; }
 
                 var selectedScrollTo = GetPicGallery.Container.Children[SelectedGalleryItem].TranslatePoint(new Point(), GetPicGallery.Container);
-
-                if (GalleryFunctions.IsVerticalFullscreenOpen)
-                {
-                    return selectedScrollTo.Y - (Vertical_items / 2) * PicGalleryItem_Size;
-                }
 
                 return selectedScrollTo.X - (Horizontal_items / 2) * PicGalleryItem_Size + (PicGalleryItem_Size_s / 2); // Scroll to overlap half of item
             }
@@ -132,20 +127,8 @@ namespace PicView.PicGallery
                 var speed = speedUp ? PicGalleryItem_Size * 4.7 : PicGalleryItem_Size / 2;
                 var offset = next ? -speed : speed;
 
-                if (GalleryFunctions.IsHorizontalOpen)
-                {
-                    var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
-                }
-                else
-                {
-                    var verticalOffset = GetPicGallery.Scroller.VerticalOffset + offset;
-                    var horizontalOffset = Settings.Default.FullscreenGalleryVertical ? GetPicGallery.Scroller.HorizontalOffset : verticalOffset;
-                    var targetOffset = new Point(horizontalOffset, verticalOffset);
-
-                    GetPicGallery.Scroller.ScrollToVerticalOffset(targetOffset.Y);
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(targetOffset.X);
-                }
+                var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
             }
         }
 

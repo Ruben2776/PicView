@@ -177,7 +177,7 @@ namespace PicView.Animations
 
         internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
         {
-            if (item.Id == Navigation.FolderIndex || item.Id == PicGallery.GalleryNavigation.SelectedGalleryItem)
+            if (item.Id == Navigation.FolderIndex || item.Id == PicGallery.GalleryNavigation.SelectedGalleryItem || PicGallery.GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 return;
             }

@@ -17,7 +17,7 @@ namespace PicView.Views.UserControls.Buttons
             InitializeComponent();
             MouseLeftButtonUp += (_, _) =>
             {
-                if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+                if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
                     SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                 }

@@ -85,7 +85,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 GalleryNavigation.SetSelected(prev, false);
             }

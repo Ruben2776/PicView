@@ -62,7 +62,7 @@ namespace PicView.SystemIntegration
         /// Executes when user manually resized window
         public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (Settings.Default.AutoFitWindow || GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (Settings.Default.AutoFitWindow || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 return IntPtr.Zero;
             }

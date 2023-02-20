@@ -19,16 +19,19 @@ namespace PicView.PicGallery
     {
         internal static bool IsLoading { get; private set; }
 
+        private const int _fullscreenItems = 37;
+        private const int _galleryItems = 23;
+
         internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
         {
             // Add events and set fields, when it's loaded.
             UC.GetPicGallery.Scroller.PreviewMouseWheel += GalleryNavigation.ScrollTo;
-            UC.GetPicGallery.Scroller.ScrollChanged += (s, x) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
-            UC.GetPicGallery.grid.MouseLeftButtonDown += (s, x) => ConfigureWindows.GetMainWindow.Focus();
-            UC.GetPicGallery.x2.MouseLeftButtonDown += delegate { GalleryToggle.CloseHorizontalGallery(); };
+            UC.GetPicGallery.Scroller.ScrollChanged += (_, _) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
+            UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
+            UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
         }
 
-        internal static void LoadLayout(bool fullscreen)
+        internal static void LoadLayout()
         {
             if (UC.GetPicGallery == null)
             {
@@ -41,69 +44,33 @@ namespace PicView.PicGallery
                 Panel.SetZIndex(UC.GetPicGallery, 999);
             }
 
-            if (fullscreen)
+            if (Settings.Default.FullscreenGalleryHorizontal)
             {
                 WindowSizing.RenderFullscreen();
 
-                if (Settings.Default.FullscreenGalleryHorizontal)
-                {
-                    // Set size
-                    GalleryNavigation.SetSize(35);
-                    UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
+                // Make sure booleans are correct
+                GalleryFunctions.IsHorizontalOpen = true;
+                GalleryFunctions.IsHorizontalFullscreenOpen = true;
 
-                    // Set alignment
-                    UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
-                    UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
+                // Set size
+                GalleryNavigation.SetSize(_fullscreenItems);
+                UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
+                UC.GetPicGallery.Height = double.NaN;
 
-                    // Set scrollbar visibility and orientation
-                    UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-                    UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                    UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
+                // Set alignment
+                UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
+                UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
 
-                    // Set style
-                    UC.GetPicGallery.Margin = new Thickness(0);
-                    UC.GetPicGallery.border.BorderThickness = new Thickness(1);
+                // Set scrollbar visibility and orientation
+                UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
 
-                    // Make sure bools are correct
-                    GalleryFunctions.IsHorizontalOpen = false;
-                    GalleryFunctions.IsHorizontalFullscreenOpen = true;
-                    GalleryFunctions.IsVerticalFullscreenOpen = false;
-                }
-                else
-                {
-                    // Set size
-                    GalleryNavigation.SetSize(22);
-                    UC.GetPicGallery.Width = (GalleryNavigation.PicGalleryItem_Size + 25) * WindowSizing.MonitorInfo.DpiScaling;
-                    UC.GetPicGallery.Height = WindowSizing.MonitorInfo.WorkArea.Height;
-
-                    // Set alignment
-                    UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Right;
-                    UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Stretch;
-
-                    // Set scrollbar visibility and orientation
-                    UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                    UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
-                    UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
-
-                    // Set style
-                    UC.GetPicGallery.Margin = new Thickness(0, 0, 0, 0);
-                    UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
-                    if (Settings.Default.DarkTheme)
-                    {
-                        UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
-                    }
-                    else
-                    {
-                        UC.GetPicGallery.border.Background = new SolidColorBrush(Colors.Transparent);
-                    }
-
-                    // Make sure bools are correct
-                    GalleryFunctions.IsHorizontalOpen = false;
-                    GalleryFunctions.IsHorizontalFullscreenOpen = false;
-                    GalleryFunctions.IsVerticalFullscreenOpen = true;
-                }
-
+                // Set style
                 UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
+                UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 4 * WindowSizing.MonitorInfo.DpiScaling);
+                UC.GetPicGallery.border.BorderThickness = new Thickness(1);
+                UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItem_Size;  
 
                 ShowNavigation(false);
                 ShowTopandBottom(false);
@@ -111,9 +78,12 @@ namespace PicView.PicGallery
             }
             else
             {
-                // Set size
-                GalleryNavigation.SetSize(17);
+                // Make sure booleans are correct
+                GalleryFunctions.IsHorizontalOpen = true;
+                GalleryFunctions.IsHorizontalFullscreenOpen = false;
 
+                // Set size
+                GalleryNavigation.SetSize(_galleryItems);
                 UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
                 UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
 
@@ -124,19 +94,13 @@ namespace PicView.PicGallery
                 // Set scrollbar visibility and orientation
                 UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
                 UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-
                 UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
 
                 // Set style
                 UC.GetPicGallery.x2.Visibility = Visibility.Visible;
-                UC.GetPicGallery.Container.Margin = new Thickness(0, 65 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
+                UC.GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
                 UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
                 UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
-
-                // Make sure booleans are correct
-                GalleryFunctions.IsHorizontalOpen = true;
-                GalleryFunctions.IsHorizontalFullscreenOpen = false;
-                GalleryFunctions.IsVerticalFullscreenOpen = false;
             }
 
             if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
@@ -147,7 +111,8 @@ namespace PicView.PicGallery
             for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
             {
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                item.innerborder.Height = GalleryNavigation.PicGalleryItem_Size_s;
+                item.innerborder.Height = item.innerborder.Width = GalleryNavigation.PicGalleryItem_Size_s;
+                item.outterborder.Height = item.outterborder.Width = GalleryNavigation.PicGalleryItem_Size;
             }
         }
 
@@ -220,7 +185,7 @@ namespace PicView.PicGallery
             }
 
             var pic = await Task.FromResult(
-                Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size)
+                Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size, true)
                 ?? ImageFunctions.ImageErrorMessage());
             UpdatePic(i, pic);
         }

@@ -442,23 +442,6 @@
                 <StackPanel Margin="10">
 
                     <Label
-                        VerticalAlignment="Center"
-                        Content="{StaticResource FullscreenGalleryLayout}"
-                        Foreground="{StaticResource MainColorBrush}" />
-                    <ComboBox
-                        x:Name="GalleryBox"
-                        Width="150"
-                        Margin="8,2,0,2"
-                        HorizontalAlignment="Left"
-                        IsTabStop="False">
-                        <ComboBoxItem
-                            x:Name="GalleryVertical"
-                            Content="{StaticResource Vertical}"
-                            IsSelected="True" />
-                        <ComboBoxItem x:Name="GalleryHorizontal" Content="{StaticResource Horizontal}" />
-                    </ComboBox>
-
-                    <Label
                         Margin="0,5,0,5"
                         VerticalAlignment="Center"
                         Content="{StaticResource MiscSettings}"

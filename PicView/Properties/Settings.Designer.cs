@@ -458,30 +458,6 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FullscreenGalleryVertical {
-            get {
-                return ((bool)(this["FullscreenGalleryVertical"]));
-            }
-            set {
-                this["FullscreenGalleryVertical"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool StartInFullscreenGallery {
-            get {
-                return ((bool)(this["StartInFullscreenGallery"]));
-            }
-            set {
-                this["StartInFullscreenGallery"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Maximized {
             get {
                 return ((bool)(this["Maximized"]));

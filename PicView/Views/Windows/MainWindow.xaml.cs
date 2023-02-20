@@ -145,7 +145,7 @@ namespace PicView.Views.Windows
                     {
                         GalleryToggle.CloseHorizontalGallery();
                     }
-                    else if (GalleryFunctions.IsVerticalFullscreenOpen == false && GalleryFunctions.IsHorizontalFullscreenOpen == false)
+                    else if (GalleryFunctions.IsHorizontalFullscreenOpen == false)
                     {
                         await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
                     }

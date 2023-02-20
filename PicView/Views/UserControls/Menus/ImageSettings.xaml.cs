@@ -51,7 +51,7 @@ namespace PicView.Views.UserControls.Menus
             {
                 UC.Close_UserControls();
 
-                if (Settings.Default.FullscreenGalleryVertical == false && Settings.Default.FullscreenGalleryHorizontal == false)
+                if (Settings.Default.FullscreenGalleryHorizontal == false)
                 {
                     Settings.Default.FullscreenGalleryHorizontal = true;
                 }

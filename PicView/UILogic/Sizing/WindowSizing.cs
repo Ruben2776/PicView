@@ -168,7 +168,7 @@ namespace PicView.UILogic.Sizing
                 // Handle if browsing gallery
                 if (GalleryFunctions.IsHorizontalOpen)
                 {
-                    GalleryLoad.LoadLayout(false);
+                    GalleryLoad.LoadLayout();
                     GalleryNavigation.ScrollTo();
                 }
 
@@ -351,22 +351,6 @@ namespace PicView.UILogic.Sizing
             GetEffectsWindow?.Close();
 
             GetSettingsWindow?.Close();
-
-            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
-            {
-                if (Settings.Default.FullscreenGalleryHorizontal || Settings.Default.FullscreenGalleryVertical)
-                {
-                    Settings.Default.StartInFullscreenGallery = true;
-                }
-                else
-                {
-                    Settings.Default.StartInFullscreenGallery = false;
-                }
-            }
-            else if (Properties.Settings.Default.Fullscreen == false)
-            {
-                Settings.Default.StartInFullscreenGallery = false;
-            }
 
             Settings.Default.Save();
             DeleteFiles.DeleteTempFiles();

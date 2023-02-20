@@ -30,7 +30,7 @@ namespace PicView.PicGallery
 
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
             {
-                GalleryLoad.LoadLayout(false);
+                GalleryLoad.LoadLayout();
                 GetPicGallery.Visibility = Visibility.Visible;
 
                 bool fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
@@ -59,13 +59,13 @@ namespace PicView.PicGallery
 
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                GalleryLoad.LoadLayout(true);
+                GalleryLoad.LoadLayout();
                 GetPicGallery.Visibility = Visibility.Visible;
 
                 if (Settings.Default.FullscreenGalleryHorizontal)
                 {
                     IsHorizontalFullscreenOpen = true;
-                    IsVerticalFullscreenOpen = IsHorizontalOpen = false;
+                    IsHorizontalOpen = false;
 
                     var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
                                 select x;
@@ -78,7 +78,6 @@ namespace PicView.PicGallery
                 }
                 else
                 {
-                    IsVerticalFullscreenOpen = true;
                     IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
                     var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
@@ -113,7 +112,7 @@ namespace PicView.PicGallery
 
         internal static void CloseCurrentGallery()
         {
-            if (IsVerticalFullscreenOpen || IsHorizontalFullscreenOpen)
+            if (IsHorizontalFullscreenOpen)
             {
                 CloseFullscreenGallery();
             }
@@ -127,7 +126,7 @@ namespace PicView.PicGallery
         {
             if (GetPicGallery is null) { return; }
 
-            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+            IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
             // Restore interface elements if needed
             if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen)
@@ -153,9 +152,7 @@ namespace PicView.PicGallery
 
         internal static void CloseFullscreenGallery()
         {
-            Properties.Settings.Default.FullscreenGalleryVertical =
-                Properties.Settings.Default.FullscreenGalleryHorizontal =
-                IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+            Properties.Settings.Default.FullscreenGalleryHorizontal = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
             GetPicGallery.Visibility = Visibility.Collapsed;
 
@@ -194,6 +191,8 @@ namespace PicView.PicGallery
             {
                 GetMainWindow.ParentContainer.Children.Remove(check2.ElementAt(0));
             }
+
+            GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
         }
 
         #endregion Close

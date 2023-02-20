@@ -47,32 +47,6 @@ namespace PicView.Views.Windows
 
                 AddGenericEvents(colorAnimation);
 
-                // GalleryBox
-                if (Settings.Default.FullscreenGalleryVertical == false && Settings.Default.FullscreenGalleryHorizontal == false)
-                {
-                    Settings.Default.FullscreenGalleryHorizontal = true;
-                    GalleryVertical.IsSelected = Settings.Default.FullscreenGalleryHorizontal;
-                }
-                else
-                {
-                    GalleryVertical.IsSelected = Settings.Default.FullscreenGalleryVertical;
-                    GalleryHorizontal.IsSelected = Settings.Default.FullscreenGalleryHorizontal;
-                }
-
-                GalleryBox.SelectionChanged += delegate
-                {
-                    if (GalleryVertical.IsSelected)
-                    {
-                        Settings.Default.FullscreenGalleryVertical = true;
-                        Settings.Default.FullscreenGalleryHorizontal = false;
-                    }
-                    else
-                    {
-                        Settings.Default.FullscreenGalleryHorizontal = true;
-                        Settings.Default.FullscreenGalleryVertical = false;
-                    }
-                };
-
                 // SubDirRadio
                 SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
                 SubDirRadio.Click += async delegate

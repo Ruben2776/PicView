@@ -61,7 +61,7 @@ namespace PicView.ChangeImage
 
             if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
 
-            if (Settings.Default.FullscreenGalleryHorizontal || Settings.Default.FullscreenGalleryVertical)
+            if (Settings.Default.FullscreenGalleryHorizontal)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
                 {

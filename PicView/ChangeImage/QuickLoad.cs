@@ -30,12 +30,12 @@ namespace PicView.ChangeImage
 
             if (!GalleryFunctions.IsHorizontalFullscreenOpen) // Fix window sizing
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, ResizeWindow);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, WindowSizing.SetWindowBehavior);
             }
 
             if (!fileInfo.Exists) // If not file, try to load if URL or base64
             {
-                await LoadPicFromStringAsync(file, false, fileInfo).ConfigureAwait(false);
+                await LoadPicFromStringAsync(file, false).ConfigureAwait(false);
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace PicView.ChangeImage
             await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
             await Preloader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
-            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 await GalleryLoad.Load().ConfigureAwait(false);
             }
@@ -87,11 +87,6 @@ namespace PicView.ChangeImage
 
             FreshStartup = false;
             InitialPath = file;
-        }
-
-        private static void ResizeWindow()
-        {
-            WindowSizing.SetWindowBehavior();
         }
 
         private static void SetMainImage(BitmapSource bitmapSource, FileInfo fileInfo)

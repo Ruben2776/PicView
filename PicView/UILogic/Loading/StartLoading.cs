@@ -54,11 +54,11 @@ namespace PicView.UILogic.Loading
             var args = Environment.GetCommandLineArgs();
 
             // Determine prefered UI for startup
-            if (Settings.Default.StartInFullscreenGallery)
+            if (Settings.Default.FullscreenGalleryHorizontal)
             {
                 if (args.Length <= 1)
                 {
-                    Settings.Default.StartInFullscreenGallery = false;
+                    Settings.Default.FullscreenGalleryHorizontal = false;
                 }
                 else
                 {

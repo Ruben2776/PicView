@@ -127,13 +127,7 @@ namespace PicView.UILogic.Sizing
             var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
             var margin = 0d;
 
-            if (GalleryFunctions.IsVerticalFullscreenOpen)
-            {
-                padding += PicGalleryItem_Size - 50;
-                maxWidth = Math.Min(monitorWidth - padding, width);
-                maxHeight = Math.Min(monitorHeight, height);
-            }
-            else if (GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 maxWidth = Math.Min(monitorWidth - padding, width);
                 maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size, height);
