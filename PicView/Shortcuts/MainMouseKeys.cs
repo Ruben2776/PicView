@@ -232,11 +232,12 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);
-                    return;
+                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);                  
                 }
+                return;
             }
 
+            // 3. Navigate or zoom, depending on keys and preferences
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (Settings.Default.CtrlZoom)

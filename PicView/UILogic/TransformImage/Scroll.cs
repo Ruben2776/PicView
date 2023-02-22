@@ -37,6 +37,10 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static async Task SetScrollBehaviour(bool scrolling)
         {
+            if (Properties.Settings.Default.Fullscreen || Properties.Settings.Default.FullscreenGalleryHorizontal)
+            {
+                return;
+            }
             Settings.Default.ScrollEnabled = scrolling;
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {

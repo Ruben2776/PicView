@@ -162,16 +162,7 @@ namespace PicView.UILogic.Sizing
                     var rotationRadians = RotationAngle * Math.PI / 180;
                     var newWidth = Math.Abs(width * Math.Cos(rotationRadians)) + Math.Abs(height * Math.Sin(rotationRadians));
                     var newHeight = Math.Abs(width * Math.Sin(rotationRadians)) + Math.Abs(height * Math.Cos(rotationRadians));
-                    var remainder = RotationAngle % 90;
-
-                    if (remainder > 45)
-                    {
-                        AspectRatio = Math.Min(maxWidth / newWidth, maxHeight / newHeight);
-                    }
-                    else
-                    {
-                        AspectRatio = Math.Min(maxWidth / newHeight, maxHeight / newWidth);
-                    }
+                    AspectRatio = Math.Min(maxWidth / newWidth, maxHeight / newHeight);
                     break;
             }
 

@@ -218,6 +218,8 @@ namespace PicView.UILogic.Sizing
 
         internal static void RenderFullscreen()
         {
+            Settings.Default.ScrollEnabled = false; // Don't scroll in fulscreen
+
             SetWindowSize();
 
             ShowTopandBottom(false);

@@ -118,6 +118,7 @@ namespace PicView.PicGallery
 
         internal static async Task Load()
         {
+
             IsLoading = true;
             var source = new CancellationTokenSource();
             var task = Task.Run(() => LoopAsync(source.Token), source.Token);
@@ -194,7 +195,7 @@ namespace PicView.PicGallery
         {
             try
             {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
                 {
                     if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                     {
