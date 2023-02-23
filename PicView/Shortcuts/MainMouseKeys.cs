@@ -3,10 +3,12 @@ using PicView.ChangeTitlebar;
 using PicView.Editing;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.UILogic;
 using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -193,18 +195,18 @@ namespace PicView.Shortcuts
             }
             else if (GalleryFunctions.IsHorizontalOpen)
             {
-                GalleryNavigation.ScrollTo(dir, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => 
+                    GalleryNavigation.ScrollTo(dir, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
             }
 
             else if (ShouldHandleScroll(dir))
             {
-                HandleScroll(dir);
-                return;
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(dir));
             }
 
             else
             {
-                await HandleNavigateOrZoomAsync(dir, e).ConfigureAwait(false);
+                await HandleNavigateOrZoomAsync(e).ConfigureAwait(false);
             }
         }
 
@@ -235,28 +237,28 @@ namespace PicView.Shortcuts
         {
             if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
             {
-                GalleryNavigation.ScrollTo(dir, false, true);
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(dir, false, true));
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    Zoom(e.Delta > 0);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
                 else
                 {
-                   await NavigateToPicAsync(dir).ConfigureAwait(false);
+                   await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(dir).ConfigureAwait(false);
+                    await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
                 }
                 else
                 {
-                    Zoom(e.Delta > 0);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
             }
         }
@@ -275,28 +277,28 @@ namespace PicView.Shortcuts
             }
         }
 
-        private static async Task HandleNavigateOrZoomAsync(bool dir, MouseWheelEventArgs e)
+        private static async Task HandleNavigateOrZoomAsync(MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    Zoom(e.Delta > 0);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
                 else
                 {
-                    await NavigateToPicAsync(dir).ConfigureAwait(false);
+                    await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(dir).ConfigureAwait(false);
+                    await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
                 }
                 else
                 {
-                    Zoom(e.Delta > 0);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
             }
         }
