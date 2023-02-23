@@ -92,18 +92,6 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static void ScrollTo(object sender, MouseWheelEventArgs e)
-        {
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                ScrollTo(e.Delta > 0);
-            }
-            else
-            {
-                ScrollTo(e.Delta > 0);
-            }
-        }
-
         /// <summary>
         /// Scrolls a page back or forth
         /// </summary>

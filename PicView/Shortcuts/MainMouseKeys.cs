@@ -170,20 +170,9 @@ namespace PicView.Shortcuts
         internal static async Task MainImage_MouseWheelAsync(object sender, MouseWheelEventArgs e)
         {
             // Don't execute keys when entering in GoToPicBox || QuickResize
-            if (GetImageSettingsMenu.GoToPic != null)
+            if (ShouldIgnoreMouseWheel())
             {
-                if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
-                {
-                    return;
-                }
-            }
-
-            if (GetQuickResize != null)
-            {
-                if (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused)
-                {
-                    return;
-                }
+                return;
             }
 
             // Disable normal scroll, so we can use our own values
@@ -196,48 +185,98 @@ namespace PicView.Shortcuts
             }
 
             // Determine horizontal scrolling direction
-            bool dir = Settings.Default.HorizontalReverseScroll ? e.Delta < 0 : e.Delta > 0;
+            bool dir = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
 
-            // 1. Handle horizontal gallery
-            if (GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                if (Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                await HandleFullscreenGalleryAsync(dir, e).ConfigureAwait(false);
+            }
+            else if (GalleryFunctions.IsHorizontalOpen)
+            {
+                GalleryNavigation.ScrollTo(dir, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift);
+            }
+
+            else if (ShouldHandleScroll(dir))
+            {
+                HandleScroll(dir);
+                return;
+            }
+
+            else
+            {
+                await HandleNavigateOrZoomAsync(dir, e).ConfigureAwait(false);
+            }
+        }
+
+        private static bool ShouldIgnoreMouseWheel()
+        {
+            if (GetImageSettingsMenu.GoToPic != null && GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+            {
+                return true;
+            }
+
+            if (GetQuickResize != null && (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool ShouldHandleScroll(bool dir)
+        {
+            return Settings.Default.ScrollEnabled
+                   && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
+                   && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift
+                   && Math.Abs(GetMainWindow.Scroller.ExtentHeight - GetMainWindow.Scroller.ViewportHeight) > 1;
+        }
+
+        private static async Task HandleFullscreenGalleryAsync(bool dir, MouseWheelEventArgs e)
+        {
+            if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
+            {
+                GalleryNavigation.ScrollTo(dir, false, true);
+            }
+            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                if (Settings.Default.CtrlZoom)
+                {
+                    Zoom(e.Delta > 0);
+                }
+                else
+                {
+                   await NavigateToPicAsync(dir).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                if (Settings.Default.CtrlZoom)
                 {
                     await NavigateToPicAsync(dir).ConfigureAwait(false);
                 }
                 else
                 {
-                    if (GetMainWindow.MainImage.IsMouseOver)
-                    {
-                        Zoom(e.Delta > 0);
-                    }
-                    else if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
-                    {
-                        GalleryNavigation.ScrollTo(sender, e);
-                    }
+                    Zoom(e.Delta > 0);
                 }
-
-                return;
             }
+        }
 
-            // 2. Handle scroll enabled and shift not held down
-            if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
-                                               && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
+        private static void HandleScroll(bool dir)
+        {
+            var zoomSpeed = 40;
+
+            if (dir)
             {
-                var zoomSpeed = 40;
-
-                if (e.Delta > 0)
-                {
-                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - zoomSpeed);
-                }
-                else
-                {
-                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);                  
-                }
-                return;
+                GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - zoomSpeed);
             }
+            else
+            {
+                GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);
+            }
+        }
 
-            // 3. Navigate or zoom, depending on keys and preferences
+        private static async Task HandleNavigateOrZoomAsync(bool dir, MouseWheelEventArgs e)
+        {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (Settings.Default.CtrlZoom)
