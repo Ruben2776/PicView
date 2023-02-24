@@ -213,7 +213,7 @@
     <system:String x:Key="FitToWindow">适应窗口/图片</system:String>
     <system:String x:Key="ShowHideUI">显示/隐藏界面</system:String>
     <system:String x:Key="ChangeBackground">切换背景</system:String>
-    <system:String x:Key="ChangeBackgroundTooltip">为透明图像切换背景</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">在透明背景的图像中改变背景颜色</system:String>
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">复制</system:String>
@@ -261,7 +261,7 @@
     <system:String x:Key="Centimeters">cm</system:String>
     <system:String x:Key="Inches">in</system:String>
     <system:String x:Key="BitDepth">位深</system:String>
-    <system:String x:Key="SizeTooltip">以像素或百分比输入所需的大小。</system:String>
+    <system:String x:Key="SizeTooltip">以像素或百分比输入所需的尺寸。</system:String>
 
     <!--  Keyboard key names  -->
     <system:String x:Key="Del">Del</system:String>
@@ -362,19 +362,19 @@
     <system:String x:Key="ColorPickerToolTooltip">从图片中选取颜色</system:String>
 
     <!--  Resize Window  -->
-    <system:String x:Key="ShowResizeWindow">显示调整大小窗口</system:String>
+    <system:String x:Key="ShowResizeWindow">显示调整尺寸窗口</system:String>
 
-    <system:String x:Key="Resize">调整大小</system:String>
+    <system:String x:Key="Resize">调整尺寸</system:String>
     <system:String x:Key="ResizeImage">调整图像大小</system:String>
-    <system:String x:Key="NoResize">没有调整大小</system:String>
+    <system:String x:Key="NoResize">禁止缩放</system:String>
 
-    <system:String x:Key="BatchResize">图像批量调整大小</system:String>
+    <system:String x:Key="BatchResize">批量调整尺寸</system:String>
 
     <system:String x:Key="SourceFolder">源文件夹</system:String>
-    <system:String x:Key="OutputFolder">导出目录</system:String>
+    <system:String x:Key="OutputFolder">输出文件夹</system:String>
 
-    <system:String x:Key="ConvertTo">转换成</system:String>
-    <system:String x:Key="NoConversion">没有转换</system:String>
+    <system:String x:Key="ConvertTo">转换为</system:String>
+    <system:String x:Key="NoConversion">不转换</system:String>
 
     <system:String x:Key="Compression">压缩</system:String>
     <system:String x:Key="Lossless">无损</system:String>
@@ -384,7 +384,7 @@
     <system:String x:Key="Percentage">百分比</system:String>
 
     <system:String x:Key="GenerateThumbnails">生成缩略图</system:String>
-    <system:String x:Key="Thumbnail">微型</system:String>
+    <system:String x:Key="Thumbnail">缩略图</system:String>
 
     <system:String x:Key="Start">启动</system:String>
     <system:String x:Key="Cancel">取消</system:String>
