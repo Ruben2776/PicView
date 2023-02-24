@@ -187,26 +187,26 @@ namespace PicView.Shortcuts
             }
 
             // Determine horizontal scrolling direction
-            bool dir = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
+            bool direction = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                await HandleFullscreenGalleryAsync(dir, e).ConfigureAwait(false);
+                await HandleFullscreenGalleryAsync(direction, e).ConfigureAwait(false);
             }
             else if (GalleryFunctions.IsHorizontalOpen)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => 
-                    GalleryNavigation.ScrollTo(dir, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
+                    GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
             }
 
-            else if (ShouldHandleScroll(dir))
+            else if (ShouldHandleScroll(direction))
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(dir));
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(direction));
             }
 
             else
             {
-                await HandleNavigateOrZoomAsync(e).ConfigureAwait(false);
+                await HandleNavigateOrZoomAsync(direction, e).ConfigureAwait(false);
             }
         }
 
@@ -225,7 +225,7 @@ namespace PicView.Shortcuts
             return false;
         }
 
-        private static bool ShouldHandleScroll(bool dir)
+        private static bool ShouldHandleScroll(bool direction)
         {
             return Settings.Default.ScrollEnabled
                    && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
@@ -233,11 +233,11 @@ namespace PicView.Shortcuts
                    && Math.Abs(GetMainWindow.Scroller.ExtentHeight - GetMainWindow.Scroller.ViewportHeight) > 1;
         }
 
-        private static async Task HandleFullscreenGalleryAsync(bool dir, MouseWheelEventArgs e)
+        private static async Task HandleFullscreenGalleryAsync(bool direction, MouseWheelEventArgs e)
         {
             if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(dir, false, true));
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(direction, false, true));
             }
             else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
@@ -247,14 +247,14 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                   await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
+                   await NavigateToPicAsync(!direction).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
+                    await NavigateToPicAsync(!direction).ConfigureAwait(false);
                 }
                 else
                 {
@@ -263,11 +263,11 @@ namespace PicView.Shortcuts
             }
         }
 
-        private static void HandleScroll(bool dir)
+        private static void HandleScroll(bool direction)
         {
             var zoomSpeed = 40;
 
-            if (dir)
+            if (direction)
             {
                 GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - zoomSpeed);
             }
@@ -277,7 +277,7 @@ namespace PicView.Shortcuts
             }
         }
 
-        private static async Task HandleNavigateOrZoomAsync(MouseWheelEventArgs e)
+        private static async Task HandleNavigateOrZoomAsync(bool direction, MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
@@ -287,14 +287,14 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
+                    await NavigateToPicAsync(!direction).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(Properties.Settings.Default.HorizontalReverseScroll).ConfigureAwait(false);
+                    await NavigateToPicAsync(!direction).ConfigureAwait(false);
                 }
                 else
                 {
