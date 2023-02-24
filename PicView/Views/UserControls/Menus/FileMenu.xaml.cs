@@ -46,7 +46,7 @@ namespace PicView.Views.UserControls.Menus
             CopyButton.TheButton.Click += delegate
             {
                 UC.Close_UserControls();
-                Copy_Paste.Copyfile();
+                Copy_Paste.CopyFile();
             };
 
             Open.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);

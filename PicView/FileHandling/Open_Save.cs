@@ -49,26 +49,33 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void Open_In_Explorer()
         {
-            if (Pics?.Count > 0)
+            string? directory = null, file = null;
+
+            if (Pics?.Count <= 0)
             {
-                if (Pics.Count < FolderIndex)
+                // Check if from URL and download it
+                string url = FileFunctions.RetrieveFromURL();
+                if (!string.IsNullOrEmpty(url))
                 {
-                    return;
+                    file = ArchiveExtraction.TempFilePath;
+                    directory = Path.GetDirectoryName(file);
                 }
             }
-            else
+            else if (Pics?.Count > FolderIndex)
+            {
+                file = Pics[FolderIndex];
+                directory = Path.GetDirectoryName(file);
+            }
+
+            if (file is null || directory is null)
             {
                 return;
             }
 
-            if (!File.Exists(Pics[FolderIndex]) || ConfigureWindows.GetMainWindow.MainImage.Source == null)
-            {
-                return;
-            }
             try
             {
                 Close_UserControls();
-                FileExplorer.OpenFolderAndSelectFile(Path.GetDirectoryName(Pics?[FolderIndex]), Pics?[FolderIndex]); // https://stackoverflow.com/a/39427395
+                FileExplorer.OpenFolderAndSelectFile(directory, file); // https://stackoverflow.com/a/39427395
             }
             catch (Exception e)
             {

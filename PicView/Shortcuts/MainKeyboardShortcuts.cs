@@ -353,7 +353,7 @@ namespace PicView.Shortcuts
                         {
                             if (shiftDown)
                             {
-                                Copyfile();
+                                CopyBitmap(); 
                             }
                             else if (altDown)
                             {
@@ -361,7 +361,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                CopyBitmap();
+                                CopyFile();
                             }
                         }
                         else if (!GalleryFunctions.IsHorizontalOpen)

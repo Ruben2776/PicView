@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -25,34 +26,28 @@ namespace PicView.FileHandling
         /// <summary>
         /// Add file to clipboard
         /// </summary>
-        internal static void Copyfile()
+        internal static void CopyFile()
         {
-            if (Pics == null)
+            if (Pics?.Count <= 0)
             {
-                return;
+                // Check if from URL and download it
+                string url = FileFunctions.RetrieveFromURL();
+                if (!string.IsNullOrEmpty(url)) 
+                {
+                    Copyfile(ArchiveExtraction.TempFilePath);
+                }
+                else
+                {
+                    CopyBitmap();
+                }
             }
-
-            if (Pics.Count == 0)
-            {
-                CopyBitmap();
-                return;
-            }
-
-            // Copy pic if from web
-            if (string.IsNullOrWhiteSpace(Pics[FolderIndex]) || Uri.IsWellFormedUriString(Pics[FolderIndex], UriKind.Absolute))
-            {
-                CopyBitmap();
-            }
-            else
+            else if (Pics?.Count > FolderIndex)
             {
                 Copyfile(Pics[FolderIndex]);
             }
         }
 
-        /// <summary>
-        /// Add file to clipboard
-        /// </summary>
-        internal static void Copyfile(string path)
+        static void Copyfile(string path)
         {
             var paths = new StringCollection { path };
             Clipboard.SetFileDropList(paths);

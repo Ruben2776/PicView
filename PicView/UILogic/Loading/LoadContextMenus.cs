@@ -224,8 +224,8 @@ namespace PicView.UILogic.Loading
 
             // Copy file
             var copyFileCm = (MenuItem)CopyCm.Items[0];
-            copyFileCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Shift"]} + C";
-            copyFileCm.Click += (_, _) => Copy_Paste.Copyfile();
+            copyFileCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + C";
+            copyFileCm.Click += (_, _) => Copy_Paste.CopyFile();
 
             // FileCopyPath
             var FileCopyPathCm = (MenuItem)CopyCm.Items[1];
@@ -234,7 +234,7 @@ namespace PicView.UILogic.Loading
 
             // CopyImage
             var CopyImageCm = (MenuItem)CopyCm.Items[2];
-            CopyImageCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + C";
+            CopyImageCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Shift"]} + C";
             CopyImageCm.Click += (_, _) => Copy_Paste.CopyBitmap();
 
             // CopyBase64

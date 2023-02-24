@@ -117,10 +117,8 @@ namespace PicView.ChangeImage
         {
             await UpdateImageAsync(imageName, bitmap).ConfigureAwait(false);
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
-            {
-                ToggleStartUpUC(true);
-            });
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>        
+                ToggleStartUpUC(true));
         }
 
         /// <summary>

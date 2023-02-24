@@ -75,9 +75,9 @@ namespace PicView.FileHandling
             {
                 fileName = fileName.Substring(0, index);
             }
-            string downloadFilePath = tempPath + fileName;
+            ArchiveExtraction.TempFilePath = tempPath + fileName;
 
-            using (var client = new HttpClientDownloadWithProgress(url, downloadFilePath))
+            using (var client = new HttpClientDownloadWithProgress(url, ArchiveExtraction.TempFilePath))
             {
                 if (displayProgress)
                 {
@@ -88,7 +88,7 @@ namespace PicView.FileHandling
                 await client.StartDownload().ConfigureAwait(false);
             }
 
-            return downloadFilePath;
+            return ArchiveExtraction.TempFilePath;
         }
 
         private static async Task UpdateProgressDisplay(

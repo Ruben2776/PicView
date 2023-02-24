@@ -221,5 +221,22 @@ namespace PicView.FileHandling
                 return string.Empty;
             }
         }
+
+        /// <summary>
+        /// Returns the URL path if it exists or an empty string if not.
+        /// </summary>
+        internal static string RetrieveFromURL()
+        {
+            // Check if from URL and download it
+            string url = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            if (!string.IsNullOrEmpty(url))
+            {
+                if (File.Exists(ArchiveExtraction.TempFilePath))
+                {
+                    return ArchiveExtraction.TempFilePath;
+                }
+            }
+            return string.Empty;
+        }
     }
 }
