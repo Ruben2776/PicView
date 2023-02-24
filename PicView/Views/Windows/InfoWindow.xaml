@@ -673,6 +673,11 @@
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
                             <TextBlock FontSize="12" Text="C" />
                         </StackPanel>
                     </Border>
@@ -1541,11 +1546,6 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Ctrl}" />
-                            <TextBlock
-                                FontSize="12"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                Text=" + " />
-                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
