@@ -81,22 +81,8 @@ namespace PicView.ChangeImage
             BitmapSource? pic = null;
             Preloader.PreloadValue? preloadValue = null;
 
-            if (await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false))
-            {
-                preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
-                if (preloadValue is null)
-                {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                    return;
-                }
-
-                pic = preloadValue.BitmapSource ?? ImageFunctions.ImageErrorMessage();
-            }
-            else
-            {
-                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                return;
-            }
+            preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]) ??
+                await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
 
             await UpdateImage.UpdateImageAsync(Navigation.FolderIndex, pic, preloadValue.FileInfo).ConfigureAwait(false);
         }

@@ -100,7 +100,7 @@ namespace PicView.FileHandling
             }
             else if (Clipboard.ContainsImage())  // Clipboard Image
             {
-                await UpdateImage.UpdateImageFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await UpdateImage.UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage()).ConfigureAwait(false);
                 return;
             }
             else // text/string/adddress

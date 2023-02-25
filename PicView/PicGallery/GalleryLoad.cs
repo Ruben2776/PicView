@@ -185,9 +185,7 @@ namespace PicView.PicGallery
                 return;
             }
 
-            var pic = await Task.FromResult(
-                Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size, true)
-                ?? ImageFunctions.ImageErrorMessage());
+            var pic = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size));
             UpdatePic(i, pic);
         }
 
@@ -205,7 +203,7 @@ namespace PicView.PicGallery
                     }
 
                     var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                    item.img.Source = pic;
+                    item.img.Source = pic ?? ImageFunctions.ShowLogo();
                 }));
             }
             catch (Exception e)

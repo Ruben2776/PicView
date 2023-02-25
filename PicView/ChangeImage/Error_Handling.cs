@@ -175,7 +175,7 @@ namespace PicView.ChangeImage
             }
             else if (Clipboard.ContainsImage())
             {
-                await UpdateImage.UpdateImageFromBitmapAsync(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]).ConfigureAwait(false);
+                await UpdateImage.UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage()).ConfigureAwait(false);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {

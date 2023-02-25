@@ -79,7 +79,8 @@ namespace PicView.UILogic.DragAndDrop
                     }
                 }
                 // File
-                element = new DragDropOverlayPic(GetBitmapSourceThumb(new FileInfo(files[0]), 300, true));
+                var thumb = GetBitmapSourceThumb(new FileInfo(files[0]), 300);
+                element = new DragDropOverlayPic(thumb);
             }
 
             // Tell that it's succeeded
@@ -130,10 +131,8 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-            {
-                RemoveDragOverlay();
-            });
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                RemoveDragOverlay());
 
             // Load dropped URL
             if (e.Data.GetData(DataFormats.Html) != null)
@@ -155,19 +154,6 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            if (SupportedFiles.IsSupported(files[0]) == false)
-            {
-                if (Directory.Exists(files[0]))
-                {
-                    await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
-                }
-                else if (SupportedFiles.IsArchive(files[0]))
-                {
-                    await LoadPic.LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
-                }
-                return;
-            }
-
             // Check if same file
             if (files.Length == 1 && Pics.Count > 0)
             {
@@ -179,9 +165,22 @@ namespace PicView.UILogic.DragAndDrop
                 }
             }
 
+            if (SupportedFiles.IsSupported(files[0]) == false)
+            {
+                if (Directory.Exists(files[0]))
+                {
+                    await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                }
+                else if (SupportedFiles.IsArchive(files[0]))
+                {
+                    await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
+                }
+                return;
+            }
+
             await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 // Don't show drop message any longer
                 CloseToolTipMessage();
@@ -190,12 +189,9 @@ namespace PicView.UILogic.DragAndDrop
             });
 
             // Open additional windows if multiple files dropped
-            if (files.Length > 0)
+            foreach (string file in files.Skip(1))
             {
-                for (int i = 1; i < files.Length; i++)
-                {
-                    ProcessLogic.StartProcessWithFileArgument(files[i]);
-                }
+                ProcessLogic.StartProcessWithFileArgument(file);
             }
         }
 

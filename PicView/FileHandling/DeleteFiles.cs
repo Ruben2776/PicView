@@ -93,9 +93,6 @@ namespace PicView.FileHandling
                 return;
             }
 
-            // Sync with preloader
-            Preloader.Remove(FolderIndex);
-
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 // Sync with gallery

@@ -156,5 +156,16 @@ namespace PicView.ImageHandling
                 return null;
             }
         }
+
+        internal static BitmapSource? ShowLogo()
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri("pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute);
+            bitmap.DecodePixelWidth = 48;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return new BitmapImage();
+        }
     }
 }

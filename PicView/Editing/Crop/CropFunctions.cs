@@ -45,7 +45,6 @@ namespace PicView.Editing.Crop
             var sameFile = await SaveCrop().ConfigureAwait(false);
             if (sameFile)
             {
-                Preloader.Remove(FolderIndex);
                 await LoadPic.LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
             }
 

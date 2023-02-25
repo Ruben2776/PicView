@@ -53,7 +53,7 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, int size = 500, bool checkSize = false)
+        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, int size = 500)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace PicView.ImageHandling
                         return GetWindowsThumbnail(fileInfo.FullName);
                 }
 
-                if (checkSize)
+                if (fileInfo.Length > 2e+7)
                 {
                     return fileInfo.Length > 2e+7 ? null : GetMagickImageThumb(fileInfo, size);
                 }

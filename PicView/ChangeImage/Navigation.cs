@@ -90,7 +90,7 @@ namespace PicView.ChangeImage
                 GalleryNavigation.SetSelected(prev, false);
             }
 
-            // Go to the image!
+            FolderIndex = next;
             await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
         }
 

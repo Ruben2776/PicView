@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
+using static PicView.ChangeImage.Preloader;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
@@ -105,20 +106,10 @@ namespace PicView.ChangeImage
             await Taskbar.NoProgress().ConfigureAwait(false);
             FolderIndex = 0;
 
-            await ImageInfo.UpdateValuesAsync(null).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Load a picture from a prepared bitmap
-        /// </summary>
-        /// <param name="pic"></param>
-        /// <param name="imageName"></param>
-        internal static async Task UpdateImageFromBitmapAsync(BitmapSource bitmap, string imageName)
-        {
-            await UpdateImageAsync(imageName, bitmap).ConfigureAwait(false);
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>        
-                ToggleStartUpUC(true));
+            if (ConfigureWindows.GetImageInfoWindow is not null)
+            {
+                await ImageInfo.UpdateValuesAsync(null).ConfigureAwait(false);
+            }
         }
 
         /// <summary>

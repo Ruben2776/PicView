@@ -1,4 +1,5 @@
 ﻿using PicView.ImageHandling;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -13,10 +14,12 @@ namespace PicView.ChangeImage
             /// The bitmap source of the image
             /// </summary>
             internal BitmapSource? BitmapSource;
+
             /// <summary>
             /// Whether the image is currently being loaded
             /// </summary>
             internal bool IsLoading;
+
             /// <summary>
             /// FileInfo object of the image file.
             /// </summary>
@@ -39,7 +42,17 @@ namespace PicView.ChangeImage
         /// <summary>
         /// A dictionary containing the preloaded images
         /// </summary>
-        private static readonly Dictionary<string, PreloadValue> _preloadList = new();
+        private static readonly ConcurrentDictionary<string, PreloadValue> _preloadList = new();
+
+        /// <summary>
+        /// Set the maximum number of bitmaps to be cached
+        /// </summary>
+        private const int _maxCount = 20;
+
+        /// <summary>
+        /// Keep track of file names to delete oldest values
+        /// </summary>
+        private static readonly Queue<string> _keys = new Queue<string>();
 
         /// <summary>
         /// Adds a file to the preloader from the specified index. Returns true if a new value was added.
@@ -48,71 +61,48 @@ namespace PicView.ChangeImage
         /// <param name="fileInfo">The file info of the image</param>
         /// <param name="bitmapSource">The bitmap source of the image</param>
         /// <returns>Whether a new value was added</returns>
-        internal static async Task<bool> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
+        internal static async Task<PreloadValue?> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
             if (index < 0 || index >= Pics.Count)
             {
-                return false;
+                return null;
             }
 
             if (_preloadList.ContainsKey(Pics[index]))
             {
-                return false;
+                var preloadValue = Preloader.Get(Pics[index]);
+                while (preloadValue.IsLoading)
+                {
+                    await Task.Delay(100).ConfigureAwait(false);
+                }
+                return preloadValue;
             }
             try
             {
+                _keys.Enqueue(Pics[index]);
+                if (_keys.Count > _maxCount)
+                {
+                    var oldestKey = _keys.Dequeue();
+                    _preloadList.Remove(oldestKey, out _);
+                }
+
                 var preloadValue = new PreloadValue(null, true, null);
                 var add = _preloadList.TryAdd(Pics[index], preloadValue);
 
                 fileInfo = fileInfo ?? new FileInfo(Pics[index]);
                 bitmapSource = bitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                if (bitmapSource is null)
-                {
-                    bitmapSource = ImageFunctions.ImageErrorMessage();
-                }
+                bitmapSource ??= ImageFunctions.ImageErrorMessage();
                 preloadValue.BitmapSource = bitmapSource;
                 preloadValue.IsLoading = false;
                 preloadValue.FileInfo = fileInfo;
+                return preloadValue;
             }
             catch (Exception)
             {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Removes the key with the specified index, after checking if it exists
-        /// </summary>
-        /// <param name="key"></param>
-        internal static void Remove(int key)
-        {
-            if (key < 0)
-            {
-                key = Math.Abs(key);
-            }
-            else if (key >= Pics?.Count)
-            {
-                return;
-            }
-
-            if (!Contains(Pics[key]))
-            {
-                return;
-            }
-
-            try
-            {
-                _ = _preloadList[Pics[key]];
-                _preloadList.Remove(Navigation.Pics[key], out _);
-            }
-
-            catch (Exception)
-            {
-                return;
+                return null;
             }
         }
+
         /// <summary>
         ///  Renames the key of a specified file in the cache.
         /// </summary>
@@ -132,6 +122,7 @@ namespace PicView.ChangeImage
         internal static void Clear()
         {
             _preloadList.Clear();
+            _keys.Clear();
         }
 
         /// <summary>
@@ -168,7 +159,7 @@ namespace PicView.ChangeImage
         /// <param name="currentIndex">The starting point for the iteration.</param>
         internal static Task PreLoadAsync(int currentIndex) => Task.Run(async () =>
         {
-            int nextStartingIndex, prevStartingIndex, deleteIndex;
+            int nextStartingIndex, prevStartingIndex;
             int positiveIterations = 6;
             int negativeIterations = 3;
 
@@ -176,7 +167,6 @@ namespace PicView.ChangeImage
             {
                 nextStartingIndex = currentIndex;
                 prevStartingIndex = currentIndex - 1;
-                deleteIndex = prevStartingIndex - negativeIterations;
 
                 for (int i = 0; i < positiveIterations; i++)
                 {
@@ -188,17 +178,11 @@ namespace PicView.ChangeImage
                     int index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
                     await AddAsync(index).ConfigureAwait(false);
                 }
-                for (int i = 0; i < negativeIterations; i++)
-                {
-                    int index = (deleteIndex - i + Pics.Count) % Pics.Count;
-                    Remove(index);
-                }
             }
             else
             {
                 nextStartingIndex = currentIndex;
                 prevStartingIndex = currentIndex + 1;
-                deleteIndex = prevStartingIndex + positiveIterations;
 
                 for (int i = 0; i < positiveIterations; i++)
                 {
@@ -209,11 +193,6 @@ namespace PicView.ChangeImage
                 {
                     int index = (prevStartingIndex + i) % Pics.Count;
                     await AddAsync(index).ConfigureAwait(false);
-                }
-                for (int i = 0; i < negativeIterations; i++)
-                {
-                    int index = (deleteIndex + i) % Pics.Count;
-                    Remove(index);
                 }
             }
         });

@@ -39,7 +39,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            await LoadingPreviewAsync(fileInfo).ConfigureAwait(false);
+            LoadingPreview(fileInfo);
             var size = await ImageSizeFunctions.GetImageSizeAsync(fileInfo).ConfigureAwait(false);
             BitmapSource? bitmapSource = null;
 

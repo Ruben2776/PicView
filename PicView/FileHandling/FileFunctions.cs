@@ -87,7 +87,6 @@ namespace PicView.FileHandling
                     return false;
                 }
 
-                Preloader.Remove(Navigation.FolderIndex);
                 if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
                 {
                     UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
