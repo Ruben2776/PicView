@@ -134,23 +134,10 @@ namespace PicView.UILogic.DragAndDrop
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 RemoveDragOverlay());
 
-            // Load dropped URL
-            if (e.Data.GetData(DataFormats.Html) != null)
-            {
-                MemoryStream data = (MemoryStream)e.Data.GetData("text/x-moz-url");
-                if (data != null)
-                {
-                    string dataStr = Encoding.Unicode.GetString(data.ToArray());
-                    string[] parts = dataStr.Split((char)10);
-
-                    await HttpFunctions.LoadPicFromURL(parts[0]).ConfigureAwait(false);
-                    return;
-                }
-            }
-
             // Get files as strings
             if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
+                await LoadURLAsync(e).ConfigureAwait(false);
                 return;
             }
 
@@ -175,10 +162,11 @@ namespace PicView.UILogic.DragAndDrop
                 {
                     await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
                 }
-                return;
             }
-
-            await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+            else
+            {
+                await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+            }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
@@ -192,6 +180,17 @@ namespace PicView.UILogic.DragAndDrop
             foreach (string file in files.Skip(1))
             {
                 ProcessLogic.StartProcessWithFileArgument(file);
+            }
+        }
+        static async Task LoadURLAsync(DragEventArgs e)
+        {
+            var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
+            if (memoryStream != null)
+            {
+                string dataStr = Encoding.Unicode.GetString(memoryStream.ToArray());
+                string[] parts = dataStr.Split((char)10);
+
+                await HttpFunctions.LoadPicFromURL(parts[0]).ConfigureAwait(false);
             }
         }
 
