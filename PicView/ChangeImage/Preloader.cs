@@ -47,7 +47,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Set the maximum number of bitmaps to be cached
         /// </summary>
-        private const int _maxCount = 20;
+        internal const int MaxCount = 20;
 
         /// <summary>
         /// Keep track of file names to delete oldest values
@@ -80,7 +80,7 @@ namespace PicView.ChangeImage
             try
             {
                 _keys.Enqueue(Pics[index]);
-                if (_keys.Count > _maxCount)
+                if (_keys.Count > MaxCount)
                 {
                     var oldestKey = _keys.Dequeue();
                     _preloadList.Remove(oldestKey, out _);

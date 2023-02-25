@@ -35,7 +35,7 @@ namespace PicView.ChangeImage
 
             if (!fileInfo.Exists) // If not file, try to load if URL or base64
             {
-                await LoadPicFromStringAsync(file, false).ConfigureAwait(false);
+                await LoadPicFromStringAsync(file).ConfigureAwait(false);
                 return;
             }
 

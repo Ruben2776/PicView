@@ -161,7 +161,7 @@ namespace PicView.ChangeImage
             {
                 var fileInfo = new FileInfo(path);
                 await ResetValues(fileInfo).ConfigureAwait(false);
-                await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+                await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
             }
             else if (Directory.Exists(path))
             {

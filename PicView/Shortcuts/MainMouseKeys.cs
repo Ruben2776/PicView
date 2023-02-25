@@ -247,14 +247,28 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                   await NavigateToPicAsync(!direction).ConfigureAwait(false);
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(!direction).ConfigureAwait(false);
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
                 }
                 else
                 {
@@ -287,14 +301,28 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    await NavigateToPicAsync(!direction).ConfigureAwait(false);
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(!direction).ConfigureAwait(false);
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
                 }
                 else
                 {

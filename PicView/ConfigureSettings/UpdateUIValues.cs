@@ -49,9 +49,7 @@ namespace PicView.ConfigureSettings
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > 0)
-                {
                     sortGallery = true;
-                }
             });
 
             if (sortGallery)
@@ -63,7 +61,7 @@ namespace PicView.ConfigureSettings
                 await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
             }
 
-            await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+            await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
         }
 
         internal static void SetScrolling()

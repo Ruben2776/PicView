@@ -92,12 +92,12 @@ namespace PicView.Shortcuts
                     // Go to first if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
                     {
-                        await NavigateToPicAsync(true, true).ConfigureAwait(false);
+                        await Navigation.GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
                     }
                     else
                     {
                         FastPicRunning = e.IsRepeat; // Report if key held down
-                        await NavigateToPicAsync(true, false, e.IsRepeat).ConfigureAwait(false);
+                        await Navigation.GoToNextImage(NavigateTo.Next, FastPicRunning).ConfigureAwait(false);
                     }
                     return;
 
@@ -112,11 +112,11 @@ namespace PicView.Shortcuts
                     // Go to last if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
                     {
-                        await NavigateToPicAsync(false, true).ConfigureAwait(false);
+                        await Navigation.GoToNextImage(NavigateTo.First).ConfigureAwait(false);
                     }
                     else
                     {
-                        await NavigateToPicAsync(false, false, e.IsRepeat).ConfigureAwait(false);
+                        await Navigation.GoToNextImage(NavigateTo.Previous, FastPicRunning).ConfigureAwait(false);
                     }
                     return;
 

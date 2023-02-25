@@ -110,7 +110,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            await NavigateToPicAsync(false).ConfigureAwait(false);
+            await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
 
             ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
         }

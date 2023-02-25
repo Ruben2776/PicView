@@ -92,7 +92,7 @@ namespace PicView.FileHandling
                     UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
                 }
                 Navigation.Pics.Remove(Navigation.Pics[Navigation.FolderIndex]);
-                await Navigation.NavigateToPicAsync(false).ConfigureAwait(false);
+                await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
                 return false;
             }
 
