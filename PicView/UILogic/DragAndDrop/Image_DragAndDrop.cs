@@ -28,10 +28,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
-            if (GalleryFunctions.IsHorizontalOpen)
-            {
-                return;
-            }
+            if (GalleryFunctions.IsHorizontalOpen) return;
 
             UIElement? element = null;
 

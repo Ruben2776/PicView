@@ -55,6 +55,13 @@ namespace PicView.ImageHandling
 
         internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, int size = 500)
         {
+            if (fileInfo.Length > 2e+7)
+            {
+                return fileInfo.Length > 2e+7 ?
+                    ImageFunctions.ShowLogo() :
+                    GetMagickImageThumb(fileInfo, size) ?? ImageFunctions.ImageErrorMessage();
+            }
+
             try
             {
                 switch (fileInfo.Extension)
@@ -69,11 +76,8 @@ namespace PicView.ImageHandling
                     case ".jfif":
                     case ".wbmp":
                         return GetWindowsThumbnail(fileInfo.FullName);
-                }
-
-                if (fileInfo.Length > 2e+7)
-                {
-                    return fileInfo.Length > 2e+7 ? null : GetMagickImageThumb(fileInfo, size);
+                    case ".b64":
+                        return ImageFunctions.ShowLogo();
                 }
 
                 var thumb = GetMagickImageThumb(fileInfo, size);

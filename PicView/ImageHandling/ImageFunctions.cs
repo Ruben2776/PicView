@@ -6,6 +6,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -159,13 +160,9 @@ namespace PicView.ImageHandling
 
         internal static BitmapSource? ShowLogo()
         {
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri("pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute);
-            bitmap.DecodePixelWidth = 48;
-            bitmap.EndInit();
+           var bitmap = new BitmapImage(new Uri("/PicView;component/Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute));
             bitmap.Freeze();
-            return new BitmapImage();
+            return bitmap;
         }
     }
 }
