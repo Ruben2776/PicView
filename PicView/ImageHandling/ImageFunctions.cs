@@ -160,7 +160,10 @@ namespace PicView.ImageHandling
 
         internal static BitmapSource? ShowLogo()
         {
-           var bitmap = new BitmapImage(new Uri("/PicView;component/Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute));
+           var bitmap = new BitmapImage(new Uri(@"pack://application:,,,/"
+                + Assembly.GetExecutingAssembly().GetName().Name
+                + ";component/"
+                + "Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute));
             bitmap.Freeze();
             return bitmap;
         }
