@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.ErrorHandling;
@@ -67,6 +68,7 @@ namespace PicView.ChangeImage
                     case "web": await HttpFunctions.LoadPicFromURL(path).ConfigureAwait(false); return;
                     case "base64": await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false); return;
                     case "directory": await LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
+                    case "zip": await LoadPicFromArchiveAsync(path, fileInfo).ConfigureAwait(!false); return;
                     case "": ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => Unload(true)); return;
                 }
             }
@@ -112,7 +114,14 @@ namespace PicView.ChangeImage
 
             if (Pics.Count == 0)
             {
-                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                if (SupportedFiles.IsArchive(fileInfo))
+                {
+                    await LoadPicFromArchiveAsync(null, fileInfo).ConfigureAwait(false);
+                }
+                else
+                {
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                }
                 return;
             }
 
@@ -146,10 +155,18 @@ namespace PicView.ChangeImage
 
         internal static async Task LoadPicFromArchiveAsync(string? archive, FileInfo? fileInfo = null)
         {
-            fileInfo ??= new FileInfo(archive);
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+            {
+                ToggleStartUpUC(true);
+                SetLoadingString();
+            });
+            fileInfo ??= new FileInfo(archive); 
             Preloader.Clear();
             GalleryFunctions.Clear();
-            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            if (!ArchiveExtraction.IsBeingExtraced)
+            {
+                await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            }
         }
 
         /// <summary>

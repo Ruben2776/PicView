@@ -94,6 +94,10 @@ namespace PicView.ChangeImage
 
             if (File.Exists(s))
             {
+                if (SupportedFiles.IsArchive(Path.GetExtension(s)))
+                {
+                    return "zip";
+                }
                 return s;
             }
             else

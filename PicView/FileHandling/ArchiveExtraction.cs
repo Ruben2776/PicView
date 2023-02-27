@@ -2,8 +2,10 @@
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
+using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 
@@ -20,6 +22,8 @@ namespace PicView.FileHandling
         /// File path for the extracted zip file
         /// </summary>
         internal static string? TempZipFile { get; set; }
+
+        internal static bool IsBeingExtraced { get; set; }
 
         /// <summary>
         /// Attemps to extract folder
@@ -107,6 +111,7 @@ namespace PicView.FileHandling
 #endif
 
             BackupPath = ErrorHandling.CheckOutOfRange() == false ? Pics[FolderIndex] : null;
+            IsBeingExtraced = true;
 
             var arguments = isWinrar
                 ? $"x -o- \"{path}\" " // WinRAR
@@ -132,16 +137,15 @@ namespace PicView.FileHandling
 
             process.EnableRaisingEvents = true;
             process.BeginOutputReadLine();
-            process.OutputDataReceived += async (_, _) =>
+            process.OutputDataReceived += (_, _) =>
             {
                 // Fix it if files are in sub directory
-                while (Pics.Count < 1 && !process.HasExited)
+                while (SetDirectory() && !process.HasExited)
                 {
-                    SetDirectory();
-                }
-                if (Pics.Count >= 1 && !process.HasExited)
-                {
-                    //await LoadPic.LoadingPreviewAsync(new FileInfo(Pics[0])).ConfigureAwait(false);
+                    if (Pics.Count >= 1) 
+                    {
+                        LoadPic.LoadingPreview(new FileInfo(Pics[0]));
+                    }
                 }
             };
 
@@ -149,12 +153,9 @@ namespace PicView.FileHandling
             {
                 if (SetDirectory())
                 {
-                    await LoadPic.LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
+                    await LoadPic.LoadPicFromStringAsync(Pics[0]).ConfigureAwait(false);
 
-                    if (GetFileHistory is null)
-                    {
-                        GetFileHistory = new FileHistory();
-                    }
+                    GetFileHistory ??= new FileHistory();
                     GetFileHistory.Add(TempZipFile);
 
                     if (Settings.Default.FullscreenGalleryHorizontal)
@@ -166,6 +167,7 @@ namespace PicView.FileHandling
                 {
                     await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 }
+                IsBeingExtraced = false;
             };
 
             return true;
