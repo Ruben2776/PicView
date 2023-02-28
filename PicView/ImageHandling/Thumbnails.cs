@@ -57,9 +57,7 @@ namespace PicView.ImageHandling
         {
             if (fileInfo.Length > 2e+7)
             {
-                return fileInfo.Length > 2e+7 ?
-                    ImageFunctions.ShowLogo() :
-                    GetMagickImageThumb(fileInfo, size) ?? ImageFunctions.ImageErrorMessage();
+                return ImageFunctions.ShowLogo();
             }
 
             try
@@ -80,8 +78,7 @@ namespace PicView.ImageHandling
                         return ImageFunctions.ShowLogo();
                 }
 
-                var thumb = GetMagickImageThumb(fileInfo, size);
-                return thumb ??= ImageFunctions.ImageErrorMessage();
+                return GetMagickImageThumb(fileInfo, size) ?? ImageFunctions.ShowLogo();
             }
             catch (Exception e)
             {

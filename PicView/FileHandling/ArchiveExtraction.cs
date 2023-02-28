@@ -135,6 +135,8 @@ namespace PicView.FileHandling
 
             if (process == null) { return false; }
 
+            var previewed = false;
+
             process.EnableRaisingEvents = true;
             process.BeginOutputReadLine();
             process.OutputDataReceived += (_, _) =>
@@ -142,9 +144,10 @@ namespace PicView.FileHandling
                 // Fix it if files are in sub directory
                 while (SetDirectory() && !process.HasExited)
                 {
-                    if (Pics.Count >= 1) 
+                    if (Pics.Count >= 1 && !previewed) 
                     {
                         LoadPic.LoadingPreview(new FileInfo(Pics[0]));
+                        previewed = true;
                     }
                 }
             };
