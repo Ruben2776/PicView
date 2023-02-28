@@ -12,7 +12,7 @@ namespace PicView.FileHandling
         /// </summary>
         internal static readonly string[] FileExtensions = new string[]
         {
-            ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".gif", ".jfif", ".ico", ".webp", ".wbmp",
+            ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".gif", ".jfif", ".ico", ".webp", ".wbmp", ".avif",
             ".psd", ".psb",
             ".tif", ".tiff", ".dds", ".tga", ".heic", ".heif", ".hdr", ".xcf", ".jxl", ".jp2",
             ".b64",
