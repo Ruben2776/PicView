@@ -100,19 +100,19 @@ namespace PicView.ChangeImage
 
             if (fastPic || Settings.Default.Looping || isSlideshowEnabled)
             {
-                next = FolderIndex = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
+                next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
             }
             else
             {
                 int newIndex = FolderIndex + indexChange;
                 if (newIndex < 0 || newIndex >= Pics.Count) return;
-                next = FolderIndex = newIndex;
+                next =  newIndex;
             }
 
             if (navigateTo == NavigateTo.First || navigateTo == NavigateTo.Last)
             {
                 if (Pics.Count() > Preloader.MaxCount) Preloader.Clear();
-                next = FolderIndex = navigateTo == NavigateTo.First ? 0 : Pics.Count - 1;
+                next =  navigateTo == NavigateTo.First ? 0 : Pics.Count - 1;
             }
 
             // If the horizontal fullscreen view is open, set the selected index to the previous index

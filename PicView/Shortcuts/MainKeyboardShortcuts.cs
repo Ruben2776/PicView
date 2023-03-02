@@ -116,6 +116,7 @@ namespace PicView.Shortcuts
                     }
                     else
                     {
+                        FastPicRunning = e.IsRepeat; // Report if key held down
                         await Navigation.GoToNextImage(NavigateTo.Previous, FastPicRunning).ConfigureAwait(false);
                     }
                     return;
