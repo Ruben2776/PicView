@@ -14,43 +14,44 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="base64String"></param>
         /// <returns></returns>
-        internal static Task<BitmapSource?> Base64StringToBitmap(string base64String) => Task.Run(async () =>
+        internal static async Task<BitmapSource?> Base64StringToBitmapAsync(string base64String)
         {
-            byte[] binaryData = Convert.FromBase64String(base64String);
-            return await Task.FromResult(Base64FromBytes(binaryData)).ConfigureAwait(false);
-        });
+            return await GetBitmapSourceFromBase64Async(base64String).ConfigureAwait(false);
+        }
 
-        internal static Task<BitmapSource?> Base64StringToBitmap(FileInfo fileInfo) => Task.Run(async () =>
+        internal static async Task<BitmapSource?> Base64StringToBitmapAsync(FileInfo fileInfo)
         {
-            var text = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
-            byte[] binaryData = Convert.FromBase64String(text);
-            return await Task.FromResult(Base64FromBytes(binaryData)).ConfigureAwait(false);
-        });
+            var base64String = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
+            return await GetBitmapSourceFromBase64Async(base64String).ConfigureAwait(false);
+        }
 
-        private static BitmapSource? Base64FromBytes(byte[] binaryData)
+        private static async Task<BitmapSource?> GetBitmapSourceFromBase64Async(string base64String)
         {
-            using MagickImage magick = new MagickImage();
-            var mrs = new MagickReadSettings
+            var base64Data = Convert.FromBase64String(base64String);
+            using var magickImage = new MagickImage()
+            {
+                Quality = 100,
+                ColorSpace = ColorSpace.Transparent
+            };
+
+            var readSettings = new MagickReadSettings
             {
                 Density = new Density(300, 300),
-                BackgroundColor = MagickColors.Transparent,
+                BackgroundColor = MagickColors.Transparent
             };
 
             try
             {
-                magick.Read(new MemoryStream(binaryData), mrs);
+                await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings).ConfigureAwait(false);
             }
             catch (MagickException)
             {
                 return null;
             }
-            // Set values for maximum quality
-            magick.Quality = 100;
-            magick.ColorSpace = ColorSpace.Transparent;
 
-            var pic = magick.ToBitmapSource();
-            pic.Freeze();
-            return pic;
+            var bitmapSource = magickImage.ToBitmapSource();
+            bitmapSource.Freeze();
+            return bitmapSource;
         }
 
         internal static bool IsBase64String(string base64)
@@ -65,30 +66,24 @@ namespace PicView.ImageHandling
 
         internal static async Task<string> ConvertToBase64()
         {
-            BitmapFrame? frame = null;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-            {
-                frame = ImageDecoder.GetRenderedBitmapFrame();
-            });
+            var frame = await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ImageDecoder.GetRenderedBitmapFrame, DispatcherPriority.Background);
+            if (frame == null) return string.Empty;
 
-            PngBitmapEncoder pngBitmapEncoder = new();
             using var ms = new MemoryStream();
+            var pngBitmapEncoder = new PngBitmapEncoder();
             pngBitmapEncoder.Frames.Add(frame);
             pngBitmapEncoder.Save(ms);
             var bytes = ms.ToArray();
-            ms.Close();
             return Convert.ToBase64String(bytes);
         }
 
         internal static async Task SendToClipboard()
         {
-            string path = await ConvertToBase64().ConfigureAwait(true); // Need to be true to avoid thread errors
+            var base64String = await ConvertToBase64().ConfigureAwait(true); // Need to be true to avoid thread errors
+            if (string.IsNullOrWhiteSpace(base64String)) return;
 
-            if (!string.IsNullOrWhiteSpace(path))
-            {
-                Clipboard.SetText(path);
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
-            }
+            Clipboard.SetText(base64String);
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
         }
     }
 }

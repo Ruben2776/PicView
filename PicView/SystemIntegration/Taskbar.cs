@@ -13,41 +13,39 @@ namespace PicView.SystemIntegration
         /// </summary>
         /// <param name="i">index</param>
         /// <param name="ii">size</param>
-        internal static async Task Progress(double d)
+        internal static void Progress(double d)
         {
             TaskbarItemInfo taskbar = new()
             {
                 ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = d
             };
-            await SetAsync(taskbar).ConfigureAwait(false);
+            Set(taskbar);
         }
 
         /// <summary>
         /// Stop showing taskbar progress, return to default
         /// </summary>
-        internal static async Task NoProgress()
+        internal static void NoProgress()
         {
             TaskbarItemInfo taskbar = new()
             {
                 ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = 0.0
             };
-            await SetAsync(taskbar).ConfigureAwait(false);
+            Set(taskbar);
         }
 
-        private static async Task SetAsync(TaskbarItemInfo taskbar)
+        private static void Set(TaskbarItemInfo taskbar)
         {
             taskbar.Freeze();
             try
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-                {
-                    ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
-                });
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
+                Tooltip.ShowTooltipMessage(e);
                 // Catch task canceled exception
             }
         }

@@ -39,16 +39,16 @@ namespace PicView.ImageHandling
                     return await GetWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
                 case ".tga":
-                    return await Task.FromResult(GetDefaultBitmapSource(fileInfo, true)).ConfigureAwait(false);
+                    return await GetDefaultBitmapSourceAsync(fileInfo, true).ConfigureAwait(false);
 
                 case ".svg":
                     return await GetTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
                 case ".b64":
-                    return await Base64.Base64StringToBitmap(fileInfo).ConfigureAwait(false);
+                    return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false);
 
                 default:
-                    return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
+                    return await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             }
         }
 
@@ -76,12 +76,11 @@ namespace PicView.ImageHandling
 
                 magickImage.Quality = 100;
 
-                // Apply transformation values
+                // Apply rotation and flip transformations
                 if (Rotation.Flipped)
                 {
                     magickImage.Flop();
                 }
-
                 magickImage.Rotate(Rotation.RotationAngle);
 
                 return magickImage;
@@ -89,7 +88,7 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetRenderedMagickImage)} exception, \n {e.Message}");
 #endif
                 return null;
             }
@@ -103,9 +102,9 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var sauce = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                var sourceBitmap = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
 
-                if (sauce == null)
+                if (sourceBitmap == null)
                 {
                     return null;
                 }
@@ -114,26 +113,26 @@ namespace PicView.ImageHandling
 
                 var rectangle = new Rectangle
                 {
-                    Fill = new ImageBrush(sauce),
+                    Fill = new ImageBrush(sourceBitmap),
                     Effect = effect
                 };
 
-                var sz = new Size(sauce.PixelWidth, sauce.PixelHeight);
-                rectangle.Measure(sz);
-                rectangle.Arrange(new Rect(sz));
+                var sourceSize = new Size(sourceBitmap.PixelWidth, sourceBitmap.PixelHeight);
+                rectangle.Measure(sourceSize);
+                rectangle.Arrange(new Rect(sourceSize));
 
-                var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
-                rtb.Render(rectangle);
+                var renderedBitmap = new RenderTargetBitmap(sourceBitmap.PixelWidth, sourceBitmap.PixelHeight, sourceBitmap.DpiX, sourceBitmap.DpiY, PixelFormats.Default);
+                renderedBitmap.Render(rectangle);
 
-                BitmapFrame bitmapFrame = BitmapFrame.Create(rtb);
+                BitmapFrame bitmapFrame = BitmapFrame.Create(renderedBitmap);
                 bitmapFrame.Freeze();
 
                 return bitmapFrame;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {exception.Message}");
 #endif
                 return null;
             }
@@ -151,39 +150,25 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static async Task<BitmapSource?> GetTransparentBitmapSourceAsync(FileInfo fileInfo, MagickFormat magickFormat)
         {
-            FileStream? filestream = null;
-            MagickImage magickImage = new()
+            using FileStream filestream = new(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
+            var data = new byte[filestream.Length];
+            await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
+
+            using var magickImage = new MagickImage(data)
             {
                 Quality = 100,
                 ColorSpace = ColorSpace.Transparent,
                 BackgroundColor = MagickColors.Transparent,
                 Format = magickFormat,
+                Settings =
+                {
+                    Format = magickFormat,
+                    BackgroundColor = MagickColors.Transparent,
+                    FillColor = MagickColors.Transparent,
+                },
             };
-            try
-            {
-                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
-                byte[] data = new byte[filestream.Length];
-                await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
-
-                magickImage.Read(data);
-                magickImage.Settings.Format = magickFormat;
-                magickImage.Settings.BackgroundColor = MagickColors.Transparent;
-                magickImage.Settings.FillColor = MagickColors.Transparent;
-            }
-            catch (Exception e)
-            {
-                filestream?.Dispose();
-                magickImage?.Dispose();
-#if DEBUG
-                Trace.WriteLine($"{nameof(GetTransparentBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
-#endif
-                return null;
-            }
-
-            await filestream.DisposeAsync().ConfigureAwait(false);
 
             var bitmap = magickImage.ToBitmapSource();
-            magickImage.Dispose();
             bitmap.Freeze();
             return bitmap;
         }
@@ -214,32 +199,34 @@ namespace PicView.ImageHandling
             }
         }
 
-        private static BitmapSource? GetDefaultBitmapSource(FileInfo fileInfo, bool autoOrient = false)
+        private static async Task<BitmapSource?> GetDefaultBitmapSourceAsync(FileInfo fileInfo, bool autoOrient = false)
         {
-            var magick = new MagickImage();
             try
             {
-                magick.Read(fileInfo);
+                using var magick = new MagickImage()
+                {
+                    Quality = 100
+                };
+
+                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
                 if (autoOrient)
                 {
                     magick.AutoOrient();
                 }
+
+                var pic = magick.ToBitmapSource();
+                pic.Freeze();
+
+                return pic;
             }
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetDefaultBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
+                Tooltip.ShowTooltipMessage(e);
                 return null;
             }
-
-            magick.Quality = 100;
-
-            var pic = magick.ToBitmapSource();
-            magick.Dispose();
-            pic.Freeze();
-
-            return pic;
         }
 
         #endregion Private functions

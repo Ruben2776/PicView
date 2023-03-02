@@ -1,5 +1,6 @@
 ﻿using PicView.ImageHandling;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -63,42 +64,50 @@ namespace PicView.ChangeImage
         /// <returns>Whether a new value was added</returns>
         internal static async Task<PreloadValue?> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
-            if (index < 0 || index >= Pics.Count)
-            {
-                return null;
-            }
+            if (index < 0 || index >= Pics.Count) return null;
 
             if (_preloadList.ContainsKey(Pics[index]))
             {
                 var preloadValue = Preloader.Get(Pics[index]);
                 while (preloadValue.IsLoading)
                 {
-                    await Task.Delay(100).ConfigureAwait(false);
+                    await Task.Delay(10).ConfigureAwait(false);
                 }
                 return preloadValue;
             }
+
             try
             {
                 _keys.Enqueue(Pics[index]);
                 if (_keys.Count > MaxCount)
                 {
                     var oldestKey = _keys.Dequeue();
-                    _preloadList.Remove(oldestKey, out _);
+                    if (oldestKey is not null)
+                        _preloadList.Remove(oldestKey, out _);
                 }
 
                 var preloadValue = new PreloadValue(null, true, null);
                 var add = _preloadList.TryAdd(Pics[index], preloadValue);
-
-                fileInfo = fileInfo ?? new FileInfo(Pics[index]);
-                bitmapSource = bitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                bitmapSource ??= ImageFunctions.ImageErrorMessage();
-                preloadValue.BitmapSource = bitmapSource;
-                preloadValue.IsLoading = false;
-                preloadValue.FileInfo = fileInfo;
-                return preloadValue;
+                if (add)
+                {
+                    fileInfo ??= new FileInfo(Pics[index]);
+                    bitmapSource = bitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                    bitmapSource ??= ImageFunctions.ImageErrorMessage();
+                    preloadValue.BitmapSource = bitmapSource;
+                    preloadValue.IsLoading = false;
+                    preloadValue.FileInfo = fileInfo;
+                    return preloadValue;
+                }
+                else
+                {
+                    return Preloader.Get(Pics[index]);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+#if DEBUG
+                Trace.WriteLine($"{nameof(AddAsync)} exception: \n {ex}");
+#endif
                 return null;
             }
         }

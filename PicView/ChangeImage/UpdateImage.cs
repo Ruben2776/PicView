@@ -31,18 +31,17 @@ namespace PicView.ChangeImage
         internal static async Task UpdateImageAsync(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
         {
             string? ext = fileInfo is null ? Path.GetExtension(Pics?[index]) : fileInfo.Extension;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
+            if (bitmapSource is null)
             {
+                bitmapSource = ImageFunctions.ImageErrorMessage();
                 if (bitmapSource is null)
                 {
-                    bitmapSource = ImageFunctions.ImageErrorMessage();
-                    if (bitmapSource is null)
-                    {
-                        UnexpectedError();
-                        return;
-                    }
+                    UnexpectedError();
+                    return;
                 }
-
+            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
                 // Scroll to top if scroll enabled
                 if (Settings.Default.ScrollEnabled)
                 {
@@ -74,7 +73,7 @@ namespace PicView.ChangeImage
 
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index, fileInfo);
-            });
+            }, DispatcherPriority.Send);
         }
 
         /// <summary>
@@ -103,7 +102,7 @@ namespace PicView.ChangeImage
                 ToggleStartUpUC(true);
             });
 
-            await Taskbar.NoProgress().ConfigureAwait(false);
+            Taskbar.NoProgress();
             FolderIndex = 0;
 
             if (ConfigureWindows.GetImageInfoWindow is not null)
@@ -156,7 +155,7 @@ namespace PicView.ChangeImage
                 CloseToolTipMessage();
             });
 
-            await Taskbar.NoProgress().ConfigureAwait(false);
+            Taskbar.NoProgress();
             FolderIndex = 0;
 
             DeleteFiles.DeleteTempFiles();
@@ -173,7 +172,7 @@ namespace PicView.ChangeImage
             {
                 return;
             }
-            var pic = await Base64.Base64StringToBitmap(base64string).ConfigureAwait(false);
+            var pic = await Base64.Base64StringToBitmapAsync(base64string).ConfigureAwait(false);
             if (pic == null)
             {
                 return;

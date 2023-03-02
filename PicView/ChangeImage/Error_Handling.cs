@@ -281,7 +281,7 @@ namespace PicView.ChangeImage
 
             try
             {
-                _ = Taskbar.NoProgress();
+               Taskbar.NoProgress();
             }
             catch
             {

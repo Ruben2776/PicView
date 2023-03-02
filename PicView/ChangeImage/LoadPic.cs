@@ -245,12 +245,6 @@ namespace PicView.ChangeImage
         /// <param name="fileInfo">The file information for the image. If not specified, the file information will be obtained from the image list using the specified index.</param>
         internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
         {
-            if (ErrorHandling.CheckOutOfRange())
-            {
-                await ReloadAsync().ConfigureAwait(false);
-                return;
-            }
-
             FolderIndex = index;
             var preloadValue = Preloader.Get(Pics[index]);
             fileInfo ??= new FileInfo(Pics[index]);
@@ -306,6 +300,8 @@ namespace PicView.ChangeImage
                 }
             }
 
+            if (index != FolderIndex) return;
+
             await UpdateImage.UpdateImageAsync(index, preloadValue.BitmapSource, preloadValue.FileInfo).ConfigureAwait(false);
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
@@ -317,11 +313,11 @@ namespace PicView.ChangeImage
 
             if (Pics.Count > 1)
             {
-                await Preloader.PreLoadAsync(index).ConfigureAwait(false);
-                await Preloader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
-
                 if (FolderIndex == index)
-                    await Taskbar.Progress((double)index / Pics.Count).ConfigureAwait(false);
+                    Taskbar.Progress((double)index / Pics.Count);
+
+                await Preloader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+                await Preloader.PreLoadAsync(index).ConfigureAwait(false);
             }
 
             if (ConfigureWindows.GetImageInfoWindow is not null)
