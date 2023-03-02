@@ -36,11 +36,11 @@ namespace PicView.ChangeImage
             BitmapSource? pic = null;
             updateSource = true; // Update it when key released
 
-            var preloadValue = Preloader.Get(Pics[FolderIndex]);
+            var preloadValue = Preloader.Get(Pics[index]);
 
             if (preloadValue != null)
             {
-                fileInfo = preloadValue.FileInfo ?? new FileInfo(Pics[FolderIndex]);
+                fileInfo = preloadValue.FileInfo ?? new FileInfo(Pics[index]);
                 var showthumb = true;
                 while (preloadValue.IsLoading)
                 {
@@ -55,7 +55,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                fileInfo = new FileInfo(Pics[FolderIndex]);
+                fileInfo = new FileInfo(Pics[index]);
                 LoadPic.LoadingPreview(fileInfo);
                 preloadValue = await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
                 if (preloadValue is null)
@@ -67,10 +67,10 @@ namespace PicView.ChangeImage
                 pic = preloadValue.BitmapSource;
             }
 
-            Taskbar.Progress(FolderIndex);
-            await UpdateImage.UpdateImageAsync(FolderIndex, pic, fileInfo).ConfigureAwait(false);
+            Taskbar.Progress((double)index / Pics.Count);
+            await UpdateImage.UpdateImageAsync(index, pic, fileInfo).ConfigureAwait(false);
             updateSource = false;
-            await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
+            await Preloader.PreLoadAsync(index).ConfigureAwait(false);
         }
 
         /// <summary>
