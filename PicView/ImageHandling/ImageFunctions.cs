@@ -84,8 +84,8 @@ namespace PicView.ImageHandling
             }
 
             var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            var readablePrevSize = FileFunctions.GetSizeReadable(preloadValue.FileInfo.Length);
-            var readableNewSize = FileFunctions.GetSizeReadable(fileInfo.Length);
+            var readablePrevSize = FileFunctions.GetReadableFileSize(preloadValue.FileInfo.Length);
+            var readableNewSize = FileFunctions.GetReadableFileSize(fileInfo.Length);
 
             var originalValue = preloadValue.FileInfo.Length;
             var decreasedValue = fileInfo.Length;

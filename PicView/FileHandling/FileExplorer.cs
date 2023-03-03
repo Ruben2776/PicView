@@ -12,7 +12,7 @@ namespace PicView.FileHandling
         public static extern void SHParseDisplayName([MarshalAs(UnmanagedType.LPWStr)] string name, IntPtr bindingContext, [Out] out IntPtr pidl, uint sfgaoIn, [Out] out uint psfgaoOut);
     }
 
-    internal class FileExplorer
+    internal static class FileExplorer
     {
         public static void OpenFolderAndSelectFile(string folderPath, string fileName)
         {

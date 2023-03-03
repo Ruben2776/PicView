@@ -18,7 +18,7 @@ namespace PicView.ImageHandling
                 Directory.CreateDirectory(outputFolder);
             }
 
-            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length)).Append(" 🠚 ");
+            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetReadableFileSize(sourceFile.Length)).Append(" 🠚 ");
 
             if (toResize)
             {
@@ -87,7 +87,7 @@ namespace PicView.ImageHandling
                 }
 
                 var destinationFile = new FileInfo(destination);
-                sb.Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(destinationFile.Length)).
+                sb.Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetReadableFileSize(destinationFile.Length)).
                     Append(' ').AppendLine(Environment.NewLine);
 
                 return sb.ToString();
@@ -123,8 +123,8 @@ namespace PicView.ImageHandling
             }
 
             Optimize(compress.Value, destination);
-            var newSize = FileFunctions.GetSizeReadable(new FileInfo(sourceFile.FullName).Length);
-            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetSizeReadable(sourceFile.Length))
+            var newSize = FileFunctions.GetReadableFileSize(new FileInfo(sourceFile.FullName).Length);
+            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetReadableFileSize(sourceFile.Length))
                 .Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
 
             return sb.ToString();

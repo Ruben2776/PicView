@@ -68,7 +68,7 @@ namespace PicView.ChangeTitlebar
                 .Append(" x ")
                 .Append(height)
                 .Append(StringAspect(width, height))
-                .Append(FileFunctions.GetSizeReadable(fileInfo.Length));
+                .Append(FileFunctions.GetReadableFileSize(fileInfo.Length));
 
             // Check if ZoomPercentage is not empty
             if (!string.IsNullOrEmpty(ZoomPercentage))

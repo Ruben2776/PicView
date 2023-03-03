@@ -145,20 +145,5 @@ namespace PicView.SystemIntegration
 
         #endregion GetPixelColor
 
-        #region Check if application exists
-
-        internal static string? GetPathForExe(string fileName)
-        {
-            RegistryKey localMachine = Registry.LocalMachine;
-            RegistryKey? fileKey = localMachine.OpenSubKey(string.Format(@"{0}\{1}", @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths", fileName));
-            if (fileKey == null) { return null; }
-            object? result = fileKey.GetValue(string.Empty);
-            if (result == null) { return null; }
-            fileKey.Close();
-
-            return (string)result;
-        }
-
-        #endregion Check if application exists
     }
 }

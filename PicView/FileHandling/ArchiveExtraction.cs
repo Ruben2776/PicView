@@ -65,7 +65,7 @@ namespace PicView.FileHandling
 
             foreach (string appName in appNames)
             {
-                string? registryPath = NativeMethods.GetPathForExe(appName);
+                string? registryPath = FileFunctions.GetPathForExe(appName);
                 if (registryPath == null)
                 {
                     return null;

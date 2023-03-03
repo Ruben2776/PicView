@@ -199,7 +199,7 @@ namespace PicView.Shortcuts
                     GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
             }
 
-            else if (ShouldHandleScroll(direction))
+            else if (ShouldHandleScroll())
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(direction));
             }
@@ -225,7 +225,7 @@ namespace PicView.Shortcuts
             return false;
         }
 
-        private static bool ShouldHandleScroll(bool direction)
+        private static bool ShouldHandleScroll()
         {
             return Settings.Default.ScrollEnabled
                    && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible

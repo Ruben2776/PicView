@@ -100,8 +100,10 @@ namespace PicView.FileHandling
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     ToggleStartUpUC(true);
+                    Close_UserControls();
                 });
                 await LoadPic.LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
+                IsDialogOpen = false;
             }
         }
 

@@ -16,7 +16,7 @@ using static PicView.UILogic.Sizing.ScaleImage;
 
 namespace PicView.ChangeImage
 {
-    internal class QuickLoad
+    internal static class QuickLoad
     {
         /// <summary>
         /// Quickly load image and then update values
