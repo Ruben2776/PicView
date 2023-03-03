@@ -118,11 +118,12 @@ namespace PicView.ChangeImage
         /// <param name="file">File to be renamed</param>
         /// <param name="name">New name to be changed to</param>
         /// <returns></returns>
-        internal static bool Rename(string file, string name)
+        internal static void Rename(string file, string name)
         {
-            if (file == null || name == null) { return false; }
+            if (file == null || name == null) { return; }
 
-            return _preloadList.Remove(file, out var preloadValue) && _preloadList.TryAdd(name, preloadValue);
+            _preloadList.Remove(file, out var preloadValue);
+            _= AddAsync(FolderIndex, null, preloadValue.BitmapSource).ConfigureAwait(true);
         }
 
         /// <summary>
