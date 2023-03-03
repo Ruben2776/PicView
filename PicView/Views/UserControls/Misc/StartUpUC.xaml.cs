@@ -62,6 +62,12 @@ namespace PicView.Views.UserControls.Misc
             PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
         }
 
+        public void ToggleMenu()
+        {
+            if (buttons.IsVisible) { buttons.Visibility = Visibility.Collapsed; }
+            else { buttons.Visibility = Visibility.Visible; }
+        }
+
         public void ResponsiveSize(double width)
         {
             if (width < 900)
