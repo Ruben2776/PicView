@@ -4,7 +4,7 @@ using System.Windows.Interop;
 
 namespace PicView.SystemIntegration
 {
-    internal static class WindowBlur
+    internal static partial class WindowBlur
     {
         private enum AccentState
         {
@@ -15,6 +15,7 @@ namespace PicView.SystemIntegration
             Invalid = 4
         }
 
+        #region IEquatable<T>
         private struct AccentPolicy : IEquatable<AccentPolicy>
         {
             public AccentState AccentState;
@@ -37,9 +38,14 @@ namespace PicView.SystemIntegration
                 return !(left == right);
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return obj is AccentPolicy && Equals((AccentPolicy)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -51,19 +57,29 @@ namespace PicView.SystemIntegration
 
             public bool Equals(WindowCompositionAttributeData other)
             {
-                return Attribute == other.Attribute &&
+                return Attribute == other.Attribute &&  
                        Data.Equals(other.Data) &&
                        SizeOfData == other.SizeOfData;
             }
-        }
 
+            public override bool Equals(object? obj)
+            {
+                return obj is WindowCompositionAttributeData && Equals((WindowCompositionAttributeData)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+        }
+        #endregion
         private enum WindowCompositionAttribute
         {
             AccentPolicy = 19
         }
 
-        [DllImport("user32.dll")]
-        private static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+        [LibraryImport("user32.dll")]
+        private static partial int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
 
         internal static void EnableBlur(Window window)
         {

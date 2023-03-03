@@ -11,7 +11,7 @@ using System.Windows.Interop;
 namespace PicView.SystemIntegration
 {
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
-    internal static class NativeMethods
+    internal static partial class NativeMethods
     {
         [StructLayout(LayoutKind.Sequential)]
         internal struct Win32Point : IEquatable<Win32Point>
@@ -23,20 +23,31 @@ namespace PicView.SystemIntegration
             {
                 return X == other.X && Y == other.Y;
             }
+
+            public override bool Equals(object? obj)
+            {
+                return obj is Win32Point && Equals((Win32Point)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         // Alphanumeric sort
-        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        internal static extern int StrCmpLogicalW(string x, string y);
+        [LibraryImport("shlwapi.dll", StringMarshalling = StringMarshalling.Utf16)]
+        internal static partial int StrCmpLogicalW(string x, string y);
 
         // Change cursor position
-        [DllImport("User32.dll")]
-        internal static extern bool SetCursorPos(int x, int y);
+        [LibraryImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static partial bool SetCursorPos(int x, int y);
 
         // Used to check for wallpaper support
-        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [LibraryImport("user32.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam,
+        internal static partial bool SystemParametersInfo(uint uiAction, uint uiParam,
         string pvParam, uint fWinIni);
 
         #region Disable Screensaver and Power options
