@@ -53,7 +53,7 @@ namespace PicView.FileHandling
 
             if (Pics?.Count <= 0)
             {
-                // Check if from URL and download it
+                // Check if from URL and locate it
                 string url = FileFunctions.RetrieveFromURL();
                 if (!string.IsNullOrEmpty(url))
                 {

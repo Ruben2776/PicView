@@ -18,7 +18,6 @@ namespace PicView.ChangeImage
 {
     internal class QuickLoad
     {
-
         /// <summary>
         /// Quickly load image and then update values
         /// </summary>
@@ -52,7 +51,7 @@ namespace PicView.ChangeImage
             bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             if (bitmapSource != null)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () => SetMainImage(bitmapSource, fileInfo));         
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () => SetMainImage(bitmapSource, fileInfo));
             }
 
             await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
@@ -71,7 +70,7 @@ namespace PicView.ChangeImage
             }
 
             await Preloader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
-            await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);      
+            await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
@@ -89,7 +88,7 @@ namespace PicView.ChangeImage
             InitialPath = file;
         }
 
-        private static void SetMainImage(BitmapSource bitmapSource, FileInfo fileInfo)
+        static void SetMainImage(BitmapSource bitmapSource, FileInfo fileInfo)
         {
             if (fileInfo.Extension?.ToLowerInvariant() == ".gif")
             {

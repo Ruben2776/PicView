@@ -70,13 +70,12 @@ namespace PicView.Views.Windows
                 }
                 catch (Exception)
                 {
-
                 }
                 await StartLoading.ContentRenderedEventAsync().ConfigureAwait(false);
 
                 // keyboard and Mouse_Keys Keys
-                PreviewKeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
-                PreviewKeyUp += (sender, e) => MainKeyboardShortcuts.MainWindow_KeysUp(sender, e);
+                KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
+                KeyUp += (sender, e) => MainKeyboardShortcuts.MainWindow_KeysUp(sender, e);
                 MouseLeftButtonDown += async (sender, e) => await MainMouseKeys.MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
@@ -153,7 +152,7 @@ namespace PicView.Views.Windows
 
                 // RotateButton
                 if (!Settings.Default.DarkTheme)
-                {                  
+                {
                     AnimationHelper.LightThemeMouseEvent(RotateButton, RotateBrush);
                     RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBg, true);
                     RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBg, true);
@@ -172,7 +171,7 @@ namespace PicView.Views.Windows
                     RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBrush);
                     RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(RotateBg);
                 }
-                RotateButton.Click += async (_, _) => 
+                RotateButton.Click += async (_, _) =>
                     await UILogic.TransformImage.Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
 
                 // FlipButton

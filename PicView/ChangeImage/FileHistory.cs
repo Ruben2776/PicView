@@ -1,4 +1,5 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeTitlebar;
+using PicView.FileHandling;
 using PicView.UILogic;
 using System.Globalization;
 using System.IO;
@@ -61,6 +62,9 @@ namespace PicView.ChangeImage
             {
                 return;
             }
+
+            UC.GetStartUpUC.ToggleMenu();
+            SetTitle.SetLoadingString();
 
             await LoadPic.LoadPicFromStringAsync(fileHistory.Last()).ConfigureAwait(false);
         }

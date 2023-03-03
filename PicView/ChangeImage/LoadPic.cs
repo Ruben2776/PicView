@@ -1,27 +1,19 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
-using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using XamlAnimatedGif;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
-using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
-using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ChangeImage
 {
@@ -48,7 +40,6 @@ namespace PicView.ChangeImage
                     {
                         await LoadPicFromArchiveAsync(path, fileInfo).ConfigureAwait(false);
                     }
-                    
                 }
                 else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
                 {
@@ -99,7 +90,8 @@ namespace PicView.ChangeImage
                 await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
             }
         }
-        static async Task LoadPiFromFileAsync(FileInfo fileInfo)
+
+        private static async Task LoadPiFromFileAsync(FileInfo fileInfo)
         {
             LoadingPreview(fileInfo);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ToggleStartUpUC(true));
@@ -160,7 +152,7 @@ namespace PicView.ChangeImage
                 ToggleStartUpUC(true);
                 SetLoadingString();
             });
-            fileInfo ??= new FileInfo(archive); 
+            fileInfo ??= new FileInfo(archive);
             Preloader.Clear();
             GalleryFunctions.Clear();
             if (!ArchiveExtraction.IsBeingExtraced)
@@ -288,14 +280,14 @@ namespace PicView.ChangeImage
                         await ErrorHandling.ReloadAsync().ConfigureAwait(false);
                         return;
                     }
-                    else if (index != FolderIndex) 
+                    else if (index != FolderIndex)
                         return;
                 }
                 while (preloadValue.IsLoading)
                 {
                     await Task.Delay(20).ConfigureAwait(false);
 
-                    if (index != FolderIndex) 
+                    if (index != FolderIndex)
                         return; // Skip loading if user went to next value
                 }
             }
@@ -337,8 +329,8 @@ namespace PicView.ChangeImage
         internal static void LoadingPreview(FileInfo fileInfo)
         {
             var bitmapSource = Thumbnails.GetBitmapSourceThumb(fileInfo);
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () => 
-            {              
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
+            {
                 // Set Loading
                 SetLoadingString();
 

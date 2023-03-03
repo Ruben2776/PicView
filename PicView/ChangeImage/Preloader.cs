@@ -61,7 +61,7 @@ namespace PicView.ChangeImage
         /// <param name="i">Index of the image in the list of Pics</param>
         /// <param name="fileInfo">The file info of the image</param>
         /// <param name="bitmapSource">The bitmap source of the image</param>
-        /// <returns>Whether a new value was added</returns>
+        /// <returns>Preloadvalue that can be null</returns>
         internal static async Task<PreloadValue?> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
             if (index < 0 || index >= Pics.Count) return null;
@@ -150,16 +150,6 @@ namespace PicView.ChangeImage
             {
                 return null;
             }
-        }
-
-        /// <summary>
-        /// Checks if the specified key exists
-        /// </summary>
-        /// <param name="key">The corrosponding filename</param>
-        /// <returns></returns>
-        internal static bool Contains(string key)
-        {
-            return _preloadList.ContainsKey(key);
         }
 
         /// <summary>

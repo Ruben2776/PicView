@@ -1,9 +1,11 @@
 ﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.UILogic.Tooltip;
@@ -42,9 +44,22 @@ namespace PicView.FileHandling
                 return;
             }
 
-            var isGif = Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase);
-
-            await UpdateImage.UpdateImageAsync(destination, url, isGif).ConfigureAwait(false);
+            string check = CheckIfLoadableString(destination);
+            switch (check)
+            {
+                default: 
+                    var pic = await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(check)).ConfigureAwait(false);
+                    await UpdateImage.UpdateImageAsync(url, pic, Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase), destination).ConfigureAwait(false);
+                    break;
+                case "base64": 
+                    await UpdateImage.UpdateImageFromBase64PicAsync(check).ConfigureAwait(false);
+                    break;
+                case "zip": 
+                    await LoadPic.LoadPicFromArchiveAsync(check).ConfigureAwait(!false);
+                    break;
+                case "directory":
+                case "": ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => Unload(true)); return;
+            }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {

@@ -4,6 +4,7 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using System.IO;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -21,8 +22,6 @@ namespace PicView.ChangeImage
 {
     internal static class UpdateImage
     {
-        #region UpdatePic
-
         /// <summary>
         /// Update picture, size it and set the title from index
         /// </summary>
@@ -81,47 +80,20 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="imageName"></param>
         /// <param name="bitmapSource"></param>
-        internal static async Task UpdateImageAsync(string imageName, BitmapSource bitmapSource)
+        internal static async Task UpdateImageAsync(string imageName, BitmapSource bitmapSource, bool isGif = false, string? file = null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
+            Size? imageSize = null;
+            if (isGif)
             {
-                Unload(false);
-
-                if (Settings.Default.ScrollEnabled)
+                if (string.IsNullOrWhiteSpace(file))
                 {
-                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    return;
                 }
-
-                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, imageName);
-
-                CloseToolTipMessage();
-
-                ToggleStartUpUC(true);
-            });
-
-            Taskbar.NoProgress();
-            FolderIndex = 0;
-
-            if (ConfigureWindows.GetImageInfoWindow is not null)
-            {
-                await ImageInfo.UpdateValuesAsync(null).ConfigureAwait(false);
+                imageSize = await ImageSizeFunctions.GetImageSizeAsync(file).ConfigureAwait(true);
             }
-        }
 
-        /// <summary>
-        /// Load a picture from a prepared string
-        /// </summary>
-        /// <param name="pic"></param>
-        /// <param name="imageName"></param>
-        internal static async Task UpdateImageAsync(string file, string imageName, bool isGif)
-        {
-            FileInfo fileInfo = new FileInfo(file);
-            BitmapSource? bitmapSource = isGif ? null : await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, async () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 ToggleStartUpUC(true);
 
@@ -132,7 +104,6 @@ namespace PicView.ChangeImage
 
                 if (isGif)
                 {
-                    Size? imageSize = await ImageSizeFunctions.GetImageSizeAsync(file).ConfigureAwait(true);
                     if (imageSize.HasValue)
                     {
                         FitImage(imageSize.Value.Width, imageSize.Value.Height);
@@ -150,15 +121,19 @@ namespace PicView.ChangeImage
                 {
                     UnexpectedError();
                     return;
-                }
-
-                CloseToolTipMessage();
-            });
+                }          
+            }, DispatcherPriority.Send);
+            CloseToolTipMessage();
 
             Taskbar.NoProgress();
             FolderIndex = 0;
 
             DeleteFiles.DeleteTempFiles();
+
+            if (ConfigureWindows.GetImageInfoWindow is not null)
+            {
+                await ImageInfo.UpdateValuesAsync(null).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -184,7 +159,5 @@ namespace PicView.ChangeImage
 
             await UpdateImageAsync(b64, pic).ConfigureAwait(false);
         }
-
-        #endregion UpdatePic
     }
 }
