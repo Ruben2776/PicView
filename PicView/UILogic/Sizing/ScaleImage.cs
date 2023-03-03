@@ -191,7 +191,9 @@ namespace PicView.UILogic.Sizing
             }
 
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
-            var interfaceSize = 195;
+            var interfaceSize = 
+                GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
+                + GetMainWindow.MinButton.Width + GetMainWindow.FullscreenButton.Width + GetMainWindow.CloseButton.Width;
 
             if (Settings.Default.AutoFitWindow)
             {
