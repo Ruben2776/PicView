@@ -98,7 +98,7 @@ namespace PicView.FileHandling
                 return false;
             }
 
-            Preloader.Rename(Navigation.Pics[Navigation.FolderIndex], newPath);
+            Preloader.Rename(Navigation.Pics[Navigation.FolderIndex], Navigation.FolderIndex, newPath);
             if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
             {
                 UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
@@ -120,7 +120,7 @@ namespace PicView.FileHandling
         /// Returns the human-readable file size for an arbitrary, 64-bit file size
         /// The default format is "0.## XB", e.g. "4.2 KB" or "1.43 GB"
         /// </summary>
-        /// <param name="i">FileInfo.Length</param>
+        /// <param name="fileSize">FileInfo.Length</param>
         /// <returns>E.g. "3.34 MB"</returns>
         /// Credits to http://www.somacon.com/p576.php
         internal static string GetReadableFileSize(this long fileSize)

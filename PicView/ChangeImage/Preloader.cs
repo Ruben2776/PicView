@@ -91,8 +91,9 @@ namespace PicView.ChangeImage
                 if (add)
                 {
                     fileInfo ??= new FileInfo(Pics[index]);
-                    bitmapSource = bitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                    bitmapSource ??= ImageFunctions.ImageErrorMessage();
+                    bitmapSource = bitmapSource ??
+                        await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
+                        ImageFunctions.ImageErrorMessage();
                     preloadValue.BitmapSource = bitmapSource;
                     preloadValue.IsLoading = false;
                     preloadValue.FileInfo = fileInfo;
@@ -118,12 +119,13 @@ namespace PicView.ChangeImage
         /// <param name="file">File to be renamed</param>
         /// <param name="name">New name to be changed to</param>
         /// <returns></returns>
-        internal static void Rename(string file, string name)
+        internal static void Rename(string file, int index, string name)
         {
             if (file == null || name == null) { return; }
+            if (index < 0 || index >= Pics.Count) { return; }
 
             _preloadList.Remove(file, out var preloadValue);
-            _= AddAsync(FolderIndex, null, preloadValue.BitmapSource).ConfigureAwait(true);
+            _= AddAsync(index, null, preloadValue.BitmapSource).ConfigureAwait(true);
         }
 
         /// <summary>
