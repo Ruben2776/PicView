@@ -76,7 +76,7 @@
     <ImageBrush
         x:Key="NoisyBg"
         ImageSource="\Themes\Resources\img\noise-texture-100x100 (3).png"
-        Opacity=".5"
+        Opacity=".4"
         TileMode="FlipXY"
         Viewport="0,0,100,100"
         ViewportUnits="Absolute" />

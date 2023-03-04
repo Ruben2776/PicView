@@ -90,7 +90,7 @@ namespace PicView.ConfigureSettings
             var mainWindow = ConfigureWindows.GetMainWindow;
             if (mainWindow.MainImageBorder == null) return;
 
-            Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 4;
+            Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 5;
 
             mainWindow.MainImageBorder.Background = BackgroundColorBrush;
 
@@ -105,11 +105,12 @@ namespace PicView.ConfigureSettings
         internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
         {
             0 => Brushes.Transparent,
-            1 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
+            1 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(15, 15, 15)),
             2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
             3 => Settings.Default.DarkTheme ?
                 DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 60)
                 : DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
+            4 => Settings.Default.DarkTheme ? new SolidColorBrush(Color.FromRgb(15, 15, 15)) : Brushes.White,
             _ => Brushes.Transparent,
         };
 

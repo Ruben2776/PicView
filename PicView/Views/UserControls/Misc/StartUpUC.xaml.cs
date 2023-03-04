@@ -2,7 +2,9 @@
 using PicView.FileHandling;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
+using Color = System.Windows.Media.Color;
 
 namespace PicView.Views.UserControls.Misc
 {
@@ -60,6 +62,11 @@ namespace PicView.Views.UserControls.Misc
             };
 
             PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
+
+            if (Properties.Settings.Default.DarkTheme == false)
+            {
+                Background = new SolidColorBrush(Color.FromArgb(230,255, 255, 255));
+            }
         }
 
         public void ToggleMenu()

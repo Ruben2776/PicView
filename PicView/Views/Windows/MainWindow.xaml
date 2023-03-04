@@ -35,6 +35,7 @@
             <misc:Icon
                 x:Name="Logo"
                 Width="37"
+                Height="30"
                 Margin="0"
                 Padding="0,2,0,2"
                 Background="{StaticResource SubtleFadeBrush}" />
@@ -47,6 +48,7 @@
             <Button
                 Name="GalleryButton"
                 Width="29"
+                Height="31"
                 DockPanel.Dock="Left">
                 <Button.Background>
                     <SolidColorBrush x:Name="GalleryBg" Color="{StaticResource SubtleFadeColor}" />
@@ -73,7 +75,10 @@
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
-            <Button Name="RotateButton" Width="29">
+            <Button
+                Name="RotateButton"
+                Width="29"
+                Height="31">
                 <Button.Background>
                     <SolidColorBrush x:Name="RotateBg" Color="{StaticResource SubtleFadeColor}" />
                 </Button.Background>
