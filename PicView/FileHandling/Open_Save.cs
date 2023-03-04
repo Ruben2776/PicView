@@ -26,7 +26,7 @@ namespace PicView.FileHandling
         ///  TODO update for and check file support
         /// </summary>
         internal const string FilterFiles =
-            "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;"                                    // Common pics
+            "*|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;"
             + "|jpg| *.jpg;*.jpeg"                                                                          // JPG
             + "|PNG|*.png;"                                                                                 // PNG
             + "|gif|*.gif;"                                                                                 // GIF
@@ -36,10 +36,13 @@ namespace PicView.FileHandling
             + "|tga|*.tga;"                                                                                 // TGA
             + "|dds|*.dds;"                                                                                 // DDS
             + "|ico|*.ico;"                                                                                 // ICO
-            + "|wdp|*.wdp;"                                                                                 // WDP
+            + "|HEIC|*.heic;*.heif;"                                                                        // HEIC
+            + "|HDR|*.hdr;"                                                                                 // HDR
             + "|svg|*.svg;"                                                                                 // SVG
             + "|Photoshop|*.psd;*.psb"                                                                      // PSD
             + "|GIMP|*.xcf"                                                                                 // GIMP
+            + "|QOI|*.qoi"                                                                                  // GQOI (Quite OK Image
+            + "|Base64|*.b64"                                                                               // Base64
             + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
