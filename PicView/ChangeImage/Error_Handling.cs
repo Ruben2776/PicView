@@ -1,11 +1,12 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeTitlebar;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
@@ -21,7 +22,7 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool CheckOutOfRange()
         {
-            return Pics?.Count < FolderIndex || Pics?.Count < 1 || UILogic.UC.GetCropppingTool is { IsVisible: true };
+            return Pics?.Count < FolderIndex || Pics?.Count < 1 || UC.GetCropppingTool is { IsVisible: true };
         }
 
         internal static void UnexpectedError()
@@ -59,8 +60,8 @@ namespace PicView.ChangeImage
             }
 
             if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
-            
-            if (Properties.Settings.Default.FullscreenGalleryHorizontal || Properties.Settings.Default.FullscreenGalleryVertical)
+
+            if (Settings.Default.FullscreenGalleryHorizontal)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
                 {
@@ -81,34 +82,39 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static string CheckIfLoadableString(string s)
         {
-            bool result = Uri.TryCreate(s, UriKind.Absolute, out Uri? uriResult)
-                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-
-            if (result)
+            if (!string.IsNullOrWhiteSpace(FileHandling.FileFunctions.GetURL(s)))
             {
                 return "web";
             }
-            else if (Base64.IsBase64String(s))
+
+            if (Base64.IsBase64String(s))
             {
                 return "base64";
             }
-            
-            s = s.Replace("\"", "");
-            s = s.Trim();
 
             if (File.Exists(s))
             {
+                if (SupportedFiles.IsArchive(Path.GetExtension(s)))
+                {
+                    return "zip";
+                }
                 return s;
-            }
-
-            else if (Directory.Exists(s))
-            {
-                return "directory";
             }
             else
             {
-                return string.Empty;
+                s = s.Trim().Replace("\"", "");
+                if (File.Exists(s))
+                {
+                    return s;
+                }
             }
+
+            if (Directory.Exists(s))
+            {
+                return "directory";
+            }
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -148,84 +154,69 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static async Task ReloadAsync(bool fromBackup = false)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
-
-            string? path = null;
-            if (fromBackup)
-            {
-                if (string.IsNullOrWhiteSpace(BackupPath))
-                {
-                    UnexpectedError();
-                    return;
-                }
-                path = BackupPath;
-            }
-            else if (CheckOutOfRange() == false)
-            {
-                // Determine if browsing directories recursively or only update from single directory
-                if (string.IsNullOrWhiteSpace(Navigation.InitialPath) == false
-                    && Properties.Settings.Default.IncludeSubDirectories
-                    && Path.GetDirectoryName(Navigation.InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
-                {
-                    path = Navigation.InitialPath;
-                }
-                else
-                {
-                    path = Pics[FolderIndex];
-                }
-            }
-            else
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
-                {
-                    path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                });
-
-                if (path == (string)Application.Current.Resources["Loading"])
-                {
-                    path = Navigation.InitialPath;
-                }
-            }
-
+            string? path = fromBackup
+                ? BackupPath ?? null
+                : GetReloadPath();
             if (path == null)
             {
                 UnexpectedError();
-                return;
             }
-
             if (File.Exists(path))
             {
                 var fileInfo = new FileInfo(path);
                 await ResetValues(fileInfo).ConfigureAwait(false);
-                await LoadPic.LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
+                await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
             }
             else if (Directory.Exists(path))
             {
-                int index = 0;
                 var fileInfo = new FileInfo(path);
-                if (CheckOutOfRange() == false)
-                {
-                    index = FolderIndex;
-                }
-
                 await ResetValues(fileInfo).ConfigureAwait(false);
-                await LoadPic.LoadPicFromFolderAsync(fileInfo, index).ConfigureAwait(false);
+                await LoadPic.LoadPicFromFolderAsync(fileInfo, FolderIndex).ConfigureAwait(false);
             }
             else if (Base64.IsBase64String(path))
             {
-                await LoadPic.LoadBase64PicAsync(path).ConfigureAwait(false);
+                await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
             }
             else if (Clipboard.ContainsImage())
             {
-                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await UpdateImage.UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage()).ConfigureAwait(false);
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {
-                await WebFunctions.PicWeb(path).ConfigureAwait(false);
+                await HttpFunctions.LoadPicFromURL(path).ConfigureAwait(false);
             }
             else
             {
                 UnexpectedError();
+            }
+
+            string? GetReloadPath()
+            {
+                if (CheckOutOfRange() == false)
+                {
+                    if (string.IsNullOrWhiteSpace(InitialPath) == false
+                        && Settings.Default.IncludeSubDirectories
+                        && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+                    {
+                        return InitialPath;
+                    }
+                    else
+                    {
+                        return Pics[FolderIndex];
+                    }
+                }
+                else
+                {
+                    return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
+                    {
+                        var path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                        if (path == (string)Application.Current.Resources["Loading"])
+                        {
+                            return InitialPath;
+                        }
+                        return path;
+                    });
+                }
             }
         }
 
@@ -271,6 +262,8 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.MainImage.Width = 0;
             ConfigureWindows.GetMainWindow.MainImage.Height = 0;
 
+            WindowSizing.SetWindowBehavior();
+
             UC.ToggleStartUpUC(!showStartup);
 
             FreshStartup = true;
@@ -288,7 +281,7 @@ namespace PicView.ChangeImage
 
             try
             {
-                _ = SystemIntegration.Taskbar.NoProgress();
+               Taskbar.NoProgress();
             }
             catch
             {

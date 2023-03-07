@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using PicView.ConfigureSettings;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -20,7 +21,7 @@ namespace PicView.Editing.Crop.Tools
 
             Border = new Border
             {
-                Background = new SolidColorBrush(ConfigureSettings.ConfigColors.BackgroundBorderColor),
+                Background = new SolidColorBrush(ConfigColors.BackgroundBorderColor),
                 Padding = new Thickness(9),
                 BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"],
                 BorderThickness = new Thickness(1),
@@ -31,7 +32,7 @@ namespace PicView.Editing.Crop.Tools
             {
                 FontFamily = new FontFamily("/PicView;component/Themes/Resources/fonts/#Tex Gyre Heros"),
                 FontSize = 16,
-                Foreground = new SolidColorBrush(ConfigureSettings.ConfigColors.MainColor),
+                Foreground = new SolidColorBrush(ConfigColors.MainColor),
             };
             Border.Child = TextBlock;
         }

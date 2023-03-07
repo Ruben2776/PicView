@@ -2,16 +2,20 @@
     x:Class="PicView.Views.Windows.EffectsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     Width="413"
     Height="450"
-    BorderBrush="{DynamicResource WindowBorderColorBrush}"
+    AllowsTransparency="True"
+    BorderBrush="{DynamicResource BorderBrush}"
     BorderThickness="1"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
     mc:Ignorable="d">
 
     <DockPanel Background="{StaticResource NoisyBg}" LastChildFill="True">
@@ -21,15 +25,15 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon />
+            <misc:Icon />
 
-            <uc:CloseButton
+            <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
                 DockPanel.Dock="Right" />
 
-            <uc:MinButton
+            <buttons:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
@@ -50,13 +54,13 @@
             DockPanel.Dock="Top"
             Fill="{StaticResource BorderBrush}" />
 
-
         <StackPanel>
 
             <WrapPanel
                 x:Name="EffectsContainer"
+                Margin="0,10,0,0"
                 HorizontalAlignment="Center"
-                Orientation="Horizontal" Margin="0,10,0,0">
+                Orientation="Horizontal">
 
                 <CheckBox x:Name="NegativeButton" Margin="0,2,0,2">
                     <CheckBox.Background>
@@ -489,10 +493,7 @@
                         </TextBlock.Foreground>
                     </TextBlock>
                 </CheckBox>
-
-
             </WrapPanel>
-
 
             <Slider
                 x:Name="IntensitySlider"
@@ -579,11 +580,7 @@
                         </Button.Foreground>
                     </Button>
                 </Border>
-
-
             </StackPanel>
-
         </StackPanel>
-
     </DockPanel>
 </Window>

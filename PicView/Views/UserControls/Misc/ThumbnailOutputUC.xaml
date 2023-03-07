@@ -1,8 +1,9 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.ThumbnailOutputUC"
+    x:Class="PicView.Views.UserControls.Misc.ThumbnailOutputUC"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls">
+    xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons">
 
     <UserControl.Resources>
         <Style TargetType="TextBlock">
@@ -25,7 +26,7 @@
                 AllowDrop="True"
                 FontSize="11"
                 IsReadOnly="False" />
-            <uc:FolderButton x:Name="OutputFolderButton" />
+            <buttons:FolderButton x:Name="OutputFolderButton" />
         </StackPanel>
 
         <StackPanel Margin="15,3,0,6" Orientation="Horizontal">

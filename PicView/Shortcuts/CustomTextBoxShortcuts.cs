@@ -1,8 +1,8 @@
-﻿using PicView.UILogic;
-using System.Threading.Tasks;
+﻿using PicView.ChangeTitlebar;
+using PicView.FileHandling;
 using System.Windows.Input;
 
-namespace PicView
+namespace PicView.Shortcuts
 {
     internal static class CustomTextBoxShortcuts
     {
@@ -15,7 +15,7 @@ namespace PicView
             else if (e.Key == Key.Escape)
             {
                 EditTitleBar.Refocus();
-                FileHandling.Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
+                Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
             }
         }
     }

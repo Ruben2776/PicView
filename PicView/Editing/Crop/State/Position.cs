@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace PicView.Editing.Crop.State
 {
@@ -18,7 +17,8 @@ namespace PicView.Editing.Crop.State
             Height = height;
         }
 
-        public override bool Equals(object obj) => obj != null && obj is Position size && Equals(size);
+        #region IEquatable<T>
+        public override bool Equals(object? obj) => obj != null && obj is Position size && Equals(size);
 
         public static bool operator ==(Position e1, Position e2)
         {
@@ -39,5 +39,6 @@ namespace PicView.Editing.Crop.State
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

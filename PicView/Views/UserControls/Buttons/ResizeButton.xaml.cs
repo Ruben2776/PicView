@@ -1,11 +1,12 @@
 ﻿using PicView.Animations;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class ResizeButton : UserControl
     {
@@ -47,7 +48,7 @@ namespace PicView.Views.UserControls
             {
                 LoadControls.LoadQuickResize();
             }
-            if (UC.GetQuickResize.Visibility == System.Windows.Visibility.Collapsed)
+            if (UC.GetQuickResize.Visibility == Visibility.Collapsed)
             {
                 UC.GetQuickResize.Show();
             }

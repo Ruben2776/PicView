@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class FolderButton : UserControl
     {
@@ -11,8 +11,7 @@ namespace PicView.Views.UserControls
             InitializeComponent();
 
             // FileMenuButton
-            FileMenuButton.PreviewMouseLeftButtonDown += (_, _) => MouseOverAnimations.PreviewMouseButtonDownAnim(FolderFill);
-            FileMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FolderFill);       
+            FileMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FolderFill);
             FileMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FolderFill);
         }
 

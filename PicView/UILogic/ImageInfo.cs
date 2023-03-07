@@ -1,9 +1,8 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.ImageHandling;
-using PicView.Views.UserControls;
-using System;
+using PicView.Views.UserControls.Misc;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,11 +12,11 @@ namespace PicView.UILogic
 {
     internal static class ImageInfo
     {
-        static object? rating;
+        private static object? rating;
 
         internal static async Task RenameTask(KeyEventArgs e, TextBox textBox, string file)
         {
-            if (e.Key != System.Windows.Input.Key.Enter) { return; }
+            if (e.Key != Key.Enter) { return; }
 
             e.Handled = true;
             var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
@@ -39,9 +38,9 @@ namespace PicView.UILogic
         {
             if (fileInfo is null)
             {
-                if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Navigation.Pics.Count > ChangeImage.Navigation.FolderIndex)
+                if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex)
                 {
-                    fileInfo = new FileInfo(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+                    fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
                 }
             }
 
@@ -67,7 +66,7 @@ namespace PicView.UILogic
 
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                if (fileInfo is not null && ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
+                if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
                 {
                     return;
                 }
@@ -385,7 +384,7 @@ namespace PicView.UILogic
             });
         }
 
-        static void Clear()
+        private static void Clear()
         {
             if (ConfigureWindows.GetImageInfoWindow is null) { return; }
 
@@ -463,6 +462,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 1:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.OutlineStar();
@@ -470,6 +470,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 2:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();
@@ -477,6 +478,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 3:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();
@@ -484,6 +486,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.OutlineStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 4:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();
@@ -491,6 +494,7 @@ namespace PicView.UILogic
                     ConfigureWindows.GetImageInfoWindow.Star4.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star5.OutlineStar();
                     return;
+
                 case 5:
                     ConfigureWindows.GetImageInfoWindow.Star1.FillStar();
                     ConfigureWindows.GetImageInfoWindow.Star2.FillStar();

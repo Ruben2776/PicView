@@ -1,8 +1,9 @@
 ﻿using PicView.Animations;
+using PicView.ConfigureSettings;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class BackGroundButton : UserControl
     {
@@ -12,15 +13,6 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += delegate
-                {
-                    PreviewMouseButtonDownAnim(IconBrush1);
-                    PreviewMouseButtonDownAnim(IconBrush2);
-                    PreviewMouseButtonDownAnim(IconBrush3);
-                    PreviewMouseButtonDownAnim(IconBrush4);
-                    PreviewMouseButtonDownAnim(IconBrush5);
-                };
-
                 TheButton.MouseEnter += delegate
                 {
                     ButtonMouseOverAnim(IconBrush1);
@@ -41,7 +33,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
+                TheButton.Click += (_, _) => ConfigColors.ChangeBackground();
             };
         }
     }

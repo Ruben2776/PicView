@@ -1,7 +1,8 @@
-﻿using System.Windows;
+﻿using PicView.ConfigureSettings;
+using System.Windows;
 using System.Windows.Media;
 
-namespace PicView.Library.Resources
+namespace PicView.Themes.Resources
 {
     internal static class DrawingBrushes
     {
@@ -9,7 +10,7 @@ namespace PicView.Library.Resources
 
         public static DrawingBrush CheckerboardDrawingBrush(Color color)
         {
-            return CheckerboardDrawingBrush(color, ConfigureSettings.ConfigColors.BackgroundBorderColor, 30);
+            return CheckerboardDrawingBrush(color, ConfigColors.BackgroundBorderColor, 30);
         }
 
         public static DrawingBrush CheckerboardDrawingBrush(Color color, Color color2, int size)
@@ -24,7 +25,7 @@ namespace PicView.Library.Resources
 
             var drawingroup = new DrawingGroup();
 
-            var geoBlack = new GeometryDrawing()
+            var geoBlack = new GeometryDrawing
             {
                 Brush = new SolidColorBrush(color)
             };

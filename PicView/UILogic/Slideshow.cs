@@ -1,8 +1,8 @@
 ﻿using PicView.Animations;
+using PicView.ChangeImage;
+using PicView.Properties;
 using PicView.SystemIntegration;
-using System;
-using System.Threading.Tasks;
-using System.Timers;
+using PicView.UILogic.Sizing;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
 
@@ -13,7 +13,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Timer used for slideshow
         /// </summary>
-        internal static Timer? SlideTimer { get; set; }
+        internal static System.Timers.Timer? SlideTimer { get; set; }
 
         /// <summary>
         /// Maximize and removes Interface and start timer for slideshow.
@@ -29,9 +29,9 @@ namespace PicView.UILogic
 
             if (SlideTimer == null)
             {
-                SlideTimer = new Timer()
+                SlideTimer = new System.Timers.Timer
                 {
-                    Interval = Properties.Settings.Default.SlideTimer,
+                    Interval = Settings.Default.SlideTimer,
                     Enabled = true
                 };
                 SlideTimer.Elapsed += async delegate { await SlideTimer_Elapsed().ConfigureAwait(false); };
@@ -44,7 +44,7 @@ namespace PicView.UILogic
 
             if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
             {
-                UILogic.Sizing.WindowSizing.RenderFullscreen();
+                WindowSizing.RenderFullscreen();
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
@@ -57,9 +57,9 @@ namespace PicView.UILogic
         {
             SlideTimer?.Stop();
 
-            if (!Properties.Settings.Default.Fullscreen)
+            if (!Settings.Default.Fullscreen)
             {
-                UILogic.Sizing.WindowSizing.Fullscreen_Restore();
+                WindowSizing.Fullscreen_Restore();
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS); // Allow screensaver again
@@ -73,7 +73,7 @@ namespace PicView.UILogic
         private static async Task SlideTimer_Elapsed()
         {
             AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.8), TimeSpan.FromSeconds(0), 0, .5);
-            await NavigateToPicAsync().ConfigureAwait(false);
+            await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
             AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.7), TimeSpan.FromSeconds(0), .5, 1);
         }
     }

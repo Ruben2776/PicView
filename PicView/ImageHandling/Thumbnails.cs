@@ -1,5 +1,7 @@
 ﻿using ImageMagick;
-using PicView.Views.UserControls;
+using Microsoft.WindowsAPICodePack.Shell;
+using PicView.ChangeImage;
+using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -17,7 +19,7 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
         {
-            if (ChangeImage.ErrorHandling.CheckOutOfRange())
+            if (ErrorHandling.CheckOutOfRange())
             {
                 return null;
             }
@@ -51,25 +53,40 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, byte quality = 100, int size = 500)
+        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, int size = 500)
         {
-            switch (fileInfo.Extension)
+            if (fileInfo.Length > 2e+7)
             {
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".gif":
-                case ".ico":
-                case ".jfif":
-                case ".wbmp":
-                    return GetWindowsThumbnail(fileInfo.FullName);
-                default:
-                    break;
+                return ImageFunctions.ShowLogo();
             }
 
-            return fileInfo.Length > 5e+6 ? null : GetMagickImageThumb(fileInfo);
+            try
+            {
+                switch (fileInfo.Extension)
+                {
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".jpe":
+                    case ".png":
+                    case ".bmp":
+                    case ".gif":
+                    case ".ico":
+                    case ".jfif":
+                    case ".wbmp":
+                        return GetWindowsThumbnail(fileInfo.FullName);
+                    case ".b64":
+                        return ImageFunctions.ShowLogo();
+                }
+
+                return GetMagickImageThumb(fileInfo, size) ?? ImageFunctions.ShowLogo();
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
+#endif
+                return ImageFunctions.ImageErrorMessage();
+            }
         }
 
         /// <summary>
@@ -79,41 +96,27 @@ namespace PicView.ImageHandling
         /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, byte quality = 100, int size = 500)
+        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, int size = 500)
         {
-            using MagickImage magickImage = new()
-            {
-                Quality = quality,
-                ColorSpace = ColorSpace.Transparent
-            };
             try
             {
-                magickImage.Read(fileInfo);
-                var exifData = magickImage.GetExifProfile();
-                if (exifData != null)
+                using (MagickImage image = new MagickImage(fileInfo))
                 {
-                    // Create thumbnail from exif information
-                    using var thumbnail = (MagickImage)exifData.CreateThumbnail()!;
-                    // Check if exif profile contains thumbnail and save it
-                    var bitmapSource = thumbnail.ToBitmapSource();
-                    bitmapSource.Freeze();
-                    return bitmapSource;
+                    image.Thumbnail(new MagickGeometry(size, size));
+                    var bmp = image.ToBitmapSource();
+                    bmp.Freeze();
+                    return bmp;
                 }
-
-                magickImage.AdaptiveResize(size, size);
             }
 #if DEBUG
-            catch (MagickException e)
+            catch (Exception e)
             {
                 Trace.WriteLine("GetMagickImage returned " + fileInfo + " null, \n" + e.Message);
                 return null;
             }
 #else
-                catch (MagickException) { return null; }
+                catch (Exception) { return null; }
 #endif
-            BitmapSource pic = magickImage.ToBitmapSource();
-            pic.Freeze();
-            return pic;
         }
 
         /// <summary>
@@ -121,11 +124,21 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="path">The path to the file</param>
         /// <returns></returns>
-        private static BitmapSource GetWindowsThumbnail(string path)
+        private static BitmapSource? GetWindowsThumbnail(string path)
         {
-            BitmapSource pic = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
-            pic.Freeze();
-            return pic;
+            try
+            {
+                BitmapSource pic = ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+                pic.Freeze();
+                return pic;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine(nameof(GetWindowsThumbnail) + " " + e.Message);
+#endif
+                return null;
+            }
         }
     }
 }

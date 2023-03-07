@@ -1,13 +1,14 @@
 ﻿using ImageMagick;
+using PicView.UILogic;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
 {
@@ -20,40 +21,39 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo fileInfo)
         {
-            if (fileInfo == null) { return null; }
-            if (fileInfo.Length <= 0) { return null; }
+            if (fileInfo == null || fileInfo.Length <= 0) { return null; }
 
-            switch (fileInfo.Extension)
+            var extension = fileInfo.Extension.ToLowerInvariant();
+            switch (extension)
             {
-                case { } when fileInfo.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".jpe", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".jfif", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".ico", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".webp", StringComparison.OrdinalIgnoreCase):
-                case { } when fileInfo.Extension.Equals(".wbmp", StringComparison.OrdinalIgnoreCase):
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                case ".jfif":
+                case ".ico":
+                case ".webp":
+                case ".wbmp":
                     return await GetWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
-                case { } when fileInfo.Extension.Equals(".tga", StringComparison.OrdinalIgnoreCase): // Make sure to to auto orient tga files https://github.com/Ruben2776/PicView/issues/22
-                    return await Task.FromResult(GetDefaultBitmapSource(fileInfo, true)).ConfigureAwait(false);
+                case ".tga":
+                    return await GetDefaultBitmapSourceAsync(fileInfo, true).ConfigureAwait(false);
 
-                case { } when fileInfo.Extension.Equals(".svg", StringComparison.OrdinalIgnoreCase):
-                    // TODO convert to drawingimage instead.. maybe
-                    // TODO svgz only works in getDefaultBitmapSource, need to figure out how to fix white bg instead of transparent 
+                case ".svg":
                     return await GetTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
-                case { } when fileInfo.Extension.Equals(".b64", StringComparison.OrdinalIgnoreCase):
-                    return await Base64.Base64StringToBitmap(fileInfo).ConfigureAwait(false);
+                case ".b64":
+                    return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false);
 
                 default:
-                    return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
+                    return await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             }
         }
 
         #region Render Image From Source
+
         /// <summary>
         /// Returns the currently viewed bitmap image to MagickImage
         /// </summary>
@@ -76,20 +76,19 @@ namespace PicView.ImageHandling
 
                 magickImage.Quality = 100;
 
-                // Apply transformation values
-                if (UILogic.TransformImage.Rotation.Flipped)
+                // Apply rotation and flip transformations
+                if (Rotation.Flipped)
                 {
                     magickImage.Flop();
                 }
-
-                magickImage.Rotate(UILogic.TransformImage.Rotation.Rotateint);
+                magickImage.Rotate(Rotation.RotationAngle);
 
                 return magickImage;
             }
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetRenderedMagickImage)} exception, \n {e.Message}");
 #endif
                 return null;
             }
@@ -103,43 +102,43 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var sauce = UILogic.ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                var sourceBitmap = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
 
-                if (sauce == null)
+                if (sourceBitmap == null)
                 {
                     return null;
                 }
 
-                var effect = UILogic.ConfigureWindows.GetMainWindow.MainImage.Effect;
+                var effect = ConfigureWindows.GetMainWindow.MainImage.Effect;
 
-                var rectangle = new System.Windows.Shapes.Rectangle
+                var rectangle = new Rectangle
                 {
-                    Fill = new ImageBrush(sauce),
+                    Fill = new ImageBrush(sourceBitmap),
                     Effect = effect
                 };
 
-                var sz = new Size(sauce.PixelWidth, sauce.PixelHeight);
-                rectangle.Measure(sz);
-                rectangle.Arrange(new Rect(sz));
+                var sourceSize = new Size(sourceBitmap.PixelWidth, sourceBitmap.PixelHeight);
+                rectangle.Measure(sourceSize);
+                rectangle.Arrange(new Rect(sourceSize));
 
-                var rtb = new RenderTargetBitmap(sauce.PixelWidth, sauce.PixelHeight, sauce.DpiX, sauce.DpiY, PixelFormats.Default);
-                rtb.Render(rectangle);
+                var renderedBitmap = new RenderTargetBitmap(sourceBitmap.PixelWidth, sourceBitmap.PixelHeight, sourceBitmap.DpiX, sourceBitmap.DpiY, PixelFormats.Default);
+                renderedBitmap.Render(rectangle);
 
-                BitmapFrame bitmapFrame = BitmapFrame.Create(rtb);
+                BitmapFrame bitmapFrame = BitmapFrame.Create(renderedBitmap);
                 bitmapFrame.Freeze();
 
                 return bitmapFrame;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {exception.Message}");
 #endif
                 return null;
             }
         }
 
-        #endregion
+        #endregion Render Image From Source
 
         #region Private functions
 
@@ -151,100 +150,85 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static async Task<BitmapSource?> GetTransparentBitmapSourceAsync(FileInfo fileInfo, MagickFormat magickFormat)
         {
-            FileStream? filestream = null;
-            MagickImage magickImage = new()
+            using FileStream filestream = new(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
+            var data = new byte[filestream.Length];
+            await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
+
+            using var magickImage = new MagickImage(data)
             {
                 Quality = 100,
                 ColorSpace = ColorSpace.Transparent,
                 BackgroundColor = MagickColors.Transparent,
                 Format = magickFormat,
+                Settings =
+                {
+                    Format = magickFormat,
+                    BackgroundColor = MagickColors.Transparent,
+                    FillColor = MagickColors.Transparent,
+                },
             };
-            try
-            {
-                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
-                byte[] data = new byte[filestream.Length];
-                await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
-
-                magickImage.Read(data);
-                magickImage.Settings.Format = magickFormat;
-                magickImage.Settings.BackgroundColor = MagickColors.Transparent;
-                magickImage.Settings.FillColor = MagickColors.Transparent;
-            }
-            catch (Exception e)
-            {
-                filestream?.Dispose();
-                magickImage?.Dispose();
-#if DEBUG
-                Trace.WriteLine($"{nameof(GetTransparentBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
-#endif
-                return null;
-            }
-
-            await filestream.DisposeAsync().ConfigureAwait(false);
 
             var bitmap = magickImage.ToBitmapSource();
-            magickImage.Dispose();
             bitmap.Freeze();
             return bitmap;
         }
 
         private static async Task<WriteableBitmap?> GetWriteableBitmapAsync(FileInfo fileInfo)
         {
-            FileStream? filestream = null; // https://devblogs.microsoft.com/dotnet/file-io-improvements-in-dotnet-6/
-            byte[] data;
-
             try
             {
-                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
-                data = new byte[filestream.Length];
-                await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
-                await filestream.DisposeAsync().ConfigureAwait(false);
+                using var stream = File.OpenRead(fileInfo.FullName);
+                var data = new byte[stream.Length];
+                await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
 
                 var sKBitmap = SKBitmap.Decode(data);
                 if (sKBitmap is null) { return null; }
 
                 var skPic = sKBitmap.ToWriteableBitmap();
-                skPic.Freeze();
                 sKBitmap.Dispose();
+
+                skPic.Freeze();
                 return skPic;
             }
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception: \n {e.Message}");
 #endif
                 return null;
             }
         }
 
-        private static BitmapSource? GetDefaultBitmapSource(FileInfo fileInfo, bool autoOrient = false)
+        private static async Task<BitmapSource?> GetDefaultBitmapSourceAsync(FileInfo fileInfo, bool autoOrient = false)
         {
-            var magick = new MagickImage();
             try
             {
-                magick.Read(fileInfo);
+                using var magick = new MagickImage()
+                {
+                    Quality = 100
+                };
+
+                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
                 if (autoOrient)
                 {
                     magick.AutoOrient();
                 }
+
+                var pic = magick.ToBitmapSource();
+                pic.Freeze();
+
+                return pic;
             }
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetDefaultBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
+                Tooltip.ShowTooltipMessage(e);
                 return null;
             }
-
-            magick.Quality = 100;
-
-            var pic = magick.ToBitmapSource();
-            magick.Dispose();
-            pic.Freeze();
-
-            return pic;
         }
 
-        #endregion
+        #endregion Private functions
     }
 }

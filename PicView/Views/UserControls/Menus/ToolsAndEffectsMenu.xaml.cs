@@ -1,12 +1,14 @@
 ﻿using PicView.Animations;
+using PicView.ConfigureSettings;
 using PicView.Editing;
 using PicView.ImageHandling;
+using PicView.Properties;
 using PicView.UILogic;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Menus
 {
     /// <summary>
     /// Menu to open functions
@@ -17,7 +19,7 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            switch (Properties.Settings.Default.UserLanguage)
+            switch (Settings.Default.UserLanguage)
             {
                 case "ru":
                 case "pl":
@@ -125,16 +127,6 @@ namespace PicView.Views.UserControls
             };
             OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
 
-            BgBorder.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(IconBrush1);
-                PreviewMouseButtonDownAnim(IconBrush2);
-                PreviewMouseButtonDownAnim(IconBrush3);
-                PreviewMouseButtonDownAnim(IconBrush4);
-                PreviewMouseButtonDownAnim(IconBrush5);
-                PreviewMouseButtonDownAnim(BgText);
-            };
-
             BgBorder.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(IconBrush1);
@@ -157,7 +149,7 @@ namespace PicView.Views.UserControls
                 AnimationHelper.MouseLeaveBgTexColor(BgBrush);
             };
 
-            BgButton.Click += (_, _) => ConfigureSettings.ConfigColors.ChangeBackground();
+            BgButton.Click += (_, _) => ConfigColors.ChangeBackground();
         }
     }
 }

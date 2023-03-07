@@ -217,7 +217,7 @@
 
     <!--  Copy related  -->
     <system:String x:Key="Copy">Copy</system:String>
-    <system:String x:Key="AddedToClipboard">added to clipboard</system:String>
+    <system:String x:Key="AddedToClipboard">Added to clipboard</system:String>
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Copy file</system:String>
@@ -390,5 +390,4 @@
     <system:String x:Key="Cancel">Cancel</system:String>
 
     <system:String x:Key="None">None</system:String>
-
 </ResourceDictionary>

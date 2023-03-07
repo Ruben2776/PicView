@@ -1,8 +1,12 @@
-﻿using System.Windows;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
+using Color = System.Windows.Media.Color;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     /// <summary>
     /// Interaction logic for StartUpUC.xaml
@@ -12,13 +16,6 @@ namespace PicView.Views.UserControls
         public StartUpUC()
         {
             InitializeComponent();
-
-            SelectFile.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(folderBrush1);
-                PreviewMouseButtonDownAnim(folderBrush2);
-                PreviewMouseButtonDownAnim(selectBrush);
-            };
 
             SelectFile.MouseEnter += delegate
             {
@@ -34,15 +31,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(selectBrush);
             };
 
-            SelectFile.Click += async (_, _) => await FileHandling.Open_Save.OpenAsync().ConfigureAwait(false);
-
-
-            OpenLastFileButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(lastBrush1);
-                PreviewMouseButtonDownAnim(lastBrush2);
-                PreviewMouseButtonDownAnim(lastBrush);
-            };
+            SelectFile.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
 
             OpenLastFileButton.MouseEnter += delegate
             {
@@ -58,14 +47,7 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(lastBrush);
             };
 
-            OpenLastFileButton.Click += async (_, _) => await ChangeImage.History.OpenLastFileAsync().ConfigureAwait(false);
-
-
-            PasteButton.PreviewMouseLeftButtonDown += delegate
-            {
-                PreviewMouseButtonDownAnim(pasteBrush);
-                PreviewMouseButtonDownAnim(pasteTxt);
-            };
+            OpenLastFileButton.Click += async (_, _) => await Navigation.GetFileHistory.OpenLastFileAsync().ConfigureAwait(false);
 
             PasteButton.MouseEnter += delegate
             {
@@ -79,7 +61,18 @@ namespace PicView.Views.UserControls
                 ButtonMouseLeaveAnim(pasteTxt);
             };
 
-            PasteButton.Click += (_, _) => FileHandling.Copy_Paste.Paste();
+            PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
+
+            if (Properties.Settings.Default.DarkTheme == false)
+            {
+                Background = new SolidColorBrush(Color.FromArgb(230,255, 255, 255));
+            }
+        }
+
+        public void ToggleMenu()
+        {
+            if (buttons.IsVisible) { buttons.Visibility = Visibility.Collapsed; }
+            else { buttons.Visibility = Visibility.Visible; }
         }
 
         public void ResponsiveSize(double width)

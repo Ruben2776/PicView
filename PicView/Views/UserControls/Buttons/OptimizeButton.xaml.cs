@@ -1,9 +1,10 @@
 ﻿using PicView.Animations;
+using PicView.ImageHandling;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Interaction logic for OptimizeButton.xaml
@@ -36,7 +37,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(ButtonBrush);
                 };
 
-                TheButton.Click += async (_, _) => await ImageHandling.ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+                TheButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
             };
         }
     }

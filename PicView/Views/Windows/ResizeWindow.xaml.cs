@@ -3,15 +3,11 @@ using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.ImageHandling;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using PicView.Shortcuts;
+using PicView.SystemIntegration;
+using PicView.Views.UserControls.Misc;
 using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,27 +17,28 @@ using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows
 {
-
     public partial class ResizeWindow : Window
     {
-        bool running;
-        readonly System.Collections.Generic.List<BatchFunctions.ThumbNailHolder> thumbs = new();
+        private bool running;
+        private readonly List<BatchFunctions.ThumbNailHolder> thumbs = new();
+
         public ResizeWindow()
         {
             Title = Application.Current.Resources["BatchResize"] + " - PicView";
-            MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
-            Width *= WindowSizing.MonitorInfo.DpiScaling;
+            MaxHeight = MonitorInfo.WorkArea.Height;
+            Width *= MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
             {
-                WindowSizing.MonitorInfo = SystemIntegration.MonitorSize.GetMonitorSize();
-                MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
-                Width *= WindowSizing.MonitorInfo.DpiScaling;
+                MonitorInfo = MonitorSize.GetMonitorSize();
+                MaxHeight = MonitorInfo.WorkArea.Height;
+                Width *= MonitorInfo.DpiScaling;
             }
 
             InitializeComponent();
 
             ContentRendered += (sender, e) =>
             {
+                WindowBlur.EnableBlur(this);
                 Owner = null; // Remove owner, so that minizing mainwindow will not minize this
 
                 if (ErrorHandling.CheckOutOfRange() == false)
@@ -55,7 +52,7 @@ namespace PicView.Views.Windows
 
                 SourceFolderButton.FileMenuButton.Click += (_, _) =>
                 {
-                    var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
+                    var newFolder = Open_Save.SelectAndReturnFolder();
                     if (string.IsNullOrWhiteSpace(newFolder) == false)
                     {
                         SourceFolderInput.Text = newFolder;
@@ -65,7 +62,7 @@ namespace PicView.Views.Windows
 
                 OutputFolderButton.FileMenuButton.Click += (_, _) =>
                 {
-                    var newFolder = FileHandling.Open_Save.SelectAndReturnFolder();
+                    var newFolder = Open_Save.SelectAndReturnFolder();
                     if (string.IsNullOrWhiteSpace(newFolder) == false)
                     {
                         OutputFolderInput.Text = newFolder;
@@ -124,7 +121,7 @@ namespace PicView.Views.Windows
 
                         for (int i = 1; i <= count; i++)
                         {
-                            GeneratedThumbnailsContainer.Children.Add(new UserControls.ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
+                            GeneratedThumbnailsContainer.Children.Add(new ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
                         }
                     }
                 };
@@ -132,7 +129,7 @@ namespace PicView.Views.Windows
                 MouseLeftButtonDown += (_, e) =>
                 { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
-                KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
+                KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
 
                 // CloseButton
                 CloseButton.TheButton.Click += delegate { Hide(); };
@@ -158,7 +155,7 @@ namespace PicView.Views.Windows
             };
         }
 
-        async Task Load()
+        private async Task Load()
         {
             running = true;
             CancellationTokenSource source = new CancellationTokenSource();
@@ -179,7 +176,7 @@ namespace PicView.Views.Windows
             finally { source.Dispose(); }
         }
 
-        void Loop(CancellationToken cancellationToken)
+        private void Loop(CancellationToken cancellationToken)
         {
             running = true;
 
@@ -271,7 +268,7 @@ namespace PicView.Views.Windows
 
                 for (int i = 0; i < GeneratedThumbnailsContainer.Children.Count; i++)
                 {
-                    var container = (UserControls.ThumbnailOutputUC)GeneratedThumbnailsContainer.Children[i];
+                    var container = (ThumbnailOutputUC)GeneratedThumbnailsContainer.Children[i];
                     if (container == null) { continue; }
                     if (container.Percentage.IsSelected && int.TryParse(container.ValueBox.Text, out var number))
                     {

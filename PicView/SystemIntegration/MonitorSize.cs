@@ -1,5 +1,6 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Interop;
+using WpfScreenHelper;
 
 namespace PicView.SystemIntegration
 {
@@ -15,14 +16,12 @@ namespace PicView.SystemIntegration
 
         internal readonly Rect WorkArea { get; }
 
+        #region IEquatable<T>
         public bool Equals(MonitorSize other)
         {
             throw new NotImplementedException();
         }
-
-#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
-        public override bool Equals(object obj) => obj != null && obj is MonitorSize size && Equals(size);
-#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
+        public override bool Equals(object? obj) => obj != null && obj is MonitorSize size && Equals(size);
 
         public static bool operator ==(MonitorSize e1, MonitorSize e2)
         {
@@ -38,6 +37,7 @@ namespace PicView.SystemIntegration
         {
             throw new NotImplementedException();
         }
+        #endregion
 
         /// <summary>
         /// Store current monitor info
@@ -61,7 +61,7 @@ namespace PicView.SystemIntegration
         internal static MonitorSize GetMonitorSize()
         {
             // https://stackoverflow.com/a/32599760
-            var currentMonitor = WpfScreenHelper.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow).Handle);
+            var currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow).Handle);
 
             //find out if the app is being scaled by the monitor
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);

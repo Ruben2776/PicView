@@ -1,9 +1,10 @@
 ﻿using PicView.Animations;
 using PicView.FileHandling;
+using PicView.Properties;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class PasteButton : UserControl
     {
@@ -13,16 +14,15 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (_, _) => PreviewMouseButtonDownAnim(PasteButtonBrush);
                 TheButton.MouseEnter += (_, _) => ButtonMouseOverAnim(PasteButtonBrush, true);
-                TheButton.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush, false);
+                TheButton.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush);
 
-                if (!Properties.Settings.Default.DarkTheme)
+                if (!Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                TheButton.Click += (_, _) => Copy_Paste.Paste();
+                TheButton.Click += async delegate { await Copy_Paste.PasteAsync().ConfigureAwait(false); };
             };
         }
     }

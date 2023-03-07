@@ -1,12 +1,11 @@
 ﻿using Microsoft.Win32;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -30,8 +29,8 @@ namespace PicView.Editing.Crop
                 LoadControls.LoadCroppingTool();
             }
 
-            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? XHeight : XWidth;
+            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
 
             ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
 
@@ -46,8 +45,7 @@ namespace PicView.Editing.Crop
             var sameFile = await SaveCrop().ConfigureAwait(false);
             if (sameFile)
             {
-                Preloader.Remove(Navigation.FolderIndex);
-                await LoadPic.LoadPiFromFileAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                await LoadPic.LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -71,8 +69,8 @@ namespace PicView.Editing.Crop
 
         internal static void InitilizeCrop()
         {
-            GetCropppingTool.Width = Rotateint == 0 || Rotateint == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = Rotateint == 0 || Rotateint == 180 ? XHeight : XWidth;
+            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
 
             CropService = new CropService(GetCropppingTool);
 
@@ -93,7 +91,7 @@ namespace PicView.Editing.Crop
         {
             string filename;
             string? directory;
-            if (ChangeImage.ErrorHandling.CheckOutOfRange() == false)
+            if (ErrorHandling.CheckOutOfRange() == false)
             {
                 filename = Path.GetRandomFileName();
                 directory = null;
@@ -127,7 +125,7 @@ namespace PicView.Editing.Crop
             var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            var success = await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
+            var success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
             if (success)
             {
                 return Savedlg.FileName == Pics[FolderIndex];
@@ -151,13 +149,14 @@ namespace PicView.Editing.Crop
             x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
             y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
 
-            switch (Rotateint) // Degress the image has been rotated by
+            switch (RotationAngle) // Degress the image has been rotated by
             {
                 case 0:
                 case 180:
                     width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
                     height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
                     break;
+
                 default:
                     width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
                     height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);

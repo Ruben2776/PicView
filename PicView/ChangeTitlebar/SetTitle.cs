@@ -1,11 +1,14 @@
-﻿using System.IO;
+﻿using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.UILogic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.FileFunctions;
 using static PicView.UILogic.TransformImage.ZoomLogic;
 
-namespace PicView.UILogic
+namespace PicView.ChangeTitlebar
 {
     internal static class SetTitle
     {
@@ -22,50 +25,60 @@ namespace PicView.UILogic
         /// <returns></returns>
         private static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
+            // Check if file info is present or not
             if (fileInfo == null)
             {
                 try
                 {
                     fileInfo = new FileInfo(Pics[index]);
                 }
-                catch (System.Exception)
+                catch (Exception e)
                 {
-                    return null;
+                    return ReturnError("FileInfo exception " + e.Message);
                 }
             }
 
-            if (fileInfo.Exists == false)
+            // Check if file exists or not
+            if (!fileInfo.Exists)
             {
-                _ = ChangeImage.ErrorHandling.ReloadAsync();
+                _ = ErrorHandling.ReloadAsync();
                 return null;
             }
 
-            if (index != FolderIndex || Pics?.Count < index || index >= Pics.Count)
+            // Check index validity
+            if (Pics?.Count < index || index >= Pics.Count)
             {
-                return new[]
-                {
-                    (string)Application.Current.Resources["UnexpectedError"],
-                    (string)Application.Current.Resources["UnexpectedError"],
-                    (string)Application.Current.Resources["UnexpectedError"]
-                };
+                return ReturnError("index invalid");
             }
 
-            var files = Pics.Count == 1 ?
-                Application.Current.Resources["File"] : Application.Current.Resources["Files"];
+            var files = (string)(Pics.Count == 1 ?
+                Application.Current.Resources["File"] :
+                Application.Current.Resources["Files"]);
 
             var s1 = new StringBuilder(90);
-            s1.Append(fileInfo.Name).Append(' ').Append(index + 1).Append('/').Append(Pics.Count).Append(' ')
-                .Append(files).Append(" (").Append(width).Append(" x ").Append(height)
+            s1.Append(fileInfo.Name)
+                .Append(' ')
+                .Append(index + 1)
+                .Append('/')
+                .Append(Pics.Count)
+                .Append(' ')
+                .Append(files)
+                .Append(" (")
+                .Append(width)
+                .Append(" x ")
+                .Append(height)
                 .Append(StringAspect(width, height))
-                .Append(GetSizeReadable(fileInfo.Length));
+                .Append(FileFunctions.GetReadableFileSize(fileInfo.Length));
 
-
+            // Check if ZoomPercentage is not empty
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
-                s1.Append(", ").Append(ZoomPercentage);
+                s1.Append(", ")
+                    .Append(ZoomPercentage);
             }
 
-            s1.Append(" - ").Append(AppName);
+            s1.Append(" - ")
+                .Append(AppName);
 
             var array = new string[3];
             array[0] = s1.ToString();
@@ -74,6 +87,19 @@ namespace PicView.UILogic
             s1.Replace(Path.GetFileName(Pics[index]), Pics[index]);
             array[2] = s1.ToString();
             return array;
+        }
+
+        private static string[]? ReturnError(string exception)
+        {
+#if DEBUG
+            Trace.WriteLine(exception);
+#endif
+            return new[]
+            {
+                (string)Application.Current.Resources["UnexpectedError"],
+                (string)Application.Current.Resources["UnexpectedError"],
+                (string)Application.Current.Resources["UnexpectedError"]
+            };
         }
 
         /// <summary>
@@ -89,7 +115,7 @@ namespace PicView.UILogic
             var titleString = TitleString(width, height, index, fileInfo);
             if (titleString == null)
             {
-                _ = ChangeImage.ErrorHandling.ReloadAsync();
+                _ = ErrorHandling.ReloadAsync();
                 return;
             }
 
@@ -149,7 +175,7 @@ namespace PicView.UILogic
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            var path = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            var path = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
 
             path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 

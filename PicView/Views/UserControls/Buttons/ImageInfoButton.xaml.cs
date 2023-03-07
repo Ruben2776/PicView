@@ -1,8 +1,9 @@
 ﻿using PicView.Animations;
+using PicView.UILogic;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class ImageInfoButton : UserControl
     {
@@ -12,11 +13,6 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += delegate
-                {
-                    PreviewMouseButtonDownAnim(IconBrush);
-                };
-
                 TheButton.MouseEnter += delegate
                 {
                     ButtonMouseOverAnim(IconBrush);
@@ -31,8 +27,8 @@ namespace PicView.Views.UserControls
 
                 TheButton.Click += (_, _) =>
                 {
-                    UILogic.UC.Close_UserControls();
-                    UILogic.ConfigureWindows.ImageInfoWindow();
+                    UC.Close_UserControls();
+                    ConfigureWindows.ImageInfoWindow();
                 };
             };
         }

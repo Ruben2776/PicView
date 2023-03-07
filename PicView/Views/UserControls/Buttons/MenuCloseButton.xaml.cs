@@ -1,9 +1,10 @@
-﻿using PicView.UILogic;
-using PicView.Animations;
+﻿using PicView.Animations;
+using PicView.Properties;
+using PicView.UILogic;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class MenuCloseButton : UserControl
     {
@@ -13,11 +14,10 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CloseButtonBrush);
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
-                MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CloseButtonBrush, false);
+                MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CloseButtonBrush);
 
-                if (!Properties.Settings.Default.DarkTheme)
+                if (!Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }

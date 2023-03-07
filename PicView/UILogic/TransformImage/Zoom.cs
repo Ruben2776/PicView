@@ -1,10 +1,10 @@
-﻿using PicView.PicGallery;
-using System;
-using System.Linq;
+﻿using PicView.ChangeTitlebar;
+using PicView.Properties;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic.TransformImage
@@ -118,48 +118,45 @@ namespace PicView.UILogic.TransformImage
 
         internal static void PanImage(object sender, MouseEventArgs e)
         {
-            // Don't drag on't drag it if unintended
-            if (ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured == false || ConfigureWindows.GetMainWindow.IsActive == false || scaleTransform.ScaleX == 1)
+            // Check if mouse capture is allowed and window is active
+            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive || scaleTransform.ScaleX == 1)
             {
                 return;
             }
 
-            // Drag image by modifying X,Y coordinates
-            var dragMousePosition = start - e.GetPosition(ConfigureWindows.GetMainWindow);
+            // Calculate the change in mouse position
+            var dragDelta = start - e.GetPosition(ConfigureWindows.GetMainWindow);
 
-            var newXproperty = origin.X - dragMousePosition.X;
-            var newYproperty = origin.Y - dragMousePosition.Y;
+            // Update the image position
+            translateTransform.X = origin.X - dragDelta.X;
+            translateTransform.Y = origin.Y - dragDelta.Y;
 
-            // Keep panning it in bounds 
-            if (Properties.Settings.Default.AutoFitWindow && Properties.Settings.Default.Fullscreen == false) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
+            // Check if auto-fit window is enabled and full-screen mode is disabled
+            if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen)
             {
+                // Calculate if the image is outside of the window bounds
                 var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
                 var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
-                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
-                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
 
-                if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
+                // Keep the image within the window bounds
+                if (isXOutOfBorder)
                 {
-                    newXproperty = maxX;
+                    translateTransform.X = Math.Min(0, Math.Max(ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX), translateTransform.X));
+                }
+                else
+                {
+                    translateTransform.X = Math.Max(0, Math.Min(ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX), translateTransform.X));
                 }
 
-                if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
+                if (isYOutOfBorder)
                 {
-                    newYproperty = maxY;
+                    translateTransform.Y = Math.Min(0, Math.Max(ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY), translateTransform.Y));
                 }
-
-                if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
+                else
                 {
-                    newXproperty = 0;
-                }
-                if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
-                {
-                    newYproperty = 0;
+                    translateTransform.Y = Math.Max(0, Math.Min(ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY), translateTransform.Y));
                 }
             }
-
-            translateTransform.X = newXproperty;
-            translateTransform.Y = newYproperty;
 
             e.Handled = true;
         }
@@ -202,64 +199,43 @@ namespace PicView.UILogic.TransformImage
         /// Determine zoom direction and speed
         /// </summary>
         /// <param name="i">increment</param>
-        internal static void Zoom(bool increment)
+        internal static void Zoom(bool isZoomIn)
         {
-            /// Don't zoom when gallery is open
-            if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsVerticalFullscreenOpen)
-            {
-                return;
-            }
-
-            // Disable zoom for crop
-            // TODO integrate zoom for crop
+            // Disable zoom if cropping tool is active
             if (UC.GetCropppingTool != null && UC.GetCropppingTool.IsVisible)
             {
                 return;
             }
 
-            ZoomValue = scaleTransform.ScaleX;
+            var currentZoom = scaleTransform.ScaleX;
+            var zoomSpeed = Settings.Default.ZoomSpeed;
 
-            /// Determine zoom speed
-            var zoomSpeed = Properties.Settings.Default.ZoomSpeed;
-
-            // Increase speed determined by how much is zoomed in
-            // TODO improve it when zoomed greatly in
-
-            if (ZoomValue > 14 && increment)
+            // Increase speed based on the current zoom level
+            if (currentZoom > 14 && isZoomIn)
             {
                 return;
             }
-
-            switch (ZoomValue)
+            else if (currentZoom > 4)
             {
-                case > 4:
-                    zoomSpeed += 1.5;
-                    break;
-                case > 3.2:
-                    zoomSpeed += 1;
-                    break;
-                case > 1.6:
-                    zoomSpeed += .5;
-                    break;
-                default: break;
+                zoomSpeed += 1.5;
+            }
+            else if (currentZoom > 3.2)
+            {
+                zoomSpeed += 1;
+            }
+            else if (currentZoom > 1.6)
+            {
+                zoomSpeed += 0.5;
             }
 
-            if (increment == false)
+            if (!isZoomIn)
             {
-                // Make it go negative
                 zoomSpeed = -zoomSpeed;
             }
 
-            // Set speed
-            ZoomValue += zoomSpeed;
-
-            if (ZoomValue < .09)
-            {
-                /// Don't zoom less than 1.0,
-                ZoomValue = .09;
-            }
-
-            Zoom(ZoomValue);
+            currentZoom += zoomSpeed;
+            currentZoom = Math.Max(0.09, currentZoom);
+            Zoom(currentZoom);
         }
 
         /// <summary>
@@ -281,12 +257,12 @@ namespace PicView.UILogic.TransformImage
             {
                 Tooltip.CloseToolTipMessage();
             }
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
             {
-                /// Display updated values
+                // Display updated values
                 if (Pics.Count == 0)
                 {
-                    /// Display values from web
+                    ///  values from web
                     SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
                 }
                 else
@@ -308,7 +284,6 @@ namespace PicView.UILogic.TransformImage
             // Reset to zero if value is one, which is reset
             double newTranslateValueX = zoomValue != 1 ? absoluteX - relative.X * zoomValue : 0;
             double newTranslateValueY = zoomValue != 1 ? absoluteY - relative.Y * zoomValue : 0;
-
 
             var duration = new Duration(TimeSpan.FromSeconds(.25));
 

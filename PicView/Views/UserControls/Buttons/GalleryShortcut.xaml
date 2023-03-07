@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.GalleryShortcut"
+    x:Class="PicView.Views.UserControls.Buttons.GalleryShortcut"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     ToolTip="{StaticResource ShowImageGallery}">

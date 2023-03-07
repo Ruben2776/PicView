@@ -44,16 +44,16 @@
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
                     <Border
                         x:Name="Border"
-                        Background="{StaticResource NoisyBg}"
+                        Background="{StaticResource MenuBg}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="2"
+                        BorderThickness="1"
                         CornerRadius="4">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="HasDropShadow" Value="true">
                             <Setter TargetName="Border" Property="Padding" Value="5" />
-                            <Setter TargetName="Border" Property="CornerRadius" Value="0" />
+                            <Setter TargetName="Border" Property="CornerRadius" Value="4" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -69,7 +69,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border BorderBrush="{StaticResource BackgroundColorBrushFadeSubtle}" BorderThickness="2" />
+                    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="2" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -91,7 +91,7 @@
                 <Setter TargetName="Border" Property="Background" Value="transparent" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Foreground" Value="#fff"/>
+                <Setter Property="Foreground" Value="#fff" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -166,7 +166,7 @@
                 <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Foreground" Value="#fff"/>
+                <Setter Property="Foreground" Value="#fff" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground" Value="{StaticResource FadeColorBrush}" />
@@ -176,10 +176,7 @@
 
     <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
         <!--  menu that goes into submenu  -->
-        <Border
-            x:Name="Border"
-            Padding="3,7,0,7"
-            Background="{StaticResource NoisyBg}">
+        <Border x:Name="Border" Padding="3,7,0,7">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
@@ -224,10 +221,10 @@
                     <!--  Sub level border  -->
                     <Border
                         x:Name="SubmenuBorder"
-                        Background="{StaticResource NoisyBg}"
+                        Background="{StaticResource MenuBg}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="2"
-                        CornerRadius="1"
+                        BorderThickness="1"
+                        CornerRadius="4"
                         SnapsToDevicePixels="True">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
@@ -242,7 +239,7 @@
                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Foreground" Value="#fff"/>
+                <Setter Property="Foreground" Value="White" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground" Value="{StaticResource MainColorFadedBrush}" />

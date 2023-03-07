@@ -1,8 +1,9 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.Properties;
 using PicView.UILogic;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,7 +12,7 @@ using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class GoToPicButton : UserControl
     {
@@ -21,12 +22,11 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(GoToPicBrush);
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush, false);
+                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush);
                 TheButton.Click += async (s, x) => await GoToPicEventAsync(s, x).ConfigureAwait(false);
 
-                if (!Properties.Settings.Default.DarkTheme)
+                if (!Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush1);
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush2);
@@ -34,7 +34,7 @@ namespace PicView.Views.UserControls
 
                 GoToPicBox.PreviewMouseLeftButtonDown += delegate
                 {
-                    GoToPicBox.CaretBrush = new SolidColorBrush(ConfigureSettings.ConfigColors.MainColor);
+                    GoToPicBox.CaretBrush = new SolidColorBrush(ConfigColors.MainColor);
                 };
                 GoToPicBox.PreviewKeyDown += async (s, x) => await GoToPicPreviewKeysAsync(s, x).ConfigureAwait(false);
             };
@@ -42,12 +42,12 @@ namespace PicView.Views.UserControls
 
         internal static async Task GoToPicEventAsync(object sender, RoutedEventArgs e)
         {
-            if (ChangeImage.ErrorHandling.CheckOutOfRange())
+            if (ErrorHandling.CheckOutOfRange())
             {
                 return;
             }
 
-            if (int.TryParse(GetImageSettingsMenu.GoToPic.GoToPicBox.Text.ToString(), out int x))
+            if (int.TryParse(GetImageSettingsMenu.GoToPic.GoToPicBox.Text, out int x))
             {
                 x--;
                 x = x <= 0 ? 0 : x;

@@ -1,6 +1,5 @@
-﻿using PicView.PicGallery;
-using PicView.UILogic;
-using PicView.Animations;
+﻿using PicView.Animations;
+using PicView.PicGallery;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,7 +14,7 @@ namespace PicView.Views.UserControls.Gallery
         {
             InitializeComponent();
 
-            RestoreButton.MouseLeftButtonUp += delegate { PicView.PicGallery.GalleryToggle.CloseFullscreenGallery(); };
+            RestoreButton.MouseLeftButtonUp += delegate { GalleryToggle.CloseFullscreenGallery(); };
 
             RestoreButton.MouseEnter += delegate
             {

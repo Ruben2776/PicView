@@ -1,10 +1,11 @@
 ﻿using PicView.Animations;
-using PicView.Library.Resources;
+using PicView.Properties;
+using PicView.Themes.Resources;
 using PicView.UILogic;
-using System;
-using System.Diagnostics;
+using PicView.Views.Windows;
 using System.Windows;
 using System.Windows.Media;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace PicView.ConfigureSettings
 {
@@ -29,116 +30,87 @@ namespace PicView.ConfigureSettings
         /// Update color values for brushes and window border
         /// </summary>
         /// <param name="remove">Remove border?</param>
-        internal static void UpdateColor(bool remove = false)
+        internal static void UpdateColor()
         {
-            if (remove)
-            {
-                Application.Current.Resources["WindowBorderColorBrush"] = new SolidColorBrush((Color)Application.Current.Resources["WindowBorderColor"]);
-                return;
-            }
-
-            var getColor = AnimationHelper.GetPrefferedColorOver();
+            var getColor = AnimationHelper.GetPrefferedColor();
             var getColorBrush = new SolidColorBrush(getColor);
 
             Application.Current.Resources["ChosenColor"] = getColor;
             Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 
-            if (Properties.Settings.Default.WindowBorderColorEnabled)
-            {
-                try
-                {
-                    Application.Current.Resources["WindowBorderColorBrush"] = getColorBrush;
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine(nameof(UpdateColor) + " threw exception:  " + e.Message);
-#endif
-                }
-            }
-
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
 
+        /// <summary>
+        /// Apply color varaibles from themes
+        /// </summary>
         internal static void SetColors()
         {
+            var mainWindow = ConfigureWindows.GetMainWindow;
             MainColor = (Color)Application.Current.Resources["IconColor"];
             BackgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
-            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
-            {
-                return;
-            }
+            if (mainWindow.MainImageBorder == null) return;
 
-            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
+            mainWindow.MainImageBorder.Background = BackgroundColorBrush;
         }
 
         #endregion Update and set colors
 
         #region Window LostFocus style change
 
-        internal static void MainWindowUnfocus()
+        internal static void MainWindowUnfocusOrFocus(bool isFocused)
         {
-            var w = ConfigureWindows.GetMainWindow;
-            var fadeColor1 = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
-            var fadeColor2 = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
-
-            w.TitleText.InnerTextBox.Foreground = fadeColor1;
-            w.TitleText.Background = fadeColor2;
-            w.LowerBar.Background = fadeColor2;
-
-            var x = (SolidColorBrush)w.Logo.TryFindResource("LogoBrush");
-            x.Color = fadeColor1.Color;
-
-            if (ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryHorizontal || ConfigureWindows.GetFakeWindow is not null && Properties.Settings.Default.FullscreenGalleryVertical)
-            {
-                ConfigureWindows.GetFakeWindow.ActuallyVisible = false;
-            }
-        }
-
-        internal static void MainWindowFocus()
-        {
-            var w = ConfigureWindows.GetMainWindow;
-            var main1 = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-            var main2 = (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"];
-
-            w.TitleText.InnerTextBox.Foreground = main1;
-            w.TitleText.Background = main2;
-            w.LowerBar.Background = main2;
-
-            var x = (SolidColorBrush)w.Logo.TryFindResource("LogoBrush");
-            x.Color = main1.Color;
-        }
-
-        #endregion
-
-        #region Change background
-
-        internal static void ChangeBackground()
-        {
-            if (ConfigureWindows.GetMainWindow.MainImageBorder == null)
+            if (!Properties.Settings.Default.DarkTheme)
             {
                 return;
             }
+            var w = ConfigureWindows.GetMainWindow;
+            var foregroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
+                                            : (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
+            var backgroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"]
+                                            : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
 
-            Properties.Settings.Default.BgColorChoice++;
-
-            if (Properties.Settings.Default.BgColorChoice > 3)
-            {
-                Properties.Settings.Default.BgColorChoice = 0;
-            }
-
-            ConfigureWindows.GetMainWindow.MainImageBorder.Background = BackgroundColorBrush;
-
-            Properties.Settings.Default.Save();
+            w.TitleText.InnerTextBox.Foreground = foregroundColor;
+            w.TitleText.Background = backgroundColor;
+            w.LowerBar.Background = backgroundColor;
         }
 
-        internal static Brush BackgroundColorBrush => Properties.Settings.Default.BgColorChoice switch
+        #endregion Window LostFocus style change
+
+        #region Change background
+
+        /// <summary>
+        /// changes the background color of the main window.
+        /// It increments the BgColorChoice setting, which is used to determine the background color,
+        /// and sets the background color of the main window to the BackgroundColorBrush brush.
+        /// </summary>
+        internal static void ChangeBackground()
+        {
+            var mainWindow = ConfigureWindows.GetMainWindow;
+            if (mainWindow.MainImageBorder == null) return;
+
+            Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 5;
+
+            mainWindow.MainImageBorder.Background = BackgroundColorBrush;
+
+            Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Returns a Brush object based on the BgColorChoice setting.
+        /// The BgColorChoice is used to determine the background color of the main window.
+        /// The method returns different brushes based on the value of BgColorChoice.
+        /// </summary>
+        internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
         {
             0 => Brushes.Transparent,
-            1 => Properties.Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(25, 25, 25)),
+            1 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(15, 15, 15)),
             2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
-            3 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 56),
+            3 => Settings.Default.DarkTheme ?
+                DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 60)
+                : DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
+            4 => Settings.Default.DarkTheme ? new SolidColorBrush(Color.FromRgb(15, 15, 15)) : Brushes.White,
             _ => Brushes.Transparent,
         };
 
@@ -146,99 +118,52 @@ namespace PicView.ConfigureSettings
 
         #region Change Theme
 
-        internal static void ChangeToLightTheme()
+        /// <summary>
+        /// changes the UI theme of the application to a light or dark theme. 
+        /// It updates the resource dictionary of the application with the specified theme.
+        /// </summary>
+        /// <param name="useDarkTheme"></param>
+        internal static void ChangeTheme(bool useDarkTheme)
         {
             Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
             {
-                Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
+                Source = new Uri(useDarkTheme ? 
+                @"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml" :
+                @"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
 
-            Properties.Settings.Default.DarkTheme = false;
-        }
-
-        internal static void ChangeToDarkTheme()
-        {
-            Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
-            {
-                Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml", UriKind.Relative)
-            };
-
-            Properties.Settings.Default.DarkTheme = true;
+            Settings.Default.DarkTheme = useDarkTheme;
         }
 
         #endregion Change Theme
 
         #region Set ColorTheme
 
-        internal static void Blue(object sender, RoutedEventArgs e)
+        public enum ColorOption
         {
-            Properties.Settings.Default.ColorTheme = 1;
-            UpdateColor();
+            Blue = 0,
+            Pink = 2,
+            Orange = 3,
+            Green = 4,
+            Red = 5,
+            Teal = 6,
+            Aqua = 7,
+            Golden = 8,
+            Purple = 9,
+            Cyan = 10,
+            Magenta = 11,
+            Lime = 12
         }
 
-        internal static void Pink(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Changes the color theme of the application. 
+        /// It takes a ColorOption value and updates the ColorTheme setting of the application to the corresponding value.
+        /// The method then calls the UpdateColor method, which updates the application's color scheme to match the new theme.
+        /// </summary>
+        /// <param name="colorOption"></param>
+        internal static void UpdateColorThemeTo(ColorOption colorOption)
         {
-            Properties.Settings.Default.ColorTheme = 2;
-            UpdateColor();
-        }
-
-        internal static void Orange(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 3;
-            UpdateColor();
-        }
-
-        internal static void Green(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 4;
-            UpdateColor();
-        }
-
-        internal static void Red(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 5;
-            UpdateColor();
-        }
-
-        internal static void Teal(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 6;
-            UpdateColor();
-        }
-
-        internal static void Aqua(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 7;
-            UpdateColor();
-        }
-
-        internal static void Golden(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 8;
-            UpdateColor();
-        }
-
-        internal static void Purple(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 9;
-            UpdateColor();
-        }
-
-        internal static void Cyan(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 10;
-            UpdateColor();
-        }
-
-        internal static void Magenta(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 11;
-            UpdateColor();
-        }
-
-        internal static void Lime(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.ColorTheme = 12;
+            Settings.Default.ColorTheme = (int)colorOption;
             UpdateColor();
         }
 

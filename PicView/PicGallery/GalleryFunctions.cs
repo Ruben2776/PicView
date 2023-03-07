@@ -1,12 +1,9 @@
 ﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.UILogic;
-using PicView.Views.UserControls;
-using System;
-using System.Collections.Generic;
+using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.UILogic.UC;
@@ -16,7 +13,6 @@ namespace PicView.PicGallery
     internal static class GalleryFunctions
     {
         internal static bool IsHorizontalOpen { get; set; }
-        internal static bool IsVerticalFullscreenOpen { get; set; }
         internal static bool IsHorizontalFullscreenOpen { get; set; }
 
         public class tempPics
@@ -46,7 +42,6 @@ namespace PicView.PicGallery
             {
                 if (GetPicGallery.Container.Children.Count <= 0)
                 {
-                    return;
                 }
             }));
 
@@ -55,7 +50,7 @@ namespace PicView.PicGallery
                 fileInfo = new FileInfo(Navigation.Pics[0]);
             }
 
-            var thumbs = new System.Collections.Generic.List<tempPics>();
+            var thumbs = new List<tempPics>();
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
             {
@@ -69,7 +64,7 @@ namespace PicView.PicGallery
             }));
 
             Navigation.Pics.Clear(); // Cancel task if running
-            await FileHandling.FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             try
             {
@@ -86,7 +81,6 @@ namespace PicView.PicGallery
             for (int i = 0; i < Navigation.Pics.Count; i++)
             {
                 GalleryLoad.Add(i, Navigation.FolderIndex);
-
             }
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
@@ -117,7 +111,6 @@ namespace PicView.PicGallery
                 Trace.WriteLine("Cleared Gallery children");
 #endif
             }));
-
         }
     }
 }

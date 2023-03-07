@@ -2,19 +2,22 @@
     x:Class="PicView.Views.Windows.ImageInfoWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     Title="{StaticResource ImageInfo}"
     Width="816"
     Height="385"
     d:Height="700"
+    AllowsTransparency="True"
     BorderBrush="{DynamicResource WindowBorderColorBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
+    WindowStyle="None"
     mc:Ignorable="d">
 
     <Window.Resources>
@@ -138,7 +141,6 @@
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="2" />
         </Style>
-
     </Window.Resources>
 
     <DockPanel>
@@ -148,7 +150,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon Margin="7,1,0,1" />
+            <misc:Icon Margin="7,1,0,1" />
 
             <Rectangle
                 Width="1"
@@ -214,12 +216,10 @@
                 </Button.Background>
             </Button>
 
-
             <Rectangle
                 Width="1"
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
-
 
             <Button
                 x:Name="OpenWith"
@@ -263,18 +263,18 @@
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:StarOutlineButton x:Name="Star1" />
-            <uc:StarOutlineButton x:Name="Star2" />
-            <uc:StarOutlineButton x:Name="Star3" />
-            <uc:StarOutlineButton x:Name="Star4" />
-            <uc:StarOutlineButton x:Name="Star5" />
+            <buttons:StarOutlineButton x:Name="Star1" />
+            <buttons:StarOutlineButton x:Name="Star2" />
+            <buttons:StarOutlineButton x:Name="Star3" />
+            <buttons:StarOutlineButton x:Name="Star4" />
+            <buttons:StarOutlineButton x:Name="Star5" />
 
             <Rectangle
                 Width="1"
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:CloseButton
+            <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
@@ -287,7 +287,7 @@
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
-            <uc:MinButton
+            <buttons:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
@@ -299,12 +299,11 @@
                 Height="30"
                 DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
-
         </DockPanel>
 
         <Border
             x:Name="MainBackground"
-            Background="{StaticResource NoisyBg}"
+            Background="{StaticResource MenuBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1">
             <ScrollViewer
@@ -335,7 +334,7 @@
                                     d:Text="404.jpg"
                                     IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="FilenameCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="FilenameCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -355,7 +354,7 @@
                                     d:Text="D:\Pictures"
                                     IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="FolderCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="FolderCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -374,7 +373,7 @@
                                     d:Text="D:\Pictures\404.jpg"
                                     IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="FullpathCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="FullpathCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -392,7 +391,7 @@
                                     Width="180"
                                     d:Text="8/9/2019 - 10:37:42 PM" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="CreatedCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="CreatedCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -410,7 +409,7 @@
                                     Width="180"
                                     d:Text="12/10/2018 - 7:41:14 PM" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="ModifiedCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="ModifiedCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -428,7 +427,7 @@
                                     Width="180"
                                     d:Text="Today, ‎October ‎25, ‎2021, ‏‎11:29 AM" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="Accessedopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="Accessedopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -446,7 +445,7 @@
                                     Width="180"
                                     d:Text="24" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="BitDepthCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="BitDepthCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
                         </StackPanel>
@@ -469,7 +468,7 @@
                                     IsReadOnly="False"
                                     ToolTip="{StaticResource SizeTooltip}" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="WidthCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="WidthCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -489,7 +488,7 @@
                                     IsReadOnly="False"
                                     ToolTip="{StaticResource SizeTooltip}" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="HeightCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="HeightCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -507,7 +506,7 @@
                                     Width="180"
                                     d:Text="2.1 Megapixels" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="SizeMpCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="SizeMpCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -525,7 +524,7 @@
                                     Width="180"
                                     d:Text="96 x 96 DPI" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="DpiCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="DpiCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -543,7 +542,7 @@
                                     Width="180"
                                     d:Text="50.8 x 28.58 centimeters" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="PrintSizeCmCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="PrintSizeCmCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -561,7 +560,7 @@
                                     Width="180"
                                     d:Text="20 x 11.25 inches" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="PrintSizeInCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="PrintSizeInCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
 
@@ -579,13 +578,11 @@
                                     Width="180"
                                     d:Text="16:9 (Landscape)" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <uc:CopyButton x:Name="AspectRatioCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="AspectRatioCopy" ToolTip="{StaticResource Copy}" />
                                 </Border>
                             </StackPanel>
                         </StackPanel>
-
                     </StackPanel>
-
 
                     <StackPanel Margin="0,7,0,0" DockPanel.Dock="Bottom">
 
@@ -617,7 +614,6 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal" />
                     </StackPanel>
-
                 </DockPanel>
             </ScrollViewer>
         </Border>

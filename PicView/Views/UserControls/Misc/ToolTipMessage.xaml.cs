@@ -1,16 +1,14 @@
-﻿using System.Windows.Controls;
+﻿using PicView.Shortcuts;
+using System.Windows.Controls;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
-    /// <summary>
-    /// Interaction logic for SexyToolTip.xaml
-    /// </summary>
     public partial class ToolTipMessage : UserControl
     {
         public ToolTipMessage()
         {
             InitializeComponent();
-            MouseWheel += async (sender, e) => await Shortcuts.MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
+            MouseWheel += async (sender, e) => await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
         }
 
         public ToolTipMessage(string message)

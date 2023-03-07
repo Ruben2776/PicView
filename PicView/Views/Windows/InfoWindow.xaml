@@ -2,19 +2,22 @@
     x:Class="PicView.Views.Windows.InfoWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     Title="{StaticResource ResourceKey=InfoWindowTitle}"
     Height="378"
     MinHeight="378"
     d:Height="Auto"
-    BorderBrush="{DynamicResource WindowBorderColorBrush}"
+    AllowsTransparency="True"
+    BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
     Style="{DynamicResource MyWindowStyle}"
     WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
         <Style x:Key="txtItalic" TargetType="TextBlock">
@@ -41,15 +44,15 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon />
+            <misc:Icon />
 
-            <uc:CloseButton
+            <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
                 DockPanel.Dock="Right" />
 
-            <uc:MinButton
+            <buttons:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
@@ -72,7 +75,7 @@
 
         <ScrollViewer
             x:Name="Scroller"
-            Background="{StaticResource NoisyBg}"
+            Background="{StaticResource MenuBg}"
             CanContentScroll="False"
             Focusable="False"
             HorizontalScrollBarVisibility="Disabled"
@@ -80,16 +83,14 @@
 
             <StackPanel>
 
-
-
                 <StackPanel Margin="0,36,0,0">
 
                     <Image
-                        Width="40"
-                        Height="40"
+                        Height="75"
                         Margin="0,0,0,5"
-                        Source="pack://application:,,,/Themes/Resources/img/icon__Q6k_icon.ico" />
-                    <uc:Logo Height="40" Margin="0,0,0,-7" />
+                        RenderOptions.BitmapScalingMode="Fant"
+                        RenderOptions.EdgeMode="Aliased"
+                        Source="pack://application:,,,/Themes/Resources/img/logo.png" />
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <TextBlock>
@@ -133,7 +134,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         FontSize="14"
-                        Text="2017 - 2021 © Ruben Hyldgaard Negendahl" />
+                        Text="2017 - 2023 © Ruben Hyldgaard Negendahl" />
 
                     <TextBlock
                         Margin="0,8,0,2"
@@ -182,7 +183,6 @@
                             </Label.Foreground>
                         </Label>
                     </Border>
-
                 </StackPanel>
 
                 <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
@@ -673,6 +673,11 @@
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
                             <TextBlock FontSize="12" Text="C" />
                         </StackPanel>
                     </Border>
@@ -736,7 +741,6 @@
                             <TextBlock FontSize="12" Text="I" />
                         </StackPanel>
                     </Border>
-
                 </Grid>
 
                 <Label
@@ -1546,11 +1550,6 @@
                                 FontSize="12"
                                 Foreground="{StaticResource MainColorFadedBrush}"
                                 Text=" + " />
-                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
-                            <TextBlock
-                                FontSize="12"
-                                Foreground="{StaticResource MainColorFadedBrush}"
-                                Text=" + " />
                             <TextBlock FontSize="12" Text="C" />
                         </StackPanel>
                     </Border>
@@ -1964,7 +1963,6 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,0,1,0" />
 
-
                     <Border
                         Grid.Row="3"
                         Grid.Column="0"
@@ -1998,14 +1996,13 @@
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="0,0,1,0" >
+                        BorderThickness="0,0,1,0">
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="12"
                             Text="F9" />
                     </Border>
-
 
                     <Border
                         Grid.Row="4"
@@ -2259,8 +2256,6 @@
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="0,1,1,1" />
-
-
                 </Grid>
 
                 <Label
@@ -2481,7 +2476,6 @@
                         </Hyperlink>
                     </TextBlock>
                 </StackPanel>
-
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

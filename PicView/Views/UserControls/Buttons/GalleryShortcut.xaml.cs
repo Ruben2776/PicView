@@ -2,7 +2,7 @@
 using PicView.PicGallery;
 using System.Windows.Controls;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Cool shady close button!
@@ -16,13 +16,6 @@ namespace PicView.Views.UserControls
             Loaded += delegate
             {
                 MouseLeftButtonDown += async (_, _) => await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-
-                PreviewMouseLeftButtonDown += delegate
-                {
-                    MouseOverAnimations.AltInterfacePreviewMouseOver(ImagePath1Fill, BorderBrushKey);
-                    MouseOverAnimations.AltInterfacePreviewMouseOver(ImagePath2Fill, BorderBrushKey);
-                    MouseOverAnimations.AltInterfacePreviewMouseOver(ImagePath3Fill, BorderBrushKey);
-                };
 
                 MouseEnter += delegate
                 {

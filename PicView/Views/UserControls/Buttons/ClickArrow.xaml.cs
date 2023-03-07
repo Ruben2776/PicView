@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class ClickArrow : UserControl
     {
@@ -21,11 +21,6 @@ namespace PicView.Views.UserControls
                 border.CornerRadius = new CornerRadius(0, 2, 2, 0);
                 Canvas.SetLeft(Arrow, 12);
             }
-
-            PreviewMouseLeftButtonDown += delegate
-            {
-                MouseOverAnimations.AltInterfacePreviewMouseOver(PolyFill, BorderBrushKey);
-            };
 
             MouseEnter += delegate
             {

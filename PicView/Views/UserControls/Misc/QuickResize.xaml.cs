@@ -1,8 +1,6 @@
 ﻿using PicView.Animations;
 using PicView.Shortcuts;
 using PicView.UILogic;
-using System;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Misc
 {
     public partial class QuickResize : UserControl
     {
@@ -55,15 +53,17 @@ namespace PicView.Views.UserControls
                 // ApplyButton
                 ApplyButton.MouseEnter += delegate
                 {
-                    colorAnimation.From = AnimationHelper.GetPrefferedColorOver();
-                    colorAnimation.To = AnimationHelper.GetPrefferedColorDown();
+                    colorAnimation.From = (Color)Application.Current.Resources["MainColor"];
+                    colorAnimation.To = AnimationHelper.GetPrefferedColor();
                     ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    Cursor = Cursors.Hand;
                 };
                 ApplyButton.MouseLeave += delegate
                 {
-                    colorAnimation.From = AnimationHelper.GetPrefferedColorDown();
-                    colorAnimation.To = AnimationHelper.GetPrefferedColorOver();
+                    colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                    colorAnimation.To = (Color)Application.Current.Resources["MainColor"];
                     ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                    Cursor = Cursors.Arrow;
                 };
 
                 ApplyButton.MouseLeftButtonDown += async (_, _) => await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
@@ -91,7 +91,7 @@ namespace PicView.Views.UserControls
             var content = ((ComboBoxItem)PercentageBox.SelectedItem).Content as string;
             if (content == null) { return; }
 
-            var value = decimal.Parse(content.TrimEnd(new char[] { '%', ' ' })) / 100M; // Convert from percentage to decimal
+            var value = decimal.Parse(content.TrimEnd('%', ' ')) / 100M; // Convert from percentage to decimal
 
             QuickResizeShortcuts.QuickResizeAspectRatio(WidthBox, HeightBox, true, null, (double)value);
         }
@@ -99,11 +99,11 @@ namespace PicView.Views.UserControls
         public void Show()
         {
             Visibility = Visibility.Visible;
-            Animations.AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
+            AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
             WidthBox.Text = ConfigureWindows.GetMainWindow.MainImage.Source?.Width.ToString();
             HeightBox.Text = ConfigureWindows.GetMainWindow.MainImage?.Source?.Height.ToString();
 
-            var timer = new Timer(401) { AutoReset = false, Enabled = true };
+            var timer = new System.Timers.Timer(401) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
@@ -117,10 +117,10 @@ namespace PicView.Views.UserControls
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
-                Animations.AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
+                AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
             });
 
-            var timer = new Timer(601) { AutoReset = false, Enabled = true };
+            var timer = new System.Timers.Timer(601) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>

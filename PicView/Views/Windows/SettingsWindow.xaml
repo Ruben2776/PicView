@@ -2,11 +2,13 @@
     x:Class="PicView.Views.Windows.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Views.UserControls"
+    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     Width="325"
-    BorderBrush="{DynamicResource WindowBorderColorBrush}"
+    AllowsTransparency="True"
+    BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
     Foreground="{StaticResource MainColorBrush}"
@@ -14,27 +16,28 @@
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}"
     WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary Source="\Themes\Styles\ComboBox.xaml" />
     </Window.Resources>
 
-    <DockPanel Background="{StaticResource NoisyBg}">
+    <DockPanel>
         <DockPanel
             x:Name="TitleBar"
             Height="30"
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <uc:Icon />
+            <misc:Icon />
 
-            <uc:CloseButton
+            <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
                 Height="30"
                 DockPanel.Dock="Right" />
 
-            <uc:MinButton
+            <buttons:MinButton
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
@@ -46,13 +49,7 @@
                 FontSize="14"
                 Text="{StaticResource Settings}"
                 TextAlignment="Center" />
-
         </DockPanel>
-
-        <Rectangle
-            Height="1"
-            DockPanel.Dock="Top"
-            Fill="{StaticResource BorderBrush}" />
 
         <TabControl
             Padding="0"
@@ -82,7 +79,7 @@
                                         x:Name="Border"
                                         Grid.Row="1"
                                         Background="{StaticResource NoisyBg}"
-                                        BorderBrush="{x:Null}"
+                                        BorderBrush="{StaticResource BorderBrush}"
                                         BorderThickness="0">
                                         <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
                                     </Border>
@@ -99,12 +96,13 @@
                             <ControlTemplate TargetType="{x:Type TabItem}">
                                 <Grid Background="{StaticResource BackgroundSubtleHighlightBrush}">
                                     <Rectangle
+                                        Name="Border"
                                         Width="1"
                                         Height="35"
-                                        HorizontalAlignment="Left"
+                                        HorizontalAlignment="Right"
                                         Fill="{StaticResource BorderBrush}" />
                                     <Rectangle
-                                        Name="Border"
+                                        Name="AccentBorder"
                                         Height="2"
                                         VerticalAlignment="Bottom" />
                                     <Rectangle
@@ -122,8 +120,11 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Panel.ZIndex" Value="100" />
-                                        <Setter TargetName="Border" Property="Fill" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                                        <Setter TargetName="AccentBorder" Property="Fill" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                                         <Setter Property="Foreground" Value="{DynamicResource ChosenColorBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -229,6 +230,33 @@
                             <TextBlock.Foreground>
                                 <SolidColorBrush x:Name="WallpaperApplyBrush" Color="{DynamicResource ChosenColor}" />
                             </TextBlock.Foreground>
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Opacity" Value=".9" />
+                                    <Style.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Storyboard.TargetProperty="Opacity"
+                                                        To="1"
+                                                        Duration="0:0:0.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Storyboard.TargetProperty="Opacity"
+                                                        To=".8"
+                                                        Duration="0:0:0.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
                         </TextBlock>
                     </StackPanel>
 
@@ -399,7 +427,6 @@
                             IsTabStop="False"
                             TextAlignment="Center" />
                     </StackPanel>
-
                 </StackPanel>
             </TabItem>
             <TabItem>
@@ -415,46 +442,10 @@
                 <StackPanel Margin="10">
 
                     <Label
-                        VerticalAlignment="Center"
-                        Content="{StaticResource FullscreenGalleryLayout}"
-                        Foreground="{StaticResource MainColorBrush}" />
-                    <ComboBox
-                        x:Name="GalleryBox"
-                        Width="150"
-                        Margin="8,2,0,2"
-                        HorizontalAlignment="Left"
-                        IsTabStop="False">
-                        <ComboBoxItem
-                            x:Name="GalleryVertical"
-                            Content="{StaticResource Vertical}"
-                            IsSelected="True" />
-                        <ComboBoxItem x:Name="GalleryHorizontal" Content="{StaticResource Horizontal}" />
-                    </ComboBox>
-
-                    <Label
                         Margin="0,5,0,5"
                         VerticalAlignment="Center"
                         Content="{StaticResource MiscSettings}"
                         Foreground="{StaticResource MainColorBrush}" />
-
-                    <CheckBox
-                        x:Name="BorderRadio"
-                        Margin="7,0,0,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="BorderBrushText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                Focusable="False"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                FontSize="13"
-                                Text="{StaticResource ColoredWindowBorder}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
-                    </CheckBox>
 
                     <CheckBox
                         x:Name="AltUIRadio"
@@ -705,4 +696,5 @@
             </TabItem>
         </TabControl>
     </DockPanel>
+
 </Window>

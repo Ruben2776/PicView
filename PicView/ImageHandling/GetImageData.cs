@@ -2,12 +2,14 @@
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PicView.ChangeImage;
-using System;
+using PicView.UILogic;
+using PicView.UILogic.TransformImage;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
+using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace PicView.ImageHandling
 {
@@ -15,7 +17,7 @@ namespace PicView.ImageHandling
     {
         internal static Task<string[]?> RetrieveData(FileInfo? fileInfo) => Task.Run(async () =>
         {
-            if (fileInfo is not null && ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex] != fileInfo.FullName)
+            if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
             {
                 return null;
             }
@@ -55,17 +57,17 @@ namespace PicView.ImageHandling
 
             BitmapSource? bitmapSource = null;
 
-            if (ChangeImage.Navigation.Pics.Count > 0 && ChangeImage.Navigation.Pics.Count > ChangeImage.Navigation.FolderIndex)
+            if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex)
             {
-                var preloadValue = Preloader.Get(ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex]);
+                var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
                 if (preloadValue is null)
                 {
-                    await Preloader.AddAsync(ChangeImage.Navigation.FolderIndex).ConfigureAwait(false);
+                    await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
 
                     if (preloadValue is null)
                     {
                         preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
-                        await UILogic.ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                         {
                             preloadValue.BitmapSource = ImageDecoder.GetRenderedBitmapFrame();
                         });
@@ -84,7 +86,7 @@ namespace PicView.ImageHandling
             }
             else
             {
-                await UILogic.ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     bitmapSource = ImageDecoder.GetRenderedBitmapFrame();
                 });
@@ -97,8 +99,8 @@ namespace PicView.ImageHandling
             var cmWidth = inchesWidth * 2.54;
             var cmHeight = inchesHeight * 2.54;
 
-            var firstRatio = bitmapSource.PixelWidth / UILogic.TransformImage.ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-            var secondRatio = bitmapSource.PixelHeight / UILogic.TransformImage.ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            var firstRatio = bitmapSource.PixelWidth / ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            var secondRatio = bitmapSource.PixelHeight / ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             string ratioText;
             if (firstRatio == secondRatio)
             {
@@ -127,7 +129,7 @@ namespace PicView.ImageHandling
 
             if (fileInfo is null)
             {
-                return new string[] {
+                return new[] {
                         name,
                         directoryname,
                         fullname,
@@ -307,7 +309,7 @@ namespace PicView.ImageHandling
             }
             catch (Exception)
             {
-                return new string[] {
+                return new[] {
                         name,
                         directoryname,
                         fullname,
@@ -366,7 +368,7 @@ namespace PicView.ImageHandling
                 }
                 else if (authorsArray.Length >= 2)
                 {
-                    var sb = new System.Text.StringBuilder();
+                    var sb = new StringBuilder();
                     for (int i = 0; i < authorsArray.Length; i++)
                     {
                         if (i == 0)
@@ -669,7 +671,7 @@ namespace PicView.ImageHandling
 
             so.Dispose();
 
-            return new string[]
+            return new[]
             {
                 // Fileinfo
                 name,

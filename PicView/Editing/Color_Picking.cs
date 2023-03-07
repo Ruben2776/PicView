@@ -2,12 +2,13 @@
 using PicView.UILogic.Loading;
 using PicView.UILogic.TransformImage;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using static PicView.SystemIntegration.NativeMethods;
+using Color = System.Drawing.Color;
 
 namespace PicView.Editing
 {
@@ -40,7 +41,7 @@ namespace PicView.Editing
             UC.GetColorPicker.RectangleColorPresenter.Fill =
             UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush
             {
-                Color = Color.FromRgb(
+                Color = System.Windows.Media.Color.FromRgb(
                         c.R, c.G, c.B
                     )
             };
@@ -69,7 +70,7 @@ namespace PicView.Editing
                     Clipboard.SetText(x);
                     Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
                 }
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
                     ConfigureWindows.GetMainWindow.Focus();
@@ -79,7 +80,7 @@ namespace PicView.Editing
             IsRunning = false;
         }
 
-        internal static string HexConverter(System.Drawing.Color c)
+        internal static string HexConverter(Color c)
         {
             return "#" +
                 c.R.ToString("X2", CultureInfo.InvariantCulture) +
@@ -87,7 +88,7 @@ namespace PicView.Editing
                 c.B.ToString("X2", CultureInfo.InvariantCulture);
         }
 
-        internal static string RGBConverter(System.Drawing.Color c)
+        internal static string RGBConverter(Color c)
         {
             return "RGB(" +
                 c.R.ToString("X2", CultureInfo.InvariantCulture) +

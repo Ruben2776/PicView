@@ -1,11 +1,20 @@
-﻿using PicView.Animations;
+﻿using Microsoft.Win32;
+using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.ConfigureSettings;
+using PicView.PicGallery;
+using PicView.Properties;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
+using PicView.Translations;
 using PicView.UILogic;
+using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Loading;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
@@ -16,40 +25,53 @@ namespace PicView.Views.Windows
         public MainWindow()
         {
             // Updates settings from older version to newer version
-            if (Properties.Settings.Default.CallUpgrade)
+            if (Settings.Default.CallUpgrade)
             {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.CallUpgrade = false;
+                Settings.Default.Upgrade();
+                Settings.Default.CallUpgrade = false;
             }
 
-            if (Properties.Settings.Default.DarkTheme == false)
+            if (Settings.Default.DarkTheme == false)
             {
-                ConfigureSettings.ConfigColors.ChangeToLightTheme();
+                ConfigColors.ChangeTheme(false);
             }
+
             InitializeComponent();
 
-            if (Properties.Settings.Default.AutoFitWindow == false)
+            if (Settings.Default.AutoFitWindow == false)
             {
                 // Need to change startup location after initialize component
                 WindowStartupLocation = WindowStartupLocation.Manual;
-                if (Properties.Settings.Default.Width > 0)
+                if (Settings.Default.Width > 0)
                 {
                     SetLastWindowSize();
                 }
             }
-            Topmost = Properties.Settings.Default.TopMost;
+            Topmost = Settings.Default.TopMost;
 
             Loaded += (_, _) =>
             {
                 // Subscribe to Windows resized event || Need to be exactly on load
-                HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle);
-                source.AddHook(new HwndSourceHook(NativeMethods.WndProc));
-                Translations.LoadLanguage.DetermineLanguage();
+                HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle)
+                    ?.AddHook(NativeMethods.WndProc);
+                LoadLanguage.DetermineLanguage();
                 StartLoading.LoadedEvent();
             };
-            ContentRendered += delegate
+
+            ContentRendered += async delegate
             {
-                StartLoading.ContentRenderedEvent();
+                try
+                {
+                    WindowBlur.EnableBlur(this);
+                    if (!Settings.Default.DarkTheme)
+                    {
+                        ConfigColors.MainWindowUnfocusOrFocus(true);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+                await StartLoading.ContentRenderedEventAsync().ConfigureAwait(false);
 
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
@@ -58,8 +80,8 @@ namespace PicView.Views.Windows
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
                 // Lowerbar
-                LowerBar.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
-                LowerBar.MouseLeftButtonDown += UILogic.Sizing.WindowSizing.MoveAlt;
+                LowerBar.Drop += async (sender, e) => await Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
+                LowerBar.MouseLeftButtonDown += MoveAlt;
 
                 MouseMove += async (_, _) => await HideInterfaceLogic.Interface_MouseMove().ConfigureAwait(false);
                 MouseLeave += async (_, _) => await HideInterfaceLogic.Interface_MouseLeave().ConfigureAwait(false);
@@ -69,18 +91,16 @@ namespace PicView.Views.Windows
                 ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
 
                 // ClickArrows
-                GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await ChangeImage.Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
-                GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await ChangeImage.Navigation.PicButtonAsync(true, true).ConfigureAwait(false);
+                GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
+                GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, true).ConfigureAwait(false);
 
                 // image_button
-                image_button.PreviewMouseLeftButtonDown += (_, _) => MouseOverAnimations.PreviewMouseButtonDownAnim(ImagePath1Fill, ImagePath2Fill, ImagePath3Fill);
                 image_button.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(ImagePath1Fill, ImagePath2Fill, ImagePath3Fill);
                 image_button.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ImageMenuBg);
                 image_button.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(ImagePath1Fill, ImagePath2Fill, ImagePath3Fill);
                 image_button.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ImageMenuBg);
 
                 // SettingsButton
-                SettingsButton.PreviewMouseLeftButtonDown += (_, _) => MouseOverAnimations.PreviewMouseButtonDownAnim(SettingsButtonFill);
                 SettingsButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(SettingsButtonFill);
                 SettingsButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(SettingsMenuBg);
                 SettingsButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(SettingsButtonFill);
@@ -89,13 +109,93 @@ namespace PicView.Views.Windows
                 image_button.Click += Toggle_image_menu;
 
                 //FunctionButton
-                var MagicBrush = TryFindResource("MagicBrush") as System.Windows.Media.SolidColorBrush;
-                FunctionMenuButton.PreviewMouseLeftButtonDown += (_, _) => MouseOverAnimations.PreviewMouseButtonDownAnim(MagicBrush);
+                var MagicBrush = TryFindResource("MagicBrush") as SolidColorBrush;
                 FunctionMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(MagicBrush);
                 FunctionMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(EffectsMenuBg);
                 FunctionMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(MagicBrush);
                 FunctionMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(EffectsMenuBg);
                 FunctionMenuButton.Click += Toggle_Functions_menu;
+
+                var subtleFaceColor = (Color)Application.Current.TryFindResource("SubtleFadeColor");
+                //GalleryButton
+                if (!Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(GalleryButton, GalleryBrush);
+                    GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBg, true);
+                    GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBg, true);
+                    GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
+                        subtleFaceColor.A,
+                        subtleFaceColor.R,
+                        subtleFaceColor.G,
+                        subtleFaceColor.B,
+                        GalleryBg, false
+                        );
+                }
+                else
+                {
+                    GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
+                    GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
+                    GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBrush);
+                    GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
+                }
+                GalleryButton.Click += async (_, _) =>
+                {
+                    if (GalleryFunctions.IsHorizontalOpen)
+                    {
+                        GalleryToggle.CloseHorizontalGallery();
+                    }
+                    else if (GalleryFunctions.IsHorizontalFullscreenOpen == false)
+                    {
+                        await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+                    }
+                };
+
+                // RotateButton
+                if (!Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(RotateButton, RotateBrush);
+                    RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBg, true);
+                    RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBg, true);
+                    RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
+                        subtleFaceColor.A,
+                        subtleFaceColor.R,
+                        subtleFaceColor.G,
+                        subtleFaceColor.B,
+                        RotateBg, false
+                        );
+                }
+                else
+                {
+                    RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBrush);
+                    RotateButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(RotateBg);
+                    RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBrush);
+                    RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(RotateBg);
+                }
+                RotateButton.Click += async (_, _) =>
+                    await UILogic.TransformImage.Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
+
+                // FlipButton
+                if (!Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(FlipButton, FlipBrush);
+                    FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBg, true);
+                    FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBg, true);
+                    FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
+                        subtleFaceColor.A,
+                        subtleFaceColor.R,
+                        subtleFaceColor.G,
+                        subtleFaceColor.B,
+                        FlipBg, false
+                        );
+                }
+                else
+                {
+                    FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBrush);
+                    FlipButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FlipBg);
+                    FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBrush);
+                    FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FlipBg);
+                }
+                FlipButton.Click += (_, _) => UILogic.TransformImage.Rotation.Flip();
 
                 // TitleText
                 TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
@@ -104,24 +204,24 @@ namespace PicView.Views.Windows
                 TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 
                 // ParentContainer
-                ParentContainer.Drop += async (sender, e) => await UILogic.DragAndDrop.Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
-                ParentContainer.DragEnter += UILogic.DragAndDrop.Image_DragAndDrop.Image_DragEnter;
-                ParentContainer.DragLeave += UILogic.DragAndDrop.Image_DragAndDrop.Image_DragLeave;
+                ParentContainer.Drop += async (sender, e) => await Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
+                ParentContainer.DragEnter += Image_DragAndDrop.Image_DragEnter;
+                ParentContainer.DragLeave += Image_DragAndDrop.Image_DragLeave;
                 ParentContainer.PreviewMouseWheel += async (sender, e) => await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
                 CloseButton.TheButton.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
 
-                Closing += (_, _) => UILogic.Sizing.WindowSizing.Window_Closing();
-                StateChanged += (_, _) => UILogic.Sizing.WindowSizing.MainWindow_StateChanged();
+                Closing += (_, _) => Window_Closing();
+                StateChanged += (_, _) => MainWindow_StateChanged();
 
-                Deactivated += (_, _) => ConfigureSettings.ConfigColors.MainWindowUnfocus();
-                Activated += (_, _) => ConfigureSettings.ConfigColors.MainWindowFocus();
+                Deactivated += (_, _) => ConfigColors.MainWindowUnfocusOrFocus(false);
+                Activated += (_, _) => ConfigColors.MainWindowUnfocusOrFocus(true);
 
-                Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => UILogic.Sizing.WindowSizing.SystemEvents_DisplaySettingsChanged();
+                SystemEvents.DisplaySettingsChanged += (_, _) => SystemEvents_DisplaySettingsChanged();
 
                 TitleBar.MouseLeftButtonDown += (_, e) =>
                 {
-                    if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                    if (e.LeftButton == MouseButtonState.Pressed)
                     {
                         DragMove();
                     }
@@ -133,7 +233,7 @@ namespace PicView.Views.Windows
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged || Properties.Settings.Default.AutoFitWindow == false)
+            if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged || Settings.Default.AutoFitWindow == false)
             {
                 return;
             }
@@ -161,7 +261,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
 
-                _ = FadeControls.FadeAsync(true);
+                _ = FadeControls.FadeAsync(true).ConfigureAwait(false);
             }
             else if (Navigation.ClickArrowLeftClicked)
             {
@@ -169,7 +269,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowLeftClicked = false;
 
-                _ = FadeControls.FadeAsync(true);
+                _ = FadeControls.FadeAsync(true).ConfigureAwait(false);
             }
 
             base.OnRenderSizeChanged(sizeInfo);

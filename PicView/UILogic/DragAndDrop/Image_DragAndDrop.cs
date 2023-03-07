@@ -1,12 +1,13 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
+using PicView.PicGallery;
 using PicView.ProcessHandling;
-using PicView.Views.UserControls;
+using PicView.Properties;
 using PicView.Views.UserControls.Misc;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Tooltip;
@@ -27,10 +28,7 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static void Image_DragEnter(object sender, DragEventArgs e)
         {
-            if (PicGallery.GalleryFunctions.IsHorizontalOpen)
-            {
-                return;
-            }
+            if (GalleryFunctions.IsHorizontalOpen) return;
 
             UIElement? element = null;
 
@@ -50,7 +48,7 @@ namespace PicView.UILogic.DragAndDrop
             }
             else if (Directory.Exists(files[0]))
             {
-                if (Properties.Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
+                if (Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
                 {
                     // Folder
                     element = new FolderIcon();
@@ -60,12 +58,12 @@ namespace PicView.UILogic.DragAndDrop
                     return;
                 }
             }
-            else if (SupportedFiles.IsSupportedArchives(files[0]))
+            else if (SupportedFiles.IsArchive(files[0]))
             {
                 // Archive
                 element = new ZipIcon();
             }
-            else if (SupportedFiles.IsSupportedExt(files[0]))
+            else if (SupportedFiles.IsSupported(files[0]))
             {
                 // Check if same file
                 if (files.Length == 1 && Pics.Count > 0)
@@ -78,7 +76,8 @@ namespace PicView.UILogic.DragAndDrop
                     }
                 }
                 // File
-                element = new DragDropOverlayPic(GetBitmapSourceThumb(new FileInfo(files[0])));
+                var thumb = GetBitmapSourceThumb(new FileInfo(files[0]), 300);
+                element = new DragDropOverlayPic(thumb);
             }
 
             // Tell that it's succeeded
@@ -124,46 +123,18 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static async Task Image_Drop(object sender, DragEventArgs e)
         {
-            if (PicGallery.GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsHorizontalOpen)
             {
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
-            {
-                RemoveDragOverlay();
-            });
-
-            // Load dropped URL
-            if (e.Data.GetData(DataFormats.Html) != null)
-            {
-                MemoryStream data = (MemoryStream)e.Data.GetData("text/x-moz-url");
-                if (data != null)
-                {
-                    string dataStr = Encoding.Unicode.GetString(data.ToArray());
-                    string[] parts = dataStr.Split((char)10);
-
-                    await WebFunctions.PicWeb(parts[0]).ConfigureAwait(false);
-                    return;
-                }
-            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                RemoveDragOverlay());
 
             // Get files as strings
             if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
-                return;
-            }
-
-            if (SupportedFiles.IsSupportedExt(files[0]) == false)
-            {
-                if (Directory.Exists(files[0]))
-                {
-                    await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
-                }
-                else if (SupportedFiles.IsSupportedArchives(files[0]))
-                {
-                    await LoadPic.LoadPiFromFileAsync(files[0]).ConfigureAwait(false);
-                }
+                await LoadURLAsync(e).ConfigureAwait(false);
                 return;
             }
 
@@ -178,9 +149,23 @@ namespace PicView.UILogic.DragAndDrop
                 }
             }
 
-            await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+            if (SupportedFiles.IsSupported(files[0]) == false)
+            {
+                if (Directory.Exists(files[0]))
+                {
+                    await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                }
+                else if (SupportedFiles.IsArchive(files[0]))
+                {
+                    await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+            }
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 // Don't show drop message any longer
                 CloseToolTipMessage();
@@ -188,13 +173,21 @@ namespace PicView.UILogic.DragAndDrop
                 ConfigureWindows.GetMainWindow.Activate();
             });
 
-            // Open additional windows if multiple files dropped 
-            if (files.Length > 0)
+            // Open additional windows if multiple files dropped
+            foreach (string file in files.Skip(1))
             {
-                for (int i = 1; i < files.Length; i++)
-                {
-                    ProcessLogic.StartProcessWithFileArgument(files[i]);
-                }
+                ProcessLogic.StartProcessWithFileArgument(file);
+            }
+        }
+        static async Task LoadURLAsync(DragEventArgs e)
+        {
+            var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
+            if (memoryStream != null)
+            {
+                string dataStr = Encoding.Unicode.GetString(memoryStream.ToArray());
+                string[] parts = dataStr.Split((char)10);
+
+                await HttpFunctions.LoadPicFromURL(parts[0]).ConfigureAwait(false);
             }
         }
 

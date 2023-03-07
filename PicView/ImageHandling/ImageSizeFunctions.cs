@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace PicView.ImageHandling
@@ -10,7 +9,11 @@ namespace PicView.ImageHandling
     {
         internal static async Task<Size?> GetImageSizeAsync(FileInfo fileInfo)
         {
-            using var magick = new MagickImage();
+            if (!fileInfo.Exists)
+            {
+                return null;
+            }
+
             if (fileInfo.Length > 2e+9)
             {
 #if DEBUG
@@ -18,6 +21,8 @@ namespace PicView.ImageHandling
 #endif
                 return null;
             }
+
+            using var magick = new MagickImage();
             try
             {
                 await magick.ReadAsync(fileInfo).ConfigureAwait(false);
@@ -29,7 +34,10 @@ namespace PicView.ImageHandling
                 return null;
             }
 #else
-                catch (MagickException) { return null; }
+        catch (MagickException)
+        {
+            return null;
+        }
 #endif
 
             return new Size(magick.Width, magick.Height);
@@ -37,7 +45,12 @@ namespace PicView.ImageHandling
 
         internal static async Task<Size?> GetImageSizeAsync(string file)
         {
-            FileInfo fileInfo = new(file);
+            if (!File.Exists(file))
+            {
+                return null;
+            }
+
+            var fileInfo = new FileInfo(file);
             return await GetImageSizeAsync(fileInfo).ConfigureAwait(false);
         }
 
@@ -47,7 +60,7 @@ namespace PicView.ImageHandling
             if (File.Exists(file) == false) { return false; }
             if (width < 0 && percentage is not null || height < 0 && percentage is not null) { return false; }
 
-            var magick = new MagickImage()
+            var magick = new MagickImage
             {
                 ColorSpace = ColorSpace.Transparent
             };
@@ -129,7 +142,7 @@ namespace PicView.ImageHandling
             {
                 imageOptimizer.Compress(x);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return true;
             }

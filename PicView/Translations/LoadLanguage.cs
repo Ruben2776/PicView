@@ -1,4 +1,4 @@
-﻿using System;
+﻿using PicView.Properties;
 using System.Globalization;
 using System.Windows;
 
@@ -8,12 +8,9 @@ namespace PicView.Translations
     {
         internal static void DetermineLanguage()
         {
-            if (Properties.Settings.Default.UserLanguage != "en")
+            if (Settings.Default.UserLanguage != "en")
             {
-                Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
-                {
-                    Source = new Uri(@"/PicView;component/Translations/" + Properties.Settings.Default.UserLanguage + ".xaml", UriKind.Relative)
-                };
+                TrySetSource(new Uri(@"/PicView;component/Translations/" + Settings.Default.UserLanguage + ".xaml", UriKind.Relative));
                 return;
             }
 
@@ -21,7 +18,7 @@ namespace PicView.Translations
             switch (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)
             {
                 case "da":
-                    source = new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative);
+                    source = new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative);
                     break;
 
                 case "de":
@@ -36,8 +33,12 @@ namespace PicView.Translations
                     source = new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative);
                     break;
 
-                case "zh":
+                case "zh_CN":
                     source = new Uri(@"/PicView;component/Translations/zh_CN.xaml", UriKind.Relative);
+                    break;
+
+                case "zh_TW":
+                    source = new Uri(@"/PicView;component/Translations/zh_TW.xaml", UriKind.Relative);
                     break;
 
                 case "pl":
@@ -51,19 +52,24 @@ namespace PicView.Translations
                 case "it":
                     source = new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative);
                     break;
-                
+
                 case "ru":
                     source = new Uri(@"/PicView;component/Translations/ru.xaml", UriKind.Relative);
                     break;
-                
+
                 case "ro":
                     source = new Uri(@"/PicView;component/Translations/ro.xaml", UriKind.Relative);
                     break;
-                
+
                 default:
                     source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);
                     break;
             }
+            TrySetSource(source);
+        }
+
+        private static void TrySetSource(Uri source)
+        {
             try
             {
                 Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary
@@ -83,9 +89,9 @@ namespace PicView.Translations
         internal static void ChangeLanguage(int language)
         {
             var choice = (Languages)language;
-            Properties.Settings.Default.UserLanguage = choice.ToString();
+            Settings.Default.UserLanguage = choice.ToString();
 
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
     }
 }

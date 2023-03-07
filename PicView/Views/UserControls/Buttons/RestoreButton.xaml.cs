@@ -1,8 +1,10 @@
 ﻿using PicView.Animations;
+using PicView.Properties;
+using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Cool shady close button!
@@ -13,16 +15,11 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            PreviewMouseLeftButtonDown += delegate
-            {
-                MouseOverAnimations.AltInterfacePreviewMouseOver(PolyFill, BorderBrushKey);
-            };
-            
-            TheButton.Click += delegate { UILogic.Sizing.WindowSizing.Fullscreen_Restore(); };
+            TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(); };
 
             MouseEnter += delegate
             {
-                if (!Properties.Settings.Default.Fullscreen)
+                if (!Settings.Default.Fullscreen)
                 {
                     ToolTip = Application.Current.Resources["Fullscreen"];
                 }

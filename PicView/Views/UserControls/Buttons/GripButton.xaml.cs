@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Interaction logic for CropButton.xaml

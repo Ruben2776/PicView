@@ -1,23 +1,29 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeTitlebar;
+using PicView.FileHandling;
+using PicView.PicGallery;
+using PicView.Properties;
 using PicView.UILogic.TransformImage;
-using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using XamlAnimatedGif;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.UILogic.DragAndDrop
 {
     internal static class DragToExplorer
     {
-        internal static async void DragFile(object sender, MouseButtonEventArgs e)
+        internal static void DragFile(object sender, MouseButtonEventArgs e)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null
                 || Keyboard.Modifiers != ModifierKeys.Control
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Keyboard.Modifiers == ModifierKeys.Alt
-                || PicGallery.GalleryFunctions.IsHorizontalOpen
-                || Properties.Settings.Default.Fullscreen
+                || GalleryFunctions.IsHorizontalOpen
+                || Settings.Default.Fullscreen
                 || Scroll.IsAutoScrolling
                 || ZoomLogic.IsZoomed)
             {
@@ -30,18 +36,16 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            string file;
-
+            string? file;
             if (Pics.Count == 0)
             {
                 try
                 {
-                    // Download from internet
-                    // TODO check file exceptions and errors
-                    string url = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
-                    if (Uri.IsWellFormedUriString(url, UriKind.Absolute)) // Check if from web
+                    // Check if from URL and locate it
+                    string url = FileFunctions.RetrieveFromURL();
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        file = await WebFunctions.DownloadData(url, false).ConfigureAwait(false);
+                        file = ArchiveExtraction.TempFilePath;
                     }
                     else
                     {
@@ -50,10 +54,9 @@ namespace PicView.UILogic.DragAndDrop
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
+                    Tooltip.ShowTooltipMessage(ex);
                     return;
                 }
-
             }
             else if (Pics.Count > FolderIndex)
             {
@@ -63,11 +66,16 @@ namespace PicView.UILogic.DragAndDrop
             {
                 return;
             }
+            if (file == null) return;
 
-            FrameworkElement? senderElement = sender as FrameworkElement;
-            DataObject dragObj = new DataObject();
-            dragObj.SetFileDropList(new StringCollection() { file });
-            DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            {
+                FrameworkElement? senderElement = sender as FrameworkElement;
+                if (senderElement == null) return;
+                DataObject dragObj = new DataObject();
+                dragObj.SetFileDropList(new StringCollection { file });
+                DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
+            });
 
             e.Handled = true;
         }

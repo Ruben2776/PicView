@@ -1,7 +1,7 @@
 ﻿using PicView.PicGallery;
 using System.Windows.Controls;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Gallery
 {
     /// <summary>
     /// Interaction logic for PicGallery.xaml

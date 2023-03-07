@@ -1,10 +1,13 @@
 ﻿using PicView.Animations;
+using PicView.ConfigureSettings;
+using PicView.Editing.Crop;
+using PicView.Properties;
 using PicView.UILogic;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Menus
 {
     /// <summary>
     /// Interaction logic for QuickSettingsMenu.xaml
@@ -21,21 +24,21 @@ namespace PicView.Views.UserControls
                 Close_UserControls();
             };
 
-            ToggleScroll.IsChecked = Properties.Settings.Default.ScrollEnabled;
-            ToggleScroll.Click += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
-            ToggleScrollBorder.MouseLeftButtonDown += (s, x) => ConfigureSettings.UpdateUIValues.SetScrolling(Properties.Settings.Default.ScrollEnabled);
+            ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
+            ToggleScroll.Click += (s, x) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
+            ToggleScrollBorder.MouseLeftButtonDown += (s, x) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
 
-            ToggleFill.IsChecked = Properties.Settings.Default.FillImage;
-            ToggleFill.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
-            ToggleFillBorder.MouseLeftButtonDown += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+            ToggleFill.IsChecked = Settings.Default.FillImage;
+            ToggleFill.Click += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+            ToggleFillBorder.MouseLeftButtonDown += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
 
-            ToggleLooping.IsChecked = Properties.Settings.Default.Looping;
-            ToggleLooping.Click += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
-            ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => ConfigureSettings.UpdateUIValues.SetLooping();
+            ToggleLooping.IsChecked = Settings.Default.Looping;
+            ToggleLooping.Click += (_, _) => UpdateUIValues.SetLooping();
+            ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetLooping();
 
-            SetFit.IsChecked = Properties.Settings.Default.AutoFitWindow;
-            SetFit.Click += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
-            SetFitBorder.MouseLeftButtonDown += async (s, e) => await ConfigureSettings.UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
+            SetFit.IsChecked = Settings.Default.AutoFitWindow;
+            SetFit.Click += async (s, e) => await UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
+            SetFitBorder.MouseLeftButtonDown += async (s, e) => await UpdateUIValues.SetAutoFitAsync(s, e).ConfigureAwait(false);
 
             // CropButton
             CropButton.PreviewMouseLeftButtonDown += delegate
@@ -45,36 +48,31 @@ namespace PicView.Views.UserControls
 
             CropButton.Click += delegate
             {
-                UC.Close_UserControls();
-                Editing.Crop.CropFunctions.StartCrop();
+                Close_UserControls();
+                CropFunctions.StartCrop();
             };
-
 
             #region Animation events
 
             // Toggle Scroll
-            ToggleScrollBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleScrollFill); };
             ToggleScrollBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleScrollFill); };
             ToggleScrollBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleScrollBrush); };
             ToggleScrollBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleScrollFill); };
             ToggleScrollBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleScrollBrush); };
 
             // Toggle Loop
-            ToggleLoopingBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleLoopFill); };
             ToggleLoopingBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleLoopFill); };
             ToggleLoopingBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleLoopBrush); };
             ToggleLoopingBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleLoopFill); };
             ToggleLoopingBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleLoopBrush); };
 
             // Set Fit
-            SetFitBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SetFitFill); };
             SetFitBorder.MouseEnter += delegate { ButtonMouseOverAnim(SetFitFill); };
             SetFitBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetFitBrush); };
             SetFitBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(SetFitFill); };
             SetFitBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetFitBrush); };
 
             // ToggleFill
-            ToggleFillBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToggleFillFill); };
             ToggleFillBorder.MouseEnter += delegate { ButtonMouseOverAnim(ToggleFillFill); };
             ToggleFillBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
             ToggleFillBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };

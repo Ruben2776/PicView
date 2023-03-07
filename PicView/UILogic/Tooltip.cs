@@ -1,5 +1,4 @@
 ﻿using PicView.Animations;
-using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 using static PicView.UILogic.UC;

@@ -1,10 +1,10 @@
-﻿using PicView.UILogic;
-using PicView.Animations;
+﻿using PicView.Animations;
+using PicView.UILogic;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class SlideshowButton : UserControl
     {
@@ -14,12 +14,6 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += delegate
-                {
-                    PreviewMouseButtonDownAnim(IconBrush);
-                    PreviewMouseButtonDownAnim(txtBrush);
-                };
-
                 TheButton.MouseEnter += delegate
                 {
                     ButtonMouseOverAnim(IconBrush);
@@ -34,7 +28,6 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-
                 TheButton.Click += delegate
                 {
                     UC.Close_UserControls();
@@ -44,7 +37,6 @@ namespace PicView.Views.UserControls
                 var s = Application.Current.Resources["StartSlideshow"] as string;
                 s += " [F5]";
                 ToolTip = s;
-
             };
         }
     }

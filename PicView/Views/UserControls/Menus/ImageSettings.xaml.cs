@@ -1,9 +1,10 @@
-﻿using PicView.PicGallery;
+﻿using PicView.Animations;
+using PicView.PicGallery;
+using PicView.Properties;
 using PicView.UILogic;
-using PicView.Animations;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Menus
 {
     /// <summary>
     /// Interaction logic for ImageSettings.xaml
@@ -14,7 +15,7 @@ namespace PicView.Views.UserControls
         {
             InitializeComponent();
 
-            switch (Properties.Settings.Default.UserLanguage)
+            switch (Settings.Default.UserLanguage)
             {
                 case "ru":
                 case "pl":
@@ -22,11 +23,6 @@ namespace PicView.Views.UserControls
                     Contained_Gallery.FontSize = Fullscreen_Gallery.FontSize = 13;
                     break;
             }
-
-            // FullscreenGalleryBorder
-            FullscreenGalleryBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenFill1); };
-            FullscreenGalleryBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenFill2); };
-            FullscreenGalleryBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FullscreenTextBrush); };
 
             FullscreenGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(FullscreenFill1); };
             FullscreenGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(FullscreenFill2); };
@@ -37,10 +33,6 @@ namespace PicView.Views.UserControls
             FullscreenGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(FullscreenFill2); };
             FullscreenGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(FullscreenTextBrush); };
             FullscreenGalleryBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FullscreenBrush); };
-
-            // ContainedGalleryBorder
-            ContainedGalleryBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ContainedFill); };
-            ContainedGalleryBorder.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ContainedTextBrush); };
 
             ContainedGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(ContainedFill); };
             ContainedGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(ContainedTextBrush); };
@@ -59,14 +51,13 @@ namespace PicView.Views.UserControls
             {
                 UC.Close_UserControls();
 
-                if (Properties.Settings.Default.FullscreenGalleryVertical == false && Properties.Settings.Default.FullscreenGalleryHorizontal == false)
+                if (Settings.Default.FullscreenGalleryHorizontal == false)
                 {
-                    Properties.Settings.Default.FullscreenGalleryHorizontal = true;
+                    Settings.Default.FullscreenGalleryHorizontal = true;
                 }
 
                 await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
             };
-
         }
     }
 }

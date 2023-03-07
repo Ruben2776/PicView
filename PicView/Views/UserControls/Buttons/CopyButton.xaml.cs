@@ -1,8 +1,9 @@
 ﻿using PicView.Animations;
+using PicView.Properties;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class CopyButton : UserControl
     {
@@ -12,11 +13,10 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += (s, x) => PreviewMouseButtonDownAnim(CopyButtonBrush);
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush, false);
+                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush);
 
-                if (!Properties.Settings.Default.DarkTheme)
+                if (!Settings.Default.DarkTheme)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }

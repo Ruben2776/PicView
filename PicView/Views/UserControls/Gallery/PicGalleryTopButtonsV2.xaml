@@ -62,7 +62,6 @@
             </Image>
         </Border>
 
-
         <Border
             x:Name="CloseButton"
             Width="35"
@@ -83,6 +82,5 @@
                 </Path>
             </Viewbox>
         </Border>
-
     </StackPanel>
 </UserControl>

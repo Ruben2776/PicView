@@ -1,14 +1,14 @@
 ﻿using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
@@ -26,7 +26,7 @@ namespace PicView.FileHandling
         ///  TODO update for and check file support
         /// </summary>
         internal const string FilterFiles =
-            "Pictures|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;"                                    // Common pics
+            "*|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;"
             + "|jpg| *.jpg;*.jpeg"                                                                          // JPG
             + "|PNG|*.png;"                                                                                 // PNG
             + "|gif|*.gif;"                                                                                 // GIF
@@ -36,10 +36,13 @@ namespace PicView.FileHandling
             + "|tga|*.tga;"                                                                                 // TGA
             + "|dds|*.dds;"                                                                                 // DDS
             + "|ico|*.ico;"                                                                                 // ICO
-            + "|wdp|*.wdp;"                                                                                 // WDP
+            + "|HEIC|*.heic;*.heif;"                                                                        // HEIC
+            + "|HDR|*.hdr;"                                                                                 // HDR
             + "|svg|*.svg;"                                                                                 // SVG
             + "|Photoshop|*.psd;*.psb"                                                                      // PSD
             + "|GIMP|*.xcf"                                                                                 // GIMP
+            + "|QOI|*.qoi"                                                                                  // GQOI (Quite OK Image
+            + "|Base64|*.b64"                                                                               // Base64
             + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
             + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
             + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
@@ -49,35 +52,38 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void Open_In_Explorer()
         {
-            if (Pics?.Count > 0)
+            string? directory = null, file = null;
+
+            if (Pics?.Count <= 0)
             {
-                if (Pics.Count < FolderIndex)
+                // Check if from URL and locate it
+                string url = FileFunctions.RetrieveFromURL();
+                if (!string.IsNullOrEmpty(url))
                 {
-                    return;
+                    file = ArchiveExtraction.TempFilePath;
+                    directory = Path.GetDirectoryName(file);
                 }
             }
-            else
+            else if (Pics?.Count > FolderIndex)
+            {
+                file = Pics[FolderIndex];
+                directory = Path.GetDirectoryName(file);
+            }
+
+            if (file is null || directory is null)
             {
                 return;
             }
 
-            if (!File.Exists(Pics[FolderIndex]) || ConfigureWindows.GetMainWindow.MainImage.Source == null)
-            {
-                return;
-            }
             try
             {
                 Close_UserControls();
-                FileFunctions.OpenFolderAndSelectItem(Path.GetDirectoryName(Pics?[FolderIndex]), Pics?[FolderIndex]); // https://stackoverflow.com/a/39427395
+                FileExplorer.OpenFolderAndSelectFile(directory, file); // https://stackoverflow.com/a/39427395
             }
-#if DEBUG
-            catch (InvalidCastException e)
+            catch (Exception e)
             {
-                Trace.WriteLine("Open_In_Explorer exception \n" + e.Message);
+                Tooltip.ShowTooltipMessage("Open_In_Explorer exception \n" + e.Message);
             }
-#else
-            catch (InvalidCastException) { }
-#endif
         }
 
         /// <summary>
@@ -87,18 +93,20 @@ namespace PicView.FileHandling
         {
             IsDialogOpen = true;
 
-            var dlg = new OpenFileDialog()
+            var dlg = new OpenFileDialog
             {
                 Filter = FilterFiles,
                 Title = $"{Application.Current.Resources["OpenFileDialog"]} - {SetTitle.AppName}"
             };
             if (dlg.ShowDialog() == true)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     ToggleStartUpUC(true);
+                    Close_UserControls();
                 });
                 await LoadPic.LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
+                IsDialogOpen = false;
             }
         }
 
@@ -110,10 +118,15 @@ namespace PicView.FileHandling
         {
             try
             {
-                using var process = new Process();
-                process.StartInfo.FileName = "openwith";
-                process.StartInfo.Arguments = $"\"{file}\"";
-                process.StartInfo.ErrorDialog = true;
+                using var process = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = "openwith",
+                        Arguments = $"\"{file}\"",
+                        ErrorDialog = true
+                    }
+                };
 
                 process.Start();
             }
@@ -121,7 +134,6 @@ namespace PicView.FileHandling
             {
 #if DEBUG
                 Trace.WriteLine("OpenWith exception \n" + e.Message);
-
 #endif
                 ShowTooltipMessage(e.Message, true);
             }
@@ -154,7 +166,7 @@ namespace PicView.FileHandling
                 randomized = true;
             }
 
-            var Savedlg = new SaveFileDialog()
+            var Savedlg = new SaveFileDialog
             {
                 Filter = FilterFiles,
                 Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
@@ -179,11 +191,11 @@ namespace PicView.FileHandling
 
             if (Pics?.Count > FolderIndex)
             {
-                success = await SaveImages.SaveImageAsync(Rotateint, Flipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
             else if (source != null)
             {
-                success = await SaveImages.SaveImageAsync(Rotateint, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
             }
 
             if (success == false)
@@ -197,7 +209,7 @@ namespace PicView.FileHandling
                 await ReloadAsync().ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 Close_UserControls();
             });
@@ -246,6 +258,6 @@ namespace PicView.FileHandling
             }
 
             return null;
-        } 
+        }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using PicView.Animations;
+using PicView.ConfigureSettings;
+using PicView.Properties;
 using PicView.UILogic;
-using PicView.Views.Windows;
-using System;
-using System.Threading.Tasks;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.ConfigureWindows;
@@ -26,9 +28,9 @@ namespace PicView.PicGallery
             IsHorizontalOpen = true;
             IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
             {
-                GalleryLoad.LoadLayout(false);
+                GalleryLoad.LoadLayout();
                 GetPicGallery.Visibility = Visibility.Visible;
 
                 bool fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
@@ -43,15 +45,6 @@ namespace PicView.PicGallery
                 GetMinus.Visibility =
                 GetRestorebutton.Visibility =
                 GetGalleryShortcut.Visibility = Visibility.Hidden;
-
-                if (GetFakeWindow != null)
-                {
-                    if (GetFakeWindow.grid.Children.Contains(GetPicGallery))
-                    {
-                        GetFakeWindow.grid.Children.Remove(GetPicGallery);
-                        GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
-                    }
-                }
             });
 
             await LoadAndScrollToAsync().ConfigureAwait(false);
@@ -64,77 +57,39 @@ namespace PicView.PicGallery
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                GalleryLoad.LoadLayout(true);
+                GalleryLoad.LoadLayout();
                 GetPicGallery.Visibility = Visibility.Visible;
 
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                if (Settings.Default.FullscreenGalleryHorizontal)
                 {
                     IsHorizontalFullscreenOpen = true;
-                    IsVerticalFullscreenOpen = IsHorizontalOpen = false;
+                    IsHorizontalOpen = false;
+
+                    var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
+                                select x;
+                    foreach (var item in check)
+                    {
+                        GetMainWindow.ParentContainer.Children.Remove(item);
+                    }
+
+                    GetMainWindow.ParentContainer.Children.Add(new PicGalleryTopButtonsV2());
                 }
                 else
                 {
-                    IsVerticalFullscreenOpen = true;
                     IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+
+                    var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
+                                select x;
+                    foreach (var item in check)
+                    {
+                        GetMainWindow.ParentContainer.Children.Remove(item);
+                    }
+
+                    GetMainWindow.ParentContainer.Children.Add(new PicGalleryTopButtons());
                 }
 
-                if (GetFakeWindow == null)
-                {
-                    GetFakeWindow = new FakeWindow()
-                    {
-                        WindowStyle = WindowStyle.None,
-                        ShowInTaskbar = false,
-                        ShowActivated = false
-                    };
-
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                    else
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                }
-                else
-                {
-                    GetFakeWindow.grid.Children.RemoveAt(0);
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtonsV2
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                    else
-                    {
-                        GetFakeWindow.grid.Children.Add(new Views.UserControls.Gallery.PicGalleryTopButtons
-                        {
-                            Margin = new Thickness(1, 12, 0, 0),
-                        });
-                    }
-                }
-
-                // Switch gallery container to the correct window
-                if (GetMainWindow.ParentContainer.Children.Contains(GetPicGallery))
-                {
-                    GetMainWindow.ParentContainer.Children.Remove(GetPicGallery);
-                    GetFakeWindow.grid.Children.Add(GetPicGallery);
-                }
-                else if (!GetFakeWindow.grid.Children.Contains(GetPicGallery))
-                {
-                    GetFakeWindow.grid.Children.Add(GetPicGallery);
-                }
-
-                GetFakeWindow.Show();
                 GetMainWindow.Focus();
 
                 // Fix not showing up opacity bug..
@@ -145,7 +100,7 @@ namespace PicView.PicGallery
 
             if (startup == false)
             {
-                await UILogic.Sizing.ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+                await ScaleImage.TryFitImageAsync().ConfigureAwait(false);
             }
 
             await LoadAndScrollToAsync().ConfigureAwait(false);
@@ -157,11 +112,11 @@ namespace PicView.PicGallery
 
         internal static void CloseCurrentGallery()
         {
-            if (GalleryFunctions.IsVerticalFullscreenOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (IsHorizontalFullscreenOpen)
             {
                 CloseFullscreenGallery();
             }
-            else if (GalleryFunctions.IsHorizontalOpen)
+            else if (IsHorizontalOpen)
             {
                 CloseHorizontalGallery();
             }
@@ -169,12 +124,12 @@ namespace PicView.PicGallery
 
         internal static void CloseHorizontalGallery()
         {
-            if (UC.GetPicGallery is null) { return; }
+            if (GetPicGallery is null) { return; }
 
-            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+            IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
             // Restore interface elements if needed
-            if (!Properties.Settings.Default.ShowInterface || Properties.Settings.Default.Fullscreen)
+            if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen)
             {
                 HideInterfaceLogic.ShowNavigation(true);
                 HideInterfaceLogic.ShowShortcuts(true);
@@ -197,32 +152,47 @@ namespace PicView.PicGallery
 
         internal static void CloseFullscreenGallery()
         {
-            if (ConfigureWindows.GetFakeWindow is null) { return; }
+            Properties.Settings.Default.FullscreenGalleryHorizontal = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
-            IsVerticalFullscreenOpen = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
-            GetFakeWindow.Hide();
+            GetPicGallery.Visibility = Visibility.Collapsed;
 
-            ConfigureSettings.ConfigColors.UpdateColor();
+            ConfigColors.UpdateColor();
 
             HideInterfaceLogic.ShowStandardInterface();
             GetPicGallery.x2.Visibility = Visibility.Collapsed;
 
             // Restore settings
-            UILogic.Sizing.WindowSizing.SetWindowBehavior();
+            WindowSizing.SetWindowBehavior();
 
-            if (Properties.Settings.Default.AutoFitWindow)
+            if (Settings.Default.AutoFitWindow)
             {
-                UILogic.Sizing.WindowSizing.CenterWindowOnScreen();
+                WindowSizing.CenterWindowOnScreen();
             }
             else
             {
-                UILogic.Sizing.WindowSizing.SetLastWindowSize();
+                WindowSizing.SetLastWindowSize();
             }
 
             if (GetMainWindow.MainImage.Source is not null)
             {
-                UILogic.Sizing.ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+                ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
             }
+
+            var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
+                        select x;
+            if (check.Any())
+            {
+                GetMainWindow.ParentContainer.Children.Remove(check.ElementAt(0));
+            }
+
+            var check2 = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
+                         select x;
+            if (check2.Any())
+            {
+                GetMainWindow.ParentContainer.Children.Remove(check2.ElementAt(0));
+            }
+
+            GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
         }
 
         #endregion Close
@@ -232,9 +202,9 @@ namespace PicView.PicGallery
             if (GalleryLoad.IsLoading == false)
             {
                 bool checkLoad = false;
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
-                    if (GetPicGallery.Container.Children.Count == ChangeImage.Navigation.Pics.Count)
+                    if (GetPicGallery.Container.Children.Count == Pics.Count)
                     {
                         checkLoad = true;
                     }
@@ -247,7 +217,7 @@ namespace PicView.PicGallery
 
             try
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
                 {
                     GalleryNavigation.ScrollTo();
                 });

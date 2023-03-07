@@ -3,11 +3,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.PicGallery.GalleryNavigation;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Gallery
 {
-    /// <summary>
-    /// The usercontrol (UI element) of PicGallery
-    /// </summary>
     public partial class PicGalleryItem : UserControl
     {
         internal int Id { get; set; }
@@ -40,11 +37,9 @@ namespace PicView.Views.UserControls
                 PicGalleryItem_Size_s
             );
 
-            if (selected)
-            {
-                innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColorOverAlpha());
-                innerborder.Width = innerborder.Height = PicGalleryItem_Size;
-            }
+            if (!selected) return;
+            innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColor());
+            innerborder.Width = innerborder.Height = PicGalleryItem_Size;
         }
     }
 }

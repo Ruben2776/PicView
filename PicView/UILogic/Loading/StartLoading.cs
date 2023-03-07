@@ -1,9 +1,11 @@
-﻿using PicView.PicGallery;
+﻿using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.PicGallery;
+using PicView.Properties;
 using PicView.SystemIntegration;
-using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
@@ -28,18 +30,18 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
-            if (Properties.Settings.Default.AutoFitWindow == false)
+            if (Settings.Default.AutoFitWindow == false)
             {
                 SetWindowBehavior();
             }
 
-            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Properties.Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
             // Set min size to DPI scaling
             ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
-            if (!Properties.Settings.Default.ShowInterface)
+            if (!Settings.Default.ShowInterface)
             {
                 ConfigureWindows.GetMainWindow.TitleBar.Visibility =
                    ConfigureWindows.GetMainWindow.LowerBar.Visibility
@@ -47,51 +49,69 @@ namespace PicView.UILogic.Loading
             }
         }
 
-        internal static void ContentRenderedEvent()
+        internal static async Task ContentRenderedEventAsync()
         {
-            // Load image if possible
             var args = Environment.GetCommandLineArgs();
-            if (args.Length == 1)
+
+            // Determine prefered UI for startup
+            if (Settings.Default.FullscreenGalleryHorizontal)
             {
-                // Determine proper startup size
-                if (Properties.Settings.Default.AutoFitWindow == false && Properties.Settings.Default.Width != 0)
+                if (args.Length <= 1)
                 {
-                    SetLastWindowSize();
-                }
-                else if (Properties.Settings.Default.AutoFitWindow)
-                {
-                    SetWindowBehavior();
-                }
-
-                Unload(true); // Load clean setup when starting up without arguments
-            }
-            else
-            {
-                if (Properties.Settings.Default.StartInFullscreenGallery)
-                {
-                    _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
-                }
-
-                // Determine prefered UI for startup
-                if (Properties.Settings.Default.Fullscreen)
-                {
-                    Sizing.WindowSizing.Fullscreen_Restore(true);
-                }
-
-                else if (Properties.Settings.Default.Width > 0 && Properties.Settings.Default.AutoFitWindow == false)
-                {
-                    SetLastWindowSize();
+                    Settings.Default.FullscreenGalleryHorizontal = false;
                 }
                 else
                 {
-                    UILogic.Sizing.WindowSizing.SetWindowBehavior();
+                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                 }
+            }
 
-                _ = ChangeImage.LoadPic.QuickLoadAsync(args[1]).ConfigureAwait(false);
+            else if (Settings.Default.Fullscreen)
+            {
+                if (args.Length <= 1)
+                {
+                    Settings.Default.Fullscreen = false;
+                }
+                else
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                    {
+                        Fullscreen_Restore(true);
+                    }));
+                }
+            }
+
+            else if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                {
+                    SetLastWindowSize();
+                }));
+            }
+            else
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                {
+                    SetWindowBehavior();
+                }));
+            }
+
+            // Load image if possible
+
+            if (args.Length <= 1)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                {
+                    Unload(true); // Load clean setup when starting up without arguments       
+                }));
+            }
+            else
+            {
+                _= QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
 
-            ConfigureSettings.ConfigColors.UpdateColor();
+            ConfigColors.UpdateColor();
 
             // Add dictionaries
             Application.Current.Resources.MergedDictionaries.Add(
@@ -122,16 +142,19 @@ namespace PicView.UILogic.Loading
                 }
             );
 
-            // Load UI and events
-            AddUIElementsAndUpdateValues();
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+            {
+                // Load UI and events
+                AddUIElementsAndUpdateValues();
+            }));
         }
 
         private static void AddUIElementsAndUpdateValues()
         {
             // Update values
             ConfigureWindows.GetMainWindow.FolderButton.BackgroundEvents();
-            ConfigureSettings.ConfigColors.SetColors();
             ConfigureWindows.GetMainWindow.AllowDrop = true;
+            ConfigureSettings.ConfigColors.SetColors();
 
             LoadClickArrow(true);
             LoadClickArrow(false);
@@ -141,7 +164,7 @@ namespace PicView.UILogic.Loading
             LoadGalleryShortcut();
 
             // Update WindowStyle
-            if (!Properties.Settings.Default.ShowInterface)
+            if (!Settings.Default.ShowInterface)
             {
                 GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
@@ -159,7 +182,7 @@ namespace PicView.UILogic.Loading
                 GetRestorebutton.Visibility =
                 Visibility.Visible;
             }
-            else if (Properties.Settings.Default.Fullscreen)
+            else if (Settings.Default.Fullscreen)
             {
                 GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
@@ -188,7 +211,7 @@ namespace PicView.UILogic.Loading
 
             // Initilize Things!
             InitializeZoom();
-            ChangeImage.History.InstantiateFileHistory();
+            GetFileHistory = new FileHistory();
 
             // Add things!
             Timers.AddTimers();

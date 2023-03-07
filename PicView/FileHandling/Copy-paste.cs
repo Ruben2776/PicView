@@ -1,11 +1,12 @@
 ﻿using PicView.ChangeImage;
 using PicView.ImageHandling;
+using PicView.ProcessHandling;
 using PicView.UILogic;
-using System;
+using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -25,36 +26,30 @@ namespace PicView.FileHandling
         /// <summary>
         /// Add file to clipboard
         /// </summary>
-        internal static void Copyfile()
+        internal static void CopyFile()
         {
-            if (Pics == null)
+            if (Pics?.Count <= 0)
             {
-                return;
+                // Check if from URL and download it
+                string url = FileFunctions.RetrieveFromURL();
+                if (!string.IsNullOrEmpty(url)) 
+                {
+                    Copyfile(ArchiveExtraction.TempFilePath);
+                }
+                else
+                {
+                    CopyBitmap();
+                }
             }
-
-            if (Pics.Count == 0)
-            {
-                CopyBitmap();
-                return;
-            }
-
-            // Copy pic if from web
-            if (string.IsNullOrWhiteSpace(Pics[FolderIndex]) || Uri.IsWellFormedUriString(Pics[FolderIndex], UriKind.Absolute))
-            {
-                CopyBitmap();
-            }
-            else
+            else if (Pics?.Count > FolderIndex)
             {
                 Copyfile(Pics[FolderIndex]);
             }
         }
 
-        /// <summary>
-        /// Add file to clipboard
-        /// </summary>
-        internal static void Copyfile(string path)
+        static void Copyfile(string path)
         {
-            var paths = new System.Collections.Specialized.StringCollection { path };
+            var paths = new StringCollection { path };
             Clipboard.SetFileDropList(paths);
             ShowTooltipMessage(Application.Current.Resources["FileCopy"]);
         }
@@ -88,59 +83,47 @@ namespace PicView.FileHandling
         /// <summary>
         /// Retrieves the data from the clipboard and attemps to load image, if possible
         /// </summary>
-        internal static void Paste()
+        internal static async Task PasteAsync()
         {
-            // file
-            if (Clipboard.ContainsFileDropList()) // If Clipboard has one or more files
+            if (Clipboard.ContainsFileDropList()) // file
             {
                 var files = Clipboard.GetFileDropList().Cast<string>().ToArray();
 
-                if (files != null)
-                {
-                    _ = LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+                if (files == null) { return; }
 
-                    if (files.Length > 1)
-                    {
-                        for (int i = 1; i < files.Length; i++)
-                        {
-                            ProcessHandling.ProcessLogic.StartProcessWithFileArgument(files[i]);
-                        }
-                    }
-                    return;
+                await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+
+                for (int i = 1; i < files.Length; i++) // If Clipboard has more files
+                {
+                    ProcessLogic.StartProcessWithFileArgument(files[i]);
                 }
             }
-
-            // Clipboard Image
-            if (Clipboard.ContainsImage())
+            else if (Clipboard.ContainsImage())  // Clipboard Image
             {
-                LoadPic.LoadPicFromBitmap(Clipboard.GetImage(), (string)Application.Current.Resources["ClipboardImage"]);
+                await UpdateImage.UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage()).ConfigureAwait(false);
                 return;
             }
-
-            // text/string/adddress
-
-            var s = Clipboard.GetText(TextDataFormat.Text);
-
-            if (string.IsNullOrEmpty(s))
+            else // text/string/adddress
             {
-                return;
-            }
+                var s = Clipboard.GetText(TextDataFormat.Text);
 
-            string check = ErrorHandling.CheckIfLoadableString(s);
-            switch (check)
-            {
-                default: _ = LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
-                case "web": _ = WebFunctions.PicWeb(s).ConfigureAwait(false); return;
-                case "base64": _ = LoadPic.LoadBase64PicAsync(s).ConfigureAwait(false); return;
-                case "directory": _ = LoadPic.LoadPicFromFolderAsync(s).ConfigureAwait(false); return;
-                case "": return;
+                if (string.IsNullOrEmpty(s)) { return; }
+
+                string check = ErrorHandling.CheckIfLoadableString(s);
+                switch (check)
+                {
+                    case "": return;
+                    default: await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
+                    case "web": await HttpFunctions.LoadPicFromURL(s).ConfigureAwait(false); return;
+                    case "base64": await UpdateImage.UpdateImageFromBase64PicAsync(s).ConfigureAwait(false); return;
+                    case "directory": await LoadPic.LoadPicFromFolderAsync(s).ConfigureAwait(false); return;
+                }
             }
         }
 
         /// <summary>
         /// Add file to move/paste clipboard
         /// </summary>
-        /// <param name="path"></param>
         internal static void Cut()
         {
             if (Pics.Count <= 0 || FolderIndex >= Pics.Count)
@@ -148,23 +131,20 @@ namespace PicView.FileHandling
                 return;
             }
 
-            var x = new System.Collections.Specialized.StringCollection
-            {
-                Pics[FolderIndex]
-            };
+            var filePath = Pics[FolderIndex];
+            var fileDropList = new StringCollection { filePath };
 
-            byte[] moveEffect = new byte[] { 2, 0, 0, 0 };
-            using (var dropEffect = new MemoryStream())
-            {
-                dropEffect.Write(moveEffect, 0, moveEffect.Length);
+            var moveEffect = new byte[] { 2, 0, 0, 0 };
+            var dropEffect = new MemoryStream();
+            dropEffect.Write(moveEffect, 0, moveEffect.Length);
 
-                DataObject data = new();
-                data.SetFileDropList(x);
-                data.SetData("Preferred DropEffect", dropEffect);
+            var data = new DataObject();
+            data.SetFileDropList(fileDropList);
+            data.SetData("Preferred DropEffect", dropEffect);
 
-                Clipboard.Clear();
-                Clipboard.SetDataObject(data, true);
-            }
+            Clipboard.Clear();
+            Clipboard.SetDataObject(data, true);
+            ShowTooltipMessage(Application.Current.Resources["FileCutMessage"]);
         }
     }
 }

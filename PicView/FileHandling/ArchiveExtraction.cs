@@ -1,8 +1,11 @@
 ﻿using PicView.ChangeImage;
+using PicView.PicGallery;
+using PicView.Properties;
 using PicView.SystemIntegration;
-using System;
+using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 
@@ -10,16 +13,6 @@ namespace PicView.FileHandling
 {
     internal static class ArchiveExtraction
     {
-        // TODO needs improvement to be dynamic
-        private const string SupportedFilesFilter =
-            " *.jpg *.jpeg *.jpe *.png *.bmp *.tif *.tiff *.gif *.ico *.jfif *.webp *.wbmp "
-            + "*.psd *.psb "
-            + "*.tga *.dds "
-            + "*.svg "
-            + "*.3fr *.arw *.cr2 *.crw *.dcr *.dng *.erf *.kdc *.mdc *.mef *.mos *.mrw *.nef *.nrw *.orf "
-            + "*.pef *.raf *.raw *.rw2 *.srf *.x3f "
-            + "*.pgm *.hdr *.cut *.exr *.dib *.heic *.emf *.wmf *.wpg *.pcx *.xbm *.xpm";
-
         /// <summary>
         /// File path for the extracted folder
         /// </summary>
@@ -30,6 +23,8 @@ namespace PicView.FileHandling
         /// </summary>
         internal static string? TempZipFile { get; set; }
 
+        internal static bool IsBeingExtraced { get; set; }
+
         /// <summary>
         /// Attemps to extract folder
         /// </summary>
@@ -37,50 +32,65 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool Extract(string path)
         {
-            const string winRar = "WinRAR.exe";
-            const string winRarPath = "\\WinRAR\\WinRAR.exe";
+            string[] appNames = { "WinRAR.exe", "7z.exe" };
+            string[] appPathNames = { "\\WinRAR\\WinRAR.exe", "\\7-Zip\\7z.exe" };
 
-            const string sevenzip = "7z.exe";
-            const string sevenzipPath = "\\7-Zip\\7z.exe";
-
-            var appNames = new string[] { winRar, sevenzip };
-            var appPathNames = new string[] { winRarPath, sevenzipPath };
-
-            string? getextractPath = GetExtractApp(appPathNames, appNames);
-
-            if (getextractPath == null) { return false; }
-
-            return Extract(path, getextractPath, getextractPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
-        }
-
-        internal static string? GetExtractApp(string[] commonPath, string[] appName)
-        {
-            if (appName == null || commonPath == null) { return null; }
-
-            for (int i = 0; i < commonPath.Length; i++)
+            string? extractAppPath = GetExtractAppPath(appPathNames, appNames);
+            if (extractAppPath == null)
             {
-                string x86path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + commonPath[i];
-                if (File.Exists(x86path))
-                {
-                    return x86path;
-                }
-                string x64path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + commonPath[i];
-                if (File.Exists(x64path))
-                {
-                    return x64path;
-                }
+                return false;
             }
 
-            for (int i = 0; i < appName.Length; i++)
+            return Extract(path, extractAppPath, extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static string? GetExtractAppPath(string[] commonPaths, string[] appNames)
+        {
+            if (appNames == null || commonPaths == null)
             {
-                string? registryPath = NativeMethods.GetPathForExe(appName[i]);
-                if (registryPath == null) { return null; }
+                return null;
+            }
+
+            string x86Path = GetProgramFilePath(Environment.SpecialFolder.ProgramFilesX86, commonPaths);
+            if (!string.IsNullOrEmpty(x86Path))
+            {
+                return x86Path;
+            }
+
+            string x64Path = GetProgramFilePath(Environment.SpecialFolder.ProgramFiles, commonPaths);
+            if (!string.IsNullOrEmpty(x64Path))
+            {
+                return x64Path;
+            }
+
+            foreach (string appName in appNames)
+            {
+                string? registryPath = FileFunctions.GetPathForExe(appName);
+                if (registryPath == null)
+                {
+                    return null;
+                }
                 if (File.Exists(registryPath))
                 {
                     return registryPath;
                 }
             }
+
             return null;
+        }
+
+        private static string GetProgramFilePath(Environment.SpecialFolder specialFolder, string[] paths)
+        {
+            foreach (string path in paths)
+            {
+                string fullPath = Environment.GetFolderPath(specialFolder) + path;
+                if (File.Exists(fullPath))
+                {
+                    return fullPath;
+                }
+            }
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -89,32 +99,28 @@ namespace PicView.FileHandling
         /// <param name="path">The path to the archived file</param>
         /// <param name="exe">Full path of the executeable</param>
         /// <param name="winrar">If WinRar or 7-Zip</param>
-        private static bool Extract(string path, string exe, bool winrar)
+        private static bool Extract(string path, string exe, bool isWinrar)
         {
-            if (CreateTempDirectory(path))
+            if (!CreateTempDirectory(path))
             {
+                return false;
+            }
+
 #if DEBUG
-                Trace.WriteLine("Created temp dir: " + TempFilePath);
+            Trace.WriteLine("Created temp dir: " + TempFilePath);
 #endif
-            }
-            else { return false; }
 
-            // Create backup
-            if (ErrorHandling.CheckOutOfRange() == false)
-            {
-                Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
-            }
+            BackupPath = ErrorHandling.CheckOutOfRange() == false ? Pics[FolderIndex] : null;
+            IsBeingExtraced = true;
 
-            var arguments = winrar ?
-                // Add WinRAR specifics
-                "x -o- \"" + path + "\" "
-                :
-                // Add 7-Zip specifics
-                "x \"" + path + "\" -o";
+            var arguments = isWinrar
+                ? $"x -o- \"{path}\" " // WinRAR
+                : $"x \"{path}\" -o"; // 7-Zip
 
-            arguments += TempFilePath + SupportedFilesFilter + " -r -aou";
+            var supportedFilesFilter = " *" + string.Join(" *", SupportedFiles.FileExtensions) + " ";
+            arguments += TempFilePath + supportedFilesFilter + " -r -aou";
 
-            var x = Process.Start(new ProcessStartInfo
+            var process = Process.Start(new ProcessStartInfo
             {
                 FileName = exe,
                 Arguments = arguments,
@@ -127,42 +133,44 @@ namespace PicView.FileHandling
 #endif
             });
 
-            if (x == null) { return false; }
+            if (process == null) { return false; }
 
-            x.EnableRaisingEvents = true;
-            x.BeginOutputReadLine();
-            x.OutputDataReceived += async delegate
+            var previewed = false;
+
+            process.EnableRaisingEvents = true;
+            process.BeginOutputReadLine();
+            process.OutputDataReceived += (_, _) =>
             {
-                while (Pics.Count < 1 && x.HasExited == false)
+                // Fix it if files are in sub directory
+                while (SetDirectory() && !process.HasExited)
                 {
-                    SetDirectory();
-                }
-                if (Pics.Count >= 1 && !x.HasExited)
-                {
-                    await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                    if (Pics.Count >= 1 && !previewed) 
+                    {
+                        LoadPic.LoadingPreview(new FileInfo(Pics[0]));
+                        previewed = true;
+                    }
                 }
             };
-            x.Exited += async delegate
+
+            process.Exited += async (_, _) =>
             {
                 if (SetDirectory())
                 {
-                    if (Navigation.FolderIndex > 0)
-                    {
-                        await LoadPic.LoadPiFromFileAsync(Pics[0]).ConfigureAwait(false);
-                    }
+                    await LoadPic.LoadPicFromStringAsync(Pics[0]).ConfigureAwait(false);
 
-                    // Add zipped files as recent file
-                    History.Add(TempZipFile);
+                    GetFileHistory ??= new FileHistory();
+                    GetFileHistory.Add(TempZipFile);
 
-                    if (Properties.Settings.Default.FullscreenGalleryHorizontal)
+                    if (Settings.Default.FullscreenGalleryHorizontal)
                     {
-                        await PicGallery.GalleryLoad.Load().ConfigureAwait(false);
+                        await GalleryLoad.Load().ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await ChangeImage.ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                    await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 }
+                IsBeingExtraced = false;
             };
 
             return true;
@@ -177,10 +185,6 @@ namespace PicView.FileHandling
             return Directory.Exists(TempFilePath);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
         private static bool SetDirectory()
         {
             if (string.IsNullOrEmpty(TempFilePath))
@@ -193,7 +197,7 @@ namespace PicView.FileHandling
 
             // Set extracted files to Pics
             if (!Directory.Exists(TempFilePath)) { return false; }
-            
+
             var directory = Directory.GetDirectories(TempFilePath);
             if (directory.Length > 0)
             {

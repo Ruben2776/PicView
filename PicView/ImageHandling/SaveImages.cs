@@ -1,33 +1,31 @@
 ﻿using ImageMagick;
 using PicView.UILogic;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace PicView.ImageHandling
 {
     internal static class SaveImages
     {
-        internal static async Task<bool> SaveImageAsync(int rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
+        internal static async Task<bool> SaveImageAsync(double rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
         {
             MagickImage? magickImage = new();
             try
             {
                 if (hlsl)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         magickImage = ImageDecoder.GetRenderedMagickImage();
                     });
-
                 }
                 else if (bitmapSource is not null)
                 {
                     var encoder = new PngBitmapEncoder();
 
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
                     });

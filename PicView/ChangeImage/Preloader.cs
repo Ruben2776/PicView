@@ -1,25 +1,37 @@
 ﻿using PicView.ImageHandling;
-using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
 {
-    /// <summary>
-    /// Used for containing a list of BitmapSources
-    /// </summary>
     internal static class Preloader
     {
         internal class PreloadValue
         {
+            /// <summary>
+            /// The bitmap source of the image
+            /// </summary>
             internal BitmapSource? BitmapSource;
+
+            /// <summary>
+            /// Whether the image is currently being loaded
+            /// </summary>
             internal bool IsLoading;
+
+            /// <summary>
+            /// FileInfo object of the image file.
+            /// </summary>
             internal FileInfo? FileInfo;
 
+            /// <summary>
+            /// Constructs a new PreloadValue object with the specified values
+            /// </summary>
+            /// <param name="bitmap">The BitmapSource image that is preloaded and cached.</param>
+            /// <param name="loading">Whether the image is currently being loaded</param>
+            /// <param name="fileInfo">The file info of the image</param>
             internal PreloadValue(BitmapSource? bitmap, bool loading, FileInfo? fileInfo)
             {
                 BitmapSource = bitmap;
@@ -29,198 +41,160 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
-        /// Preloader list of BitmapSources
+        /// A dictionary containing the preloaded images
         /// </summary>
-        private static readonly ConcurrentDictionary<
-            string, PreloadValue> Sources = new();
+        private static readonly ConcurrentDictionary<string, PreloadValue> _preloadList = new();
 
         /// <summary>
-        /// Add file to preloader from index. Returns true if new value added.
+        /// Set the maximum number of bitmaps to be cached
         /// </summary>
-        /// <param name="i">Index of Pics</param>
-        /// <param name="fileInfo"></param>
-        /// <param name="bitmapSource"></param>
-        internal static async Task<bool> AddAsync(int i, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
-        {
-            if (i >= Pics?.Count) { return false; }
-
-            if (i < 0)
-            {
-                i = Math.Abs(i);
-            }
-
-            var preloadValue = new PreloadValue(null, true, null);
-
-            if (!Sources.TryAdd(Pics[i], preloadValue)) { return false; }
-            
-            await Task.Run(async () =>
-            {
-                fileInfo ??= new FileInfo(Pics[i]);
-                bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                preloadValue.BitmapSource = bitmapSource;
-                preloadValue.IsLoading = false;
-                preloadValue.FileInfo = fileInfo;
-            }).ConfigureAwait(false);
-            return true;
-        }
+        internal const int MaxCount = 20;
 
         /// <summary>
-        /// Removes the key, after checking if it exists
+        /// Keep track of file names to delete oldest values
         /// </summary>
-        /// <param name="key"></param>
-        internal static void Remove(int key)
+        private static readonly Queue<string> _keys = new Queue<string>();
+
+        /// <summary>
+        /// Adds a file to the preloader from the specified index. Returns true if a new value was added.
+        /// </summary>
+        /// <param name="i">Index of the image in the list of Pics</param>
+        /// <param name="fileInfo">The file info of the image</param>
+        /// <param name="bitmapSource">The bitmap source of the image</param>
+        /// <returns>Preloadvalue that can be null</returns>
+        internal static async Task<PreloadValue?> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
-            if (key < 0) // Make it load at start of folder, when looping is on
-            {
-                key = Math.Abs(key);
-            }
+            if (index < 0 || index >= Pics.Count) return null;
 
-            else if (key >= Pics?.Count)
+            if (_preloadList.ContainsKey(Pics[index]))
             {
-#if DEBUG
-                Trace.WriteLine("Preloader " + nameof(Remove) + " key null, " + key);
-#endif
-                return;
-            }
-
-            if (!Contains(Pics[key]))
-            {
-                return;
+                var preloadValue = Preloader.Get(Pics[index]);
+                while (preloadValue.IsLoading)
+                {
+                    await Task.Delay(10).ConfigureAwait(false);
+                }
+                return preloadValue;
             }
 
             try
             {
-                _ = Sources[Pics[key]];
-#if DEBUG
-                if (!Sources.TryRemove(Pics[key], out _))
+                _keys.Enqueue(Pics[index]);
+                if (_keys.Count > MaxCount)
                 {
-                    Trace.WriteLine($"Failed to Remove {key} from Preloader, index {Pics?[key]}");
+                    var oldestKey = _keys.Dequeue();
+                    if (oldestKey is not null)
+                        _preloadList.Remove(oldestKey, out _);
                 }
-#else
-            Sources.TryRemove(Navigation.Pics[key], out _);
-#endif
+
+                var preloadValue = new PreloadValue(null, true, null);
+                var add = _preloadList.TryAdd(Pics[index], preloadValue);
+                if (add)
+                {
+                    fileInfo ??= new FileInfo(Pics[index]);
+                    bitmapSource = bitmapSource ??
+                        await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
+                        ImageFunctions.ImageErrorMessage();
+                    preloadValue.BitmapSource = bitmapSource;
+                    preloadValue.IsLoading = false;
+                    preloadValue.FileInfo = fileInfo;
+                    return preloadValue;
+                }
+                else
+                {
+                    return Preloader.Get(Pics[index]);
+                }
             }
+            catch (Exception ex)
+            {
 #if DEBUG
-            catch (Exception e)
-            {
-                Trace.WriteLine("Preloader " + nameof(Remove) + "exception" + Environment.NewLine + e.Message);
-                return;
-            }
-#else
-            catch (Exception)
-            {
-                return;
-            }
+                Trace.WriteLine($"{nameof(AddAsync)} exception: \n {ex}");
 #endif
-
-        }
-
-        internal static bool Rename(string file, string name)
-        {
-            if (file == null || name == null) { return false; }
-
-            return Sources.TryRemove(file, out var preloadValue) && Sources.TryAdd(name, preloadValue);
+                return null;
+            }
         }
 
         /// <summary>
-        /// Removes all keys
+        ///  Renames the key of a specified file in the cache.
+        /// </summary>
+        /// <param name="file">File to be renamed</param>
+        /// <param name="name">New name to be changed to</param>
+        /// <returns></returns>
+        internal static void Rename(string file, int index, string name)
+        {
+            if (file == null || name == null) { return; }
+            if (index < 0 || index >= Pics.Count) { return; }
+
+            _preloadList.Remove(file, out var preloadValue);
+            _= AddAsync(index, null, preloadValue.BitmapSource).ConfigureAwait(true);
+        }
+
+        /// <summary>
+        /// Removes all keys from the cache.
         /// </summary>
         internal static void Clear()
         {
-            if (Sources.IsEmpty)
-            {
-                return;
-            }
-
-            Sources.Clear();
-#if DEBUG
-            Trace.WriteLine("Cleared Preloader");
-#endif
+            _preloadList.Clear();
+            _keys.Clear();
         }
 
         /// <summary>
         /// Returns the specified BitmapSource.
         /// Returns null if key not found.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">The corrosponding filename</param>
         /// <returns></returns>
         internal static PreloadValue? Get(string key)
         {
-            if (!Contains(key))
+            if (_preloadList.TryGetValue(key, out var preloadValue))
+            {
+                return preloadValue;
+            }
+            else
             {
                 return null;
             }
-
-            return Sources[key];
         }
 
         /// <summary>
-        /// Checks if the specified key exists
+        /// An asynchronous task that iterates through filenames and caches the decoded images to the preload list
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        internal static bool Contains(string key)
+        /// <param name="currentIndex">The starting point for the iteration.</param>
+        internal static Task PreLoadAsync(int currentIndex) => Task.Run(async () =>
         {
-            return !Sources.IsEmpty && Sources.ContainsKey(key);
-        }
+            int nextStartingIndex, prevStartingIndex;
+            int positiveIterations = 6;
+            int negativeIterations = 3;
 
-        /// <summary>
-        /// Starts decoding images into memory,
-        /// based on current index and if reverse or not
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="reverse"></param>
-        internal static Task PreLoad(int index) => Task.Run(() =>
-        {
-            int loadInfront = Pics.Count >= 10 ? 5 : 3;
-            int loadBehind = Pics.Count >= 10 ? 3 : 2;
-
-            int endPoint;
-            if (Reverse)
+            if (!Reverse)
             {
-                endPoint = index - 1 - loadInfront;
-                // Add first elements behind
-                for (int i = index - 1; i > endPoint; i--)
-                {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
-                }
+                nextStartingIndex = currentIndex;
+                prevStartingIndex = currentIndex - 1;
 
-                // Add second elements
-                for (int i = index + 1; i < (index + 1) + loadBehind; i++)
+                for (int i = 0; i < positiveIterations; i++)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
+                    int index = (nextStartingIndex + i) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
                 }
-
-                //Clean up infront
-                for (int i = (index + 1) + loadBehind; i < (index + 1) + loadInfront; i++)
+                for (int i = 0; i < negativeIterations; i++)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    Remove(i % Pics.Count);
+                    int index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
                 }
             }
             else
             {
-                endPoint = (index - 1) - loadBehind;
-                // Add first elements
-                for (int i = index + 1; i < (index + 1) + loadInfront; i++)
-                {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
-                }
-                // Add second elements behind
-                for (int i = index - 1; i > endPoint; i--)
-                {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    _ = AddAsync(i % Pics.Count).ConfigureAwait(false);
-                }
+                nextStartingIndex = currentIndex;
+                prevStartingIndex = currentIndex + 1;
 
-                //Clean up behind
-                for (int i = index - loadInfront; i <= endPoint; i++)
+                for (int i = 0; i < positiveIterations; i++)
                 {
-                    if (Pics.Count == 0 || Pics.Count == Sources.Count) { return; }
-                    Remove(i % Pics.Count);
+                    int index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
+                }
+                for (int i = 0; i < negativeIterations; i++)
+                {
+                    int index = (prevStartingIndex + i) % Pics.Count;
+                    await AddAsync(index).ConfigureAwait(false);
                 }
             }
         });

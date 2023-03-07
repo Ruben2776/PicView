@@ -1,11 +1,10 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using PicView.ChangeImage;
 using PicView.UILogic;
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -58,7 +57,7 @@ namespace PicView.FileHandling
         /// <returns></returns>
         internal static bool TryDeleteFile(string file, bool Recycle)
         {
-            /// Need to add function to remove from PicGallery
+            // TODO Need to add function to remove from PicGallery
             if (!File.Exists(file))
             {
                 return false;
@@ -94,15 +93,12 @@ namespace PicView.FileHandling
                 return;
             }
 
-            // Sync with preloader
-            Preloader.Remove(FolderIndex);
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 // Sync with gallery
-                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > ChangeImage.Navigation.FolderIndex)
+                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > FolderIndex)
                 {
-                    UC.GetPicGallery.Container.Children.RemoveAt(ChangeImage.Navigation.FolderIndex);
+                    UC.GetPicGallery.Container.Children.RemoveAt(FolderIndex);
                 }
             });
 
@@ -114,7 +110,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            await NavigateToPicAsync(false).ConfigureAwait(false);
+            await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
 
             ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
         }

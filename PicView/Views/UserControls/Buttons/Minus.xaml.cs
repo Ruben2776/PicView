@@ -1,8 +1,9 @@
 ﻿using PicView.Animations;
+using PicView.UILogic;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     /// <summary>
     /// Cool shady close button!
@@ -12,11 +13,6 @@ namespace PicView.Views.UserControls
         public Minus()
         {
             InitializeComponent();
-
-            PreviewMouseLeftButtonDown += delegate
-            {
-                MouseOverAnimations.AltInterfacePreviewMouseOver(PolyFill, BorderBrushKey);
-            };
 
             MouseEnter += delegate
             {
@@ -28,7 +24,7 @@ namespace PicView.Views.UserControls
                 MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
             };
 
-            TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(UILogic.ConfigureWindows.GetMainWindow);
+            TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
         }
     }
 }

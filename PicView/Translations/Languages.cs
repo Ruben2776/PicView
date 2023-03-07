@@ -7,6 +7,7 @@
         de,
         es,
         zh_CN,
+        zh_TW,
         ko,
         pl,
         fr,

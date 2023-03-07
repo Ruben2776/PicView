@@ -1,8 +1,9 @@
 ﻿using PicView.Animations;
+using PicView.UILogic;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class InfoButton : UserControl
     {
@@ -12,12 +13,6 @@ namespace PicView.Views.UserControls
 
             Loaded += delegate
             {
-                TheButton.PreviewMouseLeftButtonDown += delegate
-                {
-                    PreviewMouseButtonDownAnim(IconBrush1);
-                    PreviewMouseButtonDownAnim(txtBrush);
-                };
-
                 TheButton.MouseEnter += delegate
                 {
                     ButtonMouseOverAnim(IconBrush1);
@@ -32,7 +27,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += (_, _) => UILogic.ConfigureWindows.InfoWindow();
+                TheButton.Click += (_, _) => ConfigureWindows.InfoWindow();
             };
         }
     }

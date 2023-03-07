@@ -1,7 +1,6 @@
-﻿
-
-using PicView.UILogic;
-using System.Threading.Tasks;
+﻿using PicView.UILogic;
+using System.Windows.Shell;
+using System.Windows.Threading;
 
 namespace PicView.SystemIntegration
 {
@@ -14,35 +13,41 @@ namespace PicView.SystemIntegration
         /// </summary>
         /// <param name="i">index</param>
         /// <param name="ii">size</param>
-        internal static async Task Progress(double d)
+        internal static void Progress(double d)
         {
-            System.Windows.Shell.TaskbarItemInfo taskbar = new()
+            TaskbarItemInfo taskbar = new()
             {
-                ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal,
+                ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = d
             };
-            taskbar.Freeze();
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
-            {
-                ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
-            });
+            Set(taskbar);
         }
 
         /// <summary>
         /// Stop showing taskbar progress, return to default
         /// </summary>
-        internal static async Task NoProgress()
+        internal static void NoProgress()
         {
-            System.Windows.Shell.TaskbarItemInfo taskbar = new()
+            TaskbarItemInfo taskbar = new()
             {
-                ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal,
+                ProgressState = TaskbarItemProgressState.Normal,
                 ProgressValue = 0.0
             };
+            Set(taskbar);
+        }
+
+        private static void Set(TaskbarItemInfo taskbar)
+        {
             taskbar.Freeze();
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            try
             {
-                ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar;
-            });
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
+            }
+            catch (System.Exception e)
+            {
+                Tooltip.ShowTooltipMessage(e);
+                // Catch task canceled exception
+            }
         }
 
         #endregion Progress

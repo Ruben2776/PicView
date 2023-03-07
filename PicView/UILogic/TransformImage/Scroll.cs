@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using PicView.ChangeImage;
+using PicView.Properties;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
@@ -21,7 +23,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static Point? AutoScrollPos { get; set; }
 
-        internal static readonly Timer AutoScrollTimer = new Timer()
+        internal static readonly System.Timers.Timer AutoScrollTimer = new System.Timers.Timer
         {
             Interval = 7,
             AutoReset = true,
@@ -31,23 +33,24 @@ namespace PicView.UILogic.TransformImage
         internal static bool IsAutoScrolling { get; set; }
 
         /// <summary>
-        /// Toggles scroll and displays it with TooltipStle
+        /// Toggles scroll and displays it with TooltipStyle
         /// </summary>
         internal static async Task SetScrollBehaviour(bool scrolling)
         {
-            Properties.Settings.Default.ScrollEnabled = scrolling;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            if (Properties.Settings.Default.Fullscreen || Properties.Settings.Default.FullscreenGalleryHorizontal)
+            {
+                return;
+            }
+            Settings.Default.ScrollEnabled = scrolling;
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
             });
-
-            // TODO fix error when image is from web
-
-            if (ChangeImage.Navigation.Pics != null)
+            if (Navigation.Pics != null)
             {
                 await TryFitImageAsync().ConfigureAwait(false);
-                if (ChangeImage.Navigation.FreshStartup == false)
+                if (Navigation.FreshStartup == false)
                 {
                     ShowTooltipMessage(scrolling ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);
                 }
@@ -73,8 +76,6 @@ namespace PicView.UILogic.TransformImage
             GetAutoScrollSign.Visibility = Visibility.Visible;
             GetAutoScrollSign.Opacity = 1;
         }
-
-        // Auto scroll
 
         /// <summary>
         /// Starts the auto scroll feature and shows the sign on the ui
@@ -111,7 +112,7 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="E"></param>
-        internal static async void AutoScrollTimerEvent(object sender, ElapsedEventArgs E)
+        internal static void AutoScrollTimerEvent(object sender, ElapsedEventArgs E)
         {
             // Error checking
             if (AutoScrollPos == null || AutoScrollOrigin == null)
@@ -120,7 +121,7 @@ namespace PicView.UILogic.TransformImage
             }
 
             // Start in dispatcher because timer is threaded
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
                 if (AutoScrollOrigin.HasValue && AutoScrollPos.HasValue)
                 {

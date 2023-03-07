@@ -1,10 +1,10 @@
 ﻿using PicView.Animations;
 using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
+using PicView.Shortcuts;
+using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,7 +22,7 @@ namespace PicView.Views.Windows
             Width *= WindowSizing.MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
             {
-                WindowSizing.MonitorInfo = SystemIntegration.MonitorSize.GetMonitorSize();
+                WindowSizing.MonitorInfo = MonitorSize.GetMonitorSize();
                 MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
                 Width *= WindowSizing.MonitorInfo.DpiScaling;
             }
@@ -32,7 +32,8 @@ namespace PicView.Views.Windows
 
         private void Window_ContentRendered(object? sender, EventArgs? e)
         {
-            KeyDown += (_, e) => Shortcuts.GenericWindowShortcuts.KeysDown(null, e, this);
+            WindowBlur.EnableBlur(this);
+            KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
 
             // CloseButton
             CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };
@@ -54,162 +55,135 @@ namespace PicView.Views.Windows
 
             // NegativeButton
             NegativeButton.Click += (_, _) => Negative();
-            NegativeButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(NegativeColorsText); };
             NegativeButton.MouseEnter += delegate { ButtonMouseOverAnim(NegativeColorsText); };
             NegativeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(NegativeColorsText); };
 
             GrayscaleButton.Click += (_, _) => GraySceale();
-            GrayscaleButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(GrayscaleText); };
             GrayscaleButton.MouseEnter += delegate { ButtonMouseOverAnim(GrayscaleText); };
             GrayscaleButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GrayscaleText); };
 
             ColorToneButton.Click += (_, _) => ColorToneEffect();
-            ColorToneButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ColorToneText); };
             ColorToneButton.MouseEnter += delegate { ButtonMouseOverAnim(ColorToneText); };
             ColorToneButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ColorToneText); };
 
             OldMovieButton.Click += (_, _) => OldMovieEffect();
-            OldMovieButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(OldMovieText); };
             OldMovieButton.MouseEnter += delegate { ButtonMouseOverAnim(OldMovieText); };
             OldMovieButton.MouseLeave += delegate { ButtonMouseLeaveAnim(OldMovieText); };
 
             BloomButton.Click += (_, _) => Bloom();
-            BloomButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BloomText); };
             BloomButton.MouseEnter += delegate { ButtonMouseOverAnim(BloomText); };
             BloomButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BloomText); };
 
             GloomButton.Click += (_, _) => Gloom();
-            GloomButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(GloomText); };
             GloomButton.MouseEnter += delegate { ButtonMouseOverAnim(GloomText); };
             GloomButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GloomText); };
 
             MonochromeButton.Click += (_, _) => Monochrome();
-            MonochromeButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(MonochromeText); };
             MonochromeButton.MouseEnter += delegate { ButtonMouseOverAnim(MonochromeText); };
             MonochromeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(MonochromeText); };
 
             WavewarperButton.Click += (_, _) => WaveWarperEffect();
-            WavewarperButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(WaveWarperText); };
             WavewarperButton.MouseEnter += delegate { ButtonMouseOverAnim(WaveWarperText); };
             WavewarperButton.MouseLeave += delegate { ButtonMouseLeaveAnim(WaveWarperText); };
 
             UnderwaterButton.Click += (_, _) => UnderWaterEffect();
-            UnderwaterButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(UnderwaterText); };
             UnderwaterButton.MouseEnter += delegate { ButtonMouseOverAnim(UnderwaterText); };
             UnderwaterButton.MouseLeave += delegate { ButtonMouseLeaveAnim(UnderwaterText); };
 
             BandedSwirlButton.Click += (_, _) => BandedSwirlEffect();
-            BandedSwirlButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BandedSwirlText); };
             BandedSwirlButton.MouseEnter += delegate { ButtonMouseOverAnim(BandedSwirlText); };
             BandedSwirlButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BandedSwirlText); };
 
             SwirlButton.Click += (_, _) => SwirlEffect();
-            SwirlButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SwirlText); };
             SwirlButton.MouseEnter += delegate { ButtonMouseOverAnim(SwirlText); };
             SwirlButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SwirlText); };
 
             RippleButton.Click += (_, _) => RippleEffect1();
-            RippleButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RippleText); };
             RippleButton.MouseEnter += delegate { ButtonMouseOverAnim(RippleText); };
             RippleButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RippleText); };
 
             RippleAltButton.Click += (_, _) => RippleEffect2();
-            RippleAltButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(RippleAltText); };
             RippleAltButton.MouseEnter += delegate { ButtonMouseOverAnim(RippleAltText); };
             RippleAltButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RippleAltText); };
 
             BlurButton.Click += (_, _) => BlurEffect();
-            BlurButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BlurText); };
             BlurButton.MouseEnter += delegate { ButtonMouseOverAnim(BlurText); };
             BlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BlurText); };
 
             DirectionalBlurButton.Click += (_, _) => Dir_blur();
-            DirectionalBlurButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(DirectionalBlurText); };
             DirectionalBlurButton.MouseEnter += delegate { ButtonMouseOverAnim(DirectionalBlurText); };
             DirectionalBlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(DirectionalBlurText); };
 
             TelescopicBlurButton.Click += (_, _) => Teleskopisk_blur();
-            TelescopicBlurButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(TelescopicBlurText); };
             TelescopicBlurButton.MouseEnter += delegate { ButtonMouseOverAnim(TelescopicBlurText); };
             TelescopicBlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(TelescopicBlurText); };
 
             PixelateButton.Click += (_, _) => PixelateEffect();
-            PixelateButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PixelateText); };
             PixelateButton.MouseEnter += delegate { ButtonMouseOverAnim(PixelateText); };
             PixelateButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PixelateText); };
 
             EmbossedButton.Click += (_, _) => Embossed();
-            EmbossedButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(EmbossedText); };
             EmbossedButton.MouseEnter += delegate { ButtonMouseOverAnim(EmbossedText); };
             EmbossedButton.MouseLeave += delegate { ButtonMouseLeaveAnim(EmbossedText); };
 
             SmoothMagnifyButton.Click += (_, _) => MagnifySmoothEffect();
-            SmoothMagnifyButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SmoothMagnifyText); };
             SmoothMagnifyButton.MouseEnter += delegate { ButtonMouseOverAnim(SmoothMagnifyText); };
             SmoothMagnifyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SmoothMagnifyText); };
 
             PivotButton.Click += (_, _) => PivotEffect();
-            PivotButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PivotText); };
             PivotButton.MouseEnter += delegate { ButtonMouseOverAnim(PivotText); };
             PivotButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PivotText); };
 
             PaperfoldButton.Click += (_, _) => PaperFoldEffect();
-            PaperfoldButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PaperFoldText); };
             PaperfoldButton.MouseEnter += delegate { ButtonMouseOverAnim(PaperFoldText); };
             PaperfoldButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PaperFoldText); };
 
             PencilSketchButton.Click += (_, _) => SketchPencilStrokeEffect();
-            PencilSketchButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(PencilSketchText); };
             PencilSketchButton.MouseEnter += delegate { ButtonMouseOverAnim(PencilSketchText); };
             PencilSketchButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PencilSketchText); };
 
             SketchButton.Click += (_, _) => Sketch();
-            SketchButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(SketchText); };
             SketchButton.MouseEnter += delegate { ButtonMouseOverAnim(SketchText); };
             SketchButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SketchText); };
 
             TonemappingButton.Click += (_, _) => ToneMapping();
-            TonemappingButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(ToneMappingText); };
             TonemappingButton.MouseEnter += delegate { ButtonMouseOverAnim(ToneMappingText); };
             TonemappingButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ToneMappingText); };
 
             BandsButton.Click += (_, _) => Bands();
-            BandsButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(BandsText); };
             BandsButton.MouseEnter += delegate { ButtonMouseOverAnim(BandsText); };
             BandsButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BandsText); };
 
             GlasTileButton.Click += (_, _) => GlasTileEffect();
-            GlasTileButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(GlassTileText); };
             GlasTileButton.MouseEnter += delegate { ButtonMouseOverAnim(GlassTileText); };
             GlasTileButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GlassTileText); };
 
             FrostyOutlineButton.Click += (_, _) => FrostyOutlineEffect();
-            FrostyOutlineButton.PreviewMouseLeftButtonDown += delegate { PreviewMouseButtonDownAnim(FrostyOutlineText); };
             FrostyOutlineButton.MouseEnter += delegate { ButtonMouseOverAnim(FrostyOutlineText); };
             FrostyOutlineButton.MouseLeave += delegate { ButtonMouseLeaveAnim(FrostyOutlineText); };
 
             // SaveButton
-            SaveButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(SaveText); };
+            SaveButton.MouseEnter += delegate { ButtonMouseOverAnim(SaveText); };
             SaveButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
-            SaveButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(SaveText); };
+            SaveButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveText); };
             SaveButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
             SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync();
 
             // SetAsButton
-            SetAsButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(SetAsText); };
+            SetAsButton.MouseEnter += delegate { ButtonMouseOverAnim(SetAsText); };
             SetAsButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetAsBrush); };
-            SetAsButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(SetAsText); };
+            SetAsButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SetAsText); };
             SetAsButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetAsBrush); };
-            SetAsButton.Click += async (_, _) => await SystemIntegration.Wallpaper.SetWallpaperAsync(SystemIntegration.Wallpaper.WallpaperStyle.Fit).ConfigureAwait(false);
+            SetAsButton.Click += async (_, _) => await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fit).ConfigureAwait(false);
 
             // CopyButton
-            CopyButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CopyText); };
+            CopyButton.MouseEnter += delegate { ButtonMouseOverAnim(CopyText); };
             CopyButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CopyBrush); };
-            CopyButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CopyText); };
+            CopyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(CopyText); };
             CopyButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CopyBrush); };
             CopyButton.Click += (_, _) => Copy_Paste.CopyBitmap();
 
-            #endregion
+            #endregion button events
         }
 
         private void IntensitySlider_ValueChanged()
@@ -302,7 +276,6 @@ namespace PicView.Views.Windows
             {
                 SketchPencilStrokeEffect();
             }
-
         }
 
         #region HLSL Shader Effects
@@ -321,10 +294,8 @@ namespace PicView.Views.Windows
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         private void Negative()

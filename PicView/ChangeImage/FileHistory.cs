@@ -1,124 +1,80 @@
-﻿using PicView.FileHandling;
+﻿using PicView.ChangeTitlebar;
+using PicView.FileHandling;
 using PicView.UILogic;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace PicView.ChangeImage
 {
-    internal static class History
+    internal class FileHistory
     {
-        static List<string>? fileHistory;
-        const short maxCount = 15;
+        private readonly List<string> fileHistory = new List<string>();
+        private const short maxCount = 15;
+        private readonly string path;
 
-        internal static void InstantiateFileHistory()
+        public FileHistory()
         {
-            fileHistory = new List<string>();
+            path = FileFunctions.GetWritingPath() + "\\Recent.txt";
 
-            string path = FileFunctions.GetWritingPath() + "\\Recent.txt";
-            StreamReader? listToRead = null;
-
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                try
-                {
-                    listToRead = new StreamReader(path);
-                }
-                catch (System.Exception)
-                {
-                    return; // Putting in try catch prevents error when file list is empty
-                }
-
-                if (listToRead == null) { return; }
-
-                using (listToRead)
-                {
-                    while (listToRead.Peek() >= 0)
-                    {
-                        fileHistory.Add(listToRead.ReadLine());
-                    }
-                }
+                using FileStream fs = File.Create(path);
+                fs.Seek(0, SeekOrigin.Begin);
             }
-            else
-            {
-                try
-                {
-                    using FileStream fs = File.Create(path);
-                    fs.Seek(0, SeekOrigin.Begin);
-                }
-                catch (System.Exception)
-                {
-                    return;
-                }
 
-                WriteToFile();
+            ReadFromFile();
+        }
+
+        private void ReadFromFile()
+        {
+            fileHistory.Clear();
+
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
+            using var reader = new StreamReader(path);
+            while (reader.Peek() >= 0)
+            {
+                fileHistory.Add(reader.ReadLine());
             }
         }
 
         /// <summary>
         /// Write all entries to the Recent.txt file
         /// </summary>
-        internal static void WriteToFile()
+        internal void WriteToFile()
         {
-            if (fileHistory is null)
+            using var writer = new StreamWriter(path);
+            foreach (string item in fileHistory)
             {
-                fileHistory = new List<string>();
-            }
-
-            try
-            {
-                // Create file called "Recent.txt" located on app folder
-                var streamWriter = new StreamWriter(FileFunctions.GetWritingPath() + "\\Recent.txt");
-
-                foreach (string item in fileHistory)
-                {
-                    // Write list to stream
-                    streamWriter.WriteLine(item);
-                }
-
-                // Write stream to file
-                streamWriter.Flush();
-                // Close the stream and reclaim memory
-                streamWriter.Close();
-            }
-            catch (System.Exception)
-            {
-                // Putting in try catch prevents error when file list is empty
+                writer.WriteLine(item);
             }
         }
 
-        internal static async Task OpenLastFileAsync()
+        internal async Task OpenLastFileAsync()
         {
-            if (fileHistory is null)
-            {
-                InstantiateFileHistory();
-            }
-
             if (fileHistory.Count <= 0)
             {
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
-            {
-                UC.ToggleStartUpUC(true);
-            });
+            UC.GetStartUpUC.ToggleMenu();
+            SetTitle.SetLoadingString();
 
             await LoadPic.LoadPicFromStringAsync(fileHistory.Last()).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Function to add file to MRU
-        /// </summary>
-        /// <returns></returns>
-        internal static void Add(string fileName)
+        internal void Add(string fileName)
         {
-            if (fileHistory == null) { InstantiateFileHistory(); }
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return;
+            }
 
             lock (fileHistory) // index out of range exception when multiple threads accessing it
             {
@@ -136,7 +92,7 @@ namespace PicView.ChangeImage
             }
         }
 
-        internal static async Task NextAsync()
+        internal async Task NextAsync()
         {
             if (Navigation.Pics.Count <= 0)
             {
@@ -160,7 +116,7 @@ namespace PicView.ChangeImage
             await LoadPic.LoadPicFromStringAsync(fileHistory[index]).ConfigureAwait(false);
         }
 
-        internal static async Task PrevAsync()
+        internal async Task PrevAsync()
         {
             if (Navigation.Pics.Count <= 0)
             {
@@ -181,7 +137,7 @@ namespace PicView.ChangeImage
             await LoadPic.LoadPicFromStringAsync(fileHistory[index]).ConfigureAwait(false);
         }
 
-        static MenuItem menuItem(string filePath, int i)
+        private static MenuItem menuItem(string filePath, int i)
         {
             bool selected;
             if (ErrorHandling.CheckOutOfRange())
@@ -190,7 +146,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                selected = filePath == ChangeImage.Navigation.Pics[ChangeImage.Navigation.FolderIndex];
+                selected = filePath == Navigation.Pics[Navigation.FolderIndex];
             }
 
             var mainColor = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
@@ -208,7 +164,7 @@ namespace PicView.ChangeImage
             var header = Path.GetFileNameWithoutExtension(filePath);
             header = header.Length > 30 ? FileFunctions.Shorten(header, 30) : header;
 
-            var menuItem = new MenuItem()
+            var menuItem = new MenuItem
             {
                 Header = header,
                 ToolTip = filePath,
@@ -227,10 +183,8 @@ namespace PicView.ChangeImage
             return menuItem;
         }
 
-        internal static void RefreshRecentItemsMenu()
+        internal void RefreshRecentItemsMenu()
         {
-            if (fileHistory == null) { InstantiateFileHistory(); }
-
             var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
 
             for (int i = 0; i < maxCount; i++)

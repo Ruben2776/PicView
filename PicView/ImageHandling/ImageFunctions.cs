@@ -1,12 +1,17 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Globalization;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using TextAlignment = System.Windows.TextAlignment;
 
 namespace PicView.ImageHandling
 {
@@ -36,14 +41,13 @@ namespace PicView.ImageHandling
             }
         });
 
-
         internal static async Task OptimizeImageAsyncWithErrorChecking()
         {
             if (ErrorHandling.CheckOutOfRange()) { return; }
 
             bool toCenter = false;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 toCenter = UC.QuickSettingsMenuOpen;
                 if (toCenter is false)
@@ -58,18 +62,18 @@ namespace PicView.ImageHandling
 
             if (success)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
                 {
                     var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
                     var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
 
-                    SetTitle.SetTitleString((int)width, (int)height, ChangeImage.Navigation.FolderIndex, null);
+                    SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
                     Tooltip.CloseToolTipMessage();
                 });
             }
             else
             {
-                Tooltip.ShowTooltipMessage($"0%", toCenter);
+                Tooltip.ShowTooltipMessage("0%", toCenter);
                 return;
             }
 
@@ -79,25 +83,24 @@ namespace PicView.ImageHandling
                 await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
             }
 
-            var fileInfo = new System.IO.FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            var readablePrevSize = FileHandling.FileFunctions.GetSizeReadable(preloadValue.FileInfo.Length);
-            var readableNewSize = FileHandling.FileFunctions.GetSizeReadable(fileInfo.Length);
+            var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
+            var readablePrevSize = FileFunctions.GetReadableFileSize(preloadValue.FileInfo.Length);
+            var readableNewSize = FileFunctions.GetReadableFileSize(fileInfo.Length);
 
             var originalValue = preloadValue.FileInfo.Length;
             var decreasedValue = fileInfo.Length;
             if (originalValue != decreasedValue)
             {
                 var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
                 {
-                    Tooltip.ShowTooltipMessage($"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%", toCenter, System.TimeSpan.FromSeconds(3.5));
+                    Tooltip.ShowTooltipMessage($"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%", toCenter, TimeSpan.FromSeconds(3.5));
                 });
             }
             else
             {
-                Tooltip.ShowTooltipMessage($"0%", toCenter);
+                Tooltip.ShowTooltipMessage("0%", toCenter);
             }
-
         }
 
         internal static async Task<bool> OptimizeImageAsync(string file, bool lossless = true) => await Task.Run(() =>
@@ -116,11 +119,10 @@ namespace PicView.ImageHandling
             {
                 return imageOptimizer.LosslessCompress(file);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return false;
             }
-
         });
 
         internal static RenderTargetBitmap? ImageErrorMessage()
@@ -140,7 +142,7 @@ namespace PicView.ImageHandling
                     //text
                     var text = new FormattedText("Unable to render image", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, 16, brush, WindowSizing.MonitorInfo.DpiScaling)
                     {
-                        TextAlignment = System.Windows.TextAlignment.Center
+                        TextAlignment = TextAlignment.Center
                     };
 
                     ctx.DrawText(text, new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2));
@@ -150,10 +152,20 @@ namespace PicView.ImageHandling
                 rtv.Freeze();
                 return rtv;
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return null;
             }
+        }
+
+        internal static BitmapSource? ShowLogo()
+        {
+           var bitmap = new BitmapImage(new Uri(@"pack://application:,,,/"
+                + Assembly.GetExecutingAssembly().GetName().Name
+                + ";component/"
+                + "Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute));
+            bitmap.Freeze();
+            return bitmap;
         }
     }
 }

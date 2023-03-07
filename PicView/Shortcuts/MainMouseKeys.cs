@@ -1,9 +1,14 @@
-﻿using PicView.Editing;
+﻿using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.Editing;
 using PicView.PicGallery;
+using PicView.Properties;
 using PicView.UILogic;
-using System.Threading.Tasks;
+using PicView.UILogic.DragAndDrop;
+using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -32,7 +37,7 @@ namespace PicView.Shortcuts
             // Move window when Shift is being held down
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
-                UILogic.Sizing.WindowSizing.Move(sender, e);
+                WindowSizing.Move(sender, e);
                 return;
             }
 
@@ -54,7 +59,7 @@ namespace PicView.Shortcuts
                 return;
             }
             // Drag logic
-            if (Properties.Settings.Default.ScrollEnabled == false && GetMainWindow.MainImage.IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
+            if (Settings.Default.ScrollEnabled == false && GetMainWindow.MainImage.IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
             {
                 PreparePanImage(sender, e);
             }
@@ -62,6 +67,11 @@ namespace PicView.Shortcuts
 
         internal static async Task MouseButtonDownAsync(object sender, MouseButtonEventArgs e)
         {
+            if (GetFileHistory is null)
+            {
+                GetFileHistory = new FileHistory();
+            }
+
             switch (e.ChangedButton)
             {
                 case MouseButton.Right:
@@ -73,19 +83,17 @@ namespace PicView.Shortcuts
                     else if (IsAutoScrolling)
                     {
                         StopAutoScroll();
-                        return;
                     }
                     break;
 
                 case MouseButton.Left:
                     if (Keyboard.Modifiers == ModifierKeys.Control)
                     {
-                        UILogic.DragAndDrop.DragToExplorer.DragFile(sender, e);
+                        DragToExplorer.DragFile(sender, e);
                     }
                     if (IsAutoScrolling)
                     {
                         StopAutoScroll();
-                        return;
                     }
                     break;
 
@@ -102,14 +110,12 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.XButton1:
-                    await ChangeImage.History.PrevAsync().ConfigureAwait(false);
+                    await GetFileHistory.PrevAsync().ConfigureAwait(false);
                     break;
 
                 case MouseButton.XButton2:
-                    await ChangeImage.History.NextAsync().ConfigureAwait(false);
+                    await GetFileHistory.NextAsync().ConfigureAwait(false);
                     break;
-
-                default: break;
             }
         }
 
@@ -166,20 +172,9 @@ namespace PicView.Shortcuts
         internal static async Task MainImage_MouseWheelAsync(object sender, MouseWheelEventArgs e)
         {
             // Don't execute keys when entering in GoToPicBox || QuickResize
-            if (GetImageSettingsMenu.GoToPic != null)
+            if (ShouldIgnoreMouseWheel())
             {
-                if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
-                {
-                    return;
-                }
-            }
-
-            if (GetQuickResize != null)
-            {
-                if (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused)
-                {
-                    return;
-                }
+                return;
             }
 
             // Disable normal scroll, so we can use our own values
@@ -192,61 +187,146 @@ namespace PicView.Shortcuts
             }
 
             // Determine horizontal scrolling direction
-            bool dir = Properties.Settings.Default.HorizontalReverseScroll ? e.Delta < 0 : e.Delta > 0;
+            bool direction = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
 
-            // 1. Handle horizontal gallery
-            if (GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                if (Properties.Settings.Default.FullscreenGalleryHorizontal && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                {
-                    await NavigateToPicAsync(dir).ConfigureAwait(false);
-                }
-                else
-                {
-                    GalleryNavigation.ScrollTo(sender, e);
-                }
-
-                return;
+                await HandleFullscreenGalleryAsync(direction, e).ConfigureAwait(false);
+            }
+            else if (GalleryFunctions.IsHorizontalOpen)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => 
+                    GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
             }
 
-            // 2. Handle scroll enabled and shift not held down
-            if (Properties.Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
-                && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
+            else if (ShouldHandleScroll())
             {
-                var zoomSpeed = 40;
-
-                if (e.Delta > 0)
-                {
-                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - zoomSpeed);
-                }
-                else
-                {
-                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);
-                }
-
-                return;
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(direction));
             }
 
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            else
             {
-                if (Properties.Settings.Default.CtrlZoom)
+                await HandleNavigateOrZoomAsync(direction, e).ConfigureAwait(false);
+            }
+        }
+
+        private static bool ShouldIgnoreMouseWheel()
+        {
+            if (GetImageSettingsMenu.GoToPic != null && GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+            {
+                return true;
+            }
+
+            if (GetQuickResize != null && (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool ShouldHandleScroll()
+        {
+            return Settings.Default.ScrollEnabled
+                   && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
+                   && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift
+                   && Math.Abs(GetMainWindow.Scroller.ExtentHeight - GetMainWindow.Scroller.ViewportHeight) > 1;
+        }
+
+        private static async Task HandleFullscreenGalleryAsync(bool direction, MouseWheelEventArgs e)
+        {
+            if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(direction, false, true));
+            }
+            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                if (Settings.Default.CtrlZoom)
                 {
-                    Zoom(e.Delta > 0);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
                 else
                 {
-                    await NavigateToPicAsync(dir).ConfigureAwait(false);
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
                 }
             }
             else
             {
-                if (Properties.Settings.Default.CtrlZoom)
+                if (Settings.Default.CtrlZoom)
                 {
-                    await NavigateToPicAsync(dir).ConfigureAwait(false);
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
                 }
                 else
                 {
-                    Zoom(e.Delta > 0);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
+                }
+            }
+        }
+
+        private static void HandleScroll(bool direction)
+        {
+            var zoomSpeed = 40;
+
+            if (direction)
+            {
+                GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - zoomSpeed);
+            }
+            else
+            {
+                GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + zoomSpeed);
+            }
+        }
+
+        private static async Task HandleNavigateOrZoomAsync(bool direction, MouseWheelEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                if (Settings.Default.CtrlZoom)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
+                }
+                else
+                {
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
+                }
+            }
+            else
+            {
+                if (Settings.Default.CtrlZoom)
+                {
+                    if (direction)
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
             }
         }

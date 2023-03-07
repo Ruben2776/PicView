@@ -1,8 +1,9 @@
 ﻿using PicView.Animations;
+using PicView.UILogic.TransformImage;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls
+namespace PicView.Views.UserControls.Buttons
 {
     public partial class RotateLeftButton : UserControl
     {
@@ -31,7 +32,7 @@ namespace PicView.Views.UserControls
                     AnimationHelper.MouseLeaveBgTexColor(TheButtonBrush);
                 };
 
-                TheButton.Click += async (_, _) => await UILogic.TransformImage.Rotation.RotateAndMoveCursor(false, TheButton).ConfigureAwait(false);
+                TheButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(true, TheButton).ConfigureAwait(false);
             };
         }
     }

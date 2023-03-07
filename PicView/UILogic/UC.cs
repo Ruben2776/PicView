@@ -1,8 +1,10 @@
 ﻿using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.PicGallery;
-using PicView.Views.UserControls;
+using PicView.Views.UserControls.Buttons;
+using PicView.Views.UserControls.Menus;
 using PicView.Views.UserControls.Misc;
-using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media.Animation;
 
@@ -22,7 +24,7 @@ namespace PicView.UILogic
         internal static X2? Getx2 { get; set; }
         internal static Minus? GetMinus { get; set; }
         internal static Restorebutton? GetRestorebutton { get; set; }
-        internal static Views.UserControls.PicGallery? GetPicGallery { get; set; }
+        internal static Views.UserControls.Gallery.PicGallery? GetPicGallery { get; set; }
         internal static GalleryShortcut? GetGalleryShortcut { get; set; }
         internal static CroppingTool? GetCropppingTool { get; set; }
         internal static ColorPicker? GetColorPicker { get; set; }
@@ -69,7 +71,7 @@ namespace PicView.UILogic
                     {
                         GetImageSettingsMenu.GoToPic.GoToPicBox.Text =
                             (Navigation.FolderIndex + 1)
-                            .ToString(System.Globalization.CultureInfo.CurrentCulture);
+                            .ToString(CultureInfo.CurrentCulture);
                     }
                 }
             }
@@ -390,8 +392,11 @@ namespace PicView.UILogic
                 GetStartUpUC = new StartUpUC();
             }
 
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
-            UC.GetStartUpUC.ResponsiveSize(ConfigureWindows.GetMainWindow.Width);
+            if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetStartUpUC))
+            {
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
+                GetStartUpUC.ResponsiveSize(ConfigureWindows.GetMainWindow.Width);
+            }
         }
     }
 }

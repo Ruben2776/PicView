@@ -13,17 +13,14 @@
                     <Rectangle
                         Name="ellipse"
                         Width="13"
-                        Opacity=".9"
                         Fill="{StaticResource BackgroundColorBrushFadeSubtle}"
                         Stroke="{StaticResource BorderBrush}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="ellipse" Property="Fill" Value="{DynamicResource ChosenColorBrush}" />
-                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
                             <Setter TargetName="ellipse" Property="Fill" Value="{DynamicResource ChosenColorBrush}" />
-                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -40,18 +37,15 @@
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Rectangle
                         Name="ellipse"
-                        MinWidth="30"
-                        Opacity=".9"
+                        MinWidth="50"
                         Fill="{StaticResource BackgroundColorBrushFadeSubtle}"
                         Stroke="{StaticResource BorderBrush}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="ellipse" Property="Fill" Value="{DynamicResource ChosenColorBrush}" />
-                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
                             <Setter TargetName="ellipse" Property="Fill" Value="{DynamicResource ChosenColorBrush}" />
-                            <Setter TargetName="ellipse" Property="Opacity" Value=".6" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -177,7 +171,7 @@
             </Trigger>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="Width" Value="Auto" />
-                <Setter Property="Margin" Value="0,0,0,10" />
+                <Setter Property="Margin" Value="0,0,0,6" />
                 <Setter Property="Height" Value="15" />
                 <Setter Property="Template" Value="{StaticResource HorizontalScrollBar}" />
             </Trigger>
