@@ -135,7 +135,7 @@ namespace PicView.Views.Windows
             PicViewSite.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(PicViewBrush); };
             PicViewSite.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(PicViewBrush); };
 
-            UpdateButton.MouseLeftButtonUp += delegate
+            UpdateButton.MouseLeftButtonDown += delegate
             {
                 AutoUpdater.ShowRemindLaterButton = false;
                 AutoUpdater.ReportErrors = true;
