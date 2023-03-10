@@ -118,7 +118,6 @@ namespace PicView.PicGallery
 
         internal static async Task Load()
         {
-
             IsLoading = true;
             var source = new CancellationTokenSource();
             var task = Task.Run(() => LoopAsync(source.Token), source.Token);

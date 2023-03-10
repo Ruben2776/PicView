@@ -67,7 +67,7 @@ namespace PicView.ImageHandling
             return true;
         }
 
-        internal static bool SaveImage(Stream? stream, string? path, string? destination, int? width, int? height, int? quality, string? ext)
+        internal static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination, int? width, int? height, int? quality, string? ext)
         {
             try
             {
@@ -75,11 +75,11 @@ namespace PicView.ImageHandling
 
                 if (stream is not null)
                 {
-                    magickImage.Read(stream);
+                    await magickImage.ReadAsync(stream).ConfigureAwait(false);
                 }
                 else if (path is not null)
                 {
-                    magickImage.Read(path);
+                    await magickImage.ReadAsync(path).ConfigureAwait(false);
                 }
                 else { return false; }
 
@@ -99,14 +99,17 @@ namespace PicView.ImageHandling
 
                 if (destination is not null)
                 {
-                    magickImage.Write(ext is not null ? Path.ChangeExtension(destination, ext) : destination);
+                    await magickImage.WriteAsync(ext is not null ? Path.ChangeExtension(destination, ext) : destination).ConfigureAwait(false);
                 }
                 else
                 {
-                    magickImage.Write(ext is not null ? Path.ChangeExtension(path, ext) : path);
+                    await magickImage.WriteAsync(ext is not null ? Path.ChangeExtension(path, ext) : path).ConfigureAwait(false);
                 }
             }
-            catch (Exception) { return false; }
+            catch (Exception) 
+            { 
+                return false;
+            }
             return true;
         }
     }
