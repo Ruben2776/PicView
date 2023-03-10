@@ -263,10 +263,11 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Centers on the current monitor
         /// </summary>
-        internal static void CenterWindowOnScreen()
+        internal static void CenterWindowOnScreen(bool horizontal = true)
         {
             GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
-            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
+            if (horizontal)
+                GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
         }
 
         internal static void SetLastWindowSize()

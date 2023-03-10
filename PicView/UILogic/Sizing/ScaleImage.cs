@@ -197,10 +197,7 @@ namespace PicView.UILogic.Sizing
 
             if (Settings.Default.AutoFitWindow)
             {
-                if (Settings.Default.KeepCentered)
-                {
-                    CenterWindowOnScreen();
-                }
+                CenterWindowOnScreen(Settings.Default.KeepCentered);
 
                 // Update mainWindow.TitleBar width to dynamically fit new size
                 var x = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
