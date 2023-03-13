@@ -25,11 +25,6 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void SetWindowBehavior()
         {
-            if (Properties.Settings.Default.Fullscreen)
-            {
-                return;
-            }
-
             if (Settings.Default.AutoFitWindow)
             {
                 GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
@@ -70,6 +65,11 @@ namespace PicView.UILogic.Sizing
                 {
                     GetQuickSettingsMenu.SetFit.IsChecked = false;
                 }
+
+                GetMainWindow.Width =
+                GetMainWindow.Height =
+                GetMainWindow.MainImageBorder.Width =
+                GetMainWindow.MainImageBorder.Height = double.NaN;
 
                 GetMainWindow.ParentContainer.Width = GetMainWindow.Width;
                 GetMainWindow.ParentContainer.Height = GetMainWindow.Height;

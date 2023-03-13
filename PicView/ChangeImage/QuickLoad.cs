@@ -26,12 +26,6 @@ namespace PicView.ChangeImage
         internal static async Task QuickLoadAsync(string file)
         {
             var fileInfo = new FileInfo(file);
-
-            if (!GalleryFunctions.IsHorizontalFullscreenOpen) // Fix window sizing
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, WindowSizing.SetWindowBehavior);
-            }
-
             if (!fileInfo.Exists) // If not file, try to load if URL or base64
             {
                 await LoadPicFromStringAsync(file).ConfigureAwait(false);
@@ -44,14 +38,13 @@ namespace PicView.ChangeImage
 
             if (size.HasValue)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
-                FitImage(size.Value.Width, size.Value.Height));
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => FitImage(size.Value.Width, size.Value.Height), DispatcherPriority.Send);
             }
 
             bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             if (bitmapSource != null)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () => SetMainImage(bitmapSource, fileInfo));
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => SetMainImage(bitmapSource, fileInfo), DispatcherPriority.Send);
             }
 
             await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
@@ -60,8 +53,8 @@ namespace PicView.ChangeImage
 
             if (bitmapSource != null)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
-                    SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo));
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => 
+                    SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo), DispatcherPriority.Send);
             }
 
             if (FolderIndex > 0)

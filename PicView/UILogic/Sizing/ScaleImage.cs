@@ -183,11 +183,15 @@ namespace PicView.UILogic.Sizing
             {
                 // Fit image by aspect ratio calculation
                 // and update values
+                if (Settings.Default.AutoFitWindow)
+                {
+                    GetMainWindow.ParentContainer.Width = double.NaN;
+                    GetMainWindow.ParentContainer.Height = double.NaN;
+                }
+
                 GetMainWindow.MainImage.Width = XWidth = width * AspectRatio;
                 GetMainWindow.MainImage.Height = XHeight = height * AspectRatio;
 
-                GetMainWindow.ParentContainer.Width = double.NaN;
-                GetMainWindow.ParentContainer.Height = double.NaN;
             }
 
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
