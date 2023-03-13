@@ -8,9 +8,9 @@ namespace PicView.Editing.Crop.Tools
     {
         public Shape Shape { get; }
 
-        private readonly Canvas originalCanvas;
+        private readonly Canvas? originalCanvas;
 
-        public CropShape(Shape shape, Canvas overlayCanvas = null)
+        public CropShape(Shape shape, Canvas? overlayCanvas = null)
         {
             Shape = shape;
             originalCanvas = overlayCanvas;
@@ -18,11 +18,7 @@ namespace PicView.Editing.Crop.Tools
 
         public void Redraw(double newX, double newY, double newWidth, double newHeight)
         {
-            //dont use negative value
-            if (newHeight < 0 || newWidth < 0)
-            {
-                return;
-            }
+            if (newHeight < 0 || newWidth < 0) return;
 
             if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
@@ -44,7 +40,6 @@ namespace PicView.Editing.Crop.Tools
 
         public void UpdateRectangle(double newX, double newY, double newWidth, double newHeight)
         {
-            //dont use negative value
             if (newHeight < 0 || newWidth < 0) { return; }
 
             Canvas.SetLeft(Shape, newX);

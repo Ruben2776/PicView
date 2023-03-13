@@ -64,7 +64,9 @@ namespace PicView.Editing.Crop
             cropAdorner = new CropAdorner(adornedElement, canvas);
             var adornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
 
+#if DEBUG
             Debug.Assert(adornerLayer != null, nameof(adornerLayer) + " != null");
+#endif
 
             adornerLayer.Add(cropAdorner);
 
