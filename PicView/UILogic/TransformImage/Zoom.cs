@@ -16,9 +16,10 @@ namespace PicView.UILogic.TransformImage
         private static Point origin;
         private static Point start;
 
+        /// <summary>
         /// Used to determine final point when zooming,
-        /// since DoubleAnimation changes value of
-        /// TranslateTransform continuesly.
+        /// since DoubleAnimation changes value of TranslateTransform continuesly.
+        /// </summary>
         internal static double ZoomValue { get; set; }
 
         /// <summary>
@@ -297,9 +298,6 @@ namespace PicView.UILogic.TransformImage
             {
                 // Hack it to keep the intended value
                 scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue;
-
-                // Make sure value stays correct
-                ZoomValue = 1.0;
             };
 
             var translateAnimX = new DoubleAnimation(translateTransform.X, newTranslateValueX, duration)
