@@ -96,51 +96,45 @@ namespace PicView.ChangeImage
             LoadingPreview(fileInfo);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ToggleStartUpUC(true));
 
-            if (!fileInfo.Exists)
+            if (!fileInfo.Exists)  // If file does not exist, try to load it if base64 or URL
             {
                 await LoadPicFromStringAsync(fileInfo.FullName, fileInfo).ConfigureAwait(false);
                 return;
             }
-
-            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             if (Pics.Count == 0)
             {
                 if (SupportedFiles.IsArchive(fileInfo))
                 {
                     await LoadPicFromArchiveAsync(null, fileInfo).ConfigureAwait(false);
+                    return;
                 }
                 else
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
                 }
-                return;
             }
 
-            var foundIndex = Pics.IndexOf(fileInfo.FullName);
+            var folderChanged = await CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
 
-            if (FolderIndex == foundIndex)
+            if (folderChanged)
             {
-                await LoadPicAtIndexAsync(foundIndex, fileInfo).ConfigureAwait(false);
-            }
-            else
-            {
-                var folderChanged = await CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
-                FolderIndex = foundIndex >= 0 ? foundIndex : 0;
-                if (Pics.Count() > Preloader.MaxCount) Preloader.Clear();
+                Preloader.Clear();
 
-                if (FolderIndex >= 0)
-                    await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
+                await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
                 if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
                     await GalleryLoad.Load().ConfigureAwait(false);
-                    GalleryNavigation.SetSelected(FolderIndex, true);
                 }
 
                 if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
                     InitialPath = fileInfo.FullName;
             }
+            else if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+
+            FolderIndex = Pics.IndexOf(fileInfo.FullName);
+            await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
 
             FreshStartup = false;
         }
