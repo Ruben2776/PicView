@@ -367,7 +367,18 @@ namespace PicView.Shortcuts
                         }
                         else if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            CropFunctions.StartCrop();
+                            switch (RotationAngle)
+                            {
+                                case 0:
+                                case 90:
+                                case 180:
+                                case 270:
+                                    if (!IsZoomed) // TODO make crop work with zoom
+                                    {
+                                        CropFunctions.StartCrop();
+                                    }
+                                    break;
+                            }
                         }
                         break;
 
@@ -600,7 +611,7 @@ namespace PicView.Shortcuts
                         HideInterfaceLogic.ToggleInterface();
                     }
                 }
-                else if (e.SystemKey == Key.Enter) // Doesn't work..
+                else if (e.SystemKey == Key.Enter)
                 {
                     if (Settings.Default.FullscreenGalleryHorizontal == false)
                     {
