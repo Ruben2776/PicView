@@ -3,8 +3,10 @@ using PicView.ConfigureSettings;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
@@ -53,6 +55,16 @@ namespace PicView.UILogic.Loading
         {
             var args = Environment.GetCommandLineArgs();
 
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => 
+            {
+                if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)
+                {
+                    SetLastWindowSize();
+                }
+                SetWindowBehavior();
+
+            }, DispatcherPriority.Send);
+
             // Determine prefered UI for startup
             if (Settings.Default.FullscreenGalleryHorizontal)
             {
@@ -65,7 +77,6 @@ namespace PicView.UILogic.Loading
                     await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
                 }
             }
-
             else if (Settings.Default.Fullscreen)
             {
                 if (args.Length <= 1)
@@ -74,40 +85,18 @@ namespace PicView.UILogic.Loading
                 }
                 else
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                    {
-                        Fullscreen_Restore(true);
-                    }));
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => Fullscreen_Restore(true), DispatcherPriority.Send);
                 }
             }
 
-            else if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                {
-                    SetLastWindowSize();
-                }));
-            }
-            else
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                {
-                    SetWindowBehavior();
-                }));
-            }
-
             // Load image if possible
-
             if (args.Length <= 1)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                {
-                    Unload(true); // Load clean setup when starting up without arguments       
-                }));
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => Unload(true), DispatcherPriority.Send);
             }
             else
             {
-                _= QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
 
@@ -139,6 +128,13 @@ namespace PicView.UILogic.Loading
                 new ResourceDictionary
                 {
                     Source = new Uri(@"/PicView;component/Views/UserControls/Misc/MainContextMenu.xaml", UriKind.Relative)
+                }
+            );
+
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary
+                {
+                    Source = new Uri(@"/PicView;component/Views/UserControls/Misc/WindowContextMenu.xaml", UriKind.Relative)
                 }
             );
 

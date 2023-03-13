@@ -4,6 +4,7 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.SystemIntegration;
+using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Buttons;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,10 +20,7 @@ namespace PicView.UILogic.Loading
     {
         internal static void AddContextMenus()
         {
-            if (GetFileHistory is null)
-            {
-                GetFileHistory = new FileHistory();
-            }
+            GetFileHistory ??= new FileHistory();
 
             // Add main contextmenu
             MainContextMenu = (ContextMenu)Application.Current.Resources["mainCM"];
@@ -270,6 +268,30 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var CloseCm = (MenuItem)MainContextMenu.Items[19];
             CloseCm.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
+
+
+
+
+
+            // Add Window contextmenu
+            WindowContextMenu = (ContextMenu)Application.Current.Resources["windowCM"];
+
+            var fullscreenWindow = (MenuItem)WindowContextMenu.Items[0];
+            fullscreenWindow.Click += (_,_) => WindowSizing.Fullscreen_Restore();
+
+            var minWindow = (MenuItem)WindowContextMenu.Items[1];
+            minWindow.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
+
+            var closeWindow = (MenuItem)WindowContextMenu.Items[2];
+            closeWindow.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+
+            GetMainWindow.Logo.ContextMenu = WindowContextMenu;
+            GetMainWindow.GalleryButton.ContextMenu = WindowContextMenu;
+            GetMainWindow.RotateButton.ContextMenu = WindowContextMenu;
+            GetMainWindow.FlipButton.ContextMenu = WindowContextMenu;
+            GetMainWindow.MinButton.ContextMenu = WindowContextMenu;
+            GetMainWindow.FullscreenButton.ContextMenu = WindowContextMenu;
+            GetMainWindow.CloseButton.ContextMenu = WindowContextMenu;
         }
     }
 }
