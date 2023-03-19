@@ -67,14 +67,7 @@ namespace PicView.ChangeImage
             if (index < 0 || index >= Pics.Count) return null;
 
             if (_preloadList.ContainsKey(Pics[index]))
-            {
-                var preloadValue = Preloader.Get(Pics[index]);
-                while (preloadValue.IsLoading)
-                {
-                    await Task.Delay(10).ConfigureAwait(false);
-                }
-                return preloadValue;
-            }
+                return Preloader.Get(Pics[index]);
 
             try
             {
@@ -82,8 +75,7 @@ namespace PicView.ChangeImage
                 if (_keys.Count > MaxCount)
                 {
                     var oldestKey = _keys.Dequeue();
-                    if (oldestKey is not null)
-                        _preloadList.Remove(oldestKey, out _);
+                    _preloadList.TryRemove(oldestKey, out _);
                 }
 
                 var preloadValue = new PreloadValue(null, true, null);
@@ -159,7 +151,7 @@ namespace PicView.ChangeImage
         /// An asynchronous task that iterates through filenames and caches the decoded images to the preload list
         /// </summary>
         /// <param name="currentIndex">The starting point for the iteration.</param>
-        internal static Task PreLoadAsync(int currentIndex) => Task.Run(async () =>
+        internal static Task PreLoadAsync(int currentIndex) => Task.Run(() =>
         {
             int nextStartingIndex, prevStartingIndex;
             int positiveIterations = 6;
@@ -170,32 +162,32 @@ namespace PicView.ChangeImage
                 nextStartingIndex = currentIndex;
                 prevStartingIndex = currentIndex - 1;
 
-                for (int i = 0; i < positiveIterations; i++)
+                Parallel.For(0, positiveIterations, i =>
                 {
                     int index = (nextStartingIndex + i) % Pics.Count;
-                    await AddAsync(index).ConfigureAwait(false);
-                }
-                for (int i = 0; i < negativeIterations; i++)
+                    _= AddAsync(index).ConfigureAwait(false);
+                });
+                Parallel.For(0, negativeIterations, i =>
                 {
                     int index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
-                    await AddAsync(index).ConfigureAwait(false);
-                }
+                    _= AddAsync(index).ConfigureAwait(false);
+                });
             }
             else
             {
                 nextStartingIndex = currentIndex;
                 prevStartingIndex = currentIndex + 1;
 
-                for (int i = 0; i < positiveIterations; i++)
+                Parallel.For(0, positiveIterations, i =>
                 {
                     int index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
-                    await AddAsync(index).ConfigureAwait(false);
-                }
-                for (int i = 0; i < negativeIterations; i++)
+                    _ = AddAsync(index).ConfigureAwait(false);
+                });
+                Parallel.For(0, negativeIterations, i =>
                 {
-                    int index = (prevStartingIndex + i) % Pics.Count;
-                    await AddAsync(index).ConfigureAwait(false);
-                }
+                    int index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                    _ = AddAsync(index).ConfigureAwait(false);
+                });
             }
         });
     }
