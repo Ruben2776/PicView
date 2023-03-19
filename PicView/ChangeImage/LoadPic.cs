@@ -294,7 +294,7 @@ namespace PicView.ChangeImage
                 GalleryNavigation.FullscreenGalleryNavigation();
 
             if (GetToolTipMessage is not null && GetToolTipMessage.IsVisible)
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                     GetToolTipMessage.Visibility = Visibility.Hidden);
 
             if (Pics.Count > 1)

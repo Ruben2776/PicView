@@ -71,7 +71,20 @@ namespace PicView.ChangeImage
                 }
 
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index, fileInfo);
+            }, DispatcherPriority.Send);
+
+            var titleString = TitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index, fileInfo);
+            if (titleString == null)
+            {
+                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                return;
+            }
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ConfigureWindows.GetMainWindow.Title = titleString[0];
+                ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
+                ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
             }, DispatcherPriority.Send);
         }
 

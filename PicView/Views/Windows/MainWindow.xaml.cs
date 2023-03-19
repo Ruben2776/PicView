@@ -90,6 +90,7 @@ namespace PicView.Views.Windows
                 ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
                 ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
 
+
                 // ClickArrows
                 GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
                 GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, true).ConfigureAwait(false);

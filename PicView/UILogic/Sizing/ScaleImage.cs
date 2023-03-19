@@ -166,8 +166,6 @@ namespace PicView.UILogic.Sizing
                     break;
             }
 
-            GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
-
             if (Settings.Default.ScrollEnabled)
             {
                 GetMainWindow.MainImage.Height = maxWidth * height / width;
@@ -220,7 +218,7 @@ namespace PicView.UILogic.Sizing
                 GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
             }
 
-            if (ZoomLogic.translateTransform is not null && ZoomLogic.translateTransform?.X != 0d)
+            if (ZoomLogic.IsZoomed)
             {
                 ZoomLogic.ResetZoom(false);
             }
