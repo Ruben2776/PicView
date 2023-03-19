@@ -130,20 +130,13 @@ namespace PicView.ImageHandling
             return sb.ToString();
         }
 
-        private static bool Optimize(bool lossless, string file)
+        private static bool Optimize(bool isLossless, string file)
         {
             ImageOptimizer imageOptimizer = new()
             {
-                OptimalCompression = lossless
+                OptimalCompression = isLossless
             };
-            try
-            {
-                return imageOptimizer.Compress(file);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return imageOptimizer.Compress(file);
         }
 
         internal class ThumbNailHolder

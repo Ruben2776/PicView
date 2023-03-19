@@ -41,7 +41,7 @@ namespace PicView.SystemIntegration
             taskbar.Freeze();
             try
             {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
             }
             catch (System.Exception e)
             {
