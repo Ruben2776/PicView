@@ -87,10 +87,7 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.Left:
-                    if (Keyboard.Modifiers == ModifierKeys.Control)
-                    {
                         DragToExplorer.DragFile(sender, e);
-                    }
                     if (IsAutoScrolling)
                     {
                         StopAutoScroll();
