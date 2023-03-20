@@ -28,7 +28,8 @@ namespace PicView.UILogic.DragAndDrop
                 || GalleryFunctions.IsHorizontalOpen
                 || Settings.Default.Fullscreen
                 || Scroll.IsAutoScrolling
-                || ZoomLogic.IsZoomed)
+                || ZoomLogic.IsZoomed
+                || ConfigureWindows.MainContextMenu.IsVisible)
             {
                 return;
             }
@@ -38,6 +39,8 @@ namespace PicView.UILogic.DragAndDrop
                 EditTitleBar.Refocus();
                 return;
             }
+
+            if (UC.GetCropppingTool is { IsVisible: true }) return;
 
             string? file;
             if (Pics.Count == 0)
@@ -62,13 +65,8 @@ namespace PicView.UILogic.DragAndDrop
                 }
             }
             else if (Pics.Count > FolderIndex)
-            {
                 file = Pics[FolderIndex];
-            }
-            else
-            {
-                return;
-            }
+            else return;
             if (file == null) return;
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
@@ -90,19 +88,13 @@ namespace PicView.UILogic.DragAndDrop
                 DragDrop.AddQueryContinueDragHandler(senderElement, DragContrinueHandler);
                 DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
             });
-
-            //e.Handled = true;
         }
 
         private static void DragContrinueHandler(object sender, QueryContinueDragEventArgs e)
         {
             if (e.Action == DragAction.Continue && e.KeyStates != DragDropKeyStates.LeftMouseButton)
             {
-                if (dragdropWindow == null)
-                {
-                    return;
-                }
-                dragdropWindow.Hide();
+                dragdropWindow?.Hide();
                 return;
             }
             Win32Point w32Mouse = new Win32Point();

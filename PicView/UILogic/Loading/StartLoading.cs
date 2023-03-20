@@ -138,11 +138,8 @@ namespace PicView.UILogic.Loading
                 }
             );
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-            {
-                // Load UI and events
-                AddUIElementsAndUpdateValues();
-            }));
+            // Load UI and events
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => AddUIElementsAndUpdateValues());
         }
 
         private static void AddUIElementsAndUpdateValues()
