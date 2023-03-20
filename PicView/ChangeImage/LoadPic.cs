@@ -231,6 +231,8 @@ namespace PicView.ChangeImage
         /// <param name="fileInfo">The file information for the image. If not specified, the file information will be obtained from the image list using the specified index.</param>
         internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
         {
+            if (GetQuickResize is not null && GetQuickResize.Opacity > 0) return;
+
             FolderIndex = index;
             var preloadValue = Preloader.Get(Pics[index]);
             fileInfo ??= new FileInfo(Pics[index]);
@@ -268,7 +270,8 @@ namespace PicView.ChangeImage
 
                 if (preloadValue is null)
                 {
-                    preloadValue = await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                    await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                    preloadValue = Preloader.Get(Pics[index]);
                     if (preloadValue is null)
                     {
                         await ErrorHandling.ReloadAsync().ConfigureAwait(false);

@@ -62,12 +62,9 @@ namespace PicView.ChangeImage
         /// <param name="fileInfo">The file info of the image</param>
         /// <param name="bitmapSource">The bitmap source of the image</param>
         /// <returns>Preloadvalue that can be null</returns>
-        internal static async Task<PreloadValue?> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
+        internal static async Task AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
-            if (index < 0 || index >= Pics.Count) return null;
-
-            if (_preloadList.ContainsKey(Pics[index]))
-                return Preloader.Get(Pics[index]);
+            if (index < 0 || index >= Pics.Count) return;
 
             try
             {
@@ -75,7 +72,12 @@ namespace PicView.ChangeImage
                 if (_keys.Count > MaxCount)
                 {
                     var oldestKey = _keys.Dequeue();
-                    _preloadList.TryRemove(oldestKey, out _);
+                    var remove = _preloadList.TryRemove(oldestKey, out _);
+#if DEBUG
+                    if (remove)
+                        Trace.WriteLine($"{oldestKey} removed at {Pics.IndexOf(Pics[index])}");
+#endif
+                    return;
                 }
 
                 var preloadValue = new PreloadValue(null, true, null);
@@ -89,11 +91,10 @@ namespace PicView.ChangeImage
                     preloadValue.BitmapSource = bitmapSource;
                     preloadValue.IsLoading = false;
                     preloadValue.FileInfo = fileInfo;
-                    return preloadValue;
-                }
-                else
-                {
-                    return Preloader.Get(Pics[index]);
+
+#if DEBUG
+                    Trace.WriteLine($"{fileInfo.Name} added at {index}");
+#endif
                 }
             }
             catch (Exception ex)
@@ -101,7 +102,6 @@ namespace PicView.ChangeImage
 #if DEBUG
                 Trace.WriteLine($"{nameof(AddAsync)} exception: \n {ex}");
 #endif
-                return null;
             }
         }
 
@@ -153,18 +153,21 @@ namespace PicView.ChangeImage
         /// <param name="currentIndex">The starting point for the iteration.</param>
         internal static Task PreLoadAsync(int currentIndex) => Task.Run(() =>
         {
-            int nextStartingIndex, prevStartingIndex;
-            int positiveIterations = 6;
-            int negativeIterations = 3;
+            int prevStartingIndex;
+            int positiveIterations = 4;
+            int negativeIterations = 2;
+
+#if DEBUG
+            Trace.WriteLine($"\nPreloading started at {currentIndex} \n");
+#endif
 
             if (!Reverse)
             {
-                nextStartingIndex = currentIndex;
                 prevStartingIndex = currentIndex - 1;
 
                 Parallel.For(0, positiveIterations, i =>
                 {
-                    int index = (nextStartingIndex + i) % Pics.Count;
+                    int index = (currentIndex + i) % Pics.Count;
                     _= AddAsync(index).ConfigureAwait(false);
                 });
                 Parallel.For(0, negativeIterations, i =>
@@ -175,17 +178,16 @@ namespace PicView.ChangeImage
             }
             else
             {
-                nextStartingIndex = currentIndex;
                 prevStartingIndex = currentIndex + 1;
 
                 Parallel.For(0, positiveIterations, i =>
                 {
-                    int index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                    int index = (currentIndex - i + Pics.Count) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
                 Parallel.For(0, negativeIterations, i =>
                 {
-                    int index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                    int index = (prevStartingIndex + i + Pics.Count) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
             }

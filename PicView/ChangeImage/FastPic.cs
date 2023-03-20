@@ -1,4 +1,5 @@
 ﻿using PicView.SystemIntegration;
+using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
@@ -53,7 +54,8 @@ namespace PicView.ChangeImage
             {
                 fileInfo = new FileInfo(Pics[index]);
                 LoadPic.LoadingPreview(fileInfo);
-                preloadValue = await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                preloadValue = Preloader.Get(Pics[index]);
                 if (preloadValue is null)
                 {
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
@@ -77,13 +79,15 @@ namespace PicView.ChangeImage
 
             _timer = null;
             BitmapSource? pic = null;
-            Preloader.PreloadValue? preloadValue = null;
-
-            preloadValue = await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+            var preloadValue = Preloader.Get(Pics[FolderIndex]);
             if (preloadValue is null)
             {
-                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                return;
+                await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+                if (preloadValue is null)
+                {
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    return;
+                }
             }
             while (preloadValue.IsLoading)
             {
