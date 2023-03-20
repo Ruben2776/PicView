@@ -19,7 +19,7 @@ namespace PicView.Shortcuts
 {
     internal static class MainMouseKeys
     {
-        internal static async Task MouseLeftButtonDownAsync(object sender, MouseButtonEventArgs e)
+        internal static void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (GetMainWindow.TitleText.InnerTextBox.IsKeyboardFocusWithin)
             {
@@ -30,7 +30,7 @@ namespace PicView.Shortcuts
 
             if (Color_Picking.IsRunning)
             {
-                await Color_Picking.StopRunningAsync(true).ConfigureAwait(false);
+                Color_Picking.StopRunning(true);
                 return;
             }
 
@@ -78,7 +78,7 @@ namespace PicView.Shortcuts
                     // Stop running color picking when right clicking
                     if (Color_Picking.IsRunning)
                     {
-                        await Color_Picking.StopRunningAsync(false).ConfigureAwait(false);
+                        Color_Picking.StopRunning(false);
                     }
                     else if (IsAutoScrolling)
                     {
