@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeTitlebar;
+using PicView.Editing;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -29,6 +30,8 @@ namespace PicView.UILogic.DragAndDrop
                 || Settings.Default.Fullscreen
                 || Scroll.IsAutoScrolling
                 || ZoomLogic.IsZoomed
+                || UC.GetQuickResize is not null && UC.GetQuickResize.Opacity > 0
+                || UC.UserControls_Open()
                 || ConfigureWindows.MainContextMenu.IsVisible)
             {
                 return;
@@ -37,6 +40,12 @@ namespace PicView.UILogic.DragAndDrop
             if (ConfigureWindows.GetMainWindow.TitleText.IsFocused)
             {
                 EditTitleBar.Refocus();
+                return;
+            }
+
+            if (Color_Picking.IsRunning)
+            {
+                Color_Picking.StopRunning(false);
                 return;
             }
 
@@ -92,7 +101,7 @@ namespace PicView.UILogic.DragAndDrop
 
         private static void DragContrinueHandler(object sender, QueryContinueDragEventArgs e)
         {
-            if (e.Action == DragAction.Continue && e.KeyStates != DragDropKeyStates.LeftMouseButton)
+            if (Color_Picking.IsRunning || e.Action == DragAction.Continue && e.KeyStates != DragDropKeyStates.LeftMouseButton)
             {
                 dragdropWindow?.Hide();
                 return;
