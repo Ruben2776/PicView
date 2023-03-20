@@ -166,7 +166,6 @@ namespace PicView.ChangeImage
 #if DEBUG
                     Trace.WriteLine($"{nameof(Remove)} exception:\n{e.Message}");
 #endif
-
                 return;
             }
         }
