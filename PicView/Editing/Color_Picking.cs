@@ -52,7 +52,7 @@ namespace PicView.Editing
             Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
         }
 
-        internal static async Task StopRunningAsync(bool addValue)
+        internal static void StopRunning(bool addValue)
         {
             // Reset cursor from coloc picking
             ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
@@ -70,7 +70,7 @@ namespace PicView.Editing
                     Clipboard.SetText(x);
                     Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
                 }
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                 {
                     ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
                     ConfigureWindows.GetMainWindow.Focus();

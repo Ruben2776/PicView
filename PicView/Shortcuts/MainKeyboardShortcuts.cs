@@ -253,7 +253,7 @@ namespace PicView.Shortcuts
                         }
                         else if (Color_Picking.IsRunning)
                         {
-                            await Color_Picking.StopRunningAsync(false).ConfigureAwait(false);
+                            Color_Picking.StopRunning(false);
                         }
                         else if (GetEffectsWindow != null && GetEffectsWindow.IsVisible)
                         {

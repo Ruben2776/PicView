@@ -76,7 +76,7 @@ namespace PicView.Views.Windows
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
                 KeyUp += (sender, e) => MainKeyboardShortcuts.MainWindow_KeysUp(sender, e);
-                MouseLeftButtonDown += async (sender, e) => await MainMouseKeys.MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
+                MouseLeftButtonDown += MainMouseKeys.MouseLeftButtonDown;
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
                 // Lowerbar
