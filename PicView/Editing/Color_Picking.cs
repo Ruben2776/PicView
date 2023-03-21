@@ -37,7 +37,15 @@ namespace PicView.Editing
             var c = GetColorAt(w32Mouse.X, w32Mouse.Y);
 
             // Set color values to usercontrol
-            UC.GetColorPicker.HexCodePresenter.Content = HexConverter(c);
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                UC.GetColorPicker.HexCodePresenter.Content = RGBConverter(c);
+            }
+            else
+            {
+                UC.GetColorPicker.HexCodePresenter.Content = HexConverter(c); 
+            }
+            
             UC.GetColorPicker.RectangleColorPresenter.Fill =
             UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush
             {
@@ -66,9 +74,13 @@ namespace PicView.Editing
                         IsRunning = false;
                         return;
                     }
-                    var x = UC.GetColorPicker.HexCodePresenter.Content.ToString();
-                    Clipboard.SetText(x);
-                    Tooltip.ShowTooltipMessage(x + " " + Application.Current.Resources["AddedToClipboard"]);
+                    string clipboardContent = UC.GetColorPicker.HexCodePresenter.Content.ToString() ?? "";
+                    if (clipboardContent.StartsWith("RGB "))
+                    {
+                        clipboardContent = clipboardContent.Remove(0, 4);
+                    }
+                    Clipboard.SetText(clipboardContent);
+                    Tooltip.ShowTooltipMessage(clipboardContent + " " + Application.Current.Resources["AddedToClipboard"]);
                 }
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                 {
@@ -90,10 +102,7 @@ namespace PicView.Editing
 
         internal static string RGBConverter(Color c)
         {
-            return "RGB(" +
-                c.R.ToString("X2", CultureInfo.InvariantCulture) +
-                c.G.ToString("X2", CultureInfo.InvariantCulture) +
-                c.B.ToString("X2", CultureInfo.InvariantCulture) + ")";
+            return $"RGB {c.R}, {c.G}, {c.B}";
         }
     }
 }
