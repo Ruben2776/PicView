@@ -87,10 +87,13 @@ namespace PicView.Shortcuts
                     break;
 
                 case MouseButton.Left:
-                        DragToExplorer.DragFile(sender, e);
                     if (IsAutoScrolling)
                     {
                         StopAutoScroll();
+                    }
+                    else
+                    {
+                        DragToExplorer.DragFile(sender, e);
                     }
                     break;
 

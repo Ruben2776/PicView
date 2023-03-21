@@ -37,9 +37,9 @@ namespace PicView.ProcessHandling
         {
             var GetAppPath = Environment.ProcessPath;
 
-            if (Path.GetExtension(GetAppPath) == ".dll")
+            if (GetAppPath is not null && Path.GetExtension(GetAppPath) == ".dll")
             {
-                GetAppPath = GetAppPath?.Replace(".dll", ".exe", StringComparison.InvariantCultureIgnoreCase);
+                GetAppPath = GetAppPath.Replace(".dll", ".exe", StringComparison.InvariantCultureIgnoreCase);
             }
             return GetAppPath;
         }
@@ -102,10 +102,7 @@ namespace PicView.ProcessHandling
 
             Process process = new()
             {
-                StartInfo =
-            {
-                FileName = pathToExe,
-            }
+                StartInfo = { FileName = pathToExe }
             };
             process.Start();
         }

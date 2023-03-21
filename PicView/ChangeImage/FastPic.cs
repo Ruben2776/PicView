@@ -16,7 +16,7 @@ namespace PicView.ChangeImage
         {
             if (_timer is null)
             {
-                _timer = new Timer(TimeSpan.FromSeconds(.4))
+                _timer = new Timer(TimeSpan.FromSeconds(.7))
                 {
                     AutoReset = false,
                     Enabled = true
@@ -73,16 +73,18 @@ namespace PicView.ChangeImage
 
         internal static async Task FastPicUpdateAsync()
         {
+            _timer = null;
+
             if (_updateSource == false) { return; }
 
             // Update picture in case it didn't load. Won't happen normally
-
-            _timer = null;
+            
             BitmapSource? pic = null;
             var preloadValue = Preloader.Get(Pics[FolderIndex]);
             if (preloadValue is null)
             {
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
+                preloadValue = Preloader.Get(Pics[FolderIndex]);
                 if (preloadValue is null)
                 {
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
