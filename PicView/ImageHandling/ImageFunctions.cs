@@ -77,7 +77,7 @@ namespace PicView.ImageHandling
                 return;
             }
 
-            var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
+            var preloadValue = Preloader.Get(Navigation.FolderIndex);
             if (preloadValue == null)
             {
                 await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);

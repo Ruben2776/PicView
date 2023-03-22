@@ -59,7 +59,7 @@ namespace PicView.ImageHandling
 
             if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex)
             {
-                var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
+                var preloadValue = Preloader.Get(Navigation.FolderIndex);
                 if (preloadValue is null)
                 {
                     await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);

@@ -32,7 +32,7 @@ namespace PicView.ConfigureSettings
             });
 
             FileInfo fileInfo;
-            var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
+            var preloadValue = Preloader.Get(Navigation.FolderIndex);
             if (preloadValue is not null && preloadValue.FileInfo is not null)
             {
                 fileInfo = preloadValue.FileInfo;

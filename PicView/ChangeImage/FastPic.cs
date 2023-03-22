@@ -33,7 +33,7 @@ namespace PicView.ChangeImage
             BitmapSource? pic = null;
             _updateSource = true; // Update it when key released
 
-            var preloadValue = Preloader.Get(Pics[index]);
+            var preloadValue = Preloader.Get(index);
 
             if (preloadValue != null)
             {
@@ -55,7 +55,7 @@ namespace PicView.ChangeImage
                 fileInfo = new FileInfo(Pics[index]);
                 LoadPic.LoadingPreview(fileInfo);
                 await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
-                preloadValue = Preloader.Get(Pics[index]);
+                preloadValue = Preloader.Get(index);
                 if (preloadValue is null)
                 {
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
@@ -80,11 +80,11 @@ namespace PicView.ChangeImage
             // Update picture in case it didn't load. Won't happen normally
             
             BitmapSource? pic = null;
-            var preloadValue = Preloader.Get(Pics[FolderIndex]);
+            var preloadValue = Preloader.Get(FolderIndex);
             if (preloadValue is null)
             {
                 await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                preloadValue = Preloader.Get(Pics[FolderIndex]);
+                preloadValue = Preloader.Get(FolderIndex);
                 if (preloadValue is null)
                 {
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);

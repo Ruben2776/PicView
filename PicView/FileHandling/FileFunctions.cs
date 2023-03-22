@@ -98,7 +98,7 @@ namespace PicView.FileHandling
                 return false;
             }
 
-            Preloader.Rename(Navigation.Pics[Navigation.FolderIndex], Navigation.FolderIndex, newPath);
+            Preloader.Rename(Navigation.FolderIndex, newPath);
             if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
             {
                 UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);

@@ -43,7 +43,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// A dictionary containing the preloaded images
         /// </summary>
-        private static readonly ConcurrentDictionary<string, PreloadValue> _preloadList = new();
+        static readonly ConcurrentDictionary<int, PreloadValue> _preloadList = new();
 
         /// <summary>
         /// Sets the number of iterations to load infront 
@@ -58,12 +58,12 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Set the maximum number of bitmaps to be cached
         /// </summary>
-        internal const int MaxCount = positiveIterations + negativeIterations;
+        internal const int MaxCount = positiveIterations + negativeIterations + 1;
 
         /// <summary>
         /// Adds a file to the preloader from the specified index. Returns true if a new value was added.
         /// </summary>
-        /// <param name="i">Index of the image in the list of Pics</param>
+        /// <param name="index">Index of the image in the list of Pics</param>
         /// <param name="fileInfo">The file info of the image</param>
         /// <param name="bitmapSource">The bitmap source of the image</param>
         /// <returns>Preloadvalue that can be null</returns>
@@ -74,7 +74,7 @@ namespace PicView.ChangeImage
             try
             {
                 var preloadValue = new PreloadValue(null, true, null);
-                var add = _preloadList.TryAdd(Pics[index], preloadValue);
+                var add = _preloadList.TryAdd(index, preloadValue);
                 if (add)
                 {
                     fileInfo ??= new FileInfo(Pics[index]);
@@ -104,12 +104,12 @@ namespace PicView.ChangeImage
         /// <param name="file">File to be renamed</param>
         /// <param name="name">New name to be changed to</param>
         /// <returns></returns>
-        internal static void Rename(string file, int index, string name)
+        internal static void Rename(int index, string name)
         {
-            if (file == null || name == null) { return; }
+            if (name == null) { return; }
             if (index < 0 || index >= Pics.Count) { return; }
 
-            _preloadList.Remove(file, out var preloadValue);
+            _preloadList.Remove(index, out var preloadValue);
             _= AddAsync(index, null, preloadValue.BitmapSource).ConfigureAwait(true);
         }
 
@@ -127,7 +127,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key">The corrosponding filename</param>
         /// <returns></returns>
-        internal static PreloadValue? Get(string key)
+        internal static PreloadValue? Get(int key)
         {
             if (_preloadList.TryGetValue(key, out var preloadValue))
             {
@@ -148,13 +148,13 @@ namespace PicView.ChangeImage
             if (key >= Pics?.Count || key < 0)
                 return;
 
-            if (!_preloadList.ContainsKey(Pics[key]))
+            if (!_preloadList.ContainsKey(key))
                 return;
 
             try
             {
-                _ = _preloadList[Pics[key]];
-                var remove = _preloadList.TryRemove(Pics[key], out _);
+                _ = _preloadList[key];
+                var remove = _preloadList.TryRemove(key, out _);
 #if DEBUG
                 if (remove)
                     Trace.WriteLine($"{Pics[key]} removed at {Pics.IndexOf(Pics[key])}");
@@ -225,6 +225,21 @@ namespace PicView.ChangeImage
                     Remove(index);
                 }
             }
+
+            while (_preloadList.Count > MaxCount)
+            {
+                try
+                {
+                    Remove(_preloadList.Keys.First());
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
+#endif
+                }
+            }
+
         });
     }
 }

@@ -234,7 +234,7 @@ namespace PicView.ChangeImage
             if (GetQuickResize is not null && GetQuickResize.Opacity > 0) return;
 
             FolderIndex = index;
-            var preloadValue = Preloader.Get(Pics[index]);
+            var preloadValue = Preloader.Get(index);
             fileInfo ??= new FileInfo(Pics[index]);
 
             if (!fileInfo.Exists)
@@ -271,7 +271,7 @@ namespace PicView.ChangeImage
                 if (preloadValue is null)
                 {
                     await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(Pics[index]);
+                    preloadValue = Preloader.Get(index);
                     if (preloadValue is null)
                     {
                         await ErrorHandling.ReloadAsync().ConfigureAwait(false);

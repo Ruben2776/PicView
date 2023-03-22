@@ -53,7 +53,7 @@ namespace PicView.Views.Windows
                 {
                     Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
                     if (ErrorHandling.CheckOutOfRange()) { return; }
-                    var preloadValue = Preloader.Get((Navigation.Pics[Navigation.FolderIndex]));
+                    var preloadValue = Preloader.Get(Navigation.FolderIndex);
                     if (preloadValue is null) { return; }
                     await FileLists.RetrieveFilelistAsync(preloadValue.FileInfo).ConfigureAwait(false);
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
