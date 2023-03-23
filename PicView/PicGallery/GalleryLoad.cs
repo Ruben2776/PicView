@@ -184,8 +184,8 @@ namespace PicView.PicGallery
                 return;
             }
 
-            var pic = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size));
-            UpdatePic(i, pic);
+            var thumbHolder = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size));
+            UpdatePic(i, thumbHolder.Thumb);
         }
 
         internal static void UpdatePic(int i, BitmapSource pic)

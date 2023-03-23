@@ -102,7 +102,9 @@ namespace PicView.FileHandling
                 }
             });
 
+            Preloader.Clear();
             Pics.Remove(Pics[FolderIndex]);
+            
 
             if (Pics.Count <= 0)
             {

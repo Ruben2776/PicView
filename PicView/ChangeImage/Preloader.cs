@@ -1,4 +1,5 @@
-﻿using PicView.ImageHandling;
+﻿using PicView.FileHandling;
+using PicView.ImageHandling;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -102,7 +103,7 @@ namespace PicView.ChangeImage
             catch (Exception ex)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(AddAsync)} exception: \n {ex}");
+                Trace.WriteLine($"{nameof(AddAsync)} exception: \n{ex}");
 #endif
             }
         }
@@ -188,7 +189,7 @@ namespace PicView.ChangeImage
             int nextStartingIndex, prevStartingIndex, deleteIndex;
 
 #if DEBUG
-            Trace.WriteLine($"\nPreloading started at {currentIndex} \n");
+            Trace.WriteLine($"\nPreloading started at {currentIndex}\n");
 #endif
             if (!Reverse)
             {
@@ -216,7 +217,7 @@ namespace PicView.ChangeImage
             {
                 nextStartingIndex = currentIndex;
                 prevStartingIndex = currentIndex + 1;
-                deleteIndex = prevStartingIndex + positiveIterations;
+                deleteIndex = prevStartingIndex + negativeIterations;
 
                 Parallel.For(0, positiveIterations, i =>
                 {
@@ -248,7 +249,6 @@ namespace PicView.ChangeImage
 #endif
                 }
             }
-
         });
     }
 }

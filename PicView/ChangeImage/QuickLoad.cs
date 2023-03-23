@@ -91,6 +91,7 @@ namespace PicView.ChangeImage
             {
                 ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
             }
+            ConfigureWindows.GetMainWindow.MainImage.Cursor = System.Windows.Input.Cursors.Arrow;
         }
     }
 }

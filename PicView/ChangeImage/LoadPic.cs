@@ -6,6 +6,8 @@ using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
@@ -331,21 +333,23 @@ namespace PicView.ChangeImage
         /// <param name="fileInfo">The file information of the image to be loaded.</param>
         internal static void LoadingPreview(FileInfo fileInfo)
         {
-            var bitmapSource = Thumbnails.GetBitmapSourceThumb(fileInfo);
+            var bitmapSourceHolder = Thumbnails.GetBitmapSourceThumb(fileInfo);
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
             {
                 // Set Loading
                 SetLoadingString();
 
-                if (bitmapSource != null)
+                ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Wait;
+
+                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSourceHolder.Thumb;
+                if (bitmapSourceHolder.isLogo)
                 {
-                    if (!bitmapSource.IsFrozen)
-                        bitmapSource.Freeze();
-                    ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                    ConfigureWindows.GetMainWindow.MainImage.Width = bitmapSourceHolder.Size;
+                    ConfigureWindows.GetMainWindow.MainImage.Height = bitmapSourceHolder.Size;
                 }
 
                 // Don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
-                if (XWidth < 1)
+                else if (XWidth < 1)
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
                     ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
