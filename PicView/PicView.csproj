@@ -155,7 +155,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <AppDesigner Include="Properties\" />
+    <None Remove="Themes\Resources\img\icon.png" />
     <None Remove="Themes\Resources\img\noise-texture-100x100 %283%29.png" />
+    <Resource Include="Themes\Resources\img\icon.png" />
     <Resource Include="Themes\Resources\img\noise-texture-100x100 (3).png" />
   </ItemGroup>
 
