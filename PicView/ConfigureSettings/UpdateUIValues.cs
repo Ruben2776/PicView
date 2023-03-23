@@ -5,6 +5,7 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using PicView.UILogic.TransformImage;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,11 +42,9 @@ namespace PicView.ConfigureSettings
             {
                 fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
             }
-
+            
             Preloader.Clear();
-
             bool sortGallery = false;
-
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
                 if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > 0)
@@ -61,13 +60,17 @@ namespace PicView.ConfigureSettings
                 await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
             }
 
-            await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+            Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
+            await Preloader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+            await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
         }
 
         internal static void SetScrolling()
         {
             if (GalleryFunctions.IsHorizontalFullscreenOpen
-                || GalleryFunctions.IsHorizontalOpen) { return; }
+                || GalleryFunctions.IsHorizontalOpen
+                || Rotation.RotationAngle != 0)
+            return;
 
             var settingscm = MainContextMenu.Items[7] as MenuItem;
             var scrollcm = settingscm.Items[1] as MenuItem;
@@ -75,13 +78,13 @@ namespace PicView.ConfigureSettings
 
             if (Settings.Default.ScrollEnabled)
             {
-                _ = SetScrollBehaviour(false);
+                SetScrollBehaviour(false);
                 scrollcmHeader.IsChecked = false;
                 UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = false;
             }
             else
             {
-                _ = SetScrollBehaviour(true);
+                SetScrollBehaviour(true);
                 scrollcmHeader.IsChecked = true;
                 UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = true;
             }
@@ -150,19 +153,19 @@ namespace PicView.ConfigureSettings
             }
         }
 
-        internal static async Task SetAutoFitAsync(object sender, RoutedEventArgs e)
+        internal static void SetAutoFit(object sender, RoutedEventArgs e)
         {
             if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
-            await SetScalingBehaviourAsync(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow, Settings.Default.FillImage).ConfigureAwait(false);
+            SetScalingBehaviour(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow, Settings.Default.FillImage);
         }
 
-        internal static async Task SetAutoFillAsync(object sender, RoutedEventArgs e)
+        internal static void SetAutoFill(object sender, RoutedEventArgs e)
         {
             if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
-            await SetScalingBehaviourAsync(Settings.Default.AutoFitWindow, !Settings.Default.FillImage).ConfigureAwait(false);
+            SetScalingBehaviour(Settings.Default.AutoFitWindow, !Settings.Default.FillImage);
         }
 
-        internal static async Task SetScalingBehaviourAsync(bool autoFit, bool fill)
+        internal static void SetScalingBehaviour(bool autoFit, bool fill)
         {
             Settings.Default.FillImage = fill;
             Settings.Default.AutoFitWindow = autoFit;
@@ -187,7 +190,7 @@ namespace PicView.ConfigureSettings
 
             WindowSizing.SetWindowBehavior();
 
-            await ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+            _= ScaleImage.TryFitImageAsync().ConfigureAwait(false);
         }
     }
 }
