@@ -192,6 +192,9 @@ namespace PicView.UILogic.Sizing
 
             }
 
+            // Update margin when from fullscreengallery and when not
+            GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
+
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
             var interfaceSize = 
                 GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
@@ -202,14 +205,14 @@ namespace PicView.UILogic.Sizing
                 CenterWindowOnScreen(Settings.Default.KeepCentered);
 
                 // Update mainWindow.TitleBar width to dynamically fit new size
-                var x = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+                var titlebarMaxWidth = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
                 if (Settings.Default.ScrollEnabled)
                 {
-                    GetMainWindow.TitleText.MaxWidth = x;
+                    GetMainWindow.TitleText.MaxWidth = titlebarMaxWidth;
                 }
                 else
                 {
-                    GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                    GetMainWindow.TitleText.MaxWidth = titlebarMaxWidth - interfaceSize < interfaceSize ? interfaceSize : titlebarMaxWidth - interfaceSize;
                 }
             }
             else
