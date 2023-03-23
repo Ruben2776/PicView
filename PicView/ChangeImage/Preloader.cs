@@ -7,12 +7,21 @@ using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeImage
 {
+
+    /// <summary>
+    /// The Preloader class is responsible for loading and caching images.
+    /// It contains an internal class named PreloadValue, which stores information about each image,
+    /// including the image's BitmapSource, whether the image is currently being loaded, and the image's FileInfo object.
+    /// </summary>
     internal static class Preloader
     {
+        /// <summary>
+        /// Represents a value that is preloaded and cached, including information about the image file and whether it is currently being loaded.
+        /// </summary>
         internal class PreloadValue
         {
             /// <summary>
-            /// The bitmap source of the image
+            /// The BitmapSource of the image
             /// </summary>
             internal BitmapSource? BitmapSource;
 

@@ -496,7 +496,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(true, false).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
                     // 2
@@ -505,7 +505,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(true, true).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
 
                     // 3
@@ -514,7 +514,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(false, false).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
                     // 4
@@ -523,7 +523,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(false, true).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
                     // F1

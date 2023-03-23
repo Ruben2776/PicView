@@ -7,6 +7,9 @@ using System.Windows.Media;
 
 namespace PicView.UILogic.TransformImage
 {
+    /// <summary>
+    /// Contains static methods to manipulate the rotation and flipping of the displayed image.
+    /// </summary>
     internal static class Rotation
     {
         internal static bool Flipped { get; set; }
@@ -16,6 +19,11 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static double RotationAngle { get; set; }
 
+        /// <summary>
+        /// Rotates the image and moves the cursor to the new position.
+        /// </summary>
+        /// <param name="up">If true, rotates the image up (clockwise); otherwise, rotates it down (counterclockwise).</param>
+        /// <param name="uIElement">The UIElement in which the image is displayed.</param>
         internal static async Task RotateAndMoveCursor(bool up, UIElement uIElement)
         {
             Rotate(false, up);
@@ -27,6 +35,11 @@ namespace PicView.UILogic.TransformImage
             NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
         }
 
+        /// <summary>
+        /// Rotates the image.
+        /// </summary>
+        /// <param name="keyDown">If true, the rotation is triggered by a key down event; otherwise, it is triggered by a key up event.</param>
+        /// <param name="up">If true, rotates the image up (clockwise); otherwise, rotates it down (counterclockwise).</param>
         internal static void Rotate(bool keyDown, bool up)
         {
             if (keyDown)
@@ -45,11 +58,10 @@ namespace PicView.UILogic.TransformImage
                 }
             }
         }
-
         /// <summary>
-        /// Rotates left or right
+        /// Rotates the image by 90 degrees.
         /// </summary>
-        /// <param name="right"></param>
+        /// <param name="up">If true, rotates the image up (clockwise); otherwise, rotates it down (counterclockwise).</param>
         internal static void Rotate(bool up)
         {
             if (up)
@@ -67,9 +79,9 @@ namespace PicView.UILogic.TransformImage
         }
 
         /// <summary>
-        /// Rotates the image the specified degrees
+        /// Rotates the image by the specified angle in degrees.
         /// </summary>
-        /// <param name="r"></param>
+        /// <param name="r">The angle in degrees to rotate the image.</param>
         internal static void Rotate(double r)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
@@ -126,12 +138,29 @@ namespace PicView.UILogic.TransformImage
             ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = tg;
         }
 
+        /// <summary>
+        /// This method checks if the provided rotation angle is valid or not.
+        /// A rotation angle is considered valid if it is a multiple of 90 degrees and lies within the range of 0 to 360 degrees (inclusive).
+        /// If the provided angle is not valid, the method returns false. Otherwise, it returns true.
+        /// </summary>
+        /// <param name="rotationAngle">A double value representing the rotation angle to be checked.</param>
+        /// <returns>A bool value representing whether the provided rotation angle is valid or not.</returns>
         internal static bool IsValidRotation(double rotationAngle)
         {
             rotationAngle = rotationAngle % 360;
             return rotationAngle == 0 || rotationAngle == 90 || rotationAngle == 180 || rotationAngle == 270;
         }
 
+        /// <summary>
+        /// This method returns the next rotation angle to be used based on the current rotation angle and the direction of rotation.
+        /// If roundUp is true, the method returns the next multiple of 90 degrees that is greater than the current rotation angle.
+        /// Otherwise, it returns the next multiple of 90 degrees that is less than the current rotation angle.
+        /// The returned value is an integer representing the next rotation angle in degrees.
+        /// </summary>
+        /// <param name="currentDegrees">A double value representing the current rotation angle in degrees.</param>
+        /// <param name="roundUp">A bool value indicating the direction of rotation. If true, the method returns the next higher multiple of 90 degrees.
+        /// Otherwise, it returns the next lower multiple of 90 degrees.</param>
+        /// <returns>An integer representing the next rotation angle in degrees.</returns>
         internal static int NextRotationAngle(double currentDegrees, bool roundUp)
         {
             int nearestMultipleOf90 = (int)Math.Round(currentDegrees / 90.0) * 90;

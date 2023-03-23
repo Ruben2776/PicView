@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeTitlebar;
+using PicView.PicGallery;
 using PicView.Properties;
 using System.Windows;
 using System.Windows.Input;
@@ -120,9 +121,15 @@ namespace PicView.UILogic.TransformImage
         internal static void PanImage(object sender, MouseEventArgs e)
         {
             // Check if mouse capture is allowed and window is active
-            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive || scaleTransform.ScaleX == 1)
+            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive)
             {
                 return;
+            }
+
+            if (scaleTransform.ScaleX == 1)
+            {
+                if (!Settings.Default.Fullscreen && !GalleryFunctions.IsHorizontalFullscreenOpen)
+                    return;
             }
 
             // Calculate the change in mouse position
@@ -133,7 +140,7 @@ namespace PicView.UILogic.TransformImage
             translateTransform.Y = origin.Y - dragDelta.Y;
 
             // Check if auto-fit window is enabled and full-screen mode is disabled
-            if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen)
+            if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal)
             {
                 // Calculate if the image is outside of the window bounds
                 var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);

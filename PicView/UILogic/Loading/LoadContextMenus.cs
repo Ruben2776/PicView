@@ -166,8 +166,8 @@ namespace PicView.UILogic.Loading
             var imageHeightMenu = (MenuItem)settingscm.Items[5];
             var imageHeightHeader = (CheckBox)imageHeightMenu.Header;
             imageHeightHeader.IsChecked = Settings.Default.FillImage;
-            imageHeightHeader.Click += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
-            imageHeightMenu.Click += async (s, e) => await UpdateUIValues.SetAutoFillAsync(s, e).ConfigureAwait(false);
+            imageHeightHeader.Click += UpdateUIValues.SetAutoFill;
+            imageHeightMenu.Click += UpdateUIValues.SetAutoFill;
 
             // 6 = seperator
 

@@ -26,6 +26,7 @@ namespace PicView.UILogic.DragAndDrop
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null
                 || Keyboard.Modifiers == ModifierKeys.Shift
                 || Keyboard.Modifiers == ModifierKeys.Alt
+                || GalleryFunctions.IsHorizontalFullscreenOpen
                 || GalleryFunctions.IsHorizontalOpen
                 || Settings.Default.Fullscreen
                 || Scroll.IsAutoScrolling

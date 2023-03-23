@@ -91,9 +91,10 @@ namespace PicView.ChangeImage
             }
         }
 
-        private static async Task LoadPiFromFileAsync(FileInfo fileInfo)
+        static async Task LoadPiFromFileAsync(FileInfo fileInfo)
         {
             LoadingPreview(fileInfo);
+
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ToggleStartUpUC(true));
 
             if (!fileInfo.Exists)  // If file does not exist, try to load it if base64 or URL
@@ -323,6 +324,11 @@ namespace PicView.ChangeImage
 
         #endregion LoadPicAtValue
 
+
+        /// <summary>
+        /// Loads a thumbnail preview of an image file and displays a loading message while it's being loaded.
+        /// </summary>
+        /// <param name="fileInfo">The file information of the image to be loaded.</param>
         internal static void LoadingPreview(FileInfo fileInfo)
         {
             var bitmapSource = Thumbnails.GetBitmapSourceThumb(fileInfo);

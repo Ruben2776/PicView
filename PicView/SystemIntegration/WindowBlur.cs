@@ -6,7 +6,7 @@ namespace PicView.SystemIntegration
 {
     internal static partial class WindowBlur
     {
-        private enum AccentState
+        internal enum AccentState
         {
             Disabled = 0,
             EnableGradient = 1,
@@ -81,12 +81,12 @@ namespace PicView.SystemIntegration
         [LibraryImport("user32.dll")]
         private static partial int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
 
-        internal static void EnableBlur(Window window)
+        internal static void EnableBlur(Window window, AccentState accentState = AccentState.EnableBlurBehind)
         {
             var windowHelper = new WindowInteropHelper(window);
             var accent = new AccentPolicy
             {
-                AccentState = AccentState.EnableBlurBehind
+                AccentState = accentState
             };
 
             var accentStructSize = Marshal.SizeOf(accent);
