@@ -362,7 +362,10 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                CopyFile();
+                                if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
+                                    CopyBitmap();
+                                else
+                                    CopyFile();
                             }
                         }
                         else if (!GalleryFunctions.IsHorizontalOpen)
