@@ -208,7 +208,7 @@ namespace PicView.UILogic.Sizing
                 var titlebarMaxWidth = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
                 if (Settings.Default.ScrollEnabled)
                 {
-                    GetMainWindow.TitleText.MaxWidth = titlebarMaxWidth;
+                    GetMainWindow.TitleText.MaxWidth = maxWidth;
                 }
                 else
                 {
