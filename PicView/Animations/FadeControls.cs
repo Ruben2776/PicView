@@ -19,7 +19,7 @@ namespace PicView.Animations
         /// Hides/shows interface elements with a fade animation
         /// </summary>
         /// <param name="show"></param>
-        internal static async Task FadeAsync(bool show)
+        internal static void Fade(bool show)
         {
             if (Settings.Default.ShowInterface && Settings.Default.Fullscreen == false
                 || GetClickArrowRight == null
@@ -33,7 +33,7 @@ namespace PicView.Animations
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {
                 if (GetCropppingTool != null)
                 {
