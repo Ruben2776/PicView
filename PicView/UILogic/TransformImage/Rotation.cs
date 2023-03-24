@@ -12,10 +12,13 @@ namespace PicView.UILogic.TransformImage
     /// </summary>
     internal static class Rotation
     {
+        /// <summary>
+        /// Used to determine if the image has been flipped
+        /// </summary>
         internal static bool Flipped { get; set; }
 
         /// <summary>
-        /// Used to get and set image rotation by degrees
+        /// Used to get rotation by degrees
         /// </summary>
         internal static double RotationAngle { get; set; }
 
@@ -48,7 +51,7 @@ namespace PicView.UILogic.TransformImage
             }
             else
             {
-                if (Rotation.IsValidRotation(RotationAngle))
+                if (IsValidRotation(RotationAngle))
                 {
                     Rotate(up);
                 }
@@ -81,14 +84,14 @@ namespace PicView.UILogic.TransformImage
         /// <summary>
         /// Rotates the image by the specified angle in degrees.
         /// </summary>
-        /// <param name="r">The angle in degrees to rotate the image.</param>
-        internal static void Rotate(double r)
+        /// <param name="degrees">The angle in degrees to rotate the image.</param>
+        internal static void Rotate(double degrees)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
                 Settings.Default.FullscreenGalleryHorizontal == false && GalleryFunctions.IsHorizontalOpen)
             { return; }
 
-            var rt = new RotateTransform { Angle = RotationAngle = r };
+            var rt = new RotateTransform { Angle = RotationAngle = degrees };
 
             ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
 
