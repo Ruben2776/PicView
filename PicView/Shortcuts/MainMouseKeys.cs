@@ -35,7 +35,7 @@ namespace PicView.Shortcuts
             }
 
             // Move window when Shift is being held down
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            if (Properties.Settings.Default.ShowInterface == false || (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 WindowSizing.Move(sender, e);
                 return;
