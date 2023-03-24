@@ -3,6 +3,7 @@ using PicView.ConfigureSettings;
 using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.UILogic;
+using PicView.UILogic.Loading;
 using PicView.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,6 +48,7 @@ namespace PicView.PicGallery
                 GalleryFunctions.IsHorizontalOpen = false;
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
+                    ChangeTitlebar.SetTitle.SetLoadingString();
                     FitImage(size.Value.Width, size.Value.Height);
                 });
             }
@@ -91,7 +93,22 @@ namespace PicView.PicGallery
                 await ItemClickAsync(id, false).ConfigureAwait(false);
             };
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            image = new Image
+            {
+                Source = GetThumb(id),
+                Stretch = Stretch.Fill,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Need to add border for background to pictures with transparent background
+            border = new Border
+            {
+                Background = ConfigColors.BackgroundColorBrush
+            };
+            border.Child = image;
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (Settings.Default.AutoFitWindow)
                 {
@@ -113,31 +130,16 @@ namespace PicView.PicGallery
                 }
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
-
-                image = new Image
-                {
-                    Source = GetThumb(id),
-                    Stretch = Stretch.Fill,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                // Need to add border for background to pictures with transparent background
-                border = new Border
-                {
-                    Background = ConfigColors.BackgroundColorBrush
-                };
-                border.Child = image;
                 GetPicGallery.grid.Children.Add(border);
 
                 border.BeginAnimation(FrameworkElement.WidthProperty, da);
                 border.BeginAnimation(FrameworkElement.HeightProperty, da0);
-            });
+            }, DispatcherPriority.Send);
         }
 
         internal static async Task ItemClickAsync(int id, bool resize = true)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync( () =>
             {
                 // Deselect current item
                 GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);

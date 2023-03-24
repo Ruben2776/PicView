@@ -11,18 +11,27 @@ namespace PicView.ChangeImage
 {
     internal class FileHistory
     {
-        private readonly List<string> fileHistory = new List<string>();
+        private readonly List<string> fileHistory;
         private const short maxCount = 15;
         private readonly string path;
 
         public FileHistory()
         {
-            path = FileFunctions.GetWritingPath() + "\\Recent.txt";
-
-            if (!File.Exists(path))
+           fileHistory ??= new List<string>();
+            try
             {
-                using FileStream fs = File.Create(path);
-                fs.Seek(0, SeekOrigin.Begin);
+                path = FileFunctions.GetWritingPath() + "\\Recent.txt";
+
+                if (!File.Exists(path))
+                {
+                    using FileStream fs = File.Create(path);
+                    fs.Seek(0, SeekOrigin.Begin);
+                }
+            }
+            catch (Exception e)
+            {
+                Tooltip.ShowTooltipMessage(e.Message);
+                path = "";
             }
 
             ReadFromFile();
@@ -37,10 +46,17 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            using var reader = new StreamReader(path);
-            while (reader.Peek() >= 0)
+            try
             {
-                fileHistory.Add(reader.ReadLine());
+                using var reader = new StreamReader(path);
+                while (reader.Peek() >= 0)
+                {
+                    fileHistory.Add(reader.ReadLine());
+                }
+            }
+            catch (Exception e)
+            {
+                Tooltip.ShowTooltipMessage(e.Message);
             }
         }
 
@@ -49,11 +65,19 @@ namespace PicView.ChangeImage
         /// </summary>
         internal void WriteToFile()
         {
-            using var writer = new StreamWriter(path);
-            foreach (string item in fileHistory)
+            try
             {
-                writer.WriteLine(item);
+                using var writer = new StreamWriter(path);
+                foreach (string item in fileHistory)
+                {
+                    writer.WriteLine(item);
+                }
             }
+            catch (Exception e)
+            {
+                Tooltip.ShowTooltipMessage(e.Message);
+            }
+
         }
 
         internal async Task OpenLastFileAsync()

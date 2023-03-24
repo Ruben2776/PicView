@@ -98,15 +98,18 @@ namespace PicView.Views.UserControls.Misc
 
         public void Show()
         {
+            grid.Width = UILogic.Sizing.ScaleImage.XWidth;
+            grid.Height = UILogic.Sizing.ScaleImage.XHeight;
             Visibility = Visibility.Visible;
             AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
+            PercentageBox.SelectedIndex = 0;
             WidthBox.Text = ConfigureWindows.GetMainWindow.MainImage.Source?.Width.ToString();
             HeightBox.Text = ConfigureWindows.GetMainWindow.MainImage?.Source?.Height.ToString();
 
             var timer = new System.Timers.Timer(401) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
                 {
                     Keyboard.Focus(WidthBox);
                 });
@@ -115,7 +118,7 @@ namespace PicView.Views.UserControls.Misc
 
         public void Hide()
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
                 AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
             });
@@ -123,7 +126,7 @@ namespace PicView.Views.UserControls.Misc
             var timer = new System.Timers.Timer(601) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
                 {
                     Visibility = Visibility.Collapsed;
                 });

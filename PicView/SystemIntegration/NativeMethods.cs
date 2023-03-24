@@ -45,9 +45,9 @@ namespace PicView.SystemIntegration
         internal static partial bool SetCursorPos(int x, int y);
 
         // Used to check for wallpaper support
-        [LibraryImport("user32.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool SystemParametersInfo(uint uiAction, uint uiParam,
+        internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam,
         string pvParam, uint fWinIni);
 
         #region Disable Screensaver and Power options

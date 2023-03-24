@@ -5,6 +5,7 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
+using PicView.UILogic;
 using PicView.Views.UserControls.Misc;
 using System.IO;
 using System.Text;
@@ -159,7 +160,7 @@ namespace PicView.Views.Windows
         {
             running = true;
             CancellationTokenSource source = new CancellationTokenSource();
-            Task task = Task.Run(() => Loop(source.Token), source.Token);
+            Task task = Task.Run(() => LoopAsync(source.Token), source.Token);
             try
             {
                 await task.ConfigureAwait(false);
@@ -176,7 +177,7 @@ namespace PicView.Views.Windows
             finally { source.Dispose(); }
         }
 
-        private void Loop(CancellationToken cancellationToken)
+        private async Task LoopAsync(CancellationToken cancellationToken)
         {
             running = true;
 
@@ -199,7 +200,7 @@ namespace PicView.Views.Windows
             List<string>? sourceFileist = null;
             string outputFolder = "";
 
-            Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetResizeWindow.Dispatcher.InvokeAsync(() =>
             {
                 LogTextBox.Text = String.Empty;
 
@@ -294,9 +295,9 @@ namespace PicView.Views.Windows
                 }
 
                 ProgressBar.Maximum = sourceFileist.Count;
-            });
+            }, DispatcherPriority.Normal, cancellationToken);
 
-            Parallel.For(0, sourceFileist.Count, i =>
+            for (int i = 0; i < sourceFileist.Count; i++)
             {
                 if (sourceFileist is null)
                 {
@@ -311,7 +312,7 @@ namespace PicView.Views.Windows
                         sourceFileist.Clear();
                         sourceFileist = null;
                     }
-                    Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                    Dispatcher.Invoke(DispatcherPriority.Background, () =>
                     {
                         ProgressBar.Value = 0;
                     });
@@ -324,7 +325,7 @@ namespace PicView.Views.Windows
                     fileInfo = new FileInfo(sourceFileist[i]);
                 }
                 StringBuilder sb = new();
-                sb.Append(BatchFunctions.Run(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize));
+                sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
 
                 for (int x = 0; x < thumbs.Count; x++)
                 {
@@ -336,14 +337,14 @@ namespace PicView.Views.Windows
                             sourceFileist.Clear();
                             sourceFileist = null;
                         }
-                        Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                        Dispatcher.Invoke(DispatcherPriority.Background, () =>
                         {
                             ProgressBar.Value = 0;
                         });
                         return;
                     }
 
-                    sb.Append(BatchFunctions.Run(fileInfo, thumbs[x].Width, thumbs[x].Height, quality, ext, thumbs[x].Percentage, compress, thumbs[x].Directory, true));
+                    sb.Append(await BatchFunctions.RunAsync(fileInfo, thumbs[x].Width, thumbs[x].Height, quality, ext, thumbs[x].Percentage, compress, thumbs[x].Directory, true).ConfigureAwait(false));
                 }
 
                 if (cancelToken.IsCancellationRequested)
@@ -353,20 +354,20 @@ namespace PicView.Views.Windows
                         sourceFileist.Clear();
                         sourceFileist = null;
                     }
-                    Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                    Dispatcher.Invoke(DispatcherPriority.Background, () =>
                     {
                         ProgressBar.Value = 0;
                     });
                     return;
                 }
 
-                Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
+                Dispatcher.Invoke(DispatcherPriority.Background, () =>
                 {
                     LogTextBox.Text += sb.ToString();
                     LogTextBox.ScrollToEnd();
                     ProgressBar.Value++;
                 });
-            });
+            }
         }
 
         internal static void SetTextboxDragEvent(TextBox textBox)
@@ -405,20 +406,6 @@ namespace PicView.Views.Windows
 
                 textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
             };
-        }
-
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-        {
-            if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged)
-            {
-                return;
-            }
-
-            //Keep position when size has changed
-            Top += ((sizeInfo.PreviousSize.Height / MonitorInfo.DpiScaling) - (sizeInfo.NewSize.Height / MonitorInfo.DpiScaling)) / 2;
-            Left += ((sizeInfo.PreviousSize.Width / MonitorInfo.DpiScaling) - (sizeInfo.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
-
-            base.OnRenderSizeChanged(sizeInfo);
         }
     }
 }

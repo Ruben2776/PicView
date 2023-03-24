@@ -37,7 +37,7 @@ namespace PicView.ImageHandling
             else
             {
                 fileInfo ??= new FileInfo(Pics[x]);
-                pic = GetBitmapSourceThumb(fileInfo);
+                pic = GetBitmapSourceThumb(fileInfo).Thumb;
             }
 
             if (pic == null)
@@ -53,11 +53,26 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource? GetBitmapSourceThumb(FileInfo fileInfo, int size = 500)
+        internal class LogoOrThumbHolder
+        {
+            internal BitmapSource Thumb;
+
+            internal bool isLogo;
+
+            internal readonly double Size = 256; // Set it to the size of the logo
+
+            public LogoOrThumbHolder(BitmapSource Thumb, bool isLogo)
+            {
+                this.Thumb = Thumb;
+                this.isLogo = isLogo;
+            }
+        }
+
+        internal static LogoOrThumbHolder GetBitmapSourceThumb(FileInfo fileInfo, int size = 500)
         {
             if (fileInfo.Length > 2e+7)
             {
-                return ImageFunctions.ShowLogo();
+                return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
             }
 
             try
@@ -73,19 +88,23 @@ namespace PicView.ImageHandling
                     case ".ico":
                     case ".jfif":
                     case ".wbmp":
-                        return GetWindowsThumbnail(fileInfo.FullName);
+                        return new LogoOrThumbHolder(GetWindowsThumbnail(fileInfo.FullName) ?? ImageFunctions.ImageErrorMessage(), false);
                     case ".b64":
-                        return ImageFunctions.ShowLogo();
+                        return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
                 }
-
-                return GetMagickImageThumb(fileInfo, size) ?? ImageFunctions.ShowLogo();
+                var thumb = GetMagickImageThumb(fileInfo, size);
+                if (thumb is null)
+                {
+                    return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
+                }
+                return new LogoOrThumbHolder(thumb, false);
             }
             catch (Exception e)
             {
 #if DEBUG
                 Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
 #endif
-                return ImageFunctions.ImageErrorMessage();
+                return new LogoOrThumbHolder(ImageFunctions.ImageErrorMessage(), false);
             }
         }
 

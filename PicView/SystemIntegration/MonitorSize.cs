@@ -5,15 +5,25 @@ using WpfScreenHelper;
 namespace PicView.SystemIntegration
 {
     /// <summary>
-    /// Logic for the current monitor's screen resolution
+    /// Represents information about the current monitor's screen resolution, DPI scaling and work area of a monitor screen.
     /// </summary>
     internal readonly struct MonitorSize : IEquatable<MonitorSize>
     {
+        /// <summary>
+        /// Gets the pixel width of the current monitor's working area.
+        /// </summary>
         internal readonly double Width { get; }
+        /// <summary>
+        /// Gets the pixel height of the current monitor's working area.
+        /// </summary>
         internal readonly double Height { get; }
-
+        /// <summary>
+        /// Gets the DPI scaling factor of the current monitor.
+        /// </summary>
         internal readonly double DpiScaling { get; }
-
+        /// <summary>
+        /// Gets the available working area of the current monitor.
+        /// </summary>
         internal readonly Rect WorkArea { get; }
 
         #region IEquatable<T>
@@ -40,12 +50,12 @@ namespace PicView.SystemIntegration
         #endregion
 
         /// <summary>
-        /// Store current monitor info
+        /// Initializes a new instance of the <see cref="MonitorSize"/> struct with the specified monitor information.
         /// </summary>
-        /// <param name="width">The WorkArea Pixel Width</param>
-        /// <param name="height">The WorkArea Pixel Height</param>
-        /// <param name="dpiScaling"></param>
-        /// <param name="workArea"></param>
+        /// <param name="width">The pixel width of the monitor's working area.</param>
+        /// <param name="height">The pixel height of the monitor's working area.</param>
+        /// <param name="dpiScaling">The DPI scaling factor of the current monitor.</param>
+        /// <param name="workArea">The available working area of the current monitor.</param>
         private MonitorSize(double width, double height, double dpiScaling, Rect workArea)
         {
             Width = width;
@@ -55,33 +65,24 @@ namespace PicView.SystemIntegration
         }
 
         /// <summary>
-        /// Get the current monitor's screen resolution
+        /// Gets the size and DPI scaling of the current monitor screen.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A new instance of the <see cref="MonitorSize"/> struct representing the current monitor screen.</returns>
         internal static MonitorSize GetMonitorSize()
         {
-            // https://stackoverflow.com/a/32599760
+            // Get the current monitor screen information
             var currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow).Handle);
 
-            //find out if the app is being scaled by the monitor
+            // Find out if the app is being scaled by the monitor
             var source = PresentationSource.FromVisual(Application.Current.MainWindow);
             var dpiScaling = source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1;
 
-            //get the available area of the monitor
+            // Get the available work area of the monitor screen
             var workArea = currentMonitor.WorkingArea;
             var monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
             var monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
-            // Update values for lower resolutions
-            if (!(monitorWidth < 1850 * dpiScaling))
-            {
-                return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea);
-            }
-
-            Application.Current.Resources["LargeButtonHeight"] = 30 * dpiScaling;
-            Application.Current.Resources["ButtonHeight"] = 22 * dpiScaling;
-            Application.Current.Resources["StandardPadding"] = new Thickness(15, 8, 5, 8);
-
+            // Return a new instance of the MonitorSize struct
             return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea);
         }
     }

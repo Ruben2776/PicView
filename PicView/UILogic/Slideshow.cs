@@ -59,7 +59,7 @@ namespace PicView.UILogic
 
             if (!Settings.Default.Fullscreen)
             {
-                WindowSizing.Fullscreen_Restore();
+                WindowSizing.Fullscreen_Restore(false);
             }
 
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS); // Allow screensaver again

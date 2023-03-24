@@ -7,7 +7,7 @@ namespace PicView.ImageHandling
 {
     internal static class BatchFunctions
     {
-        internal static string Run(FileInfo sourceFile, int width, int height, int quality, string? ext, Percentage? percentage, bool? compress, string outputFolder, bool toResize)
+        internal static async Task<string> RunAsync(FileInfo sourceFile, int width, int height, int quality, string? ext, Percentage? percentage, bool? compress, string outputFolder, bool toResize)
         {
             var destination = outputFolder is null ? null : outputFolder + @"/" + sourceFile.Name;
 
@@ -25,7 +25,7 @@ namespace PicView.ImageHandling
                 try
                 {
                     using var filestream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);
-                    using var magick = new MagickImage(filestream)
+                    using var magick = new MagickImage(filestream) 
                     {
                         ColorSpace = ColorSpace.Transparent,
                         Quality = quality,
@@ -46,7 +46,7 @@ namespace PicView.ImageHandling
                         {
                             destination = Path.ChangeExtension(sourceFile.FullName, ext);
                             using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
-                            magick.Write(saveStream);
+                            await magick.WriteAsync(saveStream).ConfigureAwait(false);
                             DeleteFiles.TryDeleteFile(sourceFile.FullName, true);
                             if (compress.HasValue)
                             {
@@ -55,7 +55,7 @@ namespace PicView.ImageHandling
                         }
                         else
                         {
-                            magick.Write(filestream);
+                            await magick.WriteAsync(filestream).ConfigureAwait(false);
                             if (compress.HasValue)
                             {
                                 Optimize(compress.Value, sourceFile.FullName);
@@ -74,7 +74,7 @@ namespace PicView.ImageHandling
                         }
 
                         using var overwriteStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
-                        magick.Write(overwriteStream);
+                        await magick.WriteAsync(overwriteStream).ConfigureAwait(false);
                         if (compress.HasValue)
                         {
                             Optimize(compress.Value, destination);
@@ -99,7 +99,7 @@ namespace PicView.ImageHandling
 
             if (sourceFile.DirectoryName + @"\" == outputFolder)
             {
-                _ = ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
+                await ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
             }
             else if (ext is null)
             {
@@ -109,12 +109,12 @@ namespace PicView.ImageHandling
                 }
                 else
                 {
-                    success = SaveImages.SaveImage(null, sourceFile.FullName, destination, null, null, quality, ext);
+                    success = await SaveImages.SaveImageAsync(null, sourceFile.FullName, destination, null, null, quality, ext).ConfigureAwait(false);
                 }
             }
             else
             {
-                success = SaveImages.SaveImage(null, sourceFile.FullName, destination, null, null, quality, ext);
+                success = await SaveImages.SaveImageAsync(null, sourceFile.FullName, destination, null, null, quality, ext).ConfigureAwait (false);
             }
 
             if (success is false)
@@ -130,20 +130,13 @@ namespace PicView.ImageHandling
             return sb.ToString();
         }
 
-        private static bool Optimize(bool lossless, string file)
+        private static bool Optimize(bool isLossless, string file)
         {
             ImageOptimizer imageOptimizer = new()
             {
-                OptimalCompression = lossless
+                OptimalCompression = isLossless
             };
-            try
-            {
-                return imageOptimizer.Compress(file);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return imageOptimizer.Compress(file);
         }
 
         internal class ThumbNailHolder

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     Width="413"
-    Height="450"
+    Height="470"
     AllowsTransparency="True"
     BorderBrush="{DynamicResource BorderBrush}"
     BorderThickness="1"
@@ -512,16 +512,54 @@
             <StackPanel
                 Margin="0,0,0,5"
                 HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <ComboBox
+                    x:Name="WallpaperBox"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Left"
+                    IsTabStop="False">
+                    <ComboBoxItem
+                        x:Name="Fill"
+                        Content="{StaticResource Fill}"
+                        IsSelected="True" />
+                    <ComboBoxItem x:Name="Center" Content="{StaticResource Center}" />
+                    <ComboBoxItem x:Name="Fit" Content="{StaticResource Fit}" />
+                    <ComboBoxItem x:Name="Tile" Content="{StaticResource Tile}" />
+                    <ComboBoxItem x:Name="Stretch" Content="{StaticResource Stretch}" />
+                </ComboBox>
+
+                <Border
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Focusable="False">
+                    <Button
+                        x:Name="SetAsButton"
+                        Margin="15,10,15,10"
+                        Content="{StaticResource SetAsWallpaper}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="SetAsBrush" Color="{StaticResource BackgroundColorAlt}" />
+                        </Button.Background>
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="SetAsText" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                    </Button>
+                </Border>
+            </StackPanel>
+
+            <StackPanel
+                Margin="0,0,0,5"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 Orientation="Horizontal">
 
                 <Border
-                    Margin="0,0,10,0"
+                    Margin="0,0,5,0"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="2"
-                    Effect="{StaticResource MenuShadowButtonBorder}"
                     Focusable="False">
                     <Button
                         x:Name="SaveButton"
@@ -538,33 +576,11 @@
                 </Border>
 
                 <Border
+                    Margin="5,0,0,0"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="2"
-                    Effect="{StaticResource MenuShadowButtonBorder}"
-                    Focusable="False">
-                    <Button
-                        x:Name="SetAsButton"
-                        Margin="15,10,15,10"
-                        Content="{StaticResource SetAsWallpaper}"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold">
-                        <Button.Background>
-                            <SolidColorBrush x:Name="SetAsBrush" Color="{StaticResource BackgroundColorAlt}" />
-                        </Button.Background>
-                        <Button.Foreground>
-                            <SolidColorBrush x:Name="SetAsText" Color="{StaticResource MainColor}" />
-                        </Button.Foreground>
-                    </Button>
-                </Border>
-
-                <Border
-                    Margin="10,0,0,0"
-                    Background="{StaticResource BackgroundColorBrushAlt}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="2"
-                    Effect="{StaticResource MenuShadowButtonBorder}"
                     Focusable="False">
                     <Button
                         x:Name="CopyButton"
@@ -581,6 +597,9 @@
                     </Button>
                 </Border>
             </StackPanel>
+
+
+
         </StackPanel>
     </DockPanel>
 </Window>

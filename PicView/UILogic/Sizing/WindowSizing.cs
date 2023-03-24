@@ -25,11 +25,6 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void SetWindowBehavior()
         {
-            if (Properties.Settings.Default.Fullscreen)
-            {
-                return;
-            }
-
             if (Settings.Default.AutoFitWindow)
             {
                 GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
@@ -71,6 +66,11 @@ namespace PicView.UILogic.Sizing
                     GetQuickSettingsMenu.SetFit.IsChecked = false;
                 }
 
+                GetMainWindow.Width =
+                GetMainWindow.Height =
+                GetMainWindow.MainImageBorder.Width =
+                GetMainWindow.MainImageBorder.Height = double.NaN;
+
                 GetMainWindow.ParentContainer.Width = GetMainWindow.Width;
                 GetMainWindow.ParentContainer.Height = GetMainWindow.Height;
             }
@@ -105,8 +105,9 @@ namespace PicView.UILogic.Sizing
                 {
                     Settings.Default.AutoFitWindow = false;
                     SetWindowBehavior();
+                    Settings.Default.AutoFitWindow = true;
                 }
-                SetMaximized();
+                Fullscreen_Restore(true);
             }
             else
             {
@@ -118,7 +119,6 @@ namespace PicView.UILogic.Sizing
                 // Update info for possible new screen, needs more engineering
                 // Seems to work
                 MonitorInfo = MonitorSize.GetMonitorSize();
-                SetWindowSize();
             }
         }
 
@@ -135,7 +135,6 @@ namespace PicView.UILogic.Sizing
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GetMainWindow.DragMove();
-                SetWindowSize();
             }
         }
 
@@ -158,9 +157,14 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Fullscreen/restore window
         /// </summary>
-        internal static void Fullscreen_Restore(bool forceFullscreen = false)
+        internal static void Fullscreen_Restore(bool gotoFullscreen)
         {
-            if (forceFullscreen || Settings.Default.Fullscreen == false)
+            if (Settings.Default.AutoFitWindow == false)
+            {
+                SetWindowSize();
+            }
+
+            if (gotoFullscreen)
             {
                 // Show fullscreen logic
                 RenderFullscreen();
@@ -200,12 +204,12 @@ namespace PicView.UILogic.Sizing
                 GetMainWindow.TitleBar.Margin = new Thickness(0);
                 GetMainWindow.LowerBar.Margin = new Thickness(0);
 
+                SetWindowBehavior();
+
                 if (Settings.Default.AutoFitWindow == false)
                 {
                     SetLastWindowSize();
                 }
-
-                SetWindowBehavior();
 
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
                 {
@@ -220,8 +224,6 @@ namespace PicView.UILogic.Sizing
         {
             Settings.Default.ScrollEnabled = false; // Don't scroll in fulscreen
 
-            SetWindowSize();
-
             ShowTopandBottom(false);
             GetMainWindow.Topmost = true;
 
@@ -229,9 +231,6 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.SizeToContent = SizeToContent.Manual;
             GetMainWindow.Width = MonitorInfo.WorkArea.Width;
             GetMainWindow.Height = MonitorInfo.WorkArea.Height;
-
-            GetMainWindow.MainImageBorder.Width = GetMainWindow.Width;
-            GetMainWindow.MainImageBorder.Height = GetMainWindow.Height;
 
             _ = TryFitImageAsync();
 
@@ -263,10 +262,11 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Centers on the current monitor
         /// </summary>
-        internal static void CenterWindowOnScreen()
+        internal static void CenterWindowOnScreen(bool horizontal = true)
         {
             GetMainWindow.Top = ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 + MonitorInfo.WorkArea.Top;
-            GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
+            if (horizontal)
+                GetMainWindow.Left = ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 + MonitorInfo.WorkArea.Left;
         }
 
         internal static void SetLastWindowSize()
@@ -286,8 +286,8 @@ namespace PicView.UILogic.Sizing
             {
                 Settings.Default.Top = GetMainWindow.Top;
                 Settings.Default.Left = GetMainWindow.Left;
-                Settings.Default.Height = GetMainWindow.Height;
-                Settings.Default.Width = GetMainWindow.Width;
+                Settings.Default.Height = GetMainWindow.ActualHeight;
+                Settings.Default.Width = GetMainWindow.ActualWidth;
 
                 Settings.Default.Save();
             });
@@ -302,10 +302,6 @@ namespace PicView.UILogic.Sizing
             switch (GetMainWindow.WindowState)
             {
                 case WindowState.Normal:
-                    if (Settings.Default.Fullscreen)
-                    {
-                        Fullscreen_Restore();
-                    }
                     return;
 
                 case WindowState.Maximized:

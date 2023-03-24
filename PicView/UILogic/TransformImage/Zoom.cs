@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeTitlebar;
+using PicView.PicGallery;
 using PicView.Properties;
 using System.Windows;
 using System.Windows.Input;
@@ -16,9 +17,10 @@ namespace PicView.UILogic.TransformImage
         private static Point origin;
         private static Point start;
 
+        /// <summary>
         /// Used to determine final point when zooming,
-        /// since DoubleAnimation changes value of
-        /// TranslateTransform continuesly.
+        /// since DoubleAnimation changes value of TranslateTransform continuesly.
+        /// </summary>
         internal static double ZoomValue { get; set; }
 
         /// <summary>
@@ -119,44 +121,56 @@ namespace PicView.UILogic.TransformImage
         internal static void PanImage(object sender, MouseEventArgs e)
         {
             // Check if mouse capture is allowed and window is active
-            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive || scaleTransform.ScaleX == 1)
+            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive)
             {
                 return;
+            }
+
+            if (scaleTransform.ScaleX == 1)
+            {
+                if (!Settings.Default.Fullscreen && !GalleryFunctions.IsHorizontalFullscreenOpen)
+                    return;
             }
 
             // Calculate the change in mouse position
             var dragDelta = start - e.GetPosition(ConfigureWindows.GetMainWindow);
 
             // Update the image position
-            translateTransform.X = origin.X - dragDelta.X;
-            translateTransform.Y = origin.Y - dragDelta.Y;
+            var dragMousePosition = start - e.GetPosition(ConfigureWindows.GetMainWindow);
 
-            // Check if auto-fit window is enabled and full-screen mode is disabled
-            if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen)
+            var newXproperty = origin.X - dragMousePosition.X;
+            var newYproperty = origin.Y - dragMousePosition.Y;
+
+            // Keep panning it in bounds 
+            if (Properties.Settings.Default.AutoFitWindow) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
-                // Calculate if the image is outside of the window bounds
                 var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
                 var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
+                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
+                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
 
-                // Keep the image within the window bounds
-                if (isXOutOfBorder)
+                if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
                 {
-                    translateTransform.X = Math.Min(0, Math.Max(ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX), translateTransform.X));
-                }
-                else
-                {
-                    translateTransform.X = Math.Max(0, Math.Min(ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX), translateTransform.X));
+                    newXproperty = maxX;
                 }
 
-                if (isYOutOfBorder)
+                if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
                 {
-                    translateTransform.Y = Math.Min(0, Math.Max(ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY), translateTransform.Y));
+                    newYproperty = maxY;
                 }
-                else
+
+                if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
                 {
-                    translateTransform.Y = Math.Max(0, Math.Min(ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY), translateTransform.Y));
+                    newXproperty = 0;
+                }
+                if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+                {
+                    newYproperty = 0;
                 }
             }
+
+            translateTransform.X = newXproperty;
+            translateTransform.Y = newYproperty;
 
             e.Handled = true;
         }
@@ -297,9 +311,6 @@ namespace PicView.UILogic.TransformImage
             {
                 // Hack it to keep the intended value
                 scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue;
-
-                // Make sure value stays correct
-                ZoomValue = 1.0;
             };
 
             var translateAnimX = new DoubleAnimation(translateTransform.X, newTranslateValueX, duration)

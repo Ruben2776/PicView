@@ -36,7 +36,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -155,7 +155,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <AppDesigner Include="Properties\" />
+    <None Remove="Themes\Resources\img\icon.png" />
     <None Remove="Themes\Resources\img\noise-texture-100x100 %283%29.png" />
+    <Resource Include="Themes\Resources\img\icon.png" />
     <Resource Include="Themes\Resources\img\noise-texture-100x100 (3).png" />
   </ItemGroup>
 
@@ -178,11 +180,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.7" />
-    <PackageReference Include="Magick.NET-Q16-OpenMP-x64" Version="12.3.0" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="6.1.4">
+    <PackageReference Include="Magick.NET-Q16-OpenMP-x64" Version="13.0.0" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="7.0.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="6.1.4" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.0.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
@@ -411,7 +413,7 @@
   </ItemGroup>
 	
   <PropertyGroup>
-    <FileVersion>1.7</FileVersion>
+    <FileVersion>1.7.5</FileVersion>
     <SignAssembly>False</SignAssembly>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
@@ -423,7 +425,7 @@
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon-raster.128b.png</PackageIcon>
-    <AssemblyVersion>1.7</AssemblyVersion>
+    <AssemblyVersion>1.7.5</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>

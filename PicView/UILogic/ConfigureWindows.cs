@@ -23,6 +23,8 @@ namespace PicView.UILogic
         /// </summary>
         internal static ContextMenu? MainContextMenu { get; set; }
 
+        internal static ContextMenu? WindowContextMenu { get; set; }
+
         internal static bool IsMainWindowTopMost
         {
             get { return Settings.Default.TopMost; }

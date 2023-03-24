@@ -62,8 +62,8 @@ namespace PicView.UILogic
         internal static void ShowMinimalInterface()
         {
             ShowTopandBottom(false);
-            ShowNavigation(true);
-            ShowShortcuts(true);
+            ShowNavigation(Properties.Settings.Default.ShowAltInterfaceButtons);
+            ShowShortcuts(Properties.Settings.Default.ShowAltInterfaceButtons);
 
             Settings.Default.ShowInterface = false;
 
@@ -139,9 +139,9 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async Task Interface_MouseMove()
+        internal static void Interface_MouseMove()
         {
-            await FadeAsync(true).ConfigureAwait(false);
+            Fade(true);
         }
 
         /// <summary>
@@ -149,9 +149,9 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async Task Interface_MouseLeave()
+        internal static void Interface_MouseLeave()
         {
-            await FadeAsync(false).ConfigureAwait(false);
+            Fade(false);
         }
     }
 }

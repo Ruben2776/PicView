@@ -13,6 +13,12 @@ namespace PicView
         {
             ProfileOptimization.SetProfileRoot(FileFunctions.GetWritingPath());
             ProfileOptimization.StartProfile("ProfileOptimization");
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+        }
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.ToString());
         }
     }
 }

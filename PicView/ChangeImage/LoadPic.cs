@@ -6,6 +6,8 @@ using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
@@ -91,56 +93,51 @@ namespace PicView.ChangeImage
             }
         }
 
-        private static async Task LoadPiFromFileAsync(FileInfo fileInfo)
+        static async Task LoadPiFromFileAsync(FileInfo fileInfo)
         {
             LoadingPreview(fileInfo);
+
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ToggleStartUpUC(true));
 
-            if (!fileInfo.Exists)
+            if (!fileInfo.Exists)  // If file does not exist, try to load it if base64 or URL
             {
                 await LoadPicFromStringAsync(fileInfo.FullName, fileInfo).ConfigureAwait(false);
                 return;
             }
-
-            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
             if (Pics.Count == 0)
             {
                 if (SupportedFiles.IsArchive(fileInfo))
                 {
                     await LoadPicFromArchiveAsync(null, fileInfo).ConfigureAwait(false);
+                    return;
                 }
                 else
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
                 }
-                return;
             }
 
-            var foundIndex = Pics.IndexOf(fileInfo.FullName);
+            var folderChanged = await CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
 
-            if (FolderIndex == foundIndex)
+            if (folderChanged)
             {
-                await LoadPicAtIndexAsync(foundIndex, fileInfo).ConfigureAwait(false);
-            }
-            else
-            {
-                var folderChanged = await CheckDirectoryChangeAndPicGallery(fileInfo).ConfigureAwait(false);
-                FolderIndex = foundIndex >= 0 ? foundIndex : 0;
-                if (Pics.Count() > Preloader.MaxCount) Preloader.Clear();
+                Preloader.Clear();
 
-                if (FolderIndex >= 0)
-                    await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
+                await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
 
                 if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
                     await GalleryLoad.Load().ConfigureAwait(false);
-                    GalleryNavigation.SetSelected(FolderIndex, true);
                 }
 
                 if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
                     InitialPath = fileInfo.FullName;
             }
+            else if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+
+            FolderIndex = Pics.IndexOf(fileInfo.FullName);
+            await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
 
             FreshStartup = false;
         }
@@ -237,8 +234,10 @@ namespace PicView.ChangeImage
         /// <param name="fileInfo">The file information for the image. If not specified, the file information will be obtained from the image list using the specified index.</param>
         internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
         {
+            if (GetQuickResize is not null && GetQuickResize.Opacity > 0) return;
+
             FolderIndex = index;
-            var preloadValue = Preloader.Get(Pics[index]);
+            var preloadValue = Preloader.Get(index);
             fileInfo ??= new FileInfo(Pics[index]);
 
             if (!fileInfo.Exists)
@@ -274,7 +273,8 @@ namespace PicView.ChangeImage
 
                 if (preloadValue is null)
                 {
-                    preloadValue = await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                    await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                    preloadValue = Preloader.Get(index);
                     if (preloadValue is null)
                     {
                         await ErrorHandling.ReloadAsync().ConfigureAwait(false);
@@ -300,7 +300,7 @@ namespace PicView.ChangeImage
                 GalleryNavigation.FullscreenGalleryNavigation();
 
             if (GetToolTipMessage is not null && GetToolTipMessage.IsVisible)
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                     GetToolTipMessage.Visibility = Visibility.Hidden);
 
             if (Pics.Count > 1)
@@ -326,26 +326,27 @@ namespace PicView.ChangeImage
 
         #endregion LoadPicAtValue
 
+
+        /// <summary>
+        /// Loads a thumbnail preview of an image file and displays a loading message while it's being loaded.
+        /// </summary>
+        /// <param name="fileInfo">The file information of the image to be loaded.</param>
         internal static void LoadingPreview(FileInfo fileInfo)
         {
-            var bitmapSource = Thumbnails.GetBitmapSourceThumb(fileInfo);
+            var bitmapSourceHolder = Thumbnails.GetBitmapSourceThumb(fileInfo);
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
             {
                 // Set Loading
                 SetLoadingString();
 
-                if (bitmapSource != null)
-                {
-                    if (!bitmapSource.IsFrozen)
-                        bitmapSource.Freeze();
-                    ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-                }
+                ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Wait;
 
-                // Don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
-                if (XWidth < 1)
+                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSourceHolder.Thumb;
+                // Set to logo size or don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
+                if (bitmapSourceHolder.isLogo || XWidth < 1)
                 {
-                    ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                    ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                    ConfigureWindows.GetMainWindow.MainImage.Width = bitmapSourceHolder.Size;
+                    ConfigureWindows.GetMainWindow.MainImage.Height = bitmapSourceHolder.Size;
                 }
             });
         }

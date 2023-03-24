@@ -76,19 +76,20 @@ namespace PicView.Views.Windows
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
                 KeyUp += (sender, e) => MainKeyboardShortcuts.MainWindow_KeysUp(sender, e);
-                MouseLeftButtonDown += async (sender, e) => await MainMouseKeys.MouseLeftButtonDownAsync(sender, e).ConfigureAwait(false);
+                MouseLeftButtonDown += MainMouseKeys.MouseLeftButtonDown;
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
                 // Lowerbar
                 LowerBar.Drop += async (sender, e) => await Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
                 LowerBar.MouseLeftButtonDown += MoveAlt;
 
-                MouseMove += async (_, _) => await HideInterfaceLogic.Interface_MouseMove().ConfigureAwait(false);
-                MouseLeave += async (_, _) => await HideInterfaceLogic.Interface_MouseLeave().ConfigureAwait(false);
+                MouseMove += (_, _) => HideInterfaceLogic.Interface_MouseMove();
+                MouseLeave += (_, _) => HideInterfaceLogic.Interface_MouseLeave();
 
                 // MainImage
                 ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
                 ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
+
 
                 // ClickArrows
                 GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
@@ -261,7 +262,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
 
-                _ = FadeControls.FadeAsync(true).ConfigureAwait(false);
+                FadeControls.Fade(true);
             }
             else if (Navigation.ClickArrowLeftClicked)
             {
@@ -269,7 +270,7 @@ namespace PicView.Views.Windows
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowLeftClicked = false;
 
-                _ = FadeControls.FadeAsync(true).ConfigureAwait(false);
+                FadeControls.Fade(true);
             }
 
             base.OnRenderSizeChanged(sizeInfo);

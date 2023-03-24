@@ -35,21 +35,21 @@ namespace PicView.UILogic.TransformImage
         /// <summary>
         /// Toggles scroll and displays it with TooltipStyle
         /// </summary>
-        internal static async Task SetScrollBehaviour(bool scrolling)
+        internal static void SetScrollBehaviour(bool scrolling)
         {
             if (Properties.Settings.Default.Fullscreen || Properties.Settings.Default.FullscreenGalleryHorizontal)
             {
                 return;
             }
             Settings.Default.ScrollEnabled = scrolling;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
             {
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
             });
             if (Navigation.Pics != null)
             {
-                await TryFitImageAsync().ConfigureAwait(false);
+                _= TryFitImageAsync();
                 if (Navigation.FreshStartup == false)
                 {
                     ShowTooltipMessage(scrolling ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);

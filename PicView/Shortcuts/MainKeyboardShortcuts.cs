@@ -253,7 +253,7 @@ namespace PicView.Shortcuts
                         }
                         else if (Color_Picking.IsRunning)
                         {
-                            await Color_Picking.StopRunningAsync(false).ConfigureAwait(false);
+                            Color_Picking.StopRunning(false);
                         }
                         else if (GetEffectsWindow != null && GetEffectsWindow.IsVisible)
                         {
@@ -273,7 +273,7 @@ namespace PicView.Shortcuts
                         }
                         else if (Settings.Default.Fullscreen)
                         {
-                            WindowSizing.Fullscreen_Restore();
+                            WindowSizing.Fullscreen_Restore(false);
                         }
                         else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
                         {
@@ -362,12 +362,26 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                CopyFile();
+                                if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
+                                    CopyBitmap();
+                                else
+                                    CopyFile();
                             }
                         }
                         else if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            CropFunctions.StartCrop();
+                            switch (RotationAngle)
+                            {
+                                case 0:
+                                case 90:
+                                case 180:
+                                case 270:
+                                    if (!IsZoomed) // TODO make crop work with zoom
+                                    {
+                                        CropFunctions.StartCrop();
+                                    }
+                                    break;
+                            }
                         }
                         break;
 
@@ -485,7 +499,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(true, false).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(true, false);
                         break;
 
                     // 2
@@ -494,7 +508,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(true, true).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(true, true);
                         break;
 
                     // 3
@@ -503,7 +517,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(false, false).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(false, false);
                         break;
 
                     // 4
@@ -512,7 +526,7 @@ namespace PicView.Shortcuts
                         || Settings.Default.Fullscreen) { break; }
 
                         Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"]);
-                        await UpdateUIValues.SetScalingBehaviourAsync(false, true).ConfigureAwait(false);
+                        UpdateUIValues.SetScalingBehaviour(false, true);
                         break;
 
                     // F1
@@ -560,7 +574,7 @@ namespace PicView.Shortcuts
 
                     // F11
                     case Key.F11:
-                        WindowSizing.Fullscreen_Restore();
+                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
                         break;
 
                     // Home
@@ -600,11 +614,11 @@ namespace PicView.Shortcuts
                         HideInterfaceLogic.ToggleInterface();
                     }
                 }
-                else if (e.SystemKey == Key.Enter) // Doesn't work..
+                else if (e.SystemKey == Key.Enter)
                 {
                     if (Settings.Default.FullscreenGalleryHorizontal == false)
                     {
-                        WindowSizing.Fullscreen_Restore();
+                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
                     }
                 }
                 return;

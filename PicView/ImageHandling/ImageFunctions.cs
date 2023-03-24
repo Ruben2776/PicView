@@ -77,7 +77,7 @@ namespace PicView.ImageHandling
                 return;
             }
 
-            var preloadValue = Preloader.Get(Navigation.Pics[Navigation.FolderIndex]);
+            var preloadValue = Preloader.Get(Navigation.FolderIndex);
             if (preloadValue == null)
             {
                 await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
@@ -163,7 +163,7 @@ namespace PicView.ImageHandling
            var bitmap = new BitmapImage(new Uri(@"pack://application:,,,/"
                 + Assembly.GetExecutingAssembly().GetName().Name
                 + ";component/"
-                + "Themes/Resources/img/icon__Q6k_icon.ico", UriKind.Absolute));
+                + "Themes/Resources/img/icon.png", UriKind.Absolute));
             bitmap.Freeze();
             return bitmap;
         }

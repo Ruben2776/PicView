@@ -38,7 +38,7 @@ namespace PicView.UILogic.Sizing
             if (ErrorHandling.CheckOutOfRange() == false)
             {
                 if (!(Pics?.Count > FolderIndex)) { return false; }
-                var preloadValue = Preloader.Get(Pics[FolderIndex]);
+                var preloadValue = Preloader.Get(FolderIndex);
                 if (preloadValue != null)
                 {
                     var pic = preloadValue.BitmapSource;
@@ -166,8 +166,6 @@ namespace PicView.UILogic.Sizing
                     break;
             }
 
-            GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
-
             if (Settings.Default.ScrollEnabled)
             {
                 GetMainWindow.MainImage.Height = maxWidth * height / width;
@@ -183,12 +181,19 @@ namespace PicView.UILogic.Sizing
             {
                 // Fit image by aspect ratio calculation
                 // and update values
+                if (Settings.Default.AutoFitWindow)
+                {
+                    GetMainWindow.ParentContainer.Width = double.NaN;
+                    GetMainWindow.ParentContainer.Height = double.NaN;
+                }
+
                 GetMainWindow.MainImage.Width = XWidth = width * AspectRatio;
                 GetMainWindow.MainImage.Height = XHeight = height * AspectRatio;
 
-                GetMainWindow.ParentContainer.Width = double.NaN;
-                GetMainWindow.ParentContainer.Height = double.NaN;
             }
+
+            // Update margin when from fullscreengallery and when not
+            GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
 
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
             var interfaceSize = 
@@ -197,20 +202,17 @@ namespace PicView.UILogic.Sizing
 
             if (Settings.Default.AutoFitWindow)
             {
-                if (Settings.Default.KeepCentered)
-                {
-                    CenterWindowOnScreen();
-                }
+                CenterWindowOnScreen(Settings.Default.KeepCentered);
 
                 // Update mainWindow.TitleBar width to dynamically fit new size
-                var x = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+                var titlebarMaxWidth = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
                 if (Settings.Default.ScrollEnabled)
                 {
-                    GetMainWindow.TitleText.MaxWidth = x;
+                    GetMainWindow.TitleText.MaxWidth = maxWidth;
                 }
                 else
                 {
-                    GetMainWindow.TitleText.MaxWidth = x - interfaceSize < interfaceSize ? interfaceSize : x - interfaceSize;
+                    GetMainWindow.TitleText.MaxWidth = titlebarMaxWidth - interfaceSize < interfaceSize ? interfaceSize : titlebarMaxWidth - interfaceSize;
                 }
             }
             else
@@ -219,7 +221,7 @@ namespace PicView.UILogic.Sizing
                 GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
             }
 
-            if (ZoomLogic.translateTransform is not null && ZoomLogic.translateTransform?.X != 0d)
+            if (ZoomLogic.IsZoomed)
             {
                 ZoomLogic.ResetZoom(false);
             }

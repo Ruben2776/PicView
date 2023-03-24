@@ -45,81 +45,94 @@
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
 
-            <Button
-                Name="GalleryButton"
-                Width="29"
-                Height="31"
+            <Canvas
+                Width="90"
+                Background="{StaticResource BackgroundColorBrushFadeSubtle}"
                 DockPanel.Dock="Left">
-                <Button.Background>
-                    <SolidColorBrush x:Name="GalleryBg" Color="{StaticResource SubtleFadeColor}" />
-                </Button.Background>
-                <Image Width="17">
-                    <Image.Source>
-                        <DrawingImage>
-                            <DrawingImage.Drawing>
-                                <DrawingGroup>
-                                    <GeometryDrawing Geometry="F1 M22 16L22 4C22 2.9 21.1 2 20 2L8 2C6.9 2 6 2.9 6 4L6 16C6 17.1 6.9 18 8 18L20 18C21.1 18 22 17.1 22 16ZM11 12L13.03 14.71L16 11L20 16L8 16L11 12ZM2 6L2 20C2 21.1 2.9 22 4 22L18 22L18 20L4 20L4 6L2 6Z">
-                                        <GeometryDrawing.Brush>
-                                            <SolidColorBrush x:Name="GalleryBrush" Color="{StaticResource IconColor}" />
-                                        </GeometryDrawing.Brush>
-                                    </GeometryDrawing>
-                                </DrawingGroup>
-                            </DrawingImage.Drawing>
-                        </DrawingImage>
-                    </Image.Source>
-                </Image>
-            </Button>
+                <Button
+                    Name="GalleryButton"
+                    Width="29"
+                    Height="31">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="GalleryBg" Color="{StaticResource SubtleFadeColor}" />
+                    </Button.Background>
+                    <Image Width="17">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Geometry="F1 M22 16L22 4C22 2.9 21.1 2 20 2L8 2C6.9 2 6 2.9 6 4L6 16C6 17.1 6.9 18 8 18L20 18C21.1 18 22 17.1 22 16ZM11 12L13.03 14.71L16 11L20 16L8 16L11 12ZM2 6L2 20C2 21.1 2.9 22 4 22L18 22L18 20L4 20L4 6L2 6Z">
+                                            <GeometryDrawing.Brush>
+                                                <SolidColorBrush x:Name="GalleryBrush" Color="{StaticResource IconColor}" />
+                                            </GeometryDrawing.Brush>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </Button>
 
+                <Rectangle
+                    Canvas.Left="30"
+                    Width="1"
+                    Height="30"
+                    Fill="{StaticResource BorderBrush}" />
+
+                <Button
+                    Name="RotateButton"
+                    Canvas.Left="31"
+                    Width="29"
+                    Height="31">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="RotateBg" Color="{StaticResource SubtleFadeColor}" />
+                    </Button.Background>
+                    <Path
+                        Canvas.Top="19"
+                        Width="15"
+                        Height="15"
+                        Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
+                        Stretch="Fill">
+                        <Path.Fill>
+                            <SolidColorBrush x:Name="RotateBrush" Color="{StaticResource IconColor}" />
+                        </Path.Fill>
+                    </Path>
+                </Button>
+
+                <Rectangle
+                    Canvas.Left="60"
+                    Width="1"
+                    Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Fill="{StaticResource BorderBrush}" />
+
+                <Button
+                    Name="FlipButton"
+                    Canvas.Left="61"
+                    Width="29"
+                    Height="30">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="FlipBg" Color="{StaticResource SubtleFadeColor}" />
+                    </Button.Background>
+                    <Path
+                        x:Name="FlipPath"
+                        Width="13"
+                        Height="13"
+                        Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
+                        Stretch="Fill">
+                        <Path.Fill>
+                            <SolidColorBrush x:Name="FlipBrush" Color="{StaticResource IconColor}" />
+                        </Path.Fill>
+                    </Path>
+                </Button>
+
+
+            </Canvas>
             <Rectangle
                 Width="1"
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
-
-            <Button
-                Name="RotateButton"
-                Width="29"
-                Height="31">
-                <Button.Background>
-                    <SolidColorBrush x:Name="RotateBg" Color="{StaticResource SubtleFadeColor}" />
-                </Button.Background>
-                <Path
-                    Canvas.Top="19"
-                    Width="15"
-                    Height="15"
-                    Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
-                    Stretch="Fill">
-                    <Path.Fill>
-                        <SolidColorBrush x:Name="RotateBrush" Color="{StaticResource IconColor}" />
-                    </Path.Fill>
-                </Path>
-            </Button>
-
-            <Rectangle
-                Width="1"
-                Height="30"
-                Fill="{StaticResource BorderBrush}" />
-
-            <Button Name="FlipButton" Width="29">
-                <Button.Background>
-                    <SolidColorBrush x:Name="FlipBg" Color="{StaticResource SubtleFadeColor}" />
-                </Button.Background>
-                <Path
-                    x:Name="FlipPath"
-                    Width="13"
-                    Height="13"
-                    Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
-                    Stretch="Fill">
-                    <Path.Fill>
-                        <SolidColorBrush x:Name="FlipBrush" Color="{StaticResource IconColor}" />
-                    </Path.Fill>
-                </Path>
-            </Button>
-
-            <Rectangle
-                Width="1"
-                Height="30"
-                Fill="{StaticResource BorderBrush}" />
-
             <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
