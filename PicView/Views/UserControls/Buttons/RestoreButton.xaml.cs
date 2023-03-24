@@ -15,7 +15,7 @@ namespace PicView.Views.UserControls.Buttons
         {
             InitializeComponent();
 
-            TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(); };
+            TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen); };
 
             MouseEnter += delegate
             {

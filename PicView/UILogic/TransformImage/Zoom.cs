@@ -136,35 +136,41 @@ namespace PicView.UILogic.TransformImage
             var dragDelta = start - e.GetPosition(ConfigureWindows.GetMainWindow);
 
             // Update the image position
-            translateTransform.X = origin.X - dragDelta.X;
-            translateTransform.Y = origin.Y - dragDelta.Y;
+            var dragMousePosition = start - e.GetPosition(ConfigureWindows.GetMainWindow);
 
-            // Check if auto-fit window is enabled and full-screen mode is disabled
-            if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal)
+            var newXproperty = origin.X - dragMousePosition.X;
+            var newYproperty = origin.Y - dragMousePosition.Y;
+
+            // Keep panning it in bounds 
+            if (Properties.Settings.Default.AutoFitWindow) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
-                // Calculate if the image is outside of the window bounds
                 var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
                 var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
+                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
+                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
 
-                // Keep the image within the window bounds
-                if (isXOutOfBorder)
+                if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
                 {
-                    translateTransform.X = Math.Min(0, Math.Max(ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX), translateTransform.X));
-                }
-                else
-                {
-                    translateTransform.X = Math.Max(0, Math.Min(ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX), translateTransform.X));
+                    newXproperty = maxX;
                 }
 
-                if (isYOutOfBorder)
+                if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
                 {
-                    translateTransform.Y = Math.Min(0, Math.Max(ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY), translateTransform.Y));
+                    newYproperty = maxY;
                 }
-                else
+
+                if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
                 {
-                    translateTransform.Y = Math.Max(0, Math.Min(ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY), translateTransform.Y));
+                    newXproperty = 0;
+                }
+                if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+                {
+                    newYproperty = 0;
                 }
             }
+
+            translateTransform.X = newXproperty;
+            translateTransform.Y = newYproperty;
 
             e.Handled = true;
         }

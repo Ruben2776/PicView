@@ -273,7 +273,7 @@ namespace PicView.Shortcuts
                         }
                         else if (Settings.Default.Fullscreen)
                         {
-                            WindowSizing.Fullscreen_Restore();
+                            WindowSizing.Fullscreen_Restore(false);
                         }
                         else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
                         {
@@ -571,7 +571,7 @@ namespace PicView.Shortcuts
 
                     // F11
                     case Key.F11:
-                        WindowSizing.Fullscreen_Restore();
+                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
                         break;
 
                     // Home
@@ -615,7 +615,7 @@ namespace PicView.Shortcuts
                 {
                     if (Settings.Default.FullscreenGalleryHorizontal == false)
                     {
-                        WindowSizing.Fullscreen_Restore();
+                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
                     }
                 }
                 return;

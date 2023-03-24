@@ -277,7 +277,7 @@ namespace PicView.UILogic.Loading
             WindowContextMenu = (ContextMenu)Application.Current.Resources["windowCM"];
 
             var fullscreenWindow = (MenuItem)WindowContextMenu.Items[0];
-            fullscreenWindow.Click += (_,_) => WindowSizing.Fullscreen_Restore();
+            fullscreenWindow.Click += (_,_) => WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
 
             var minWindow = (MenuItem)WindowContextMenu.Items[1];
             minWindow.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);

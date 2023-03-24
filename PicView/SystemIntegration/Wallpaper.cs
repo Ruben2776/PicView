@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.ComponentModel;
@@ -50,6 +51,9 @@ namespace PicView.SystemIntegration
             }
 
             SetDesktopWallpaper(destination, style);
+            // Wait a while and then delete file
+            await Task.Delay(TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+            DeleteFiles.TryDeleteFile(destination, false);
         }
 
         /// <summary>
