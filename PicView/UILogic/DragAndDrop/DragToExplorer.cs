@@ -52,6 +52,14 @@ namespace PicView.UILogic.DragAndDrop
 
             if (UC.GetCropppingTool is { IsVisible: true }) return;
 
+            if (Properties.Settings.Default.ShowInterface == false)
+            {
+                if (Keyboard.Modifiers != ModifierKeys.Control)
+                {
+                    return;
+                }
+            }
+
             string? file;
             if (Pics.Count == 0)
             {
