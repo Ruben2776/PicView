@@ -34,26 +34,21 @@ namespace PicView.SystemIntegration
             var tempPath = Path.GetTempPath();
             var randomName = Path.GetRandomFileName();
             var destination = tempPath + randomName;
-
-            var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+            BitmapSource? bitmapSource = null;
+            string? path = null;
+            if (ErrorHandling.CheckOutOfRange())
+            {
+                bitmapSource = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+            }
+            else
+            {
+                path = Pics[FolderIndex];
+            }
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            if (effectApplied || ErrorHandling.CheckOutOfRange())
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
-                {
-                    await SaveImages.SaveImageAsync(RotationAngle, Flipped, source, null, destination, null, effectApplied).ConfigureAwait(false);
-                });
-            }
-            else if (ErrorHandling.CheckOutOfRange() == false)
-            {
-                await SaveImages.SaveImageAsync(RotationAngle, Flipped, null, Pics[FolderIndex], destination, null, effectApplied).ConfigureAwait(false);
-            }
+            await SaveImages.SaveImageAsync(RotationAngle, Flipped, bitmapSource, path, destination, null, effectApplied).ConfigureAwait(false);
 
             SetDesktopWallpaper(destination, style);
-            // Wait a while and then delete file
-            await Task.Delay(TimeSpan.FromSeconds(15)).ConfigureAwait(false);
-            DeleteFiles.TryDeleteFile(destination, false);
         }
 
         /// <summary>

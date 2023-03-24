@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.Animations.MouseOverAnimations;
+using static PicView.SystemIntegration.Wallpaper;
 
 namespace PicView.Views.Windows
 {
@@ -174,7 +175,16 @@ namespace PicView.Views.Windows
             SetAsButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetAsBrush); };
             SetAsButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SetAsText); };
             SetAsButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetAsBrush); };
-            SetAsButton.Click += async (_, _) => await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fit).ConfigureAwait(false);
+            SetAsButton.Click += async delegate
+            {
+                var x = WallpaperStyle.Fill;
+                if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
+                if (Center.IsSelected) { x = WallpaperStyle.Center; }
+                if (Tile.IsSelected) { x = WallpaperStyle.Tile; }
+                if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
+
+                await SetWallpaperAsync(x).ConfigureAwait(false);
+            };
 
             // CopyButton
             CopyButton.MouseEnter += delegate { ButtonMouseOverAnim(CopyText); };
