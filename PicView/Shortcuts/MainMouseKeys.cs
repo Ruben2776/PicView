@@ -239,41 +239,9 @@ namespace PicView.Shortcuts
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(direction, false, true));
             }
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                if (Settings.Default.CtrlZoom)
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
-                }
-                else
-                {
-                    if (direction)
-                    {
-                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
-                    }
-                }
-            }
             else
             {
-                if (Settings.Default.CtrlZoom)
-                {
-                    if (direction)
-                    {
-                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
-                }
+                await HandleNavigateOrZoomAsync(direction, e).ConfigureAwait(false);
             }
         }
 
@@ -293,6 +261,7 @@ namespace PicView.Shortcuts
 
         private static async Task HandleNavigateOrZoomAsync(bool direction, MouseWheelEventArgs e)
         {
+            var next = direction ? NavigateTo.Previous : NavigateTo.Next;
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 if (Settings.Default.CtrlZoom)
@@ -301,27 +270,23 @@ namespace PicView.Shortcuts
                 }
                 else
                 {
-                    if (direction)
-                    {
-                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
-                    }
+                    await Navigation.GoToNextImage(next).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    if (direction)
+                    if (Properties.Settings.Default.ScrollEnabled)
                     {
-                        await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                        {
+                            await Navigation.GoToNextImage(next).ConfigureAwait(false);
+                        }
                     }
                     else
                     {
-                        await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                        await Navigation.GoToNextImage(next).ConfigureAwait(false);
                     }
                 }
                 else
