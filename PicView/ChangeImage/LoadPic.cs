@@ -342,17 +342,11 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Wait;
 
                 ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSourceHolder.Thumb;
-                if (bitmapSourceHolder.isLogo)
+                // Set to logo size or don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
+                if (bitmapSourceHolder.isLogo || XWidth < 1)
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Width = bitmapSourceHolder.Size;
                     ConfigureWindows.GetMainWindow.MainImage.Height = bitmapSourceHolder.Size;
-                }
-
-                // Don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
-                else if (XWidth < 1)
-                {
-                    ConfigureWindows.GetMainWindow.MainImage.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                    ConfigureWindows.GetMainWindow.MainImage.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
             });
         }

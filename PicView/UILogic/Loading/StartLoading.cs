@@ -35,13 +35,10 @@ namespace PicView.UILogic.Loading
             if (Settings.Default.AutoFitWindow == false)
             {
                 SetWindowBehavior();
+                SetLastWindowSize();
             }
 
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-
-            // Set min size to DPI scaling
-            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             if (!Settings.Default.ShowInterface)
             {
@@ -54,16 +51,6 @@ namespace PicView.UILogic.Loading
         internal static async Task ContentRenderedEventAsync()
         {
             var args = Environment.GetCommandLineArgs();
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => 
-            {
-                if (Settings.Default.Width > 0 && Settings.Default.AutoFitWindow == false)
-                {
-                    SetLastWindowSize();
-                }
-                SetWindowBehavior();
-
-            }, DispatcherPriority.Send);
 
             // Determine prefered UI for startup
             if (Settings.Default.FullscreenGalleryHorizontal)
