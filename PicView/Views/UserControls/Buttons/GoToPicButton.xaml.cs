@@ -22,9 +22,9 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush);
-                TheButton.Click += async (s, x) => await GoToPicEventAsync(s, x).ConfigureAwait(false);
+                TheButton.MouseEnter += (_, _) => ButtonMouseOverAnim(GoToPicBrush, true);
+                TheButton.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(GoToPicBrush);
+                TheButton.Click += async (_, _) => await GoToPicEventAsync().ConfigureAwait(false);
 
                 if (!Settings.Default.DarkTheme)
                 {
@@ -40,12 +40,9 @@ namespace PicView.Views.UserControls.Buttons
             };
         }
 
-        internal static async Task GoToPicEventAsync(object sender, RoutedEventArgs e)
+        internal static async Task GoToPicEventAsync()
         {
-            if (ErrorHandling.CheckOutOfRange())
-            {
-                return;
-            }
+            if (ErrorHandling.CheckOutOfRange()) return;
 
             if (int.TryParse(GetImageSettingsMenu.GoToPic.GoToPicBox.Text, out int x))
             {
@@ -53,10 +50,8 @@ namespace PicView.Views.UserControls.Buttons
                 x = x <= 0 ? 0 : x;
                 x = x >= Pics.Count ? Pics.Count - 1 : x;
                 await LoadPic.LoadPicAtIndexAsync(x).ConfigureAwait(false);
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
-                {
-                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
-                });
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => 
+                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture));
             }
             else if (Pics.Count > 0 && Pics.Count > FolderIndex)
             {
@@ -122,12 +117,8 @@ namespace PicView.Views.UserControls.Buttons
                     break;
 
                 case Key.Enter: // Execute it!
-                    await GoToPicEventAsync(sender, e).ConfigureAwait(false);
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(() =>
-                    {
-                        ClearGoTo();
-                    });
-
+                    await GoToPicEventAsync().ConfigureAwait(false);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ClearGoTo());
                     break;
 
                 default:

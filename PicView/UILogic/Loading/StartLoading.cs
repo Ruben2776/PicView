@@ -22,7 +22,6 @@ namespace PicView.UILogic.Loading
     {
         internal static void LoadedEvent()
         {
-            FreshStartup = true;
             Pics = new List<string>();
 
             // Load sizing properties
@@ -32,11 +31,10 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
+            SetWindowBehavior();
+
             if (Settings.Default.AutoFitWindow == false)
-            {
-                SetWindowBehavior();
                 SetLastWindowSize();
-            }
 
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 

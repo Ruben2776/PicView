@@ -22,7 +22,8 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool CheckOutOfRange()
         {
-            return Pics?.Count < FolderIndex || Pics?.Count < 1 || UC.GetCropppingTool is { IsVisible: true };
+            return Pics.Count < FolderIndex || Pics.Count < 1 || UC.GetCropppingTool is not null and { IsVisible: true } 
+                || (UC.GetQuickResize?.Opacity > 0);
         }
 
         internal static void UnexpectedError()
@@ -38,12 +39,12 @@ namespace PicView.ChangeImage
             });
         }
 
-        internal static async Task<bool> CheckDirectoryChangeAndPicGallery(FileInfo fileInfo)
+        internal static bool CheckDirectoryChangeAndPicGallery(FileInfo fileInfo)
         {
             bool folderChanged = false;
 
             // If count not correct or just started, get values
-            if (Pics?.Count <= FolderIndex || FolderIndex < 0 || FreshStartup)
+            if (Pics?.Count <= FolderIndex || FolderIndex < 0)
             {
                 folderChanged = true;
             }
@@ -64,7 +65,7 @@ namespace PicView.ChangeImage
 
             if (Settings.Default.FullscreenGalleryHorizontal)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, (Action)(() =>
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, (Action)(() =>
                 {
                     // Remove children before loading new
                     if (UC.GetPicGallery.Container.Children.Count > 0)
@@ -146,7 +147,6 @@ namespace PicView.ChangeImage
             }
 
             Preloader.Clear();
-            FreshStartup = true;
             DeleteTempFiles();
         }
 
@@ -229,12 +229,8 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            // Force reloading values by setting freshStartup to true
-            FreshStartup = true;
-
             Preloader.Clear();
-
-            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            Pics = FileLists.FileList(fileInfo);
 
             bool containerCheck = false;
 
@@ -266,8 +262,6 @@ namespace PicView.ChangeImage
             WindowSizing.SetWindowBehavior();
 
             UC.ToggleStartUpUC(!showStartup);
-
-            FreshStartup = true;
             Pics?.Clear();
 
             Preloader.Clear();

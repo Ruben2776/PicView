@@ -56,6 +56,7 @@ namespace PicView.UILogic
         internal static void StopSlideshow()
         {
             SlideTimer?.Stop();
+            SlideTimer = null;
 
             if (!Settings.Default.Fullscreen)
             {

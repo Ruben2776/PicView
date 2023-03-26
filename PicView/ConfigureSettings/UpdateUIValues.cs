@@ -57,7 +57,7 @@ namespace PicView.ConfigureSettings
             }
             else
             {
-                await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+                Navigation.Pics = FileLists.FileList(fileInfo);
             }
 
             Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);

@@ -64,7 +64,7 @@ namespace PicView.PicGallery
             }));
 
             Navigation.Pics.Clear(); // Cancel task if running
-            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            Navigation.Pics = FileLists.FileList(fileInfo);
 
             try
             {
