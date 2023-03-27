@@ -4,6 +4,7 @@ using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -150,33 +151,47 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static async Task<BitmapSource?> GetTransparentBitmapSourceAsync(FileInfo fileInfo, MagickFormat magickFormat)
         {
-            using FileStream filestream = new(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
-            var data = new byte[filestream.Length];
-            await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
+            if (fileInfo.Length >= 2147483648)
+                return (WriteableBitmap?)await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
 
-            using var magickImage = new MagickImage(data)
+            try
             {
-                Quality = 100,
-                ColorSpace = ColorSpace.Transparent,
-                BackgroundColor = MagickColors.Transparent,
-                Format = magickFormat,
-                Settings =
+                using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+                byte[] data = new byte[fileStream.Length];
+                await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
+                var magickImage = new MagickImage()
                 {
-                    Format = magickFormat,
+                    Quality = 100,
+                    ColorSpace = ColorSpace.Transparent,
                     BackgroundColor = MagickColors.Transparent,
-                    FillColor = MagickColors.Transparent,
-                },
-            };
+                    Format = magickFormat,
+                };
+                magickImage.Read(data);
+                magickImage.Settings.BackgroundColor = MagickColors.Transparent;
+                magickImage.Settings.FillColor = MagickColors.Transparent;
 
-            var bitmap = magickImage.ToBitmapSource();
-            bitmap.Freeze();
-            return bitmap;
+                var bitmap = magickImage.ToBitmapSource();
+                bitmap.Freeze();
+                magickImage.Dispose();
+                return bitmap;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(GetTransparentBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
+#endif
+                Tooltip.ShowTooltipMessage(e);
+                return null;
+            }
         }
 
         private static async Task<WriteableBitmap?> GetWriteableBitmapAsync(FileInfo fileInfo)
         {
             try
             {
+                if (fileInfo.Length >= 2147483648)
+                    return (WriteableBitmap?)await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+
                 using var stream = File.OpenRead(fileInfo.FullName);
                 var data = new byte[stream.Length];
                 await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
@@ -201,23 +216,40 @@ namespace PicView.ImageHandling
 
         private static async Task<BitmapSource?> GetDefaultBitmapSourceAsync(FileInfo fileInfo, bool autoOrient = false)
         {
+            MagickImage magickImage;
             try
             {
-                using var magick = new MagickImage()
+                if (fileInfo.Length >= 2147483648) // Streams with a length larger than 2GB are not supported, read from file instead
                 {
-                    Quality = 100
-                };
-
-                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
-                if (autoOrient)
+                    magickImage = new MagickImage();
+                    try
+                    {
+                       magickImage.Read(fileInfo);
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(GetDefaultBitmapSourceAsync)} {fileInfo.Name} exception\n {e.Message}");
+#endif
+                        return null;
+                    }
+                }
+                else
                 {
-                    magick.AutoOrient();
+                    using FileStream filestream = new(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
+                    var data = new byte[filestream.Length];
+                    await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
+                    magickImage = new MagickImage(data);
                 }
 
-                var pic = magick.ToBitmapSource();
-                pic.Freeze();
-
-                return pic;
+                if (autoOrient)
+                {
+                    magickImage.AutoOrient();
+                }
+                var bitmap = magickImage.ToBitmapSource();
+                bitmap.Freeze();
+                magickImage.Dispose();
+                return bitmap;
             }
             catch (Exception e)
             {
