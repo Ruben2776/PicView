@@ -46,9 +46,9 @@ namespace PicView.UILogic
 
             bool toReturn = false;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                if (ConfigureWindows.GetImageInfoWindow == null || ConfigureWindows.GetImageInfoWindow != null && ConfigureWindows.GetImageInfoWindow.IsVisible == false)
+                if (ConfigureWindows.GetImageInfoWindow is null or { IsVisible : false })
                 {
                     toReturn = true;
                 }
@@ -58,13 +58,13 @@ namespace PicView.UILogic
                     Clear();
                     toReturn = true;
                 }
-            });
+            }, DispatcherPriority.DataBind);
 
             if (toReturn) { return; }
 
             var data = await GetImageData.RetrieveData(fileInfo).ConfigureAwait(false);
 
-            await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetImageInfoWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
                 {

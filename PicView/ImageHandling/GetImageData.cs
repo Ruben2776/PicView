@@ -15,7 +15,7 @@ namespace PicView.ImageHandling
 {
     internal static class GetImageData
     {
-        internal static Task<string[]?> RetrieveData(FileInfo? fileInfo) => Task.Run(async () =>
+        internal static async Task<string[]?> RetrieveData(FileInfo? fileInfo)
         {
             if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
             {
@@ -38,7 +38,7 @@ namespace PicView.ImageHandling
                 try
                 {
                     name = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                    directoryname = fileInfo.DirectoryName;
+                    directoryname = fileInfo.DirectoryName ?? "";
                     fullname = fileInfo.FullName;
                     creationtime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
                     lastwritetime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
@@ -63,19 +63,16 @@ namespace PicView.ImageHandling
                 if (preloadValue is null)
                 {
                     await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-
+                    preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
                     if (preloadValue is null)
                     {
                         preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
-                        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                        {
-                            preloadValue.BitmapSource = ImageDecoder.GetRenderedBitmapFrame();
-                        });
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => preloadValue.BitmapSource = ImageDecoder.GetRenderedBitmapFrame());
                     }
                 }
                 while (preloadValue.IsLoading)
                 {
-                    await Task.Delay(200).ConfigureAwait(false);
+                    await Task.Delay(50).ConfigureAwait(false);
 
                     if (preloadValue == null) { return null; }
                 }
@@ -317,10 +314,10 @@ namespace PicView.ImageHandling
                         lastwritetime,
                         lastaccesstime,
 
-                        bitdepth.ToString(),
+                        bitdepth.ToString() ?? "",
 
-                        bitmapSource.PixelWidth.ToString(),
-                        bitmapSource.PixelHeight.ToString(),
+                        bitmapSource.PixelWidth.ToString() ?? "",
+                        bitmapSource.PixelHeight.ToString() ?? "",
 
                         dpi,
 
@@ -331,7 +328,7 @@ namespace PicView.ImageHandling
 
                         ratioText,
 
-                        stars.ToString(),
+                        stars.ToString() ?? "",
                     };
             }
 
@@ -346,14 +343,14 @@ namespace PicView.ImageHandling
             title = _title.Description.DisplayName;
             if (_title.ValueAsObject is not null)
             {
-                titleValue = _title.ValueAsObject.ToString();
+                titleValue = _title.ValueAsObject.ToString() ?? "";
             }
 
             var _subject = so.Properties.GetProperty(SystemProperties.System.Subject);
             subject = _subject.Description.DisplayName;
             if (_subject.ValueAsObject is not null)
             {
-                subjectValue = _subject.ValueAsObject.ToString();
+                subjectValue = _subject.ValueAsObject.ToString() ?? "";
             }
 
             var _author = so.Properties.GetProperty(SystemProperties.System.Author);
@@ -389,28 +386,28 @@ namespace PicView.ImageHandling
             dateTaken = _dateTaken.Description.DisplayName;
             if (_dateTaken.ValueAsObject is not null)
             {
-                dateTakenValue = _dateTaken.ValueAsObject.ToString();
+                dateTakenValue = _dateTaken.ValueAsObject.ToString() ?? "";
             }
 
             var _program = so.Properties.GetProperty(SystemProperties.System.ApplicationName);
             programName = _program.Description.DisplayName;
             if (_program.ValueAsObject is not null)
             {
-                programNameValue = _program.ValueAsObject.ToString();
+                programNameValue = _program.ValueAsObject.ToString() ?? "";
             }
 
             var _copyright = so.Properties.GetProperty(SystemProperties.System.Copyright);
             copyrightName = _copyright.Description.DisplayName;
             if (_copyright.ValueAsObject is not null)
             {
-                copyrightValue = _copyright.ValueAsObject.ToString();
+                copyrightValue = _copyright.ValueAsObject.ToString() ?? "";
             }
 
             var _resolutionUnit = so.Properties.GetProperty(SystemProperties.System.Image.ResolutionUnit);
             resolutionUnit = _resolutionUnit.Description.DisplayName;
             if (_resolutionUnit.ValueAsObject is not null)
             {
-                resolutionUnitValue = _resolutionUnit.ValueAsObject.ToString();
+                resolutionUnitValue = _resolutionUnit.ValueAsObject.ToString() ?? "";
             }
 
             colorRepresentation = so.Properties.GetProperty(SystemProperties.System.Image.ColorSpace).Description.DisplayName;
@@ -422,28 +419,28 @@ namespace PicView.ImageHandling
             cameraMaker = camManu.Description.DisplayName;
             if (camManu.ValueAsObject is not null)
             {
-                cameroMakerValue = camManu.ValueAsObject.ToString();
+                cameroMakerValue = camManu.ValueAsObject.ToString() ?? "";
             }
 
             var cam = so.Properties.GetProperty(SystemProperties.System.Photo.CameraModel);
             cameraModel = cam.Description.DisplayName;
             if (cam.ValueAsObject is not null)
             {
-                cameroModelValue = cam.ValueAsObject.ToString();
+                cameroModelValue = cam.ValueAsObject.ToString() ?? "";
             }
 
             var flashManu = so.Properties.GetProperty(SystemProperties.System.Photo.FlashManufacturer);
             flashManufacturer = flashManu.Description.DisplayName;
             if (flashManu.ValueAsObject is not null)
             {
-                flashManufacturerValue = flashManu.ValueAsObject.ToString();
+                flashManufacturerValue = flashManu.ValueAsObject.ToString() ?? "";
             }
 
             var flashM = so.Properties.GetProperty(SystemProperties.System.Photo.FlashModel);
             flashModel = flashM.Description.DisplayName;
             if (flashM.ValueAsObject is not null)
             {
-                flashModelValue = flashManu.ValueAsObject.ToString();
+                flashModelValue = flashManu.ValueAsObject.ToString() ?? "";
             }
 
             fstop = so.Properties.GetProperty(SystemProperties.System.Photo.FNumber).Description.DisplayName;
@@ -452,14 +449,14 @@ namespace PicView.ImageHandling
             exposure = expo.Description.DisplayName;
             if (expo.ValueAsObject is not null)
             {
-                exposureValue = expo.ValueAsObject.ToString();
+                exposureValue = expo.ValueAsObject.ToString() ?? "";
             }
 
             var iso = so.Properties.GetProperty(SystemProperties.System.Photo.ISOSpeed);
             isoSpeed = iso.Description.DisplayName;
             if (iso.ValueAsObject is not null)
             {
-                isoSpeedValue = iso.ValueAsObject.ToString();
+                isoSpeedValue = iso.ValueAsObject.ToString() ?? "";
             }
 
             meteringMode = so.Properties.GetProperty(SystemProperties.System.Photo.MeteringMode).Description.DisplayName;
@@ -480,27 +477,27 @@ namespace PicView.ImageHandling
             camSerialNumber = serial.Description.DisplayName;
             if (serial.ValueAsObject is not null)
             {
-                camSerialNumberValue = serial.ValueAsObject.ToString();
+                camSerialNumberValue = serial.ValueAsObject.ToString() ?? "";
             }
 
             flength35 = f35.Description.DisplayName;
             if (f35.ValueAsObject is not null)
             {
-                flength35Value = f35.ValueAsObject.ToString();
+                flength35Value = f35.ValueAsObject.ToString() ?? "";
             }
 
             var lensm = so.Properties.GetProperty(SystemProperties.System.Photo.LensManufacturer);
             lensManufacturer = lensm.Description.DisplayName;
             if (lensm.ValueAsObject is not null)
             {
-                lensManufacturerValue = lensm.ValueAsObject.ToString();
+                lensManufacturerValue = lensm.ValueAsObject.ToString() ?? "";
             }
 
             var _lensmodel = so.Properties.GetProperty(SystemProperties.System.Photo.LensModel);
             lensmodel = _lensmodel.Description.DisplayName;
             if (_lensmodel.ValueAsObject is not null)
             {
-                lensmodelValue = _lensmodel.ValueAsObject.ToString();
+                lensmodelValue = _lensmodel.ValueAsObject.ToString() ?? "";
             }
 
             contrast = so.Properties.GetProperty(SystemProperties.System.Photo.Contrast).Description.DisplayName;
@@ -509,7 +506,7 @@ namespace PicView.ImageHandling
             brightness = bright.Description.DisplayName;
             if (bright.ValueAsObject is not null)
             {
-                brightnessValue = bright.ValueAsObject.ToString();
+                brightnessValue = bright.ValueAsObject.ToString() ?? "";
             }
 
             lightSource = so.Properties.GetProperty(SystemProperties.System.Photo.LightSource).Description.DisplayName;
@@ -530,7 +527,7 @@ namespace PicView.ImageHandling
             exifversion = exifv.Description.DisplayName;
             if (exifv.ValueAsObject is not null)
             {
-                exifversionValue = exifv.ValueAsObject.ToString();
+                exifversionValue = exifv.ValueAsObject.ToString() ?? "";
             }
 
             if (exifData is not null)
@@ -681,10 +678,10 @@ namespace PicView.ImageHandling
                 lastwritetime,
                 lastaccesstime,
 
-                bitdepth.ToString(),
+                bitdepth.ToString() ?? "",
 
-                bitmapSource.PixelWidth.ToString(),
-                bitmapSource.PixelHeight.ToString(),
+                bitmapSource.PixelWidth.ToString() ?? "",
+                bitmapSource.PixelHeight.ToString() ?? "",
 
                 dpi,
 
@@ -695,7 +692,7 @@ namespace PicView.ImageHandling
 
                 ratioText,
 
-                stars.ToString(),
+                stars.ToString() ?? "",
 
                 latitude, latitudeValue,
                 longitude, longitudeValue,
@@ -761,7 +758,7 @@ namespace PicView.ImageHandling
 
                 exifversion, exifversionValue,
             };
-        });
+        }
 
         private static double GetCoordinates(string gpsRef, Rational[] rationals)
         {

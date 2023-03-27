@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     Title="{StaticResource ImageInfo}"
-    Width="816"
+    Width="825"
     Height="385"
     d:Height="700"
     AllowsTransparency="True"
@@ -24,7 +24,7 @@
         <StackPanel
             x:Key="GPS"
             Height="20"
-            Margin="0,10,0,5"
+            Margin="0,15,0,10"
             Orientation="Horizontal">
             <Rectangle
                 Width="372"
@@ -45,7 +45,7 @@
         <StackPanel
             x:Key="Origin"
             Height="20"
-            Margin="0,10,0,5"
+            Margin="0,15,0,10"
             Orientation="Horizontal">
             <Rectangle
                 Width="372"
@@ -66,7 +66,7 @@
         <StackPanel
             x:Key="Image"
             Height="20"
-            Margin="0,10,0,5"
+            Margin="0,15,0,10"
             Orientation="Horizontal">
             <Rectangle
                 Width="372"
@@ -87,7 +87,7 @@
         <StackPanel
             x:Key="Film"
             Height="20"
-            Margin="0,10,0,5"
+            Margin="0,15,0,10"
             Orientation="Horizontal">
             <Rectangle
                 Width="372"
@@ -108,7 +108,7 @@
         <StackPanel
             x:Key="Camera"
             Height="20"
-            Margin="0,10,0,5"
+            Margin="0,15,0,10"
             Orientation="Horizontal">
             <Rectangle
                 Width="372"
@@ -160,7 +160,7 @@
 
             <Button
                 x:Name="FileProperties"
-                Width="125"
+                Width="126"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}"
@@ -202,7 +202,7 @@
 
             <Button
                 x:Name="OptimizeImageButton"
-                Width="121"
+                Width="123"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}"
@@ -223,7 +223,7 @@
 
             <Button
                 x:Name="OpenWith"
-                Width="115"
+                Width="116"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}"
@@ -244,7 +244,7 @@
 
             <Button
                 x:Name="ShowInFolder"
-                Width="128"
+                Width="130"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}"
@@ -268,11 +268,6 @@
             <buttons:StarOutlineButton x:Name="Star3" />
             <buttons:StarOutlineButton x:Name="Star4" />
             <buttons:StarOutlineButton x:Name="Star5" />
-
-            <Rectangle
-                Width="1"
-                Height="30"
-                Fill="{StaticResource BorderBrush}" />
 
             <buttons:CloseButton
                 x:Name="CloseButton"
@@ -610,7 +605,7 @@
                         </Border>
                         <WrapPanel
                             x:Name="ExifParent"
-                            Margin="10,5,10,10"
+                            Margin="15,5,10,0"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal" />
                     </StackPanel>
