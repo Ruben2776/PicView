@@ -151,14 +151,8 @@ namespace PicView.ImageHandling
         /// <returns></returns>
         private static async Task<BitmapSource?> GetTransparentBitmapSourceAsync(FileInfo fileInfo, MagickFormat magickFormat)
         {
-            if (fileInfo.Length >= 2147483648)
-                return (WriteableBitmap?)await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-
             try
             {
-                using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
-                byte[] data = new byte[fileStream.Length];
-                await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
                 var magickImage = new MagickImage()
                 {
                     Quality = 100,
@@ -166,7 +160,19 @@ namespace PicView.ImageHandling
                     BackgroundColor = MagickColors.Transparent,
                     Format = magickFormat,
                 };
-                magickImage.Read(data);
+
+                if (fileInfo.Length >= 2147483648)
+                {
+                    magickImage.Read(fileInfo);
+                }
+                else
+                {
+                    using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+                    byte[] data = new byte[fileStream.Length];
+                    await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
+                    magickImage.Read(data);
+                }
+                
                 magickImage.Settings.BackgroundColor = MagickColors.Transparent;
                 magickImage.Settings.FillColor = MagickColors.Transparent;
 
@@ -187,11 +193,11 @@ namespace PicView.ImageHandling
 
         private static async Task<WriteableBitmap?> GetWriteableBitmapAsync(FileInfo fileInfo)
         {
+            if (fileInfo.Length >= 2147483648)
+                return (WriteableBitmap?)await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+
             try
             {
-                if (fileInfo.Length >= 2147483648)
-                    return (WriteableBitmap?)await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-
                 using var stream = File.OpenRead(fileInfo.FullName);
                 var data = new byte[stream.Length];
                 await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);

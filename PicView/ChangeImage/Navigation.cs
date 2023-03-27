@@ -112,7 +112,7 @@ namespace PicView.ChangeImage
             if (GalleryFunctions.IsHorizontalFullscreenOpen) GalleryNavigation.SetSelected(FolderIndex, false);
 
             if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
-            else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+            else await Task.Run(() => LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false));
         }
 
         /// <summary>
