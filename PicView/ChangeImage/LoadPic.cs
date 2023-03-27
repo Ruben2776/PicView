@@ -242,7 +242,7 @@ namespace PicView.ChangeImage
         {
             FolderIndex = index;
             var preloadValue = Preloader.Get(index);
-            fileInfo ??= new FileInfo(Pics[index]);
+            fileInfo ??= preloadValue?.FileInfo ?? new FileInfo(Pics[index]);
 
             if (!fileInfo.Exists)
             {
@@ -271,7 +271,7 @@ namespace PicView.ChangeImage
 
             // If the preload value for the image is null or the image is still loading,
             // display the loading preview and wait until the image is loaded.
-            if (preloadValue is null || preloadValue.IsLoading)
+            if (preloadValue is null or { IsLoading : true })
             {
                 LoadingPreview(fileInfo);
 
@@ -303,7 +303,7 @@ namespace PicView.ChangeImage
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 GalleryNavigation.FullscreenGalleryNavigation();
 
-            if (GetToolTipMessage is not null && GetToolTipMessage.IsVisible)
+            if (GetToolTipMessage is not null and { IsVisible : true })
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                     GetToolTipMessage.Visibility = Visibility.Hidden);
 
