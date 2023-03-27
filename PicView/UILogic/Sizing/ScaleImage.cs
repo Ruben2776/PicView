@@ -31,80 +31,33 @@ namespace PicView.UILogic.Sizing
         internal static double AspectRatio { get; set; }
 
         /// <summary>
-        /// Tries to call Zoomfit with additional error checking
+        /// Tries to call FitImage with additional error checking
         /// </summary>
-        internal static async Task<bool> TryFitImageAsync()
+        internal static void TryFitImage()
         {
-            if (ErrorHandling.CheckOutOfRange() == false)
+            GetMainWindow.Dispatcher.Invoke(() =>
             {
-                if (!(Pics?.Count > FolderIndex)) { return false; }
-                var preloadValue = Preloader.Get(FolderIndex);
-                if (preloadValue != null)
+                if (GetMainWindow.MainImage.Source != null)
                 {
-                    var pic = preloadValue.BitmapSource;
-                    if (pic != null)
+                    FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+                }
+                else if (ErrorHandling.CheckOutOfRange() == false)
+                {
+                    var preloadValue = Preloader.Get(FolderIndex);
+                    if (preloadValue != null)
                     {
-                        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                        var pic = preloadValue.BitmapSource;
+                        if (pic != null)
                         {
                             FitImage(pic.PixelWidth, pic.PixelHeight);
-                        });
-                        return true;
+                        }
                     }
                 }
-                else
-                {
-                    var size = await ImageSizeFunctions.GetImageSizeAsync(Pics[FolderIndex]).ConfigureAwait(false);
-                    if (size.HasValue)
-                    {
-                        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                        {
-                            FitImage(size.Value.Width, size.Value.Height);
-                        });
-
-                        return true;
-                    }
-
-                    if (GetMainWindow.MainImage.Source != null)
-                    {
-                        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                        {
-                            FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-                        });
-                        return true;
-                    }
-
-                    if (XWidth > 0 && XHeight > 0)
-                    {
-                        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                        {
-                            FitImage(XWidth, XHeight);
-                        });
-                        return true;
-                    }
-                }
-            }
-            else if (XWidth > 0 && XHeight > 0)
-            {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                else if (XWidth > 0 && XHeight > 0)
                 {
                     FitImage(XWidth, XHeight);
-                });
-                return true;
-            }
-            else
-            {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                {
-                    if (GetMainWindow.MainImage.Source != null)
-                    {
-                        FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-                        return true;
-                    }
-                    return false;
-                });
-            }
-
-            return false;
+                }
+            });
         }
 
         /// <summary>

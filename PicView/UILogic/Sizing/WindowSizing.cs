@@ -216,7 +216,7 @@ namespace PicView.UILogic.Sizing
                     Slideshow.SlideTimer.Enabled = false;
                 }
 
-                _ = TryFitImageAsync();
+                TryFitImage();
             }
         }
 
@@ -232,7 +232,7 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.Width = MonitorInfo.WorkArea.Width;
             GetMainWindow.Height = MonitorInfo.WorkArea.Height;
 
-            _ = TryFitImageAsync();
+            TryFitImage();
 
             GetMainWindow.Top = 0;
             GetMainWindow.Left = 0;
@@ -317,7 +317,7 @@ namespace PicView.UILogic.Sizing
         {
             // Update size when screen resulution changes
             MonitorInfo = MonitorSize.GetMonitorSize();
-            _ = TryFitImageAsync();
+            TryFitImage();
         }
 
         #endregion Changed Events

@@ -79,29 +79,36 @@ namespace PicView.ChangeImage
         {
             if (ErrorHandling.CheckOutOfRange()) return;
 
-            int next;
-            int indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
-
-            Reverse = navigateTo == NavigateTo.Previous;
-
-            if (Settings.Default.Looping || fastPic || Slideshow.SlideTimer != null)
+            int next;          
+            switch (navigateTo)
             {
-                next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
-            }
-            else
-            {
-                int newIndex = FolderIndex + indexChange;
-                if (newIndex <= 0 || newIndex >= Pics.Count) return; // Don't load same image because that causes the UI to blink
-                next =  newIndex;
+                case NavigateTo.Next:
+                case NavigateTo.Previous:
+                    int indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
+                    Reverse = navigateTo == NavigateTo.Previous;
+                    if (Settings.Default.Looping || fastPic || Slideshow.SlideTimer != null)
+                    {
+                        next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
+                    }
+                    else
+                    {
+                        int newIndex = FolderIndex + indexChange;
+                        if (newIndex <= 0 || newIndex >= Pics.Count) return; // Don't load same image because that causes the UI to blink
+                        next = newIndex;
+                    }
+                    break;
+                case NavigateTo.First:
+                    if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+                    next = 0;
+                    break;
+                case NavigateTo.Last:
+                    if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+                    next = Pics.Count - 1;
+                    break;
+                default: return;
             }
 
-            if (navigateTo == NavigateTo.First || navigateTo == NavigateTo.Last)
-            {
-                if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
-                next =  navigateTo == NavigateTo.First ? 0 : Pics.Count - 1;
-            }
-
-            // If the horizontal fullscreen view is open, set the selected index to the previous index
+            // If the horizontal fullscreen gallery is open, deselect current index
             if (GalleryFunctions.IsHorizontalFullscreenOpen) GalleryNavigation.SetSelected(FolderIndex, false);
 
             if (fastPic) await FastPic.Run(next).ConfigureAwait(false);

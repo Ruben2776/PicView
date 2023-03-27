@@ -29,7 +29,6 @@ namespace PicView.ChangeImage
         /// <param name="bitmapSource"></param>
         internal static async Task UpdateImageAsync(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
         {
-            string? ext = fileInfo is null ? Path.GetExtension(Pics?[index]) : fileInfo.Extension;
             if (bitmapSource is null)
             {
                 bitmapSource = ImageFunctions.ImageErrorMessage();
@@ -39,6 +38,9 @@ namespace PicView.ChangeImage
                     return;
                 }
             }
+
+            var ext = fileInfo is null ? Path.GetExtension(Pics[index]) : fileInfo.Extension;
+            var isGif = ext is not null && ext.Equals(".gif", StringComparison.OrdinalIgnoreCase);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 // Scroll to top if scroll enabled
@@ -59,9 +61,8 @@ namespace PicView.ChangeImage
 
                     ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }
-
-                // Loads gif from XamlAnimatedGif if neccesary            
-                if (ext is not null && ext.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                         
+                if (isGif) // Loads gif from XamlAnimatedGif if neccesary   
                 {
                     AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
                 }
@@ -69,19 +70,13 @@ namespace PicView.ChangeImage
                 {
                     ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
                 }
-
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             }, DispatcherPriority.Send);
 
             var titleString = TitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index, fileInfo);
-            if (titleString == null)
-            {
-                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                return;
-            }
-
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
+                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+
                 ConfigureWindows.GetMainWindow.Title = titleString[0];
                 ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
                 ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
@@ -137,8 +132,8 @@ namespace PicView.ChangeImage
                     return;
                 }          
             }, DispatcherPriority.Send);
-            CloseToolTipMessage();
 
+            CloseToolTipMessage();
             Taskbar.NoProgress();
             FolderIndex = 0;
 

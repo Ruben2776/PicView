@@ -49,7 +49,7 @@ namespace PicView.UILogic.TransformImage
             });
             if (Navigation.Pics != null)
             {
-                _= TryFitImageAsync();
+                TryFitImage();
                 ShowTooltipMessage(scrolling ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);
             }
         }

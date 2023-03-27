@@ -190,7 +190,7 @@ namespace PicView.ConfigureSettings
 
             WindowSizing.SetWindowBehavior();
 
-            _= ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+            ScaleImage.TryFitImage();
         }
     }
 }

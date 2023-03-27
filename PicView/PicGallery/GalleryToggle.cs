@@ -100,7 +100,7 @@ namespace PicView.PicGallery
 
             if (startup == false)
             {
-                await ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+                ScaleImage.TryFitImage();
             }
 
             await LoadAndScrollToAsync().ConfigureAwait(false);
