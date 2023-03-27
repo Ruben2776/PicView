@@ -20,10 +20,9 @@ namespace PicView.ChangeImage
     internal static class QuickLoad
     {
         /// <summary>
-        /// Quickly load image and then update values
+        /// Load Image from blank values and show loading preview
         /// </summary>
         /// <param name="file"></param>
-        /// <returns></returns>
         internal static async Task QuickLoadAsync(string file)
         {
             InitialPath = file;
@@ -31,6 +30,11 @@ namespace PicView.ChangeImage
             if (!fileInfo.Exists) // If not file, try to load if URL or base64
             {
                 await LoadPicFromStringAsync(file).ConfigureAwait(false);
+                return;
+            }
+            else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                await LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
                 return;
             }
 
