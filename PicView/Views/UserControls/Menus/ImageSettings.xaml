@@ -9,7 +9,7 @@
         <Border
             Width="275"
             Height="180"
-            Background="{StaticResource BorderBrushAlt}"
+            Background="{StaticResource BackgroundColorBrushAlt}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
             CornerRadius="4">
@@ -158,11 +158,11 @@
             Height="2"
             Margin="33,-2,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource BorderBrushAlt}" />
+            Fill="{StaticResource BackgroundColorBrushAlt}" />
         <Polygon
             Margin="30,-7,0,0"
             Panel.ZIndex="-1"
-            Fill="{StaticResource BorderBrushAlt}"
+            Fill="{StaticResource BackgroundColorBrushAlt}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource BorderBrush}"
             StrokeThickness="1" />
