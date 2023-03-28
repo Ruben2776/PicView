@@ -48,6 +48,9 @@ namespace PicView.UILogic.Loading
 
         internal static async Task ContentRenderedEventAsync()
         {
+            if (Properties.Settings.Default.AutoFitWindow) // Fix being able to resize window
+                SetWindowBehavior();
+
             var args = Environment.GetCommandLineArgs();
 
             // Determine prefered UI for startup
