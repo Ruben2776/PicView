@@ -213,10 +213,13 @@ namespace PicView.ChangeImage
                     int index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
-                for (int i = 0; i < negativeIterations; i++)
+                if (Pics.Count > MaxCount + negativeIterations)
                 {
-                    int index = (deleteIndex - i + Pics.Count) % Pics.Count;
-                    Remove(index);
+                    for (int i = 0; i < negativeIterations; i++)
+                    {
+                        int index = (deleteIndex - i + Pics.Count) % Pics.Count;
+                        Remove(index);
+                    }
                 }
             }
             else
@@ -235,10 +238,13 @@ namespace PicView.ChangeImage
                     int index = (prevStartingIndex + i) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
-                for (int i = 0; i < negativeIterations; i++)
+                if (Pics.Count > MaxCount + negativeIterations)
                 {
-                    int index = (deleteIndex + i) % Pics.Count;
-                    Remove(index);
+                    for (int i = 0; i < negativeIterations; i++)
+                    {
+                        int index = (deleteIndex + i) % Pics.Count;
+                        Remove(index);
+                    }
                 }
             }
 
