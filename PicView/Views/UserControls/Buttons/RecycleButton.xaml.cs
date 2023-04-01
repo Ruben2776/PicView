@@ -14,15 +14,9 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(RecycleButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(RecycleButtonBrush);
+                SetIconButterMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
 
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
-
-                TheButton.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(false);
+                TheButton.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(false).ConfigureAwait(false);
             };
         }
     }

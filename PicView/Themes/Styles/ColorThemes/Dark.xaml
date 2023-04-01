@@ -57,6 +57,13 @@
         ShadowDepth="1"
         Color="#3F000000" />
 
+    <DropShadowEffect
+        x:Key="TextShadow"
+        BlurRadius="15"
+        Direction="9"
+        ShadowDepth="1"
+        Color="#2B3E392D" />
+
     <!--  Texture  -->
     <ImageBrush
         x:Key="NoisyBg"

@@ -54,6 +54,7 @@ namespace PicView.Views.Windows
                 // Subscribe to Windows resized event || Need to be exactly on load
                 HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle)
                     ?.AddHook(NativeMethods.WndProc);
+                ConfigColors.MainWindowUnfocusOrFocus(true);
                 LoadLanguage.DetermineLanguage();
                 StartLoading.LoadedEvent();
             };
@@ -63,14 +64,9 @@ namespace PicView.Views.Windows
                 try
                 {
                     WindowBlur.EnableBlur(this);
-                    if (!Settings.Default.DarkTheme)
-                    {
-                        ConfigColors.MainWindowUnfocusOrFocus(true);
-                    }
                 }
-                catch (Exception)
-                {
-                }
+                catch (Exception) { }
+
                 await StartLoading.ContentRenderedEventAsync().ConfigureAwait(false);
 
                 // keyboard and Mouse_Keys Keys
@@ -119,26 +115,10 @@ namespace PicView.Views.Windows
 
                 var subtleFaceColor = (Color)Application.Current.TryFindResource("SubtleFadeColor");
                 //GalleryButton
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(GalleryButton, GalleryBrush);
-                    GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBg, true);
-                    GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBg, true);
-                    GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
-                        subtleFaceColor.A,
-                        subtleFaceColor.R,
-                        subtleFaceColor.G,
-                        subtleFaceColor.B,
-                        GalleryBg, false
-                        );
-                }
-                else
-                {
-                    GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
-                    GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
-                    GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBrush);
-                    GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
-                }
+                GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
+                GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
+                GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBrush);
+                GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
                 GalleryButton.Click += async (_, _) =>
                 {
                     if (GalleryFunctions.IsHorizontalOpen)
@@ -152,50 +132,18 @@ namespace PicView.Views.Windows
                 };
 
                 // RotateButton
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(RotateButton, RotateBrush);
-                    RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBg, true);
-                    RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBg, true);
-                    RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
-                        subtleFaceColor.A,
-                        subtleFaceColor.R,
-                        subtleFaceColor.G,
-                        subtleFaceColor.B,
-                        RotateBg, false
-                        );
-                }
-                else
-                {
-                    RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBrush);
-                    RotateButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(RotateBg);
-                    RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBrush);
-                    RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(RotateBg);
-                }
+                RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBrush);
+                RotateButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(RotateBg);
+                RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBrush);
+                RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(RotateBg);
                 RotateButton.Click += async (_, _) =>
                     await UILogic.TransformImage.Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
 
                 // FlipButton
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(FlipButton, FlipBrush);
-                    FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBg, true);
-                    FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBg, true);
-                    FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveColorEvent(
-                        subtleFaceColor.A,
-                        subtleFaceColor.R,
-                        subtleFaceColor.G,
-                        subtleFaceColor.B,
-                        FlipBg, false
-                        );
-                }
-                else
-                {
-                    FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBrush);
-                    FlipButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FlipBg);
-                    FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBrush);
-                    FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FlipBg);
-                }
+                FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBrush);
+                FlipButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FlipBg);
+                FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBrush);
+                FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FlipBg);
                 FlipButton.Click += (_, _) => UILogic.TransformImage.Rotation.Flip();
 
                 // TitleText

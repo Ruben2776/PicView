@@ -159,12 +159,17 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void Fullscreen_Restore(bool gotoFullscreen)
         {
+            if (Navigation.ClickArrowLeftClicked || Navigation.ClickArrowRightClicked) 
+            {
+                return; // Fixes weird unintentional hit
+            }
+
             if (Settings.Default.AutoFitWindow == false)
             {
                 SetWindowSize();
             }
 
-            if (gotoFullscreen)
+            if (GetMainWindow.WindowState == WindowState.Maximized || gotoFullscreen)
             {
                 // Show fullscreen logic
                 RenderFullscreen();

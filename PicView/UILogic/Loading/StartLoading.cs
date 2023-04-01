@@ -44,6 +44,7 @@ namespace PicView.UILogic.Loading
                    ConfigureWindows.GetMainWindow.LowerBar.Visibility
                    = Visibility.Collapsed;
             }
+            ConfigColors.UpdateColor();
         }
 
         internal static async Task ContentRenderedEventAsync()
@@ -87,8 +88,6 @@ namespace PicView.UILogic.Loading
                 await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
-
-            ConfigColors.UpdateColor();
 
             // Add dictionaries
             Application.Current.Resources.MergedDictionaries.Add(

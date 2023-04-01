@@ -26,10 +26,7 @@ namespace PicView.ConfigureSettings
         /// </summary>
         internal static Color MainColor { get; set; }
 
-        /// <summary>
-        /// Update color values for brushes and window border
-        /// </summary>
-        /// <param name="remove">Remove border?</param>
+
         internal static void UpdateColor()
         {
             var getColor = AnimationHelper.GetPrefferedColor();
@@ -37,6 +34,10 @@ namespace PicView.ConfigureSettings
 
             Application.Current.Resources["ChosenColor"] = getColor;
             Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
+
+            ConfigureWindows.GetMainWindow.Logo.ChangeColor();
+            ConfigureWindows.GetSettingsWindow?.Logo.ChangeColor();
+            ConfigureWindows.GetInfoWindow?.ChangeColor();
 
             Settings.Default.Save();
         }
@@ -47,7 +48,7 @@ namespace PicView.ConfigureSettings
         internal static void SetColors()
         {
             var mainWindow = ConfigureWindows.GetMainWindow;
-            MainColor = (Color)Application.Current.Resources["IconColor"];
+            MainColor = (Color)Application.Current.Resources["MainColor"];
             BackgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
             if (mainWindow.MainImageBorder == null) return;
@@ -61,19 +62,49 @@ namespace PicView.ConfigureSettings
 
         internal static void MainWindowUnfocusOrFocus(bool isFocused)
         {
-            if (!Properties.Settings.Default.DarkTheme)
-            {
-                return;
-            }
             var w = ConfigureWindows.GetMainWindow;
-            var foregroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
-                                            : (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
-            var backgroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"]
-                                            : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
 
-            w.TitleText.InnerTextBox.Foreground = foregroundColor;
-            w.TitleText.Background = backgroundColor;
-            w.LowerBar.Background = backgroundColor;
+            var foregroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
+                : (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
+
+            if (Properties.Settings.Default.DarkTheme)
+            {
+                w.TitleText.InnerTextBox.Foreground = foregroundColor;
+
+                w.LeftButtonContainer.Background =
+                w.Logo.Background =
+                w.CloseButton.Background =
+                w.MinButton.Background =
+                w.FullscreenButton.Background =
+                    isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+
+                w.TitleBar.Background =
+                    isFocused ? (SolidColorBrush)Application.Current.Resources["SubtleFadeBrush"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
+                w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+            }
+            else
+            {
+                w.TitleText.InnerTextBox.Foreground = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+
+                w.LeftButtonContainer.Background =
+                w.Logo.Background =
+                w.CloseButton.Background =
+                w.MinButton.Background =
+                w.FullscreenButton.Background =
+                w.GalleryButton.Background =
+                w.RotateButton.Background =
+                w.FlipButton.Background =
+                    isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
+                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+
+                w.TitleBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundSubtleHighlightBrush"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+                w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundSubtleHighlightBrush"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+            }
         }
 
         #endregion Window LostFocus style change
@@ -105,12 +136,10 @@ namespace PicView.ConfigureSettings
         internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
         {
             0 => Brushes.Transparent,
-            1 => Settings.Default.DarkTheme ? Brushes.White : new SolidColorBrush(Color.FromRgb(15, 15, 15)),
-            2 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
-            3 => Settings.Default.DarkTheme ?
-                DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(76, 76, 76), Color.FromRgb(32, 32, 32), 60)
-                : DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
-            4 => Settings.Default.DarkTheme ? new SolidColorBrush(Color.FromRgb(15, 15, 15)) : Brushes.White,
+            1 => Brushes.White,
+            2 => new SolidColorBrush(Color.FromRgb(15, 15, 15)),
+            3 => DrawingBrushes.CheckerboardDrawingBrush(Colors.White),
+            4 => DrawingBrushes.CheckerboardDrawingBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
             _ => Brushes.Transparent,
         };
 
@@ -166,6 +195,23 @@ namespace PicView.ConfigureSettings
             Settings.Default.ColorTheme = (int)colorOption;
             UpdateColor();
         }
+
+        internal static Color GetSecondaryAccentColor => Properties.Settings.Default.ColorTheme switch
+        {
+            0 => Color.FromRgb(182, 251, 95), // Blue
+            2 => Color.FromRgb(255, 237, 38), // Pink
+            3 => Color.FromRgb(248, 175, 60), // Orange
+            4 => Color.FromRgb(209, 237, 93), // Green
+            5 => Color.FromRgb(250, 192, 92), // Red
+            6 => Color.FromRgb(254, 172, 150), // Teal
+            7 => Color.FromRgb(79, 209, 117), // Aqua
+            8 => Color.FromRgb(252, 139, 111), // Golden
+            9 => Color.FromRgb(214, 232, 97), // Purple
+            10 => Color.FromRgb(180, 246, 88), // Cyan
+            11 => Color.FromRgb(255, 237, 38), // Magenta
+            12 => Color.FromRgb(202, 253, 82), // Lime
+            _ => throw new ArgumentOutOfRangeException(nameof(Properties.Settings.Default.ColorTheme)),
+        };
 
         #endregion Set ColorTheme
     }

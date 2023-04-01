@@ -13,13 +13,7 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush);
-
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
+                SetIconButterMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
             };
         }
     }

@@ -44,6 +44,7 @@ namespace PicView.Views.Windows
             ContentRendered += delegate
             {
                 WindowBlur.EnableBlur(this);
+                ChangeColor();
                 var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
                 AddGenericEvents(colorAnimation);
@@ -206,6 +207,11 @@ namespace PicView.Views.Windows
                         break;
                 }
             };
+        }
+
+        public void ChangeColor()
+        {
+            Logo.ChangeColor();
         }
 
         #region EventHandlers

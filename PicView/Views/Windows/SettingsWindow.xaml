@@ -29,7 +29,7 @@
             Background="{StaticResource WindowBackgroundColorBrush}"
             DockPanel.Dock="Top">
 
-            <misc:Icon />
+            <misc:Icon x:Name="Logo" />
 
             <buttons:CloseButton
                 x:Name="CloseButton"
@@ -41,6 +41,8 @@
                 x:Name="MinButton"
                 Width="30"
                 Height="30"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1,0,1,0"
                 DockPanel.Dock="Right" />
 
             <TextBlock
@@ -51,11 +53,18 @@
                 TextAlignment="Center" />
         </DockPanel>
 
+        <Rectangle
+            Width="325"
+            Height="1"
+            DockPanel.Dock="Top"
+            Fill="{StaticResource BorderBrushAlt}" />
+
         <TabControl
             Padding="0"
             BorderBrush="{x:Null}"
             BorderThickness="0"
-            DockPanel.Dock="Top">
+            DockPanel.Dock="Top"
+            FocusVisualStyle="{x:Null}">
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabControl}">
                     <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -78,7 +87,7 @@
                                     <Border
                                         x:Name="Border"
                                         Grid.Row="1"
-                                        Background="{StaticResource NoisyBg}"
+                                        Background="{StaticResource MenuBg}"
                                         BorderBrush="{StaticResource BorderBrush}"
                                         BorderThickness="0">
                                         <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
@@ -135,10 +144,12 @@
                     <Setter Property="Background" Value="{StaticResource NoisyBg}" />
                 </Style>
             </TabControl.Resources>
+
             <TabItem>
                 <TabItem.Header>
                     <TextBlock
                         MaxWidth="155"
+                        FocusVisualStyle="{x:Null}"
                         FontSize="14"
                         Text="{StaticResource GeneralSettings}"
                         TextTrimming="CharacterEllipsis"
@@ -433,6 +444,7 @@
                 <TabItem.Header>
                     <TextBlock
                         MaxWidth="155"
+                        FocusVisualStyle="{x:Null}"
                         FontSize="14"
                         Text="{StaticResource UISettings}"
                         TextTrimming="CharacterEllipsis"

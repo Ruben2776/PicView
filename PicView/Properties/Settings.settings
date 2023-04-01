@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Blue" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FF0461B1</Value>
+      <Value Profile="(Default)">#1a8cf0</Value>
     </Setting>
     <Setting Name="Pink" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FFE68BEE</Value>
@@ -12,7 +12,7 @@
       <Value Profile="(Default)">#FFDB5B3D</Value>
     </Setting>
     <Setting Name="Green" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FF0EB24C</Value>
+      <Value Profile="(Default)">#20E76B</Value>
     </Setting>
     <Setting Name="Red" Type="System.Windows.Media.Color" Scope="User">
       <Value Profile="(Default)">#FFF91110</Value>

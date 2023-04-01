@@ -25,7 +25,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FF0461B1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#1a8cf0")]
         public global::System.Windows.Media.Color Blue {
             get {
                 return ((global::System.Windows.Media.Color)(this["Blue"]));
@@ -61,7 +61,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FF0EB24C")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#20E76B")]
         public global::System.Windows.Media.Color Green {
             get {
                 return ((global::System.Windows.Media.Color)(this["Green"]));

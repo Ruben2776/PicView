@@ -1,5 +1,7 @@
 ﻿using AutoUpdaterDotNET;
+using Microsoft.VisualBasic.Logging;
 using PicView.Animations;
+using PicView.ConfigureSettings;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
@@ -20,8 +22,9 @@ namespace PicView.Views.Windows
         public InfoWindow()
         {
             InitializeComponent();
-            startheight = Height;
+
             extendedheight = 750;
+            startheight = Height;
 
             // Get version
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -82,9 +85,17 @@ namespace PicView.Views.Windows
             xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z");
         }
 
+        public void ChangeColor()
+        {
+            Logo.ChangeColor();
+            AccentBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
+        }
+
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             WindowBlur.EnableBlur(this);
+            ChangeColor();
+
             MouseLeftButtonDown += (_, e) =>
             { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
@@ -111,29 +122,29 @@ namespace PicView.Views.Windows
             CloseButton.TheButton.Click += delegate { Hide(); };
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
-            Iconic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IconicBrush); };
-            Iconic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IconicBrush); };
+            Iconic.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, IconicBrush, false); };
+            Iconic.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, IconicBrush, false); };
 
-            Ionic.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(IonicBrush); };
-            Ionic.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(IonicBrush); };
+            Ionic.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, IonicBrush, false); };
+            Ionic.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, IonicBrush, false); };
 
-            FontAwesome.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(FontAwesomeBrush); };
-            FontAwesome.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(FontAwesomeBrush); };
+            FontAwesome.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, FontAwesomeBrush, false); };
+            FontAwesome.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, FontAwesomeBrush, false); };
 
-            GitHub.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(GitHubBrush); };
-            GitHub.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(GitHubBrush); };
+            GitHub.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, GitHubBrush, false); };
+            GitHub.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, GitHubBrush, false); };
 
-            License.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(LicenseBrush); };
-            License.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(LicenseBrush); };
+            License.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, LicenseBrush, false); };
+            License.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, LicenseBrush, false); };
 
-            zondicons.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(zondiconsBrush); };
-            zondicons.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(zondiconsBrush); };
+            zondicons.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, zondiconsBrush, false); };
+            zondicons.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, zondiconsBrush, false); };
 
-            freepik.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(FreepikBrush); };
-            freepik.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(FreepikBrush); };
+            freepik.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, FreepikBrush, false); };
+            freepik.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, FreepikBrush, false); };
 
-            PicViewSite.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(PicViewBrush); };
-            PicViewSite.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(PicViewBrush); };
+            PicViewSite.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, PicViewBrush, false); };
+            PicViewSite.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, PicViewBrush, false); };
 
             UpdateButton.MouseLeftButtonDown += delegate
             {
@@ -143,9 +154,9 @@ namespace PicView.Views.Windows
                 AutoUpdater.Start("https://picview.org/update.xml");
             };
 
-            UpdateButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(UpdateText); };
+            UpdateButton.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, UpdateText, false); };
             UpdateButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(UpdateBrush); };
-            UpdateButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(UpdateText); };
+            UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, UpdateText, false); };
             UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(UpdateBrush); };
         }
 
