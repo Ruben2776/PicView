@@ -43,7 +43,7 @@ namespace PicView.ImageHandling
                     return await GetDefaultBitmapSourceAsync(fileInfo, true).ConfigureAwait(false);
 
                 case ".svg":
-                    return await GetTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
+                    return await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
                 case ".b64":
                     return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false);
@@ -149,7 +149,7 @@ namespace PicView.ImageHandling
         /// <param name="fileInfo"></param>
         /// <param name="magickFormat"></param>
         /// <returns></returns>
-        private static async Task<BitmapSource?> GetTransparentBitmapSourceAsync(FileInfo fileInfo, MagickFormat magickFormat)
+        private static async Task<BitmapSource?> GetMagickSvg(FileInfo fileInfo, MagickFormat magickFormat)
         {
             try
             {
@@ -175,6 +175,7 @@ namespace PicView.ImageHandling
                 
                 magickImage.Settings.BackgroundColor = MagickColors.Transparent;
                 magickImage.Settings.FillColor = MagickColors.Transparent;
+                magickImage.Settings.SetDefine("svg:xml-parse-huge", "true");
 
                 var bitmap = magickImage.ToBitmapSource();
                 bitmap.Freeze();
@@ -184,7 +185,7 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetTransparentBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetMagickSvg)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
                 Tooltip.ShowTooltipMessage(e);
                 return null;
