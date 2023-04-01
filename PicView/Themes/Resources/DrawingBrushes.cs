@@ -6,8 +6,6 @@ namespace PicView.Themes.Resources
 {
     internal static class DrawingBrushes
     {
-        #region DrawingBrush
-
         public static DrawingBrush CheckerboardDrawingBrush(Color color)
         {
             return CheckerboardDrawingBrush(color, ConfigColors.BackgroundBorderColor, 30);
@@ -57,7 +55,5 @@ namespace PicView.Themes.Resources
 
             return draw;
         }
-
-        #endregion DrawingBrush
     }
 }
