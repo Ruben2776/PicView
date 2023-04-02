@@ -161,9 +161,13 @@ namespace PicView.ImageHandling
                     Format = magickFormat,
                 };
 
-                if (fileInfo.Length >= 2147483648)
+                if (fileInfo.Length >= 2147483648) // Streams with a length larger than 2GB are not supported, read from file instead
                 {
-                    magickImage.Read(fileInfo);
+                    await Task.Run(() =>
+                    {
+                        magickImage = new MagickImage();
+                        magickImage.Read(fileInfo);
+                    }).ConfigureAwait(false);
                 }
                 else
                 {
@@ -223,23 +227,16 @@ namespace PicView.ImageHandling
 
         private static async Task<BitmapSource?> GetDefaultBitmapSourceAsync(FileInfo fileInfo, bool autoOrient = false)
         {
-            MagickImage magickImage;
+            MagickImage? magickImage = null;
             try
             {
                 if (fileInfo.Length >= 2147483648) // Streams with a length larger than 2GB are not supported, read from file instead
                 {
-                    magickImage = new MagickImage();
-                    try
+                    await Task.Run(() =>
                     {
-                       magickImage.Read(fileInfo);
-                    }
-                    catch (Exception e)
-                    {
-#if DEBUG
-                        Trace.WriteLine($"{nameof(GetDefaultBitmapSourceAsync)} {fileInfo.Name} exception\n {e.Message}");
-#endif
-                        return null;
-                    }
+                        magickImage = new MagickImage();
+                        magickImage.Read(fileInfo);
+                    }).ConfigureAwait(false);
                 }
                 else
                 {
@@ -251,11 +248,11 @@ namespace PicView.ImageHandling
 
                 if (autoOrient)
                 {
-                    magickImage.AutoOrient();
+                    magickImage?.AutoOrient();
                 }
-                var bitmap = magickImage.ToBitmapSource();
-                bitmap.Freeze();
-                magickImage.Dispose();
+                var bitmap = magickImage?.ToBitmapSource();
+                bitmap?.Freeze();
+                magickImage?.Dispose();
                 return bitmap;
             }
             catch (Exception e)
