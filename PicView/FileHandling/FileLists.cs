@@ -72,7 +72,7 @@ namespace PicView.FileHandling
         /// <param name="fileInfo">The file information object.</param>
         /// <param name="sortFilesBy">The sorting method to be used for the file names.</param>
         /// <returns>A list of file names.</returns>
-        private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
+        internal static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
         {
             switch (fileInfo)
             {
@@ -150,37 +150,5 @@ namespace PicView.FileHandling
                     return items.OrderBy(f => Guid.NewGuid()).ToList();
             }
         }
-
-        /// <summary>
-        /// Gets values and extracts archives
-        /// </summary>
-        /// <param name="fileInfo"></param>
-        /// <returns></returns>
-        internal static Task RetrieveFilelistAsync(FileInfo? fileInfo) => Task.Run(() =>
-        {
-            if (fileInfo is null)
-            {
-                _ = ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
-                return;
-            }
-            // Check if to load from archive
-            if (SupportedFiles.IsArchive(fileInfo.Extension))
-            {
-                if (Extract(fileInfo.FullName)) { return; }
-                if (ErrorHandling.CheckOutOfRange() == false)
-                {
-                    Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
-                }
-
-                _ = ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
-                return;
-            }
-            // Set files to Pics and get index
-            Navigation.Pics = FileList(fileInfo);
-            if (Navigation.Pics == null)
-            {
-                _ = ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
-            }
-        });
     }
 }

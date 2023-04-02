@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -16,6 +17,28 @@ namespace PicView.Animations
         private static readonly Color mainColor = (Color)Application.Current.Resources["IconColor"];
 
         private static readonly Color backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
+
+        internal static void SetIconButterMouseOverAnimations(Button button, Brush backgroundBrush, Brush iconBrush)
+        {
+            button.MouseLeftButtonDown += delegate
+            {
+                ButtonMouseOverAnim(iconBrush, false, true);
+                ButtonMouseOverAnim(backgroundBrush, false, true);
+                AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+            };
+
+            button.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(iconBrush);
+                AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+            };
+
+            button.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(iconBrush);
+                AnimationHelper.MouseLeaveBgTexColor(backgroundBrush);
+            };
+        }
 
         #region ALtInterface hover anims
 

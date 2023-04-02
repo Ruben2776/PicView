@@ -26,7 +26,7 @@
                 Width="358"
                 Height="178"
                 Margin="0,51,0,0"
-                Background="{StaticResource BorderBrushAlt}"
+                Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1,0,1,1"
                 CornerRadius="0,0,4,4" />

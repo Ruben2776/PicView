@@ -54,7 +54,19 @@ namespace PicView.Animations
         #endregion Fade
 
         #region Color Events
+        internal static void MouseEnterFadeColor(Brush brush)
+        {
+            colorAnimation.From = (Color)Application.Current.Resources["FadeColor"]; 
+            colorAnimation.To = (Color)Application.Current.Resources["BackgroundSubtleHighlight"];
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+        }
 
+        internal static void MouseLeaveFadeColor(Brush brush)
+        {
+            colorAnimation.From = (Color)Application.Current.Resources["BackgroundSubtleHighlight"];
+            colorAnimation.To = (Color)Application.Current.Resources["FadeColor"];
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+        }
         internal static void MouseEnterBgTexColor(Brush brush)
         {
             colorAnimation.From = Color.FromArgb(0, 0, 0, 0);

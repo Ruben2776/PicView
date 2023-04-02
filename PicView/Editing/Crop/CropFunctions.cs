@@ -43,7 +43,7 @@ namespace PicView.Editing.Crop
 
         internal static async Task PerformCropAsync()
         {
-            var sameFile = await SaveCrop().ConfigureAwait(false);
+            var sameFile = await SaveCrop().ConfigureAwait(true);
             if (sameFile)
             {
                 await LoadPic.LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
@@ -150,9 +150,10 @@ namespace PicView.Editing.Crop
             // Return null if there is no cropped area defined
             if (cropArea == null) return null;
 
+            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue; // TODO: Make crop work with zoom
             // Calculate the scaled dimensions and coordinates of the cropped area based on the aspect ratio
-            int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / (AspectRatio * ZoomLogic.ZoomValue));
-            int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / (AspectRatio * ZoomLogic.ZoomValue));
+            int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / (AspectRatio * zoomValue));
+            int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / (AspectRatio * zoomValue));
             int width, height;
 
             // Calculate the scaled width and height of the cropped area based on the rotation angle
@@ -160,13 +161,13 @@ namespace PicView.Editing.Crop
             {
                 case 0:
                 case 180:
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / ZoomLogic.ZoomValue);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / ZoomLogic.ZoomValue);
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / zoomValue);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / zoomValue);
                     break;  
 
                 default:
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / ZoomLogic.ZoomValue);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / ZoomLogic.ZoomValue);
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / zoomValue);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / zoomValue);
                     break;
             }
 

@@ -1,4 +1,5 @@
-﻿using PicView.ImageHandling;
+﻿using PicView.FileHandling;
+using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
@@ -19,16 +20,27 @@ namespace PicView.ChangeImage
     internal static class QuickLoad
     {
         /// <summary>
-        /// Quickly load image and then update values
+        /// Load Image from blank values and show loading preview
         /// </summary>
         /// <param name="file"></param>
-        /// <returns></returns>
         internal static async Task QuickLoadAsync(string file)
         {
+            InitialPath = file;
             var fileInfo = new FileInfo(file);
             if (!fileInfo.Exists) // If not file, try to load if URL or base64
             {
                 await LoadPicFromStringAsync(file).ConfigureAwait(false);
+                return;
+            }
+            else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                await LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
+                return;
+            }
+
+            if (SupportedFiles.IsArchive(file))
+            {
+                await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
                 return;
             }
 
@@ -47,7 +59,7 @@ namespace PicView.ChangeImage
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => SetMainImage(bitmapSource, fileInfo), DispatcherPriority.Send);
             }
 
-            await RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            Pics = FileList(fileInfo);
 
             FolderIndex = Pics?.IndexOf(fileInfo.FullName) ?? 0;
 
@@ -67,7 +79,7 @@ namespace PicView.ChangeImage
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                await GalleryLoad.Load().ConfigureAwait(false);
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive
@@ -75,10 +87,7 @@ namespace PicView.ChangeImage
             {
                 GetFileHistory ??= new FileHistory();
                 GetFileHistory.Add(Pics[FolderIndex]);
-            }
-
-            FreshStartup = false;
-            InitialPath = file;
+            }            
         }
 
         static void SetMainImage(BitmapSource bitmapSource, FileInfo fileInfo)

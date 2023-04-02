@@ -38,13 +38,6 @@ namespace PicView.PicGallery
 
         internal static async Task SortGallery(FileInfo? fileInfo = null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-            {
-                if (GetPicGallery.Container.Children.Count <= 0)
-                {
-                }
-            }));
-
             if (fileInfo is null)
             {
                 fileInfo = new FileInfo(Navigation.Pics[0]);
@@ -56,15 +49,23 @@ namespace PicView.PicGallery
             {
                 for (int i = 0; i < Navigation.Pics.Count; i++)
                 {
-                    var x = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                    thumbs.Add(new tempPics(x?.img?.Source as BitmapSource, Navigation.Pics[i]));
+                    try
+                    {
+                        var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
+                        thumbs.Add(new tempPics(picGalleryItem?.img?.Source as BitmapSource, Navigation.Pics[i]));
+                    }
+                    catch (Exception e)
+                    {
+                        Tooltip.ShowTooltipMessage(e);
+                        Clear();
+                    }
                 }
 
                 Clear();
             }));
 
             Navigation.Pics.Clear(); // Cancel task if running
-            await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+            Navigation.Pics = FileLists.FileList(fileInfo);
 
             try
             {
@@ -74,7 +75,7 @@ namespace PicView.PicGallery
             {
                 thumbs = null;
                 Clear();
-                await GalleryLoad.Load().ConfigureAwait(false);
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
                 return;
             }
 
@@ -88,10 +89,10 @@ namespace PicView.PicGallery
                 GalleryNavigation.ScrollTo();
             }));
 
-            Parallel.For(0, Navigation.Pics.Count, i =>
+            for (int i = 0; i < Navigation.Pics.Count; i++)
             {
                 GalleryLoad.UpdatePic(i, thumbs[i].pic);
-            });
+            }
 
             thumbs = null;
         }

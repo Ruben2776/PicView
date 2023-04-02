@@ -14,13 +14,7 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                TheButton.MouseEnter += (_, _) => ButtonMouseOverAnim(PasteButtonBrush, true);
-                TheButton.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(PasteButtonBrush);
-
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
+                SetIconButterMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
 
                 TheButton.Click += async delegate { await Copy_Paste.PasteAsync().ConfigureAwait(false); };
             };

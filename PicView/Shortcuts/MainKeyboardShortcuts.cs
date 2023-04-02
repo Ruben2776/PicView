@@ -630,10 +630,7 @@ namespace PicView.Shortcuts
                 case Key.Right:
                 case Key.Left:
                 case Key.D:
-                    if (FolderIndex <= 0 || Pics?.Count < FolderIndex)
-                    {
-                        return;
-                    }
+                    if (FolderIndex < 0 || FolderIndex >= Pics.Count) return;
                     _ = FastPic.FastPicUpdateAsync().ConfigureAwait(false);
                     return;
             }

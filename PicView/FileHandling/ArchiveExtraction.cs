@@ -23,8 +23,6 @@ namespace PicView.FileHandling
         /// </summary>
         internal static string? TempZipFile { get; set; }
 
-        internal static bool IsBeingExtraced { get; set; }
-
         /// <summary>
         /// Attemps to extract folder
         /// </summary>
@@ -111,7 +109,6 @@ namespace PicView.FileHandling
 #endif
 
             BackupPath = ErrorHandling.CheckOutOfRange() == false ? Pics[FolderIndex] : null;
-            IsBeingExtraced = true;
 
             var arguments = isWinrar
                 ? $"x -o- \"{path}\" " // WinRAR
@@ -125,12 +122,7 @@ namespace PicView.FileHandling
                 FileName = exe,
                 Arguments = arguments,
                 RedirectStandardOutput = true,
-
-#if DEBUG
                 CreateNoWindow = false
-#else
-                CreateNoWindow = true
-#endif
             });
 
             if (process == null) { return false; }
@@ -142,9 +134,11 @@ namespace PicView.FileHandling
             process.OutputDataReceived += (_, _) =>
             {
                 // Fix it if files are in sub directory
-                while (SetDirectory() && !process.HasExited)
+                while (!process.HasExited)
                 {
-                    if (Pics.Count >= 1 && !previewed) 
+                    if (previewed) return;
+
+                    if (SetDirectory() && Pics.Count >= 1) 
                     {
                         LoadPic.LoadingPreview(new FileInfo(Pics[0]));
                         previewed = true;
@@ -156,21 +150,20 @@ namespace PicView.FileHandling
             {
                 if (SetDirectory())
                 {
-                    await LoadPic.LoadPicFromStringAsync(Pics[0]).ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
 
                     GetFileHistory ??= new FileHistory();
                     GetFileHistory.Add(TempZipFile);
 
                     if (Settings.Default.FullscreenGalleryHorizontal)
                     {
-                        await GalleryLoad.Load().ConfigureAwait(false);
+                        await GalleryLoad.LoadAsync().ConfigureAwait(false);
                     }
                 }
                 else
                 {
                     await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 }
-                IsBeingExtraced = false;
             };
 
             return true;

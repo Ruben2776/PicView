@@ -22,7 +22,6 @@ namespace PicView.UILogic.Loading
     {
         internal static void LoadedEvent()
         {
-            FreshStartup = true;
             Pics = new List<string>();
 
             // Load sizing properties
@@ -32,11 +31,10 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
+            SetWindowBehavior();
+
             if (Settings.Default.AutoFitWindow == false)
-            {
-                SetWindowBehavior();
                 SetLastWindowSize();
-            }
 
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
@@ -46,10 +44,14 @@ namespace PicView.UILogic.Loading
                    ConfigureWindows.GetMainWindow.LowerBar.Visibility
                    = Visibility.Collapsed;
             }
+            ConfigColors.UpdateColor();
         }
 
         internal static async Task ContentRenderedEventAsync()
         {
+            if (Properties.Settings.Default.AutoFitWindow) // Fix being able to resize window
+                SetWindowBehavior();
+
             var args = Environment.GetCommandLineArgs();
 
             // Determine prefered UI for startup
@@ -86,8 +88,6 @@ namespace PicView.UILogic.Loading
                 await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 // TODO maybe load extra images if multiple arguments
             }
-
-            ConfigColors.UpdateColor();
 
             // Add dictionaries
             Application.Current.Resources.MergedDictionaries.Add(

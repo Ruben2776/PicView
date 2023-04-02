@@ -235,48 +235,6 @@ namespace PicView.PicGallery
             });
         }
 
-        internal static void FullscreenGallerySelection(Direction direction)
-        {
-            var backup = SelectedGalleryItem;
-            if (direction == Direction.Up)
-            {
-                SelectedGalleryItem--;
-            }
-            else
-            {
-                SelectedGalleryItem++;
-            }
-
-            if (SelectedGalleryItem >= Pics.Count - 1)
-            {
-                SelectedGalleryItem = Pics.Count - 1;
-            }
-
-            if (SelectedGalleryItem < 0)
-            {
-                SelectedGalleryItem = 0;
-            }
-
-            SetSelected(SelectedGalleryItem, true);
-            if (backup != SelectedGalleryItem)
-            {
-                SetSelected(backup, false); // deselect
-            }
-            if (SelectedGalleryItem != FolderIndex)
-            {
-                SetSelected(FolderIndex, false); // deselect
-            }
-
-            if (Reverse)
-            {
-                GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset + PicGalleryItem_Size);
-            }
-            else
-            {
-                GetPicGallery.Scroller.ScrollToVerticalOffset(GetPicGallery.Scroller.VerticalOffset - PicGalleryItem_Size);
-            }
-        }
-
         #endregion Horizontal Gallery Navigation
     }
 }

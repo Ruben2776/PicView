@@ -159,12 +159,17 @@ namespace PicView.UILogic.Sizing
         /// </summary>
         internal static void Fullscreen_Restore(bool gotoFullscreen)
         {
+            if (Navigation.ClickArrowLeftClicked || Navigation.ClickArrowRightClicked) 
+            {
+                return; // Fixes weird unintentional hit
+            }
+
             if (Settings.Default.AutoFitWindow == false)
             {
                 SetWindowSize();
             }
 
-            if (gotoFullscreen)
+            if (GetMainWindow.WindowState == WindowState.Maximized || gotoFullscreen)
             {
                 // Show fullscreen logic
                 RenderFullscreen();
@@ -216,7 +221,7 @@ namespace PicView.UILogic.Sizing
                     Slideshow.SlideTimer.Enabled = false;
                 }
 
-                _ = TryFitImageAsync();
+                TryFitImage();
             }
         }
 
@@ -232,7 +237,7 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.Width = MonitorInfo.WorkArea.Width;
             GetMainWindow.Height = MonitorInfo.WorkArea.Height;
 
-            _ = TryFitImageAsync();
+            TryFitImage();
 
             GetMainWindow.Top = 0;
             GetMainWindow.Left = 0;
@@ -284,6 +289,9 @@ namespace PicView.UILogic.Sizing
         {
             GetMainWindow.Dispatcher.Invoke(() =>
             {
+                if (GetMainWindow.WindowState == WindowState.Maximized || Properties.Settings.Default.Fullscreen)
+                    return;
+
                 Settings.Default.Top = GetMainWindow.Top;
                 Settings.Default.Left = GetMainWindow.Left;
                 Settings.Default.Height = GetMainWindow.ActualHeight;
@@ -317,7 +325,7 @@ namespace PicView.UILogic.Sizing
         {
             // Update size when screen resulution changes
             MonitorInfo = MonitorSize.GetMonitorSize();
-            _ = TryFitImageAsync();
+            TryFitImage();
         }
 
         #endregion Changed Events

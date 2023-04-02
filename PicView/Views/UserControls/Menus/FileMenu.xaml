@@ -12,7 +12,7 @@
             <Border
                 Width="259"
                 Height="178"
-                Background="{StaticResource BorderBrushAlt}"
+                Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 CornerRadius="4" />
@@ -42,7 +42,20 @@
                 Stroke="{DynamicResource BorderBrush}"
                 StrokeThickness="1" />
 
-            <buttons:ReloadButton x:Name="ReloadButton" />
+            <buttons:ReloadButton
+                x:Name="ReloadButton"
+                Canvas.Left="1"
+                Canvas.Top="1"
+                Width="51"
+                Height="51" />
+
+            <Rectangle
+                Canvas.Left="52"
+                Width="1"
+                Height="51"
+                Panel.ZIndex="1"
+                Stroke="{DynamicResource BorderBrush}"
+                StrokeThickness="1" />
 
             <buttons:RecycleButton
                 x:Name="RecycleButton"
@@ -161,11 +174,11 @@
             Height="1.5"
             Margin="29,-1,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource BorderBrushAlt}" />
+            Fill="{StaticResource BackgroundColorBrushAlt}" />
         <Polygon
             Margin="25,-5,0,0"
             Panel.ZIndex="-1"
-            Fill="{StaticResource BorderBrushAlt}"
+            Fill="{StaticResource BackgroundColorBrushAlt}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource BorderBrush}"
             StrokeThickness="1" />

@@ -42,7 +42,7 @@ namespace PicView.UILogic
                 AutoReset = false,
                 Enabled = true,
             };
-            timer.Elapsed += (_, _) => _ = ScaleImage.TryFitImageAsync().ConfigureAwait(true);
+            timer.Elapsed += (_, _) => ScaleImage.TryFitImage();
         }
 
         internal static void ShowStandardInterface()

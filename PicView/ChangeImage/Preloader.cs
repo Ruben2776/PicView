@@ -70,6 +70,10 @@ namespace PicView.ChangeImage
         /// </summary>
         internal const int MaxCount = positiveIterations + negativeIterations + 1;
 
+#if DEBUG
+        static bool showAddRemove = false;
+#endif
+
         /// <summary>
         /// Adds a file to the preloader from the specified index. Returns true if a new value was added.
         /// </summary>
@@ -96,7 +100,8 @@ namespace PicView.ChangeImage
                     preloadValue.FileInfo = fileInfo;
 
 #if DEBUG
-                    Trace.WriteLine($"{fileInfo.Name} added at {index}");
+                    if (showAddRemove)
+                        Trace.WriteLine($"{fileInfo.Name} added at {index}");
 #endif
                 }
             }
@@ -166,7 +171,7 @@ namespace PicView.ChangeImage
                 _ = _preloadList[key];
                 var remove = _preloadList.TryRemove(key, out _);
 #if DEBUG
-                if (remove)
+                if (remove && showAddRemove)
                     Trace.WriteLine($"{Pics[key]} removed at {Pics.IndexOf(Pics[key])}");
 #endif
             }
@@ -189,7 +194,8 @@ namespace PicView.ChangeImage
             int nextStartingIndex, prevStartingIndex, deleteIndex;
 
 #if DEBUG
-            Trace.WriteLine($"\nPreloading started at {currentIndex}\n");
+            if (showAddRemove)
+                Trace.WriteLine($"\nPreloading started at {currentIndex}\n");
 #endif
             if (!Reverse)
             {
@@ -207,10 +213,13 @@ namespace PicView.ChangeImage
                     int index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
-                for (int i = 0; i < negativeIterations; i++)
+                if (Pics.Count > MaxCount + negativeIterations)
                 {
-                    int index = (deleteIndex - i + Pics.Count) % Pics.Count;
-                    Remove(index);
+                    for (int i = 0; i < negativeIterations; i++)
+                    {
+                        int index = (deleteIndex - i + Pics.Count) % Pics.Count;
+                        Remove(index);
+                    }
                 }
             }
             else
@@ -229,10 +238,13 @@ namespace PicView.ChangeImage
                     int index = (prevStartingIndex + i) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
-                for (int i = 0; i < negativeIterations; i++)
+                if (Pics.Count > MaxCount + negativeIterations)
                 {
-                    int index = (deleteIndex + i) % Pics.Count;
-                    Remove(index);
+                    for (int i = 0; i < negativeIterations; i++)
+                    {
+                        int index = (deleteIndex + i) % Pics.Count;
+                        Remove(index);
+                    }
                 }
             }
 

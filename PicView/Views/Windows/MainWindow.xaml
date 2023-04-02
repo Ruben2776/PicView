@@ -29,32 +29,36 @@
         <DockPanel
             x:Name="TitleBar"
             Height="30"
-            Background="{StaticResource NoisyBg}"
             DockPanel.Dock="Top">
 
-            <misc:Icon
-                x:Name="Logo"
-                Width="37"
-                Height="30"
-                Margin="0"
-                Padding="0,2,0,2"
-                Background="{StaticResource SubtleFadeBrush}" />
-
-            <Rectangle
-                Width="1"
-                Height="30"
-                Fill="{StaticResource BorderBrush}" />
-
             <Canvas
-                Width="90"
+                x:Name="LeftButtonContainer"
+                Width="131"
+                Height="30"
                 Background="{StaticResource BackgroundColorBrushFadeSubtle}"
                 DockPanel.Dock="Left">
+
+                <misc:Icon
+                    x:Name="Logo"
+                    Width="41"
+                    Height="30"
+                    Margin="0"
+                    Padding="0,2,0,2"
+                    Background="{StaticResource SubtleFadeBrush}" />
+
+                <Rectangle
+                    Canvas.Left="41"
+                    Width="1"
+                    Height="30"
+                    Fill="{StaticResource BorderBrush}" />
+
                 <Button
                     Name="GalleryButton"
+                    Canvas.Left="42"
                     Width="29"
-                    Height="31">
+                    Height="30">
                     <Button.Background>
-                        <SolidColorBrush x:Name="GalleryBg" Color="{StaticResource SubtleFadeColor}" />
+                        <SolidColorBrush x:Name="GalleryBg" Color="Transparent" />
                     </Button.Background>
                     <Image Width="17">
                         <Image.Source>
@@ -74,18 +78,18 @@
                 </Button>
 
                 <Rectangle
-                    Canvas.Left="30"
+                    Canvas.Left="71"
                     Width="1"
                     Height="30"
                     Fill="{StaticResource BorderBrush}" />
 
                 <Button
                     Name="RotateButton"
-                    Canvas.Left="31"
+                    Canvas.Left="72"
                     Width="29"
-                    Height="31">
+                    Height="30">
                     <Button.Background>
-                        <SolidColorBrush x:Name="RotateBg" Color="{StaticResource SubtleFadeColor}" />
+                        <SolidColorBrush x:Name="RotateBg" Color="Transparent" />
                     </Button.Background>
                     <Path
                         Canvas.Top="19"
@@ -100,7 +104,7 @@
                 </Button>
 
                 <Rectangle
-                    Canvas.Left="60"
+                    Canvas.Left="101"
                     Width="1"
                     Height="30"
                     HorizontalAlignment="Left"
@@ -109,11 +113,11 @@
 
                 <Button
                     Name="FlipButton"
-                    Canvas.Left="61"
+                    Canvas.Left="102"
                     Width="29"
                     Height="30">
                     <Button.Background>
-                        <SolidColorBrush x:Name="FlipBg" Color="{StaticResource SubtleFadeColor}" />
+                        <SolidColorBrush x:Name="FlipBg" Color="Transparent" />
                     </Button.Background>
                     <Path
                         x:Name="FlipPath"
@@ -127,12 +131,13 @@
                     </Path>
                 </Button>
 
-
             </Canvas>
+
             <Rectangle
                 Width="1"
                 Height="30"
                 Fill="{StaticResource BorderBrush}" />
+
             <buttons:CloseButton
                 x:Name="CloseButton"
                 Width="30"
@@ -172,31 +177,33 @@
 
             <misc:CustomTextBox
                 x:Name="TitleText"
-                Background="{StaticResource SubtleFadeBrush}"
+                Background="Transparent"
                 Foreground="{StaticResource IconColorBrush}" />
         </DockPanel>
 
         <Grid
             x:Name="LowerBar"
             Height="25"
-            Background="{StaticResource SubtleFadeBrush}"
+            Background="{StaticResource BackgroundColorBrushAlt}"
             DockPanel.Dock="Bottom">
 
             <Canvas
                 Width="404"
                 Height="25"
                 HorizontalAlignment="Center"
-                Background="{StaticResource FadeColorBrush}">
+                Background="{StaticResource BackgroundColorBrushAlt}">
+
+                <Rectangle
+                    Canvas.Left="1"
+                    Canvas.Top="24"
+                    Width="404"
+                    Height="1"
+                    Panel.ZIndex="1"
+                    Fill="{StaticResource BorderBrush}" />
 
                 <Rectangle
                     Width="1"
                     Height="25"
-                    Fill="{StaticResource BorderBrush}" />
-
-                <Rectangle
-                    Canvas.Top="25"
-                    Width="56"
-                    Height="1"
                     Fill="{StaticResource BorderBrush}" />
 
                 <buttons:FolderButton
@@ -210,13 +217,6 @@
                     Canvas.Top="0"
                     Width="1"
                     Height="25"
-                    Fill="{StaticResource BorderBrush}" />
-
-                <Rectangle
-                    Canvas.Left="57"
-                    Canvas.Top="25"
-                    Width="56"
-                    Height="1"
                     Fill="{StaticResource BorderBrush}" />
 
                 <Button
@@ -277,13 +277,7 @@
                     Canvas.Left="112"
                     Width="182"
                     Height="25"
-                    Background="{StaticResource FadeColorBrush}">
-
-                    <Rectangle
-                        Canvas.Top="25"
-                        Width="182"
-                        Height="1"
-                        Fill="{StaticResource BorderBrush}" />
+                    Background="{StaticResource BackgroundColorBrushAlt}">
 
                     <Rectangle
                         Canvas.Left="90"
@@ -479,35 +473,6 @@
                     Focusable="False"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Disabled">
-                    <ScrollViewer.Style>
-                        <Style TargetType="{x:Type ScrollViewer}">
-                            <Setter Property="OverridesDefaultStyle" Value="True" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <ScrollContentPresenter Grid.RowSpan="2" Grid.ColumnSpan="2" />
-                                            <ScrollBar
-                                                Name="PART_VerticalScrollBar"
-                                                Grid.Column="1"
-                                                Maximum="{TemplateBinding ScrollableHeight}"
-                                                ViewportSize="{TemplateBinding ViewportHeight}"
-                                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                                Value="{TemplateBinding VerticalOffset}" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ScrollViewer.Style>
                     <Border
                         x:Name="MainImageBorder"
                         HorizontalAlignment="Center"

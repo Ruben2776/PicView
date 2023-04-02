@@ -11,7 +11,7 @@
         BorderThickness="0"
         FontWeight="Bold">
         <Button.Background>
-            <SolidColorBrush x:Name="PasteButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="ButtonBrush" Color="{StaticResource FadeColor}" />
         </Button.Background>
         <Path
             Width="16"

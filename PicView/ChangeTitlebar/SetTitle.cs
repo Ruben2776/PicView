@@ -23,7 +23,7 @@ namespace PicView.ChangeTitlebar
         /// <param name="index"></param>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        internal static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
+        internal static string[] TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
             // Check if file info is present or not
             if (fileInfo == null)
@@ -89,7 +89,7 @@ namespace PicView.ChangeTitlebar
             return array;
         }
 
-        private static string[]? ReturnError(string exception)
+        private static string[] ReturnError(string exception)
         {
 #if DEBUG
             Trace.WriteLine(exception);

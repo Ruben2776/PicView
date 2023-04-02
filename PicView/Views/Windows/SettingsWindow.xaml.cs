@@ -12,6 +12,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,6 +44,7 @@ namespace PicView.Views.Windows
             ContentRendered += delegate
             {
                 WindowBlur.EnableBlur(this);
+                ChangeColor();
                 var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
                 AddGenericEvents(colorAnimation);
@@ -55,7 +57,7 @@ namespace PicView.Views.Windows
                     if (ErrorHandling.CheckOutOfRange()) { return; }
                     var preloadValue = Preloader.Get(Navigation.FolderIndex);
                     if (preloadValue is null) { return; }
-                    await FileLists.RetrieveFilelistAsync(preloadValue.FileInfo).ConfigureAwait(false);
+                    Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                     {
                         SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
@@ -205,6 +207,11 @@ namespace PicView.Views.Windows
                         break;
                 }
             };
+        }
+
+        public void ChangeColor()
+        {
+            Logo.ChangeColor();
         }
 
         #region EventHandlers

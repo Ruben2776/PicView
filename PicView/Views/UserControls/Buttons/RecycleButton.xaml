@@ -5,7 +5,7 @@
     ToolTip="{StaticResource SendCurrentImageToRecycleBin}">
     <Button x:Name="TheButton" BorderThickness="0">
         <Button.Background>
-            <SolidColorBrush x:Name="RecycleButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+            <SolidColorBrush x:Name="ButtonBrush" Color="{StaticResource FadeColor}" />
         </Button.Background>
         <Path
             Width="16"

@@ -1,7 +1,9 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.Properties;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons
@@ -14,15 +16,9 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ReloadButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ReloadButtonBrush);
+                SetIconButterMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
 
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
-
-                TheButton.Click += async (_, _) => await ErrorHandling.ReloadAsync();
+                TheButton.Click += async (_, _) => await ErrorHandling.ReloadAsync().ConfigureAwait(false);
             };
         }
     }

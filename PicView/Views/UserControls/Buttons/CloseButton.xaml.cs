@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using PicView.ConfigureSettings;
 using PicView.Properties;
 using System.Windows;
 using System.Windows.Controls;

@@ -53,11 +53,20 @@ namespace PicView.ConfigureSettings
 
             if (sortGallery)
             {
-                await GalleryFunctions.SortGallery(fileInfo).ConfigureAwait(false);
+                try
+                {
+                    await GalleryFunctions.SortGallery(fileInfo).ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    Tooltip.ShowTooltipMessage(e);
+                    GalleryFunctions.Clear();
+                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                }
             }
             else
             {
-                await FileLists.RetrieveFilelistAsync(fileInfo).ConfigureAwait(false);
+                Navigation.Pics = FileLists.FileList(fileInfo);
             }
 
             Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
@@ -190,7 +199,7 @@ namespace PicView.ConfigureSettings
 
             WindowSizing.SetWindowBehavior();
 
-            _= ScaleImage.TryFitImageAsync().ConfigureAwait(false);
+            ScaleImage.TryFitImage();
         }
     }
 }

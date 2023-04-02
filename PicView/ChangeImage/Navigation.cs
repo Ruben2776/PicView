@@ -38,11 +38,6 @@ namespace PicView.ChangeImage
         internal static string? InitialPath { get; set; }
 
         /// <summary>
-        /// Used to determine if values need to get retrieved (again)
-        /// </summary>
-        internal static bool FreshStartup { get; set; }
-
-        /// <summary>
         /// Determine direction user is going
         /// </summary>
         internal static bool Reverse { get; private set; }
@@ -84,39 +79,37 @@ namespace PicView.ChangeImage
         {
             if (ErrorHandling.CheckOutOfRange()) return;
 
-            int prev = FolderIndex;
-            int next = FolderIndex;
-
-            int indexChange = navigateTo switch
+            int next;          
+            switch (navigateTo)
             {
-                NavigateTo.Next => 1,
-                NavigateTo.Previous => -1,
-                _ => 0
-            };
-
-            bool isSlideshowEnabled = Slideshow.SlideTimer?.Enabled == true;
-
-            Reverse = navigateTo == NavigateTo.Previous;
-
-            if (fastPic || Settings.Default.Looping || isSlideshowEnabled)
-            {
-                next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
-            }
-            else
-            {
-                int newIndex = FolderIndex + indexChange;
-                if (newIndex < 0 || newIndex >= Pics.Count) return;
-                next =  newIndex;
-            }
-
-            if (navigateTo == NavigateTo.First || navigateTo == NavigateTo.Last)
-            {
-                if (Pics.Count() > Preloader.MaxCount) Preloader.Clear();
-                next =  navigateTo == NavigateTo.First ? 0 : Pics.Count - 1;
+                case NavigateTo.Next:
+                case NavigateTo.Previous:
+                    int indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
+                    Reverse = navigateTo == NavigateTo.Previous;
+                    if (Settings.Default.Looping || fastPic || Slideshow.SlideTimer != null)
+                    {
+                        next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
+                    }
+                    else
+                    {
+                        int newIndex = FolderIndex + indexChange;
+                        if (newIndex <= 0 || newIndex >= Pics.Count) return; // Don't load same image because that causes the UI to blink
+                        next = newIndex;
+                    }
+                    break;
+                case NavigateTo.First:
+                    if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+                    next = 0;
+                    break;
+                case NavigateTo.Last:
+                    if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+                    next = Pics.Count - 1;
+                    break;
+                default: return;
             }
 
-            // If the horizontal fullscreen view is open, set the selected index to the previous index
-            if (GalleryFunctions.IsHorizontalFullscreenOpen) GalleryNavigation.SetSelected(prev, false);
+            // If the horizontal fullscreen gallery is open, deselect current index
+            if (GalleryFunctions.IsHorizontalFullscreenOpen) GalleryNavigation.SetSelected(FolderIndex, false);
 
             if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
             else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
@@ -138,11 +131,6 @@ namespace PicView.ChangeImage
                     return;
                 }
 
-                if (ErrorHandling.CheckOutOfRange())
-                {
-                    return;
-                }
-
                 if (right)
                 {
                     RightbuttonClicked = true; // Update flag to move cursor when resized
@@ -156,11 +144,6 @@ namespace PicView.ChangeImage
             }
             else // Alternative interface buttons
             {
-                if (ErrorHandling.CheckOutOfRange())
-                {
-                    return;
-                }
-
                 if (right)
                 {
                     ClickArrowRightClicked = true; // Update flag to move cursor when resized

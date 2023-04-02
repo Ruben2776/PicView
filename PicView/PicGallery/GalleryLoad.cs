@@ -116,7 +116,7 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static async Task Load()
+        internal static async Task LoadAsync()
         {
             IsLoading = true;
             var source = new CancellationTokenSource();
@@ -131,7 +131,7 @@ namespace PicView.PicGallery
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
                 {
                     UC.GetPicGallery.Container.Children.Clear();
-                    await Load().ConfigureAwait(false); // restart when changing directory
+                    await LoadAsync().ConfigureAwait(false); // restart when changing directory
                 }));
             }
             finally { source.Dispose(); }
@@ -180,7 +180,7 @@ namespace PicView.PicGallery
             if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
             {
                 GalleryFunctions.Clear();
-                await Load().ConfigureAwait(false); // restart when changing directory
+                await LoadAsync().ConfigureAwait(false); // restart when changing directory
                 return;
             }
 
@@ -197,7 +197,7 @@ namespace PicView.PicGallery
                     if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                     {
                         GalleryFunctions.Clear();
-                        Load().ConfigureAwait(false); // restart when changing directory
+                        LoadAsync().ConfigureAwait(false); // restart when changing directory
                         return;
                     }
 
