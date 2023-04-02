@@ -211,7 +211,7 @@ namespace PicView.PicGallery
                 });
                 if (checkLoad == false)
                 {
-                    await GalleryLoad.Load().ConfigureAwait(false);
+                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
                 }
             }
 

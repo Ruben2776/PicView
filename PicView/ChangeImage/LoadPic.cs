@@ -128,7 +128,7 @@ namespace PicView.ChangeImage
 
                 if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
-                    await GalleryLoad.Load().ConfigureAwait(false);
+                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
                 }
 
                 if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
@@ -224,7 +224,7 @@ namespace PicView.ChangeImage
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                await GalleryLoad.Load().ConfigureAwait(false);
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
 
             if (folderChanged || string.IsNullOrWhiteSpace(InitialPath))

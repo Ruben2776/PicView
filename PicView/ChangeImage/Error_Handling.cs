@@ -244,7 +244,7 @@ namespace PicView.ChangeImage
 
             if (containerCheck)
             {
-                await GalleryFunctions.SortGallery().ConfigureAwait(false);
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
         }
 

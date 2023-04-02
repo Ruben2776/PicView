@@ -79,7 +79,7 @@ namespace PicView.ChangeImage
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                await GalleryLoad.Load().ConfigureAwait(false);
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
 
             // Add recent files, except when browing archive

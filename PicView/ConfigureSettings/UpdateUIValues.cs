@@ -53,7 +53,16 @@ namespace PicView.ConfigureSettings
 
             if (sortGallery)
             {
-                await GalleryFunctions.SortGallery(fileInfo).ConfigureAwait(false);
+                try
+                {
+                    await GalleryFunctions.SortGallery(fileInfo).ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    Tooltip.ShowTooltipMessage(e);
+                    GalleryFunctions.Clear();
+                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                }
             }
             else
             {

@@ -150,7 +150,7 @@ namespace PicView.Editing.Crop
             // Return null if there is no cropped area defined
             if (cropArea == null) return null;
 
-            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue;
+            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue; // TODO: Make crop work with zoom
             // Calculate the scaled dimensions and coordinates of the cropped area based on the aspect ratio
             int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / (AspectRatio * zoomValue));
             int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / (AspectRatio * zoomValue));
