@@ -88,15 +88,13 @@ namespace PicView.UILogic.Sizing
             }
             else if (Settings.Default.AutoFitWindow)
             {
-                maxWidth = Settings.Default.FillImage && IsValidRotation(RotationAngle) ? monitorWidth : Math.Min(monitorWidth - padding, width);
-                maxHeight = Settings.Default.FillImage && IsValidRotation(RotationAngle) ? monitorHeight : Math.Min(monitorHeight - padding, height);
+                maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
+                maxHeight = Settings.Default.FillImage ? monitorHeight : Math.Min(monitorHeight - padding, height);
             }
             else
             {
-                maxWidth = Settings.Default.FillImage && IsValidRotation(RotationAngle) ?
-                    GetMainWindow.ParentContainer.ActualWidth : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
-                maxHeight = Settings.Default.FillImage && IsValidRotation(RotationAngle) ?
-                    GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
+                maxWidth = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualWidth : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
+                maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
             }
 
             switch (RotationAngle) // aspect ratio calculation
