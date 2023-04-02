@@ -289,6 +289,9 @@ namespace PicView.UILogic.Sizing
         {
             GetMainWindow.Dispatcher.Invoke(() =>
             {
+                if (GetMainWindow.WindowState == WindowState.Maximized || Properties.Settings.Default.Fullscreen)
+                    return;
+
                 Settings.Default.Top = GetMainWindow.Top;
                 Settings.Default.Left = GetMainWindow.Left;
                 Settings.Default.Height = GetMainWindow.ActualHeight;
