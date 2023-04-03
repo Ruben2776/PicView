@@ -24,6 +24,7 @@ namespace PicView.Editing.Crop
         internal static void StartCrop()
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
+            if (!(RotationAngle is not 0 && !ZoomLogic.IsZoomed)) { return; }
 
             if (GetCropppingTool == null)
             {
@@ -84,8 +85,8 @@ namespace PicView.Editing.Crop
                     chosenColorBrush.Color.B
                 ));
 
-            GetCropppingTool.RootGrid.PreviewMouseDown += (s, e) => CropService.Adorner.RaiseEvent(e);
-            GetCropppingTool.RootGrid.PreviewMouseLeftButtonUp += (s, e) => CropService.Adorner.RaiseEvent(e);
+            GetCropppingTool.RootGrid.PreviewMouseDown += (_, e) => CropService.Adorner.RaiseEvent(e);
+            GetCropppingTool.RootGrid.PreviewMouseLeftButtonUp += (_, e) => CropService.Adorner.RaiseEvent(e);
         }
 
         /// <summary>
@@ -150,10 +151,10 @@ namespace PicView.Editing.Crop
             // Return null if there is no cropped area defined
             if (cropArea == null) return null;
 
-            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue; // TODO: Make crop work with zoom
-            // Calculate the scaled dimensions and coordinates of the cropped area based on the aspect ratio
-            int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / (AspectRatio * zoomValue));
-            int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / (AspectRatio * zoomValue));
+            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue;
+            double aspectZoomValue = AspectRatio * zoomValue;  // TODO: Make crop work with zoom
+            int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / aspectZoomValue);
+            int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / aspectZoomValue);
             int width, height;
 
             // Calculate the scaled width and height of the cropped area based on the rotation angle

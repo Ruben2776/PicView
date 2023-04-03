@@ -370,18 +370,7 @@ namespace PicView.Shortcuts
                         }
                         else if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            switch (RotationAngle)
-                            {
-                                case 0:
-                                case 90:
-                                case 180:
-                                case 270:
-                                    if (!IsZoomed) // TODO make crop work with zoom
-                                    {
-                                        CropFunctions.StartCrop();
-                                    }
-                                    break;
-                            }
+                            CropFunctions.StartCrop();
                         }
                         break;
 
