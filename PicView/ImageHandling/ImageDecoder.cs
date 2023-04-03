@@ -1,14 +1,13 @@
 ﻿using ImageMagick;
+using ImageMagick.Formats;
 using PicView.UILogic;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
@@ -39,9 +38,6 @@ namespace PicView.ImageHandling
                 case ".wbmp":
                     return await GetWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
-                case ".tga":
-                    return await GetDefaultBitmapSourceAsync(fileInfo, true).ConfigureAwait(false);
-
                 case ".svg":
                     return await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
@@ -49,7 +45,7 @@ namespace PicView.ImageHandling
                     return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false);
 
                 default:
-                    return await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                    return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
             }
         }
 
@@ -112,7 +108,7 @@ namespace PicView.ImageHandling
 
                 var effect = ConfigureWindows.GetMainWindow.MainImage.Effect;
 
-                var rectangle = new Rectangle
+                var rectangle = new System.Windows.Shapes.Rectangle
                 {
                     Fill = new ImageBrush(sourceBitmap),
                     Effect = effect
@@ -176,7 +172,7 @@ namespace PicView.ImageHandling
                     await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
                     magickImage.Read(data);
                 }
-                
+
                 magickImage.Settings.BackgroundColor = MagickColors.Transparent;
                 magickImage.Settings.FillColor = MagickColors.Transparent;
                 magickImage.Settings.SetDefine("svg:xml-parse-huge", "true");
@@ -199,7 +195,7 @@ namespace PicView.ImageHandling
         private static async Task<WriteableBitmap?> GetWriteableBitmapAsync(FileInfo fileInfo)
         {
             if (fileInfo.Length >= 2147483648)
-                return (WriteableBitmap?)await GetDefaultBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                return (WriteableBitmap?)await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
 
             try
             {
@@ -225,42 +221,62 @@ namespace PicView.ImageHandling
             }
         }
 
-        private static async Task<BitmapSource?> GetDefaultBitmapSourceAsync(FileInfo fileInfo, bool autoOrient = false)
+        private static BitmapSource? GetDefaultBitmapSource(FileInfo fileInfo)
         {
             MagickImage? magickImage = null;
+
             try
             {
-                if (fileInfo.Length >= 2147483648) // Streams with a length larger than 2GB are not supported, read from file instead
+                magickImage = new MagickImage();
+                magickImage.Read(fileInfo);
+
+                var extension = fileInfo.Extension;
+                var settings = new MagickReadSettings
                 {
-                    await Task.Run(() =>
+                    SyncImageWithExifProfile = true,
+                    SyncImageWithTiffProperties = true,
+                };
+
+                if (extension.Equals(".HEIC", StringComparison.OrdinalIgnoreCase) || extension.Equals(".HEIF", StringComparison.OrdinalIgnoreCase))
+                {
+                    settings.SetDefines(new HeicReadDefines
                     {
-                        magickImage = new MagickImage();
-                        magickImage.Read(fileInfo);
-                    }).ConfigureAwait(false);
+                        PreserveOrientation = true,
+                        DepthImage = true,
+                    });
                 }
-                else
+                else if (extension.Equals(".JP2", StringComparison.OrdinalIgnoreCase))
                 {
-                    using FileStream filestream = new(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
-                    var data = new byte[filestream.Length];
-                    await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
-                    magickImage = new MagickImage(data);
+                    settings.SetDefines(new Jp2ReadDefines
+                    {
+                        QualityLayers = 100,
+                    });
+                }
+                else if (extension.Equals(".TIF", StringComparison.OrdinalIgnoreCase) || extension.Equals(".TIFF", StringComparison.OrdinalIgnoreCase))
+                {
+                    settings.SetDefines(new TiffReadDefines
+                    {
+                        IgnoreTags = new[] {
+                            "34022", // ColorTable
+                            "34025", // ImageColorValue
+                            "34026", // BackgroundColorValue
+                            "32928",
+                        },
+                    });
                 }
 
-                if (autoOrient)
-                {
-                    magickImage?.AutoOrient();
-                }
-                var bitmap = magickImage?.ToBitmapSource();
-                bitmap?.Freeze();
+                magickImage?.AutoOrient();
+                var bitmapSource = magickImage?.ToBitmapSource();
+                bitmapSource?.Freeze();
                 magickImage?.Dispose();
-                return bitmap;
+                return bitmapSource;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetDefaultBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception: \n{exception.Message}");
 #endif
-                Tooltip.ShowTooltipMessage(e);
+                Tooltip.ShowTooltipMessage(exception);
                 return null;
             }
         }
