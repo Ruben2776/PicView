@@ -178,13 +178,20 @@ namespace PicView.UILogic.Loading
             // 8 = seperator
 
             ///////////////////////////
-            ///   SetWallpaper     \\\\
+            ///   Set as           \\\\
             ///////////////////////////
-            var SetWallpaperCm = (MenuItem)MainContextMenu.Items[9];
+            var SetAsCm = (MenuItem)MainContextMenu.Items[9];
+            var SetWallpaperCm = (MenuItem)SetAsCm.Items[0];
             SetWallpaperCm.Click += async (_, _) =>
             {
                 MainContextMenu.IsOpen = false;
                 await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill).ConfigureAwait(false);
+            };
+            var SetLockCm = (MenuItem)SetAsCm.Items[1];
+            SetLockCm.Click += async (_, _) =>
+            {
+                MainContextMenu.IsOpen = false;
+                await LockScreenHelper.SetLockScreenImageAsync().ConfigureAwait(false);
             };
 
             ///////////////////////////
