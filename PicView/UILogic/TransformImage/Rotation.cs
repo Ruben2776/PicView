@@ -15,7 +15,7 @@ namespace PicView.UILogic.TransformImage
         /// <summary>
         /// Used to determine if the image has been flipped
         /// </summary>
-        internal static bool Flipped { get; set; }
+        internal static bool IsFlipped { get; set; }
 
         /// <summary>
         /// Used to get rotation by degrees
@@ -96,7 +96,7 @@ namespace PicView.UILogic.TransformImage
             ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
 
             // If it's flipped, keep it flipped when rotating
-            if (Flipped)
+            if (IsFlipped)
             {
                 var tg = new TransformGroup();
                 var flip = new ScaleTransform { ScaleX = -1 };
@@ -124,15 +124,15 @@ namespace PicView.UILogic.TransformImage
             var flip = new ScaleTransform();
             var tg = new TransformGroup();
 
-            if (!Flipped)
+            if (!IsFlipped)
             {
                 flip.ScaleX = -1;
-                Flipped = true;
+                IsFlipped = true;
             }
             else
             {
                 flip.ScaleX = +1;
-                Flipped = false;
+                IsFlipped = false;
             }
 
             rt.Angle = RotationAngle;

@@ -45,7 +45,7 @@ namespace PicView.ConfigureSettings
             
             Preloader.Clear();
             bool sortGallery = false;
-            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > 0)
                     sortGallery = true;

@@ -131,7 +131,7 @@ namespace PicView.Editing.Crop
             var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            var success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
+            var success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
             if (success)
             {
                 return Savedlg.FileName == Pics[FolderIndex];

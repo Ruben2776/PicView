@@ -151,6 +151,23 @@ namespace PicView.ChangeTitlebar
             return array;
         }
 
+        internal static void SetTitleString()
+        {
+            var preloadValue = Preloader.Get(FolderIndex);
+            if (preloadValue is null) return;
+
+            var titleString = TitleString((int)preloadValue.BitmapSource.Width, (int)preloadValue.BitmapSource.Height, FolderIndex, preloadValue.FileInfo);
+            if (titleString == null)
+            {
+                _ = ErrorHandling.ReloadAsync();
+                return;
+            }
+
+            ConfigureWindows.GetMainWindow.Title = titleString[0];
+            ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
+        }
+
         /// <summary>
         /// Sets title string with file name,
         /// zoom, aspect ratio and resolution

@@ -74,7 +74,7 @@ namespace PicView.ImageHandling
                 magickImage.Quality = 100;
 
                 // Apply rotation and flip transformations
-                if (Rotation.Flipped)
+                if (Rotation.IsFlipped)
                 {
                     magickImage.Flop();
                 }
