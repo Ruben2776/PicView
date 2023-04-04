@@ -1,15 +1,12 @@
 ﻿using Microsoft.Win32;
 using PicView.ChangeImage;
-using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.SystemIntegration
 {
@@ -30,25 +27,51 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static async Task SetWallpaperAsync(WallpaperStyle style)
         {
-            // Create temp directory
-            var tempPath = Path.GetTempPath();
-            var randomName = Path.GetRandomFileName();
-            var destination = tempPath + randomName;
-            BitmapSource? bitmapSource = null;
-            string? path = null;
-            if (ErrorHandling.CheckOutOfRange())
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                bitmapSource = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                ChangeTitlebar.SetTitle.SetLoadingString();
+                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Wait;
+            });
+
+            bool hasEffect = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+            double rotationAngle = UILogic.TransformImage.Rotation.RotationAngle;
+            bool isFlipped = UILogic.TransformImage.Rotation.IsFlipped;
+            bool shouldSaveImage = hasEffect || rotationAngle != 0 || isFlipped;
+            bool checkOutOfRange = ErrorHandling.CheckOutOfRange();
+            bool effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+
+            BitmapSource? bitmapSource = null;
+            string? imagePath = null;
+
+            if (shouldSaveImage || checkOutOfRange)
+            {
+                // Create a temporary directory
+                string tempDirectory = Path.GetTempPath();
+                string tempFileName = Path.GetRandomFileName();
+                string destinationPath = Path.Combine(tempDirectory, tempFileName);
+
+                if (checkOutOfRange)
+                {
+                    bitmapSource = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+                }
+                else
+                {
+                    imagePath = Navigation.Pics[Navigation.FolderIndex];
+                }
+
+                await SaveImages.SaveImageAsync(rotationAngle, isFlipped, bitmapSource, imagePath, destinationPath, null, hasEffect).ConfigureAwait(false);
+                SetDesktopWallpaper(destinationPath, style);
             }
             else
             {
-                path = Pics[FolderIndex];
+                SetDesktopWallpaper(Navigation.Pics[Navigation.FolderIndex], style);
             }
-            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            await SaveImages.SaveImageAsync(RotationAngle, Flipped, bitmapSource, path, destination, null, effectApplied).ConfigureAwait(false);
-
-            SetDesktopWallpaper(destination, style);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ChangeTitlebar.SetTitle.SetTitleString();
+                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Arrow;
+            });
         }
 
         /// <summary>

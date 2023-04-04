@@ -9,6 +9,7 @@ using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.Diagnostics;
+using System.Windows.Input;
 
 namespace PicView.SystemIntegration
 {
@@ -16,10 +17,16 @@ namespace PicView.SystemIntegration
     {
         public static async Task<bool> SetLockScreenImageAsync()
         {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ChangeTitlebar.SetTitle.SetTitleString();
+                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Arrow;
+            });
+
             string? folderPath, fileName;
             bool hasEffect = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
             double rotationAngle = UILogic.TransformImage.Rotation.RotationAngle;
-            bool isFlipped = UILogic.TransformImage.Rotation.Flipped;
+            bool isFlipped = UILogic.TransformImage.Rotation.IsFlipped;
             bool shouldSaveImage = hasEffect || rotationAngle != 0 || isFlipped;
             bool checkOutOfRange = ErrorHandling.CheckOutOfRange();
 
@@ -69,8 +76,19 @@ namespace PicView.SystemIntegration
                 Trace.WriteLine($"{nameof(LockScreenHelper)}::{nameof(SetLockScreenImageAsync)} exception:\n{ex.Message}");
 #endif
                 Tooltip.ShowTooltipMessage(ex);
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    ChangeTitlebar.SetTitle.SetTitleString();
+                    System.Windows.Application.Current.MainWindow.Cursor = Cursors.Arrow;
+                });
                 return false;
             }
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ChangeTitlebar.SetTitle.SetTitleString();
+                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Arrow;
+            });
 
             return true;
         }
