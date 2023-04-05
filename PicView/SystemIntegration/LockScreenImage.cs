@@ -19,8 +19,8 @@ namespace PicView.SystemIntegration
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                ChangeTitlebar.SetTitle.SetTitleString();
-                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Arrow;
+                ChangeTitlebar.SetTitle.SetLoadingString();
+                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Wait;
             });
 
             string? folderPath, fileName;

@@ -52,14 +52,7 @@ namespace PicView.Editing.Crop.Tools
         /// </summary>
         public void Redraw()
         {
-            if (_cropTool.Height <= 0 && _cropTool.Width <= 0)
-            {
-                ShowText(false);
-            }
-            else
-            {
-                ShowText(true);
-            }
+            ShowText(!_cropTool.Height <= 0 && _cropTool.Width <= 0);
 
             double calculateTop = _cropTool.TopLeftY - Border.ActualHeight - OffsetTop;
             if (calculateTop < 0)

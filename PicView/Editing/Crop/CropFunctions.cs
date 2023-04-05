@@ -24,7 +24,7 @@ namespace PicView.Editing.Crop
         internal static void StartCrop()
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
-            if (!(RotationAngle is not 0 && !ZoomLogic.IsZoomed)) { return; }
+            if (!(RotationAngle is 0 && !ZoomLogic.IsZoomed)) { return; }
 
             if (GetCropppingTool == null)
             {
