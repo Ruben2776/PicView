@@ -69,7 +69,8 @@
                     IsReadOnly="False"
                     IsTabStop="False"
                     IsUndoEnabled="True"
-                    TextAlignment="Center" />
+                    TextAlignment="Center"
+                    ToolTip="{StaticResource GoToImageAtSpecifiedIndex}" />
             </Canvas>
         </Button.Content>
     </Button>
