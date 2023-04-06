@@ -15,7 +15,7 @@ namespace PicView.Views.UserControls.Buttons
         public X2()
         {
             InitializeComponent();
-            MouseLeftButtonUp += (_, _) =>
+            MouseLeftButtonDown += (_, _) =>
             {
                 if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 {
@@ -27,7 +27,7 @@ namespace PicView.Views.UserControls.Buttons
                 }
                 else if (Settings.Default.ShowInterface == false || Settings.Default.Fullscreen)
                 {
-                    if (UC.GetPicGallery is null || UC.GetPicGallery.IsVisible == false)
+                    if (UC.GetPicGallery is null or { IsVisible : false})
                     {
                         SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                     }
