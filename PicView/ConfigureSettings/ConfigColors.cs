@@ -5,6 +5,7 @@ using PicView.UILogic;
 using PicView.Views.Windows;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace PicView.ConfigureSettings
@@ -112,20 +113,58 @@ namespace PicView.ConfigureSettings
         #region Change background
 
         /// <summary>
-        /// changes the background color of the main window.
-        /// It increments the BgColorChoice setting, which is used to determine the background color,
-        /// and sets the background color of the main window to the BackgroundColorBrush brush.
+        /// Changes the background color of the displayed image.
+        /// If the image has a transparent background, it increments the BgColorChoice setting,
+        /// which is used to determine the background color, and sets the background color of the main window
+        /// to the BackgroundColorBrush brush.
         /// </summary>
         internal static void ChangeBackground()
         {
+            // Get the main window and check if it has a valid image border and source
             var mainWindow = ConfigureWindows.GetMainWindow;
-            if (mainWindow.MainImageBorder == null) return;
+            if (mainWindow.MainImageBorder is null || mainWindow.MainImage.Source is null) return;
 
+            // Check if the main image has a transparent background
+            if (HasTransparentBackground(mainWindow.MainImage.Source as BitmapSource) is false) return;
+
+            // Increment the BgColorChoice setting
             Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 5;
 
+            // Set the background color of the main window to the BackgroundColorBrush brush
             mainWindow.MainImageBorder.Background = BackgroundColorBrush;
 
+            // Save the changes to the settings
             Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Checks whether a given bitmap has any transparent pixels.
+        /// </summary>
+        /// <param name="bitmap">The bitmap to check.</param>
+        /// <returns>True if the bitmap has any transparent pixels, false otherwise.</returns>
+        static bool HasTransparentBackground(BitmapSource bitmap)
+        {
+            // Convert the bitmap to the Bgra32 pixel format if necessary
+            if (bitmap.Format != PixelFormats.Bgra32)
+            {
+                bitmap = new FormatConvertedBitmap(bitmap, PixelFormats.Bgra32, null, 0);
+            }
+
+            // Copy the bitmap pixels into a byte array
+            var pixels = new byte[bitmap.PixelWidth * bitmap.PixelHeight * 4];
+            bitmap.CopyPixels(pixels, bitmap.PixelWidth * 4, 0);
+
+            // Check each pixel for transparency
+            for (int i = 3; i < pixels.Length; i += 4)
+            {
+                if (pixels[i] < 255)
+                {
+                    return true;
+                }
+            }
+
+            // If no transparent pixels were found, return false
+            return false;
         }
 
         /// <summary>
