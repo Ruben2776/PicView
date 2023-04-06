@@ -192,6 +192,7 @@
     <system:String x:Key="Folder">資料夾</system:String>
     <system:String x:Key="FullPath">完整路徑</system:String>
     <system:String x:Key="RenameFile">重新命名檔案</system:String>
+    <system:String x:Key="UnsupportedFile">不支持的文件格式</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">排序方式</system:String>
@@ -289,6 +290,7 @@
     <system:String x:Key="UnexpectedError">發生未知錯誤</system:String>
     <system:String x:Key="NoImages">無影像</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">移動檔案時發生錯誤</system:String>
+    <system:String x:Key="UnableToRender">无法渲染图像</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">拖放以開啟影像</system:String>

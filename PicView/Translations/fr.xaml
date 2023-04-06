@@ -192,6 +192,7 @@
     <system:String x:Key="Folder">Dossier</system:String>
     <system:String x:Key="FullPath">Chemin complet</system:String>
     <system:String x:Key="RenameFile">Renommer le fichier</system:String>
+    <system:String x:Key="UnsupportedFile">Fichier non pris en charge</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Trier les fichiers par</system:String>
@@ -289,6 +290,7 @@
     <system:String x:Key="UnexpectedError">Une erreur inconnue est survenue</system:String>
     <system:String x:Key="NoImages">Aucune image</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">Une erreur est survenue lors du déplacement du fichier</system:String>
+    <system:String x:Key="UnableToRender">Impossible de rendre l'image</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Glisser pour charger l'image</system:String>

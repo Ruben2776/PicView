@@ -192,6 +192,7 @@
     <system:String x:Key="Folder">Mappe</system:String>
     <system:String x:Key="FullPath">Filsti</system:String>
     <system:String x:Key="RenameFile">Omdøb fil</system:String>
+    <system:String x:Key="UnsupportedFile">Ikke understøttet filformat</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Sorter efter</system:String>
@@ -289,6 +290,7 @@
     <system:String x:Key="UnexpectedError">Der skete en ukendt fejl</system:String>
     <system:String x:Key="NoImages">Ingen billeder</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">Der skete en fejl ved flytning af fil</system:String>
+    <system:String x:Key="UnableToRender">Kan ikke gengive billedet</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Slip for at indlæse</system:String>

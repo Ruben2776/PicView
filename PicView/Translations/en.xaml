@@ -192,6 +192,7 @@
     <system:String x:Key="Folder">Folder</system:String>
     <system:String x:Key="FullPath">Full path</system:String>
     <system:String x:Key="RenameFile">Rename file</system:String>
+    <system:String x:Key="UnsupportedFile">Unsupported file</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Sort files by</system:String>
@@ -289,6 +290,7 @@
     <system:String x:Key="UnexpectedError">An unknown error occured</system:String>
     <system:String x:Key="NoImages">No Images</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">An error occured moving file</system:String>
+    <system:String x:Key="UnableToRender">Unable to render image</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Drop to load image</system:String>
