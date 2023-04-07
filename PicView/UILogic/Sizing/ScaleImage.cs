@@ -37,11 +37,7 @@ namespace PicView.UILogic.Sizing
         {
             GetMainWindow.Dispatcher.Invoke(() =>
             {
-                if (GetMainWindow.MainImage.Source != null)
-                {
-                    FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-                }
-                else if (ErrorHandling.CheckOutOfRange() == false)
+                if (ErrorHandling.CheckOutOfRange() == false)
                 {
                     var preloadValue = Preloader.Get(FolderIndex);
                     if (preloadValue != null)
@@ -56,6 +52,10 @@ namespace PicView.UILogic.Sizing
                 else if (XWidth > 0 && XHeight > 0)
                 {
                     FitImage(XWidth, XHeight);
+                }
+                else if (GetMainWindow.MainImage.Source != null)
+                {
+                    FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
                 }
             });
         }
@@ -153,7 +153,7 @@ namespace PicView.UILogic.Sizing
 
             if (Settings.Default.AutoFitWindow)
             {
-                CenterWindowOnScreen(Settings.Default.KeepCentered);
+                CenterWindowOnScreen(Settings.Default.KeepCentered); // Vertically center or vertically and horizontally center
 
                 // Update mainWindow.TitleBar width to dynamically fit new size
                 var titlebarMaxWidth = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
