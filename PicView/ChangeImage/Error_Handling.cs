@@ -22,8 +22,13 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static bool CheckOutOfRange()
         {
-            return Pics.Count < FolderIndex || Pics.Count < 1 || UC.GetCropppingTool is not null and { IsVisible: true } 
+            bool value = true;
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, (Action)(() =>
+            {
+                value = Pics.Count < FolderIndex || Pics.Count < 1 || UC.GetCropppingTool is not null and { IsVisible: true }
                 || (UC.GetQuickResize?.Opacity > 0);
+            }));
+            return value;
         }
 
         internal static void UnexpectedError()
