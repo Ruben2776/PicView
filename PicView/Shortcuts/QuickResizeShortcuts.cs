@@ -139,13 +139,14 @@ namespace PicView.Shortcuts
 
         private static async Task<bool> FireResizeAsync(string widthText, string heightText)
         {
+            Preloader.Remove(Navigation.FolderIndex);
             var file = Navigation.Pics[Navigation.FolderIndex];
             if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
             {
                 var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height, 0).ConfigureAwait(false);
                 if (resize)
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
                 }
                 else
                 {
@@ -157,13 +158,13 @@ namespace PicView.Shortcuts
                 var tryWidth = await FirePercentageAsync(widthText, file).ConfigureAwait(false);
                 if (tryWidth)
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
                     return false;
                 }
                 var tryHeight = await FirePercentageAsync(heightText, file).ConfigureAwait(false);
                 if (tryHeight)
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
                 }
                 else
                 {
