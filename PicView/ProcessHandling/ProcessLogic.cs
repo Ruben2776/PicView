@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.Properties;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -49,6 +50,8 @@ namespace PicView.ProcessHandling
         /// </summary>
         internal static void RestartApp()
         {
+            Settings.Default.Save();
+
             var GetAppPath = GetPathToProcess();
 
             string args;
