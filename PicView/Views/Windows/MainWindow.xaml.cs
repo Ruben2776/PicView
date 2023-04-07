@@ -42,10 +42,6 @@ namespace PicView.Views.Windows
             {
                 // Need to change startup location after initialize component
                 WindowStartupLocation = WindowStartupLocation.Manual;
-                if (Settings.Default.Width > 0)
-                {
-                    SetLastWindowSize();
-                }
             }
             Topmost = Settings.Default.TopMost;
 

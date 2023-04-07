@@ -32,9 +32,7 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             SetWindowBehavior();
-
-            if (Settings.Default.AutoFitWindow == false)
-                SetLastWindowSize();
+            SetLastWindowSize();
 
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 
@@ -49,8 +47,8 @@ namespace PicView.UILogic.Loading
 
         internal static async Task ContentRenderedEventAsync()
         {
-            if (Properties.Settings.Default.AutoFitWindow) // Fix being able to resize window
-                SetWindowBehavior();
+            //if (Properties.Settings.Default.AutoFitWindow) // Fix being able to resize window
+            //    SetWindowBehavior();
 
             var args = Environment.GetCommandLineArgs();
 
