@@ -1,5 +1,5 @@
 <img align="center" style="box-shadow: 48px 16px 48px rgba(24,37,56,0.12);transform: perspective(1000px) rotateY(5deg) translateY(4%);"
-src="https://d33wubrfki0l68.cloudfront.net/bd46748571d9f714f4c19d5d824786b675d6b58f/e6d87/assets/screenshots/configure-ui02.webp" width="958" height="488" />
+src="https://picview.org/assets/screenshots/uix3/950/uix3-950w.png" width="950" height="483" />
 </img>
 <h1 align="center">
 <img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
@@ -128,7 +128,7 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 * Open file in external application, show it in folder or view file properties
 * Color picker
 
-<img src="https://picview.org/assets/screenshots/PicView-Dark-Titlebar.webp"/><br>
+<img src="https://picview.org/assets/screenshots/rename-titlebar/rename-titlebar-pink-dark.png"/><br>
 Rename or move files in the titlebar by pressing `F2` or right clicking it.
 
 **File support** 
