@@ -57,6 +57,15 @@ namespace PicView.ChangeImage
             if (bitmapSource != null)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => SetMainImage(bitmapSource, fileInfo), DispatcherPriority.Send);
+                if (!size.HasValue)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => FitImage(bitmapSource.Width, bitmapSource.Height), DispatcherPriority.Send);
+                }
+            }
+            else
+            {
+                var ErrorImage = ImageFunctions.ImageErrorMessage();
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ConfigureWindows.GetMainWindow.MainImage.Source = ErrorImage);
             }
 
             Pics = FileList(fileInfo);
@@ -67,6 +76,11 @@ namespace PicView.ChangeImage
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => 
                     SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo), DispatcherPriority.Send);
+            }
+            else
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    SetTitleString(0, 0, FolderIndex, fileInfo), DispatcherPriority.Send);
             }
 
             if (FolderIndex > 0)
