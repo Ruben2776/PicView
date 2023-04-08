@@ -81,6 +81,7 @@ namespace PicView.Views.Windows
                 // MainImage
                 ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
                 ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
+                ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += UILogic.DragAndDrop.DragToExplorer.DragFile;
 
 
                 // ClickArrows
