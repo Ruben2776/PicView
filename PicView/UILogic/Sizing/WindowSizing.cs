@@ -113,12 +113,13 @@ namespace PicView.UILogic.Sizing
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    GetMainWindow.DragMove();
-                }
+                    GetMainWindow.DragMove();                
+                    // Update info for possible new screen, needs more engineering
+                    // Seems to work
+                    MonitorInfo = MonitorSize.GetMonitorSize();
 
-                // Update info for possible new screen, needs more engineering
-                // Seems to work
-                MonitorInfo = MonitorSize.GetMonitorSize();
+                    SetWindowSize();
+                }
             }
         }
 
@@ -135,6 +136,9 @@ namespace PicView.UILogic.Sizing
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GetMainWindow.DragMove();
+                MonitorInfo = MonitorSize.GetMonitorSize();
+
+                SetWindowSize();
             }
         }
 
@@ -152,6 +156,8 @@ namespace PicView.UILogic.Sizing
             // Reset margin
             GetMainWindow.TitleBar.Margin = new Thickness(0);
             GetMainWindow.LowerBar.Margin = new Thickness(0);
+
+            SetWindowSize();
         }
 
         /// <summary>
@@ -164,10 +170,7 @@ namespace PicView.UILogic.Sizing
                 return; // Fixes weird unintentional hit
             }
 
-            if (Settings.Default.AutoFitWindow == false)
-            {
-                SetWindowSize();
-            }
+            SetWindowSize();
 
             if (GetMainWindow.WindowState == WindowState.Maximized || gotoFullscreen)
             {
@@ -280,13 +283,18 @@ namespace PicView.UILogic.Sizing
             {
                 GetMainWindow.Top = Settings.Default.Top;
                 GetMainWindow.Left = Settings.Default.Left;
-                GetMainWindow.Width = Settings.Default.Width;
-                GetMainWindow.Height = Settings.Default.Height;
+                GetMainWindow.Width = Double.IsNaN(Settings.Default.Width) ? GetMainWindow.Width :
+                    Double.IsNaN(Settings.Default.Width) ? GetMainWindow.ActualWidth : Settings.Default.Width;
+                GetMainWindow.Height = Double.IsNaN(Settings.Default.Height) ? GetMainWindow.Height :
+                    Double.IsNaN(Settings.Default.Height) ? GetMainWindow.ActualHeight : Settings.Default.Height;
             });
         }
 
         internal static void SetWindowSize()
         {
+            if (Settings.Default.AutoFitWindow && Settings.Default.Fullscreen)
+                return;
+
             GetMainWindow.Dispatcher.Invoke(() =>
             {
                 if (GetMainWindow.WindowState == WindowState.Maximized || Properties.Settings.Default.Fullscreen)
@@ -337,17 +345,11 @@ namespace PicView.UILogic.Sizing
         /// <param name="e"></param>
         internal static void Window_Closing()
         {
-            if (!Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen)
-            {
-                Settings.Default.Top = GetMainWindow.Top;
-                Settings.Default.Left = GetMainWindow.Left;
-                Settings.Default.Height = GetMainWindow.Height;
-                Settings.Default.Width = GetMainWindow.Width;
-            }
+            GetMainWindow.Hide(); // Make it feel faster
+
+            SetWindowSize();
 
             Navigation.Pics.Clear(); // Make it cancel task
-
-            GetMainWindow.Hide(); // Make it feel faster
 
             // Close Extra windows when closing
             GetInfoWindow?.Close();

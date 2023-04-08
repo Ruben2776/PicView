@@ -181,6 +181,10 @@ namespace PicView.Views.Windows
         {
             if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged || Settings.Default.AutoFitWindow == false)
             {
+                Navigation.RightbuttonClicked = false;
+                Navigation.LeftbuttonClicked = false;
+                Navigation.ClickArrowRightClicked = false;
+                Navigation.ClickArrowLeftClicked = false;
                 return;
             }
 

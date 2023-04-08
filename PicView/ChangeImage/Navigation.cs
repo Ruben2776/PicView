@@ -133,12 +133,18 @@ namespace PicView.ChangeImage
 
                 if (right)
                 {
-                    RightbuttonClicked = true; // Update flag to move cursor when resized
+                    if (Properties.Settings.Default.Fullscreen == false) 
+                        RightbuttonClicked = true; // Update flag to move cursor when resized
+                    else
+                        RightbuttonClicked = false;
                     await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
                 }
                 else
                 {
-                    LeftbuttonClicked = true; // Update flag to move cursor when resized
+                    if (Properties.Settings.Default.Fullscreen == false)
+                        LeftbuttonClicked = true; // Update flag to move cursor when resized
+                    else
+                        LeftbuttonClicked = false;
                     await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
                 }
             }
@@ -146,12 +152,18 @@ namespace PicView.ChangeImage
             {
                 if (right)
                 {
-                    ClickArrowRightClicked = true; // Update flag to move cursor when resized
+                    if (Properties.Settings.Default.Fullscreen == false)
+                        ClickArrowRightClicked = true; // Update flag to move cursor when resized
+                    else
+                        ClickArrowRightClicked = false;
                     await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
                 }
                 else
                 {
-                    ClickArrowLeftClicked = true; // Update flag to move cursor when resized
+                    if (Properties.Settings.Default.Fullscreen == false)
+                        ClickArrowLeftClicked = true; // Update flag to move cursor when resized
+                    else
+                        ClickArrowLeftClicked = false;
                     await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
                 }
             }
