@@ -33,7 +33,8 @@ namespace PicView.UILogic.DragAndDrop
                 || ZoomLogic.IsZoomed
                 || UC.GetQuickResize is not null && UC.GetQuickResize.Opacity > 0
                 || UC.UserControls_Open()
-                || ConfigureWindows.MainContextMenu.IsVisible)
+                || ConfigureWindows.MainContextMenu.IsVisible
+                || Color_Picking.IsRunning)
             {
                 return;
             }
@@ -41,12 +42,6 @@ namespace PicView.UILogic.DragAndDrop
             if (ConfigureWindows.GetMainWindow.TitleText.IsFocused)
             {
                 EditTitleBar.Refocus();
-                return;
-            }
-
-            if (Color_Picking.IsRunning)
-            {
-                Color_Picking.StopRunning(false);
                 return;
             }
 
