@@ -83,7 +83,11 @@ namespace PicView.Views.Windows
 
                 ZoomSlider.Value = Settings.Default.ZoomSpeed;
                 txtZoomSlide.Text = Math.Round(ZoomSlider.Value * 100).ToString();
-                ZoomSlider.ValueChanged += (_, e) => { Settings.Default.ZoomSpeed = e.NewValue; txtZoomSlide.Text = Math.Round(e.NewValue * 100).ToString(); };
+                ZoomSlider.ValueChanged += (_, e) => 
+                {
+                    Settings.Default.ZoomSpeed = e.NewValue; txtZoomSlide.Text = Math.Round(e.NewValue * 100).ToString();
+                    Settings.Default.Save();
+                };
 
                 LightThemeRadio.IsChecked = !Settings.Default.DarkTheme;
                 DarkThemeRadio.IsChecked = Settings.Default.DarkTheme;
