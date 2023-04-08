@@ -43,6 +43,8 @@ namespace PicView.UILogic
                 Enabled = true,
             };
             timer.Elapsed += (_, _) => ScaleImage.TryFitImage();
+
+            Properties.Settings.Default.Save();
         }
 
         internal static void ShowStandardInterface()

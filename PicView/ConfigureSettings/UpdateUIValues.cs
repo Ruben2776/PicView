@@ -200,6 +200,7 @@ namespace PicView.ConfigureSettings
             WindowSizing.SetWindowBehavior();
 
             ScaleImage.TryFitImage();
+            Properties.Settings.Default.Save();
         }
     }
 }
