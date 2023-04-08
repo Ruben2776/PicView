@@ -24,7 +24,7 @@ namespace PicView.Editing.Crop
         internal static void StartCrop()
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
-            if (!(RotationAngle is 0 && !ZoomLogic.IsZoomed)) { return; }
+            //if (!(RotationAngle is 0 && !ZoomLogic.IsZoomed)) { return; }
 
             if (GetCropppingTool == null)
             {
@@ -146,12 +146,12 @@ namespace PicView.Editing.Crop
         internal static Int32Rect? GetCrop()
         {
             // Get the cropped area dimensions and coordinates
-            var cropArea = CropService.GetCroppedArea();
+            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue;
+            var cropArea = CropService.GetCroppedArea(zoomValue);
 
             // Return null if there is no cropped area defined
             if (cropArea == null) return null;
 
-            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue;
             double aspectZoomValue = AspectRatio * zoomValue;  // TODO: Make crop work with zoom
             int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / aspectZoomValue);
             int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / aspectZoomValue);
