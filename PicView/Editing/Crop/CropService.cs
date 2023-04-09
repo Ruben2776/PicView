@@ -94,17 +94,11 @@ namespace PicView.Editing.Crop
             cropTool.Redraw(0, 0, 0, 0);
         }
 
-        public CropArea GetCroppedArea(double zoomValue)
-        {
-            var renderedSize = new Size(cropAdorner.RenderSize.Width / zoomValue, cropAdorner.RenderSize.Height / zoomValue);
-            var rect = new Rect(
-                cropTool.TopLeftX / zoomValue,
-                cropTool.TopLeftY / zoomValue,
-                cropTool.Width / zoomValue,
-                cropTool.Height / zoomValue);
-
-            return new CropArea(renderedSize, rect);
-        }
+        public CropArea GetCroppedArea() =>
+            new CropArea(
+                cropAdorner.RenderSize,
+                new Rect(cropTool.TopLeftX, cropTool.TopLeftY, cropTool.Width, cropTool.Height)
+            );
 
         private void AdornerOnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {

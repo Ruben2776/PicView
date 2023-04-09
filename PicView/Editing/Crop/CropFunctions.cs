@@ -145,34 +145,29 @@ namespace PicView.Editing.Crop
         /// <returns>The Int32Rect object containing the X and Y coordinates, width, and height of the cropped area. Returns null if there is no cropped area defined.</returns>
         internal static Int32Rect? GetCrop()
         {
-            // Get the cropped area dimensions and coordinates
-            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue;
-            var cropArea = CropService.GetCroppedArea(zoomValue);
+            var cropArea = CropService.GetCroppedArea(); // Contains the dimensions and coordinates of cropped area
 
-            // Return null if there is no cropped area defined
-            if (cropArea == null) return null;
+            if (cropArea == null) { return null; }
 
-            double aspectZoomValue = AspectRatio * zoomValue;  // TODO: Make crop work with zoom
-            int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / aspectZoomValue);
-            int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / aspectZoomValue);
-            int width, height;
+            // TODO add support for zooming in
+            int x, y, width, height;
 
-            // Calculate the scaled width and height of the cropped area based on the rotation angle
-            switch (RotationAngle)
+            x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
+            y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
+
+            switch (RotationAngle) // Degress the image has been rotated by
             {
                 case 0:
                 case 180:
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / zoomValue);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / zoomValue);
-                    break;  
-
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                    break;
                 default:
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / zoomValue);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / zoomValue);
+                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
                     break;
             }
 
-            // Return the Int32Rect object containing the scaled dimensions and coordinates of the cropped area
             return new Int32Rect(x, y, width, height);
         }
     }
