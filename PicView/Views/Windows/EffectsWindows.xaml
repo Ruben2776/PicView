@@ -445,6 +445,7 @@
                 Margin="0,10,0,7"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
+                IsEnabled="False"
                 IsMoveToPointEnabled="True"
                 IsSnapToTickEnabled="True"
                 Maximum="200"
@@ -493,7 +494,7 @@
 
                 <Border
                     Height="35"
-                    MinWidth="185"
+                    MinWidth="195"
                     Margin="13,0,0,0"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -523,7 +524,7 @@
 
                 <Border
                     Height="35"
-                    MinWidth="80"
+                    MinWidth="85"
                     Margin="0,0,5,0"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -545,7 +546,7 @@
 
                 <Border
                     Height="35"
-                    MinWidth="80"
+                    MinWidth="85"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"

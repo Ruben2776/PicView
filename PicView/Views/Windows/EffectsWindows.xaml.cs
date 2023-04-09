@@ -289,6 +289,7 @@ namespace PicView.Views.Windows
         {
             bool value = false;
             ConfigureWindows.GetMainWindow.MainImage.Effect = null;
+            IntensitySlider.IsEnabled = false;
 
             var list = EffectsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
             var borders = EffectsContainer.Children.OfType<Border>();
@@ -317,6 +318,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new InvertColorEffect();
             NegativeButton.IsChecked = true;
+            IntensitySlider.IsEnabled = false;
         }
 
         private void GraySceale()
@@ -331,6 +333,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new GrayscaleEffect();
             GrayscaleButton.IsChecked = true;
+            IntensitySlider.IsEnabled = false;
         }
 
         private void ColorToneEffect()
@@ -345,6 +348,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new ColorToneEffect(IntensitySlider.Value);
             ColorToneButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void RippleEffect1()
@@ -359,6 +363,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new Transition_RippleEffect();
             RippleButton.IsChecked = true;
+            IntensitySlider.IsEnabled = false;
         }
 
         private void RippleEffect2()
@@ -373,6 +378,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new RippleEffect(IntensitySlider.Value);
             RippleAltButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void BandedSwirlEffect()
@@ -387,6 +393,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new BandedSwirlEffect(IntensitySlider.Value);
             BandedSwirlButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void Monochrome()
@@ -401,6 +408,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new MonochromeEffect();
             MonochromeButton.IsChecked = true;
+            IntensitySlider.IsEnabled = false;
         }
 
         private void SwirlEffect()
@@ -415,6 +423,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new SwirlEffect(IntensitySlider.Value);
             SwirlButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void Bloom()
@@ -429,6 +438,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new BloomEffect(IntensitySlider.Value);
             BloomButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void Gloom()
@@ -443,6 +453,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new GloomEffect(IntensitySlider.Value);
             GloomButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void ToneMapping()
@@ -457,6 +468,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect(IntensitySlider.Value);
             ToneMappingButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void Teleskopisk_blur()
@@ -471,6 +483,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new TelescopicBlurPS3Effect(IntensitySlider.Value);
             TelescopicBlurButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void BlurEffect()
@@ -485,6 +498,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new GrowablePoissonDiskEffect();
             BlurButton.IsChecked = true;
+            IntensitySlider.IsEnabled = false;
         }
 
         private void Dir_blur()
@@ -499,6 +513,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new DirectionalBlurEffect(IntensitySlider.Value);
             DirectionalBlurButton.IsChecked = true;
+            IntensitySlider.IsEnabled = false;
         }
 
         private void Bands()
@@ -513,6 +528,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new BandsEffect(IntensitySlider.Value);
             BandsButton.IsChecked = true;
+            IntensitySlider.IsEnabled = false;
         }
 
         private void Embossed()
@@ -527,6 +543,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new EmbossedEffect(IntensitySlider.Value);
             EmbossedButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void GlasTileEffect()
@@ -541,6 +558,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new GlassTilesEffect(IntensitySlider.Value);
             GlasTileButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void MagnifySmoothEffect()
@@ -555,6 +573,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new MagnifySmoothEffect(IntensitySlider.Value);
             SmoothMagnifyButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void PaperFoldEffect()
@@ -569,6 +588,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new PaperFoldEffect(IntensitySlider.Value);
             PaperfoldButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void PivotEffect()
@@ -583,6 +603,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new PivotEffect(IntensitySlider.Value);
             PivotButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void UnderWaterEffect()
@@ -597,6 +618,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new UnderwaterEffect(IntensitySlider.Value);
             UnderwaterButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void WaveWarperEffect()
@@ -611,6 +633,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new WaveWarperEffect(IntensitySlider.Value);
             WavewarperButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void FrostyOutlineEffect()
@@ -625,6 +648,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new FrostyOutlineEffect(IntensitySlider.Value);
             FrostyOutlineButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void OldMovieEffect()
@@ -639,6 +663,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new OldMovieEffect(IntensitySlider.Value);
             OldMovieButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void PixelateEffect()
@@ -653,6 +678,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new PixelateEffect(IntensitySlider.Value);
             PixelateButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void Sketch()
@@ -667,6 +693,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchGraniteEffect(IntensitySlider.Value);
             SketchButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         private void SketchPencilStrokeEffect()
@@ -681,6 +708,7 @@ namespace PicView.Views.Windows
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new SketchPencilStrokeEffect(IntensitySlider.Value);
             PencilSketchButton.IsChecked = true;
+            IntensitySlider.IsEnabled = true;
         }
 
         #endregion HLSL Shader Effects
