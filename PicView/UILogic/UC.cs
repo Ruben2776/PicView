@@ -397,6 +397,7 @@ namespace PicView.UILogic
                 ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetStartUpUC);
                 GetStartUpUC.ResponsiveSize(ConfigureWindows.GetMainWindow.Width);
             }
+            GetStartUpUC.ResponsiveSize(ConfigureWindows.GetMainWindow.ActualWidth);
         }
     }
 }
