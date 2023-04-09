@@ -33,9 +33,14 @@ namespace PicView.ImageHandling
             try
             {
                 using MagickImage image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]);
-                var profile = image.GetExifProfile();
+                var profile = image?.GetExifProfile();
+                if (profile is null)
+                {
+                    profile = new ExifProfile(Navigation.Pics[Navigation.FolderIndex]);
+                    if (profile is null || image is null)
+                        return false;
+                }
                 profile.SetValue(ExifTag.Rating, rating);
-
                 image.SetProfile(profile);
 
                 image.Write(Navigation.Pics[Navigation.FolderIndex]);
