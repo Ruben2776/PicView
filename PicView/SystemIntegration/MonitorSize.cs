@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using PicView.UILogic;
+using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using WpfScreenHelper;
 
 namespace PicView.SystemIntegration
@@ -72,20 +74,29 @@ namespace PicView.SystemIntegration
         {
             if (Application.Current is not null) // Fixes bug when closing window
             {
-                // Get the current monitor screen information
-                var currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow).Handle);
+                Screen? currentMonitor = null;
+                PresentationSource? source = null;
+                double dpiScaling = 0;
+                Rect? workArea = null;
+                double monitorWidth = 0;
+                double monitorHeight = 0;
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () => // Avoid threading errors
+                {
+                    // Get the current monitor screen information
+                    currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow).Handle);
 
-                // Find out if the app is being scaled by the monitor
-                var source = PresentationSource.FromVisual(Application.Current.MainWindow);
-                var dpiScaling = source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1;
+                    // Find out if the app is being scaled by the monitor
+                    source = PresentationSource.FromVisual(Application.Current.MainWindow);
+                    dpiScaling = source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1;
+                });
 
                 // Get the available work area of the monitor screen
-                var workArea = currentMonitor.WorkingArea;
-                var monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
-                var monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
+                workArea = currentMonitor.WorkingArea;
+                monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
+                monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
                 // Return a new instance of the MonitorSize struct
-                return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea);
+                return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea.Value);
             }
             else
             {
