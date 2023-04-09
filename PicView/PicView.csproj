@@ -176,7 +176,6 @@
     <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
     <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
-    <Resource Include="Themes\Resources\img\logo.png" />
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o2-d15-c-ffffff-t1.png" />
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
@@ -405,7 +404,6 @@
   <ItemGroup>
     <None Remove="Themes\Resources\img\favicon.ico" />
     <None Remove="Themes\Resources\img\icon__Q6k_icon.ico" />
-    <None Remove="Themes\Resources\img\logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Themes\Resources\img\icon__Q6k_icon.ico" />

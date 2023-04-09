@@ -39,6 +39,7 @@ namespace PicView.ConfigureSettings
             ConfigureWindows.GetMainWindow.Logo.ChangeColor();
             ConfigureWindows.GetSettingsWindow?.Logo.ChangeColor();
             ConfigureWindows.GetInfoWindow?.ChangeColor();
+            UC.GetStartUpUC?.ChangeColor();
 
             Settings.Default.Save();
         }

@@ -1,8 +1,12 @@
-﻿using PicView.ChangeImage;
+﻿using Microsoft.VisualBasic.Logging;
+using PicView.ChangeImage;
+using PicView.ConfigureSettings;
 using PicView.FileHandling;
+using PicView.UILogic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using static PicView.Animations.MouseOverAnimations;
 using Color = System.Windows.Media.Color;
 
@@ -77,18 +81,26 @@ namespace PicView.Views.UserControls.Misc
 
         public void ResponsiveSize(double width)
         {
-            if (width < 900)
+            if (width < 1265)
             {
-                logo.Width = 247;
-                buttons.Margin = new Thickness(0, 0, 0, 0);
+                Logo.Width = 350;
+                buttons.Margin = new Thickness(0, 0, 0, 16);
                 buttons.VerticalAlignment = VerticalAlignment.Bottom;
             }
-            else if (width > 900)
+            else if (width > 1265)
             {
-                logo.Width = double.NaN;
-                buttons.Margin = new Thickness(0, 181, 25, 16);
+                Logo.Width = double.NaN;
+                buttons.Margin = new Thickness(0, 220, 25, 16);
                 buttons.VerticalAlignment = VerticalAlignment.Center;
             }
+        }
+
+        public void ChangeColor()
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
+            {
+                AccentBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
+            });
         }
     }
 }
