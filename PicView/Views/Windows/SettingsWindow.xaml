@@ -87,7 +87,7 @@
                                     <Border
                                         x:Name="Border"
                                         Grid.Row="1"
-                                        Background="{StaticResource MenuBg}"
+                                        Background="{StaticResource NoisyBg}"
                                         BorderBrush="{StaticResource BorderBrush}"
                                         BorderThickness="0">
                                         <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />

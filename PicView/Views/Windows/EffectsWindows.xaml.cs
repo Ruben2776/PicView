@@ -8,6 +8,7 @@ using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using WinRT;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.SystemIntegration.Wallpaper;
 
@@ -54,128 +55,117 @@ namespace PicView.Views.Windows
 
             #region button events
 
-            // NegativeButton
+            // Button, Brush and Text for Negative effect
             NegativeButton.Click += (_, _) => Negative();
-            NegativeButton.MouseEnter += delegate { ButtonMouseOverAnim(NegativeColorsText); };
-            NegativeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(NegativeColorsText); };
+            SetIconButterMouseOverAnimations(NegativeButton, NegativeButtonBrush, NegativeColorsText);
 
+            // Button, Brush and Text for Grayscale effect
             GrayscaleButton.Click += (_, _) => GraySceale();
-            GrayscaleButton.MouseEnter += delegate { ButtonMouseOverAnim(GrayscaleText); };
-            GrayscaleButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GrayscaleText); };
+            SetIconButterMouseOverAnimations(GrayscaleButton, GrayscaleButtonBrush, GrayscaleText);
 
+            // Button, Brush and Text for Color Tone effect
             ColorToneButton.Click += (_, _) => ColorToneEffect();
-            ColorToneButton.MouseEnter += delegate { ButtonMouseOverAnim(ColorToneText); };
-            ColorToneButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ColorToneText); };
+            SetIconButterMouseOverAnimations(ColorToneButton, ColorToneButtonBrush, ColorToneText);
 
+            // Button, Brush and Text for Old Movie effect
             OldMovieButton.Click += (_, _) => OldMovieEffect();
-            OldMovieButton.MouseEnter += delegate { ButtonMouseOverAnim(OldMovieText); };
-            OldMovieButton.MouseLeave += delegate { ButtonMouseLeaveAnim(OldMovieText); };
+            SetIconButterMouseOverAnimations(OldMovieButton, OldMovieButtonBrush, OldMovieText);
 
+            // Button, Brush and Text for Bloom effect
             BloomButton.Click += (_, _) => Bloom();
-            BloomButton.MouseEnter += delegate { ButtonMouseOverAnim(BloomText); };
-            BloomButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BloomText); };
+            SetIconButterMouseOverAnimations(BloomButton, BloomButtonBrush, BloomText);
 
+            // Button, Brush and Text for Gloom effect
             GloomButton.Click += (_, _) => Gloom();
-            GloomButton.MouseEnter += delegate { ButtonMouseOverAnim(GloomText); };
-            GloomButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GloomText); };
+            SetIconButterMouseOverAnimations(GloomButton, GloomButtonBrush, GloomText);
 
+            // Button, Brush and Text for Monochrome effect
             MonochromeButton.Click += (_, _) => Monochrome();
-            MonochromeButton.MouseEnter += delegate { ButtonMouseOverAnim(MonochromeText); };
-            MonochromeButton.MouseLeave += delegate { ButtonMouseLeaveAnim(MonochromeText); };
+            SetIconButterMouseOverAnimations(MonochromeButton, MonochromeButtonBrush, MonochromeText);
 
+            // Button, Brush and Text for Wave Warper effect
             WavewarperButton.Click += (_, _) => WaveWarperEffect();
-            WavewarperButton.MouseEnter += delegate { ButtonMouseOverAnim(WaveWarperText); };
-            WavewarperButton.MouseLeave += delegate { ButtonMouseLeaveAnim(WaveWarperText); };
+            SetIconButterMouseOverAnimations(WavewarperButton, WaveWarperButtonBrush, WaveWarperText);
 
+            // Button, Brush and Text for Underwater effect
             UnderwaterButton.Click += (_, _) => UnderWaterEffect();
-            UnderwaterButton.MouseEnter += delegate { ButtonMouseOverAnim(UnderwaterText); };
-            UnderwaterButton.MouseLeave += delegate { ButtonMouseLeaveAnim(UnderwaterText); };
+            SetIconButterMouseOverAnimations(UnderwaterButton, UnderwaterButtonBrush, UnderwaterText);
 
+            // Button, Brush and Text for Banded Swirl effect
             BandedSwirlButton.Click += (_, _) => BandedSwirlEffect();
-            BandedSwirlButton.MouseEnter += delegate { ButtonMouseOverAnim(BandedSwirlText); };
-            BandedSwirlButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BandedSwirlText); };
+            SetIconButterMouseOverAnimations(BandedSwirlButton, BandedSwirlButtonBrush, BandedSwirlText);
 
+            // Button, Brush and Text for Swirl effect
             SwirlButton.Click += (_, _) => SwirlEffect();
-            SwirlButton.MouseEnter += delegate { ButtonMouseOverAnim(SwirlText); };
-            SwirlButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SwirlText); };
+            SetIconButterMouseOverAnimations(SwirlButton, SwirlButtonBrush, SwirlText);
 
+            // Button, Brush and Text for Ripple effect
             RippleButton.Click += (_, _) => RippleEffect1();
-            RippleButton.MouseEnter += delegate { ButtonMouseOverAnim(RippleText); };
-            RippleButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RippleText); };
+            SetIconButterMouseOverAnimations(RippleButton, RippleButtonBrush, RippleText);
 
+            // Button, Brush and Text for Ripple Alternate effect
             RippleAltButton.Click += (_, _) => RippleEffect2();
-            RippleAltButton.MouseEnter += delegate { ButtonMouseOverAnim(RippleAltText); };
-            RippleAltButton.MouseLeave += delegate { ButtonMouseLeaveAnim(RippleAltText); };
+            SetIconButterMouseOverAnimations(RippleAltButton, RippleAltButtonBrush, RippleAltText);
 
+            // Button, Brush and Text for Blur effect
             BlurButton.Click += (_, _) => BlurEffect();
-            BlurButton.MouseEnter += delegate { ButtonMouseOverAnim(BlurText); };
-            BlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BlurText); };
+            SetIconButterMouseOverAnimations(BlurButton, BlurButtonBrush, BlurText);
 
+            // Button, Brush and Text for Directional Blur effect
             DirectionalBlurButton.Click += (_, _) => Dir_blur();
-            DirectionalBlurButton.MouseEnter += delegate { ButtonMouseOverAnim(DirectionalBlurText); };
-            DirectionalBlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(DirectionalBlurText); };
+            SetIconButterMouseOverAnimations(DirectionalBlurButton, DirectionalBlurButtonBrush, DirectionalBlurText);
 
+            // Button, Brush and Text for Telescopic Blur effect
             TelescopicBlurButton.Click += (_, _) => Teleskopisk_blur();
-            TelescopicBlurButton.MouseEnter += delegate { ButtonMouseOverAnim(TelescopicBlurText); };
-            TelescopicBlurButton.MouseLeave += delegate { ButtonMouseLeaveAnim(TelescopicBlurText); };
+            SetIconButterMouseOverAnimations(TelescopicBlurButton, TelescopicBlurButtonBrush, TelescopicBlurText);
 
+            // Button, Brush and Text for Pixelate effect
             PixelateButton.Click += (_, _) => PixelateEffect();
-            PixelateButton.MouseEnter += delegate { ButtonMouseOverAnim(PixelateText); };
-            PixelateButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PixelateText); };
+            SetIconButterMouseOverAnimations(PixelateButton, PixelateButtonBrush, PixelateText);
 
+            // Button, Brush and Text for Embossed effect
             EmbossedButton.Click += (_, _) => Embossed();
-            EmbossedButton.MouseEnter += delegate { ButtonMouseOverAnim(EmbossedText); };
-            EmbossedButton.MouseLeave += delegate { ButtonMouseLeaveAnim(EmbossedText); };
+            SetIconButterMouseOverAnimations(EmbossedButton, EmbossedButtonBrush, EmbossedText);
 
+            // Button, Brush and Text for Smooth Magnify effect
             SmoothMagnifyButton.Click += (_, _) => MagnifySmoothEffect();
-            SmoothMagnifyButton.MouseEnter += delegate { ButtonMouseOverAnim(SmoothMagnifyText); };
-            SmoothMagnifyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SmoothMagnifyText); };
+            SetIconButterMouseOverAnimations(SmoothMagnifyButton, SmoothMagnifyButtonBrush, SmoothMagnifyText);
 
+            // Button, Brush and Text for Pivot effect
             PivotButton.Click += (_, _) => PivotEffect();
-            PivotButton.MouseEnter += delegate { ButtonMouseOverAnim(PivotText); };
-            PivotButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PivotText); };
+            SetIconButterMouseOverAnimations(PivotButton, PivotButtonBrush, PivotText);
 
+            // Button, Brush and Text for Paper Fold effect
             PaperfoldButton.Click += (_, _) => PaperFoldEffect();
-            PaperfoldButton.MouseEnter += delegate { ButtonMouseOverAnim(PaperFoldText); };
-            PaperfoldButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PaperFoldText); };
+            SetIconButterMouseOverAnimations(PaperfoldButton, PaperfoldButtonBrush, PaperFoldText);
 
+            // Button, Brush and Text for Pencil Sketch Stroke effect
             PencilSketchButton.Click += (_, _) => SketchPencilStrokeEffect();
-            PencilSketchButton.MouseEnter += delegate { ButtonMouseOverAnim(PencilSketchText); };
-            PencilSketchButton.MouseLeave += delegate { ButtonMouseLeaveAnim(PencilSketchText); };
+            SetIconButterMouseOverAnimations(PencilSketchButton, PencilSketchButtonBrush, PencilSketchText);
 
+            // Button, Brush and Text for Sketch effect
             SketchButton.Click += (_, _) => Sketch();
-            SketchButton.MouseEnter += delegate { ButtonMouseOverAnim(SketchText); };
-            SketchButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SketchText); };
+            SetIconButterMouseOverAnimations(SketchButton, SketchButtonBrush, SketchText);
 
-            TonemappingButton.Click += (_, _) => ToneMapping();
-            TonemappingButton.MouseEnter += delegate { ButtonMouseOverAnim(ToneMappingText); };
-            TonemappingButton.MouseLeave += delegate { ButtonMouseLeaveAnim(ToneMappingText); };
+            // Button, Brush and Text for Tone Mapping effect
+            ToneMappingButton.Click += (_, _) => ToneMapping();
+            SetIconButterMouseOverAnimations(ToneMappingButton, ToneMappingButtonBrush, ToneMappingText);
 
+            // Button, Brush and Text for Bands effect
             BandsButton.Click += (_, _) => Bands();
-            BandsButton.MouseEnter += delegate { ButtonMouseOverAnim(BandsText); };
-            BandsButton.MouseLeave += delegate { ButtonMouseLeaveAnim(BandsText); };
+            SetIconButterMouseOverAnimations(BandsButton, BandsButtonBrush, BandsText);
 
+            // Button, Brush and Text for Glass Tile effect
             GlasTileButton.Click += (_, _) => GlasTileEffect();
-            GlasTileButton.MouseEnter += delegate { ButtonMouseOverAnim(GlassTileText); };
-            GlasTileButton.MouseLeave += delegate { ButtonMouseLeaveAnim(GlassTileText); };
+            SetIconButterMouseOverAnimations(GlasTileButton, GlasTileButtonBrush, GlassTileText);
 
+            // Button, Brush and Text for Frosty Outline effect
             FrostyOutlineButton.Click += (_, _) => FrostyOutlineEffect();
-            FrostyOutlineButton.MouseEnter += delegate { ButtonMouseOverAnim(FrostyOutlineText); };
-            FrostyOutlineButton.MouseLeave += delegate { ButtonMouseLeaveAnim(FrostyOutlineText); };
+            SetIconButterMouseOverAnimations(FrostyOutlineButton, FrostyOutlineButtonBrush, FrostyOutlineText);
 
-            // SaveButton
-            SaveButton.MouseEnter += delegate { ButtonMouseOverAnim(SaveText); };
-            SaveButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
-            SaveButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveText); };
-            SaveButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
-            SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync();
-
-            // SetAsButton
-            SetAsButton.MouseEnter += delegate { ButtonMouseOverAnim(SetAsText); };
-            SetAsButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetAsBrush); };
-            SetAsButton.MouseLeave += delegate { ButtonMouseLeaveAnim(SetAsText); };
-            SetAsButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetAsBrush); };
-            SetAsButton.Click += async delegate
+            // Button, Brush and Text for SetAsWallpaper function
+            SetIconButterMouseOverAnimations(SetAsWallpaperButton, SetAsWallpaperButtonBrush, SetAsWallpaperText);
+            SetAsWallpaperButton.Click += async delegate
             {
                 var x = WallpaperStyle.Fill;
                 if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
@@ -186,12 +176,17 @@ namespace PicView.Views.Windows
                 await SetWallpaperAsync(x).ConfigureAwait(false);
             };
 
-            // CopyButton
-            CopyButton.MouseEnter += delegate { ButtonMouseOverAnim(CopyText); };
-            CopyButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CopyBrush); };
-            CopyButton.MouseLeave += delegate { ButtonMouseLeaveAnim(CopyText); };
-            CopyButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CopyBrush); };
+            // Button, Brush and Text for SetAsLockscreen function
+            SetIconButterMouseOverAnimations(SetAsLockScreenButton, SetAsLockscreenButtonBrush, SetAsLockscreenText);
+            SetAsLockScreenButton.Click += async (_, _) => await LockScreenHelper.SetLockScreenImageAsync().ConfigureAwait(false);
+
+            // Button, Brush and Text for Copy function
+            SetIconButterMouseOverAnimations(CopyButton, CopyBrush, CopyText);
             CopyButton.Click += (_, _) => Copy_Paste.CopyBitmap();
+
+            // Button, Brush and Text for Save function
+            SetIconButterMouseOverAnimations(SaveButton, SaveBrush, SaveText);
+            SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync();
 
             #endregion button events
         }
@@ -274,7 +269,7 @@ namespace PicView.Views.Windows
             {
                 Gloom();
             }
-            else if (TonemappingButton.IsChecked.HasValue && TonemappingButton.IsChecked.Value)
+            else if (ToneMappingButton.IsChecked.HasValue && ToneMappingButton.IsChecked.Value)
             {
                 ToneMapping();
             }
@@ -292,20 +287,22 @@ namespace PicView.Views.Windows
 
         private bool Remove_Effects()
         {
+            bool value = false;
             ConfigureWindows.GetMainWindow.MainImage.Effect = null;
 
             var list = EffectsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
-
-            if (list.Any())
+            var borders = EffectsContainer.Children.OfType<Border>();
+            foreach (var item in borders)
             {
-                foreach (var item in list)
+                var checkbox = item.Child.As<CheckBox>();
+                if (checkbox is not null and { IsChecked : true})
                 {
-                    item.IsChecked = false;
+                    checkbox.IsChecked = false;
+                    value = true;
                 }
-                return true;
             }
 
-            return false;
+            return value;
         }
 
         private void Negative()
@@ -459,7 +456,7 @@ namespace PicView.Views.Windows
             }
 
             ConfigureWindows.GetMainWindow.MainImage.Effect = new ToneMappingEffect(IntensitySlider.Value);
-            TonemappingButton.IsChecked = true;
+            ToneMappingButton.IsChecked = true;
         }
 
         private void Teleskopisk_blur()

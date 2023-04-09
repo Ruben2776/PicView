@@ -18,22 +18,22 @@ namespace PicView.Animations
 
         private static readonly Color backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
-        internal static void SetIconButterMouseOverAnimations(Button button, Brush backgroundBrush, Brush iconBrush)
+        internal static void SetIconButterMouseOverAnimations(UIElement uIElement, Brush backgroundBrush, Brush iconBrush)
         {
-            button.MouseLeftButtonDown += delegate
+            uIElement.MouseLeftButtonDown += delegate
             {
                 ButtonMouseOverAnim(iconBrush, false, true);
                 ButtonMouseOverAnim(backgroundBrush, false, true);
                 AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
             };
 
-            button.MouseEnter += delegate
+            uIElement.MouseEnter += delegate
             {
                 ButtonMouseOverAnim(iconBrush);
                 AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
             };
 
-            button.MouseLeave += delegate
+            uIElement.MouseLeave += delegate
             {
                 ButtonMouseLeaveAnim(iconBrush);
                 AnimationHelper.MouseLeaveBgTexColor(backgroundBrush);

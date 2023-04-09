@@ -195,7 +195,7 @@
 
         <ScrollViewer
             x:Name="Scroller"
-            Background="{StaticResource NoisyBg}"
+            Background="{StaticResource MenuBg}"
             CanContentScroll="False"
             Focusable="False"
             HorizontalScrollBarVisibility="Disabled"

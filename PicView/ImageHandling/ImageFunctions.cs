@@ -40,6 +40,9 @@ namespace PicView.ImageHandling
                     if (profile is null || image is null)
                         return false;
                 }
+                else if (image is null)
+                    return false;
+
                 profile.SetValue(ExifTag.Rating, rating);
                 image.SetProfile(profile);
 
