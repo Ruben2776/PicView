@@ -42,7 +42,7 @@ namespace PicView.PicGallery
             Border? border = null;
             Image? image = null;
 
-            var size = await ImageSizeFunctions.GetImageSizeAsync(Pics[id]).ConfigureAwait(true);
+            var size = ImageSizeFunctions.GetImageSize(Pics[id]);
             if (size.HasValue)
             {
                 GalleryFunctions.IsHorizontalOpen = false;

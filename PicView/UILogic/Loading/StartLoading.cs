@@ -32,7 +32,8 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             SetWindowBehavior();
-            SetLastWindowSize();
+            if (Properties.Settings.Default.AutoFitWindow == false)
+                SetLastWindowSize();
 
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
 

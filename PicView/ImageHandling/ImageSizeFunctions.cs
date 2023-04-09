@@ -7,30 +7,26 @@ namespace PicView.ImageHandling
 {
     internal static class ImageSizeFunctions
     {
-        internal static async Task<Size?> GetImageSizeAsync(FileInfo fileInfo)
+        internal static Size? GetImageSize(string file)
         {
-            if (!fileInfo.Exists)
+            if (!File.Exists(file))
             {
-                return null;
-            }
-
-            if (fileInfo.Length > 2e+9)
-            {
-#if DEBUG
-                Trace.WriteLine("File size bigger than 2gb");
-#endif
                 return null;
             }
 
             using var magick = new MagickImage();
             try
             {
-                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
+                magick.Ping(file);
+                if (magick.Width <= 0)
+                {
+                    magick.Read(file);
+                }
             }
 #if DEBUG
             catch (MagickException e)
             {
-                Trace.WriteLine("ImageSize returned " + fileInfo.FullName + " null, \n" + e.Message);
+                Trace.WriteLine("ImageSize returned " + file + " null\n" + e.Message);
                 return null;
             }
 #else
@@ -39,19 +35,7 @@ namespace PicView.ImageHandling
             return null;
         }
 #endif
-
             return new Size(magick.Width, magick.Height);
-        }
-
-        internal static async Task<Size?> GetImageSizeAsync(string file)
-        {
-            if (!File.Exists(file))
-            {
-                return null;
-            }
-
-            var fileInfo = new FileInfo(file);
-            return await GetImageSizeAsync(fileInfo).ConfigureAwait(false);
         }
 
         internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)

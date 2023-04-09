@@ -99,7 +99,7 @@ namespace PicView.ChangeImage
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
                     return;
                 }
-                imageSize = await ImageSizeFunctions.GetImageSizeAsync(file).ConfigureAwait(true);
+                imageSize = ImageSizeFunctions.GetImageSize(file);
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>

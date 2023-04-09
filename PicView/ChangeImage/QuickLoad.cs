@@ -45,7 +45,7 @@ namespace PicView.ChangeImage
             }
 
             LoadingPreview(fileInfo);
-            var size = await ImageSizeFunctions.GetImageSizeAsync(fileInfo).ConfigureAwait(false);
+            var size = ImageSizeFunctions.GetImageSize(file);
             BitmapSource? bitmapSource = null;
 
             if (size.HasValue)
