@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeTitlebar;
-using PicView.PicGallery;
 using PicView.Properties;
 using System.Windows;
 using System.Windows.Input;
@@ -120,29 +119,25 @@ namespace PicView.UILogic.TransformImage
 
         internal static void PanImage(object sender, MouseEventArgs e)
         {
-            // Check if mouse capture is allowed and window is active
-            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive)
+            // Don't drag on't drag it if unintended
+            if (ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured == false || ConfigureWindows.GetMainWindow.IsActive == false)
             {
                 return;
             }
 
-            if (scaleTransform.ScaleX == 1)
+            if (scaleTransform.ScaleX == 1 && Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen && !Properties.Settings.Default.FullscreenGalleryHorizontal)
             {
-                if (!Settings.Default.Fullscreen && !GalleryFunctions.IsHorizontalFullscreenOpen)
-                    return;
+                return;
             }
 
-            // Calculate the change in mouse position
-            var dragDelta = start - e.GetPosition(ConfigureWindows.GetMainWindow);
-
-            // Update the image position
+            // Drag image by modifying X,Y coordinates
             var dragMousePosition = start - e.GetPosition(ConfigureWindows.GetMainWindow);
 
             var newXproperty = origin.X - dragMousePosition.X;
             var newYproperty = origin.Y - dragMousePosition.Y;
 
-            // Keep panning it in bounds 
-            if (Properties.Settings.Default.AutoFitWindow) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
+            // Keep panning it in bounds
+            if (Properties.Settings.Default.AutoFitWindow && !Properties.Settings.Default.Fullscreen && !Properties.Settings.Default.FullscreenGalleryHorizontal) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
                 var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
                 var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
@@ -168,6 +163,10 @@ namespace PicView.UILogic.TransformImage
                     newYproperty = 0;
                 }
             }
+            else
+            {
+                // TODO Don't pan image out of screen border
+            }
 
             translateTransform.X = newXproperty;
             translateTransform.Y = newYproperty;
@@ -176,8 +175,9 @@ namespace PicView.UILogic.TransformImage
         }
 
         /// <summary>
-        /// Resets element values to their loaded values
+        /// Resets the zoom of the <see cref="ConfigureWindows.GetMainWindow.MainImage"/> to its original size.
         /// </summary>
+        /// <param name="animate">Determines whether to animate the reset or not.</param>
         internal static void ResetZoom(bool animate = true)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null
@@ -210,9 +210,9 @@ namespace PicView.UILogic.TransformImage
         }
 
         /// <summary>
-        /// Determine zoom direction and speed
+        /// Zooms in or out the <see cref="ConfigureWindows.GetMainWindow.MainImage"/> by the given amount.
         /// </summary>
-        /// <param name="i">increment</param>
+        /// <param name="isZoomIn">Determines whether to zoom in or out.</param>
         internal static void Zoom(bool isZoomIn)
         {
             // Disable zoom if cropping tool is active
@@ -251,26 +251,25 @@ namespace PicView.UILogic.TransformImage
             currentZoom = Math.Max(0.09, currentZoom);
             if (Properties.Settings.Default.AvoidZoomingOut && currentZoom < 1.0)
             {
-                ResetZoom(true);
+                ResetZoom();
             }
             else
             {
                 Zoom(currentZoom);
             }
-
         }
 
         /// <summary>
-        /// Zooms to given value
+        /// Zooms the main image to the specified zoom value.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">The new zoom value.</param>
         internal static void Zoom(double value)
         {
             ZoomValue = value;
 
             BeginZoomAnimation(ZoomValue);
 
-            /// Displays zoompercentage in the center window
+            // Displays zoompercentage in the center window
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
                 Tooltip.ShowTooltipMessage(ZoomPercentage, true);
@@ -284,7 +283,7 @@ namespace PicView.UILogic.TransformImage
                 // Display updated values
                 if (Pics.Count == 0)
                 {
-                    ///  values from web
+                    //  values from web
                     SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
                 }
                 else
@@ -294,6 +293,10 @@ namespace PicView.UILogic.TransformImage
             });
         }
 
+        /// <summary>
+        /// Begins the zoom animation for the main image.
+        /// </summary>
+        /// <param name="zoomValue">The zoom value to animate to.</param>
         private static void BeginZoomAnimation(double zoomValue)
         {
             // TODO Make zoom work when image rotated
