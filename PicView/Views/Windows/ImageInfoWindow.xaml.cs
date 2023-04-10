@@ -39,48 +39,6 @@ namespace PicView.Views.Windows
             };
         }
 
-        private void ExtendOrCollopase()
-        {
-            double from, to;
-            bool expanded;
-            if (Height == startheight)
-            {
-                from = startheight;
-                to = extendedheight;
-                expanded = false;
-            }
-            else
-            {
-                to = startheight;
-                from = extendedheight;
-                expanded = true;
-            }
-
-            AnimationHelper.HeightAnimation(this, from, to, expanded);
-
-            if (expanded)
-            {
-                Collaspse();
-            }
-            else
-            {
-                Extend();
-            }
-        }
-
-        private void Extend()
-        {
-            Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
-            xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M414,321.94L274.22,158.82A24,24,0,0,0,237.78,158.82L98,321.94C84.66,337.51,95.72,361.56,116.22,361.56L395.82,361.56C416.32,361.56,427.38,337.51,414,321.94z");
-        }
-
-        private void Collaspse()
-        {
-            Scroller.ScrollToTop();
-            Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-            xGeo.Geometry = Geometry.Parse("F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z");
-        }
-
         private void Window_ContentRendered()
         {
             Activated += async (_, _) =>
@@ -152,13 +110,13 @@ namespace PicView.Views.Windows
             ExpandButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(chevronDownBrush);
             ExpandButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ExpandButtonBg);
 
-            ExpandButton.Click += (_, _) => ExtendOrCollopase();
+            ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollopase(Height, startheight, extendedheight, this, Scroller, xGeo);
 
             PreviewMouseWheel += (_, e) => // Collapse when scrolling down
             {
                 if (e.Delta < 0 && Height == startheight)
                 {
-                    ExtendOrCollopase();
+                    UIHelper.ExtendOrCollopase(Height, startheight, extendedheight, this, Scroller, xGeo);
                 }
             };
 
