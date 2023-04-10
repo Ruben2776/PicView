@@ -582,10 +582,13 @@
 
                     <StackPanel Margin="0,7,0,0" DockPanel.Dock="Bottom">
 
-                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,1">
+                        <Border
+                            Background="{StaticResource BackgroundColorBrushFade}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,1,0,1">
                             <Button x:Name="ExpandButton" Height="25">
                                 <Button.Background>
-                                    <SolidColorBrush x:Name="ExpandButtonBg" Color="{StaticResource BackgroundColorFadeSubtle}" />
+                                    <SolidColorBrush x:Name="ExpandButtonBg" Color="Transparent" />
                                 </Button.Background>
                                 <Image Width="20" Height="20">
                                     <Image.Source>
