@@ -177,7 +177,8 @@
                                 Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 FontSize="13"
-                                Text="{StaticResource SearchSubdirectory}" />
+                                Text="{StaticResource SearchSubdirectory}"
+                                TextWrapping="Wrap" />
                         </CheckBox.Content>
                     </CheckBox>
 
@@ -194,7 +195,8 @@
                                 Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 FontSize="13"
-                                Text="{StaticResource StayTopMost}" />
+                                Text="{StaticResource StayTopMost}"
+                                TextWrapping="Wrap" />
                         </CheckBox.Content>
                     </CheckBox>
 
@@ -215,6 +217,26 @@
                                 Text="{StaticResource StayCentered}" />
                         </CheckBox.Content>
                     </CheckBox>
+
+                    <CheckBox
+                        x:Name="AllowZoomRadio"
+                        Padding="5,0,0,0"
+                        d:IsChecked="True"
+                        Focusable="False">
+                        <CheckBox.Foreground>
+                            <SolidColorBrush x:Name="AllowZoomText" Color="{StaticResource MainColor}" />
+                        </CheckBox.Foreground>
+                        <CheckBox.Content>
+                            <TextBlock
+                                Width="279"
+                                Focusable="False"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
+                                Text="{StaticResource AllowZoomOut}"
+                                TextWrapping="Wrap" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
 
                     <Label Margin="0,15,0,0" Content="{StaticResource SetAsWallpaper}" />
 

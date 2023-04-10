@@ -122,6 +122,7 @@
     <system:String x:Key="SecAbbreviation">Seg.</system:String>
     <system:String x:Key="RestartApp">Reiniciar la aplicación</system:String>
     <system:String x:Key="CheckForUpdates">Compruebe las actualizaciones</system:String>
+    <system:String x:Key="AllowZoomOut">Evite hacer zoom out en la imagen cuando ya esté en tamaño máximo</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativo</system:String>

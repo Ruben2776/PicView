@@ -122,6 +122,7 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Repornește aplicația</system:String>
     <system:String x:Key="CheckForUpdates">Caută actualizări</system:String>
+    <system:String x:Key="AllowZoomOut">Evitați micșorarea imaginii când aceasta este deja la dimensiunea maximă</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Culori negative</system:String>

@@ -490,5 +490,17 @@ namespace PicView.Properties {
                 this["HorizontalReverseScroll"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AvoidZoomingOut {
+            get {
+                return ((bool)(this["AvoidZoomingOut"]));
+            }
+            set {
+                this["AvoidZoomingOut"] = value;
+            }
+        }
     }
 }

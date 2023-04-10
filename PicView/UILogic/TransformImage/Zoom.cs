@@ -249,7 +249,15 @@ namespace PicView.UILogic.TransformImage
 
             currentZoom += zoomSpeed;
             currentZoom = Math.Max(0.09, currentZoom);
-            Zoom(currentZoom);
+            if (Properties.Settings.Default.AvoidZoomingOut && currentZoom < 1.0)
+            {
+                ResetZoom(true);
+            }
+            else
+            {
+                Zoom(currentZoom);
+            }
+
         }
 
         /// <summary>

@@ -49,6 +49,14 @@ namespace PicView.Views.Windows
 
                 AddGenericEvents(colorAnimation);
 
+                // AllowZoomRadio
+                AllowZoomRadio.IsChecked = Settings.Default.AvoidZoomingOut;
+                AllowZoomRadio.Click += delegate
+                {
+                    Settings.Default.AvoidZoomingOut = !Settings.Default.AvoidZoomingOut;
+                    Settings.Default.Save();
+                };
+
                 // SubDirRadio
                 SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
                 SubDirRadio.Click += async delegate

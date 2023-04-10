@@ -122,6 +122,7 @@
     <system:String x:Key="SecAbbreviation">秒</system:String>
     <system:String x:Key="RestartApp">重新启动应用程序</system:String>
     <system:String x:Key="CheckForUpdates">检查更新</system:String>
+    <system:String x:Key="AllowZoomOut">在最大尺寸时避免缩小图像</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">反色</system:String>
