@@ -49,9 +49,9 @@ namespace PicView.Views.Windows
 
                 AddGenericEvents(colorAnimation);
 
-                // AllowZoomRadio
-                AllowZoomRadio.IsChecked = Settings.Default.AvoidZoomingOut;
-                AllowZoomRadio.Click += delegate
+                // AvoidZoomRadio
+                AvoidZoomRadio.IsChecked = Settings.Default.AvoidZoomingOut;
+                AvoidZoomRadio.Click += delegate
                 {
                     Settings.Default.AvoidZoomingOut = !Settings.Default.AvoidZoomingOut;
                     Settings.Default.Save();
@@ -397,6 +397,20 @@ namespace PicView.Views.Windows
                 colorAnimation.From = AnimationHelper.GetPrefferedColor();
                 colorAnimation.To = MainColor;
                 CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+
+            // AvoidZoom
+            AvoidZoomRadio.MouseEnter += delegate
+            {
+                colorAnimation.From = MainColor;
+                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                AvoidZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            };
+            AvoidZoomRadio.MouseLeave += delegate
+            {
+                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = MainColor;
+                AvoidZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
 
 

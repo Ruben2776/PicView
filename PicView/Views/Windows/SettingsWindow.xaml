@@ -219,12 +219,12 @@
                     </CheckBox>
 
                     <CheckBox
-                        x:Name="AllowZoomRadio"
+                        x:Name="AvoidZoomRadio"
                         Padding="5,0,0,0"
                         d:IsChecked="True"
                         Focusable="False">
                         <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="AllowZoomText" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="AvoidZoomText" Color="{StaticResource MainColor}" />
                         </CheckBox.Foreground>
                         <CheckBox.Content>
                             <TextBlock
