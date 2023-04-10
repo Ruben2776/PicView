@@ -22,7 +22,7 @@
     <system:String x:Key="NewWindow">新窗口</system:String>
 
     <!--  About window  -->
-    <system:String x:Key="About">About</system:String>
+    <system:String x:Key="About">关于</system:String>
     <system:String x:Key="InfoWindowTitle">信息与快捷键</system:String>
     <system:String x:Key="ApplicationShortcuts">应用程序快捷键</system:String>
     <system:String x:Key="SavedOnNextStartUp">（保存至下次启动）</system:String>
