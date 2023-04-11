@@ -134,15 +134,15 @@ namespace PicView.ConfigureSettings
                 return;
             }
 
-            var settingscm = (MenuItem)MainContextMenu.Items[7];
-            var TopmostMenu = (MenuItem)settingscm.Items[4];
-            var TopmostHeader = (CheckBox)TopmostMenu.Header;
+            var settingCcm = (MenuItem)MainContextMenu.Items[7];
+            var TopMostMenu = (MenuItem)settingCcm.Items[4];
+            var TopMostHeader = (CheckBox)TopMostMenu.Header;
 
             if (Settings.Default.TopMost)
             {
                 Settings.Default.TopMost = false;
                 GetMainWindow.Topmost = false;
-                TopmostHeader.IsChecked = false;
+                TopMostHeader.IsChecked = false;
 
                 if (GetSettingsWindow is not null)
                 {
@@ -153,7 +153,7 @@ namespace PicView.ConfigureSettings
             {
                 Settings.Default.TopMost = true;
                 GetMainWindow.Topmost = true;
-                TopmostHeader.IsChecked = true;
+                TopMostHeader.IsChecked = true;
 
                 if (GetSettingsWindow is not null)
                 {
@@ -170,8 +170,11 @@ namespace PicView.ConfigureSettings
 
         internal static void SetAutoFill(object sender, RoutedEventArgs e)
         {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
             SetScalingBehaviour(Settings.Default.AutoFitWindow, !Settings.Default.FillImage);
+            var settingsCm = MainContextMenu.Items[7] as MenuItem;
+            var fillCm = settingsCm.Items[5] as MenuItem;
+            var fillCmHeader = fillCm.Header as CheckBox;
+            fillCmHeader.IsChecked = Settings.Default.FillImage;
         }
 
         internal static void SetScalingBehaviour(bool autoFit, bool fill)
@@ -196,8 +199,8 @@ namespace PicView.ConfigureSettings
             {
                 UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
             }
-
-            WindowSizing.SetWindowBehavior();
+            if (!GalleryFunctions.IsHorizontalFullscreenOpen)
+                WindowSizing.SetWindowBehavior();
 
             ScaleImage.TryFitImage();
             Settings.Default.Save();

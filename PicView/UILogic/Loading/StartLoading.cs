@@ -48,7 +48,7 @@ namespace PicView.UILogic.Loading
         {
             var args = Environment.GetCommandLineArgs();
 
-            // Determine prefered UI for startup
+            // Determine preferred UI for startup
             if (Settings.Default.FullscreenGalleryHorizontal)
             {
                 if (args.Length <= 1)
@@ -120,10 +120,10 @@ namespace PicView.UILogic.Loading
             );
 
             // Load UI and events
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => AddUIElementsAndUpdateValues());
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(AddUiElementsAndUpdateValues);
         }
 
-        private static void AddUIElementsAndUpdateValues()
+        private static void AddUiElementsAndUpdateValues()
         {
             // Update values
             ConfigureWindows.GetMainWindow.FolderButton.BackgroundEvents();
@@ -183,7 +183,7 @@ namespace PicView.UILogic.Loading
             LoadAutoScrollSign();
             LoadTooltipStyle();
 
-            // Initilize Things!
+            // Initialize things!
             InitializeZoom();
             GetFileHistory ??= new FileHistory();
 

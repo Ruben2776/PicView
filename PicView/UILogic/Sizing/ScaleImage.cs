@@ -38,13 +38,18 @@ namespace PicView.UILogic.Sizing
                 if (ErrorHandling.CheckOutOfRange() == false)
                 {
                     var preloadValue = Preloader.Get(FolderIndex);
-                    if (preloadValue != null)
+                    if (preloadValue == null)
                     {
-                        var pic = preloadValue.BitmapSource;
-                        if (pic != null)
+                        if (XWidth > 0 && XHeight > 0)
                         {
-                            FitImage(pic.PixelWidth, pic.PixelHeight);
+                            FitImage(XWidth, XHeight);
                         }
+                        return;
+                    }
+                    var pic = preloadValue.BitmapSource;
+                    if (pic != null)
+                    {
+                        FitImage(pic.PixelWidth, pic.PixelHeight);
                     }
                 }
                 else if (XWidth > 0 && XHeight > 0)
@@ -80,8 +85,8 @@ namespace PicView.UILogic.Sizing
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                maxWidth = Math.Min(monitorWidth - padding, width);
-                maxHeight = Math.Min(monitorHeight - PicGalleryItem_Size, height);
+                maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
+                maxHeight = Settings.Default.FillImage ? monitorHeight - 5 : Math.Min(monitorHeight - PicGalleryItem_Size, height);
                 margin = PicGalleryItem_Size + 5;
             }
             else if (Settings.Default.AutoFitWindow)
@@ -144,6 +149,13 @@ namespace PicView.UILogic.Sizing
             // Update margin when from fullscreengallery and when not
             GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
 
+            if (ZoomLogic.IsZoomed)
+            {
+                ZoomLogic.ResetZoom(false);
+            }
+
+            if (GalleryFunctions.IsHorizontalFullscreenOpen) return;
+
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
             var interfaceSize = 
                 GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
@@ -154,7 +166,7 @@ namespace PicView.UILogic.Sizing
                 CenterWindowOnScreen(Settings.Default.KeepCentered); // Vertically center or vertically and horizontally center
 
                 // Update mainWindow.TitleBar width to dynamically fit new size
-                var titlebarMaxWidth = RotationAngle == 0 || RotationAngle == 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+                var titlebarMaxWidth = RotationAngle is 0 or 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
                 if (Settings.Default.ScrollEnabled)
                 {
                     GetMainWindow.TitleText.MaxWidth = maxWidth;
@@ -168,11 +180,6 @@ namespace PicView.UILogic.Sizing
             {
                 // Fix title width to window size
                 GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
-            }
-
-            if (ZoomLogic.IsZoomed)
-            {
-                ZoomLogic.ResetZoom(false);
             }
         }
 
