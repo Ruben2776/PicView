@@ -97,13 +97,13 @@ namespace PicView.FileHandling
                 await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
                 return false;
             }
-
-            Preloader.Rename(Navigation.FolderIndex, newPath);
+            
+            Navigation.Pics[Navigation.FolderIndex] = newPath;
+            Preloader.Rename(Navigation.FolderIndex);
             if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
             {
                 UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
             }
-            Navigation.Pics[Navigation.FolderIndex] = newPath;
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
