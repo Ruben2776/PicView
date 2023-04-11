@@ -1,14 +1,12 @@
-﻿using PicView.ChangeImage;
+﻿using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
+using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.Editing;
 using PicView.PicGallery;
 using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Sizing;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -35,7 +33,7 @@ namespace PicView.Shortcuts
             }
 
             // Move window when Shift is being held down
-            if (Properties.Settings.Default.ShowInterface == false || (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            if (Settings.Default.ShowInterface == false || (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 WindowSizing.Move(sender, e);
                 return;
@@ -191,13 +189,13 @@ namespace PicView.Shortcuts
             }
             else if (GalleryFunctions.IsHorizontalOpen)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => 
+                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => 
                     GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
             }
 
             else if (ShouldHandleScroll())
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(direction));
+                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(direction));
             }
 
             else
@@ -233,7 +231,7 @@ namespace PicView.Shortcuts
         {
             if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(direction, false, true));
+                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(direction, false, true));
             }
             else
             {
@@ -262,32 +260,32 @@ namespace PicView.Shortcuts
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
+                    await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
                 else
                 {
-                    await Navigation.GoToNextImage(next).ConfigureAwait(false);
+                    await GoToNextImage(next).ConfigureAwait(false);
                 }
             }
             else
             {
                 if (Settings.Default.CtrlZoom)
                 {
-                    if (Properties.Settings.Default.ScrollEnabled)
+                    if (Settings.Default.ScrollEnabled)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                         {
-                            await Navigation.GoToNextImage(next).ConfigureAwait(false);
+                            await GoToNextImage(next).ConfigureAwait(false);
                         }
                     }
                     else
                     {
-                        await Navigation.GoToNextImage(next).ConfigureAwait(false);
+                        await GoToNextImage(next).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
+                    await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
             }
         }

@@ -1,5 +1,5 @@
-﻿using PicView.Shortcuts;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PicView.Shortcuts;
 
 namespace PicView.Views.UserControls.Misc
 {

@@ -1,8 +1,8 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using System.Windows.Controls;
+using PicView.Animations;
 using PicView.PicGallery;
 using PicView.UILogic;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Gallery
 {

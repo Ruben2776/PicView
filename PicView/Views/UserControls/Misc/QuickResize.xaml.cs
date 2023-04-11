@@ -1,12 +1,13 @@
-﻿using PicView.Animations;
-using PicView.Shortcuts;
-using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
+using PicView.Animations;
+using PicView.Shortcuts;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using Timer = System.Timers.Timer;
 
 namespace PicView.Views.UserControls.Misc
 {
@@ -98,15 +99,15 @@ namespace PicView.Views.UserControls.Misc
 
         public void Show()
         {
-            grid.Width = UILogic.Sizing.ScaleImage.XWidth;
-            grid.Height = UILogic.Sizing.ScaleImage.XHeight;
+            grid.Width = ScaleImage.XWidth;
+            grid.Height = ScaleImage.XHeight;
             Visibility = Visibility.Visible;
             AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
             PercentageBox.SelectedIndex = 0;
             WidthBox.Text = ConfigureWindows.GetMainWindow.MainImage.Source?.Width.ToString();
             HeightBox.Text = ConfigureWindows.GetMainWindow.MainImage?.Source?.Height.ToString();
 
-            var timer = new System.Timers.Timer(401) { AutoReset = false, Enabled = true };
+            var timer = new Timer(401) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
@@ -123,7 +124,7 @@ namespace PicView.Views.UserControls.Misc
                 AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
             });
 
-            var timer = new System.Timers.Timer(601) { AutoReset = false, Enabled = true };
+            var timer = new Timer(601) { AutoReset = false, Enabled = true };
             timer.Elapsed += delegate
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>

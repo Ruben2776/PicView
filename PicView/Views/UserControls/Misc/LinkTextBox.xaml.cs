@@ -1,5 +1,5 @@
-﻿using PicView.ProcessHandling;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PicView.ProcessHandling;
 
 namespace PicView.Views.UserControls.Misc
 {

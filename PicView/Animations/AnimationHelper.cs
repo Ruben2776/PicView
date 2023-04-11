@@ -1,9 +1,10 @@
-﻿using PicView.ChangeImage;
-using PicView.Properties;
-using PicView.Views.UserControls.Gallery;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using PicView.ChangeImage;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.Views.UserControls.Gallery;
 
 namespace PicView.Animations
 {
@@ -177,11 +178,11 @@ namespace PicView.Animations
 
         internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
         {
-            if (item.Id == Navigation.FolderIndex || item.Id == PicGallery.GalleryNavigation.SelectedGalleryItem || PicGallery.GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (item.Id == Navigation.FolderIndex || item.Id == GalleryNavigation.SelectedGalleryItem || GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 return;
             }
-            if (item.InnerBorder.Width > PicGallery.GalleryNavigation.PicGalleryItem_Size_s && unHover == false)
+            if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItem_Size_s && unHover == false)
             {
                 // Make sure it is not run consecutively
                 return;

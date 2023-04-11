@@ -1,25 +1,25 @@
-﻿using PicView.ChangeImage;
+﻿using System.IO;
+using System.Text;
+using System.Windows;
+using System.Windows.Threading;
+using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.Views.UserControls.Misc;
-using System.IO;
-using System.Text;
-using System.Windows;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.UILogic.DragAndDrop
 {
-    internal static class Image_DragAndDrop
+    internal static class ImageDragAndDrop
     {
         /// <summary>
         /// Backup of image
         /// </summary>
-        private static DragDropOverlay? DropOverlay;
+        private static DragDropOverlay? _dropOverlay;
 
         /// <summary>
         /// Show image or thumbnail preview on drag enter
@@ -58,12 +58,12 @@ namespace PicView.UILogic.DragAndDrop
                     return;
                 }
             }
-            else if (SupportedFiles.IsArchive(files[0]))
+            else if (files[0].IsArchive())
             {
                 // Archive
                 element = new ZipIcon();
             }
-            else if (SupportedFiles.IsSupported(files[0]))
+            else if (files[0].IsSupported())
             {
                 // Check if same file
                 if (files.Length == 1 && Pics.Count > 0)
@@ -84,12 +84,10 @@ namespace PicView.UILogic.DragAndDrop
             e.Effects = DragDropEffects.Copy;
             e.Handled = true;
 
-            if (element != null)
+            if (element == null) return;
+            if (_dropOverlay == null)
             {
-                if (DropOverlay == null)
-                {
-                    AddDragOverlay(element);
-                }
+                AddDragOverlay(element);
             }
         }
 
@@ -104,7 +102,7 @@ namespace PicView.UILogic.DragAndDrop
 
             // Switch to previous image if available
 
-            if (DropOverlay != null)
+            if (_dropOverlay != null)
             {
                 RemoveDragOverlay();
             }
@@ -128,13 +126,12 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                RemoveDragOverlay());
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, RemoveDragOverlay);
 
             // Get files as strings
             if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
-                await LoadURLAsync(e).ConfigureAwait(false);
+                await LoadUrlAsync(e).ConfigureAwait(false);
                 return;
             }
 
@@ -149,13 +146,13 @@ namespace PicView.UILogic.DragAndDrop
                 }
             }
 
-            if (SupportedFiles.IsSupported(files[0]) == false)
+            if (files[0].IsSupported() == false)
             {
                 if (Directory.Exists(files[0]))
                 {
                     await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
                 }
-                else if (SupportedFiles.IsArchive(files[0]))
+                else if (files[0].IsArchive())
                 {
                     await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
                 }
@@ -174,18 +171,19 @@ namespace PicView.UILogic.DragAndDrop
             });
 
             // Open additional windows if multiple files dropped
-            foreach (string file in files.Skip(1))
+            foreach (var file in files.Skip(1))
             {
                 ProcessLogic.StartProcessWithFileArgument(file);
             }
         }
-        static async Task LoadURLAsync(DragEventArgs e)
+
+        private static async Task LoadUrlAsync(DragEventArgs e)
         {
-            var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
-            if (memoryStream != null)
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url") ?? throw new Exception();
             {
-                string dataStr = Encoding.Unicode.GetString(memoryStream.ToArray());
-                string[] parts = dataStr.Split((char)10);
+                var dataStr = Encoding.Unicode.GetString(memoryStream.ToArray());
+                var parts = dataStr.Split((char) 10);
 
                 await HttpFunctions.LoadPicFromURL(parts[0]).ConfigureAwait(false);
             }
@@ -193,18 +191,18 @@ namespace PicView.UILogic.DragAndDrop
 
         private static void AddDragOverlay(UIElement element)
         {
-            DropOverlay = new DragDropOverlay(element)
+            _dropOverlay = new DragDropOverlay(element)
             {
                 Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth,
                 Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight
             };
-            ConfigureWindows.GetMainWindow.TopLayer.Children.Add(DropOverlay);
+            ConfigureWindows.GetMainWindow.TopLayer.Children.Add(_dropOverlay);
         }
 
         private static void RemoveDragOverlay()
         {
-            ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(DropOverlay);
-            DropOverlay = null;
+            ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(_dropOverlay);
+            _dropOverlay = null;
         }
     }
 }

@@ -1,18 +1,16 @@
-﻿using AutoUpdaterDotNET;
-using Microsoft.VisualBasic.Logging;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Navigation;
+using AutoUpdaterDotNET;
 using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.Diagnostics;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Navigation;
 
 namespace PicView.Views.Windows
 {
@@ -64,13 +62,13 @@ namespace PicView.Views.Windows
             ExpandButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(chevronDownBrush);
             ExpandButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ExpandButtonBg);
 
-            ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollopase(Height, startheight, extendedheight, this, Scroller, xGeo);
+            ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
 
             PreviewMouseWheel += (_, e) => // Collapse when scrolling down
             {
                 if (e.Delta < 0 && Height == startheight)
                 {
-                    UIHelper.ExtendOrCollopase(Height, startheight, extendedheight, this, Scroller, xGeo);
+                    UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
                 }
             };
 

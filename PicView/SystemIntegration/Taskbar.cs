@@ -1,6 +1,6 @@
-﻿using PicView.UILogic;
-using System.Windows.Shell;
+﻿using System.Windows.Shell;
 using System.Windows.Threading;
+using PicView.UILogic;
 
 namespace PicView.SystemIntegration
 {
@@ -43,7 +43,7 @@ namespace PicView.SystemIntegration
             {
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Tooltip.ShowTooltipMessage(e);
                 // Catch task canceled exception

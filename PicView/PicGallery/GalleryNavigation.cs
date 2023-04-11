@@ -1,10 +1,9 @@
-﻿using PicView.Properties;
+﻿using System.Windows;
+using System.Windows.Media;
+using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -18,7 +17,7 @@ namespace PicView.PicGallery
         {
             PicGalleryItem_Size = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
 
-            PicGalleryItem_Size_s = !Properties.Settings.Default.FullscreenGalleryHorizontal ? PicGalleryItem_Size - 20 : PicGalleryItem_Size - 10;
+            PicGalleryItem_Size_s = !Settings.Default.FullscreenGalleryHorizontal ? PicGalleryItem_Size - 20 : PicGalleryItem_Size - 10;
         }
 
         internal static double PicGalleryItem_Size { get; private set; }

@@ -1,7 +1,8 @@
-﻿using PicView.PicGallery;
-using System.Windows.Threading;
+﻿using System.Windows.Threading;
+using PicView.PicGallery;
 using static PicView.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
+using Timer = System.Timers.Timer;
 
 namespace PicView.UILogic
 {
@@ -12,7 +13,7 @@ namespace PicView.UILogic
         {
             AutoScrollTimer.Elapsed += AutoScrollTimerEvent;
 
-            ActivityTimer = new System.Timers.Timer
+            ActivityTimer = new Timer
             {
                 Interval = 6000,
                 AutoReset = true,
@@ -23,7 +24,7 @@ namespace PicView.UILogic
 
         internal static void PicGalleryTimerHack()
         {
-            System.Timers.Timer timer = new() // Dirty code to make it scroll to selected item after start up
+            Timer timer = new() // Dirty code to make it scroll to selected item after start up
             {
                 AutoReset = false,
                 Enabled = true,

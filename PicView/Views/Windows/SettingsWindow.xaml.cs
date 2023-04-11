@@ -1,7 +1,14 @@
-﻿using PicView.Animations;
+﻿using System.Diagnostics;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
-using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Properties;
@@ -10,15 +17,6 @@ using PicView.SystemIntegration;
 using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
 using static PicView.SystemIntegration.Wallpaper;
@@ -102,7 +100,7 @@ namespace PicView.Views.Windows
 
                 DarkThemeRadio.Click += delegate
                 {
-                    if (Properties.Settings.Default.DarkTheme)
+                    if (Settings.Default.DarkTheme)
                     {
                         DarkThemeRadio.IsChecked = true;
                         LightThemeRadio.IsChecked = false;
@@ -114,7 +112,7 @@ namespace PicView.Views.Windows
                 };
                 LightThemeRadio.Click += delegate
                 {
-                    if (!Properties.Settings.Default.DarkTheme)
+                    if (!Settings.Default.DarkTheme)
                     {
                         DarkThemeRadio.IsChecked = false;
                         LightThemeRadio.IsChecked = true;

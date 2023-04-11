@@ -1,16 +1,16 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls.Gallery;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls.Gallery;
 using static PicView.UILogic.HideInterfaceLogic;
 
 namespace PicView.PicGallery

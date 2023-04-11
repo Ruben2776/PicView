@@ -1,45 +1,39 @@
-﻿using PicView.Animations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Media3D;
 using System.Windows.Media;
-using System.Windows;
-using System.Windows.Shapes;
+using PicView.Animations;
 
 namespace PicView.UILogic
 {
     /// <summary>
     /// Provides helper methods for UI-related tasks.
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     internal static class UIHelper
     {
         /// <summary>
         /// Expands or collapses a <see cref="ScrollViewer"/> control.
         /// </summary>
-        /// <param name="Height">The current height of the <see cref="ScrollViewer"/> control.</param>
-        /// <param name="StartHeight">The starting height of the <see cref="ScrollViewer"/> control.</param>
-        /// <param name="ExtendedHeight">The expanded height of the <see cref="ScrollViewer"/> control.</param>
+        /// <param name="height">The current height of the <see cref="ScrollViewer"/> control.</param>
+        /// <param name="startHeight">The starting height of the <see cref="ScrollViewer"/> control.</param>
+        /// <param name="extendedHeight">The expanded height of the <see cref="ScrollViewer"/> control.</param>
         /// <param name="frameworkElement">The parent control or window <see cref="FrameworkElement"/> control.</param>
         /// <param name="scrollViewer">The <see cref="ScrollViewer"/> control to expand or collapse.</param>
         /// <param name="geometryDrawing">The <see cref="GeometryDrawing"/> object to modify.</param>
-        public static void ExtendOrCollopase(double Height, double StartHeight, double ExtendedHeight, FrameworkElement frameworkElement, ScrollViewer scrollViewer, GeometryDrawing geometryDrawing)
+        public static void ExtendOrCollapse(double height, double startHeight, double extendedHeight, FrameworkElement frameworkElement, ScrollViewer scrollViewer, GeometryDrawing geometryDrawing)
         {
             double from, to;
             bool expanded;
-            if (Height == StartHeight)
+            if (Math.Abs(height - startHeight) < .1)
             {
-                from = StartHeight;
-                to = ExtendedHeight;
+                from = startHeight;
+                to = extendedHeight;
                 expanded = false;
             }
             else
             {
-                to = StartHeight;
-                from = ExtendedHeight;
+                to = startHeight;
+                from = extendedHeight;
                 expanded = true;
             }
 
@@ -47,7 +41,7 @@ namespace PicView.UILogic
 
             if (expanded)
             {
-                Collaspse(scrollViewer, geometryDrawing);
+                Collapse(scrollViewer, geometryDrawing);
             }
             else
             {
@@ -60,7 +54,7 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="scrollViewer">The <see cref="ScrollViewer"/> control to expand.</param>
         /// <param name="geometryDrawing">The <see cref="GeometryDrawing"/> object to modify.</param>
-        static void Extend(ScrollViewer scrollViewer, GeometryDrawing geometryDrawing)
+        private static void Extend(ScrollViewer scrollViewer, GeometryDrawing geometryDrawing)
         {
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             geometryDrawing.Geometry = Geometry.Parse("F1 M512,512z M0,0z M414,321.94L274.22,158.82A24,24,0,0,0,237.78,158.82L98,321.94C84.66,337.51,95.72,361.56,116.22,361.56L395.82,361.56C416.32,361.56,427.38,337.51,414,321.94z");
@@ -71,7 +65,7 @@ namespace PicView.UILogic
         /// </summary>
         /// <param name="scrollViewer">The <see cref="ScrollViewer"/> control to collapse.</param>
         /// <param name="geometryDrawing">The <see cref="GeometryDrawing"/> object to modify.</param>
-        static void Collaspse(ScrollViewer scrollViewer, GeometryDrawing geometryDrawing)
+        private static void Collapse(ScrollViewer scrollViewer, GeometryDrawing geometryDrawing)
         {
             scrollViewer.ScrollToTop();
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;

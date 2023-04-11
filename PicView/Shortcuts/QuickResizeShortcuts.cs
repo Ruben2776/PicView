@@ -1,13 +1,13 @@
-﻿using ImageMagick;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using ImageMagick;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.UILogic;
 
 namespace PicView.Shortcuts
 {
@@ -54,11 +54,9 @@ namespace PicView.Shortcuts
                         // Allow Ctrl + A, Ctrl + C, Ctrl + X
                         break;
                     }
-                    else
-                    {
-                        e.Handled = true;// only allowed on ctrl
-                        return;
-                    }
+
+                    e.Handled = true;// only allowed on ctrl
+                    return;
                 case Key.Escape: // Escape logic
                     UC.GetQuickResize.Hide();
                     e.Handled = true;

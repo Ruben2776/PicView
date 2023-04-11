@@ -1,9 +1,9 @@
-﻿using PicView.Properties;
+﻿using System.Diagnostics;
+using System.Windows;
+using PicView.Properties;
 using PicView.Views.UserControls.Buttons;
 using PicView.Views.UserControls.Menus;
 using PicView.Views.UserControls.Misc;
-using System.Diagnostics;
-using System.Windows;
 using static PicView.UILogic.UC;
 
 namespace PicView.UILogic.Loading

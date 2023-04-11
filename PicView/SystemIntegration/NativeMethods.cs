@@ -1,12 +1,10 @@
-﻿using Microsoft.Win32;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Interop;
 
 namespace PicView.SystemIntegration
 {

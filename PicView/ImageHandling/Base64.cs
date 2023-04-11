@@ -1,9 +1,9 @@
-﻿using ImageMagick;
-using PicView.UILogic;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ImageMagick;
+using PicView.UILogic;
 
 namespace PicView.ImageHandling
 {
@@ -28,7 +28,7 @@ namespace PicView.ImageHandling
         private static async Task<BitmapSource?> GetBitmapSourceFromBase64Async(string base64String)
         {
             var base64Data = Convert.FromBase64String(base64String);
-            using var magickImage = new MagickImage()
+            using var magickImage = new MagickImage
             {
                 Quality = 100,
                 ColorSpace = ColorSpace.Transparent

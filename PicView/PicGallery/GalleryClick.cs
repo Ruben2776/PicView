@@ -1,15 +1,15 @@
-﻿using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Loading;
-using PicView.Views.UserControls.Gallery;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.ConfigureSettings;
+using PicView.ImageHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.Views.UserControls.Gallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Sizing.ScaleImage;
@@ -48,7 +48,7 @@ namespace PicView.PicGallery
                 GalleryFunctions.IsHorizontalOpen = false;
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
                 {
-                    ChangeTitlebar.SetTitle.SetLoadingString();
+                    SetTitle.SetLoadingString();
                     FitImage(size.Value.Width, size.Value.Height);
                 });
             }

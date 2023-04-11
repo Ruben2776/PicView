@@ -1,13 +1,11 @@
-﻿using PicView.ChangeImage;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
@@ -32,7 +30,7 @@ namespace PicView.UILogic.Loading
             ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             SetWindowBehavior();
-            if (Properties.Settings.Default.AutoFitWindow == false)
+            if (Settings.Default.AutoFitWindow == false)
                 SetLastWindowSize();
 
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
@@ -130,7 +128,7 @@ namespace PicView.UILogic.Loading
             // Update values
             ConfigureWindows.GetMainWindow.FolderButton.BackgroundEvents();
             ConfigureWindows.GetMainWindow.AllowDrop = true;
-            ConfigureSettings.ConfigColors.SetColors();
+            ConfigColors.SetColors();
 
             LoadClickArrow(true);
             LoadClickArrow(false);

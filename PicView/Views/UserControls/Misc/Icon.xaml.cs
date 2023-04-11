@@ -1,9 +1,8 @@
-﻿using PicView.ConfigureSettings;
-using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.ConfigureSettings;
 
 namespace PicView.Views.UserControls.Misc
 {

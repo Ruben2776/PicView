@@ -1,8 +1,9 @@
-﻿using PicView.PicGallery;
+﻿using System.Windows;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
-using System.Windows;
 using static PicView.Animations.FadeControls;
+using Timer = System.Timers.Timer;
 
 namespace PicView.UILogic
 {
@@ -37,14 +38,14 @@ namespace PicView.UILogic
             UC.Close_UserControls();
 
             // Recalculate to new size
-            var timer = new System.Timers.Timer(50) // If not fired in timer, calculation incorrect
+            var timer = new Timer(50) // If not fired in timer, calculation incorrect
             {
                 AutoReset = false,
                 Enabled = true,
             };
             timer.Elapsed += (_, _) => ScaleImage.TryFitImage();
 
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
 
         internal static void ShowStandardInterface()
@@ -64,8 +65,8 @@ namespace PicView.UILogic
         internal static void ShowMinimalInterface()
         {
             ShowTopandBottom(false);
-            ShowNavigation(Properties.Settings.Default.ShowAltInterfaceButtons);
-            ShowShortcuts(Properties.Settings.Default.ShowAltInterfaceButtons);
+            ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
+            ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
 
             Settings.Default.ShowInterface = false;
 

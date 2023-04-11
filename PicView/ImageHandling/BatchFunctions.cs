@@ -1,7 +1,7 @@
-﻿using ImageMagick;
-using PicView.FileHandling;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using ImageMagick;
+using PicView.FileHandling;
 
 namespace PicView.ImageHandling
 {
@@ -87,7 +87,7 @@ namespace PicView.ImageHandling
                 }
 
                 var destinationFile = new FileInfo(destination);
-                sb.Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetReadableFileSize(destinationFile.Length)).
+                sb.Append(destinationFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(destinationFile.Length.GetReadableFileSize()).
                     Append(' ').AppendLine(Environment.NewLine);
 
                 return sb.ToString();

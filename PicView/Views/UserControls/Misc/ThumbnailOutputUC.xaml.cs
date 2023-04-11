@@ -1,7 +1,7 @@
-﻿using PicView.FileHandling;
+﻿using System.Windows.Controls;
+using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.Views.Windows;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Misc
 {

@@ -1,8 +1,8 @@
-﻿using PicView.Animations;
-using PicView.UILogic.TransformImage;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.Animations;
+using PicView.UILogic.TransformImage;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons

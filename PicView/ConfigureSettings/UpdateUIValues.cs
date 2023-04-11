@@ -1,4 +1,8 @@
-﻿using PicView.ChangeImage;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
@@ -6,10 +10,6 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -59,7 +59,7 @@ namespace PicView.ConfigureSettings
                 }
                 catch (Exception e)
                 {
-                    Tooltip.ShowTooltipMessage(e);
+                    ShowTooltipMessage(e);
                     GalleryFunctions.Clear();
                     await GalleryLoad.LoadAsync().ConfigureAwait(false);
                 }
@@ -200,7 +200,7 @@ namespace PicView.ConfigureSettings
             WindowSizing.SetWindowBehavior();
 
             ScaleImage.TryFitImage();
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
     }
 }

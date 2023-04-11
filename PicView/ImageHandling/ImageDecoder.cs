@@ -1,13 +1,14 @@
-﻿using ImageMagick;
-using ImageMagick.Formats;
-using PicView.UILogic;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using ImageMagick;
+using ImageMagick.Formats;
+using PicView.UILogic;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
 using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.ImageHandling
@@ -106,7 +107,7 @@ namespace PicView.ImageHandling
 
                 var effect = ConfigureWindows.GetMainWindow.MainImage.Effect;
 
-                var rectangle = new System.Windows.Shapes.Rectangle
+                var rectangle = new Rectangle
                 {
                     Fill = new ImageBrush(sourceBitmap),
                     Effect = effect
@@ -147,7 +148,7 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var magickImage = new MagickImage()
+                var magickImage = new MagickImage
                 {
                     Quality = 100,
                     ColorSpace = ColorSpace.Transparent,

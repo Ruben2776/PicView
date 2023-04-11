@@ -1,7 +1,7 @@
-﻿using PicView.Animations;
-using PicView.PicGallery;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using PicView.Animations;
+using PicView.PicGallery;
 
 namespace PicView.Views.UserControls.Gallery
 {

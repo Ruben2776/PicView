@@ -1,7 +1,6 @@
 ﻿using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PicView.ChangeImage
 {

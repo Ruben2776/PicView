@@ -1,17 +1,16 @@
-﻿using PicView.FileHandling;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
-using System.IO;
-using System.Security.Policy;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
-using static PicView.ChangeImage.Preloader;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
@@ -72,7 +71,7 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.Title = titleString[0];
                 ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
                 ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
-                ConfigureWindows.GetMainWindow.MainImage.Cursor = System.Windows.Input.Cursors.Arrow;
+                ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
             }, DispatcherPriority.Send);
         }
 

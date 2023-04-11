@@ -1,4 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using Microsoft.Win32;
 using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
@@ -11,10 +15,7 @@ using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Loading;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
+using PicView.UILogic.TransformImage;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
@@ -68,7 +69,7 @@ namespace PicView.Views.Windows
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
                 // Lowerbar
-                LowerBar.Drop += async (sender, e) => await Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
+                LowerBar.Drop += async (sender, e) => await ImageDragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
                 LowerBar.MouseLeftButtonDown += MoveAlt;
 
                 MouseMove += (_, _) => HideInterfaceLogic.Interface_MouseMove();
@@ -77,7 +78,7 @@ namespace PicView.Views.Windows
                 // MainImage
                 ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
                 ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
-                ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += UILogic.DragAndDrop.DragToExplorer.DragFile;
+                ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += DragToExplorer.DragFile;
 
 
                 // ClickArrows
@@ -99,14 +100,13 @@ namespace PicView.Views.Windows
                 ImageButton.Click += Toggle_image_menu;
 
                 //FunctionButton
-                var MagicBrush = TryFindResource("MagicBrush") as SolidColorBrush;
-                FunctionMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(MagicBrush);
+                var magicBrush = TryFindResource("MagicBrush") as SolidColorBrush;
+                FunctionMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(magicBrush);
                 FunctionMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(EffectsMenuBg);
-                FunctionMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(MagicBrush);
+                FunctionMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(magicBrush);
                 FunctionMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(EffectsMenuBg);
                 FunctionMenuButton.Click += Toggle_Functions_menu;
-
-                var subtleFaceColor = (Color)Application.Current.TryFindResource("SubtleFadeColor");
+                
                 //GalleryButton
                 GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
                 GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
@@ -130,14 +130,14 @@ namespace PicView.Views.Windows
                 RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBrush);
                 RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(RotateBg);
                 RotateButton.Click += async (_, _) =>
-                    await UILogic.TransformImage.Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
+                    await Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
 
                 // FlipButton
                 FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBrush);
                 FlipButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FlipBg);
                 FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBrush);
                 FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FlipBg);
-                FlipButton.Click += (_, _) => UILogic.TransformImage.Rotation.Flip();
+                FlipButton.Click += (_, _) => Rotation.Flip();
 
                 // TitleText
                 TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
@@ -146,9 +146,9 @@ namespace PicView.Views.Windows
                 TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 
                 // ParentContainer
-                ParentContainer.Drop += async (sender, e) => await Image_DragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
-                ParentContainer.DragEnter += Image_DragAndDrop.Image_DragEnter;
-                ParentContainer.DragLeave += Image_DragAndDrop.Image_DragLeave;
+                ParentContainer.Drop += async (sender, e) => await ImageDragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
+                ParentContainer.DragEnter += ImageDragAndDrop.Image_DragEnter;
+                ParentContainer.DragLeave += ImageDragAndDrop.Image_DragLeave;
                 ParentContainer.PreviewMouseWheel += async (sender, e) => await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
                 CloseButton.TheButton.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);

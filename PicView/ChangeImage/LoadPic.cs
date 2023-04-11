@@ -1,14 +1,13 @@
-﻿using PicView.FileHandling;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ChangeTitlebar.SetTitle;
@@ -274,7 +273,7 @@ namespace PicView.ChangeImage
                         Preloader.Clear();
                         Pics = FileList(fileInfo);
                         var reverse = Reverse ? NavigateTo.Previous : NavigateTo.Next;
-                        await GoToNextImage(reverse, false).ConfigureAwait(false);
+                        await GoToNextImage(reverse).ConfigureAwait(false);
                         return;
                     }
                     catch (Exception)

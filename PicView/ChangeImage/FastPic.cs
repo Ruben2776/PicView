@@ -1,7 +1,6 @@
-﻿using PicView.SystemIntegration;
-using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Media.Imaging;
+using PicView.SystemIntegration;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 

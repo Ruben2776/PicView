@@ -1,12 +1,15 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.ImageHandling;
+using PicView.UILogic;
+using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.SystemIntegration
 {
@@ -29,13 +32,13 @@ namespace PicView.SystemIntegration
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                ChangeTitlebar.SetTitle.SetLoadingString();
-                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Wait;
+                SetTitle.SetLoadingString();
+                Application.Current.MainWindow.Cursor = Cursors.Wait;
             });
 
             bool hasEffect = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
-            double rotationAngle = UILogic.TransformImage.Rotation.RotationAngle;
-            bool isFlipped = UILogic.TransformImage.Rotation.IsFlipped;
+            double rotationAngle = Rotation.RotationAngle;
+            bool isFlipped = Rotation.IsFlipped;
             bool shouldSaveImage = hasEffect || rotationAngle != 0 || isFlipped;
             bool checkOutOfRange = ErrorHandling.CheckOutOfRange();
             bool effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
@@ -69,8 +72,8 @@ namespace PicView.SystemIntegration
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                ChangeTitlebar.SetTitle.SetTitleString();
-                System.Windows.Application.Current.MainWindow.Cursor = Cursors.Arrow;
+                SetTitle.SetTitleString();
+                Application.Current.MainWindow.Cursor = Cursors.Arrow;
             });
         }
 

@@ -1,6 +1,6 @@
-﻿using PicView.ConfigureSettings;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
+using PicView.ConfigureSettings;
 
 namespace PicView.Themes.Resources
 {

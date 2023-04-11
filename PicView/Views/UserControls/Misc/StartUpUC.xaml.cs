@@ -1,14 +1,12 @@
-﻿using Microsoft.VisualBasic.Logging;
-using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.FileHandling;
-using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.ConfigureSettings;
+using PicView.FileHandling;
+using PicView.Properties;
 using static PicView.Animations.MouseOverAnimations;
-using Color = System.Windows.Media.Color;
 
 namespace PicView.Views.UserControls.Misc
 {
@@ -67,7 +65,7 @@ namespace PicView.Views.UserControls.Misc
 
             PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
 
-            if (Properties.Settings.Default.DarkTheme == false)
+            if (Settings.Default.DarkTheme == false)
             {
                 Background = new SolidColorBrush(Color.FromArgb(230,255, 255, 255));
             }

@@ -1,10 +1,8 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
+﻿using System.Windows;
+using PicView.ChangeImage;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.TransformImage;
-using System.Windows;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;

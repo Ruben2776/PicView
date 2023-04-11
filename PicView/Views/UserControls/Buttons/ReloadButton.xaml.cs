@@ -1,9 +1,5 @@
-﻿using PicView.Animations;
+﻿using System.Windows.Controls;
 using PicView.ChangeImage;
-using PicView.Properties;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons

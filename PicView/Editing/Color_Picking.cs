@@ -1,12 +1,12 @@
-﻿using PicView.UILogic;
-using PicView.UILogic.Loading;
-using PicView.UILogic.TransformImage;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.UILogic;
+using PicView.UILogic.Loading;
+using PicView.UILogic.TransformImage;
 using static PicView.SystemIntegration.NativeMethods;
 using Color = System.Drawing.Color;
 

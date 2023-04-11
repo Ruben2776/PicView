@@ -1,10 +1,4 @@
-﻿using ImageMagick;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -12,6 +6,12 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ImageMagick;
+using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.FileHandling;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using TextAlignment = System.Windows.TextAlignment;
 
 namespace PicView.ImageHandling
@@ -102,8 +102,8 @@ namespace PicView.ImageHandling
             }
 
             var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            var readablePrevSize = FileFunctions.GetReadableFileSize(preloadValue.FileInfo.Length);
-            var readableNewSize = FileFunctions.GetReadableFileSize(fileInfo.Length);
+            var readablePrevSize = preloadValue.FileInfo.Length.GetReadableFileSize();
+            var readableNewSize = fileInfo.Length.GetReadableFileSize();
 
             var originalValue = preloadValue.FileInfo.Length;
             var decreasedValue = fileInfo.Length;

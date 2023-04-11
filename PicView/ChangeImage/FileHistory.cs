@@ -1,11 +1,11 @@
-﻿using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.UILogic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.ChangeTitlebar;
+using PicView.FileHandling;
+using PicView.UILogic;
 
 namespace PicView.ChangeImage
 {

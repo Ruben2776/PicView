@@ -1,11 +1,8 @@
-﻿using PicView.ChangeImage;
+﻿using System.Diagnostics;
+using System.IO;
+using PicView.ChangeImage;
 using PicView.PicGallery;
 using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 

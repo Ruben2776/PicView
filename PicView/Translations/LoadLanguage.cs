@@ -1,6 +1,6 @@
-﻿using PicView.Properties;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
+using PicView.Properties;
 
 namespace PicView.Translations
 {

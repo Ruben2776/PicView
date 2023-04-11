@@ -1,5 +1,5 @@
-﻿using PicView.Animations;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PicView.Animations;
 using static PicView.UILogic.UC;
 
 namespace PicView.Views.UserControls.Buttons

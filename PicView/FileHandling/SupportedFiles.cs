@@ -10,8 +10,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// List of supported file extensions.
         /// </summary>
-        internal static readonly string[] FileExtensions = new string[]
-        {
+        internal static readonly string[] FileExtensions = {
             ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".gif", ".jfif", ".ico", ".webp", ".wbmp", ".avif",
             ".psd", ".psb",
             ".tif", ".tiff", ".dds", ".tga", ".heic", ".heif", ".hdr", ".xcf", ".jxl", ".jp2", ".qoi",
@@ -25,8 +24,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// List of supported archive file extensions.
         /// </summary>
-        internal static readonly string[] FileExtensionsArchives = new string[]
-        {
+        internal static readonly string[] FileExtensionsArchives = {
             ".zip", ".7zip", ".7z", ".rar", ".cbr", ".cb7", ".cbt", ".cbz", ".xz", ".bzip2",
             ".gzip", ".tar", ".wim", ".iso", ".cab"
         };

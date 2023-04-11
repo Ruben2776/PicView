@@ -1,10 +1,10 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
+using PicView.ChangeImage;
+using PicView.FileHandling;
+using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.TransformImage.ZoomLogic;
 
@@ -162,7 +162,7 @@ namespace PicView.ChangeTitlebar
                     _ = ErrorHandling.ReloadAsync();
                     return;
                 }
-                var path = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+                var path = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
                 path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
                 titleString = TitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
                     (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, path);

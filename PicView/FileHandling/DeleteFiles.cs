@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using PicView.ChangeImage;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using Microsoft.VisualBasic.FileIO;
+using PicView.ChangeImage;
+using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -112,7 +112,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+            await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
 
             ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
         }

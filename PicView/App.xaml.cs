@@ -1,7 +1,7 @@
-﻿using PicView.FileHandling;
-using PicView.ProcessHandling;
-using System.Runtime;
+﻿using System.Runtime;
 using System.Windows;
+using System.Windows.Threading;
+using PicView.FileHandling;
 
 namespace PicView
 {
@@ -17,11 +17,11 @@ namespace PicView
             DispatcherUnhandledException += App_DispatcherUnhandledException;
         }
 
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(e.Exception.ToString());
 #if RELEASE
-            ProcessLogic.RestartApp();
+            ProcessHandling.ProcessLogic.RestartApp();
 #endif
         }
     }

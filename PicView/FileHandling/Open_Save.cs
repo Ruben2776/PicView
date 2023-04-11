@@ -1,14 +1,14 @@
-﻿using Microsoft.Win32;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
 using PicView.UILogic;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
@@ -82,7 +82,7 @@ namespace PicView.FileHandling
             }
             catch (Exception e)
             {
-                Tooltip.ShowTooltipMessage("Open_In_Explorer exception \n" + e.Message);
+                ShowTooltipMessage("Open_In_Explorer exception \n" + e.Message);
             }
         }
 

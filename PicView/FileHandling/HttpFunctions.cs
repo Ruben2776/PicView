@@ -1,11 +1,11 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.UILogic;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.UILogic.Tooltip;
 
@@ -94,7 +94,7 @@ namespace PicView.FileHandling
             var index = fileName.IndexOf("?", StringComparison.InvariantCulture);
             if (index >= 0)
             {
-                fileName = fileName.Substring(0, index);
+                fileName = fileName[..index];
             }
             ArchiveExtraction.TempFilePath = tempPath + fileName;
 
@@ -102,8 +102,8 @@ namespace PicView.FileHandling
             {
                 if (displayProgress) // Set up progress display
                 {
-                    client.ProgressChanged += async (totalFileSize, _totalBytesDownloaded, progressPercentage) =>
-                    await UpdateProgressDisplay(totalFileSize, _totalBytesDownloaded, progressPercentage).ConfigureAwait(false);
+                    client.ProgressChanged += async (totalFileSize, totalBytesDownloaded, progressPercentage) =>
+                    await UpdateProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage).ConfigureAwait(false);
                 }
 
                 await client.StartDownload().ConfigureAwait(false);

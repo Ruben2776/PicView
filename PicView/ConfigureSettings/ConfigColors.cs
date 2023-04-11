@@ -1,12 +1,10 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using PicView.Animations;
 using PicView.Properties;
 using PicView.Themes.Resources;
 using PicView.UILogic;
-using PicView.Views.Windows;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace PicView.ConfigureSettings
 {
@@ -69,7 +67,7 @@ namespace PicView.ConfigureSettings
             var foregroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
                 : (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
 
-            if (Properties.Settings.Default.DarkTheme)
+            if (Settings.Default.DarkTheme)
             {
                 w.TitleText.InnerTextBox.Foreground = foregroundColor;
 
@@ -236,7 +234,7 @@ namespace PicView.ConfigureSettings
             UpdateColor();
         }
 
-        internal static Color GetSecondaryAccentColor => Properties.Settings.Default.ColorTheme switch
+        internal static Color GetSecondaryAccentColor => Settings.Default.ColorTheme switch
         {
             0 => Color.FromRgb(182, 251, 95), // Blue
             2 => Color.FromRgb(255, 237, 38), // Pink
@@ -250,7 +248,7 @@ namespace PicView.ConfigureSettings
             10 => Color.FromRgb(180, 246, 88), // Cyan
             11 => Color.FromRgb(255, 237, 38), // Magenta
             12 => Color.FromRgb(202, 253, 82), // Lime
-            _ => throw new ArgumentOutOfRangeException(nameof(Properties.Settings.Default.ColorTheme)),
+            _ => throw new ArgumentOutOfRangeException(nameof(Settings.Default.ColorTheme)),
         };
 
         #endregion Set ColorTheme

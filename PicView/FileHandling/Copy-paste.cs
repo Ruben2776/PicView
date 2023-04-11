@@ -1,12 +1,11 @@
-﻿using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.ProcessHandling;
-using PicView.UILogic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.ProcessHandling;
+using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -101,7 +100,6 @@ namespace PicView.FileHandling
             else if (Clipboard.ContainsImage())  // Clipboard Image
             {
                 await UpdateImage.UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage()).ConfigureAwait(false);
-                return;
             }
             else // text/string/adddress
             {

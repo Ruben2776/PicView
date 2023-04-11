@@ -1,14 +1,13 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.UILogic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Threading;
-using Windows.UI.StartScreen;
+using Microsoft.Win32;
+using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.UILogic;
 
 namespace PicView.FileHandling
 {
@@ -126,7 +125,7 @@ namespace PicView.FileHandling
         internal static string GetReadableFileSize(this long fileSize)
         {
             const int kilobyte = 1024;
-            string sign = fileSize < 0 ? "-" : "";
+            var sign = fileSize < 0 ? "-" : "";
             double value;
             char prefix;
 

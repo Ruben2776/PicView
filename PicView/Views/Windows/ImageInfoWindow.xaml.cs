@@ -1,14 +1,12 @@
-﻿using PicView.Animations;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using PicView.Animations;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ImageInfo;
@@ -110,13 +108,13 @@ namespace PicView.Views.Windows
             ExpandButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(chevronDownBrush);
             ExpandButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ExpandButtonBg);
 
-            ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollopase(Height, startheight, extendedheight, this, Scroller, xGeo);
+            ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
 
             PreviewMouseWheel += (_, e) => // Collapse when scrolling down
             {
                 if (e.Delta < 0 && Height == startheight)
                 {
-                    UIHelper.ExtendOrCollopase(Height, startheight, extendedheight, this, Scroller, xGeo);
+                    UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
                 }
             };
 

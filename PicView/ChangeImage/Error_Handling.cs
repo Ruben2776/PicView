@@ -1,4 +1,8 @@
-﻿using PicView.ChangeTitlebar;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
@@ -6,9 +10,6 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.IO;
-using System.Windows;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.DeleteFiles;
 
@@ -40,7 +41,7 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.Title = (string)Application.Current.Resources["UnexpectedError"] + " - PicView";
                 ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["UnexpectedError"];
                 ConfigureWindows.GetMainWindow.TitleText.ToolTip = (string)Application.Current.Resources["UnexpectedError"];
-                ConfigureWindows.GetMainWindow.MainImage.Cursor = System.Windows.Input.Cursors.Arrow;
+                ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
             });
         }
 
@@ -184,23 +185,19 @@ namespace PicView.ChangeImage
                     {
                         return InitialPath;
                     }
-                    else
-                    {
-                        return Pics[FolderIndex];
-                    }
+
+                    return Pics[FolderIndex];
                 }
-                else
+
+                return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
                 {
-                    return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
+                    var path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                    if (path == (string)Application.Current.Resources["Loading"])
                     {
-                        var path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                        if (path == (string)Application.Current.Resources["Loading"])
-                        {
-                            return InitialPath;
-                        }
-                        return path;
-                    });
-                }
+                        return InitialPath;
+                    }
+                    return path;
+                });
             }
         }
 

@@ -1,13 +1,12 @@
-﻿using PicView.FileHandling;
+﻿using System.IO;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.SystemIntegration;
 using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.LoadPic;
 using static PicView.ChangeImage.Navigation;
@@ -115,7 +114,7 @@ namespace PicView.ChangeImage
             {
                 ConfigureWindows.GetMainWindow.MainImage.Source = imageSource;
             }
-            ConfigureWindows.GetMainWindow.MainImage.Cursor = System.Windows.Input.Cursors.Arrow;
+            ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
         }
     }
 }

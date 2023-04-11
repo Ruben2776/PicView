@@ -1,17 +1,15 @@
-﻿using PicView.ChangeTitlebar;
+﻿using System.Collections.Specialized;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using PicView.ChangeTitlebar;
 using PicView.Editing;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
-using System.Collections.Specialized;
-using System.IO;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using XamlAnimatedGif;
 using static PicView.ChangeImage.Navigation;
 using static PicView.SystemIntegration.NativeMethods;
 
@@ -19,7 +17,7 @@ namespace PicView.UILogic.DragAndDrop
 {
     internal static class DragToExplorer
     {
-        internal static Window? dragdropWindow;
+        private static Window? _dragdropWindow;
 
         internal static void DragFile(object sender, MouseButtonEventArgs e)
         {
@@ -48,7 +46,7 @@ namespace PicView.UILogic.DragAndDrop
 
             if (UC.GetCropppingTool is { IsVisible: true }) return;
 
-            if (Properties.Settings.Default.ShowInterface == false)
+            if (Settings.Default.ShowInterface == false)
             {
                 if (Keyboard.Modifiers != ModifierKeys.Control)
                 {
@@ -62,7 +60,7 @@ namespace PicView.UILogic.DragAndDrop
                 try
                 {
                     // Check if from URL and locate it
-                    string url = FileFunctions.RetrieveFromURL();
+                    var url = FileFunctions.RetrieveFromURL();
                     if (!string.IsNullOrEmpty(url))
                     {
                         file = ArchiveExtraction.TempFilePath;
@@ -85,19 +83,19 @@ namespace PicView.UILogic.DragAndDrop
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                if (dragdropWindow == null)
+                if (_dragdropWindow == null)
                 {
                     CreateDragDropWindow(ConfigureWindows.GetMainWindow.MainImage);
                 }
-                else if (!dragdropWindow.IsVisible)
+                else if (!_dragdropWindow.IsVisible)
                 {
-                    dragdropWindow.Show();
+                    _dragdropWindow.Show();
                     UpdateDragDropWindow(ConfigureWindows.GetMainWindow.MainImage);
                 }
 
-                FrameworkElement? senderElement = sender as FrameworkElement;
-                DataObject dragObj = new DataObject();
-                dragObj.SetFileDropList(new StringCollection() { file });
+                var senderElement = sender as FrameworkElement;
+                var dragObj = new DataObject();
+                dragObj.SetFileDropList(new StringCollection { file });
                 if (senderElement is null) return;
                 DragDrop.AddQueryContinueDragHandler(senderElement, DragContrinueHandler);
                 DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
@@ -108,19 +106,19 @@ namespace PicView.UILogic.DragAndDrop
         {
             if (ColorPicking.IsRunning || e.Action == DragAction.Continue && e.KeyStates != DragDropKeyStates.LeftMouseButton)
             {
-                dragdropWindow?.Hide();
+                _dragdropWindow?.Hide();
                 return;
             }
-            Win32Point w32Mouse = new Win32Point();
+            var w32Mouse = new Win32Point();
             GetCursorPos(ref w32Mouse);
 
-            dragdropWindow.Left = w32Mouse.X + 10;
-            dragdropWindow.Top = w32Mouse.Y - 50;
+            _dragdropWindow.Left = w32Mouse.X + 10;
+            _dragdropWindow.Top = w32Mouse.Y - 50;
         }
 
         private static void CreateDragDropWindow(Visual dragElement)
         {
-            dragdropWindow = new Window
+            _dragdropWindow = new Window
             {
                 WindowStyle = WindowStyle.None,
                 AllowsTransparency = true,
@@ -135,25 +133,25 @@ namespace PicView.UILogic.DragAndDrop
 
             UpdateDragDropWindow(dragElement);
 
-            dragdropWindow.Show();
+            _dragdropWindow.Show();
         }
 
         private static void UpdateDragDropWindow(Visual dragElement)
         {
-            var xWidth = Sizing.ScaleImage.XWidth;
-            var xHeight = Sizing.ScaleImage.XHeight;
+            var xWidth = ScaleImage.XWidth;
+            var xHeight = ScaleImage.XHeight;
 
             var maxWidth = Math.Min(xWidth, xWidth / 1.8);
             var maxHeight = Math.Min(xHeight, xHeight / 1.8);
             var ratio = Math.Min(maxWidth / xHeight / 1.8, maxHeight / xWidth / 1.8);
 
-            var r = new System.Windows.Shapes.Rectangle
+            var r = new Rectangle
             {
                 Width = maxWidth * ratio,
                 Height = maxHeight * ratio,
                 Fill = new VisualBrush(dragElement)
             };
-            dragdropWindow.Content = r;
+            _dragdropWindow.Content = r;
         }
     }
 }

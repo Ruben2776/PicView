@@ -1,6 +1,6 @@
-﻿using PicView.Editing.Crop.Tools;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using PicView.Editing.Crop.Tools;
 
 namespace PicView.Editing.Crop.State
 {

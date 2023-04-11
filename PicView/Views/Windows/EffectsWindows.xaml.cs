@@ -1,13 +1,12 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using WinRT;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.SystemIntegration.Wallpaper;

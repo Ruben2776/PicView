@@ -1,11 +1,11 @@
-﻿using PicView.ChangeImage;
+﻿using System.Windows;
+using System.Windows.Input;
+using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.Views.UserControls.Buttons;
-using System.Windows;
-using System.Windows.Input;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.HideInterfaceLogic;
 using static PicView.UILogic.Sizing.ScaleImage;
@@ -297,7 +297,7 @@ namespace PicView.UILogic.Sizing
 
             GetMainWindow.Dispatcher.Invoke(() =>
             {
-                if (GetMainWindow.WindowState == WindowState.Maximized || Properties.Settings.Default.Fullscreen)
+                if (GetMainWindow.WindowState == WindowState.Maximized || Settings.Default.Fullscreen)
                     return;
 
                 Settings.Default.Top = GetMainWindow.Top;

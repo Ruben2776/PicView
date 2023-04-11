@@ -1,8 +1,9 @@
-﻿using PicView.ConfigureSettings;
-using PicView.UILogic.TransformImage;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.ConfigureSettings;
+using PicView.UILogic.Sizing;
+using PicView.UILogic.TransformImage;
 
 namespace PicView.Editing.Crop.Tools
 {
@@ -63,7 +64,7 @@ namespace PicView.Editing.Crop.Tools
             Canvas.SetLeft(Border, _cropTool.TopLeftX + OffsetLeft);
             Canvas.SetTop(Border, calculateTop);
             var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue;
-            var aspectRatio = UILogic.Sizing.ScaleImage.AspectRatio;
+            var aspectRatio = ScaleImage.AspectRatio;
             double aspectZoomValue = aspectRatio * zoomValue;
             var width = Math.Round(_cropTool.Width / zoomValue);
             var height = Math.Round(_cropTool.Height / zoomValue);

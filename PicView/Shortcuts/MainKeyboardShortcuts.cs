@@ -1,4 +1,6 @@
-﻿using PicView.ChangeImage;
+﻿using System.Windows;
+using System.Windows.Input;
+using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
 using PicView.Editing;
@@ -10,8 +12,6 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Buttons;
-using System.Windows;
-using System.Windows.Input;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;
@@ -92,12 +92,12 @@ namespace PicView.Shortcuts
                     // Go to first if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
                     {
-                        await Navigation.GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
+                        await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
                     }
                     else
                     {
                         FastPicRunning = e.IsRepeat; // Report if key held down
-                        await Navigation.GoToNextImage(NavigateTo.Next, FastPicRunning).ConfigureAwait(false);
+                        await GoToNextImage(NavigateTo.Next, FastPicRunning).ConfigureAwait(false);
                     }
                     return;
 
@@ -112,12 +112,12 @@ namespace PicView.Shortcuts
                     // Go to last if Ctrl held down
                     if (ctrlDown && !e.IsRepeat)
                     {
-                        await Navigation.GoToNextImage(NavigateTo.First).ConfigureAwait(false);
+                        await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
                     }
                     else
                     {
                         FastPicRunning = e.IsRepeat; // Report if key held down
-                        await Navigation.GoToNextImage(NavigateTo.Previous, FastPicRunning).ConfigureAwait(false);
+                        await GoToNextImage(NavigateTo.Previous, FastPicRunning).ConfigureAwait(false);
                     }
                     return;
 
@@ -192,7 +192,8 @@ namespace PicView.Shortcuts
                         await SaveFilesAsync().ConfigureAwait(false);
                         return; // Fix saving file
                     }
-                    else if (GalleryFunctions.IsHorizontalOpen)
+
+                    if (GalleryFunctions.IsHorizontalOpen)
                     {
                         GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
                         return;
@@ -362,7 +363,7 @@ namespace PicView.Shortcuts
                             }
                             else
                             {
-                                if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
+                                if (GetMainWindow.MainImage.Effect != null)
                                     CopyBitmap();
                                 else
                                     CopyFile();

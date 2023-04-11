@@ -1,10 +1,10 @@
-﻿using ImageMagick;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows.Media.Imaging;
+using ImageMagick;
 using Microsoft.WindowsAPICodePack.Shell;
 using PicView.ChangeImage;
 using PicView.Views.UserControls.Gallery;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 

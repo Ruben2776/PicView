@@ -1,12 +1,12 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
-using System.Windows;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.ConfigureWindows;
@@ -152,7 +152,7 @@ namespace PicView.PicGallery
 
         internal static void CloseFullscreenGallery()
         {
-            Properties.Settings.Default.FullscreenGalleryHorizontal = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+            Settings.Default.FullscreenGalleryHorizontal = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
 
             GetPicGallery.Visibility = Visibility.Collapsed;
 
@@ -192,7 +192,7 @@ namespace PicView.PicGallery
                 GetMainWindow.ParentContainer.Children.Remove(check2.ElementAt(0));
             }
 
-            GetMainWindow.Topmost = Properties.Settings.Default.TopMost;
+            GetMainWindow.Topmost = Settings.Default.TopMost;
         }
 
         #endregion Close

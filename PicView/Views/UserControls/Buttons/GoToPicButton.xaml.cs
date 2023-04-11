@@ -1,13 +1,12 @@
-﻿using PicView.Animations;
+﻿using System.Globalization;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.Properties;
 using PicView.UILogic;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
@@ -105,11 +104,9 @@ namespace PicView.Views.UserControls.Buttons
                         // Allow Ctrl + A, Ctrl + C, Ctrl + X
                         break;
                     }
-                    else
-                    {
-                        e.Handled = true;// only allowed on ctrl
-                        return;
-                    }
+
+                    e.Handled = true;// only allowed on ctrl
+                    return;
                 case Key.Escape: // Escape logic
                     GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                     ClearGoTo();

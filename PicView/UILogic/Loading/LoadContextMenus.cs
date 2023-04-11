@@ -1,4 +1,7 @@
-﻿using PicView.ChangeImage;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ImageHandling;
@@ -6,10 +9,6 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Buttons;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Media3D;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;
@@ -287,10 +286,10 @@ namespace PicView.UILogic.Loading
             fullscreenWindow.Click += (_,_) => WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
 
             var minWindow = (MenuItem)WindowContextMenu.Items[1];
-            minWindow.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
+            minWindow.Click += (_, _) => SystemCommands.MinimizeWindow(GetMainWindow);
 
             var closeWindow = (MenuItem)WindowContextMenu.Items[2];
-            closeWindow.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+            closeWindow.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
 
             GetMainWindow.Logo.ContextMenu = WindowContextMenu;
             GetMainWindow.GalleryButton.ContextMenu = WindowContextMenu;
