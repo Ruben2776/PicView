@@ -3,6 +3,7 @@ using PicView.ChangeImage;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -139,11 +140,12 @@ namespace PicView.Shortcuts
 
         private static async Task<bool> FireResizeAsync(string widthText, string heightText)
         {
+            var fileInfo = Preloader.Get(Navigation.FolderIndex)?.FileInfo;
+            fileInfo ??= new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
             Preloader.Remove(Navigation.FolderIndex);
-            var file = Navigation.Pics[Navigation.FolderIndex];
             if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
             {
-                var resize = await ImageSizeFunctions.ResizeImageAsync(file, width, height, 0).ConfigureAwait(false);
+                var resize = await ImageSizeFunctions.ResizeImageAsync(fileInfo, width, height, 0).ConfigureAwait(false);
                 if (resize)
                 {
                     await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
@@ -155,13 +157,13 @@ namespace PicView.Shortcuts
             }
             else // handle if it contains percentage
             {
-                var tryWidth = await FirePercentageAsync(widthText, file).ConfigureAwait(false);
+                var tryWidth = await FirePercentageAsync(widthText, fileInfo).ConfigureAwait(false);
                 if (tryWidth)
                 {
                     await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
                     return false;
                 }
-                var tryHeight = await FirePercentageAsync(heightText, file).ConfigureAwait(false);
+                var tryHeight = await FirePercentageAsync(heightText, fileInfo).ConfigureAwait(false);
                 if (tryHeight)
                 {
                     await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
@@ -174,12 +176,12 @@ namespace PicView.Shortcuts
             return true;
         }
 
-        private static async Task<bool> FirePercentageAsync(string text, string file)
+        private static async Task<bool> FirePercentageAsync(string text, FileInfo fileInfo)
         {
             var percentage = ReturnPercentageFromString(text);
             if (!(percentage > 0)) { return false; }
 
-            var resize = await ImageSizeFunctions.ResizeImageAsync(file, 0, 0, 0, new Percentage(percentage)).ConfigureAwait(false);
+            var resize = await ImageSizeFunctions.ResizeImageAsync(fileInfo, 0, 0, 0, new Percentage(percentage)).ConfigureAwait(false);
             if (resize)
             {
                 await ErrorHandling.ReloadAsync().ConfigureAwait(false);

@@ -38,10 +38,9 @@ namespace PicView.ImageHandling
             return new Size(magick.Width, magick.Height);
         }
 
-        internal static async Task<bool> ResizeImageAsync(string file, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
+        internal static async Task<bool> ResizeImageAsync(FileInfo fileInfo, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
         {
-            if (string.IsNullOrWhiteSpace(file)) { return false; }
-            if (File.Exists(file) == false) { return false; }
+            if (fileInfo.Exists == false) { return false; }
             if (width < 0 && percentage is not null || height < 0 && percentage is not null) { return false; }
 
             var magick = new MagickImage
@@ -56,7 +55,10 @@ namespace PicView.ImageHandling
 
             try
             {
-                await magick.ReadAsync(file).ConfigureAwait(false);
+                if (fileInfo.Length < 2147483648)
+                    await magick.ReadAsync(fileInfo).ConfigureAwait(false);
+                // ReSharper disable once MethodHasAsyncOverload
+                else magick.Read(fileInfo);
             }
             catch (MagickException e)
             {
@@ -81,9 +83,9 @@ namespace PicView.ImageHandling
                 {
                     if (ext is not null)
                     {
-                        Path.ChangeExtension(file, ext);
+                        Path.ChangeExtension(fileInfo.Extension, ext);
                     }
-                    await magick.WriteAsync(file).ConfigureAwait(false);
+                    await magick.WriteAsync(fileInfo).ConfigureAwait(false);
                 }
                 else
                 {
@@ -116,7 +118,7 @@ namespace PicView.ImageHandling
                 OptimalCompression = compress.Value,
             };
 
-            var x = destination ?? file;
+            var x = destination ?? fileInfo.FullName;
 
             if (imageOptimizer.IsSupported(x) == false)
             {
