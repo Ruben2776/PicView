@@ -113,7 +113,7 @@ namespace PicView.UILogic.TransformImage
 
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.IsActive == false)
+            if (ConfigureWindows.GetMainWindow.IsActive == false || ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible)
             {
                 return;
             }
@@ -126,7 +126,7 @@ namespace PicView.UILogic.TransformImage
         internal static void PanImage(object sender, MouseEventArgs e)
         {
             // Don't drag it if unintended
-            if (ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured == false || ConfigureWindows.GetMainWindow.IsActive == false)
+            if (ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured == false || ConfigureWindows.GetMainWindow.IsActive == false || ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible)
             {
                 return;
             }

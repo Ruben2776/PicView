@@ -27,10 +27,7 @@ namespace PicView.ConfigureSettings
                 Settings.Default.SortPreference = sorting;
             }
 
-            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                SetTitle.SetLoadingString();
-            });
+            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, SetTitle.SetLoadingString);
 
             FileInfo fileInfo;
             var preloadValue = Preloader.Get(Navigation.FolderIndex);
@@ -79,7 +76,7 @@ namespace PicView.ConfigureSettings
             if (GalleryFunctions.IsHorizontalFullscreenOpen
                 || GalleryFunctions.IsHorizontalOpen
                 || Rotation.RotationAngle != 0)
-            return;
+                return;
 
             var settingscm = MainContextMenu.Items[7] as MenuItem;
             var scrollcm = settingscm.Items[1] as MenuItem;

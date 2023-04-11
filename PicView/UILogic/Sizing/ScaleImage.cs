@@ -86,7 +86,7 @@ namespace PicView.UILogic.Sizing
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
-                maxHeight = Settings.Default.FillImage ? monitorHeight - 5 : Math.Min(monitorHeight - PicGalleryItem_Size, height);
+                maxHeight = Settings.Default.FillImage ? monitorHeight - 40 : Math.Min(monitorHeight - PicGalleryItem_Size, height);
                 margin = PicGalleryItem_Size + 5;
             }
             else if (Settings.Default.AutoFitWindow)
