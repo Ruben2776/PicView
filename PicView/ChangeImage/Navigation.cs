@@ -93,7 +93,7 @@ namespace PicView.ChangeImage
                     else
                     {
                         int newIndex = FolderIndex + indexChange;
-                        if (newIndex <= 0 || newIndex >= Pics.Count) return; // Don't load same image because that causes the UI to blink
+                        if (newIndex < 0 || newIndex >= Pics.Count) return; // Don't load same image because that causes the UI to blink
                         next = newIndex;
                     }
                     break;
