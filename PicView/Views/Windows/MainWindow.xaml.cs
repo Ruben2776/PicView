@@ -57,11 +57,7 @@ namespace PicView.Views.Windows
 
             ContentRendered += async delegate
             {
-                try
-                {
-                    WindowBlur.EnableBlur(this);
-                }
-                catch (Exception) { }
+                WindowBlur.EnableBlur(this);
 
                 await StartLoading.ContentRenderedEventAsync().ConfigureAwait(false);
 
@@ -172,14 +168,16 @@ namespace PicView.Views.Windows
                         DragMove();
                     }
                 };
+
+                Logo.MouseLeftButtonDown += (_, _) => ConfigureWindows.WindowContextMenu.IsOpen = true;
             };
         }
 
         #region OnRenderSizeChanged override
 
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        protected override void OnRenderSizeChanged(SizeChangedInfo? sizeInfo)
         {
-            if (sizeInfo == null || !sizeInfo.WidthChanged && !sizeInfo.HeightChanged || Settings.Default.AutoFitWindow == false)
+            if (sizeInfo == null || sizeInfo is { WidthChanged: false, HeightChanged: false } || Settings.Default.AutoFitWindow == false)
             {
                 Navigation.RightbuttonClicked = false;
                 Navigation.LeftbuttonClicked = false;
@@ -195,19 +193,19 @@ namespace PicView.Views.Windows
             // Move cursor after resize when the button has been pressed
             if (Navigation.RightbuttonClicked)
             {
-                Point p = RightButton.PointToScreen(new Point(50, 10)); //Points cursor to center of RighButton
+                var p = RightButton.PointToScreen(new Point(50, 10)); //Points cursor to center of RightButton
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.RightbuttonClicked = false;
             }
             else if (Navigation.LeftbuttonClicked)
             {
-                Point p = LeftButton.PointToScreen(new Point(50, 10));
+                var p = LeftButton.PointToScreen(new Point(50, 10));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.LeftbuttonClicked = false;
             }
             else if (Navigation.ClickArrowRightClicked)
             {
-                Point p = GetClickArrowRight.PointToScreen(new Point(25, 30));
+                var p = GetClickArrowRight.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowRightClicked = false;
 
@@ -215,7 +213,7 @@ namespace PicView.Views.Windows
             }
             else if (Navigation.ClickArrowLeftClicked)
             {
-                Point p = GetClickArrowLeft.PointToScreen(new Point(25, 30));
+                var p = GetClickArrowLeft.PointToScreen(new Point(25, 30));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
                 Navigation.ClickArrowLeftClicked = false;
 
