@@ -11,14 +11,15 @@ using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
 {
-    public class HttpFunctions
+    public abstract class HttpFunctions
     {
         #region UI configured methods
 
         /// <summary>
-        /// Attemps to download image and display it
+        /// Attempts to download image and display it
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="url"></param>
+        // ReSharper disable once InconsistentNaming
         internal static async Task LoadPicFromURL(string url)
         {
             ChangeFolder(true);
@@ -43,7 +44,7 @@ namespace PicView.FileHandling
                 return;
             }
 
-            string check = CheckIfLoadableString(destination);
+            var check = CheckIfLoadableString(destination);
             switch (check)
             {
                 default:
@@ -71,10 +72,7 @@ namespace PicView.FileHandling
                     ConfigureWindows.GetMainWindow.Focus();
                 }
             });
-            if (Navigation.GetFileHistory is null)
-            {
-                Navigation.GetFileHistory = new FileHistory();
-            }
+            Navigation.GetFileHistory ??= new FileHistory();
             Navigation.GetFileHistory.Add(url);
             Navigation.InitialPath = url;
         }
@@ -93,7 +91,7 @@ namespace PicView.FileHandling
             ArchiveExtraction.CreateTempDirectory(tempPath);
 
             // Remove past "?" to not get file exceptions
-            int index = fileName.IndexOf("?", StringComparison.InvariantCulture);
+            var index = fileName.IndexOf("?", StringComparison.InvariantCulture);
             if (index >= 0)
             {
                 fileName = fileName.Substring(0, index);
@@ -125,8 +123,8 @@ namespace PicView.FileHandling
         {
             if (totalFileSize.HasValue && totalBytesDownloaded.HasValue && progressPercentage.HasValue)
             {
-                string percentComplete = (string)Application.Current.Resources["PercentComplete"];
-                string displayProgress = $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
+                var percentComplete = (string)Application.Current.Resources["PercentComplete"];
+                var displayProgress = $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
 
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(
                     DispatcherPriority.Normal,
@@ -143,7 +141,7 @@ namespace PicView.FileHandling
 
         #region Logic
 
-        public class HttpClientDownloadWithProgress : IDisposable
+        public sealed class HttpClientDownloadWithProgress : IDisposable
         {
             private readonly string _downloadUrl;
             private readonly string _destinationFilePath;
@@ -163,64 +161,54 @@ namespace PicView.FileHandling
             public async Task StartDownload()
             {
                 _httpClient = new HttpClient { Timeout = TimeSpan.FromHours(6) };
-                using (var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead))
-                {
-                    await DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);
-                }
+                using var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                await DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);
             }
 
-            public async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
+            private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
             {
                 response.EnsureSuccessStatusCode();
                 var totalBytes = response.Content.Headers.ContentLength;
-                using (var contentStream = await response.Content.ReadAsStreamAsync())
-                {
-                    await ProcessContentStream(totalBytes, contentStream).ConfigureAwait(false);
-                }
+                await using var contentStream = await response.Content.ReadAsStreamAsync();
+                await ProcessContentStream(totalBytes, contentStream).ConfigureAwait(false);
             }
 
-            public async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
+            private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
             {
                 var buffer = new byte[8192];
-                using (var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                await using var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+                var totalBytesRead = 0L;
+                while (true)
                 {
-                    var totalBytesRead = 0L;
-                    while (true)
+                    var bytesRead = await contentStream.ReadAsync(buffer);
+                    if (bytesRead == 0)
                     {
-                        int bytesRead = await contentStream.ReadAsync(buffer);
-                        if (bytesRead == 0)
-                        {
-                            break;
-                        }
-
-                        await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead)).ConfigureAwait(false);
-                        totalBytesRead += bytesRead;
-
-                        if (totalDownloadSize.HasValue)
-                        {
-                            double progressPercentage = (double)totalBytesRead / totalDownloadSize.Value * 100;
-                            OnProgressChanged(totalDownloadSize, totalBytesRead, progressPercentage);
-                        }
+                        break;
                     }
+
+                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead)).ConfigureAwait(false);
+                    totalBytesRead += bytesRead;
+
+                    if (!totalDownloadSize.HasValue) continue;
+                    var progressPercentage = (double)totalBytesRead / totalDownloadSize.Value * 100;
+                    OnProgressChanged(totalDownloadSize, totalBytesRead, progressPercentage);
                 }
             }
 
-            protected virtual void OnProgressChanged(long? totalDownloadSize, long totalBytesRead, double progressPercentage)
+            private void OnProgressChanged(long? totalDownloadSize, long totalBytesRead, double progressPercentage)
             {
                 ProgressChanged?.Invoke(totalDownloadSize, totalBytesRead, progressPercentage);
             }
 
-            protected virtual void Dispose(bool disposing)
+            private void Dispose(bool disposing)
             {
-                if (!_disposedValue)
+                if (_disposedValue) return;
+                if (disposing)
                 {
-                    if (disposing)
-                    {
-                        _httpClient?.Dispose();
-                    }
-
-                    _disposedValue = true;
+                    _httpClient?.Dispose();
                 }
+
+                _disposedValue = true;
             }
 
             public void Dispose()

@@ -133,6 +133,7 @@ namespace PicView.ChangeImage
 
                 if (right)
                 {
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Settings.Default.Fullscreen == false) 
                         RightbuttonClicked = true; // Update flag to move cursor when resized
                     else
@@ -141,6 +142,7 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Settings.Default.Fullscreen == false)
                         LeftbuttonClicked = true; // Update flag to move cursor when resized
                     else
@@ -152,6 +154,7 @@ namespace PicView.ChangeImage
             {
                 if (right)
                 {
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Settings.Default.Fullscreen == false)
                         ClickArrowRightClicked = true; // Update flag to move cursor when resized
                     else
@@ -160,6 +163,7 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Settings.Default.Fullscreen == false)
                         ClickArrowLeftClicked = true; // Update flag to move cursor when resized
                     else

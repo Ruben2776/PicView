@@ -1,13 +1,14 @@
-﻿using PicView.ChangeImage;
-using PicView.Properties;
-using System.Timers;
+﻿using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.Properties;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
+using Timer = System.Timers.Timer;
 
 namespace PicView.UILogic.TransformImage
 {
@@ -23,21 +24,21 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         internal static Point? AutoScrollPos { get; set; }
 
-        internal static readonly System.Timers.Timer AutoScrollTimer = new System.Timers.Timer
+        internal static readonly Timer AutoScrollTimer = new()
         {
             Interval = 7,
             AutoReset = true,
             Enabled = false
         };
 
-        internal static bool IsAutoScrolling { get; set; }
+        internal static bool IsAutoScrolling { get; private set; }
 
         /// <summary>
         /// Toggles scroll and displays it with TooltipStyle
         /// </summary>
         internal static void SetScrollBehaviour(bool scrolling)
         {
-            if (Properties.Settings.Default.Fullscreen || Properties.Settings.Default.FullscreenGalleryHorizontal)
+            if (Settings.Default.Fullscreen || Settings.Default.FullscreenGalleryHorizontal)
             {
                 return;
             }
@@ -47,11 +48,9 @@ namespace PicView.UILogic.TransformImage
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
                     scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
             });
-            if (Navigation.Pics != null)
-            {
-                TryFitImage();
-                ShowTooltipMessage(scrolling ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);
-            }
+            if (Navigation.Pics == null) return;
+            TryFitImage();
+            ShowTooltipMessage(scrolling ? Application.Current.Resources["ScrollingEnabled"] : Application.Current.Resources["ScrollingDisabled"]);
         }
 
         // AutoScrollSign
@@ -105,11 +104,11 @@ namespace PicView.UILogic.TransformImage
         }
 
         /// <summary>
-        /// Uses timer to scroll vertical up/down every seventh milisecond
+        /// Uses timer to scroll vertical up/down every seventh millisecond
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="E"></param>
-        internal static void AutoScrollTimerEvent(object sender, ElapsedEventArgs E)
+        /// <param name="e"></param>
+        internal static void AutoScrollTimerEvent(object sender, ElapsedEventArgs e)
         {
             // Error checking
             if (AutoScrollPos == null || AutoScrollOrigin == null)
@@ -120,17 +119,15 @@ namespace PicView.UILogic.TransformImage
             // Start in dispatcher because timer is threaded
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                if (AutoScrollOrigin.HasValue && AutoScrollPos.HasValue)
-                {
-                    // Calculate offset by Y coordinate
-                    var offset = (AutoScrollPos.Value.Y - AutoScrollOrigin.Value.Y) / 15;
+                if (!AutoScrollOrigin.HasValue || !AutoScrollPos.HasValue) return;
+                // Calculate offset by Y coordinate
+                var offset = (AutoScrollPos.Value.Y - AutoScrollOrigin.Value.Y) / 15;
 
-                    if (IsAutoScrolling)
-                    {
-                        // Tell the scrollviewer to scroll to calculated offset
-                        ConfigureWindows.GetMainWindow.Scroller.ScrollToVerticalOffset(
-                            ConfigureWindows.GetMainWindow.Scroller.VerticalOffset + offset);
-                    }
+                if (IsAutoScrolling)
+                {
+                    // Tell the scrollviewer to scroll to calculated offset
+                    ConfigureWindows.GetMainWindow.Scroller.ScrollToVerticalOffset(
+                        ConfigureWindows.GetMainWindow.Scroller.VerticalOffset + offset);
                 }
             });
         }

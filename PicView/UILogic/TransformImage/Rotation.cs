@@ -65,7 +65,7 @@ namespace PicView.UILogic.TransformImage
         /// Rotates the image by 90 degrees.
         /// </summary>
         /// <param name="up">If true, rotates the image up (clockwise); otherwise, rotates it down (counterclockwise).</param>
-        internal static void Rotate(bool up)
+        private static void Rotate(bool up)
         {
             if (up)
             {
@@ -85,7 +85,7 @@ namespace PicView.UILogic.TransformImage
         /// Rotates the image by the specified angle in degrees.
         /// </summary>
         /// <param name="degrees">The angle in degrees to rotate the image.</param>
-        internal static void Rotate(double degrees)
+        private static void Rotate(double degrees)
         {
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
                 Settings.Default.FullscreenGalleryHorizontal == false && GalleryFunctions.IsHorizontalOpen)
@@ -148,10 +148,10 @@ namespace PicView.UILogic.TransformImage
         /// </summary>
         /// <param name="rotationAngle">A double value representing the rotation angle to be checked.</param>
         /// <returns>A bool value representing whether the provided rotation angle is valid or not.</returns>
-        internal static bool IsValidRotation(double rotationAngle)
+        private static bool IsValidRotation(double rotationAngle)
         {
-            rotationAngle = rotationAngle % 360;
-            return rotationAngle == 0 || rotationAngle == 90 || rotationAngle == 180 || rotationAngle == 270;
+            rotationAngle %= 360;
+            return rotationAngle is 0 or 90 or 180 or 270;
         }
 
         /// <summary>
@@ -164,10 +164,10 @@ namespace PicView.UILogic.TransformImage
         /// <param name="roundUp">A bool value indicating the direction of rotation. If true, the method returns the next higher multiple of 90 degrees.
         /// Otherwise, it returns the next lower multiple of 90 degrees.</param>
         /// <returns>An integer representing the next rotation angle in degrees.</returns>
-        internal static int NextRotationAngle(double currentDegrees, bool roundUp)
+        private static int NextRotationAngle(double currentDegrees, bool roundUp)
         {
-            int nearestMultipleOf90 = (int)Math.Round(currentDegrees / 90.0) * 90;
-            int nextRotationAngle = nearestMultipleOf90;
+            var nearestMultipleOf90 = (int)Math.Round(currentDegrees / 90.0) * 90;
+            int nextRotationAngle;
 
             if (roundUp)
             {

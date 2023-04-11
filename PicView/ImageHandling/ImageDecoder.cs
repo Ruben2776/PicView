@@ -167,6 +167,7 @@ namespace PicView.ImageHandling
                 {
                     await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
                     var data = new byte[fileStream.Length];
+                    // ReSharper disable once MustUseReturnValue
                     await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
                     magickImage.Read(data);
                 }
@@ -199,7 +200,8 @@ namespace PicView.ImageHandling
             {
                 await using var stream = File.OpenRead(fileInfo.FullName);
                 var data = new byte[stream.Length];
-                var readAsync = await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
+                // ReSharper disable once MustUseReturnValue
+                await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
 
                 var sKBitmap = SKBitmap.Decode(data);
                 if (sKBitmap is null) { return null; }

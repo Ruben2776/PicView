@@ -1,7 +1,7 @@
-﻿using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using PicView.UILogic;
 using WpfScreenHelper;
 
 namespace PicView.SystemIntegration
@@ -72,36 +72,34 @@ namespace PicView.SystemIntegration
         /// <returns>A new instance of the <see cref="MonitorSize"/> struct representing the current monitor screen.</returns>
         internal static MonitorSize GetMonitorSize()
         {
-            if (Application.Current is not null) // Fixes bug when closing window
+            if (Application.Current is null) // Fixes bug when closing window
+                return new MonitorSize(SystemParameters.WorkArea.Width, SystemParameters.WorkArea.Height, 1,
+                    SystemParameters.WorkArea);
+            
+            Screen? currentMonitor = null;
+            PresentationSource? source = null;
+            double dpiScaling = 0;
+            Rect? workArea = null;
+            double monitorWidth = 0;
+            double monitorHeight = 0;
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () => // Avoid threading errors
             {
-                Screen? currentMonitor = null;
-                PresentationSource? source = null;
-                double dpiScaling = 0;
-                Rect? workArea = null;
-                double monitorWidth = 0;
-                double monitorHeight = 0;
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () => // Avoid threading errors
-                {
-                    // Get the current monitor screen information
-                    currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow).Handle);
+                // Get the current monitor screen information
+                currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow!).Handle);
 
-                    // Find out if the app is being scaled by the monitor
-                    source = PresentationSource.FromVisual(Application.Current.MainWindow);
-                    dpiScaling = source != null && source.CompositionTarget != null ? source.CompositionTarget.TransformFromDevice.M11 : 1;
-                });
+                // Find out if the app is being scaled by the monitor
+                source = PresentationSource.FromVisual(Application.Current.MainWindow!);
+                dpiScaling = source is { CompositionTarget: not null } ? source.CompositionTarget.TransformFromDevice.M11 : 1;
+            });
 
-                // Get the available work area of the monitor screen
-                workArea = currentMonitor.WorkingArea;
-                monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
-                monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
+            // Get the available work area of the monitor screen
+            workArea = currentMonitor.WorkingArea;
+            monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
+            monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
-                // Return a new instance of the MonitorSize struct
-                return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea.Value);
-            }
-            else
-            {
-                return new MonitorSize(System.Windows.SystemParameters.WorkArea.Width, System.Windows.SystemParameters.WorkArea.Height, 1, System.Windows.SystemParameters.WorkArea);
-            }
+            // Return a new instance of the MonitorSize struct
+            return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea.Value);
+
         }
     }
 }

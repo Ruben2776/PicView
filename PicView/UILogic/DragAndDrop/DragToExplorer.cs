@@ -34,6 +34,7 @@ namespace PicView.UILogic.DragAndDrop
                 || UC.GetQuickResize is not null && UC.GetQuickResize.Opacity > 0
                 || UC.UserControls_Open()
                 || ConfigureWindows.MainContextMenu.IsVisible
+                || ConfigureWindows.WindowContextMenu.IsVisible
                 || ColorPicking.IsRunning)
             {
                 return;

@@ -26,7 +26,7 @@ namespace PicView.FileHandling
             /// <summary>
             /// Sort files by creation time.
             /// </summary>
-            Creationtime,
+            CreationTime,
 
             /// <summary>
             /// Sort files by extension.
@@ -36,12 +36,12 @@ namespace PicView.FileHandling
             /// <summary>
             /// Sort files by last access time.
             /// </summary>
-            Lastaccesstime,
+            LastAccessTime,
 
             /// <summary>
             /// Sort files by last write time.
             /// </summary>
-            Lastwritetime,
+            LastWriteTime,
 
             /// <summary>
             /// Sort files randomly.
@@ -58,10 +58,10 @@ namespace PicView.FileHandling
         {
             0 => FileList(fileInfo, SortFilesBy.Name),
             1 => FileList(fileInfo, SortFilesBy.FileSize),
-            2 => FileList(fileInfo, SortFilesBy.Creationtime),
+            2 => FileList(fileInfo, SortFilesBy.CreationTime),
             3 => FileList(fileInfo, SortFilesBy.Extension),
-            4 => FileList(fileInfo, SortFilesBy.Lastaccesstime),
-            5 => FileList(fileInfo, SortFilesBy.Lastwritetime),
+            4 => FileList(fileInfo, SortFilesBy.LastAccessTime),
+            5 => FileList(fileInfo, SortFilesBy.LastWriteTime),
             6 => FileList(fileInfo, SortFilesBy.Random),
             _ => FileList(fileInfo, SortFilesBy.Name),
         };
@@ -72,12 +72,12 @@ namespace PicView.FileHandling
         /// <param name="fileInfo">The file information object.</param>
         /// <param name="sortFilesBy">The sorting method to be used for the file names.</param>
         /// <returns>A list of file names.</returns>
-        internal static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
+        private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
         {
             switch (fileInfo)
             {
                 case null: return null;
-                case { }: break;
+                case not null: break;
             }
 
             // Check if the file is a directory or not
@@ -94,15 +94,16 @@ namespace PicView.FileHandling
 
             // Get the list of files in the directory
             var items = Directory.EnumerateFiles(directory, "*.*", searchOption);
+            var enumerable = items as string[] ?? items.ToArray();
             if (searchOption == SearchOption.AllDirectories)
             {
-                items.AsParallel();
+                enumerable.AsParallel();
             }
 
             // Filter out files with invalid extensions
             var extensions = SupportedFiles.FileExtensions;
-            Func<string, bool> isExtensionValid = f => extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase);
-            items = items.Where(isExtensionValid);
+            bool IsExtensionValid(string f) => extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase);
+            items = enumerable.Where((Func<string, bool>) IsExtensionValid);
 
             // Sort the file names based on the specified sorting method
             switch (sortFilesBy)
@@ -112,7 +113,7 @@ namespace PicView.FileHandling
                     var list = items.ToList();
                     if (Settings.Default.Ascending)
                     {
-                        list.Sort((x, y) => NativeMethods.StrCmpLogicalW(x, y));
+                        list.Sort(NativeMethods.StrCmpLogicalW);
                     }
                     else
                     {
@@ -128,20 +129,20 @@ namespace PicView.FileHandling
 
                 case SortFilesBy.Extension: // Sort by file extension
                     var sortedByExtension = Settings.Default.Ascending ?
-                        items.OrderBy(f => Path.GetExtension(f)) : items.OrderByDescending(f => Path.GetExtension(f));
+                        items.OrderBy(Path.GetExtension) : items.OrderByDescending(Path.GetExtension);
                     return sortedByExtension.ToList();
 
-                case SortFilesBy.Creationtime: // Sort by file creation time
+                case SortFilesBy.CreationTime: // Sort by file creation time
                     var sortedByCreationTime = Settings.Default.Ascending ?
                         items.OrderBy(f => new FileInfo(f).CreationTime) : items.OrderByDescending(f => new FileInfo(f).CreationTime);
                     return sortedByCreationTime.ToList();
 
-                case SortFilesBy.Lastaccesstime: // Sort by file last access time
+                case SortFilesBy.LastAccessTime: // Sort by file last access time
                     var sortedByLastAccessTime = Settings.Default.Ascending ?
                         items.OrderBy(f => new FileInfo(f).LastAccessTime) : items.OrderByDescending(f => new FileInfo(f).LastAccessTime);
                     return sortedByLastAccessTime.ToList();
 
-                case SortFilesBy.Lastwritetime: // Sort by file last write time
+                case SortFilesBy.LastWriteTime: // Sort by file last write time
                     var sortedByLastWriteTime = Settings.Default.Ascending ?
                         items.OrderBy(f => new FileInfo(f).LastWriteTime) : items.OrderByDescending(f => new FileInfo(f).LastWriteTime);
                     return sortedByLastWriteTime.ToList();

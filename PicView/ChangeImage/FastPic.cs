@@ -38,13 +38,13 @@ namespace PicView.ChangeImage
             if (preloadValue != null)
             {
                 fileInfo = preloadValue.FileInfo ?? new FileInfo(Pics[index]);
-                var showthumb = true;
+                var showThumb = true;
                 while (preloadValue.IsLoading)
                 {
-                    if (showthumb)
+                    if (showThumb)
                     {
                         LoadPic.LoadingPreview(fileInfo);
-                        showthumb = false;
+                        showThumb = false;
                     }
                     await Task.Delay(10).ConfigureAwait(false);
                 }
