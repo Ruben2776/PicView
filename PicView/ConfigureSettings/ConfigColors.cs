@@ -30,7 +30,7 @@ namespace PicView.ConfigureSettings
 
         internal static void UpdateColor()
         {
-            var getColor = AnimationHelper.GetPrefferedColor();
+            var getColor = AnimationHelper.GetPreferredColor();
             var getColorBrush = new SolidColorBrush(getColor);
 
             Application.Current.Resources["ChosenColor"] = getColor;

@@ -198,12 +198,12 @@ namespace PicView.UILogic.DragAndDrop
                 Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth,
                 Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight
             };
-            ConfigureWindows.GetMainWindow.topLayer.Children.Add(DropOverlay);
+            ConfigureWindows.GetMainWindow.TopLayer.Children.Add(DropOverlay);
         }
 
         private static void RemoveDragOverlay()
         {
-            ConfigureWindows.GetMainWindow.topLayer.Children.Remove(DropOverlay);
+            ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(DropOverlay);
             DropOverlay = null;
         }
     }

@@ -9,7 +9,7 @@ namespace PicView.Animations
 {
     internal static class AnimationHelper
     {
-        private static readonly ColorAnimation colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.35) };
+        private static readonly ColorAnimation ColorAnimation = new() { Duration = TimeSpan.FromSeconds(.35) };
 
         #region Fade
 
@@ -27,16 +27,17 @@ namespace PicView.Animations
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
-        internal static bool Fade(UIElement element, Duration duration, TimeSpan begintime, double from, double to)
+        internal static bool Fade(UIElement element, Duration duration, TimeSpan beginTime, double from, double to)
         {
             var da = new DoubleAnimation
             {
                 From = from,
                 To = to,
-                BeginTime = begintime,
+                BeginTime = beginTime,
                 Duration = duration
             };
 
@@ -54,45 +55,32 @@ namespace PicView.Animations
         #endregion Fade
 
         #region Color Events
-        internal static void MouseEnterFadeColor(Brush brush)
-        {
-            colorAnimation.From = (Color)Application.Current.Resources["FadeColor"]; 
-            colorAnimation.To = (Color)Application.Current.Resources["BackgroundSubtleHighlight"];
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-        }
-
-        internal static void MouseLeaveFadeColor(Brush brush)
-        {
-            colorAnimation.From = (Color)Application.Current.Resources["BackgroundSubtleHighlight"];
-            colorAnimation.To = (Color)Application.Current.Resources["FadeColor"];
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-        }
         internal static void MouseEnterBgTexColor(Brush brush)
         {
-            colorAnimation.From = Color.FromArgb(0, 0, 0, 0);
-            colorAnimation.To = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            ColorAnimation.From = Color.FromArgb(0, 0, 0, 0);
+            ColorAnimation.To = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
         internal static void MouseLeaveBgTexColor(Brush brush)
         {
-            colorAnimation.From = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
-            colorAnimation.To = Color.FromArgb(0, 0, 0, 0);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            ColorAnimation.From = (Color)Application.Current.Resources["BackgroundHoverHighlight"];
+            ColorAnimation.To = Color.FromArgb(0, 0, 0, 0);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
-        internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
+        internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush)
         {
-            colorAnimation.From = GetPrefferedColor();
-            colorAnimation.To = Color.FromArgb(a, r, g, b);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            ColorAnimation.From = GetPreferredColor();
+            ColorAnimation.To = Color.FromArgb(a, r, g, b);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
-        internal static void MouseOverColorEvent(byte a, byte r, byte g, byte b, Brush brush, bool alpha)
+        internal static void MouseOverColorEvent(byte a, byte r, byte g, byte b, Brush brush)
         {
-            colorAnimation.From = Color.FromArgb(a, r, g, b);
-            colorAnimation.To = GetPrefferedColor();
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            ColorAnimation.From = Color.FromArgb(a, r, g, b);
+            ColorAnimation.To = GetPreferredColor();
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
         internal static void LightThemeMouseEvent(UIElement uIElement, Brush brush)
@@ -101,22 +89,22 @@ namespace PicView.Animations
 
             uIElement.MouseEnter += delegate
             {
-                colorAnimation.From = Color.FromRgb(c.R, c.G, c.B);
-                colorAnimation.To = Colors.White;
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                ColorAnimation.From = Color.FromRgb(c.R, c.G, c.B);
+                ColorAnimation.To = Colors.White;
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
             };
 
             uIElement.MouseLeave += delegate
             {
-                colorAnimation.From = Colors.White;
-                colorAnimation.To = Color.FromRgb(c.R, c.G, c.B);
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+                ColorAnimation.From = Colors.White;
+                ColorAnimation.To = Color.FromRgb(c.R, c.G, c.B);
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
             };
         }
 
-        internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colortheme)
+        internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colorTheme)
         {
-            colorAnimation.From = colortheme switch
+            ColorAnimation.From = colorTheme switch
             {
                 2 => Settings.Default.Pink,
                 3 => Settings.Default.Orange,
@@ -131,14 +119,14 @@ namespace PicView.Animations
                 12 => Settings.Default.Lime,
                 _ => Settings.Default.Blue,
             };
-            colorAnimation.To = Color.FromArgb(a, r, g, b);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            ColorAnimation.To = Color.FromArgb(a, r, g, b);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
-        internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colortheme)
+        internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colorTheme)
         {
-            colorAnimation.From = Color.FromArgb(a, r, g, b);
-            colorAnimation.To = colortheme switch
+            ColorAnimation.From = Color.FromArgb(a, r, g, b);
+            ColorAnimation.To = colorTheme switch
             {
                 2 => Settings.Default.Pink,
                 3 => Settings.Default.Orange,
@@ -153,7 +141,7 @@ namespace PicView.Animations
                 12 => Settings.Default.Lime,
                 _ => Settings.Default.Blue,
             };
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
         #endregion Color Events
@@ -162,7 +150,7 @@ namespace PicView.Animations
 
         #region Return Color
 
-        internal static Color GetPrefferedColor()
+        internal static Color GetPreferredColor()
         {
             return Settings.Default.ColorTheme switch
             {
@@ -193,7 +181,7 @@ namespace PicView.Animations
             {
                 return;
             }
-            if (item.innerborder.Width > PicGallery.GalleryNavigation.PicGalleryItem_Size_s && unHover == false)
+            if (item.InnerBorder.Width > PicGallery.GalleryNavigation.PicGalleryItem_Size_s && unHover == false)
             {
                 // Make sure it is not run consecutively
                 return;
@@ -207,8 +195,8 @@ namespace PicView.Animations
             };
             da.Completed += delegate
             {
-                item.innerborder.Width = to;
-                item.innerborder.Height = to;
+                item.InnerBorder.Width = to;
+                item.InnerBorder.Height = to;
             };
 
             if (unHover)
@@ -224,8 +212,8 @@ namespace PicView.Animations
                 da.Duration = TimeSpan.FromSeconds(.25);
             }
 
-            item.innerborder.BeginAnimation(FrameworkElement.WidthProperty, da);
-            item.innerborder.BeginAnimation(FrameworkElement.HeightProperty, da);
+            item.InnerBorder.BeginAnimation(FrameworkElement.WidthProperty, da);
+            item.InnerBorder.BeginAnimation(FrameworkElement.HeightProperty, da);
         }
 
         internal static void HeightAnimation(FrameworkElement element, double from, double to, bool reverse)

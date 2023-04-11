@@ -21,12 +21,13 @@ namespace PicView.ChangeImage
 {
     internal static class LoadPic
     {
-        #region LoadPicAtValue
-
+        #region Load Pic from String
+        
         /// <summary>
         /// Determine proper path from given string value
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="fileInfo"></param>
         /// <returns></returns>
         internal static async Task LoadPicFromStringAsync(string? path, FileInfo? fileInfo = null)
         {
@@ -34,11 +35,11 @@ namespace PicView.ChangeImage
             {
                 if (fileInfo.Exists)
                 {
-                    if (SupportedFiles.IsSupported(fileInfo))
+                    if (fileInfo.IsSupported())
                     {
                         await LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
                     }
-                    else if (SupportedFiles.IsArchive(fileInfo))
+                    else if (fileInfo.IsArchive())
                     {
                         await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
                     }
@@ -49,12 +50,12 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await ReloadAsync().ConfigureAwait(false);
                 }
             }
             else if (!string.IsNullOrWhiteSpace(path))
             {
-                string check = CheckIfLoadableString(path);
+                var check = CheckIfLoadableString(path);
                 switch (check)
                 {
                     default: await LoadPiFromFileAsync(check).ConfigureAwait(false); return;
@@ -67,14 +68,19 @@ namespace PicView.ChangeImage
             }
             else
             {
-                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                await ReloadAsync().ConfigureAwait(false);
             }
         }
+        
+        #endregion
+
+        #region Load Pic from File
 
         /// <summary>
         /// Loads a picture from a given file path and does extra error checking
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="fileInfo"></param>
         internal static async Task LoadPiFromFileAsync(string? path, FileInfo? fileInfo = null)
         {
             fileInfo ??= new FileInfo(path);
@@ -89,11 +95,11 @@ namespace PicView.ChangeImage
 
 #endif
                 Tooltip.ShowTooltipMessage(e);
-                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
+                await ReloadAsync(true).ConfigureAwait(false);
             }
         }
 
-        static async Task LoadPiFromFileAsync(FileInfo fileInfo)
+        private static async Task LoadPiFromFileAsync(FileInfo fileInfo)
         {
             LoadingPreview(fileInfo);
 
@@ -107,15 +113,13 @@ namespace PicView.ChangeImage
 
             if (Pics.Count == 0)
             {
-                if (SupportedFiles.IsArchive(fileInfo))
+                if (fileInfo.IsArchive())
                 {
                     await LoadPicFromArchiveAsync(fileInfo.FullName).ConfigureAwait(false);
                     return;
                 }
-                else
-                {
-                    Pics = FileList(fileInfo);
-                }
+
+                Pics = FileList(fileInfo);
             }
 
             var folderChanged = CheckDirectoryChangeAndPicGallery(fileInfo);
@@ -140,6 +144,14 @@ namespace PicView.ChangeImage
             await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
         }
 
+        #endregion
+
+        #region Load Pic from Archive
+
+        /// <summary>
+        /// Initiate loading behavior for archive extraction logic
+        /// </summary>
+        /// <param name="archive"></param>
         internal static async Task LoadPicFromArchiveAsync(string? archive)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
@@ -156,13 +168,17 @@ namespace PicView.ChangeImage
                 }
                 Preloader.Clear();
                 GalleryFunctions.Clear();
-                var extraction = ArchiveExtraction.Extract(archive);
+                var extraction = Extract(archive);
                 if (!extraction)
                 {
                     // insert error message here?
                 }
             }).ConfigureAwait(false);
         }
+
+        #endregion
+        
+        #region Load Pic from Folder
 
         /// <summary>
         /// Handle logic if user wants to load from a folder
@@ -171,11 +187,6 @@ namespace PicView.ChangeImage
         internal static async Task LoadPicFromFolderAsync(string folder)
         {
             var fileInfo = new FileInfo(folder);
-            if (fileInfo is null)
-            {
-                UnexpectedError();
-                return;
-            }
 
             await LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
         }
@@ -183,7 +194,8 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Handle logic if user wants to load from a folder
         /// </summary>
-        /// <param name="folder"></param>
+        /// <param name="fileInfo"></param>
+        /// <param name="index"></param>
         internal static async Task LoadPicFromFolderAsync(FileInfo fileInfo, int index = -1)
         {
             // TODO add new function that can go to next/prev folder
@@ -198,7 +210,7 @@ namespace PicView.ChangeImage
                 BackupPath = Pics[FolderIndex];
             }
 
-            bool folderChanged = CheckDirectoryChangeAndPicGallery(fileInfo);
+            var folderChanged = CheckDirectoryChangeAndPicGallery(fileInfo);
 
             if (folderChanged)
             {
@@ -232,6 +244,10 @@ namespace PicView.ChangeImage
                 InitialPath = fileInfo.FullName;
             }
         }
+        
+        #endregion
+        
+        #region Load Pic at Index 
 
         /// <summary>
         /// Loads the image at the specified index asynchronously and updates the UI.
@@ -281,10 +297,10 @@ namespace PicView.ChangeImage
                     preloadValue = Preloader.Get(index);
                     if (preloadValue is null)
                     {
-                        await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                        await ReloadAsync().ConfigureAwait(false);
                         return;
                     }
-                    else if (index != FolderIndex)
+                    if (index != FolderIndex)
                         return;
                 }
                 while (preloadValue.IsLoading)
@@ -303,11 +319,11 @@ namespace PicView.ChangeImage
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
                 GalleryNavigation.FullscreenGalleryNavigation();
 
-            if (GetToolTipMessage is not null and { IsVisible : true })
+            if (GetToolTipMessage is { IsVisible : true })
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                     GetToolTipMessage.Visibility = Visibility.Hidden);
 
-            if (ConfigureWindows.GetImageInfoWindow is not null and { IsVisible : true})
+            if (ConfigureWindows.GetImageInfoWindow is { IsVisible : true})
                 await ImageInfo.UpdateValuesAsync(preloadValue.FileInfo).ConfigureAwait(false);
 
             if (Pics.Count > 1)
@@ -319,17 +335,18 @@ namespace PicView.ChangeImage
                 await Preloader.PreLoadAsync(index).ConfigureAwait(false);
             }
 
-            // Add recent files, except when browing archive
+            // Add recent files, except when browsing archive
             if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > index)
             {
                 GetFileHistory ??= new FileHistory();
                 GetFileHistory.Add(Pics[index]);
             }
         }
+        
+        #endregion
 
-        #endregion LoadPicAtValue
-
-
+        #region Loading Preview
+        
         /// <summary>
         /// Loads a thumbnail preview of an image file and displays a loading message while it's being loaded.
         /// </summary>
@@ -346,12 +363,13 @@ namespace PicView.ChangeImage
 
                 ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSourceHolder.Thumb;
                 // Set to logo size or don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
-                if (bitmapSourceHolder.isLogo || XWidth < 1)
-                {
-                    ConfigureWindows.GetMainWindow.MainImage.Width = bitmapSourceHolder.Size;
-                    ConfigureWindows.GetMainWindow.MainImage.Height = bitmapSourceHolder.Size;
-                }
+                if (!bitmapSourceHolder.isLogo && !(XWidth < 1)) return;
+                ConfigureWindows.GetMainWindow.MainImage.Width = Thumbnails.LogoOrThumbHolder.Size;
+                ConfigureWindows.GetMainWindow.MainImage.Height = Thumbnails.LogoOrThumbHolder.Size;
             });
         }
+        
+
+        #endregion
     }
 }

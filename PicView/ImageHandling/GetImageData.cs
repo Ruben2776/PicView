@@ -22,36 +22,36 @@ namespace PicView.ImageHandling
                 return null;
             }
 
-            string name, directoryname, fullname, creationtime, lastwritetime, lastaccesstime;
+            string name, directoryName, fullname, creationTime, lastWriteTime, lastAccessTime;
 
             if (fileInfo is null)
             {
                 name = string.Empty;
-                directoryname = string.Empty;
+                directoryName = string.Empty;
                 fullname = string.Empty;
-                creationtime = string.Empty;
-                lastwritetime = string.Empty;
-                lastaccesstime = String.Empty;
+                creationTime = string.Empty;
+                lastWriteTime = string.Empty;
+                lastAccessTime = string.Empty;
             }
             else
             {
                 try
                 {
                     name = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                    directoryname = fileInfo.DirectoryName ?? "";
+                    directoryName = fileInfo.DirectoryName ?? "";
                     fullname = fileInfo.FullName;
-                    creationtime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
-                    lastwritetime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
-                    lastaccesstime = fileInfo.LastAccessTime.ToString(CultureInfo.CurrentCulture);
+                    creationTime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
+                    lastWriteTime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
+                    lastAccessTime = fileInfo.LastAccessTime.ToString(CultureInfo.CurrentCulture);
                 }
                 catch (Exception)
                 {
                     name = string.Empty;
-                    directoryname = string.Empty;
+                    directoryName = string.Empty;
                     fullname = string.Empty;
-                    creationtime = string.Empty;
-                    lastwritetime = string.Empty;
-                    lastaccesstime = string.Empty;
+                    creationTime = string.Empty;
+                    lastWriteTime = string.Empty;
+                    lastAccessTime = string.Empty;
                 }
             }
 
@@ -73,11 +73,7 @@ namespace PicView.ImageHandling
                 while (preloadValue.IsLoading)
                 {
                     await Task.Delay(50).ConfigureAwait(false);
-
-                    if (preloadValue == null) { return null; }
                 }
-
-                if (preloadValue == null) { return null; }
 
                 bitmapSource = preloadValue.BitmapSource;
             }
@@ -112,27 +108,26 @@ namespace PicView.ImageHandling
                 ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
             }
 
-            string megaPixels = ((float)bitmapSource.PixelHeight * bitmapSource.PixelWidth / 1000000)
+            var megaPixels = ((float)bitmapSource.PixelHeight * bitmapSource.PixelWidth / 1000000)
                     .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"];
 
-            string printSizeCm = cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                    + " " + Application.Current.Resources["Centimeters"];
+            var printSizeCm = cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
+                              + " " + Application.Current.Resources["Centimeters"];
 
-            string printSizeInch = inchesWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                    + " " + Application.Current.Resources["Inches"];
+            var printSizeInch = inchesWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " + inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)
+                                + " " + Application.Current.Resources["Inches"];
 
-            object bitdepth, stars;
-            string dpi = String.Empty;
+            var dpi = string.Empty;
 
             if (fileInfo is null)
             {
                 return new[] {
                         name,
-                        directoryname,
+                        directoryName,
                         fullname,
-                        creationtime,
-                        lastwritetime,
-                        lastaccesstime,
+                        creationTime,
+                        lastWriteTime,
+                        lastAccessTime,
 
                         "",
 
@@ -279,8 +274,8 @@ namespace PicView.ImageHandling
             string exifversionValue = String.Empty;
 
             var so = ShellObject.FromParsingName(fileInfo.FullName);
-            bitdepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
-            stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
+            var bitDepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
+            var stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
 
             var dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
             var dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
@@ -289,32 +284,29 @@ namespace PicView.ImageHandling
                 dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " + Application.Current.Resources["Dpi"];
             }
 
-            if (bitdepth == null)
-            {
-                bitdepth = string.Empty;
-            }
-
-            if (stars is null)
-            {
-                stars = string.Empty;
-            }
+            bitDepth ??= string.Empty;
+            stars ??= string.Empty;
 
             var magickImage = new MagickImage();
             try
             {
-                magickImage.Read(fileInfo);
+                if (fileInfo.Length < 214783648)
+                    await magickImage.ReadAsync(fileInfo);
+                else
+                    // ReSharper disable once MethodHasAsyncOverload
+                    magickImage.Read(fileInfo);
             }
             catch (Exception)
             {
                 return new[] {
                         name,
-                        directoryname,
+                        directoryName,
                         fullname,
-                        creationtime,
-                        lastwritetime,
-                        lastaccesstime,
+                        creationTime,
+                        lastWriteTime,
+                        lastAccessTime,
 
-                        bitdepth.ToString() ?? "",
+                        bitDepth.ToString() ?? "",
 
                         bitmapSource.PixelWidth.ToString() ?? "",
                         bitmapSource.PixelHeight.ToString() ?? "",
@@ -359,26 +351,28 @@ namespace PicView.ImageHandling
             {
                 var authorsArray = (string[])_author.ValueAsObject;
 
-                if (authorsArray.Length == 1)
+                switch (authorsArray.Length)
                 {
-                    authorsValue = authorsArray[0];
-                }
-                else if (authorsArray.Length >= 2)
-                {
-                    var sb = new StringBuilder();
-                    for (int i = 0; i < authorsArray.Length; i++)
+                    case 1:
+                        authorsValue = authorsArray[0];
+                        break;
+                    case >= 2:
                     {
-                        if (i == 0)
+                        var sb = new StringBuilder();
+                        for (int i = 0; i < authorsArray.Length; i++)
                         {
-                            sb.Append(authorsArray[0]);
-                            authorsValue = authorsArray[0];
+                            if (i == 0)
+                            {
+                                sb.Append(authorsArray[0]);
+                            }
+                            else
+                            {
+                                sb.Append(", " + authorsArray[i]);
+                            }
                         }
-                        else
-                        {
-                            sb.Append(", " + authorsArray[i]);
-                        }
+                        authorsValue = sb.ToString();
+                        break;
                     }
-                    authorsValue = sb.ToString();
                 }
             }
 
@@ -554,13 +548,13 @@ namespace PicView.ImageHandling
                 var colorSpace = exifData.GetValue(ExifTag.ColorSpace);
                 if (colorSpace is not null)
                 {
-                    switch (colorSpace.Value)
+                    colorRepresentationValue = colorSpace.Value switch
                     {
-                        case 1: colorRepresentationValue = "sRGB"; break;
-                        case 2: colorRepresentationValue = "Adobe RGB"; break;
-                        case 65535: colorRepresentationValue = "Uncalibrated"; break;
-                        default: colorRepresentationValue = "Unknown"; break;
-                    }
+                        1 => "sRGB",
+                        2 => "Adobe RGB",
+                        65535 => "Uncalibrated",
+                        _ => "Unknown"
+                    };
                 }
 
                 var compr = exifData.GetValue(ExifTag.Compression);
@@ -672,13 +666,13 @@ namespace PicView.ImageHandling
             {
                 // Fileinfo
                 name,
-                directoryname,
+                directoryName,
                 fullname,
-                creationtime,
-                lastwritetime,
-                lastaccesstime,
+                creationTime,
+                lastWriteTime,
+                lastAccessTime,
 
-                bitdepth.ToString() ?? "",
+                bitDepth.ToString() ?? "",
 
                 bitmapSource.PixelWidth.ToString() ?? "",
                 bitmapSource.PixelHeight.ToString() ?? "",
@@ -771,8 +765,8 @@ namespace PicView.ImageHandling
             double minutes = rationals[1].Numerator / rationals[1].Denominator;
             double seconds = rationals[2].Numerator / rationals[2].Denominator;
 
-            double coordinate = degrees + (minutes / 60d) + (seconds / 3600d);
-            if (gpsRef == "S" || gpsRef == "W")
+            var coordinate = degrees + (minutes / 60d) + (seconds / 3600d);
+            if (gpsRef is "S" or "W")
                 coordinate *= -1;
             return coordinate;
         }

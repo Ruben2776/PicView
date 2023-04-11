@@ -32,7 +32,7 @@ namespace PicView.ImageHandling
                 && GetPicGallery.Container.Children.Count == Pics.Count)
             {
                 var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
-                pic = (BitmapSource)y.img.Source;
+                pic = (BitmapSource)y.ThumbImage.Source;
             }
             else
             {
@@ -55,15 +55,15 @@ namespace PicView.ImageHandling
 
         internal class LogoOrThumbHolder
         {
-            internal BitmapSource Thumb;
+            internal readonly BitmapSource Thumb;
 
-            internal bool isLogo;
+            internal readonly bool isLogo;
 
-            internal readonly double Size = 256; // Set it to the size of the logo
+            internal const double Size = 256; // Set it to the size of the logo
 
-            public LogoOrThumbHolder(BitmapSource Thumb, bool isLogo)
+            public LogoOrThumbHolder(BitmapSource thumb, bool isLogo)
             {
-                this.Thumb = Thumb;
+                Thumb = thumb;
                 this.isLogo = isLogo;
             }
         }
@@ -93,11 +93,7 @@ namespace PicView.ImageHandling
                         return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
                 }
                 var thumb = GetMagickImageThumb(fileInfo, size);
-                if (thumb is null)
-                {
-                    return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
-                }
-                return new LogoOrThumbHolder(thumb, false);
+                return thumb is null ? new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true) : new LogoOrThumbHolder(thumb, false);
             }
             catch (Exception e)
             {
@@ -112,20 +108,17 @@ namespace PicView.ImageHandling
         /// Returns BitmapSource at specified quality and pixel size
         /// </summary>
         /// <param name="fileInfo"></param>
-        /// <param name="quality"></param>
         /// <param name="size"></param>
         /// <returns></returns>
         private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, int size = 500)
         {
             try
             {
-                using (MagickImage image = new MagickImage(fileInfo))
-                {
-                    image.Thumbnail(new MagickGeometry(size, size));
-                    var bmp = image.ToBitmapSource();
-                    bmp.Freeze();
-                    return bmp;
-                }
+                using var image = new MagickImage(fileInfo);
+                image.Thumbnail(new MagickGeometry(size, size));
+                var bmp = image.ToBitmapSource();
+                bmp.Freeze();
+                return bmp;
             }
 #if DEBUG
             catch (Exception e)
@@ -147,7 +140,7 @@ namespace PicView.ImageHandling
         {
             try
             {
-                BitmapSource pic = ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
+                var pic = ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
                 pic.Freeze();
                 return pic;
             }

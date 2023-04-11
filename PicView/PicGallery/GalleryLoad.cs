@@ -106,13 +106,13 @@ namespace PicView.PicGallery
             if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
             var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
 
-            if (Math.Abs(tempItem.outterborder.Height - GalleryNavigation.PicGalleryItem_Size) < 1) { return; }
+            if (Math.Abs(tempItem.OuterBorder.Height - GalleryNavigation.PicGalleryItem_Size) < 1) { return; }
 
             for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
             {
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                item.innerborder.Height = item.innerborder.Width = GalleryNavigation.PicGalleryItem_Size_s;
-                item.outterborder.Height = item.outterborder.Width = GalleryNavigation.PicGalleryItem_Size;
+                item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItem_Size_s;
+                item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItem_Size;
             }
         }
 
@@ -202,7 +202,7 @@ namespace PicView.PicGallery
                     }
 
                     var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                    item.img.Source = pic ?? ImageFunctions.ShowLogo();
+                    item.ThumbImage.Source = pic ?? ImageFunctions.ShowLogo();
                 }));
             }
             catch (Exception e)

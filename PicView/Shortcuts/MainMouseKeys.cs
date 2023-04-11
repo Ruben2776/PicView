@@ -28,9 +28,9 @@ namespace PicView.Shortcuts
                 return;
             }
 
-            if (Color_Picking.IsRunning)
+            if (ColorPicking.IsRunning)
             {
-                Color_Picking.StopRunning(true);
+                ColorPicking.StopRunning(true);
                 return;
             }
 
@@ -76,9 +76,9 @@ namespace PicView.Shortcuts
             {
                 case MouseButton.Right:
                     // Stop running color picking when right clicking
-                    if (Color_Picking.IsRunning)
+                    if (ColorPicking.IsRunning)
                     {
-                        Color_Picking.StopRunning(false);
+                        ColorPicking.StopRunning(false);
                     }
                     else if (IsAutoScrolling)
                     {
@@ -147,11 +147,11 @@ namespace PicView.Shortcuts
                 AutoScrollTimer.Start();
             }
 
-            if (Color_Picking.IsRunning)
+            if (ColorPicking.IsRunning)
             {
                 if (GetColorPicker.Opacity == 1)
                 {
-                    Color_Picking.StartRunning();
+                    ColorPicking.StartRunning();
                 }
 
                 return;

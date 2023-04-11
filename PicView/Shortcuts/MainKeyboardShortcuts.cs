@@ -251,9 +251,9 @@ namespace PicView.Shortcuts
                         {
                             IsDialogOpen = false;
                         }
-                        else if (Color_Picking.IsRunning)
+                        else if (ColorPicking.IsRunning)
                         {
-                            Color_Picking.StopRunning(false);
+                            ColorPicking.StopRunning(false);
                         }
                         else if (GetEffectsWindow != null && GetEffectsWindow.IsVisible)
                         {

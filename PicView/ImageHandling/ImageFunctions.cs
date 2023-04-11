@@ -32,7 +32,7 @@ namespace PicView.ImageHandling
 
             try
             {
-                using MagickImage image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]);
+                using var image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]);
                 var profile = image?.GetExifProfile();
                 if (profile is null)
                 {
@@ -164,13 +164,9 @@ namespace PicView.ImageHandling
             }
         });
 
-        internal static RenderTargetBitmap? ImageErrorMessage()
+        internal static RenderTargetBitmap ImageErrorMessage()
         {
             var brush = Application.Current.TryFindResource("MainColorBrush") as Brush;
-            if (brush == null)
-            {
-                return null;
-            }
 
             var w = ScaleImage.XWidth != 0 ? ScaleImage.XWidth : 300 * WindowSizing.MonitorInfo.DpiScaling;
             var h = ScaleImage.XHeight != 0 ? ScaleImage.XHeight : 300 * WindowSizing.MonitorInfo.DpiScaling;
@@ -195,9 +191,12 @@ namespace PicView.ImageHandling
                 rtv.Freeze();
                 return rtv;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                return null;
+#if DEBUG
+                Trace.WriteLine($"{nameof(ImageErrorMessage)} exception:\n{exception.Message}");
+#endif
+                throw new Exception();
             }
         }
         static FlowDirection FlowDirection => CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;

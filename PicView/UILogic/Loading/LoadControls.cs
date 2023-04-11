@@ -256,7 +256,7 @@ namespace PicView.UILogic.Loading
                 Height = 35
             };
 
-            ConfigureWindows.GetMainWindow.topLayer.Children.Add(GetAutoScrollSign);
+            ConfigureWindows.GetMainWindow.TopLayer.Children.Add(GetAutoScrollSign);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetAutoScrollSign) + " loaded ");
@@ -284,7 +284,7 @@ namespace PicView.UILogic.Loading
         {
             GetColorPicker = new ColorPicker();
 
-            ConfigureWindows.GetMainWindow.topLayer.Children.Add(GetColorPicker);
+            ConfigureWindows.GetMainWindow.TopLayer.Children.Add(GetColorPicker);
 
 #if DEBUG
             Trace.WriteLine(nameof(GetColorPicker) + " loaded ");

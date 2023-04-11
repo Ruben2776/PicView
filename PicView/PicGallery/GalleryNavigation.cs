@@ -140,13 +140,13 @@ namespace PicView.PicGallery
 
                 if (selected)
                 {
-                    nextItem.innerborder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                    nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size;
+                    nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
+                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItem_Size;
                 }
                 else
                 {
-                    nextItem.innerborder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                    nextItem.innerborder.Width = nextItem.innerborder.Height = PicGalleryItem_Size_s;
+                    nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
+                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItem_Size_s;
                 }
             });
         }

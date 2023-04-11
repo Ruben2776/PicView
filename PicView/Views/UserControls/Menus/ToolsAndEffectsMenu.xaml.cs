@@ -87,8 +87,8 @@ namespace PicView.Views.UserControls.Menus
                 }
 
                 UC.Close_UserControls();
-                Color_Picking.IsRunning = true;
-                Color_Picking.Start();
+                ColorPicking.IsRunning = true;
+                ColorPicking.Start();
             };
 
             // ImageInfoButton

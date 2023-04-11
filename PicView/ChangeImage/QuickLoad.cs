@@ -5,6 +5,7 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using XamlAnimatedGif;
@@ -32,13 +33,14 @@ namespace PicView.ChangeImage
                 await LoadPicFromStringAsync(file).ConfigureAwait(false);
                 return;
             }
-            else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+
+            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
             {
                 await LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
                 return;
             }
 
-            if (SupportedFiles.IsArchive(file))
+            if (file.IsArchive())
             {
                 await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
                 return;
@@ -46,14 +48,13 @@ namespace PicView.ChangeImage
 
             LoadingPreview(fileInfo);
             var size = ImageSizeFunctions.GetImageSize(file);
-            BitmapSource? bitmapSource = null;
 
             if (size.HasValue)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => FitImage(size.Value.Width, size.Value.Height), DispatcherPriority.Send);
             }
 
-            bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             if (bitmapSource != null)
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => SetMainImage(bitmapSource, fileInfo), DispatcherPriority.Send);
@@ -64,8 +65,8 @@ namespace PicView.ChangeImage
             }
             else
             {
-                var ErrorImage = ImageFunctions.ImageErrorMessage();
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ConfigureWindows.GetMainWindow.MainImage.Source = ErrorImage);
+                var errorImage = ImageFunctions.ImageErrorMessage();
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ConfigureWindows.GetMainWindow.MainImage.Source = errorImage);
             }
 
             Pics = FileList(fileInfo);
@@ -96,7 +97,7 @@ namespace PicView.ChangeImage
                 await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
 
-            // Add recent files, except when browing archive
+            // Add recent files, except when browsing archive
             if (string.IsNullOrWhiteSpace(TempZipFile) && Pics?.Count > FolderIndex)
             {
                 GetFileHistory ??= new FileHistory();
@@ -104,7 +105,7 @@ namespace PicView.ChangeImage
             }            
         }
 
-        static void SetMainImage(BitmapSource bitmapSource, FileInfo fileInfo)
+        private static void SetMainImage(ImageSource imageSource, FileSystemInfo fileInfo)
         {
             if (fileInfo.Extension?.ToLowerInvariant() == ".gif")
             {
@@ -112,7 +113,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                ConfigureWindows.GetMainWindow.MainImage.Source = imageSource;
             }
             ConfigureWindows.GetMainWindow.MainImage.Cursor = System.Windows.Input.Cursors.Arrow;
         }

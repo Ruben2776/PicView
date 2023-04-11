@@ -24,7 +24,7 @@ namespace PicView.FileHandling
         internal static string? TempZipFile { get; set; }
 
         /// <summary>
-        /// Attemps to extract folder
+        /// Attempts to extract folder
         /// </summary>
         /// <param name="path">The path to the archived file</param>
         /// <returns></returns>
@@ -49,21 +49,21 @@ namespace PicView.FileHandling
                 return null;
             }
 
-            string x86Path = GetProgramFilePath(Environment.SpecialFolder.ProgramFilesX86, commonPaths);
+            var x86Path = GetProgramFilePath(Environment.SpecialFolder.ProgramFilesX86, commonPaths);
             if (!string.IsNullOrEmpty(x86Path))
             {
                 return x86Path;
             }
 
-            string x64Path = GetProgramFilePath(Environment.SpecialFolder.ProgramFiles, commonPaths);
+            var x64Path = GetProgramFilePath(Environment.SpecialFolder.ProgramFiles, commonPaths);
             if (!string.IsNullOrEmpty(x64Path))
             {
                 return x64Path;
             }
 
-            foreach (string appName in appNames)
+            foreach (var appName in appNames)
             {
-                string? registryPath = FileFunctions.GetPathForExe(appName);
+                var registryPath = FileFunctions.GetPathForExe(appName);
                 if (registryPath == null)
                 {
                     return null;
@@ -77,11 +77,11 @@ namespace PicView.FileHandling
             return null;
         }
 
-        private static string GetProgramFilePath(Environment.SpecialFolder specialFolder, string[] paths)
+        private static string GetProgramFilePath(Environment.SpecialFolder specialFolder, IEnumerable<string> paths)
         {
-            foreach (string path in paths)
+            foreach (var path in paths)
             {
-                string fullPath = Environment.GetFolderPath(specialFolder) + path;
+                var fullPath = Environment.GetFolderPath(specialFolder) + path;
                 if (File.Exists(fullPath))
                 {
                     return fullPath;
@@ -92,11 +92,11 @@ namespace PicView.FileHandling
         }
 
         /// <summary>
-        /// Attemps to extract folder
+        /// Attempts to extract folder
         /// </summary>
         /// <param name="path">The path to the archived file</param>
-        /// <param name="exe">Full path of the executeable</param>
-        /// <param name="winrar">If WinRar or 7-Zip</param>
+        /// <param name="exe">Full path of the executable</param>
+        /// <param name="isWinrar">If WinRar or 7-Zip</param>
         private static bool Extract(string path, string exe, bool isWinrar)
         {
             if (!CreateTempDirectory(path))
@@ -138,11 +138,9 @@ namespace PicView.FileHandling
                 {
                     if (previewed) return;
 
-                    if (SetDirectory() && Pics.Count >= 1) 
-                    {
-                        LoadPic.LoadingPreview(new FileInfo(Pics[0]));
-                        previewed = true;
-                    }
+                    if (!SetDirectory() || Pics.Count < 1) continue;
+                    LoadPic.LoadingPreview(new FileInfo(Pics[0]));
+                    previewed = true;
                 }
             };
 

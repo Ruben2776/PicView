@@ -23,7 +23,7 @@ namespace PicView.ChangeTitlebar
         /// <param name="index"></param>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        internal static string[] TitleString(int width, int height, int index, FileInfo? fileInfo)
+        internal static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
             // Check if file info is present or not
             if (fileInfo == null)
@@ -68,7 +68,7 @@ namespace PicView.ChangeTitlebar
                 .Append(" x ")
                 .Append(height)
                 .Append(StringAspect(width, height))
-                .Append(FileFunctions.GetReadableFileSize(fileInfo.Length));
+                .Append(fileInfo.Length.GetReadableFileSize());
 
             // Check if ZoomPercentage is not empty
             if (!string.IsNullOrEmpty(ZoomPercentage))
@@ -132,7 +132,7 @@ namespace PicView.ChangeTitlebar
         /// <param name="height"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static string[] TitleString(int width, int height, string path)
+        private static string[]? TitleString(int width, int height, string path)
         {
             var s1 = new StringBuilder();
             s1.Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
@@ -153,7 +153,7 @@ namespace PicView.ChangeTitlebar
 
         internal static void SetTitleString()
         {
-            string[] titleString;
+            string[]? titleString;
             var preloadValue = Preloader.Get(FolderIndex);
             if (preloadValue is null)
             {
@@ -164,11 +164,13 @@ namespace PicView.ChangeTitlebar
                 }
                 var path = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                 path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
-                titleString = TitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, path);
+                titleString = TitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, path);
             }
             else
             {
-                titleString = TitleString((int)preloadValue.BitmapSource.Width, (int)preloadValue.BitmapSource.Height, FolderIndex, preloadValue.FileInfo);
+                titleString = TitleString((int)preloadValue.BitmapSource.Width,
+                    (int)preloadValue.BitmapSource.Height, FolderIndex, preloadValue.FileInfo);
             }
            
             if (titleString == null)
@@ -206,7 +208,7 @@ namespace PicView.ChangeTitlebar
         /// <param name="height"></param>
         internal static void SetTitleString(int width, int height)
         {
-            var path = FileFunctions.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            var path = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
 
             path = string.IsNullOrWhiteSpace(path) ? Application.Current.Resources["Image"] as string : path;
 
@@ -218,8 +220,8 @@ namespace PicView.ChangeTitlebar
 
         internal static void SetLoadingString()
         {
-            var s = Application.Current.Resources["Loading"] as string;
-            if (s == null || ConfigureWindows.GetMainWindow.Title == null || ConfigureWindows.GetMainWindow.TitleText == null)
+            if (Application.Current.Resources["Loading"] is not string s ||
+                ConfigureWindows.GetMainWindow.Title == null || ConfigureWindows.GetMainWindow.TitleText == null)
             {
                 return;
             }

@@ -31,8 +31,8 @@ namespace PicView.Editing.Crop
                 LoadControls.LoadCroppingTool();
             }
 
-            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
+            GetCropppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
 
             ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
 
@@ -71,8 +71,8 @@ namespace PicView.Editing.Crop
 
         internal static void InitilizeCrop()
         {
-            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
+            GetCropppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
+            GetCropppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
 
             CropService = new CropService(GetCropppingTool);
 
@@ -108,7 +108,7 @@ namespace PicView.Editing.Crop
                 directory = Path.GetDirectoryName(filename);
             }
 
-            var Savedlg = new SaveFileDialog
+            var saveDialog = new SaveFileDialog
             {
                 Filter = Open_Save.FilterFiles,
                 Title = $"{Application.Current.Resources["SaveImage"]} - {SetTitle.AppName}",
@@ -117,10 +117,10 @@ namespace PicView.Editing.Crop
 
             if (directory is not null)
             {
-                Savedlg.InitialDirectory = directory;
+                saveDialog.InitialDirectory = directory;
             }
 
-            if (!Savedlg.ShowDialog().HasValue)
+            if (!saveDialog.ShowDialog().HasValue)
             {
                 return false;
             }
@@ -131,10 +131,10 @@ namespace PicView.Editing.Crop
             var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
             var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-            var success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
+            var success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, saveDialog.FileName, crop, effectApplied).ConfigureAwait(false);
             if (success)
             {
-                return Savedlg.FileName == Pics[FolderIndex];
+                return saveDialog.FileName == Pics[FolderIndex];
             }
             return false;
         }
@@ -147,15 +147,13 @@ namespace PicView.Editing.Crop
         {
             var cropArea = CropService.GetCroppedArea(); // Contains the dimensions and coordinates of cropped area
 
-            if (cropArea == null) { return null; }
-
             // TODO add support for zooming in
             int x, y, width, height;
 
             x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
             y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
 
-            switch (RotationAngle) // Degress the image has been rotated by
+            switch (RotationAngle) // Degrees the image has been rotated by
             {
                 case 0:
                 case 180:

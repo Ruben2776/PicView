@@ -54,13 +54,13 @@ namespace PicView.Views.UserControls.Misc
                 ApplyButton.MouseEnter += delegate
                 {
                     colorAnimation.From = (Color)Application.Current.Resources["MainColor"];
-                    colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                    colorAnimation.To = AnimationHelper.GetPreferredColor();
                     ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                     Cursor = Cursors.Hand;
                 };
                 ApplyButton.MouseLeave += delegate
                 {
-                    colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                    colorAnimation.From = AnimationHelper.GetPreferredColor();
                     colorAnimation.To = (Color)Application.Current.Resources["MainColor"];
                     ApplyBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
                     Cursor = Cursors.Arrow;

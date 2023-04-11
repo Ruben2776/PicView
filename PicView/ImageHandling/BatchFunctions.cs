@@ -7,7 +7,7 @@ namespace PicView.ImageHandling
 {
     internal static class BatchFunctions
     {
-        internal static async Task<string> RunAsync(FileInfo sourceFile, int width, int height, int quality, string? ext, Percentage? percentage, bool? compress, string outputFolder, bool toResize)
+        internal static async Task<string> RunAsync(FileInfo sourceFile, int width, int height, int quality, string? ext, Percentage? percentage, bool? compress, string? outputFolder, bool toResize)
         {
             var destination = outputFolder is null ? null : outputFolder + @"/" + sourceFile.Name;
 
@@ -18,13 +18,13 @@ namespace PicView.ImageHandling
                 Directory.CreateDirectory(outputFolder);
             }
 
-            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetReadableFileSize(sourceFile.Length)).Append(" 🠚 ");
+            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(sourceFile.Length.GetReadableFileSize()).Append(" 🠚 ");
 
             if (toResize)
             {
                 try
                 {
-                    using var filestream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);
+                    await using var filestream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);
                     using var magick = new MagickImage(filestream) 
                     {
                         ColorSpace = ColorSpace.Transparent,
@@ -45,7 +45,7 @@ namespace PicView.ImageHandling
                         if (ext is not null)
                         {
                             destination = Path.ChangeExtension(sourceFile.FullName, ext);
-                            using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
+                            await using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
                             await magick.WriteAsync(saveStream).ConfigureAwait(false);
                             DeleteFiles.TryDeleteFile(sourceFile.FullName, true);
                             if (compress.HasValue)
@@ -73,7 +73,7 @@ namespace PicView.ImageHandling
                             destination = Path.ChangeExtension(destination, ext);
                         }
 
-                        using var overwriteStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
+                        await using var overwriteStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
                         await magick.WriteAsync(overwriteStream).ConfigureAwait(false);
                         if (compress.HasValue)
                         {
@@ -123,8 +123,8 @@ namespace PicView.ImageHandling
             }
 
             Optimize(compress.Value, destination);
-            var newSize = FileFunctions.GetReadableFileSize(new FileInfo(sourceFile.FullName).Length);
-            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(FileFunctions.GetReadableFileSize(sourceFile.Length))
+            var newSize = new FileInfo(sourceFile.FullName).Length.GetReadableFileSize();
+            sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(sourceFile.Length.GetReadableFileSize())
                 .Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
 
             return sb.ToString();
@@ -141,12 +141,12 @@ namespace PicView.ImageHandling
 
         internal class ThumbNailHolder
         {
-            internal readonly string Directory;
+            internal readonly string? Directory;
             internal readonly int Width;
             internal readonly int Height;
             internal readonly Percentage? Percentage;
 
-            internal ThumbNailHolder(string directory, int width, int height, Percentage? percentage)
+            internal ThumbNailHolder(string? directory, int width, int height, Percentage? percentage)
             {
                 Directory = directory;
                 Width = width;

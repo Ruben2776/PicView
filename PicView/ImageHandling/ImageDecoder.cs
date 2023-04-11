@@ -19,9 +19,9 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="fileInfo">Cannot be null</param>
         /// <returns></returns>
-        internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo fileInfo)
+        internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo? fileInfo)
         {
-            if (fileInfo == null || fileInfo.Length <= 0) { return null; }
+            if (fileInfo is not { Length: > 0 }) { return null; }
 
             var extension = fileInfo.Extension.ToLowerInvariant();
             switch (extension)
@@ -59,7 +59,7 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var frame = BitmapFrame.Create(GetRenderedBitmapFrame());
+                var frame = BitmapFrame.Create(GetRenderedBitmapFrame() ?? throw new InvalidOperationException());
                 var encoder = new PngBitmapEncoder();
 
                 encoder.Frames.Add(frame);
@@ -99,9 +99,7 @@ namespace PicView.ImageHandling
         {
             try
             {
-                var sourceBitmap = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
-
-                if (sourceBitmap == null)
+                if (ConfigureWindows.GetMainWindow.MainImage.Source is not BitmapSource sourceBitmap)
                 {
                     return null;
                 }
@@ -121,7 +119,7 @@ namespace PicView.ImageHandling
                 var renderedBitmap = new RenderTargetBitmap(sourceBitmap.PixelWidth, sourceBitmap.PixelHeight, sourceBitmap.DpiX, sourceBitmap.DpiY, PixelFormats.Default);
                 renderedBitmap.Render(rectangle);
 
-                BitmapFrame bitmapFrame = BitmapFrame.Create(renderedBitmap);
+                var bitmapFrame = BitmapFrame.Create(renderedBitmap);
                 bitmapFrame.Freeze();
 
                 return bitmapFrame;
@@ -129,7 +127,7 @@ namespace PicView.ImageHandling
             catch (Exception exception)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n {exception.Message}");
+                Trace.WriteLine($"{nameof(GetRenderedBitmapFrame)} exception, \n{exception.Message}");
 #endif
                 return null;
             }
@@ -167,8 +165,8 @@ namespace PicView.ImageHandling
                 }
                 else
                 {
-                    using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
-                    byte[] data = new byte[fileStream.Length];
+                    await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+                    var data = new byte[fileStream.Length];
                     await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
                     magickImage.Read(data);
                 }
@@ -199,9 +197,9 @@ namespace PicView.ImageHandling
 
             try
             {
-                using var stream = File.OpenRead(fileInfo.FullName);
+                await using var stream = File.OpenRead(fileInfo.FullName);
                 var data = new byte[stream.Length];
-                await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
+                var readAsync = await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
 
                 var sKBitmap = SKBitmap.Decode(data);
                 if (sKBitmap is null) { return null; }
@@ -215,7 +213,7 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception: \n {e.Message}");
+                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception:\n{e.Message}");
 #endif
                 return null;
             }
@@ -223,11 +221,9 @@ namespace PicView.ImageHandling
 
         private static BitmapSource? GetDefaultBitmapSource(FileInfo fileInfo)
         {
-            MagickImage? magickImage = null;
-
             try
             {
-                magickImage = new MagickImage();
+                var magickImage = new MagickImage();
                 magickImage.Read(fileInfo);
 
                 var extension = fileInfo.Extension;
@@ -274,7 +270,7 @@ namespace PicView.ImageHandling
             catch (Exception exception)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception: \n{exception.Message}");
+                Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception:\n{exception.Message}");
 #endif
                 Tooltip.ShowTooltipMessage(exception);
                 return null;

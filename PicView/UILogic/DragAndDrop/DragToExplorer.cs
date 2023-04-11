@@ -34,7 +34,7 @@ namespace PicView.UILogic.DragAndDrop
                 || UC.GetQuickResize is not null && UC.GetQuickResize.Opacity > 0
                 || UC.UserControls_Open()
                 || ConfigureWindows.MainContextMenu.IsVisible
-                || Color_Picking.IsRunning)
+                || ColorPicking.IsRunning)
             {
                 return;
             }
@@ -105,7 +105,7 @@ namespace PicView.UILogic.DragAndDrop
 
         private static void DragContrinueHandler(object sender, QueryContinueDragEventArgs e)
         {
-            if (Color_Picking.IsRunning || e.Action == DragAction.Continue && e.KeyStates != DragDropKeyStates.LeftMouseButton)
+            if (ColorPicking.IsRunning || e.Action == DragAction.Continue && e.KeyStates != DragDropKeyStates.LeftMouseButton)
             {
                 dragdropWindow?.Hide();
                 return;

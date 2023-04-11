@@ -198,10 +198,10 @@ namespace PicView.FileHandling
         /// <returns>The full path of the executable file, or null if the file is not found in the registry.</returns>
         internal static string? GetPathForExe(string fileName)
         {
-            RegistryKey localMachine = Registry.LocalMachine;
-            RegistryKey? fileKey = localMachine.OpenSubKey(string.Format(@"{0}\{1}", @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths", fileName));
-            if (fileKey == null) { return null; }
-            object? result = fileKey.GetValue(string.Empty);
+            var localMachine = Registry.LocalMachine;
+            var fileKey = localMachine.OpenSubKey(
+                $@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{fileName}");
+            var result = fileKey?.GetValue(string.Empty);
             if (result == null) { return null; }
             fileKey.Close();
 
@@ -247,15 +247,9 @@ namespace PicView.FileHandling
         internal static string RetrieveFromURL()
         {
             // Check if from URL and download it
-            string url = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
-            if (!string.IsNullOrEmpty(url))
-            {
-                if (File.Exists(ArchiveExtraction.TempFilePath))
-                {
-                    return ArchiveExtraction.TempFilePath;
-                }
-            }
-            return string.Empty;
+            var url = GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            if (string.IsNullOrEmpty(url)) return string.Empty;
+            return File.Exists(ArchiveExtraction.TempFilePath) ? ArchiveExtraction.TempFilePath : string.Empty;
         }
     }
 }

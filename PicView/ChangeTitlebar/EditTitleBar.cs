@@ -111,11 +111,9 @@ namespace PicView.ChangeTitlebar
             Keyboard.ClearFocus();
             ConfigureWindows.GetMainWindow.Focus();
 
-            if (backup && backupTitle != null)
-            {
-                ConfigureWindows.GetMainWindow.TitleText.Text = backupTitle;
-                backupTitle = string.Empty;
-            }
+            if (!backup || backupTitle == null) return;
+            ConfigureWindows.GetMainWindow.TitleText.Text = backupTitle;
+            backupTitle = string.Empty;
         }
     }
 }

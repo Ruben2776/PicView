@@ -319,12 +319,12 @@ namespace PicView.Views.Windows
             ThemeRestart.MouseEnter += delegate
             {
                 colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = AnimationHelper.GetPreferredColor();
                 ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             ThemeRestart.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.From = AnimationHelper.GetPreferredColor();
                 colorAnimation.To = MainColor;
                 ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
@@ -333,12 +333,12 @@ namespace PicView.Views.Windows
             LanguageRestart.MouseEnter += delegate
             {
                 colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = AnimationHelper.GetPreferredColor();
                 LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             LanguageRestart.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.From = AnimationHelper.GetPreferredColor();
                 colorAnimation.To = MainColor;
                 LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
@@ -375,12 +375,12 @@ namespace PicView.Views.Windows
             ScrollZoom.MouseEnter += delegate
             {
                 colorAnimation.From =
-                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = AnimationHelper.GetPreferredColor();
                 ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             ScrollZoom.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.From = AnimationHelper.GetPreferredColor();
                 colorAnimation.To = MainColor;
                 ScrollZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
@@ -389,12 +389,12 @@ namespace PicView.Views.Windows
             CtrlZoom.MouseEnter += delegate
             {
                 colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = AnimationHelper.GetPreferredColor();
                 CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             CtrlZoom.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.From = AnimationHelper.GetPreferredColor();
                 colorAnimation.To = MainColor;
                 CtrlZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
@@ -403,12 +403,12 @@ namespace PicView.Views.Windows
             AvoidZoomRadio.MouseEnter += delegate
             {
                 colorAnimation.From = MainColor;
-                colorAnimation.To = AnimationHelper.GetPrefferedColor();
+                colorAnimation.To = AnimationHelper.GetPreferredColor();
                 AvoidZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };
             AvoidZoomRadio.MouseLeave += delegate
             {
-                colorAnimation.From = AnimationHelper.GetPrefferedColor();
+                colorAnimation.From = AnimationHelper.GetPreferredColor();
                 colorAnimation.To = MainColor;
                 AvoidZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
             };

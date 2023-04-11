@@ -36,7 +36,7 @@ namespace PicView.PicGallery
                 ConfigureWindows.GetMainWindow.Focus();
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
                 var z = GetPicGallery.Container.Children[id] as PicGalleryItem;
-                ConfigureWindows.GetMainWindow.MainImage.Source = z.img.Source;
+                ConfigureWindows.GetMainWindow.MainImage.Source = z.ThumbImage.Source;
             });
 
             Border? border = null;

@@ -60,11 +60,11 @@ namespace PicView.ImageHandling
             {
                 return false;
             }
-            Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+            var buffer = new Span<byte>(new byte[base64.Length]);
             return Convert.TryFromBase64String(base64, buffer, out _);
         }
 
-        internal static async Task<string> ConvertToBase64()
+        private static async Task<string> ConvertToBase64()
         {
             var frame = await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ImageDecoder.GetRenderedBitmapFrame, DispatcherPriority.Background);
             if (frame == null) return string.Empty;

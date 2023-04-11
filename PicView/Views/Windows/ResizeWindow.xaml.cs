@@ -198,7 +198,7 @@ namespace PicView.Views.Windows
             Percentage? thumbPercentage = null;
 
             List<string>? sourceFileist = null;
-            string outputFolder = "";
+            string? outputFolder = "";
 
             await ConfigureWindows.GetResizeWindow.Dispatcher.InvokeAsync(() =>
             {

@@ -15,22 +15,22 @@ namespace PicView.Views.UserControls.Gallery
 
             if (pic != null)
             {
-                img.Source = pic;
+                ThumbImage.Source = pic;
             }
 
             Id = id;
 
-            outterborder.Width = outterborder.Height = PicGalleryItem_Size;
-            innerborder.Width = innerborder.Height = PicGalleryItem_Size_s;
+            OuterBorder.Width = OuterBorder.Height = PicGalleryItem_Size;
+            InnerBorder.Width = InnerBorder.Height = PicGalleryItem_Size_s;
 
-            img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
+            ThumbImage.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
                 this,
                 false,
                 PicGalleryItem_Size_s,
                 PicGalleryItem_Size
             );
 
-            img.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
+            ThumbImage.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
                 this,
                 true,
                 PicGalleryItem_Size,
@@ -38,8 +38,8 @@ namespace PicView.Views.UserControls.Gallery
             );
 
             if (!selected) return;
-            innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColor());
-            innerborder.Width = innerborder.Height = PicGalleryItem_Size;
+            InnerBorder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPreferredColor());
+            InnerBorder.Width = InnerBorder.Height = PicGalleryItem_Size;
         }
     }
 }

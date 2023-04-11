@@ -49,7 +49,7 @@ namespace PicView.Animations
         internal static void AltInterfaceMouseOver(Brush foreground, Brush background, Brush border)
         {
             ccAnim.From = (Color)Application.Current.Resources["IconColor"];
-            ccAnim.To = AnimationHelper.GetPrefferedColor();
+            ccAnim.To = AnimationHelper.GetPreferredColor();
 
             foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
 
@@ -62,13 +62,12 @@ namespace PicView.Animations
                 borderBrush.Color.R,
                 borderBrush.Color.G,
                 borderBrush.Color.B,
-                border,
-                true);
+                border);
         }
 
         internal static void AltInterfaceMouseLeave(Brush foreground, Brush background, Brush border)
         {
-            ccAnim.From = AnimationHelper.GetPrefferedColor();
+            ccAnim.From = AnimationHelper.GetPreferredColor();
             ccAnim.To = (Color)Application.Current.Resources["IconColor"];
 
             foreground.BeginAnimation(SolidColorBrush.ColorProperty, ccAnim);
@@ -82,8 +81,7 @@ namespace PicView.Animations
                 borderBrush.Color.R,
                 borderBrush.Color.G,
                 borderBrush.Color.B,
-                border,
-                true);
+                border);
         }
 
         #endregion ALtInterface hover anims
@@ -94,7 +92,7 @@ namespace PicView.Animations
         {
             if (transparent)
             {
-                AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, brush, alpha);
+                AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, brush);
             }
             else
             {
@@ -103,8 +101,7 @@ namespace PicView.Animations
                     mainColor.R,
                     mainColor.G,
                     mainColor.B,
-                    brush,
-                    alpha
+                    brush
                 );
             }
         }
@@ -113,7 +110,7 @@ namespace PicView.Animations
         {
             if (transparent)
             {
-                AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush, alpha);
+                AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush);
             }
             else
             {
@@ -122,8 +119,7 @@ namespace PicView.Animations
                     mainColor.R,
                     mainColor.G,
                     mainColor.B,
-                    brush,
-                    alpha
+                    brush
                 );
             }
         }
@@ -135,8 +131,7 @@ namespace PicView.Animations
                 backgroundBorderColor.R,
                 backgroundBorderColor.G,
                 backgroundBorderColor.B,
-                brush,
-                alpha
+                brush
             );
         }
 

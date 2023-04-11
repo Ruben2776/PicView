@@ -12,7 +12,7 @@ using Color = System.Drawing.Color;
 
 namespace PicView.Editing
 {
-    internal static class Color_Picking
+    internal static class ColorPicking
     {
         internal static bool IsRunning { get; set; }
 
@@ -20,12 +20,12 @@ namespace PicView.Editing
         {
             IsRunning = true;
 
-            if (UC.GetColorPicker == null || !ConfigureWindows.GetMainWindow.topLayer.Children.Contains(UC.GetColorPicker))
+            if (UC.GetColorPicker == null || !ConfigureWindows.GetMainWindow.TopLayer.Children.Contains(UC.GetColorPicker))
             {
                 LoadControls.LoadColorPicker();
             }
 
-            // Set cursor for coloc picking
+            // Set cursor for color picking
             ConfigureWindows.GetMainWindow.Cursor = Cursors.Pen;
         }
 
@@ -37,14 +37,8 @@ namespace PicView.Editing
             var c = GetColorAt(w32Mouse.X, w32Mouse.Y);
 
             // Set color values to usercontrol
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            {
-                UC.GetColorPicker.HexCodePresenter.Content = RGBConverter(c);
-            }
-            else
-            {
-                UC.GetColorPicker.HexCodePresenter.Content = HexConverter(c); 
-            }
+            UC.GetColorPicker.HexCodePresenter.Content = 
+                (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ? RGBConverter(c) : HexConverter(c);
             
             UC.GetColorPicker.RectangleColorPresenter.Fill =
             UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush
@@ -62,7 +56,7 @@ namespace PicView.Editing
 
         internal static void StopRunning(bool addValue)
         {
-            // Reset cursor from coloc picking
+            // Reset cursor from color picking
             ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
 
             if (UC.GetColorPicker != null)
@@ -74,7 +68,7 @@ namespace PicView.Editing
                         IsRunning = false;
                         return;
                     }
-                    string clipboardContent = UC.GetColorPicker.HexCodePresenter.Content.ToString() ?? "";
+                    var clipboardContent = UC.GetColorPicker.HexCodePresenter.Content.ToString() ?? "";
                     if (clipboardContent.StartsWith("RGB "))
                     {
                         clipboardContent = clipboardContent.Remove(0, 4);
@@ -84,7 +78,7 @@ namespace PicView.Editing
                 }
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                 {
-                    ConfigureWindows.GetMainWindow.topLayer.Children.Remove(UC.GetColorPicker);
+                    ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(UC.GetColorPicker);
                     ConfigureWindows.GetMainWindow.Focus();
                 });
             }
@@ -92,7 +86,7 @@ namespace PicView.Editing
             IsRunning = false;
         }
 
-        internal static string HexConverter(Color c)
+        private static string HexConverter(Color c)
         {
             return "#" +
                 c.R.ToString("X2", CultureInfo.InvariantCulture) +
@@ -100,7 +94,7 @@ namespace PicView.Editing
                 c.B.ToString("X2", CultureInfo.InvariantCulture);
         }
 
-        internal static string RGBConverter(Color c)
+        private static string RGBConverter(Color c)
         {
             return $"RGB {c.R}, {c.G}, {c.B}";
         }

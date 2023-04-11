@@ -89,39 +89,20 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static string CheckIfLoadableString(string s)
         {
-            if (!string.IsNullOrWhiteSpace(FileHandling.FileFunctions.GetURL(s)))
-            {
+            if (!string.IsNullOrWhiteSpace(s.GetURL()))
                 return "web";
-            }
 
             if (Base64.IsBase64String(s))
-            {
                 return "base64";
-            }
 
             if (File.Exists(s))
-            {
-                if (SupportedFiles.IsArchive(Path.GetExtension(s)))
-                {
-                    return "zip";
-                }
+                return Path.GetExtension(s).IsArchive() ? "zip" : s;
+            
+            s = s.Trim().Replace("\"", "");
+            if (File.Exists(s)) 
                 return s;
-            }
-            else
-            {
-                s = s.Trim().Replace("\"", "");
-                if (File.Exists(s))
-                {
-                    return s;
-                }
-            }
 
-            if (Directory.Exists(s))
-            {
-                return "directory";
-            }
-
-            return string.Empty;
+            return Directory.Exists(s) ? "directory" : string.Empty;
         }
 
         /// <summary>
@@ -145,10 +126,7 @@ namespace PicView.ChangeImage
             }
             else
             {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
-                {
-                    GalleryFunctions.Clear();
-                }));
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(GalleryFunctions.Clear));
             }
 
             Preloader.Clear();

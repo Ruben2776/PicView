@@ -29,18 +29,10 @@ namespace PicView.ChangeImage
         /// <param name="bitmapSource"></param>
         internal static async Task UpdateImageAsync(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
         {
-            if (bitmapSource is null)
-            {
-                bitmapSource = ImageFunctions.ImageErrorMessage();
-                if (bitmapSource is null)
-                {
-                    UnexpectedError();
-                    return;
-                }
-            }
+            bitmapSource ??= ImageFunctions.ImageErrorMessage();
 
             var ext = fileInfo is null ? Path.GetExtension(Pics[index]) : fileInfo.Extension;
-            var isGif = ext is not null && ext.Equals(".gif", StringComparison.OrdinalIgnoreCase);
+            var isGif = ext.Equals(".gif", StringComparison.OrdinalIgnoreCase);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 // Scroll to top if scroll enabled
@@ -62,7 +54,7 @@ namespace PicView.ChangeImage
                     ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }
                          
-                if (isGif) // Loads gif from XamlAnimatedGif if neccesary   
+                if (isGif) // Loads gif from XamlAnimatedGif if necessary   
                 {
                     AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
                 }
@@ -89,14 +81,16 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="imageName"></param>
         /// <param name="bitmapSource"></param>
-        internal static async Task UpdateImageAsync(string imageName, BitmapSource bitmapSource, bool isGif = false, string? file = null)
+        /// <param name="isGif"></param>
+        /// <param name="file"></param>
+        internal static async Task UpdateImageAsync(string imageName, BitmapSource? bitmapSource, bool isGif = false, string? file = null)
         {
             Size? imageSize = null;
             if (isGif)
             {
                 if (string.IsNullOrWhiteSpace(file))
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await ReloadAsync().ConfigureAwait(false);
                     return;
                 }
                 imageSize = ImageSizeFunctions.GetImageSize(file);
@@ -129,7 +123,6 @@ namespace PicView.ChangeImage
                 else
                 {
                     UnexpectedError();
-                    return;
                 }          
             }, DispatcherPriority.Send);
 
@@ -148,15 +141,13 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Load a picture from a base64
         /// </summary>
-        /// <param name="pic"></param>
-        /// <param name="imageName"></param>
-        internal static async Task UpdateImageFromBase64PicAsync(string base64string)
+        internal static async Task UpdateImageFromBase64PicAsync(string base64String)
         {
-            if (string.IsNullOrEmpty(base64string))
+            if (string.IsNullOrEmpty(base64String))
             {
                 return;
             }
-            var pic = await Base64.Base64StringToBitmapAsync(base64string).ConfigureAwait(false);
+            var pic = await Base64.Base64StringToBitmapAsync(base64String).ConfigureAwait(false);
             if (pic == null)
             {
                 return;

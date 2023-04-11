@@ -11,27 +11,27 @@ namespace PicView.ChangeImage
 {
     internal class FileHistory
     {
-        private readonly List<string> fileHistory;
-        private const short maxCount = 15;
-        private readonly string path;
+        private readonly List<string> _fileHistory;
+        private const short MaxCount = 15;
+        private readonly string _path;
 
         public FileHistory()
         {
-           fileHistory ??= new List<string>();
+           _fileHistory ??= new List<string>();
             try
             {
-                path = FileFunctions.GetWritingPath() + "\\Recent.txt";
+                _path = FileFunctions.GetWritingPath() + "\\Recent.txt";
 
-                if (!File.Exists(path))
+                if (!File.Exists(_path))
                 {
-                    using FileStream fs = File.Create(path);
+                    using FileStream fs = File.Create(_path);
                     fs.Seek(0, SeekOrigin.Begin);
                 }
             }
             catch (Exception e)
             {
                 Tooltip.ShowTooltipMessage(e.Message);
-                path = "";
+                _path = "";
             }
 
             ReadFromFile();
@@ -39,19 +39,19 @@ namespace PicView.ChangeImage
 
         private void ReadFromFile()
         {
-            fileHistory.Clear();
+            _fileHistory.Clear();
 
-            if (!File.Exists(path))
+            if (!File.Exists(_path))
             {
                 return;
             }
 
             try
             {
-                using var reader = new StreamReader(path);
+                using var reader = new StreamReader(_path);
                 while (reader.Peek() >= 0)
                 {
-                    fileHistory.Add(reader.ReadLine());
+                    _fileHistory.Add(reader.ReadLine());
                 }
             }
             catch (Exception e)
@@ -67,8 +67,8 @@ namespace PicView.ChangeImage
         {
             try
             {
-                using var writer = new StreamWriter(path);
-                foreach (string item in fileHistory)
+                using var writer = new StreamWriter(_path);
+                foreach (var item in _fileHistory)
                 {
                     writer.WriteLine(item);
                 }
@@ -82,7 +82,7 @@ namespace PicView.ChangeImage
 
         internal async Task OpenLastFileAsync()
         {
-            if (fileHistory.Count <= 0)
+            if (_fileHistory.Count <= 0)
             {
                 return;
             }
@@ -90,7 +90,7 @@ namespace PicView.ChangeImage
             UC.GetStartUpUC.ToggleMenu();
             SetTitle.SetLoadingString();
 
-            await LoadPic.LoadPicFromStringAsync(fileHistory.Last()).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
         }
 
         internal void Add(string fileName)
@@ -100,19 +100,19 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            lock (fileHistory) // index out of range exception when multiple threads accessing it
+            lock (_fileHistory) // index out of range exception when multiple threads accessing it
             {
-                if (fileHistory.Exists(e => e.EndsWith(fileName)))
+                if (_fileHistory.Exists(e => e.EndsWith(fileName)))
                 {
                     return;
                 }
 
-                if (fileHistory.Count >= maxCount)
+                if (_fileHistory.Count >= MaxCount)
                 {
-                    fileHistory.Remove(fileHistory[0]);
+                    _fileHistory.Remove(_fileHistory[0]);
                 }
 
-                fileHistory.Add(fileName);
+                _fileHistory.Add(fileName);
             }
         }
 
@@ -124,20 +124,20 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            var index = fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
+            var index = _fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
             index++;
 
-            if (index >= maxCount)
+            if (index >= MaxCount)
             {
                 return;
             }
 
-            if (fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+            if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
             {
                 return;
             }
 
-            await LoadPic.LoadPicFromStringAsync(fileHistory[index]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(_fileHistory[index]).ConfigureAwait(false);
         }
 
         internal async Task PrevAsync()
@@ -148,20 +148,20 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            var index = fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
+            var index = _fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
             index--;
 
             if (index < 0) { return; }
 
-            if (fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+            if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
             {
                 return;
             }
 
-            await LoadPic.LoadPicFromStringAsync(fileHistory[index]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(_fileHistory[index]).ConfigureAwait(false);
         }
 
-        private static MenuItem menuItem(string filePath, int i)
+        private static MenuItem MenuItem(string filePath, int i)
         {
             bool selected;
             if (ErrorHandling.CheckOutOfRange())
@@ -186,7 +186,7 @@ namespace PicView.ChangeImage
             };
 
             var header = Path.GetFileNameWithoutExtension(filePath);
-            header = header.Length > 30 ? FileFunctions.Shorten(header, 30) : header;
+            header = header.Length > 30 ? header.Shorten(30) : header;
 
             var menuItem = new MenuItem
             {
@@ -211,14 +211,14 @@ namespace PicView.ChangeImage
         {
             var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
 
-            for (int i = 0; i < maxCount; i++)
+            for (int i = 0; i < MaxCount; i++)
             {
-                if (fileHistory.Count == i)
+                if (_fileHistory.Count == i)
                 {
                     return;
                 }
 
-                var item = menuItem(fileHistory[i], i);
+                var item = MenuItem(_fileHistory[i], i);
                 if (item is null) { break; }
                 if (cm.Items.Count <= i)
                 {

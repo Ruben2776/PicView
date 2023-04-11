@@ -15,19 +15,20 @@ namespace PicView.PicGallery
         internal static bool IsHorizontalOpen { get; set; }
         internal static bool IsHorizontalFullscreenOpen { get; set; }
 
-        public class tempPics
+        private class TempPics
         {
-            internal BitmapSource pic;
-            public string name;
+            internal readonly BitmapSource pic;
+            public readonly string name;
 
-            public tempPics(BitmapSource pic, string name)
+            public TempPics(BitmapSource pic, string name)
             {
                 this.pic = pic;
                 this.name = name;
             }
         }
 
-        private static IEnumerable<T> OrderBySequence<T, TId>(this IEnumerable<T> source, IEnumerable<TId> order, Func<T, TId> idSelector)
+        private static IEnumerable<T> OrderBySequence<T, TId>(this IEnumerable<T> source,
+            IEnumerable<TId> order, Func<T, TId> idSelector) where TId : notnull
         {
             var lookup = source?.ToDictionary(idSelector, t => t);
             foreach (var id in order)
@@ -38,12 +39,9 @@ namespace PicView.PicGallery
 
         internal static async Task SortGallery(FileInfo? fileInfo = null)
         {
-            if (fileInfo is null)
-            {
-                fileInfo = new FileInfo(Navigation.Pics[0]);
-            }
+            fileInfo ??= new FileInfo(Navigation.Pics[0]);
 
-            var thumbs = new List<tempPics>();
+            var thumbs = new List<TempPics>();
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
             {
@@ -52,7 +50,7 @@ namespace PicView.PicGallery
                     try
                     {
                         var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                        thumbs.Add(new tempPics(picGalleryItem?.img?.Source as BitmapSource, Navigation.Pics[i]));
+                        thumbs.Add(new TempPics(picGalleryItem?.ThumbImage?.Source as BitmapSource, Navigation.Pics[i]));
                     }
                     catch (Exception e)
                     {

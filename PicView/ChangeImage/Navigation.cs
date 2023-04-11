@@ -5,7 +5,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace PicView.ChangeImage
 {
-    enum NavigateTo
+    internal enum NavigateTo
     {
         Next,
         Previous,
@@ -84,7 +84,7 @@ namespace PicView.ChangeImage
             {
                 case NavigateTo.Next:
                 case NavigateTo.Previous:
-                    int indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
+                    var indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
                     Reverse = navigateTo == NavigateTo.Previous;
                     if (Settings.Default.Looping || fastPic || Slideshow.SlideTimer != null)
                     {
@@ -92,8 +92,8 @@ namespace PicView.ChangeImage
                     }
                     else
                     {
-                        int newIndex = FolderIndex + indexChange;
-                        if (newIndex < 0 || newIndex >= Pics.Count) return; // Don't load same image because that causes the UI to blink
+                        var newIndex = FolderIndex + indexChange;
+                        if (newIndex < 0 || newIndex >= Pics.Count) return;
                         next = newIndex;
                     }
                     break;
@@ -133,38 +133,38 @@ namespace PicView.ChangeImage
 
                 if (right)
                 {
-                    if (Properties.Settings.Default.Fullscreen == false) 
+                    if (Settings.Default.Fullscreen == false) 
                         RightbuttonClicked = true; // Update flag to move cursor when resized
                     else
                         RightbuttonClicked = false;
-                    await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    await GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
                 }
                 else
                 {
-                    if (Properties.Settings.Default.Fullscreen == false)
+                    if (Settings.Default.Fullscreen == false)
                         LeftbuttonClicked = true; // Update flag to move cursor when resized
                     else
                         LeftbuttonClicked = false;
-                    await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
                 }
             }
             else // Alternative interface buttons
             {
                 if (right)
                 {
-                    if (Properties.Settings.Default.Fullscreen == false)
+                    if (Settings.Default.Fullscreen == false)
                         ClickArrowRightClicked = true; // Update flag to move cursor when resized
                     else
                         ClickArrowRightClicked = false;
-                    await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+                    await GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
                 }
                 else
                 {
-                    if (Properties.Settings.Default.Fullscreen == false)
+                    if (Settings.Default.Fullscreen == false)
                         ClickArrowLeftClicked = true; // Update flag to move cursor when resized
                     else
                         ClickArrowLeftClicked = false;
-                    await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+                    await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
                 }
             }
         }
