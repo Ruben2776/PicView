@@ -104,16 +104,24 @@ namespace PicView.UILogic.TransformImage
                         }
             };
 
-            ConfigureWindows.GetMainWindow.ParentContainer.ClipToBounds = ConfigureWindows.GetMainWindow.MainImageBorder.ClipToBounds = true;
+            ConfigureWindows.GetMainWindow.ParentContainer.ClipToBounds =
+                ConfigureWindows.GetMainWindow.MainImageBorder.ClipToBounds = true;
 
             // Set transforms to UI elements
-            _scaleTransform = (ScaleTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            _translateTransform = (TranslateTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform).Children.First(tr => tr is TranslateTransform);
+            _scaleTransform = (ScaleTransform)((TransformGroup)
+                ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
+                .Children.First(tr => tr is ScaleTransform);
+            
+            _translateTransform = (TranslateTransform)((TransformGroup)
+                ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
+                .Children.First(tr => tr is TranslateTransform);
         }
 
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.IsActive == false || ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible)
+            if (ConfigureWindows.GetMainWindow.IsActive == false ||
+                ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible ||
+                ConfigureWindows.WindowContextMenu.IsOpen || ConfigureWindows.WindowContextMenu.IsVisible)
             {
                 return;
             }
@@ -126,12 +134,15 @@ namespace PicView.UILogic.TransformImage
         internal static void PanImage(object sender, MouseEventArgs e)
         {
             // Don't drag it if unintended
-            if (ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured == false || ConfigureWindows.GetMainWindow.IsActive == false || ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible)
+            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive ||
+                ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible ||
+                ConfigureWindows.WindowContextMenu.IsOpen || ConfigureWindows.WindowContextMenu.IsVisible)
             {
                 return;
             }
 
-            if (Math.Abs(_scaleTransform.ScaleX - 1) < .1 && Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal)
+            if (Math.Abs(_scaleTransform.ScaleX - 1) < .1 && Settings.Default.AutoFitWindow &&
+                !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal)
             {
                 return;
             }
