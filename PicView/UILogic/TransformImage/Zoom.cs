@@ -78,6 +78,7 @@ namespace PicView.UILogic.TransformImage
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
+        // ReSharper disable once InconsistentNaming
         internal static int GCD(int x, int y)
         {
             while (true)
@@ -116,12 +117,25 @@ namespace PicView.UILogic.TransformImage
                 ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
                 .Children.First(tr => tr is TranslateTransform);
         }
-
+        
+        // Don't drag it if unintended
+        private static bool EnablePan()
+        {
+            return ConfigureWindows.GetMainWindow.IsActive == false ||
+                   ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible ||
+                   ConfigureWindows.WindowContextMenu.IsOpen || ConfigureWindows.WindowContextMenu.IsVisible ||
+                   UC.FileMenuOpen || UC.ImageSettingsMenuOpen || UC.QuickSettingsMenuOpen ||
+                   UC.ToolsAndEffectsMenuOpen;
+        }
+        /// <summary>
+        /// Prepares the image for panning by capturing the mouse position when the left mouse button is pressed.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+        // ReSharper disable once UnusedParameter.Global
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
-            if (ConfigureWindows.GetMainWindow.IsActive == false ||
-                ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible ||
-                ConfigureWindows.WindowContextMenu.IsOpen || ConfigureWindows.WindowContextMenu.IsVisible)
+            if (!EnablePan())
             {
                 return;
             }
@@ -130,19 +144,18 @@ namespace PicView.UILogic.TransformImage
             _start = e.GetPosition(ConfigureWindows.GetMainWindow.ParentContainer);
             _origin = new Point(_translateTransform.X, _translateTransform.Y);
         }
-
+        
+        /// <summary>
+        /// Pans the image by modifying its X,Y coordinates, keeping it in bounds.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
+        // ReSharper disable once UnusedParameter.Global
         internal static void PanImage(object sender, MouseEventArgs e)
         {
-            // Don't drag it if unintended
-            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive ||
-                ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible ||
-                ConfigureWindows.WindowContextMenu.IsOpen || ConfigureWindows.WindowContextMenu.IsVisible)
-            {
-                return;
-            }
-
-            if (Math.Abs(_scaleTransform.ScaleX - 1) < .1 && Settings.Default.AutoFitWindow &&
-                !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal)
+            if (!EnablePan() || Math.Abs(_scaleTransform.ScaleX - 1) < .1 && Settings.Default.AutoFitWindow &&
+                !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal || 
+                !ConfigureWindows.GetMainWindow.IsMouseCaptured)
             {
                 return;
             }
