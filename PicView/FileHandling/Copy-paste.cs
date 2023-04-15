@@ -50,7 +50,7 @@ namespace PicView.FileHandling
         {
             var paths = new StringCollection { path };
             Clipboard.SetFileDropList(paths);
-            ShowTooltipMessage(Application.Current.Resources["FileCopy"]);
+            ShowTooltipMessage(Application.Current.Resources["FileCopy"], UC.FileMenuOpen);
         }
 
         internal static void CopyBitmap()
@@ -77,6 +77,27 @@ namespace PicView.FileHandling
             }
 
             ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+        }
+
+        internal static void Copy()
+        {
+            if (ConfigureWindows.GetMainWindow.MainImage.Source == null) return;
+            
+            if (ErrorHandling.CheckOutOfRange())
+            {
+                CopyBitmap();
+            }
+            else
+            {
+                if (ConfigureWindows.GetMainWindow.MainImage.Effect is not null)
+                {
+                    CopyBitmap();
+                }
+                else
+                {
+                    Copyfile(Navigation.Pics[Navigation.FolderIndex]);
+                }
+            }
         }
 
         /// <summary>

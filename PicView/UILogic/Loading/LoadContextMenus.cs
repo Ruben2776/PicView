@@ -51,7 +51,7 @@ namespace PicView.UILogic.Loading
             ///     Open With      \\\\
             ///////////////////////////
             var openwcm = (MenuItem)MainContextMenu.Items[3];
-            openwcm.Click += (_, _) => OpenWith(Pics[FolderIndex]);
+            openwcm.Click += (_, _) => OpenWith();
 
             // 4 == seperator
 
@@ -214,7 +214,7 @@ namespace PicView.UILogic.Loading
             // 2 = seperator
 
             var ImageSize = (MenuItem)ImageChoices.Items[3];
-            ImageSize.Click += (_, _) => ResizeButton.ToggleQuickResize();
+            ImageSize.Click += (_, _) => UpdateUIValues.ToggleQuickResize();
 
             var BatchSize = (MenuItem)ImageChoices.Items[4];
             BatchSize.Click += (_, _) => ResizeWindow();

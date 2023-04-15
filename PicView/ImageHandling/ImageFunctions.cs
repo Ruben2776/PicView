@@ -1,4 +1,10 @@
-﻿using System.Diagnostics;
+﻿using ImageMagick;
+using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
+using PicView.FileHandling;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -6,12 +12,6 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using ImageMagick;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
 using TextAlignment = System.Windows.TextAlignment;
 
 namespace PicView.ImageHandling
@@ -67,11 +67,7 @@ namespace PicView.ImageHandling
 
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                toCenter = UC.QuickSettingsMenuOpen;
-                if (toCenter is false)
-                {
-                    toCenter = UC.ToolsAndEffectsMenuOpen;
-                }
+                toCenter = UC.UserControls_Open();
             });
 
             Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
@@ -199,14 +195,15 @@ namespace PicView.ImageHandling
                 throw new Exception();
             }
         }
-        static FlowDirection FlowDirection => CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+
+        private static FlowDirection FlowDirection => CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 
         internal static BitmapSource? ShowLogo()
         {
-           var bitmap = new BitmapImage(new Uri(@"pack://application:,,,/"
-                + Assembly.GetExecutingAssembly().GetName().Name
-                + ";component/"
-                + "Themes/Resources/img/icon.png", UriKind.Absolute));
+            var bitmap = new BitmapImage(new Uri(@"pack://application:,,,/"
+                 + Assembly.GetExecutingAssembly().GetName().Name
+                 + ";component/"
+                 + "Themes/Resources/img/icon.png", UriKind.Absolute));
             bitmap.Freeze();
             return bitmap;
         }

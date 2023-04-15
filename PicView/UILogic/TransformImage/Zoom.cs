@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using PicView.ChangeTitlebar;
 using PicView.Properties;
@@ -48,7 +49,7 @@ namespace PicView.UILogic.TransformImage
                 {
                     return false;
                 }
-                return ZoomValue is not 0 or 1;
+                return ZoomValue is not 1;
             }
         }
 
@@ -117,16 +118,7 @@ namespace PicView.UILogic.TransformImage
                 ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
                 .Children.First(tr => tr is TranslateTransform);
         }
-        
-        // Don't drag it if unintended
-        private static bool EnablePan()
-        {
-            return ConfigureWindows.GetMainWindow.IsActive == false ||
-                   ConfigureWindows.MainContextMenu.IsOpen || ConfigureWindows.MainContextMenu.IsVisible ||
-                   ConfigureWindows.WindowContextMenu.IsOpen || ConfigureWindows.WindowContextMenu.IsVisible ||
-                   UC.FileMenuOpen || UC.ImageSettingsMenuOpen || UC.QuickSettingsMenuOpen ||
-                   UC.ToolsAndEffectsMenuOpen;
-        }
+
         /// <summary>
         /// Prepares the image for panning by capturing the mouse position when the left mouse button is pressed.
         /// </summary>
@@ -135,7 +127,7 @@ namespace PicView.UILogic.TransformImage
         // ReSharper disable once UnusedParameter.Global
         internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
         {
-            if (!EnablePan())
+            if (ConfigureWindows.GetMainWindow.IsActive == false)
             {
                 return;
             }
@@ -153,9 +145,8 @@ namespace PicView.UILogic.TransformImage
         // ReSharper disable once UnusedParameter.Global
         internal static void PanImage(object sender, MouseEventArgs e)
         {
-            if (!EnablePan() || Math.Abs(_scaleTransform.ScaleX - 1) < .1 && Settings.Default.AutoFitWindow &&
-                !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal || 
-                !ConfigureWindows.GetMainWindow.IsMouseCaptured)
+            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive ||
+                _scaleTransform.ScaleX is 1)
             {
                 return;
             }
@@ -167,12 +158,18 @@ namespace PicView.UILogic.TransformImage
             var newYproperty = _origin.Y - dragMousePosition.Y;
 
             // Keep panning it in bounds
-            if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen && !Settings.Default.FullscreenGalleryHorizontal) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
+            if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen &&
+                !Settings.Default.FullscreenGalleryHorizontal) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
-                var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * _scaleTransform.ScaleX);
-                var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * _scaleTransform.ScaleY);
-                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * _scaleTransform.ScaleX);
-                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * _scaleTransform.ScaleY);
+                var actualScrollWidth = ConfigureWindows.GetMainWindow.Scroller.ActualWidth;
+                var actualBorderWidth = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth;
+                var actualScrollHeight = ConfigureWindows.GetMainWindow.Scroller.ActualHeight;
+                var actualBorderHeight = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight;
+                
+                var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
+                var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
+                var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
+                var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
 
                 if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
                 {

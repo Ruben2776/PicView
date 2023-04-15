@@ -151,11 +151,9 @@ namespace PicView.Shortcuts
                 {
                     ColorPicking.StartRunning();
                 }
-
-                return;
             }
-
-            PanImage(sender, e);
+            else if (Mouse.LeftButton == MouseButtonState.Pressed)
+                PanImage(sender, e);
         }
 
         /// <summary>

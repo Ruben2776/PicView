@@ -24,7 +24,7 @@ namespace PicView.ChangeImage
         internal static bool CheckOutOfRange()
         {
             bool value = true;
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, (Action)(() =>
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {
                 value = Pics.Count < FolderIndex || Pics.Count < 1 || UC.GetCropppingTool is not null and { IsVisible: true }
                 || (UC.GetQuickResize?.Opacity > 0);
@@ -177,27 +177,21 @@ namespace PicView.ChangeImage
 
             string? GetReloadPath()
             {
-                if (CheckOutOfRange() == false)
-                {
-                    if (string.IsNullOrWhiteSpace(InitialPath) == false
-                        && Settings.Default.IncludeSubDirectories
-                        && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+                if (CheckOutOfRange())
+                    return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
                     {
-                        return InitialPath;
-                    }
-
-                    return Pics[FolderIndex];
+                        var path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                        return path == (string) Application.Current.Resources["Loading"] ? InitialPath : path;
+                    });
+                if (string.IsNullOrWhiteSpace(InitialPath) == false
+                    && Settings.Default.IncludeSubDirectories
+                    && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+                {
+                    return InitialPath;
                 }
 
-                return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
-                {
-                    var path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                    if (path == (string)Application.Current.Resources["Loading"])
-                    {
-                        return InitialPath;
-                    }
-                    return path;
-                });
+                return Pics[FolderIndex];
+
             }
         }
 

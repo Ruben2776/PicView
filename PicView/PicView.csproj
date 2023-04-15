@@ -239,9 +239,6 @@
     <Compile Update="Views\UserControls\Buttons\RotateRightButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\UserControls\Buttons\SlideshowButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\UserControls\Buttons\PasteButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -252,12 +249,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\UserControls\Buttons\CopyButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\UserControls\Buttons\RecycleButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\UserControls\Buttons\ReloadButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\UserControls\Buttons\MinButton.xaml.cs">
@@ -352,9 +343,6 @@
     <Page Update="Views\UserControls\Buttons\RotateRightButton.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\UserControls\Buttons\SlideshowButton.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\UserControls\Buttons\PasteButton.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -365,12 +353,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\CopyButton.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Buttons\RecycleButton.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Buttons\ReloadButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\MinButton.xaml">

@@ -144,15 +144,7 @@
                 <buttons:BackGroundButton x:Name="BackgroundButton" />
             </Border>
 
-            <Border
-                x:Name="OptimizeBorder"
-                Canvas.Left="299.5"
-                Canvas.Top="57"
-                Width="51"
-                Height="51"
-                Style="{StaticResource ButtonBorder}">
-                <buttons:OptimizeButton x:Name="OptimizeButton" />
-            </Border>
+
 
             <Border
                 x:Name="SetFitBorder"

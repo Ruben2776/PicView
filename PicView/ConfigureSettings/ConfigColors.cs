@@ -65,25 +65,25 @@ namespace PicView.ConfigureSettings
             var w = ConfigureWindows.GetMainWindow;
 
             var foregroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
-                : (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
+                : (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
+
+            w.TitleText.InnerTextBox.Foreground = foregroundColor;
 
             if (Settings.Default.DarkTheme)
             {
-                w.TitleText.InnerTextBox.Foreground = foregroundColor;
-
                 w.LeftButtonContainer.Background =
                 w.Logo.Background =
                 w.CloseButton.Background =
                 w.MinButton.Background =
                 w.FullscreenButton.Background =
-                    isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
-                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+                    isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
 
                 w.TitleBar.Background =
                     isFocused ? (SolidColorBrush)Application.Current.Resources["SubtleFadeBrush"]
                                                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
                 w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
-                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
             }
             else
             {

@@ -319,8 +319,7 @@ namespace PicView.ChangeImage
                 GalleryNavigation.FullscreenGalleryNavigation();
 
             if (GetToolTipMessage is { IsVisible : true })
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
-                    GetToolTipMessage.Visibility = Visibility.Hidden);
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);
 
             if (ConfigureWindows.GetImageInfoWindow is { IsVisible : true})
                 await ImageInfo.UpdateValuesAsync(preloadValue.FileInfo).ConfigureAwait(false);

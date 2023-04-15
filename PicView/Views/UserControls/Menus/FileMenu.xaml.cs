@@ -1,7 +1,10 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Media;
 using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using static PicView.Animations.MouseOverAnimations;
 
@@ -19,45 +22,49 @@ namespace PicView.Views.UserControls.Menus
             PasteButton.PreviewMouseLeftButtonDown += delegate { UC.Close_UserControls(); };
 
             // OpenBorder
-            OpenBorder.MouseEnter += delegate { ButtonMouseOverAnim(OpenBorderFill); };
-            OpenBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(OpenBorderBrush); };
-            OpenBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(OpenBorderFill); };
-            OpenBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(OpenBorderBrush); };
+            SetIconButterMouseOverAnimations(OpenBorder, OpenBorderBrush, (SolidColorBrush)Resources["OpenBorderFill"]);
+            OpenBorder.MouseLeftButtonDown += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
+            OpenButton.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
 
-            // PrintBorder
-            PrintBorder.MouseEnter += delegate { ButtonMouseOverAnim(PrintFill); };
-            PrintBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(PrintBrush); };
-            PrintBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(PrintFill); };
-            PrintBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(PrintBrush); };
-
-            // SaveBorder
-            SaveBorder.MouseEnter += delegate { ButtonMouseOverAnim(SaveFill); };
-            SaveBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SaveBrush); };
-            SaveBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveFill); };
-            SaveBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SaveBrush); };
-
-            // FileLocationBorder
-            FileLocationBorder.MouseEnter += delegate { ButtonMouseOverAnim(FileLocationFill); };
-            FileLocationBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FileLocationBrush); };
-            FileLocationBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(FileLocationFill); };
-            FileLocationBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FileLocationBrush); };
+            // SaveButton
+            SetIconButterMouseOverAnimations(SaveButton, SaveButtonBrush, SaveButtonIconBrush);
+            SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync().ConfigureAwait(false);
 
             // CopyButton
-            CopyButton.TheButton.Click += delegate
-            {
-                UC.Close_UserControls();
-                Copy_Paste.CopyFile();
-            };
+            SetIconButterMouseOverAnimations(CopyButton, CopyButtonBrush, CopyButtonIconBrush);
+            CopyButton.Click += (_, _) => Copy_Paste.Copy();
 
-            Open.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
-            FileLocation.Click += (_, _) => Open_Save.Open_In_Explorer();
-            Print.Click += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
-            SaveButton.Click += async (sender, e) => await Open_Save.SaveFilesAsync();
+            // PasteButton
+            SetIconButterMouseOverAnimations(PasteButton, PasteButtonBrush, PasteButtonIconBrush);
+            PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
 
-            OpenBorder.MouseLeftButtonUp += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
-            FileLocationBorder.MouseLeftButtonUp += (_, _) => Open_Save.Open_In_Explorer();
-            PrintBorder.MouseLeftButtonUp += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
-            SaveBorder.MouseLeftButtonUp += async (sender, e) => await Open_Save.SaveFilesAsync();
+            // FileLocationBorder
+            SetIconButterMouseOverAnimations(FileLocationBorder, FileLocationBrush, (SolidColorBrush)Resources["LocationBorderFill"]);
+            FileLocationBorder.MouseLeftButtonDown += (_, _) => Open_Save.Open_In_Explorer();
+            FileLocationButton.Click += (_, _) => Open_Save.Open_In_Explorer();
+
+            // PrintBorder
+            SetIconButterMouseOverAnimations(PrintBorder, PrintButtonBrush, (SolidColorBrush)Resources["PrintBorderFill"]);
+            PrintBorder.MouseLeftButtonDown += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
+            PrintButton.Click += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
+
+            // ReloadButton
+            SetIconButterMouseOverAnimations(ReloadButton, ReloadButtonBrush, (SolidColorBrush)Resources["ReloadButtonIconBrush"]);
+            ReloadButton.Click += async (_, _) => await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+
+            // RecycleButton
+            SetIconButterMouseOverAnimations(RecycleButton, RecycleButtonBrush, (SolidColorBrush)Resources["RecycleButtonIconBrush"]);
+            RecycleButton.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(true).ConfigureAwait(false);
+
+            // OpenWithBorder
+            SetIconButterMouseOverAnimations(OpenWithBorder, OpenWithBorderBrush, (SolidColorBrush)Resources["OpenWithBorderFill"]);
+            OpenWithBorder.MouseLeftButtonDown += (_, _) => Open_Save.OpenWith();
+            OpenWith.Click += (_, _) => Open_Save.OpenWith();
+
+            // RenameBorder
+            SetIconButterMouseOverAnimations(RenameBorder, RenameButtonBrush, (SolidColorBrush)Resources["RenameBorderFill"]);
+            RenameBorder.MouseLeftButtonDown += (_, _) => { UC.Close_UserControls(); EditTitleBar.EditTitleBar_Text(); };
+            RenameButton.Click += (_, _) => { UC.Close_UserControls(); EditTitleBar.EditTitleBar_Text(); };
         }
     }
 }

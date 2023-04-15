@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -21,15 +22,9 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                TheButton.MouseEnter += (_, _) => ButtonMouseOverAnim(GoToPicBrush, true);
-                TheButton.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(GoToPicBrush);
                 TheButton.Click += async (_, _) => await GoToPicEventAsync().ConfigureAwait(false);
-
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush1);
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush2);
-                }
+                
+                SetIconButterMouseOverAnimations(TheButton, GoToPicBrush, (SolidColorBrush)Resources["PlayIconBrush"]);
 
                 GoToPicBox.PreviewMouseLeftButtonDown += delegate
                 {

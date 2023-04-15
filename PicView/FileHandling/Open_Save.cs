@@ -113,9 +113,12 @@ namespace PicView.FileHandling
         /// <summary>
         /// Start Windows "Open With" function
         /// </summary>
-        /// <param name="file">The absolute path to the file</param>
-        internal static void OpenWith(string file)
+        internal static void OpenWith()
         {
+            if (CheckOutOfRange())
+            {
+                return;
+            }
             try
             {
                 using var process = new Process
@@ -123,7 +126,7 @@ namespace PicView.FileHandling
                     StartInfo =
                     {
                         FileName = "openwith",
-                        Arguments = $"\"{file}\"",
+                        Arguments = $"\"{Pics[FolderIndex]}\"",
                         ErrorDialog = true
                     }
                 };

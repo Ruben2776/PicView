@@ -13,7 +13,7 @@
     <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
 
     <!--  Main Color faded  -->
-    <Color x:Key="MainColorFaded">#FFB1B1B1</Color>
+    <Color x:Key="MainColorFaded">#FFCFCFCF</Color>
     <SolidColorBrush x:Key="MainColorFadedBrush" Color="{StaticResource MainColorFaded}" />
 
     <!--  Fade Color  -->
@@ -46,6 +46,7 @@
         x:Key="MenuShadow"
         BlurRadius="5"
         Direction="85"
+        RenderingBias="Quality"
         ShadowDepth="3"
         Color="#2B3E392D" />
 

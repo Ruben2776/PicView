@@ -5,178 +5,391 @@
     xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     Canvas.ZIndex="3"
     Foreground="{StaticResource MainColorBrush}">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ReloadButtonIconBrush" Color="{StaticResource IconColor}" />
+        <SolidColorBrush x:Key="RecycleButtonIconBrush" Color="{StaticResource IconColor}" />
+        <SolidColorBrush x:Key="OpenBorderFill" Color="{StaticResource IconColor}" />
+        <SolidColorBrush x:Key="PrintBorderFill" Color="{StaticResource IconColor}" />
+        <SolidColorBrush x:Key="LocationBorderFill" Color="{StaticResource IconColor}" />
+        <SolidColorBrush x:Key="OpenWithBorderFill" Color="{StaticResource IconColor}" />
+        <SolidColorBrush x:Key="RenameBorderFill" Color="{StaticResource IconColor}" />
+    </UserControl.Resources>
     <StackPanel>
 
-        <Canvas Width="259" Height="178">
+        <Canvas Width="277" Height="178">
 
             <Border
-                Width="259"
-                Height="178"
+                Width="277"
+                Height="183"
                 Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
-                CornerRadius="4" />
-
-            <Rectangle
-                Canvas.Left="103"
-                Width="1"
-                Height="51"
-                Panel.ZIndex="1"
-                Stroke="{StaticResource BorderBrush}"
-                StrokeThickness="1" />
-
-            <Rectangle
-                Canvas.Left="155"
-                Width="1"
-                Height="51"
-                Panel.ZIndex="1"
-                Stroke="{DynamicResource BorderBrush}"
-                StrokeThickness="1" />
+                CornerRadius="8" />
 
             <Rectangle
                 Canvas.Left="1"
-                Canvas.Top="51"
-                Width="258"
+                Canvas.Top="45"
+                Width="275"
                 Height="1"
                 Panel.ZIndex="1"
                 Stroke="{DynamicResource BorderBrush}"
                 StrokeThickness="1" />
 
-            <buttons:ReloadButton
-                x:Name="ReloadButton"
-                Canvas.Left="1"
-                Canvas.Top="1"
-                Width="51"
-                Height="51" />
+            <Border CornerRadius="8,0,0,0">
+                <Border.Background>
+                    <SolidColorBrush x:Name="ReloadButtonBrush" Color="Transparent" />
+                </Border.Background>
+                <Button
+                    x:Name="ReloadButton"
+                    Canvas.Left="1"
+                    Canvas.Top="1"
+                    Width="97"
+                    Height="45"
+                    ToolTip="{StaticResource Reload}">
+
+                    <StackPanel
+                        Width="80"
+                        Margin="0,0,-10,0"
+                        Orientation="Horizontal">
+                        <Path
+                            Width="17"
+                            Height="17"
+                            Data="M416,352l96-111.9h-64.7c-2.3-27.9-10.5-54-23.5-77.3c-27.4-49.2-75.8-85.1-133-95.6c-0.7-0.1-1.5-0.3-2.2-0.4  c-0.5-0.1-0.9-0.2-1.4-0.2C277.1,64.9,266.6,64,256,64c-0.1,0-0.3,0-0.4,0c0,0,0,0,0,0c-90.9,0.2-167,63.6-186.7,148.6  c0,0,0,0.1,0,0.1c-0.3,1.1-0.5,2.2-0.7,3.3c-0.1,0.5-0.2,0.9-0.3,1.4c-0.1,0.7-0.3,1.4-0.4,2.1c-0.2,0.9-0.3,1.7-0.5,2.6  c-0.1,0.4-0.1,0.7-0.2,1.1c-0.2,1.2-0.4,2.4-0.6,3.6c0,0.1,0,0.1,0,0.2c-1,6.3-1.6,12.7-1.9,19.1c0,0.3,0,0.6,0,0.8  c-0.1,1.4-0.1,2.7-0.2,4.1c0,1.6-0.1,3.3-0.1,5c0,1.7,0,3.3,0.1,5c0,1.4,0.1,2.7,0.2,4.1c0,0.3,0,0.6,0,0.9c0.3,6.5,1,12.9,1.9,19.1  c0,0.1,0,0.1,0,0.2c0.2,1.2,0.4,2.4,0.6,3.6c0.1,0.4,0.1,0.7,0.2,1.1c0.2,0.9,0.3,1.8,0.5,2.6c0.1,0.7,0.3,1.4,0.4,2.1  c0.1,0.5,0.2,1,0.3,1.4c0.2,1.1,0.5,2.2,0.7,3.2c0,0,0,0.1,0,0.1c19.7,85,96.1,148.4,187.1,148.6c42.9-0.1,83.1-14.2,116.9-40.7  l7.5-5.9l-43.2-46.2l-6.2,4.6c-22.1,16.3-47.5,24.2-75,24.2c-70.6,0-128-57-128-128c0-71,57.4-128,128-128  c66.4,0,122.8,46.6,129.5,112H312L416,352z"
+                            Fill="{StaticResource ReloadButtonIconBrush}"
+                            Stretch="Fill" />
+                        <TextBlock
+                            MaxWidth="66"
+                            Margin="7,2.48,0,0"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            Foreground="{StaticResource ReloadButtonIconBrush}"
+                            Text="{StaticResource Reload}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap" />
+                    </StackPanel>
+                </Button>
+            </Border>
 
             <Rectangle
-                Canvas.Left="52"
+                Canvas.Left="97"
                 Width="1"
-                Height="51"
+                Height="45"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
                 Panel.ZIndex="1"
-                Stroke="{DynamicResource BorderBrush}"
+                Stroke="{StaticResource BorderBrush}"
                 StrokeThickness="1" />
 
-            <buttons:RecycleButton
-                x:Name="RecycleButton"
-                Canvas.Left="52"
+            <Button
+                x:Name="SaveButton"
+                Canvas.Left="98"
                 Canvas.Top="1"
-                Width="51"
-                Height="51" />
+                Width="41"
+                Height="45"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                ToolTip="{StaticResource Save}">
+                <Button.Background>
+                    <SolidColorBrush x:Name="SaveButtonBrush" Color="Transparent" />
+                </Button.Background>
+                <Path
+                    Width="16"
+                    Height="16"
+                    Data="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"
+                    Stretch="Fill">
+                    <Path.Fill>
+                        <SolidColorBrush x:Name="SaveButtonIconBrush" Color="{StaticResource IconColor}" />
+                    </Path.Fill>
+                </Path>
+            </Button>
 
-            <buttons:CopyButton
+            <Rectangle
+                Canvas.Left="138"
+                Width="1"
+                Height="45"
+                Panel.ZIndex="1"
+                Stroke="{StaticResource BorderBrush}"
+                StrokeThickness="1" />
+
+            <Button
                 x:Name="CopyButton"
-                Canvas.Left="104"
+                Canvas.Left="139"
                 Canvas.Top="1"
-                Width="51"
-                Height="51"
-                ToolTip="{StaticResource CopyFile}" />
+                Width="42"
+                Height="45"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                ToolTip="{StaticResource Copy}">
+                <Button.Background>
+                    <SolidColorBrush x:Name="CopyButtonBrush" Color="Transparent" />
+                </Button.Background>
+                <Path
+                    Width="16"
+                    Height="16"
+                    Data="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"
+                    Stretch="Fill">
+                    <Path.Fill>
+                        <SolidColorBrush x:Name="CopyButtonIconBrush" Color="{StaticResource IconColor}" />
+                    </Path.Fill>
+                </Path>
+            </Button>
 
-            <buttons:PasteButton
+            <Rectangle
+                Canvas.Left="181"
+                Width="1"
+                Height="45"
+                Panel.ZIndex="1"
+                Stroke="{StaticResource BorderBrush}"
+                StrokeThickness="1" />
+
+            <Button
                 x:Name="PasteButton"
-                Canvas.Left="156"
-                Canvas.Top="1"
-                Width="52" />
+                Canvas.Left="182"
+                Width="42"
+                Height="45"
+                ToolTip="{StaticResource FilePaste}">
+                <Button.Background>
+                    <SolidColorBrush x:Name="PasteButtonBrush" Color="Transparent" />
+                </Button.Background>
+                <Path
+                    Width="16"
+                    Height="16"
+                    Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
+                    Stretch="Fill">
+                    <Path.Fill>
+                        <SolidColorBrush x:Name="PasteButtonIconBrush" Color="{StaticResource IconColor}" />
+                    </Path.Fill>
+                </Path>
+            </Button>
 
-            <buttons:MenuCloseButton x:Name="CloseButton" Canvas.Left="207" />
+            <buttons:MenuCloseButton
+                x:Name="CloseButton"
+                Canvas.Left="224"
+                Canvas.Top="1" />
 
             <Border
                 x:Name="OpenBorder"
-                Canvas.Left="5"
-                Canvas.Top="59"
-                Width="120"
-                Height="50"
-                Style="{StaticResource ButtonBorder}">
-                <Button
-                    x:Name="Open"
-                    Content="{StaticResource ResourceKey=Open}"
-                    FocusVisualStyle="{x:Null}"
-                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                    FontSize="14"
-                    ToolTip="{StaticResource ResourceKey=OpenFileDialog}">
-                    <Button.Foreground>
-                        <SolidColorBrush x:Name="OpenBorderFill" Color="{StaticResource MainColor}" />
-                    </Button.Foreground>
-                    <Button.Background>
+                Canvas.Left="7"
+                Canvas.Top="50"
+                Style="{StaticResource ButtonBorder}"
+                ToolTip="{StaticResource ResourceKey=OpenFileDialog}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Background>
                         <SolidColorBrush x:Name="OpenBorderBrush" Color="Transparent" />
-                    </Button.Background>
-                </Button>
+                    </StackPanel.Background>
+                    <Path
+                        Width="17.51"
+                        Height="14"
+                        Margin="7,0,6,0"
+                        Data="M384 480h48c11.4 0 21.9-6 27.6-15.9l112-192c5.8-9.9 5.8-22.1 .1-32.1S555.5 224 544 224H144c-11.4 0-21.9 6-27.6 15.9L48 357.1V96c0-8.8 7.2-16 16-16H181.5c4.2 0 8.3 1.7 11.3 4.7l26.5 26.5c21 21 49.5 32.8 79.2 32.8H416c8.8 0 16 7.2 16 16v32h48V160c0-35.3-28.7-64-64-64H298.5c-17 0-33.3-6.7-45.3-18.7L226.7 50.7c-12-12-28.3-18.7-45.3-18.7H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H87.7 384z"
+                        Fill="{StaticResource OpenBorderFill}"
+                        Stretch="Fill" />
+                    <Button x:Name="OpenButton" FocusVisualStyle="{x:Null}">
+                        <Button.Content>
+                            <TextBlock
+                                Margin="3,0,3,0"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Foreground="{StaticResource OpenBorderFill}"
+                                Text="{StaticResource ResourceKey=Open}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </Border>
 
             <Border
                 x:Name="FileLocationBorder"
-                Canvas.Left="132"
-                Canvas.Top="59"
-                Style="{StaticResource ButtonBorder}">
-                <Button
-                    x:Name="FileLocation"
-                    FocusVisualStyle="{x:Null}"
-                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                    FontSize="14">
-                    <Button.Content>
-                        <TextBlock
-                            Margin="3,0,3,0"
-                            Text="{StaticResource ResourceKey=ShowInFolder}"
-                            TextWrapping="Wrap" />
-                    </Button.Content>
-                    <Button.Foreground>
-                        <SolidColorBrush x:Name="FileLocationFill" Color="{StaticResource MainColor}" />
-                    </Button.Foreground>
-                    <Button.Background>
+                Canvas.Left="141"
+                Canvas.Top="50"
+                Style="{StaticResource ButtonBorder}"
+                ToolTip="{StaticResource ShowInFolder}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Background>
                         <SolidColorBrush x:Name="FileLocationBrush" Color="Transparent" />
-                    </Button.Background>
-                </Button>
+                    </StackPanel.Background>
+                    <Image Height="16" Margin="8,0,5.4,1">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V472.615 H472.615 V0 H0 Z">
+                                        <DrawingGroup>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}" Geometry="F1 M472.615,472.615z M0,0z M228.106,76.308L228.106,76.308 167.385,17.231 0,17.231 0,137.813 472.615,137.813 472.615,76.308z" />
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                        <DrawingGroup>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}" Geometry="F1 M472.615,472.615z M0,0z M262.086,236.077C249.677,223.673 233.38,217.471 217.081,217.471 200.782,217.471 184.485,223.673 172.076,236.077 147.264,260.889 147.264,301.268 172.076,326.082 196.893,350.899 237.268,350.899 262.086,326.082 286.898,301.269 286.898,260.89 262.086,236.077z" />
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                        <DrawingGroup>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}" Geometry="F1 M472.615,472.615z M0,0z M0,157.505L0,305.231 0,455.385 236.308,455.385 472.616,455.385 472.616,305.231 472.616,157.505 0,157.505z M327.5,405.423L268.598,346.516C253.538,358.387 235.323,364.374 217.081,364.374 195.739,364.374 174.398,356.249 158.153,340.004 125.663,307.514 125.663,254.644 158.153,222.153 190.643,189.663 243.519,189.663 276.009,222.153 306.139,252.284 308.276,299.916 282.52,332.592L341.422,391.499 327.5,405.423z" />
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                    <Button x:Name="FileLocationButton" FocusVisualStyle="{x:Null}">
+                        <Button.Content>
+                            <TextBlock
+                                Margin="4,0,2,0"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Foreground="{StaticResource LocationBorderFill}"
+                                Text="{StaticResource ResourceKey=ShowInFolder}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="OpenWithBorder"
+                Canvas.Left="7"
+                Canvas.Top="93"
+                Style="{StaticResource ButtonBorder}"
+                ToolTip="{StaticResource OpenWith}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Background>
+                        <SolidColorBrush x:Name="OpenWithBorderBrush" Color="Transparent" />
+                    </StackPanel.Background>
+                    <Path
+                        Width="14"
+                        Height="14"
+                        Margin="10,0,4,0"
+                        Data="M0 0l20 10L0 20V0zm0 8v4l10-2L0 8z"
+                        Fill="{StaticResource OpenWithBorderFill}"
+                        Stretch="Fill" />
+                    <Button
+                        x:Name="OpenWith"
+                        FocusVisualStyle="{x:Null}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto">
+                        <Button.Content>
+                            <TextBlock
+                                Margin="4,0,3,0"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Foreground="{StaticResource OpenWithBorderFill}"
+                                Text="{StaticResource OpenWith}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </Border>
 
             <Border
                 x:Name="PrintBorder"
-                Canvas.Left="5"
-                Canvas.Top="116"
+                Canvas.Left="141"
+                Canvas.Top="93"
                 Style="{StaticResource ButtonBorder}">
-                <Button
-                    x:Name="Print"
-                    Content="{StaticResource ResourceKey=Print}"
-                    FocusVisualStyle="{x:Null}"
-                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                    FontSize="14">
-                    <Button.Foreground>
-                        <SolidColorBrush x:Name="PrintFill" Color="{StaticResource MainColor}" />
-                    </Button.Foreground>
-                    <Button.Background>
-                        <SolidColorBrush x:Name="PrintBrush" Color="Transparent" />
-                    </Button.Background>
-                </Button>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Background>
+                        <SolidColorBrush x:Name="PrintButtonBrush" Color="Transparent" />
+                    </StackPanel.Background>
+                    <Path
+                        Width="16"
+                        Height="16"
+                        Margin="10,0,6,.5"
+                        Data="M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z"
+                        Fill="{StaticResource PrintBorderFill}"
+                        Stretch="Fill" />
+                    <Button
+                        x:Name="PrintButton"
+                        Canvas.Left="113"
+                        Canvas.Top="1"
+                        ToolTip="{StaticResource RenameFile}">
+                        <Button.Content>
+                            <TextBlock
+                                Margin="3,0,2,0"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Foreground="{StaticResource PrintBorderFill}"
+                                Text="{StaticResource Print}" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </Border>
 
             <Border
-                x:Name="SaveBorder"
-                Canvas.Left="132"
-                Canvas.Top="116"
+                x:Name="RenameBorder"
+                Canvas.Left="7"
+                Canvas.Top="137"
                 Style="{StaticResource ButtonBorder}">
-                <Button
-                    x:Name="SaveButton"
-                    Content="{StaticResource ResourceKey=Save}"
-                    FocusVisualStyle="{x:Null}"
-                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                    FontSize="14">
-                    <Button.Foreground>
-                        <SolidColorBrush x:Name="SaveFill" Color="{StaticResource MainColor}" />
-                    </Button.Foreground>
-                    <Button.Background>
-                        <SolidColorBrush x:Name="SaveBrush" Color="Transparent" />
-                    </Button.Background>
-                </Button>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Background>
+                        <SolidColorBrush x:Name="RenameButtonBrush" Color="Transparent" />
+                    </StackPanel.Background>
+                    <Path
+                        Width="16"
+                        Height="16"
+                        Margin="10.3,0,4,0"
+                        Data="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V428.7c-2.7 1.1-5.4 2-8.2 2.7l-60.1 15c-3 .7-6 1.2-9 1.4c-.9 .1-1.8 .2-2.7 .2H240c-6.1 0-11.6-3.4-14.3-8.8l-8.8-17.7c-1.7-3.4-5.1-5.5-8.8-5.5s-7.2 2.1-8.8 5.5l-8.8 17.7c-2.9 5.9-9.2 9.4-15.7 8.8s-12.1-5.1-13.9-11.3L144 381l-9.8 32.8c-6.1 20.3-24.8 34.2-46 34.2H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h8.2c7.1 0 13.3-4.6 15.3-11.4l14.9-49.5c3.4-11.3 13.8-19.1 25.6-19.1s22.2 7.8 25.6 19.1l11.6 38.6c7.4-6.2 16.8-9.7 26.8-9.7c15.9 0 30.4 9 37.5 23.2l4.4 8.8h8.9c-3.1-8.8-3.7-18.4-1.4-27.8l15-60.1c2.8-11.3 8.6-21.5 16.8-29.7L384 203.6V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM549.8 139.7c-15.6-15.6-40.9-15.6-56.6 0l-29.4 29.4 71 71 29.4-29.4c15.6-15.6 15.6-40.9 0-56.6l-14.4-14.4zM311.9 321c-4.1 4.1-7 9.2-8.4 14.9l-15 60.1c-1.4 5.5 .2 11.2 4.2 15.2s9.7 5.6 15.2 4.2l60.1-15c5.6-1.4 10.8-4.3 14.9-8.4L512.1 262.7l-71-71L311.9 321z"
+                        Fill="{StaticResource RenameBorderFill}"
+                        Stretch="Fill" />
+                    <Button
+                        x:Name="RenameButton"
+                        Canvas.Left="113"
+                        Canvas.Top="1"
+                        ToolTip="{StaticResource RenameFile}">
+                        <Button.Content>
+                            <TextBlock
+                                Margin="3.7,0,2,0"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Foreground="{StaticResource RenameBorderFill}"
+                                Text="{StaticResource RenameFile}" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </Border>
+
+            <Border
+                x:Name="RecycleBorder"
+                Canvas.Left="141"
+                Canvas.Top="137"
+                Style="{StaticResource ButtonBorder}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Background>
+                        <SolidColorBrush x:Name="RecycleButtonBrush" Color="Transparent" />
+                    </StackPanel.Background>
+                    <Path
+                        Width="16"
+                        Height="16"
+                        Margin="10,0,5,0"
+                        Data="M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-42t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z"
+                        Fill="{StaticResource RecycleButtonIconBrush}"
+                        Stretch="Fill" />
+                    <Button
+                        x:Name="RecycleButton"
+                        Canvas.Left="113"
+                        Canvas.Top="1"
+                        ToolTip="{StaticResource SendCurrentImageToRecycleBin}">
+
+                        <Button.Content>
+                            <TextBlock
+                                Margin="3,0,2,0"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Foreground="{StaticResource RecycleButtonIconBrush}"
+                                Text="{StaticResource DeleteFile}" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+
+
+
         </Canvas>
 
         <Rectangle
-            Width="22"
+            Width="25"
             Height="1.5"
-            Margin="29,-1,0,0"
+            Margin="38,4,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrushAlt}" />
         <Polygon
-            Margin="25,-5,0,0"
+            Margin="36,-6,0,0"
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrushAlt}"
             Points="0,0 15,30, 30,0"

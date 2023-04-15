@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Input;
 using PicView.Animations;
 using PicView.Properties;
 using PicView.UILogic;
@@ -22,7 +23,12 @@ namespace PicView.Views.UserControls.Buttons
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                TheButton.Click += delegate { UC.Close_UserControls(); };
+                TheButton.Click += delegate 
+                {
+                    UC.Close_UserControls();
+                    Keyboard.ClearFocus();
+                    UC.GetImageSettingsMenu?.GoToPic?.GoToPicBox?.Select(0, 0); // Deselect
+                };
             };
         }
     }

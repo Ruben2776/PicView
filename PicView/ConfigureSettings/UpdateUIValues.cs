@@ -1,15 +1,16 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
+using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -201,6 +202,24 @@ namespace PicView.ConfigureSettings
 
             ScaleImage.TryFitImage();
             Settings.Default.Save();
+        }
+
+        internal static void ToggleQuickResize()
+        {
+            UC.Close_UserControls();
+
+            if (UC.GetQuickResize is null)
+            {
+                LoadControls.LoadQuickResize();
+            }
+            if (UC.GetQuickResize.Visibility == Visibility.Collapsed)
+            {
+                UC.GetQuickResize.Show();
+            }
+            else
+            {
+                UC.GetQuickResize.Hide();
+            }
         }
     }
 }

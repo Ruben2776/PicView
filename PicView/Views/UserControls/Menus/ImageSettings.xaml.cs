@@ -1,7 +1,13 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using System.Windows.Media;
+using PicView.Animations;
+using PicView.ConfigureSettings;
+using PicView.Editing.Crop;
+using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
+using PicView.UILogic.TransformImage;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Menus
@@ -15,39 +21,48 @@ namespace PicView.Views.UserControls.Menus
         {
             InitializeComponent();
 
-            switch (Settings.Default.UserLanguage)
-            {
-                case "ru":
-                case "pl":
-                case "es":
-                    Contained_Gallery.FontSize = Fullscreen_Gallery.FontSize = 13;
-                    break;
-            }
+            // RotateLeftButton
+            SetIconButterMouseOverAnimations(RotateLeftButton, RotateLeftButtonBrush, RotateLeftIconBrush);
+            RotateLeftButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(true, RotateLeftButton).ConfigureAwait(false);
 
-            FullscreenGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(FullscreenFill1); };
-            FullscreenGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(FullscreenFill2); };
-            FullscreenGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(FullscreenTextBrush); };
-            FullscreenGalleryBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(FullscreenBrush); };
+            // RotateRightButton
+            SetIconButterMouseOverAnimations(RotateRightButton, RotateRightButtonBrush, RotateRightIconBrush);
+            RotateRightButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(false, RotateLeftButton).ConfigureAwait(false);
 
-            FullscreenGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(FullscreenFill1); };
-            FullscreenGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(FullscreenFill2); };
-            FullscreenGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(FullscreenTextBrush); };
-            FullscreenGalleryBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(FullscreenBrush); };
+            // ResizeButton
+            SetIconButterMouseOverAnimations(ResizeButtonBorder, ResizeBorderBrush, (SolidColorBrush)Resources["ResizeIcon"]);
+            ResizeButton.Click +=  (_, _) => UpdateUIValues.ToggleQuickResize();
+            ResizeButtonBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.ToggleQuickResize();
 
-            ContainedGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(ContainedFill); };
-            ContainedGalleryBorder.MouseEnter += delegate { ButtonMouseOverAnim(ContainedTextBrush); };
-            ContainedGalleryBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ContainedButtonBrush); };
+            // CropButton
+            SetIconButterMouseOverAnimations(CropButtonBorder, CropBorderBrush, (SolidColorBrush)Resources["CropIcon"]);
+            CropButton.Click += (_, _) => CropFunctions.StartCrop();
+            CropButtonBorder.MouseLeftButtonDown += (_, _) => CropFunctions.StartCrop();
 
-            ContainedGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ContainedFill); };
-            ContainedGalleryBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ContainedTextBrush); };
-            ContainedGalleryBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ContainedButtonBrush); };
+            // OptimizeButton
+            SetIconButterMouseOverAnimations(OptimizeBorder, BgBorderBrush, (SolidColorBrush)Resources["OptimizeIcon"]);
+            OptimizeButton.Click += async(_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+            OptimizeBorder.MouseLeftButtonDown += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
 
-            Contained_Gallery.Click += async delegate
+            // SlideShowBorder
+            SetIconButterMouseOverAnimations(SlideShowBorder, SlideShowBorderBrush, (SolidColorBrush)Resources["SlideshowIcon"]);
+            SlideShowButton.Click += delegate
             {
                 UC.Close_UserControls();
-                await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+                Slideshow.StartSlideshow();
             };
-            Fullscreen_Gallery.Click += async delegate
+            SlideShowBorder.MouseLeftButtonDown += delegate
+            {
+                UC.Close_UserControls();
+                Slideshow.StartSlideshow();
+            };
+            var s = Application.Current.Resources["StartSlideshow"] as string;
+            s += " [F5]";
+            SlideShowBorder.ToolTip = s;
+
+            // FullscreenGalleryBorder
+            SetIconButterMouseOverAnimations(FullScreenGalleryButton, FullScreenBrush, (SolidColorBrush)Resources["FullScreenIcon"]);
+            FullscreenGalleryBorder.MouseLeftButtonDown += async delegate
             {
                 UC.Close_UserControls();
 
@@ -57,6 +72,30 @@ namespace PicView.Views.UserControls.Menus
                 }
 
                 await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
+            };
+            FullScreenGalleryButton.Click += async delegate
+            {
+                UC.Close_UserControls();
+
+                if (Settings.Default.FullscreenGalleryHorizontal == false)
+                {
+                    Settings.Default.FullscreenGalleryHorizontal = true;
+                }
+
+                await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
+            };
+
+            // ContainedGalleryBorder
+            SetIconButterMouseOverAnimations(ContainedGalleryButton, ContainedButtonBrush, (SolidColorBrush)Resources["ContainedIcon"]);
+            ContainedGalleryBorder.MouseLeftButtonDown += async delegate
+            {
+                UC.Close_UserControls();
+                await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+            };
+            ContainedGalleryButton.Click += async delegate
+            {
+                UC.Close_UserControls();
+                await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
             };
         }
     }

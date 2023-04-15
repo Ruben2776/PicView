@@ -337,7 +337,7 @@ namespace PicView.Shortcuts
                     case Key.J:
                         if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            ResizeButton.ToggleQuickResize();
+                            UpdateUIValues.ToggleQuickResize();
                         }
                         break;
 
@@ -388,7 +388,7 @@ namespace PicView.Shortcuts
                         {
                             if (altDown)
                             {
-                                ResizeButton.ToggleQuickResize();
+                                UpdateUIValues.ToggleQuickResize();
                             }
                             else
                             {
@@ -430,10 +430,7 @@ namespace PicView.Shortcuts
                     case Key.E:
                         if (!GalleryFunctions.IsHorizontalOpen)
                         {
-                            if (CheckOutOfRange() == false)
-                            {
-                                OpenWith(Pics[FolderIndex]);
-                            }
+                            OpenWith();
                         }
                         else
                         {
