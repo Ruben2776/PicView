@@ -41,7 +41,6 @@ namespace PicView.ChangeTitlebar
             // Check if file exists or not
             if (!fileInfo.Exists)
             {
-                _ = ErrorHandling.ReloadAsync();
                 return null;
             }
 

@@ -26,8 +26,8 @@ namespace PicView.ChangeImage
             bool value = true;
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {
-                value = Pics.Count < FolderIndex || Pics.Count < 1 || UC.GetCropppingTool is not null and { IsVisible: true }
-                || (UC.GetQuickResize?.Opacity > 0);
+                value = Pics.Count < FolderIndex || Pics.Count < 1 ||
+                        UC.GetCropppingTool is { IsVisible: true } || (UC.GetQuickResize?.Opacity > 0);
             }));
             return value;
         }
@@ -197,12 +197,6 @@ namespace PicView.ChangeImage
 
         private static async Task ResetValues(FileInfo fileInfo)
         {
-            if (fileInfo is null)
-            {
-                UnexpectedError();
-                return;
-            }
-
             Preloader.Clear();
             Pics = FileLists.FileList(fileInfo);
 
