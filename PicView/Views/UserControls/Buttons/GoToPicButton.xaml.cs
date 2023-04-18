@@ -24,7 +24,7 @@ namespace PicView.Views.UserControls.Buttons
             {
                 TheButton.Click += async (_, _) => await GoToPicEventAsync().ConfigureAwait(false);
                 
-                SetIconButterMouseOverAnimations(TheButton, GoToPicBrush, (SolidColorBrush)Resources["PlayIconBrush"]);
+                SetButtonIconMouseOverAnimations(TheButton, GoToPicBrush, (SolidColorBrush)Resources["PlayIconBrush"]);
 
                 GoToPicBox.PreviewMouseLeftButtonDown += delegate
                 {

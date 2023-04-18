@@ -11,7 +11,7 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                SetIconButterMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
+                SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
             };
         }
     }

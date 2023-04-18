@@ -56,114 +56,114 @@ namespace PicView.Views.Windows
 
             // Button, Brush and Text for Negative effect
             NegativeButton.Click += (_, _) => Negative();
-            SetIconButterMouseOverAnimations(NegativeButton, NegativeButtonBrush, NegativeColorsText);
+            SetButtonIconMouseOverAnimations(NegativeButton, NegativeButtonBrush, NegativeColorsText);
 
             // Button, Brush and Text for Grayscale effect
             GrayscaleButton.Click += (_, _) => GraySceale();
-            SetIconButterMouseOverAnimations(GrayscaleButton, GrayscaleButtonBrush, GrayscaleText);
+            SetButtonIconMouseOverAnimations(GrayscaleButton, GrayscaleButtonBrush, GrayscaleText);
 
             // Button, Brush and Text for Color Tone effect
             ColorToneButton.Click += (_, _) => ColorToneEffect();
-            SetIconButterMouseOverAnimations(ColorToneButton, ColorToneButtonBrush, ColorToneText);
+            SetButtonIconMouseOverAnimations(ColorToneButton, ColorToneButtonBrush, ColorToneText);
 
             // Button, Brush and Text for Old Movie effect
             OldMovieButton.Click += (_, _) => OldMovieEffect();
-            SetIconButterMouseOverAnimations(OldMovieButton, OldMovieButtonBrush, OldMovieText);
+            SetButtonIconMouseOverAnimations(OldMovieButton, OldMovieButtonBrush, OldMovieText);
 
             // Button, Brush and Text for Bloom effect
             BloomButton.Click += (_, _) => Bloom();
-            SetIconButterMouseOverAnimations(BloomButton, BloomButtonBrush, BloomText);
+            SetButtonIconMouseOverAnimations(BloomButton, BloomButtonBrush, BloomText);
 
             // Button, Brush and Text for Gloom effect
             GloomButton.Click += (_, _) => Gloom();
-            SetIconButterMouseOverAnimations(GloomButton, GloomButtonBrush, GloomText);
+            SetButtonIconMouseOverAnimations(GloomButton, GloomButtonBrush, GloomText);
 
             // Button, Brush and Text for Monochrome effect
             MonochromeButton.Click += (_, _) => Monochrome();
-            SetIconButterMouseOverAnimations(MonochromeButton, MonochromeButtonBrush, MonochromeText);
+            SetButtonIconMouseOverAnimations(MonochromeButton, MonochromeButtonBrush, MonochromeText);
 
             // Button, Brush and Text for Wave Warper effect
             WavewarperButton.Click += (_, _) => WaveWarperEffect();
-            SetIconButterMouseOverAnimations(WavewarperButton, WaveWarperButtonBrush, WaveWarperText);
+            SetButtonIconMouseOverAnimations(WavewarperButton, WaveWarperButtonBrush, WaveWarperText);
 
             // Button, Brush and Text for Underwater effect
             UnderwaterButton.Click += (_, _) => UnderWaterEffect();
-            SetIconButterMouseOverAnimations(UnderwaterButton, UnderwaterButtonBrush, UnderwaterText);
+            SetButtonIconMouseOverAnimations(UnderwaterButton, UnderwaterButtonBrush, UnderwaterText);
 
             // Button, Brush and Text for Banded Swirl effect
             BandedSwirlButton.Click += (_, _) => BandedSwirlEffect();
-            SetIconButterMouseOverAnimations(BandedSwirlButton, BandedSwirlButtonBrush, BandedSwirlText);
+            SetButtonIconMouseOverAnimations(BandedSwirlButton, BandedSwirlButtonBrush, BandedSwirlText);
 
             // Button, Brush and Text for Swirl effect
             SwirlButton.Click += (_, _) => SwirlEffect();
-            SetIconButterMouseOverAnimations(SwirlButton, SwirlButtonBrush, SwirlText);
+            SetButtonIconMouseOverAnimations(SwirlButton, SwirlButtonBrush, SwirlText);
 
             // Button, Brush and Text for Ripple effect
             RippleButton.Click += (_, _) => RippleEffect1();
-            SetIconButterMouseOverAnimations(RippleButton, RippleButtonBrush, RippleText);
+            SetButtonIconMouseOverAnimations(RippleButton, RippleButtonBrush, RippleText);
 
             // Button, Brush and Text for Ripple Alternate effect
             RippleAltButton.Click += (_, _) => RippleEffect2();
-            SetIconButterMouseOverAnimations(RippleAltButton, RippleAltButtonBrush, RippleAltText);
+            SetButtonIconMouseOverAnimations(RippleAltButton, RippleAltButtonBrush, RippleAltText);
 
             // Button, Brush and Text for Blur effect
             BlurButton.Click += (_, _) => BlurEffect();
-            SetIconButterMouseOverAnimations(BlurButton, BlurButtonBrush, BlurText);
+            SetButtonIconMouseOverAnimations(BlurButton, BlurButtonBrush, BlurText);
 
             // Button, Brush and Text for Directional Blur effect
             DirectionalBlurButton.Click += (_, _) => Dir_blur();
-            SetIconButterMouseOverAnimations(DirectionalBlurButton, DirectionalBlurButtonBrush, DirectionalBlurText);
+            SetButtonIconMouseOverAnimations(DirectionalBlurButton, DirectionalBlurButtonBrush, DirectionalBlurText);
 
             // Button, Brush and Text for Telescopic Blur effect
             TelescopicBlurButton.Click += (_, _) => Teleskopisk_blur();
-            SetIconButterMouseOverAnimations(TelescopicBlurButton, TelescopicBlurButtonBrush, TelescopicBlurText);
+            SetButtonIconMouseOverAnimations(TelescopicBlurButton, TelescopicBlurButtonBrush, TelescopicBlurText);
 
             // Button, Brush and Text for Pixelate effect
             PixelateButton.Click += (_, _) => PixelateEffect();
-            SetIconButterMouseOverAnimations(PixelateButton, PixelateButtonBrush, PixelateText);
+            SetButtonIconMouseOverAnimations(PixelateButton, PixelateButtonBrush, PixelateText);
 
             // Button, Brush and Text for Embossed effect
             EmbossedButton.Click += (_, _) => Embossed();
-            SetIconButterMouseOverAnimations(EmbossedButton, EmbossedButtonBrush, EmbossedText);
+            SetButtonIconMouseOverAnimations(EmbossedButton, EmbossedButtonBrush, EmbossedText);
 
             // Button, Brush and Text for Smooth Magnify effect
             SmoothMagnifyButton.Click += (_, _) => MagnifySmoothEffect();
-            SetIconButterMouseOverAnimations(SmoothMagnifyButton, SmoothMagnifyButtonBrush, SmoothMagnifyText);
+            SetButtonIconMouseOverAnimations(SmoothMagnifyButton, SmoothMagnifyButtonBrush, SmoothMagnifyText);
 
             // Button, Brush and Text for Pivot effect
             PivotButton.Click += (_, _) => PivotEffect();
-            SetIconButterMouseOverAnimations(PivotButton, PivotButtonBrush, PivotText);
+            SetButtonIconMouseOverAnimations(PivotButton, PivotButtonBrush, PivotText);
 
             // Button, Brush and Text for Paper Fold effect
             PaperfoldButton.Click += (_, _) => PaperFoldEffect();
-            SetIconButterMouseOverAnimations(PaperfoldButton, PaperfoldButtonBrush, PaperFoldText);
+            SetButtonIconMouseOverAnimations(PaperfoldButton, PaperfoldButtonBrush, PaperFoldText);
 
             // Button, Brush and Text for Pencil Sketch Stroke effect
             PencilSketchButton.Click += (_, _) => SketchPencilStrokeEffect();
-            SetIconButterMouseOverAnimations(PencilSketchButton, PencilSketchButtonBrush, PencilSketchText);
+            SetButtonIconMouseOverAnimations(PencilSketchButton, PencilSketchButtonBrush, PencilSketchText);
 
             // Button, Brush and Text for Sketch effect
             SketchButton.Click += (_, _) => Sketch();
-            SetIconButterMouseOverAnimations(SketchButton, SketchButtonBrush, SketchText);
+            SetButtonIconMouseOverAnimations(SketchButton, SketchButtonBrush, SketchText);
 
             // Button, Brush and Text for Tone Mapping effect
             ToneMappingButton.Click += (_, _) => ToneMapping();
-            SetIconButterMouseOverAnimations(ToneMappingButton, ToneMappingButtonBrush, ToneMappingText);
+            SetButtonIconMouseOverAnimations(ToneMappingButton, ToneMappingButtonBrush, ToneMappingText);
 
             // Button, Brush and Text for Bands effect
             BandsButton.Click += (_, _) => Bands();
-            SetIconButterMouseOverAnimations(BandsButton, BandsButtonBrush, BandsText);
+            SetButtonIconMouseOverAnimations(BandsButton, BandsButtonBrush, BandsText);
 
             // Button, Brush and Text for Glass Tile effect
             GlasTileButton.Click += (_, _) => GlasTileEffect();
-            SetIconButterMouseOverAnimations(GlasTileButton, GlasTileButtonBrush, GlassTileText);
+            SetButtonIconMouseOverAnimations(GlasTileButton, GlasTileButtonBrush, GlassTileText);
 
             // Button, Brush and Text for Frosty Outline effect
             FrostyOutlineButton.Click += (_, _) => FrostyOutlineEffect();
-            SetIconButterMouseOverAnimations(FrostyOutlineButton, FrostyOutlineButtonBrush, FrostyOutlineText);
+            SetButtonIconMouseOverAnimations(FrostyOutlineButton, FrostyOutlineButtonBrush, FrostyOutlineText);
 
             // Button, Brush and Text for SetAsWallpaper function
-            SetIconButterMouseOverAnimations(SetAsWallpaperButton, SetAsWallpaperButtonBrush, SetAsWallpaperText);
+            SetButtonIconMouseOverAnimations(SetAsWallpaperButton, SetAsWallpaperButtonBrush, SetAsWallpaperText);
             SetAsWallpaperButton.Click += async delegate
             {
                 var x = WallpaperStyle.Fill;
@@ -176,15 +176,15 @@ namespace PicView.Views.Windows
             };
 
             // Button, Brush and Text for SetAsLockscreen function
-            SetIconButterMouseOverAnimations(SetAsLockScreenButton, SetAsLockscreenButtonBrush, SetAsLockscreenText);
+            SetButtonIconMouseOverAnimations(SetAsLockScreenButton, SetAsLockscreenButtonBrush, SetAsLockscreenText);
             SetAsLockScreenButton.Click += async (_, _) => await LockScreenHelper.SetLockScreenImageAsync().ConfigureAwait(false);
 
             // Button, Brush and Text for Copy function
-            SetIconButterMouseOverAnimations(CopyButton, CopyBrush, CopyText);
+            SetButtonIconMouseOverAnimations(CopyButton, CopyBrush, CopyText);
             CopyButton.Click += (_, _) => Copy_Paste.CopyBitmap();
 
             // Button, Brush and Text for Save function
-            SetIconButterMouseOverAnimations(SaveButton, SaveBrush, SaveText);
+            SetButtonIconMouseOverAnimations(SaveButton, SaveBrush, SaveText);
             SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync();
 
             #endregion button events

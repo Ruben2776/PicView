@@ -17,6 +17,7 @@ using static PicView.UILogic.TransformImage.Scroll;
 
 namespace PicView.ConfigureSettings
 {
+    // ReSharper disable once InconsistentNaming
     internal static class UpdateUIValues
     {
         // Todo Rewrite to use MVVM.. One day.
@@ -79,22 +80,13 @@ namespace PicView.ConfigureSettings
                 || Rotation.RotationAngle != 0)
                 return;
 
-            var settingscm = MainContextMenu.Items[7] as MenuItem;
-            var scrollcm = settingscm.Items[1] as MenuItem;
-            var scrollcmHeader = scrollcm.Header as CheckBox;
+            var settingCcm = MainContextMenu.Items[7] as MenuItem;
+            var scrollCm = settingCcm.Items[1] as MenuItem;
+            var scrollCmHeader = scrollCm.Header as CheckBox;
 
-            if (Settings.Default.ScrollEnabled)
-            {
-                SetScrollBehaviour(false);
-                scrollcmHeader.IsChecked = false;
-                UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = false;
-            }
-            else
-            {
-                SetScrollBehaviour(true);
-                scrollcmHeader.IsChecked = true;
-                UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = true;
-            }
+            SetScrollBehaviour(Settings.Default.ScrollEnabled);
+            scrollCmHeader.IsChecked = Settings.Default.ScrollEnabled;
+            UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
         }
 
         internal static void SetScrolling(bool value)
@@ -105,24 +97,17 @@ namespace PicView.ConfigureSettings
 
         internal static void SetLooping()
         {
-            var settingscm = MainContextMenu.Items[7] as MenuItem;
-            var loopcm = settingscm.Items[0] as MenuItem;
-            var loopcmHeader = loopcm.Header as CheckBox;
+            var settingsCm = MainContextMenu.Items[7] as MenuItem;
+            var loopCm = settingsCm.Items[0] as MenuItem;
+            var loopCmHeader = loopCm.Header as CheckBox;
 
-            if (Settings.Default.Looping)
-            {
-                Settings.Default.Looping = false;
-                loopcmHeader.IsChecked = false;
-                UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = false;
-                ShowTooltipMessage(Application.Current.Resources["LoopingDisabled"]);
-            }
-            else
-            {
-                Settings.Default.Looping = true;
-                loopcmHeader.IsChecked = true;
-                UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = true;
-                ShowTooltipMessage(Application.Current.Resources["LoopingEnabled"]);
-            }
+            Settings.Default.Looping = !Settings.Default.Looping;
+            loopCmHeader.IsChecked = Settings.Default.Looping;
+            UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = Settings.Default.Looping;
+
+            ShowTooltipMessage(Settings.Default.Looping ?
+                Application.Current.Resources["LoopingEnabled"] : Application.Current.Resources["LoopingDisabled"],
+                UC.UserControls_Open());
         }
 
         internal static void SetTopMost()
@@ -133,30 +118,21 @@ namespace PicView.ConfigureSettings
             }
 
             var settingCcm = (MenuItem)MainContextMenu.Items[7];
-            var TopMostMenu = (MenuItem)settingCcm.Items[4];
-            var TopMostHeader = (CheckBox)TopMostMenu.Header;
+            var topMostMenu = (MenuItem)settingCcm.Items[4];
+            var topMostHeader = (CheckBox)topMostMenu.Header;
 
-            if (Settings.Default.TopMost)
+            Settings.Default.TopMost = !Settings.Default.TopMost;
+            GetMainWindow.Topmost = Settings.Default.TopMost;
+            topMostHeader.IsChecked = Settings.Default.TopMost;
+
+            if (GetSettingsWindow is not null)
             {
-                Settings.Default.TopMost = false;
-                GetMainWindow.Topmost = false;
-                TopMostHeader.IsChecked = false;
-
-                if (GetSettingsWindow is not null)
-                {
-                    GetSettingsWindow.TopmostRadio.IsChecked = false;
-                }
+                GetSettingsWindow.TopmostRadio.IsChecked = Settings.Default.TopMost;
             }
-            else
-            {
-                Settings.Default.TopMost = true;
-                GetMainWindow.Topmost = true;
-                TopMostHeader.IsChecked = true;
 
-                if (GetSettingsWindow is not null)
-                {
-                    GetSettingsWindow.TopmostRadio.IsChecked = true;
-                }
+            if (UC.GetQuickSettingsMenu is not null)
+            {
+                UC.GetQuickSettingsMenu.StayOnTop.IsChecked = Settings.Default.TopMost;
             }
         }
 
@@ -180,23 +156,9 @@ namespace PicView.ConfigureSettings
             Settings.Default.FillImage = fill;
             Settings.Default.AutoFitWindow = autoFit;
 
-            if (autoFit)
-            {
-                UC.GetQuickSettingsMenu.SetFit.IsChecked = true;
-            }
-            else
-            {
-                UC.GetQuickSettingsMenu.SetFit.IsChecked = false;
-            }
-
-            if (fill)
-            {
-                UC.GetQuickSettingsMenu.ToggleFill.IsChecked = true;
-            }
-            else
-            {
-                UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
-            }
+            UC.GetQuickSettingsMenu.SetFit.IsChecked = autoFit;
+            UC.GetQuickSettingsMenu.ToggleFill.IsChecked = fill;
+            
             if (!GalleryFunctions.IsHorizontalFullscreenOpen)
                 WindowSizing.SetWindowBehavior();
 

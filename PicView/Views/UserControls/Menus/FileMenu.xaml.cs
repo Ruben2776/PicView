@@ -17,48 +17,48 @@ namespace PicView.Views.UserControls.Menus
             InitializeComponent();
 
             // OpenBorder
-            SetIconButterMouseOverAnimations(OpenBorder, OpenBorderBrush, (SolidColorBrush)Resources["OpenBorderFill"]);
+            SetButtonIconMouseOverAnimations(OpenBorder, OpenBorderBrush, (SolidColorBrush)Resources["OpenBorderFill"]);
             OpenBorder.MouseLeftButtonDown += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
             OpenButton.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
 
             // SaveButton
-            SetIconButterMouseOverAnimations(SaveButton, SaveButtonBrush, SaveButtonIconBrush);
+            SetButtonIconMouseOverAnimations(SaveButton, SaveButtonBrush, SaveButtonIconBrush);
             SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync().ConfigureAwait(false);
 
             // CopyButton
-            SetIconButterMouseOverAnimations(CopyButton, CopyButtonBrush, CopyButtonIconBrush);
+            SetButtonIconMouseOverAnimations(CopyButton, CopyButtonBrush, CopyButtonIconBrush);
             CopyButton.Click += (_, _) => Copy_Paste.Copy();
 
             // PasteButton
-            SetIconButterMouseOverAnimations(PasteButton, PasteButtonBrush, PasteButtonIconBrush);
+            SetButtonIconMouseOverAnimations(PasteButton, PasteButtonBrush, PasteButtonIconBrush);
             PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
             PasteButton.PreviewMouseLeftButtonDown += delegate { UC.Close_UserControls(); };
 
             // FileLocationBorder
-            SetIconButterMouseOverAnimations(FileLocationBorder, FileLocationBrush, (SolidColorBrush)Resources["LocationBorderFill"]);
+            SetButtonIconMouseOverAnimations(FileLocationBorder, FileLocationBrush, (SolidColorBrush)Resources["LocationBorderFill"]);
             FileLocationBorder.MouseLeftButtonDown += (_, _) => Open_Save.Open_In_Explorer();
             FileLocationButton.Click += (_, _) => Open_Save.Open_In_Explorer();
 
             // PrintBorder
-            SetIconButterMouseOverAnimations(PrintBorder, PrintButtonBrush, (SolidColorBrush)Resources["PrintBorderFill"]);
+            SetButtonIconMouseOverAnimations(PrintBorder, PrintButtonBrush, (SolidColorBrush)Resources["PrintBorderFill"]);
             PrintBorder.MouseLeftButtonDown += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
             PrintButton.Click += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
 
             // ReloadButton
-            SetIconButterMouseOverAnimations(ReloadButton, ReloadButtonBrush, (SolidColorBrush)Resources["ReloadButtonIconBrush"]);
+            SetButtonIconMouseOverAnimations(ReloadButton, ReloadButtonBrush, (SolidColorBrush)Resources["ReloadButtonIconBrush"]);
             ReloadButton.Click += async (_, _) => await ErrorHandling.ReloadAsync().ConfigureAwait(false);
 
             // RecycleButton
-            SetIconButterMouseOverAnimations(RecycleButton, RecycleButtonBrush, (SolidColorBrush)Resources["RecycleButtonIconBrush"]);
+            SetButtonIconMouseOverAnimations(RecycleButton, RecycleButtonBrush, (SolidColorBrush)Resources["RecycleButtonIconBrush"]);
             RecycleButton.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(true).ConfigureAwait(false);
 
             // OpenWithBorder
-            SetIconButterMouseOverAnimations(OpenWithBorder, OpenWithBorderBrush, (SolidColorBrush)Resources["OpenWithBorderFill"]);
+            SetButtonIconMouseOverAnimations(OpenWithBorder, OpenWithBorderBrush, (SolidColorBrush)Resources["OpenWithBorderFill"]);
             OpenWithBorder.MouseLeftButtonDown += (_, _) => Open_Save.OpenWith();
             OpenWith.Click += (_, _) => Open_Save.OpenWith();
 
             // RenameBorder
-            SetIconButterMouseOverAnimations(RenameBorder, RenameButtonBrush, (SolidColorBrush)Resources["RenameBorderFill"]);
+            SetButtonIconMouseOverAnimations(RenameBorder, RenameButtonBrush, (SolidColorBrush)Resources["RenameBorderFill"]);
             RenameBorder.MouseLeftButtonDown += (_, _) => { UC.Close_UserControls(); EditTitleBar.EditTitleBar_Text(); };
             RenameButton.Click += (_, _) => { UC.Close_UserControls(); EditTitleBar.EditTitleBar_Text(); };
         }

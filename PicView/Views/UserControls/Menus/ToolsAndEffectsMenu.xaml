@@ -7,10 +7,7 @@
     Foreground="{StaticResource MainColorBrush}">
 
     <UserControl.Resources>
-        <SolidColorBrush
-            x:Key="IconBrush"
-            x:Name="IconBrush"
-            Color="{StaticResource IconColor}" />
+        <SolidColorBrush x:Key="IconBrush" Color="{StaticResource IconColor}" />
     </UserControl.Resources>
 
     <StackPanel>

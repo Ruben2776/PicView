@@ -17,7 +17,7 @@ namespace PicView.Animations
 
         private static readonly Color backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
-        internal static void SetIconButterMouseOverAnimations(UIElement uIElement, Brush backgroundBrush, Brush iconBrush)
+        internal static void SetButtonIconMouseOverAnimations(UIElement uIElement, Brush backgroundBrush, Brush iconBrush)
         {
             uIElement.MouseLeftButtonDown += delegate
             {

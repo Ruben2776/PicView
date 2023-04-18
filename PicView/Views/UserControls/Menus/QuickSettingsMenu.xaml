@@ -7,272 +7,270 @@
     Foreground="{StaticResource MainColorBrush}">
     <StackPanel>
 
-        <Canvas
-            Width="358"
-            Height="170"
-            Margin="0,0,0,45"
-            VerticalAlignment="Top">
+        <Border
+            Width="359"
+            Height="203"
+            Background="{StaticResource BackgroundColorBrushAlt}"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1,0,1,1"
+            CornerRadius="8">
 
-            <Border
-                Width="358"
-                Height="45"
-                Panel.ZIndex="1"
-                Background="{StaticResource BackgroundColorBrushAlt}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="8,8,0,0" />
+            <Canvas>
 
-            <Border
-                Width="358"
-                Height="165"
-                Margin="0,45,0,0"
-                Background="{StaticResource BackgroundColorBrushAlt}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1,0,1,1"
-                CornerRadius="0,0,8,8" />
+                <Border
+                    Width="358"
+                    Height="45"
+                    Panel.ZIndex="1"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8,8,0,0" />
 
-            <buttons:SettingsButton
-                x:Name="SettingsButton"
-                Width="180"
-                Panel.ZIndex="2" />
+                <buttons:SettingsButton
+                    x:Name="SettingsButton"
+                    Width="179"
+                    Panel.ZIndex="2" />
 
-            <buttons:InfoButton
-                x:Name="InfoButton"
-                Canvas.Left="180"
-                Width="131"
-                Panel.ZIndex="2" />
+                <buttons:InfoButton
+                    x:Name="InfoButton"
+                    Canvas.Left="179"
+                    Width="133"
+                    Panel.ZIndex="2" />
 
-            <buttons:MenuCloseButton
-                x:Name="CloseButton"
-                Canvas.Left="311"
-                Panel.ZIndex="2"
-                ToolTip="Close" />
+                <buttons:MenuCloseButton
+                    x:Name="CloseButton"
+                    Canvas.Left="312"
+                    Panel.ZIndex="2"
+                    ToolTip="Close" />
 
-            <Border
-                x:Name="StayOnTopBorder"
-                Canvas.Left="8"
-                Canvas.Top="52"
-                Width="167"
-                Height="45"
-                Background="{StaticResource BackgroundColorBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="2"
-                Effect="{StaticResource MenuShadowButtonBorder}">
-                <Border>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="StayOnTopBrush" Color="Transparent" />
-                    </Border.Background>
-                    <StackPanel
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            MaxWidth="135"
+                <Border
+                    x:Name="StayOnTopBorder"
+                    Canvas.Left="7"
+                    Canvas.Top="50"
+                    Width="169"
+                    Height="45"
+                    Background="{StaticResource BackgroundColorBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}">
+                    <Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="StayOnTopBrush" Color="Transparent" />
+                        </Border.Background>
+                        <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                            Text="{StaticResource StayTopMost}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="StayOnTopFill" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                        <CheckBox x:Name="StayOnTop" Style="{StaticResource Checkstyle}" />
-                    </StackPanel>
+                            Orientation="Horizontal">
+                            <TextBlock
+                                MaxWidth="135"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Text="{StaticResource StayTopMost}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="StayOnTopFill" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="StayOnTop" Style="{StaticResource Checkstyle}" />
+                        </StackPanel>
+                    </Border>
                 </Border>
-            </Border>
 
-            <Border
-                x:Name="SearchSubDirBorder"
-                Canvas.Left="184"
-                Canvas.Top="52"
-                Width="167"
-                Height="45"
-                Background="{StaticResource BackgroundColorBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="2"
-                Effect="{StaticResource MenuShadowButtonBorder}">
-                <Border>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="SearchSubDirBrush" Color="Transparent" />
-                    </Border.Background>
-                    <StackPanel
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            MaxWidth="135"
+                <Border
+                    x:Name="SearchSubDirBorder"
+                    Canvas.Left="182"
+                    Canvas.Top="50"
+                    Width="169"
+                    Height="45"
+                    Background="{StaticResource BackgroundColorBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}">
+                    <Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="SearchSubDirBrush" Color="Transparent" />
+                        </Border.Background>
+                        <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                            Text="{StaticResource SearchSubdirectory}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="SearchSubDirFill" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                        <CheckBox x:Name="SearchSubDir" Style="{StaticResource Checkstyle}" />
-                    </StackPanel>
+                            Orientation="Horizontal">
+                            <TextBlock
+                                MaxWidth="135"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Text="{StaticResource SearchSubdirectory}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="SearchSubDirFill" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="SearchSubDir" Style="{StaticResource Checkstyle}" />
+                        </StackPanel>
+                    </Border>
                 </Border>
-            </Border>
 
-            <Border
-                x:Name="SetFitBorder"
-                Canvas.Left="8"
-                Canvas.Top="104"
-                Width="167"
-                Height="45"
-                Background="{StaticResource BackgroundColorBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="2"
-                Effect="{StaticResource MenuShadowButtonBorder}">
-                <Border>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="SetFitBrush" Color="Transparent" />
-                    </Border.Background>
-                    <StackPanel
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            MaxWidth="135"
+                <Border
+                    x:Name="SetFitBorder"
+                    Canvas.Left="7"
+                    Canvas.Top="101"
+                    Width="169"
+                    Height="45"
+                    Background="{StaticResource BackgroundColorBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}">
+                    <Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="SetFitBrush" Color="Transparent" />
+                        </Border.Background>
+                        <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                            Text="{StaticResource AutoFitWindow}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="SetFitFill" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                        <CheckBox x:Name="SetFit" Style="{StaticResource Checkstyle}" />
-                    </StackPanel>
+                            Orientation="Horizontal">
+                            <TextBlock
+                                MaxWidth="135"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Text="{StaticResource AutoFitWindow}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="SetFitFill" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="SetFit" Style="{StaticResource Checkstyle}" />
+                        </StackPanel>
+                    </Border>
                 </Border>
-            </Border>
 
-            <Border
-                x:Name="ToggleFillBorder"
-                Canvas.Left="184"
-                Canvas.Top="104"
-                Width="167"
-                Height="45"
-                Background="{StaticResource BackgroundColorBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="2"
-                Effect="{StaticResource MenuShadowButtonBorder}">
-                <Border>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="ToggleFillBrush" Color="Transparent" />
-                    </Border.Background>
-                    <StackPanel
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            MaxWidth="135"
+                <Border
+                    x:Name="ToggleFillBorder"
+                    Canvas.Left="182"
+                    Canvas.Top="101"
+                    Width="169"
+                    Height="45"
+                    Background="{StaticResource BackgroundColorBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}">
+                    <Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="ToggleFillBrush" Color="Transparent" />
+                        </Border.Background>
+                        <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                            Text="{StaticResource FillImageHeight}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="ToggleFillFill" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                        <CheckBox
-                            x:Name="ToggleFill"
-                            HorizontalContentAlignment="Center"
-                            Style="{StaticResource Checkstyle}" />
-                    </StackPanel>
+                            Orientation="Horizontal">
+                            <TextBlock
+                                MaxWidth="135"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Text="{StaticResource FillImageHeight}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ToggleFillFill" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox
+                                x:Name="ToggleFill"
+                                HorizontalContentAlignment="Center"
+                                Style="{StaticResource Checkstyle}" />
+                        </StackPanel>
+                    </Border>
                 </Border>
-            </Border>
 
-            <Border
-                x:Name="ToggleScrollBorder"
-                Canvas.Left="184"
-                Canvas.Top="155"
-                Width="167"
-                Height="45"
-                Background="{StaticResource BackgroundColorBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="2"
-                Effect="{StaticResource MenuShadowButtonBorder}">
-                <Border>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="ToggleScrollBrush" Color="Transparent" />
-                    </Border.Background>
-                    <StackPanel
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            MaxWidth="135"
+                <Border
+                    x:Name="ToggleLoopingBorder"
+                    Canvas.Left="7"
+                    Canvas.Top="151"
+                    Width="169"
+                    Height="45"
+                    Background="{StaticResource BackgroundColorBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}">
+                    <Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="ToggleLoopBrush" Color="Transparent" />
+                        </Border.Background>
+                        <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                            Text="{StaticResource ToggleScroll}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="ToggleScrollFill" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                        <CheckBox x:Name="ToggleScroll" Style="{StaticResource Checkstyle}" />
-                    </StackPanel>
+                            Orientation="Horizontal">
+                            <TextBlock
+                                MaxWidth="135"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Text="{StaticResource ToggleLooping}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ToggleLoopFill" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="ToggleLooping" Style="{StaticResource Checkstyle}" />
+                        </StackPanel>
+                    </Border>
                 </Border>
-            </Border>
 
-            <Border
-                x:Name="ToggleLoopingBorder"
-                Canvas.Left="8"
-                Canvas.Top="155"
-                Width="167"
-                Height="45"
-                Background="{StaticResource BackgroundColorBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="2"
-                Effect="{StaticResource MenuShadowButtonBorder}">
-                <Border>
-                    <Border.Background>
-                        <SolidColorBrush x:Name="ToggleLoopBrush" Color="Transparent" />
-                    </Border.Background>
-                    <StackPanel
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            MaxWidth="135"
+                <Border
+                    x:Name="ToggleScrollBorder"
+                    Canvas.Left="182"
+                    Canvas.Top="151"
+                    Width="169"
+                    Height="45"
+                    Background="{StaticResource BackgroundColorBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Effect="{StaticResource MenuShadowButtonBorder}">
+                    <Border>
+                        <Border.Background>
+                            <SolidColorBrush x:Name="ToggleScrollBrush" Color="Transparent" />
+                        </Border.Background>
+                        <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                            Text="{StaticResource ToggleLooping}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="ToggleLoopFill" Color="{StaticResource MainColor}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                        <CheckBox x:Name="ToggleLooping" Style="{StaticResource Checkstyle}" />
-                    </StackPanel>
+                            Orientation="Horizontal">
+                            <TextBlock
+                                MaxWidth="135"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Text="{StaticResource ToggleScroll}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush x:Name="ToggleScrollFill" Color="{StaticResource MainColor}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            <CheckBox x:Name="ToggleScroll" Style="{StaticResource Checkstyle}" />
+                        </StackPanel>
+                    </Border>
                 </Border>
-            </Border>
-        </Canvas>
+
+
+            </Canvas>
+        </Border>
 
         <Rectangle
             Width="24"

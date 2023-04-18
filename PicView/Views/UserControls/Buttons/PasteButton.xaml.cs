@@ -12,7 +12,7 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                SetIconButterMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
+                SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
 
                 TheButton.Click += async delegate { await Copy_Paste.PasteAsync().ConfigureAwait(false); };
             };
