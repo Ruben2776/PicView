@@ -23,7 +23,7 @@
 
             <Border
                 VerticalAlignment="Top"
-                Background="{StaticResource BackgroundColorBrushAlt}"
+                Background="{StaticResource AltInterfaceBrush}"
                 CornerRadius="8,8,0,0">
                 <Canvas Width="275" Height="45">
 
@@ -127,10 +127,10 @@
                     <buttons:GoToPicButton
                         x:Name="GoToPic"
                         Canvas.Left="137"
-                        Width="88"
+                        Width="91"
                         Height="45" />
 
-                    <Border Canvas.Left="224" CornerRadius="0,8,0,0">
+                    <Border Canvas.Left="228" CornerRadius="0,8,0,0">
                         <buttons:MenuCloseButton x:Name="CloseButton" Height="45" />
                     </Border>
 

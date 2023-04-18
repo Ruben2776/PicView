@@ -3,10 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
-        Height="52"
+        Height="45"
         BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1,1,1,0"
-        CornerRadius="4,1,1,1">
+        CornerRadius="8,1,1,1">
         <Border.Background>
             <SolidColorBrush x:Name="TheButtonBrush" Color="Transparent" />
         </Border.Background>

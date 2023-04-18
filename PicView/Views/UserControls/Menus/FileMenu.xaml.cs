@@ -10,16 +10,11 @@ using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Menus
 {
-    /// <summary>
-    /// Interaction logic for fileMenu.xaml
-    /// </summary>
     public partial class FileMenu : UserControl
     {
         public FileMenu()
         {
             InitializeComponent();
-
-            PasteButton.PreviewMouseLeftButtonDown += delegate { UC.Close_UserControls(); };
 
             // OpenBorder
             SetIconButterMouseOverAnimations(OpenBorder, OpenBorderBrush, (SolidColorBrush)Resources["OpenBorderFill"]);
@@ -37,6 +32,7 @@ namespace PicView.Views.UserControls.Menus
             // PasteButton
             SetIconButterMouseOverAnimations(PasteButton, PasteButtonBrush, PasteButtonIconBrush);
             PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
+            PasteButton.PreviewMouseLeftButtonDown += delegate { UC.Close_UserControls(); };
 
             // FileLocationBorder
             SetIconButterMouseOverAnimations(FileLocationBorder, FileLocationBrush, (SolidColorBrush)Resources["LocationBorderFill"]);

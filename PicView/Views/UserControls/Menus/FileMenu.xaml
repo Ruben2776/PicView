@@ -26,9 +26,17 @@
                 BorderThickness="1"
                 CornerRadius="8" />
 
+            <Border
+                Width="277"
+                Height="45"
+                Background="{StaticResource AltInterfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8,8,0,0" />
+
             <Rectangle
                 Canvas.Left="1"
-                Canvas.Top="45"
+                Canvas.Top="44"
                 Width="275"
                 Height="1"
                 Panel.ZIndex="1"
@@ -43,7 +51,7 @@
                     x:Name="ReloadButton"
                     Canvas.Left="1"
                     Canvas.Top="1"
-                    Width="97"
+                    Width="102"
                     Height="45"
                     ToolTip="{StaticResource Reload}">
 
@@ -70,7 +78,7 @@
             </Border>
 
             <Rectangle
-                Canvas.Left="97"
+                Canvas.Left="102"
                 Width="1"
                 Height="45"
                 HorizontalAlignment="Left"
@@ -81,7 +89,7 @@
 
             <Button
                 x:Name="SaveButton"
-                Canvas.Left="98"
+                Canvas.Left="103"
                 Canvas.Top="1"
                 Width="41"
                 Height="45"
@@ -103,7 +111,7 @@
             </Button>
 
             <Rectangle
-                Canvas.Left="138"
+                Canvas.Left="144"
                 Width="1"
                 Height="45"
                 Panel.ZIndex="1"
@@ -112,7 +120,7 @@
 
             <Button
                 x:Name="CopyButton"
-                Canvas.Left="139"
+                Canvas.Left="145"
                 Canvas.Top="1"
                 Width="42"
                 Height="45"
@@ -134,7 +142,7 @@
             </Button>
 
             <Rectangle
-                Canvas.Left="181"
+                Canvas.Left="187"
                 Width="1"
                 Height="45"
                 Panel.ZIndex="1"
@@ -143,7 +151,7 @@
 
             <Button
                 x:Name="PasteButton"
-                Canvas.Left="182"
+                Canvas.Left="188"
                 Width="42"
                 Height="45"
                 ToolTip="{StaticResource FilePaste}">
@@ -161,10 +169,7 @@
                 </Path>
             </Button>
 
-            <buttons:MenuCloseButton
-                x:Name="CloseButton"
-                Canvas.Left="224"
-                Canvas.Top="1" />
+            <buttons:MenuCloseButton x:Name="CloseButton" Canvas.Left="230" />
 
             <Border
                 x:Name="OpenBorder"

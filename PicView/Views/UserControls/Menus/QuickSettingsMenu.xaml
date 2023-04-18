@@ -9,150 +9,126 @@
 
         <Canvas
             Width="358"
-            Height="230"
+            Height="170"
+            Margin="0,0,0,45"
             VerticalAlignment="Top">
 
             <Border
                 Width="358"
-                Height="52"
+                Height="45"
                 Panel.ZIndex="1"
                 Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
-                CornerRadius="4,4,0,0" />
+                CornerRadius="8,8,0,0" />
 
             <Border
                 Width="358"
-                Height="178"
-                Margin="0,51,0,0"
+                Height="165"
+                Margin="0,45,0,0"
                 Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1,0,1,1"
-                CornerRadius="0,0,4,4" />
+                CornerRadius="0,0,8,8" />
 
             <buttons:SettingsButton
                 x:Name="SettingsButton"
-                Width="111"
+                Width="180"
                 Panel.ZIndex="2" />
 
             <buttons:InfoButton
                 x:Name="InfoButton"
-                Canvas.Left="111"
-                Width="93"
+                Canvas.Left="180"
+                Width="131"
                 Panel.ZIndex="2" />
-
-            <buttons:ImageInfoButton
-                x:Name="ImageInfoButton"
-                Canvas.Left="204"
-                Width="50"
-                Panel.ZIndex="2" />
-
-            <Rectangle
-                Canvas.Left="203"
-                Canvas.Top="1"
-                Width="1"
-                Height="51"
-                Panel.ZIndex="1"
-                Stroke="{StaticResource BorderBrush}"
-                StrokeThickness="1" />
-
-            <buttons:ResizeButton
-                x:Name="QuickResize"
-                Canvas.Left="255"
-                Canvas.Top="1"
-                Height="50"
-                Panel.ZIndex="2" />
-
-            <Rectangle
-                Canvas.Left="254"
-                Canvas.Top="1"
-                Width="1"
-                Height="51"
-                Panel.ZIndex="1"
-                Stroke="{StaticResource BorderBrush}"
-                StrokeThickness="1" />
 
             <buttons:MenuCloseButton
                 x:Name="CloseButton"
-                Canvas.Left="306"
-                Height="51"
+                Canvas.Left="311"
                 Panel.ZIndex="2"
                 ToolTip="Close" />
 
-
             <Border
-                x:Name="RotateLeftButtonBorder"
-                Canvas.Left="6"
-                Canvas.Top="57"
-                Width="51"
-                Height="51"
-                Style="{StaticResource ButtonBorder}">
-                <buttons:RotateLeftButton x:Name="RotateLeftButton" />
+                x:Name="StayOnTopBorder"
+                Canvas.Left="8"
+                Canvas.Top="52"
+                Width="167"
+                Height="45"
+                Background="{StaticResource BackgroundColorBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="2"
+                Effect="{StaticResource MenuShadowButtonBorder}">
+                <Border>
+                    <Border.Background>
+                        <SolidColorBrush x:Name="StayOnTopBrush" Color="Transparent" />
+                    </Border.Background>
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            MaxWidth="135"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                            Text="{StaticResource StayTopMost}"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="StayOnTopFill" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                        <CheckBox x:Name="StayOnTop" Style="{StaticResource Checkstyle}" />
+                    </StackPanel>
+                </Border>
             </Border>
 
             <Border
-                x:Name="RotateRightButtonBorder"
-                Canvas.Left="64"
-                Canvas.Top="57"
-                Width="51"
-                Height="51"
-                Style="{StaticResource ButtonBorder}">
-                <buttons:RotateRightButton x:Name="RotaRighttButton" />
-            </Border>
-
-            <Border
-                x:Name="FlipButtonBorder"
-                Canvas.Left="122"
-                Canvas.Top="57"
-                Width="51"
-                Height="51"
-                Style="{StaticResource ButtonBorder}">
-                <buttons:FlipButton x:Name="FlipButton" />
-            </Border>
-
-            <Border
-                x:Name="CropButtonBorder"
+                x:Name="SearchSubDirBorder"
                 Canvas.Left="184"
-                Canvas.Top="57"
-                Width="51"
-                Height="51"
-                Style="{StaticResource ButtonBorder}"
-                ToolTip="{StaticResource Crop}">
-                <Button x:Name="CropButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto SemiBold">
-                    <Button.Background>
-                        <SolidColorBrush x:Name="CropButtonBrush" Color="Transparent" />
-                    </Button.Background>
-                    <Path
-                        Width="17"
-                        Height="17"
-                        Data="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
-                        Stretch="Fill">
-                        <Path.Fill>
-                            <SolidColorBrush x:Name="CropFill" Color="{StaticResource IconColor}" />
-                        </Path.Fill>
-                    </Path>
-                </Button>
+                Canvas.Top="52"
+                Width="167"
+                Height="45"
+                Background="{StaticResource BackgroundColorBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="2"
+                Effect="{StaticResource MenuShadowButtonBorder}">
+                <Border>
+                    <Border.Background>
+                        <SolidColorBrush x:Name="SearchSubDirBrush" Color="Transparent" />
+                    </Border.Background>
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            MaxWidth="135"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                            Text="{StaticResource SearchSubdirectory}"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="SearchSubDirFill" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                        <CheckBox x:Name="SearchSubDir" Style="{StaticResource Checkstyle}" />
+                    </StackPanel>
+                </Border>
             </Border>
-
-            <Border
-                x:Name="ResizeBorder"
-                Canvas.Left="242"
-                Canvas.Top="57"
-                Width="51"
-                Height="51"
-                Style="{StaticResource ButtonBorder}">
-                <buttons:BackGroundButton x:Name="BackgroundButton" />
-            </Border>
-
-
 
             <Border
                 x:Name="SetFitBorder"
-                Canvas.Left="6"
-                Canvas.Top="114"
+                Canvas.Left="8"
+                Canvas.Top="104"
                 Width="167"
-                Height="51"
-                Background="{StaticResource BackgroundColorBrushAlt}"
+                Height="45"
+                Background="{StaticResource BackgroundColorBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 CornerRadius="2"
@@ -169,8 +145,7 @@
                             MaxWidth="135"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            FontSize="13"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                             Text="{StaticResource AutoFitWindow}"
                             TextAlignment="Center"
                             TextTrimming="CharacterEllipsis"
@@ -187,10 +162,10 @@
             <Border
                 x:Name="ToggleFillBorder"
                 Canvas.Left="184"
-                Canvas.Top="114"
+                Canvas.Top="104"
                 Width="167"
-                Height="51"
-                Background="{StaticResource BackgroundColorBrushAlt}"
+                Height="45"
+                Background="{StaticResource BackgroundColorBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 CornerRadius="2"
@@ -207,8 +182,7 @@
                             MaxWidth="135"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            FontSize="13"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                             Text="{StaticResource FillImageHeight}"
                             TextAlignment="Center"
                             TextTrimming="CharacterEllipsis"
@@ -228,10 +202,10 @@
             <Border
                 x:Name="ToggleScrollBorder"
                 Canvas.Left="184"
-                Canvas.Top="169"
+                Canvas.Top="155"
                 Width="167"
-                Height="51"
-                Background="{StaticResource BackgroundColorBrushAlt}"
+                Height="45"
+                Background="{StaticResource BackgroundColorBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 CornerRadius="2"
@@ -248,8 +222,7 @@
                             MaxWidth="135"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            FontSize="13"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                             Text="{StaticResource ToggleScroll}"
                             TextAlignment="Center"
                             TextTrimming="CharacterEllipsis"
@@ -265,11 +238,11 @@
 
             <Border
                 x:Name="ToggleLoopingBorder"
-                Canvas.Left="6"
-                Canvas.Top="169"
+                Canvas.Left="8"
+                Canvas.Top="155"
                 Width="167"
-                Height="51"
-                Background="{StaticResource BackgroundColorBrushAlt}"
+                Height="45"
+                Background="{StaticResource BackgroundColorBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 CornerRadius="2"
@@ -286,8 +259,7 @@
                             MaxWidth="135"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                            FontSize="13"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                             Text="{StaticResource ToggleLooping}"
                             TextAlignment="Center"
                             TextTrimming="CharacterEllipsis"
@@ -305,11 +277,11 @@
         <Rectangle
             Width="24"
             Height="2"
-            Margin="0,-2,87,0"
+            Margin="0,-2,88,0"
             HorizontalAlignment="Right"
             Fill="{StaticResource BorderBrushAlt}" />
         <Polygon
-            Margin="244,-7,0,0"
+            Margin="243,-7,0,0"
             Panel.ZIndex="-1"
             Fill="{StaticResource BorderBrushAlt}"
             Points="0,0 15,30, 30,0"

@@ -40,18 +40,6 @@ namespace PicView.Views.UserControls.Menus
             SetFit.Click += UpdateUIValues.SetAutoFit;
             SetFitBorder.MouseLeftButtonDown += UpdateUIValues.SetAutoFit;
 
-            // CropButton
-            CropButton.PreviewMouseLeftButtonDown += delegate
-            {
-                ButtonMouseOverAnim(CropFill, false, true);
-            };
-
-            CropButton.Click += delegate
-            {
-                Close_UserControls();
-                CropFunctions.StartCrop();
-            };
-
             #region Animation events
 
             // Toggle Scroll
@@ -77,18 +65,6 @@ namespace PicView.Views.UserControls.Menus
             ToggleFillBorder.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(ToggleFillBrush); };
             ToggleFillBorder.MouseLeave += delegate { ButtonMouseLeaveAnim(ToggleFillFill); };
             ToggleFillBorder.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(ToggleFillBrush); };
-
-            // CropButton
-            CropButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(CropFill);
-                AnimationHelper.MouseEnterBgTexColor(CropButtonBrush);
-            };
-            CropButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(CropFill);
-                AnimationHelper.MouseLeaveBgTexColor(CropButtonBrush);
-            };
 
             #endregion Animation events
         }

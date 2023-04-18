@@ -16,7 +16,7 @@ namespace PicView.Views.UserControls.Buttons
             Loaded += delegate
             {
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
-                MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CloseButtonBrush);
+                MouseLeave += (s, x) => AnimationHelper.MouseLeaveColorEvent(0,0,0,0,CloseButtonBrush);;
 
                 if (!Settings.Default.DarkTheme)
                 {

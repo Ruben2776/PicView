@@ -5,17 +5,15 @@
     Background="{x:Null}">
 
     <Border
-        Width="52"
-        Height="45"
         BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1,0,0,0"
         CornerRadius="1,8,1,1">
         <Border.Background>
-            <SolidColorBrush x:Name="CloseButtonBrush" Color="{StaticResource FadeColor}" />
+            <SolidColorBrush x:Name="CloseButtonBrush" Color="Transparent" />
         </Border.Background>
         <Button
             x:Name="TheButton"
-            Width="51"
+            Width="45"
             Height="45"
             VerticalAlignment="Center"
             BorderThickness="0"
