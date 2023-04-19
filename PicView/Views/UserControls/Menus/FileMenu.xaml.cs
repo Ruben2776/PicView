@@ -1,10 +1,8 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
-using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.FileHandling;
-using PicView.ImageHandling;
 using PicView.UILogic;
 using static PicView.Animations.MouseOverAnimations;
 

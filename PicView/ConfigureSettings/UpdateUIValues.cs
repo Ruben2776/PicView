@@ -1,4 +1,9 @@
-﻿using PicView.ChangeImage;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
+using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
@@ -7,11 +12,6 @@ using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Threading;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -32,19 +32,11 @@ namespace PicView.ConfigureSettings
 
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, SetTitle.SetLoadingString);
 
-            FileInfo fileInfo;
             var preloadValue = Preloader.Get(Navigation.FolderIndex);
-            if (preloadValue is not null && preloadValue.FileInfo is not null)
-            {
-                fileInfo = preloadValue.FileInfo;
-            }
-            else
-            {
-                fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            }
+            var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
             
             Preloader.Clear();
-            bool sortGallery = false;
+            var sortGallery = false;
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > 0)
@@ -189,11 +181,11 @@ namespace PicView.ConfigureSettings
         {
             Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            GetMainWindow.Dispatcher.Invoke(() =>
             {
-                if (ConfigureWindows.GetSettingsWindow is not null)
+                if (GetSettingsWindow is not null)
                 {
-                    ConfigureWindows.GetSettingsWindow.SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
+                    GetSettingsWindow.SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
                 }
                 if (UC.GetQuickSettingsMenu is not null)
                 {
@@ -207,7 +199,7 @@ namespace PicView.ConfigureSettings
             if (preloadValue is null) { return; }
             Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            GetMainWindow.Dispatcher.Invoke(() =>
             {
                 SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
                     Navigation.FolderIndex, preloadValue.FileInfo);

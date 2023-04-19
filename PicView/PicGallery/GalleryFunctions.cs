@@ -82,10 +82,7 @@ namespace PicView.PicGallery
                 GalleryLoad.Add(i, Navigation.FolderIndex);
             }
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
-            {
-                GalleryNavigation.ScrollTo();
-            }));
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryNavigation.ScrollTo);
 
             for (int i = 0; i < Navigation.Pics.Count; i++)
             {

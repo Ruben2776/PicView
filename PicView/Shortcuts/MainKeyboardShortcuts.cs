@@ -11,7 +11,6 @@ using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using PicView.Views.UserControls.Buttons;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.Copy_Paste;

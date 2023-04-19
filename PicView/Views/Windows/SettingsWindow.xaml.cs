@@ -5,12 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
-using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.Shortcuts;
@@ -20,7 +16,6 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
-using static PicView.SystemIntegration.Wallpaper;
 
 namespace PicView.Views.Windows
 {

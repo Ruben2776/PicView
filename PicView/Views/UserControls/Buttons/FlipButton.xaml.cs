@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.UILogic.TransformImage;

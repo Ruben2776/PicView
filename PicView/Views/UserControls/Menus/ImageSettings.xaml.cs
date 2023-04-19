@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Media;
-using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Editing.Crop;
 using PicView.ImageHandling;

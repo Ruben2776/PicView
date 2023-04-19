@@ -95,7 +95,7 @@ namespace PicView.FileHandling
                 }
                 else
                 {
-                    Copyfile(Navigation.Pics[Navigation.FolderIndex]);
+                    Copyfile(Pics[FolderIndex]);
                 }
             }
         }
