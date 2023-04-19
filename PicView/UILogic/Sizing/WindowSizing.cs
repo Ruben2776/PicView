@@ -150,7 +150,6 @@ namespace PicView.UILogic.Sizing
         internal static void Restore_From_Move()
         {
             GetMainWindow.WindowState = WindowState.Normal;
-            Settings.Default.Maximized = false;
             GetGripButton.Visibility = Visibility.Visible;
 
             // Reset margin
@@ -246,27 +245,6 @@ namespace PicView.UILogic.Sizing
             GetMainWindow.Left = 0;
         }
 
-        internal static void SetMaximized()
-        {
-            if (GetMainWindow.WindowState != WindowState.Maximized)
-            {
-                GetMainWindow.WindowState = WindowState.Maximized;
-            }
-
-            // Fix buttons appearing out of window
-            GetMainWindow.TitleBar.Margin = new Thickness(8, 8, 8, 0);
-            GetMainWindow.LowerBar.Margin = new Thickness(8, 0, 8, 8);
-
-            if (GetGripButton is not null)
-            {
-                GetGripButton.Visibility = Visibility.Collapsed;
-            }
-
-            GetMainWindow.TitleText.MaxWidth = MonitorInfo.WorkArea.Width - 192 * MonitorInfo.DpiScaling;
-
-            Settings.Default.Maximized = true;
-        }
-
         /// <summary>
         /// Centers on the current monitor
         /// </summary>
@@ -321,7 +299,8 @@ namespace PicView.UILogic.Sizing
                     return;
 
                 case WindowState.Maximized:
-                    SetMaximized();
+                    GetMainWindow.WindowState = WindowState.Normal;
+                    Fullscreen_Restore(true);
                     return;
 
                 default:
