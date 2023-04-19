@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
@@ -123,6 +124,7 @@ namespace PicView.Views.Windows
             // Stars
             Star1.MouseLeftButtonDown += async delegate
             {
+                if (ErrorHandling.CheckOutOfRange()) return;
                 await ImageFunctions.SetRating(1).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
@@ -131,6 +133,7 @@ namespace PicView.Views.Windows
 
             Star2.MouseLeftButtonDown += async delegate
             {
+                if (ErrorHandling.CheckOutOfRange()) return;
                 await ImageFunctions.SetRating(2).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
@@ -139,6 +142,7 @@ namespace PicView.Views.Windows
 
             Star3.MouseLeftButtonDown += async delegate
             {
+                if (ErrorHandling.CheckOutOfRange()) return;
                 await ImageFunctions.SetRating(3).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
@@ -147,6 +151,7 @@ namespace PicView.Views.Windows
 
             Star4.MouseLeftButtonDown += async delegate
             {
+                if (ErrorHandling.CheckOutOfRange()) return;
                 await ImageFunctions.SetRating(4).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
@@ -155,6 +160,7 @@ namespace PicView.Views.Windows
 
             Star5.MouseLeftButtonDown += async delegate
             {
+                if (ErrorHandling.CheckOutOfRange()) return;
                 await ImageFunctions.SetRating(5).ConfigureAwait(false);
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             };
