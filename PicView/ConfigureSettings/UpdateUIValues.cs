@@ -183,5 +183,35 @@ namespace PicView.ConfigureSettings
                 UC.GetQuickResize.Hide();
             }
         }
+
+        internal static void ToggleIncludeSubdirectories()
+        {
+            Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
+
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            {
+                if (ConfigureWindows.GetSettingsWindow is not null)
+                {
+                    ConfigureWindows.GetSettingsWindow.SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
+                }
+                if (UC.GetQuickSettingsMenu is not null)
+                {
+                    UC.GetQuickSettingsMenu.SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
+                }
+            });
+            Settings.Default.Save();
+
+            if (ErrorHandling.CheckOutOfRange()) { return; }
+            var preloadValue = Preloader.Get(Navigation.FolderIndex);
+            if (preloadValue is null) { return; }
+            Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
+
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            {
+                SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
+                    Navigation.FolderIndex, preloadValue.FileInfo);
+            });
+
+        }
     }
 }

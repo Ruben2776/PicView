@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
+using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ProcessHandling;
 using PicView.Properties;
@@ -57,32 +58,7 @@ namespace PicView.Views.Windows
 
                 // SubDirRadio
                 SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
-                SubDirRadio.Click += async delegate
-                {
-                    Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
-                    if (ErrorHandling.CheckOutOfRange()) { return; }
-                    var preloadValue = Preloader.Get(Navigation.FolderIndex);
-                    if (preloadValue is null) { return; }
-                    Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                    {
-                        SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
-                            Navigation.FolderIndex, preloadValue.FileInfo);
-                    });
-
-                    Settings.Default.Save();
-                };
-
-                WallpaperApply.MouseLeftButtonDown += async delegate
-                {
-                    var x = WallpaperStyle.Fill;
-                    if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
-                    if (Center.IsSelected) { x = WallpaperStyle.Center; }
-                    if (Tile.IsSelected) { x = WallpaperStyle.Tile; }
-                    if (Fit.IsSelected) { x = WallpaperStyle.Fit; }
-
-                    await SetWallpaperAsync(x).ConfigureAwait(false);
-                };
+                SubDirRadio.Click += (_,_) => UpdateUIValues.ToggleIncludeSubdirectories();
 
                 SlideshowSlider.Value = Settings.Default.SlideTimer / 1000;
                 SlideshowSlider.ValueChanged += (_, e) => Settings.Default.SlideTimer = e.NewValue * 1000;

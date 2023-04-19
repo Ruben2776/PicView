@@ -237,62 +237,6 @@
                         </CheckBox.Content>
                     </CheckBox>
 
-
-                    <Label Margin="0,15,0,0" Content="{StaticResource SetAsWallpaper}" />
-
-                    <StackPanel Margin="5,9,0,7" Orientation="Horizontal">
-                        <ComboBox
-                            x:Name="WallpaperBox"
-                            HorizontalAlignment="Left"
-                            IsTabStop="False">
-                            <ComboBoxItem
-                                x:Name="Fill"
-                                Content="{StaticResource Fill}"
-                                IsSelected="True" />
-                            <ComboBoxItem x:Name="Center" Content="{StaticResource Center}" />
-                            <ComboBoxItem x:Name="Fit" Content="{StaticResource Fit}" />
-                            <ComboBoxItem x:Name="Tile" Content="{StaticResource Tile}" />
-                            <ComboBoxItem x:Name="Stretch" Content="{StaticResource Stretch}" />
-                        </ComboBox>
-
-                        <TextBlock
-                            x:Name="WallpaperApply"
-                            Margin="10,0,0,0"
-                            VerticalAlignment="Center"
-                            Text="{StaticResource Apply}">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush x:Name="WallpaperApplyBrush" Color="{DynamicResource ChosenColor}" />
-                            </TextBlock.Foreground>
-                            <TextBlock.Style>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="Opacity" Value=".9" />
-                                    <Style.Triggers>
-                                        <EventTrigger RoutedEvent="MouseEnter">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        To="1"
-                                                        Duration="0:0:0.2" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                        <EventTrigger RoutedEvent="MouseLeave">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        To=".8"
-                                                        Duration="0:0:0.2" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </StackPanel>
-
                     <Label
                         x:Name="LanguageLabel"
                         Margin="0,15,0,0"

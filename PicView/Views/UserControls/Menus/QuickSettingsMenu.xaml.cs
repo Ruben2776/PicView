@@ -54,6 +54,12 @@ namespace PicView.Views.UserControls.Menus
             StayOnTop.Click += (_,_) => UpdateUIValues.SetTopMost();
             StayOnTopBorder.MouseLeftButtonDown += (_,_) => UpdateUIValues.SetTopMost();
             SetButtonIconMouseOverAnimations(StayOnTopBorder, StayOnTopBrush, StayOnTopFill);
+
+            // Search subdirectories
+            SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
+            SearchSubDir.Click += (_, _) => UpdateUIValues.ToggleIncludeSubdirectories();
+            SearchSubDirBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.ToggleIncludeSubdirectories();
+            SetButtonIconMouseOverAnimations(SearchSubDirBorder, SearchSubDirBrush, SearchSubDirFill);
         }
     }
 }
