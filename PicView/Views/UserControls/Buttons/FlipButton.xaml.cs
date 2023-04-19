@@ -46,8 +46,8 @@ namespace PicView.Views.UserControls.Buttons
                 };
 
                 // Change FlipButton's icon when (un)checked
-                TheButton.Checked += (_, _) => UpdateUIValues.ChangeFlipButton(true, FlipPath);
-                TheButton.Unchecked += (_, _) => UpdateUIValues.ChangeFlipButton(false, FlipPath);
+                TheButton.Checked += (_, _) => UpdateUIValues.ChangeFlipButton(true);
+                TheButton.Unchecked += (_, _) => UpdateUIValues.ChangeFlipButton(false);
             };
         }
     }
