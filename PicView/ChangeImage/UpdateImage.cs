@@ -45,10 +45,11 @@ namespace PicView.ChangeImage
                 {
                     Rotation.IsFlipped = false;
                     Rotation.RotationAngle = 0;
-                    //if (GetQuickSettingsMenu is not null && GetQuickSettingsMenu.FlipButton is not null)
-                    //{
-                    //    GetQuickSettingsMenu.FlipButton.TheButton.IsChecked = false;
-                    //}
+                    if (GetImageSettingsMenu is not null)
+                    {
+                        GetImageSettingsMenu.FlipButton.TheButton.IsChecked= false;
+                    }
+                    ConfigureWindows.GetMainWindow.FlipButton.IsChecked= false;
 
                     ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
                 }

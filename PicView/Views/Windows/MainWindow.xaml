@@ -110,24 +110,26 @@
                     VerticalAlignment="Center"
                     Fill="{StaticResource BorderBrush}" />
 
-                <Button
+                <CheckBox
                     Name="FlipButton"
                     Canvas.Left="102"
                     Width="29"
                     Height="30">
-                    <Button.Background>
+                    <CheckBox.Background>
                         <SolidColorBrush x:Name="FlipBg" Color="Transparent" />
-                    </Button.Background>
+                    </CheckBox.Background>
                     <Path
+                        x:Name="FlipPath"
                         Width="13"
                         Height="13"
+                        Margin="7,8,0,0"
                         Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
                         Stretch="Fill">
                         <Path.Fill>
                             <SolidColorBrush x:Name="FlipBrush" Color="{StaticResource IconColor}" />
                         </Path.Fill>
                     </Path>
-                </Button>
+                </CheckBox>
 
             </Canvas>
 

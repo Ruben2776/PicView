@@ -138,6 +138,8 @@ namespace PicView.Views.Windows
                 FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBrush);
                 FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FlipBg);
                 FlipButton.Click += (_, _) => Rotation.Flip();
+                FlipButton.Checked += (_, _) => UpdateUIValues.ChangeFlipButton(true, FlipPath);
+                FlipButton.Unchecked += (_, _) => UpdateUIValues.ChangeFlipButton(false, FlipPath);
 
                 // TitleText
                 TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;

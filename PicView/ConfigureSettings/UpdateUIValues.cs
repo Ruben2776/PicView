@@ -10,6 +10,7 @@ using PicView.UILogic.TransformImage;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
@@ -211,7 +212,21 @@ namespace PicView.ConfigureSettings
                 SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
                     Navigation.FolderIndex, preloadValue.FileInfo);
             });
+        }
 
+        internal static void ChangeFlipButton(bool isChecked, System.Windows.Shapes.Path flipPath)
+        {
+            if (ConfigureWindows.GetMainWindow.MainImage.Source is null) return;
+
+            if (isChecked)
+            {
+                flipPath.Data = Geometry.Parse("M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
+            }
+
+            else
+            {
+                flipPath.Data = Geometry.Parse("M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192 L192, 96z");
+            }
         }
     }
 }
