@@ -14,7 +14,7 @@
 
         <Border
             Width="358"
-            Height="175"
+            Height="166"
             Background="{StaticResource BackgroundColorBrushAlt}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -169,10 +169,10 @@
 
                 <Border
                     x:Name="ImageInfoButtonBorder"
-                    Canvas.Left="6"
-                    Canvas.Top="54"
-                    Width="160"
-                    Height="51"
+                    Canvas.Left="7"
+                    Canvas.Top="50"
+                    Width="162"
+                    Height="49"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="ImageInfoButton"
@@ -210,10 +210,10 @@
 
                 <Border
                     x:Name="ColorPickerButtonBorder"
-                    Canvas.Left="172"
-                    Canvas.Top="54"
-                    Width="176"
-                    Height="51"
+                    Canvas.Left="175"
+                    Canvas.Top="50"
+                    Width="174"
+                    Height="49"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="ColorPickerButton"
@@ -249,10 +249,10 @@
 
                 <Border
                     x:Name="OptimizeImageButtonBorder"
-                    Canvas.Left="6"
-                    Canvas.Top="113"
-                    Width="160"
-                    Height="51"
+                    Canvas.Left="7"
+                    Canvas.Top="106"
+                    Width="162"
+                    Height="49"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="OptimizeImageButton"
@@ -318,10 +318,10 @@
 
                 <Border
                     x:Name="BgBorder"
-                    Canvas.Left="172"
-                    Canvas.Top="113"
-                    Width="176"
-                    Height="51"
+                    Canvas.Left="175"
+                    Canvas.Top="106"
+                    Width="174"
+                    Height="49"
                     Style="{StaticResource ButtonBorder}">
                     <Button
                         x:Name="BgButton"
