@@ -34,26 +34,6 @@ namespace PicView.ChangeImage
             var isGif = ext.Equals(".gif", StringComparison.OrdinalIgnoreCase);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                // Scroll to top if scroll enabled
-                if (Settings.Default.ScrollEnabled)
-                {
-                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-                }
-
-                // Reset transforms if needed
-                if (Rotation.IsFlipped || Rotation.RotationAngle != 0)
-                {
-                    Rotation.IsFlipped = false;
-                    Rotation.RotationAngle = 0;
-                    if (GetImageSettingsMenu is not null)
-                    {
-                        GetImageSettingsMenu.FlipButton.TheButton.IsChecked= false;
-                    }
-                    ConfigureWindows.GetMainWindow.FlipButton.IsChecked= false;
-
-                    ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
-                }
-                         
                 if (isGif) // Loads gif from XamlAnimatedGif if necessary   
                 {
                     AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
@@ -73,6 +53,24 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
                 ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
                 ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
+                
+                // Scroll to top if scroll enabled
+                if (Settings.Default.ScrollEnabled)
+                {
+                    ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+                }
+
+                // Reset transforms if needed
+                if (!Rotation.IsFlipped && Rotation.RotationAngle == 0) return;
+                Rotation.IsFlipped = false;
+                Rotation.RotationAngle = 0;
+                if (GetImageSettingsMenu is not null)
+                {
+                    GetImageSettingsMenu.FlipButton.TheButton.IsChecked= false;
+                }
+                ConfigureWindows.GetMainWindow.FlipButton.IsChecked= false;
+
+                ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
             }, DispatcherPriority.Send);
         }
 
