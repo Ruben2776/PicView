@@ -30,7 +30,6 @@ namespace PicView.ChangeImage
             }
             catch (Exception e)
             {
-                Tooltip.ShowTooltipMessage(e.Message);
                 _path = "";
             }
 
