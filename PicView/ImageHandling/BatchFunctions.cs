@@ -136,7 +136,14 @@ namespace PicView.ImageHandling
             {
                 OptimalCompression = isLossless
             };
-            return imageOptimizer.Compress(file);
+            try
+            {
+                return imageOptimizer.Compress(file);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         internal class ThumbNailHolder
