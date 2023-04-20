@@ -15,37 +15,37 @@ namespace PicView.FileHandling
             /// <summary>
             /// Sort files by name.
             /// </summary>
-            Name,
+            Name = 0,
 
             /// <summary>
             /// Sort files by file size.
             /// </summary>
-            FileSize,
+            FileSize = 1,
 
             /// <summary>
             /// Sort files by creation time.
             /// </summary>
-            CreationTime,
+            CreationTime = 2,
 
             /// <summary>
             /// Sort files by extension.
             /// </summary>
-            Extension,
+            Extension = 3,
 
             /// <summary>
             /// Sort files by last access time.
             /// </summary>
-            LastAccessTime,
+            LastAccessTime = 4,
 
             /// <summary>
             /// Sort files by last write time.
             /// </summary>
-            LastWriteTime,
+            LastWriteTime = 5,
 
             /// <summary>
             /// Sort files randomly.
             /// </summary>
-            Random
+            Random = 6
         }
 
         /// <summary>
@@ -80,11 +80,10 @@ namespace PicView.FileHandling
             }
 
             // Check if the file is a directory or not
-            var isDirectory = FileFunctions.CheckIfDirectoryOrFile(fileInfo.FullName);
-            if (!isDirectory.HasValue) { return null; }
+            var isDirectory = fileInfo.Attributes.HasFlag(FileAttributes.Directory);
 
             // Get the directory path based on whether the file is a directory or not
-            var directory = isDirectory.Value ? fileInfo.FullName : fileInfo.DirectoryName;
+            var directory = isDirectory ? fileInfo.FullName : fileInfo.DirectoryName;
 
             // Check if the subdirectories are to be included in the search
             var searchOption = Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)

@@ -181,8 +181,8 @@ namespace PicView.Views.Windows
         {
             if (sizeInfo == null || sizeInfo is { WidthChanged: false, HeightChanged: false } || Settings.Default.AutoFitWindow == false)
             {
-                Navigation.RightbuttonClicked = false;
-                Navigation.LeftbuttonClicked = false;
+                Navigation.RightButtonClicked = false;
+                Navigation.LeftButtonClicked = false;
                 Navigation.ClickArrowRightClicked = false;
                 Navigation.ClickArrowLeftClicked = false;
                 return;
@@ -193,17 +193,17 @@ namespace PicView.Views.Windows
             Left += ((sizeInfo.PreviousSize.Width / MonitorInfo.DpiScaling) - (sizeInfo.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
 
             // Move cursor after resize when the button has been pressed
-            if (Navigation.RightbuttonClicked)
+            if (Navigation.RightButtonClicked)
             {
                 var p = RightButton.PointToScreen(new Point(50, 10)); //Points cursor to center of RightButton
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                Navigation.RightbuttonClicked = false;
+                Navigation.RightButtonClicked = false;
             }
-            else if (Navigation.LeftbuttonClicked)
+            else if (Navigation.LeftButtonClicked)
             {
                 var p = LeftButton.PointToScreen(new Point(50, 10));
                 NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
-                Navigation.LeftbuttonClicked = false;
+                Navigation.LeftButtonClicked = false;
             }
             else if (Navigation.ClickArrowRightClicked)
             {

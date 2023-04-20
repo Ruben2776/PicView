@@ -32,7 +32,7 @@ namespace PicView.ChangeImage
         internal static string? BackupPath { get; set; }
 
         /// <summary>
-        /// First file when starting application, used for recursive directory, eroor checking etc.
+        /// Keep track for recursive directory, error checking etc.
         /// </summary>
         internal static string? InitialPath { get; set; }
 
@@ -44,12 +44,12 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Used to move cursor when clicked
         /// </summary>
-        internal static bool LeftbuttonClicked { get; set; }
+        internal static bool LeftButtonClicked { get; set; }
 
         /// <summary>
         /// Used to move cursor when clicked
         /// </summary>
-        internal static bool RightbuttonClicked { get; set; }
+        internal static bool RightButtonClicked { get; set; }
 
         /// <summary>
         /// Used to move cursor when clicked
@@ -134,18 +134,18 @@ namespace PicView.ChangeImage
                 {
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Settings.Default.Fullscreen == false) 
-                        RightbuttonClicked = true; // Update flag to move cursor when resized
+                        RightButtonClicked = true; // Update flag to move cursor when resized
                     else
-                        RightbuttonClicked = false;
+                        RightButtonClicked = false;
                     await GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
                 }
                 else
                 {
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (Settings.Default.Fullscreen == false)
-                        LeftbuttonClicked = true; // Update flag to move cursor when resized
+                        LeftButtonClicked = true; // Update flag to move cursor when resized
                     else
-                        LeftbuttonClicked = false;
+                        LeftButtonClicked = false;
                     await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
                 }
             }

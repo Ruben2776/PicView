@@ -23,14 +23,16 @@ namespace PicView.ConfigureSettings
     {
         // Todo Rewrite to use MVVM.. One day.
 
-        internal static async Task ChangeSortingAsync(short sorting, bool changeOrder = false)
+        internal static async Task ChangeSortingAsync(FileLists.SortFilesBy sortFilesBy, bool changeOrder = false)
         {
             if (changeOrder == false)
             {
-                Settings.Default.SortPreference = sorting;
+                Settings.Default.SortPreference = (int) sortFilesBy;
             }
 
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, SetTitle.SetLoadingString);
+
+            var originFolder = Path.GetDirectoryName(Navigation.InitialPath);
 
             var preloadValue = Preloader.Get(Navigation.FolderIndex);
             var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
@@ -47,7 +49,7 @@ namespace PicView.ConfigureSettings
             {
                 try
                 {
-                    await GalleryFunctions.SortGallery(fileInfo).ConfigureAwait(false);
+                    await GalleryFunctions.SortGallery(new FileInfo(Navigation.InitialPath)).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -58,7 +60,7 @@ namespace PicView.ConfigureSettings
             }
             else
             {
-                Navigation.Pics = FileLists.FileList(fileInfo);
+                Navigation.Pics = FileLists.FileList(new FileInfo(Navigation.InitialPath));
             }
 
             Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);

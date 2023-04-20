@@ -14,26 +14,6 @@ namespace PicView.FileHandling
     internal static partial class FileFunctions
     {
         /// <summary>
-        /// CheckIfDirectoryOrFile method checks if a given path is a directory or a file.
-        /// </summary>
-        /// <param name="path">The path to check.</param>
-        /// <returns>
-        /// A nullable boolean indicating whether the given path is a directory (true), a file (false), or neither (null).
-        /// </returns>
-        internal static bool? CheckIfDirectoryOrFile(string path)
-        {
-            try
-            {
-                var getAttributes = File.GetAttributes(path);
-                return getAttributes.HasFlag(FileAttributes.Directory);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
         /// RenameFile method renames a file.
         /// </summary>
         /// <param name="path">The original path of the file.</param>

@@ -60,44 +60,72 @@ namespace PicView.UILogic.Loading
             var FileNameMenu = (MenuItem)sortfilesbycm.Items[0];
             var FileNameHeader = (RadioButton)FileNameMenu.Header;
             FileNameHeader.IsChecked = Settings.Default.SortPreference == 0;
-            FileNameHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(0).ConfigureAwait(false); };
+            FileNameHeader.Click += async delegate
+            {
+                MainContextMenu.IsOpen = false;
+                await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.Name).ConfigureAwait(false);
+            };
 
             // FileSize
             var filesizeMenu = (MenuItem)sortfilesbycm.Items[1];
             var filesizeHeader = (RadioButton)filesizeMenu.Header;
             filesizeHeader.IsChecked = Settings.Default.SortPreference == 1;
-            filesizeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(1).ConfigureAwait(false); };
+            filesizeHeader.Click += async delegate
+            {
+                MainContextMenu.IsOpen = false;
+                await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.FileSize).ConfigureAwait(false);
+            };
 
             // FileExtension
             var FileExtensionMenu = (MenuItem)sortfilesbycm.Items[2];
             var FileExtensionHeader = (RadioButton)FileExtensionMenu.Header;
             FileExtensionHeader.IsChecked = Settings.Default.SortPreference == 3;
-            FileExtensionHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(3).ConfigureAwait(false); };
+            FileExtensionHeader.Click += async delegate
+            {
+                MainContextMenu.IsOpen = false;
+                await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.FileSize).ConfigureAwait(false);
+            };
 
             // CreationTime
             var CreationTimeMenu = (MenuItem)sortfilesbycm.Items[3];
             var CreationTimeHeader = (RadioButton)CreationTimeMenu.Header;
             CreationTimeHeader.IsChecked = Settings.Default.SortPreference == 2;
-            CreationTimeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(2).ConfigureAwait(false); };
-
+            CreationTimeHeader.Click += async delegate
+            {
+                MainContextMenu.IsOpen = false;
+                await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.CreationTime).ConfigureAwait(false);
+            };
+            
             // LastAccessTime
             var LastAccessTimeMenu = (MenuItem)sortfilesbycm.Items[4];
             var LastAccessTimeHeader = (RadioButton)LastAccessTimeMenu.Header;
             LastAccessTimeHeader.IsChecked = Settings.Default.SortPreference == 4;
-            LastAccessTimeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(4).ConfigureAwait(false); };
-
+            LastAccessTimeHeader.Click += async delegate
+            {
+                MainContextMenu.IsOpen = false;
+                await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.LastAccessTime).ConfigureAwait(false);
+            };
+            
             // LastWriteTime
             var LastWriteTimeMenu = (MenuItem)sortfilesbycm.Items[5];
             var LastWriteTimeHeader = (RadioButton)LastWriteTimeMenu.Header;
             LastWriteTimeHeader.IsChecked = Settings.Default.SortPreference == 5;
-            LastWriteTimeHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(5).ConfigureAwait(false); };
-
+            LastWriteTimeHeader.Click += async delegate
+            {
+                MainContextMenu.IsOpen = false;
+                await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.LastWriteTime).ConfigureAwait(false);
+            };
+            
             // Random
             var RandomMenu = (MenuItem)sortfilesbycm.Items[6];
             var RandomHeader = (RadioButton)RandomMenu.Header;
             RandomHeader.IsChecked = Settings.Default.SortPreference == 6;
-            RandomHeader.Click += async delegate { MainContextMenu.IsOpen = false; await UpdateUIValues.ChangeSortingAsync(6).ConfigureAwait(false); };
-
+            RandomHeader.Click += async delegate
+            {
+                MainContextMenu.IsOpen = false;
+                await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.Random).ConfigureAwait(false);
+            };
+            
             // 7 = seperator
 
             // Ascending
