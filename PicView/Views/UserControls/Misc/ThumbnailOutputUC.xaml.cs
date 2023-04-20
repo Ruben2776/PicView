@@ -25,7 +25,7 @@ namespace PicView.Views.UserControls.Misc
                 ConfigureWindows.GetResizeWindow.Focus();
             };
 
-            ResizeWindow.SetTextboxDragEvent(OutPutStringBox);
+            ResizeWindow.SetTextBoxDragEvent(OutPutStringBox);
         }
     }
 }

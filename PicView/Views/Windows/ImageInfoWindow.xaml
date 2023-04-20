@@ -608,7 +608,7 @@
                         </Border>
                         <WrapPanel
                             x:Name="ExifParent"
-                            Margin="15,5,10,5"
+                            Margin="15,5,10,15"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal" />
                     </StackPanel>

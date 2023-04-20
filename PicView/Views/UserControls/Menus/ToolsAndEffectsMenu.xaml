@@ -39,8 +39,7 @@
                     StrokeThickness="1" />
 
                 <Border
-                    Canvas.Left="-1"
-                    Width="174"
+                    Width="172"
                     Height="45"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="0,0,1,0"
@@ -120,8 +119,8 @@
 
                 <Button
                     x:Name="EffectsButton"
-                    Canvas.Left="174"
-                    Width="136"
+                    Canvas.Left="171"
+                    Width="139"
                     Height="45"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                     FontSize="13"

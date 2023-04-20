@@ -1,21 +1,18 @@
-﻿using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Threading;
-using ImageMagick;
+﻿using ImageMagick;
 using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
-using PicView.UILogic;
 using PicView.Views.UserControls.Misc;
-using Windows.Media.Protection.PlayReady;
+using System.IO;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows
@@ -42,7 +39,7 @@ namespace PicView.Views.Windows
             ContentRendered += (sender, e) =>
             {
                 WindowBlur.EnableBlur(this);
-                Owner = null; // Remove owner, so that minizing mainwindow will not minize this
+                Owner = null; // Remove owner, so that minimizing main-window will not minimize this
 
                 if (ErrorHandling.CheckOutOfRange() == false)
                 {
@@ -50,8 +47,8 @@ namespace PicView.Views.Windows
                     OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
                 }
 
-                SetTextboxDragEvent(SourceFolderInput);
-                SetTextboxDragEvent(OutputFolderInput);
+                SetTextBoxDragEvent(SourceFolderInput);
+                SetTextBoxDragEvent(OutputFolderInput);
 
                 SourceFolderButton.FileMenuButton.Click += (_, _) =>
                 {
@@ -76,56 +73,54 @@ namespace PicView.Views.Windows
                 ThumbnailsComboBox.SelectionChanged += delegate
                 {
                     var selected = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
-                    if (int.TryParse(selected?.Content.ToString(), out var count))
+                    if (!int.TryParse(selected?.Content.ToString(), out var count)) return;
+                    GeneratedThumbnailsContainer.Children.Clear();
+
+                    if (count <= 0) { return; }
+
+                    var size = new string[count + 1];
+                    var newSize = new string[size.Length];
+                    switch (count)
                     {
-                        GeneratedThumbnailsContainer.Children.Clear();
+                        case 7:
+                            size[7] = "xxs"; size[6] = "xs"; size[5] = "small"; size[4] = "medium"; size[3] = "large"; size[2] = "xl"; size[1] = "xxl";
+                            newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80";
+                            break;
 
-                        if (count <= 0) { return; }
+                        case 6:
+                            size[6] = "xxs"; size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
+                            newSize[6] = "20"; newSize[5] = "30"; newSize[4] = "40"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
+                            break;
 
-                        var size = new string[count + 1];
-                        var newSize = new string[size.Length];
-                        switch (count)
-                        {
-                            case 7:
-                                size[7] = "xxs"; size[6] = "xs"; size[5] = "small"; size[4] = "medium"; size[3] = "large"; size[2] = "xl"; size[1] = "xxl";
-                                newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80";
-                                break;
+                        case 5:
+                            size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
+                            newSize[5] = "20"; newSize[4] = "30"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
+                            break;
 
-                            case 6:
-                                size[6] = "xxs"; size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
-                                newSize[6] = "20"; newSize[5] = "30"; newSize[4] = "40"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
-                                break;
+                        case 4:
+                            size[4] = "xs"; size[3] = "small"; size[2] = "medium"; size[1] = "large";
+                            newSize[4] = "25"; newSize[3] = "40"; newSize[2] = "50"; newSize[1] = "70";
+                            break;
 
-                            case 5:
-                                size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
-                                newSize[5] = "20"; newSize[4] = "30"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
-                                break;
+                        case 3:
+                            size[3] = "small"; size[2] = "medium"; size[1] = "large";
+                            newSize[3] = "25"; newSize[2] = "50"; newSize[1] = "70";
+                            break;
 
-                            case 4:
-                                size[4] = "xs"; size[3] = "small"; size[2] = "medium"; size[1] = "large";
-                                newSize[4] = "25"; newSize[3] = "40"; newSize[2] = "50"; newSize[1] = "70";
-                                break;
+                        case 2:
+                            size[1] = "small"; size[2] = "medium";
+                            newSize[1] = "30"; newSize[2] = "50";
+                            break;
 
-                            case 3:
-                                size[3] = "small"; size[2] = "medium"; size[1] = "large";
-                                newSize[3] = "25"; newSize[2] = "50"; newSize[1] = "70";
-                                break;
+                        default:
+                            size[1] = "small";
+                            newSize[1] = "30";
+                            break;
+                    }
 
-                            case 2:
-                                size[1] = "small"; size[2] = "medium";
-                                newSize[1] = "30"; newSize[2] = "50";
-                                break;
-
-                            default:
-                                size[1] = "small";
-                                newSize[1] = "30";
-                                break;
-                        }
-
-                        for (int i = 1; i <= count; i++)
-                        {
-                            GeneratedThumbnailsContainer.Children.Add(new ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
-                        }
+                    for (int i = 1; i <= count; i++)
+                    {
+                        GeneratedThumbnailsContainer.Children.Add(new ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
                     }
                 };
 
@@ -161,8 +156,8 @@ namespace PicView.Views.Windows
         private async Task Load()
         {
             running = true;
-            CancellationTokenSource source = new CancellationTokenSource();
-            Task task = Task.Run(() => LoopAsync(source.Token), source.Token);
+            var source = new CancellationTokenSource();
+            var task = Task.Run(() => LoopAsync(source.Token), source.Token);
             try
             {
                 await task.ConfigureAwait(false);
@@ -300,77 +295,87 @@ namespace PicView.Views.Windows
                 ProgressBar.Value = 0;
             }, DispatcherPriority.Normal, cancellationToken);
 
-            await Parallel.ForEachAsync(sourceFileist, async (sourceFile, token) =>
+            try
             {
-                if (sourceFileist is null)
-                {
-                    return;
-                }
-
-                if (running is false)
-                {
-                    cancelToken.Cancel();
-                    if (sourceFileist is not null)
+                await Parallel.ForEachAsync(sourceFileist, cancelToken.Token, async (sourceFile, token) =>
                     {
-                        sourceFileist.Clear();
-                        sourceFileist = null;
-                    }
-                    await Dispatcher.InvokeAsync(() => 
-                    {
-                        ProgressBar.Value = 0;
-                    }, DispatcherPriority.Render, token);
-                    return;
-                }
-
-                FileInfo fileInfo;
-                fileInfo = new FileInfo(sourceFile);
-                StringBuilder sb = new();
-                sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
-
-                for (int x = 0; x < thumbs.Count; x++)
-                {
-                    if (running is false)
-                    {
-                        cancelToken.Cancel();
-                        if (sourceFileist is not null)
+                        if (sourceFileist is null)
                         {
-                            sourceFileist.Clear();
-                            sourceFileist = null;
+                            return;
                         }
-                        Dispatcher.Invoke(DispatcherPriority.Background, () =>
+
+                        if (running is false)
                         {
-                            ProgressBar.Value = 0;
-                        });
-                        return;
-                    }
+                            cancelToken.Cancel();
+                            if (sourceFileist is not null)
+                            {
+                                sourceFileist.Clear();
+                                sourceFileist = null;
+                            }
+                            await Dispatcher.InvokeAsync(() =>
+                            {
+                                ProgressBar.Value = 0;
+                            }, DispatcherPriority.Render, token);
+                            return;
+                        }
 
-                    sb.Append(await BatchFunctions.RunAsync(fileInfo, thumbs[x].Width, thumbs[x].Height, quality, ext, thumbs[x].Percentage, compress, thumbs[x].Directory, true).ConfigureAwait(false));
-                }
+                        var fileInfo = new FileInfo(sourceFile);
+                        StringBuilder sb = new();
+                        sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
 
-                if (cancelToken.IsCancellationRequested)
-                {
-                    if (sourceFileist is not null)
-                    {
-                        sourceFileist.Clear();
-                        sourceFileist = null;
-                    }
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        ProgressBar.Value = 0;
-                    }, DispatcherPriority.Render, token);
-                    return;
-                }
+                        for (int x = 0; x < thumbs.Count; x++)
+                        {
+                            if (running is false)
+                            {
+                                cancelToken.Cancel();
+                                if (sourceFileist is not null)
+                                {
+                                    sourceFileist.Clear();
+                                    sourceFileist = null;
+                                }
+                                Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                                {
+                                    ProgressBar.Value = 0;
+                                });
+                                return;
+                            }
 
+                            sb.Append(await BatchFunctions.RunAsync(fileInfo, thumbs[x].Width, thumbs[x].Height, quality, ext, thumbs[x].Percentage, compress, thumbs[x].Directory, true).ConfigureAwait(false));
+                        }
+
+                        if (cancelToken.IsCancellationRequested)
+                        {
+                            if (sourceFileist is not null)
+                            {
+                                sourceFileist.Clear();
+                                sourceFileist = null;
+                            }
+                            await Dispatcher.InvokeAsync(() =>
+                            {
+                                ProgressBar.Value = 0;
+                            }, DispatcherPriority.Render, token);
+                            return;
+                        }
+
+                        await Dispatcher.InvokeAsync(() =>
+                        {
+                            LogTextBox.Text += sb.ToString();
+                            LogTextBox.ScrollToEnd();
+                            ProgressBar.Value++;
+                        }, DispatcherPriority.Render, token);
+                    });
+            }
+            catch (Exception)
+            {
+                sourceFileist?.Clear();
                 await Dispatcher.InvokeAsync(() =>
                 {
-                    LogTextBox.Text += sb.ToString();
-                    LogTextBox.ScrollToEnd();
-                    ProgressBar.Value++;
-                }, DispatcherPriority.Render, token);
-            });
+                    ProgressBar.Value = 0;
+                }, DispatcherPriority.Render, cancellationToken);
+            }
         }
 
-        internal static void SetTextboxDragEvent(TextBox textBox)
+        internal static void SetTextBoxDragEvent(TextBox textBox)
         {
             textBox.PreviewDragOver += (_, e) =>
             {
