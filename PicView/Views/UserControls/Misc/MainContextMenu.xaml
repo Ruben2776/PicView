@@ -258,6 +258,15 @@
                 </MenuItem.Header>
             </MenuItem>
 
+            <MenuItem>
+                <MenuItem.Header>
+                    <CheckBox
+                        MinWidth="130"
+                        Padding="0,0,5,0"
+                        Content="{StaticResource CtrlToZoom}" />
+                </MenuItem.Header>
+            </MenuItem>
+
             <Separator />
 
             <MenuItem

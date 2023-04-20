@@ -167,10 +167,17 @@ namespace PicView.UILogic.Loading
             imageHeightHeader.Click += UpdateUIValues.SetAutoFill;
             imageHeightMenu.Click += UpdateUIValues.SetAutoFill;
 
-            // 6 = seperator
+            // Ctrl to zoom
+            var ctrlZoomMenu = (MenuItem)settingscm.Items[6];
+            var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
+            ctrlZoomHeader.IsChecked = Settings.Default.CtrlZoom;
+            ctrlZoomMenu.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
+            ctrlZoomHeader.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
+
+            // 7 = seperator
 
             // Settings
-            var SettingsMenu = (MenuItem)settingscm.Items[7];
+            var SettingsMenu = (MenuItem)settingscm.Items[8];
             SettingsMenu.Click += (_, _) => { AllSettingsWindow(); MainContextMenu.IsOpen = false; };
 
             // 8 = seperator

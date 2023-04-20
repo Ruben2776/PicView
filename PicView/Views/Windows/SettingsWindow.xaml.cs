@@ -134,8 +134,8 @@ namespace PicView.Views.Windows
                 CtrlZoom.IsChecked = Settings.Default.CtrlZoom;
                 ScrollZoom.IsChecked = !Settings.Default.CtrlZoom;
 
-                CtrlZoom.Checked += (_, _) => Settings.Default.CtrlZoom = true;
-                ScrollZoom.Checked += (_, _) => Settings.Default.CtrlZoom = false;
+                CtrlZoom.Checked += (_, _) => UpdateUIValues.SetCtrlToZoom(true);
+                ScrollZoom.Checked += (_, _) => UpdateUIValues.SetCtrlToZoom(false);
 
                 ThemeRestart.MouseLeftButtonDown += (_, _) => ProcessLogic.RestartApp();
                 LanguageRestart.MouseLeftButtonDown += (_, _) => ProcessLogic.RestartApp();

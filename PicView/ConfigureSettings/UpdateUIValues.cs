@@ -225,5 +225,32 @@ namespace PicView.ConfigureSettings
                     Geometry.Parse("M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192 L192, 96z");
             }
         }
+
+        internal static void SetCtrlToZoom(bool value)
+        {
+            if (Properties.Settings.Default.CtrlZoom == value)
+            {
+                return;
+            }
+            Properties.Settings.Default.CtrlZoom = value;
+
+            if (GetSettingsWindow is not null)
+            {
+                if (value)
+                {
+                    GetSettingsWindow.CtrlZoom.IsChecked = true;
+                    GetSettingsWindow.ScrollZoom.IsChecked = false;
+                }
+                else
+                {
+                    GetSettingsWindow.CtrlZoom.IsChecked = false;
+                    GetSettingsWindow.ScrollZoom.IsChecked = true;
+                }
+            }
+            var settingscm = (MenuItem)MainContextMenu.Items[7];
+            var ctrlZoomMenu = (MenuItem)settingscm.Items[6];
+            var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
+            ctrlZoomHeader.IsChecked = Settings.Default.CtrlZoom;
+        }
     }
 }
