@@ -144,11 +144,12 @@
     </Window.Resources>
 
     <DockPanel>
-        <DockPanel
+        <StackPanel
             x:Name="TitleBar"
             Height="30"
             Background="{StaticResource WindowBackgroundColorBrush}"
-            DockPanel.Dock="Top">
+            DockPanel.Dock="Top"
+            Orientation="Horizontal">
 
             <misc:Icon Margin="7,1,0,1" />
 
@@ -181,7 +182,7 @@
 
             <Button
                 x:Name="Delete"
-                Width="90"
+                Width="92"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}"
@@ -269,17 +270,11 @@
             <buttons:StarOutlineButton x:Name="Star4" />
             <buttons:StarOutlineButton x:Name="Star5" />
 
-            <buttons:CloseButton
-                x:Name="CloseButton"
-                Width="30"
-                Height="30"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Right" />
+
 
             <Rectangle
                 Width="1"
                 Height="30"
-                DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
 
             <buttons:MinButton
@@ -292,9 +287,14 @@
             <Rectangle
                 Width="1"
                 Height="30"
-                DockPanel.Dock="Right"
                 Fill="{StaticResource BorderBrush}" />
-        </DockPanel>
+
+            <buttons:CloseButton
+                x:Name="CloseButton"
+                Width="30"
+                Height="30"
+                VerticalAlignment="Center" />
+        </StackPanel>
 
         <Border
             x:Name="MainBackground"

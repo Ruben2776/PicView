@@ -13,6 +13,13 @@
         <SolidColorBrush x:Key="LocationBorderFill" Color="{StaticResource IconColor}" />
         <SolidColorBrush x:Key="OpenWithBorderFill" Color="{StaticResource IconColor}" />
         <SolidColorBrush x:Key="RenameBorderFill" Color="{StaticResource IconColor}" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="MaxWidth" Value="94" />
+            <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+        </Style>
     </UserControl.Resources>
     <StackPanel>
 
@@ -192,11 +199,8 @@
                         <Button.Content>
                             <TextBlock
                                 Margin="3,0,3,0"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                 Foreground="{StaticResource OpenBorderFill}"
-                                Text="{StaticResource ResourceKey=Open}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="NoWrap" />
+                                Text="{StaticResource ResourceKey=Open}" />
                         </Button.Content>
                     </Button>
                 </StackPanel>
@@ -241,11 +245,8 @@
                         <Button.Content>
                             <TextBlock
                                 Margin="4,0,2,0"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                 Foreground="{StaticResource LocationBorderFill}"
-                                Text="{StaticResource ResourceKey=ShowInFolder}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="NoWrap" />
+                                Text="{StaticResource ResourceKey=ShowInFolder}" />
                         </Button.Content>
                     </Button>
                 </StackPanel>
@@ -275,11 +276,8 @@
                         <Button.Content>
                             <TextBlock
                                 Margin="4,0,3,0"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                 Foreground="{StaticResource OpenWithBorderFill}"
-                                Text="{StaticResource OpenWith}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="NoWrap" />
+                                Text="{StaticResource OpenWith}" />
                         </Button.Content>
                     </Button>
                 </StackPanel>
@@ -308,8 +306,7 @@
                         ToolTip="{StaticResource RenameFile}">
                         <Button.Content>
                             <TextBlock
-                                Margin="3,0,2,0"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                                Margin="2,0,2,0"
                                 Foreground="{StaticResource PrintBorderFill}"
                                 Text="{StaticResource Print}" />
                         </Button.Content>
@@ -341,7 +338,6 @@
                         <Button.Content>
                             <TextBlock
                                 Margin="3.7,0,2,0"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                 Foreground="{StaticResource RenameBorderFill}"
                                 Text="{StaticResource RenameFile}" />
                         </Button.Content>
@@ -374,7 +370,6 @@
                         <Button.Content>
                             <TextBlock
                                 Margin="3,0,2,0"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                 Foreground="{StaticResource RecycleButtonIconBrush}"
                                 Text="{StaticResource DeleteFile}" />
                         </Button.Content>

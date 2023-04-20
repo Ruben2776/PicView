@@ -150,7 +150,7 @@
                     <TextBlock
                         MaxWidth="155"
                         FocusVisualStyle="{x:Null}"
-                        FontSize="14"
+                        FontSize="13"
                         Text="{StaticResource GeneralSettings}"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="Wrap" />
@@ -411,7 +411,7 @@
                     <TextBlock
                         MaxWidth="155"
                         FocusVisualStyle="{x:Null}"
-                        FontSize="14"
+                        FontSize="13"
                         Text="{StaticResource UISettings}"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="Wrap" />
