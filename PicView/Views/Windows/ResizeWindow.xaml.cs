@@ -297,6 +297,7 @@ namespace PicView.Views.Windows
                 }
 
                 ProgressBar.Maximum = sourceFileist.Count;
+                ProgressBar.Value = 0;
             }, DispatcherPriority.Normal, cancellationToken);
 
             await Parallel.ForEachAsync(sourceFileist, async (sourceFile, token) =>
@@ -314,18 +315,15 @@ namespace PicView.Views.Windows
                         sourceFileist.Clear();
                         sourceFileist = null;
                     }
-                    Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                    await Dispatcher.InvokeAsync(() => 
                     {
                         ProgressBar.Value = 0;
-                    });
+                    }, DispatcherPriority.Render, token);
                     return;
                 }
 
                 FileInfo fileInfo;
-                lock (sourceFileist)
-                {
-                    fileInfo = new FileInfo(sourceFile);
-                }
+                fileInfo = new FileInfo(sourceFile);
                 StringBuilder sb = new();
                 sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
 
