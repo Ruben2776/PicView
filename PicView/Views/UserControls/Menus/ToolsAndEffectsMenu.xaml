@@ -55,8 +55,7 @@
 
                         <StackPanel Width="173" Orientation="Horizontal">
                             <TextBlock
-                                Width="126"
-                                MaxWidth="126"
+                                Width="125"
                                 Margin="2,2,2,2"
                                 VerticalAlignment="Center"
                                 Text="{StaticResource BatchResize}"
@@ -450,7 +449,7 @@
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrushAlt}" />
         <Polygon
-            Margin="305,-7,0,0"
+            Margin="302,-7,0,0"
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrushAlt}"
             Points="0,0 15,30, 30,0"
