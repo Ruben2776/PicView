@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,6 +15,7 @@ using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.Views.UserControls.Misc;
+using Windows.Media.Protection.PlayReady;
 using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows
@@ -200,7 +202,7 @@ namespace PicView.Views.Windows
             List<string>? sourceFileist = null;
             string? outputFolder = "";
 
-            await ConfigureWindows.GetResizeWindow.Dispatcher.InvokeAsync(() =>
+            await Dispatcher.InvokeAsync(() =>
             {
                 LogTextBox.Text = String.Empty;
 
@@ -297,7 +299,7 @@ namespace PicView.Views.Windows
                 ProgressBar.Maximum = sourceFileist.Count;
             }, DispatcherPriority.Normal, cancellationToken);
 
-            for (int i = 0; i < sourceFileist.Count; i++)
+            await Parallel.ForEachAsync(sourceFileist, async (sourceFile, token) =>
             {
                 if (sourceFileist is null)
                 {
@@ -322,7 +324,7 @@ namespace PicView.Views.Windows
                 FileInfo fileInfo;
                 lock (sourceFileist)
                 {
-                    fileInfo = new FileInfo(sourceFileist[i]);
+                    fileInfo = new FileInfo(sourceFile);
                 }
                 StringBuilder sb = new();
                 sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
@@ -354,20 +356,20 @@ namespace PicView.Views.Windows
                         sourceFileist.Clear();
                         sourceFileist = null;
                     }
-                    Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                    await Dispatcher.InvokeAsync(() =>
                     {
                         ProgressBar.Value = 0;
-                    });
+                    }, DispatcherPriority.Render, token);
                     return;
                 }
 
-                Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                await Dispatcher.InvokeAsync(() =>
                 {
                     LogTextBox.Text += sb.ToString();
                     LogTextBox.ScrollToEnd();
                     ProgressBar.Value++;
-                });
-            }
+                }, DispatcherPriority.Render, token);
+            });
         }
 
         internal static void SetTextboxDragEvent(TextBox textBox)
