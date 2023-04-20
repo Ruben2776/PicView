@@ -105,7 +105,7 @@ namespace PicView.FileHandling
                     ToggleStartUpUC(true);
                     Close_UserControls();
                 });
-                await LoadPic.LoadPiFromFileAsync(dlg.FileName).ConfigureAwait(false);
+                await LoadPic.LoadPicFromStringAsync(dlg.FileName).ConfigureAwait(false);
                 IsDialogOpen = false;
             }
         }

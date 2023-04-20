@@ -292,13 +292,9 @@ namespace PicView.ChangeImage
 
                 if (preloadValue is null)
                 {
-                    await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
-                    preloadValue = Preloader.Get(index);
-                    if (preloadValue is null)
-                    {
-                        await ReloadAsync().ConfigureAwait(false);
-                        return;
-                    }
+                    var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
+                                         ImageFunctions.ImageErrorMessage();
+                    preloadValue = new Preloader.PreloadValue(bitmapSource, false, fileInfo);
                     if (index != FolderIndex)
                         return;
                 }
