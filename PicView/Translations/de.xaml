@@ -123,6 +123,7 @@
     <system:String x:Key="RestartApp">Anwendung neustarten</system:String>
     <system:String x:Key="CheckForUpdates">Auf Updates prüfen</system:String>
     <system:String x:Key="AllowZoomOut">Vermeide das Herauszoomen des Bildes, wenn es bereits maximale Größe hat</system:String>
+    <system:String x:Key="AdjustNavSpeed">Geschwindigkeit anpassen, wenn Taste gedrückt gehalten wird</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativ Farben</system:String>

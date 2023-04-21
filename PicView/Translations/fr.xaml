@@ -123,6 +123,7 @@
     <system:String x:Key="RestartApp">Redémarrer l'application</system:String>
     <system:String x:Key="CheckForUpdates">Vérifier les mises à jour</system:String>
     <system:String x:Key="AllowZoomOut">Évitez de zoomer sur l'image lorsqu'elle est déjà à sa taille maximale</system:String>
+    <system:String x:Key="AdjustNavSpeed">Ajuster la vitesse lorsque la touche est maintenue enfoncée</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Couleurs négatives</system:String>

@@ -180,7 +180,7 @@
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.7.7" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.0" />
     <PackageReference Include="Magick.NET-Q16-OpenMP-x64" Version="13.0.1" />
     <PackageReference Include="Magick.NET.SystemDrawing" Version="7.0.1">
       <TreatAsUsed>true</TreatAsUsed>

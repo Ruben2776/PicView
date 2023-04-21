@@ -15,7 +15,7 @@ namespace PicView.ChangeImage
         {
             if (_timer is null)
             {
-                _timer = new Timer(TimeSpan.FromSeconds(.7))
+                _timer = new Timer(TimeSpan.FromSeconds(Properties.Settings.Default.NavSpeed))
                 {
                     AutoReset = false,
                     Enabled = true

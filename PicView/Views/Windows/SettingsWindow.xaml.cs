@@ -55,17 +55,32 @@ namespace PicView.Views.Windows
                 SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
                 SubDirRadio.Click += (_,_) => UpdateUIValues.ToggleIncludeSubdirectories();
 
+                // Slideshow
                 SlideshowSlider.Value = Settings.Default.SlideTimer / 1000;
-                SlideshowSlider.ValueChanged += (_, e) => Settings.Default.SlideTimer = e.NewValue * 1000;
+                SlideshowSlider.ValueChanged += (_, e) =>
+                    Settings.Default.SlideTimer = e.NewValue * 1000;
 
+                // Zoom slider
                 ZoomSlider.Value = Settings.Default.ZoomSpeed;
-                txtZoomSlide.Text = Math.Round(ZoomSlider.Value * 100).ToString();
+                txtZoomSlide.Text = Math.Round(ZoomSlider.Value * 100).ToString(CultureInfo.CurrentCulture);
                 ZoomSlider.ValueChanged += (_, e) => 
                 {
-                    Settings.Default.ZoomSpeed = e.NewValue; txtZoomSlide.Text = Math.Round(e.NewValue * 100).ToString();
+                    Settings.Default.ZoomSpeed = e.NewValue; txtZoomSlide.Text =
+                        Math.Round(e.NewValue * 100).ToString(CultureInfo.CurrentCulture);
                     Settings.Default.Save();
                 };
-
+                
+                // Nav speed
+                NavSlider.Value = Settings.Default.NavSpeed;
+                NavTxt.Text = NavSlider.Value.ToString(CultureInfo.CurrentCulture);
+                NavSlider.ValueChanged += (_, e) => 
+                {
+                    Settings.Default.NavSpeed = e.NewValue; NavTxt.Text =
+                        e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
+                    Settings.Default.Save();
+                };
+                
+                // Themes
                 LightThemeRadio.IsChecked = !Settings.Default.DarkTheme;
                 DarkThemeRadio.IsChecked = Settings.Default.DarkTheme;
 

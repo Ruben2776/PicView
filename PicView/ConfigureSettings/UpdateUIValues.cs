@@ -32,8 +32,6 @@ namespace PicView.ConfigureSettings
 
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, SetTitle.SetLoadingString);
 
-            var originFolder = Path.GetDirectoryName(Navigation.InitialPath);
-
             var preloadValue = Preloader.Get(Navigation.FolderIndex);
             var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
             
@@ -230,11 +228,11 @@ namespace PicView.ConfigureSettings
 
         internal static void SetCtrlToZoom(bool value)
         {
-            if (Properties.Settings.Default.CtrlZoom == value)
+            if (Settings.Default.CtrlZoom == value)
             {
                 return;
             }
-            Properties.Settings.Default.CtrlZoom = value;
+            Settings.Default.CtrlZoom = value;
 
             if (GetSettingsWindow is not null)
             {
@@ -249,10 +247,11 @@ namespace PicView.ConfigureSettings
                     GetSettingsWindow.ScrollZoom.IsChecked = true;
                 }
             }
-            var settingscm = (MenuItem)MainContextMenu.Items[7];
-            var ctrlZoomMenu = (MenuItem)settingscm.Items[6];
+            var settingCcm = (MenuItem)MainContextMenu.Items[7];
+            var ctrlZoomMenu = (MenuItem)settingCcm.Items[6];
             var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
             ctrlZoomHeader.IsChecked = Settings.Default.CtrlZoom;
+            MainContextMenu.IsOpen = false;
         }
     }
 }
