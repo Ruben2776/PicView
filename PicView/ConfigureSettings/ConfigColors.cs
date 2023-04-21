@@ -68,6 +68,8 @@ namespace PicView.ConfigureSettings
                 : (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
 
             w.TitleText.InnerTextBox.Foreground = foregroundColor;
+            w.BorderBrush = isFocused ? (SolidColorBrush)Application.Current.Resources["BorderBrush"]
+                                                : (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"];
 
             if (Settings.Default.DarkTheme)
             {
@@ -87,8 +89,6 @@ namespace PicView.ConfigureSettings
             }
             else
             {
-                w.TitleText.InnerTextBox.Foreground = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
-
                 w.LeftButtonContainer.Background =
                 w.Logo.Background =
                 w.CloseButton.Background =
@@ -96,14 +96,16 @@ namespace PicView.ConfigureSettings
                 w.FullscreenButton.Background =
                 w.GalleryButton.Background =
                 w.RotateButton.Background =
-                w.FlipButton.Background =
-                    isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
-                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+                w.FlipButton.Background = /*Brushes.Transparent;*/
+                    isFocused ? (SolidColorBrush)Application.Current.Resources["AltInterfaceBrush"]
+                                : (SolidColorBrush)Application.Current.Resources["BackgroundHoverHighlightBrush"];
 
-                w.TitleBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundSubtleHighlightBrush"]
-                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
-                w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundSubtleHighlightBrush"]
-                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
+                w.TitleBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
+                w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
+                                                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
+
+                
             }
         }
 

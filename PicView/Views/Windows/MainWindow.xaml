@@ -199,7 +199,7 @@
                     Width="404"
                     Height="1"
                     Panel.ZIndex="1"
-                    Fill="{StaticResource BorderBrush}" />
+                    Fill="{StaticResource BorderBrushAlt}" />
 
                 <Rectangle
                     Width="1"

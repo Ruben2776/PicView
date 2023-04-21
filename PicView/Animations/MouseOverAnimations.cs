@@ -13,7 +13,7 @@ namespace PicView.Animations
 
         */
 
-        private static readonly Color mainColor = (Color)Application.Current.Resources["IconColor"];
+        private static readonly Color iconColor = (Color)Application.Current.Resources["IconColor"];
 
         private static readonly Color backgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
 
@@ -96,10 +96,10 @@ namespace PicView.Animations
             else
             {
                 AnimationHelper.MouseOverColorEvent(
-                    mainColor.A,
-                    mainColor.R,
-                    mainColor.G,
-                    mainColor.B,
+                    iconColor.A,
+                    iconColor.R,
+                    iconColor.G,
+                    iconColor.B,
                     brush
                 );
             }
@@ -114,10 +114,10 @@ namespace PicView.Animations
             else
             {
                 AnimationHelper.MouseLeaveColorEvent(
-                    mainColor.A,
-                    mainColor.R,
-                    mainColor.G,
-                    mainColor.B,
+                    iconColor.A,
+                    iconColor.R,
+                    iconColor.G,
+                    iconColor.B,
                     brush
                 );
             }

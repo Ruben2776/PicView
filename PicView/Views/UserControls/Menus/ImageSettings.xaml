@@ -35,6 +35,14 @@
                         StrokeThickness="1" />
 
                     <Border
+                        Width="277"
+                        Height="45"
+                        Background="{StaticResource BackgroundColorBrushAlt}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8,8,0,0" />
+
+                    <Border
                         Width="47"
                         Height="45"
                         CornerRadius="8,0,0,0">

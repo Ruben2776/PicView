@@ -9,7 +9,7 @@
     <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
 
     <!--  Icon Color  -->
-    <Color x:Key="IconColor">#424242</Color>
+    <Color x:Key="IconColor">#474139</Color>
     <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
 
     <!--  Main Color faded  -->
@@ -19,7 +19,7 @@
     <!--  Fade Color  -->
     <Color
         x:Key="FadeColor"
-        A="255"
+        A="200"
         B="255"
         G="255"
         R="255" />
@@ -36,17 +36,17 @@
 
     <!--  Border Brush  -->
     <Color x:Key="BorderColor">#78AEAEAE</Color>
-    <Color x:Key="BorderColorAlt">WhiteSmoke</Color>
+    <Color x:Key="BorderColorAlt">#78c9c7c7</Color>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
 
     <!--  Alt Interface  -->
     <Color
         x:Key="AltInterface"
-        A="210"
-        B="245"
-        G="245"
-        R="245" />
+        A="100"
+        B="255"
+        G="255"
+        R="255" />
     <Color
         x:Key="AltInterfaceW"
         A="240"
@@ -91,11 +91,21 @@
         ViewportUnits="Absolute" />
 
     <!--  Background Color  -->
-    <Color x:Key="BackgroundColor">#fff</Color>
+    <Color
+        x:Key="BackgroundColor"
+        A="220"
+        B="255"
+        G="255"
+        R="255" />
     <SolidColorBrush x:Key="BackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
 
     <!--  Background Color Alt  -->
-    <Color x:Key="BackgroundColorAlt">#fff</Color>
+    <Color
+        x:Key="BackgroundColorAlt"
+        A="220"
+        B="255"
+        G="255"
+        R="255" />
     <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
 
     <!--  Window Background Color  -->

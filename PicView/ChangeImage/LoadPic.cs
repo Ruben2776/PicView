@@ -61,7 +61,7 @@ namespace PicView.ChangeImage
                     case "web": await HttpFunctions.LoadPicFromURL(path).ConfigureAwait(false); return;
                     case "base64": await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false); return;
                     case "directory": await LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
-                    case "zip": await LoadPicFromArchiveAsync(path).ConfigureAwait(!false); return;
+                    case "zip": await LoadPicFromArchiveAsync(path).ConfigureAwait(false); return;
                     case "": ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => Unload(true)); return;
                 }
             }
@@ -266,21 +266,13 @@ namespace PicView.ChangeImage
                     // If the file is a directory, create a new FileInfo object using the file path from the image list.
                     fileInfo = new FileInfo(Pics[index]);
                 }
-                else
+                else // Fix deleting files outside application
                 {
-                    try // Fix deleting files outside application
-                    {
-                        Preloader.Clear();
-                        Pics = FileList(fileInfo);
-                        var reverse = Reverse ? NavigateTo.Previous : NavigateTo.Next;
-                        await GoToNextImage(reverse).ConfigureAwait(false);
-                        return;
-                    }
-                    catch (Exception)
-                    {
-                        await ReloadAsync().ConfigureAwait(false);
-                        return;
-                    }
+                    Preloader.Clear();
+                    Pics = FileList(fileInfo);
+                    var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
+                    await GoToNextImage(navigateTo).ConfigureAwait(false);
+                    return;
                 }
             }
 
@@ -295,19 +287,17 @@ namespace PicView.ChangeImage
                     var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
                                          ImageFunctions.ImageErrorMessage();
                     preloadValue = new Preloader.PreloadValue(bitmapSource, false, fileInfo);
-                    if (index != FolderIndex)
-                        return;
+                    if (index != FolderIndex) return;
                 }
                 while (preloadValue.IsLoading)
                 {
-                    await Task.Delay(20).ConfigureAwait(false);
+                    await Task.Delay(10).ConfigureAwait(false);
 
-                    if (index != FolderIndex)
-                        return; // Skip loading if user went to next value
+                    if (index != FolderIndex) return; 
                 }
             }
 
-            if (index != FolderIndex) return;
+            if (index != FolderIndex) return; // Skip loading if user went to next value
 
             await UpdateImage.UpdateImageAsync(index, preloadValue.BitmapSource, preloadValue.FileInfo).ConfigureAwait(false);
 
@@ -322,10 +312,9 @@ namespace PicView.ChangeImage
 
             if (Pics.Count > 1)
             {
-                if (FolderIndex == index)
-                    Taskbar.Progress((double)index / Pics.Count);
+                Taskbar.Progress((double)index / Pics.Count);
 
-                await Preloader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+                await Preloader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
                 await Preloader.PreLoadAsync(index).ConfigureAwait(false);
             }
 

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Media.Imaging;
+using PicView.ImageHandling;
 using PicView.SystemIntegration;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
@@ -86,13 +87,15 @@ namespace PicView.ChangeImage
                 preloadValue = Preloader.Get(FolderIndex);
                 if (preloadValue is null)
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                    return;
+                    var fileInfo = new FileInfo(Pics[FolderIndex]);
+                    var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
+                                         ImageFunctions.ImageErrorMessage();
+                    preloadValue = new Preloader.PreloadValue(bitmapSource, false, fileInfo);
                 }
             }
             while (preloadValue.IsLoading)
             {
-                await Task.Delay(20).ConfigureAwait(false);
+                await Task.Delay(10).ConfigureAwait(false);
             }
             pic = preloadValue.BitmapSource;
             await UpdateImage.UpdateImageAsync(FolderIndex, pic, preloadValue.FileInfo).ConfigureAwait(false);

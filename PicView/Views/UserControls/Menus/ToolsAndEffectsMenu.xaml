@@ -14,7 +14,7 @@
 
         <Border
             Width="358"
-            Height="166"
+            Height="163"
             Background="{StaticResource BackgroundColorBrushAlt}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -31,12 +31,13 @@
                         Color="{StaticResource AltInterface}" />
                 </Canvas.Effect>
 
-                <Rectangle
-                    Canvas.Top="45"
+                <Border
                     Width="357"
-                    Panel.ZIndex="1"
-                    Stroke="{StaticResource BorderBrush}"
-                    StrokeThickness="1" />
+                    Height="45"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8,8,0,0" />
 
                 <Border
                     Width="172"
@@ -444,7 +445,7 @@
         <Rectangle
             Width="23"
             Height="1"
-            Margin="309,-1,0,0"
+            Margin="306,-1,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrushAlt}" />
         <Polygon
