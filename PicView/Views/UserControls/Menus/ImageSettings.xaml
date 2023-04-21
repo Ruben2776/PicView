@@ -27,16 +27,11 @@
                 CornerRadius="8,8,0,0">
                 <Canvas Width="275" Height="45">
 
-                    <Rectangle
-                        Canvas.Top="45"
-                        Width="277"
-                        Panel.ZIndex="1"
-                        Stroke="{StaticResource BorderBrush}"
-                        StrokeThickness="1" />
-
                     <Border
-                        Width="277"
-                        Height="45"
+                        Canvas.Left="-1"
+                        Canvas.Top="-1"
+                        Width="278"
+                        Height="46"
                         Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1"

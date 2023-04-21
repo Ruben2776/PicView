@@ -23,11 +23,11 @@
     </UserControl.Resources>
     <StackPanel>
 
-        <Canvas Width="277" Height="178">
+        <Canvas Width="277" Height="182">
 
             <Border
                 Width="277"
-                Height="183"
+                Height="185"
                 Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
@@ -383,9 +383,9 @@
         </Canvas>
 
         <Rectangle
-            Width="25"
+            Width="26"
             Height="1.5"
-            Margin="38,4,0,0"
+            Margin="38,1.5,0,0"
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrushAlt}" />
         <Polygon

@@ -14,7 +14,7 @@
 
         <Border
             Width="358"
-            Height="163"
+            Height="161"
             Background="{StaticResource BackgroundColorBrushAlt}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
@@ -32,7 +32,9 @@
                 </Canvas.Effect>
 
                 <Border
-                    Width="357"
+                    Canvas.Left="-1"
+                    Canvas.Top="-1"
+                    Width="358"
                     Height="45"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -40,6 +42,7 @@
                     CornerRadius="8,8,0,0" />
 
                 <Border
+                    Canvas.Top="-1"
                     Width="172"
                     Height="45"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -121,6 +124,7 @@
                 <Button
                     x:Name="EffectsButton"
                     Canvas.Left="171"
+                    Canvas.Top="-1"
                     Width="139"
                     Height="45"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
@@ -249,7 +253,7 @@
                 <Border
                     x:Name="OptimizeImageButtonBorder"
                     Canvas.Left="7"
-                    Canvas.Top="106"
+                    Canvas.Top="104"
                     Width="162"
                     Height="49"
                     Style="{StaticResource ButtonBorder}">
@@ -318,7 +322,7 @@
                 <Border
                     x:Name="BgBorder"
                     Canvas.Left="175"
-                    Canvas.Top="106"
+                    Canvas.Top="104"
                     Width="174"
                     Height="49"
                     Style="{StaticResource ButtonBorder}">

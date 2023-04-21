@@ -18,8 +18,10 @@
             <Canvas>
 
                 <Border
-                    Width="358"
-                    Height="45"
+                    Canvas.Left="-1"
+                    Canvas.Top="-1"
+                    Width="359"
+                    Height="46"
                     Panel.ZIndex="1"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -28,13 +30,15 @@
 
                 <buttons:SettingsButton
                     x:Name="SettingsButton"
+                    Canvas.Left="-1"
+                    Canvas.Top="-1"
                     Width="179"
                     Panel.ZIndex="2" />
 
                 <buttons:InfoButton
                     x:Name="InfoButton"
-                    Canvas.Left="179"
-                    Width="133"
+                    Canvas.Left="178"
+                    Width="134"
                     Panel.ZIndex="2" />
 
                 <buttons:MenuCloseButton
