@@ -72,7 +72,7 @@ namespace PicView.Views.Windows
                 
                 // Nav speed
                 NavSlider.Value = Settings.Default.NavSpeed;
-                NavTxt.Text = NavSlider.Value.ToString(CultureInfo.CurrentCulture);
+                NavTxt.Text = NavSlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
                 NavSlider.ValueChanged += (_, e) => 
                 {
                     Settings.Default.NavSpeed = e.NewValue; NavTxt.Text =
