@@ -105,7 +105,7 @@ namespace PicView.ConfigureSettings
                 w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
                                                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
 
-                
+
             }
         }
 
@@ -194,14 +194,18 @@ namespace PicView.ConfigureSettings
         /// <param name="useDarkTheme"></param>
         internal static void ChangeTheme(bool useDarkTheme)
         {
+            Settings.Default.DarkTheme = useDarkTheme;
+            
+            if (useDarkTheme)
+            {
+                // TODO create function to switch without restarting
+                return;
+            }
+            
             Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
             {
-                Source = new Uri(useDarkTheme ? 
-                @"/PicView;component/Themes/Styles/ColorThemes/Dark.xaml" :
-                @"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
+                Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
             };
-
-            Settings.Default.DarkTheme = useDarkTheme;
         }
 
         #endregion Change Theme

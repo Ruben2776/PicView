@@ -34,6 +34,10 @@ namespace PicView.Views.Windows
             }
 
             InitializeComponent();
+            if (Settings.Default.DarkTheme is false)
+            {
+                TopContainer.Background = Brushes.White;
+            }
 
             ContentRendered += delegate
             {

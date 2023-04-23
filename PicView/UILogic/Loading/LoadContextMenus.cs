@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.FileHandling;
@@ -26,50 +27,54 @@ namespace PicView.UILogic.Loading
             MainContextMenu.Opened += (_, _) => GetFileHistory.RefreshRecentItemsMenu();
 
             ///////////////////////////
-            ///     Open           \\\\
+            //     Open              \\
             ///////////////////////////
-            var opencm = (MenuItem)MainContextMenu.Items[0];
-            opencm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + O";
-            opencm.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
+            var openCm = (MenuItem)MainContextMenu.Items[0];
+            openCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + O";
+            openCm.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
 
             ///////////////////////////
-            ///     Save           \\\\
+            //     Save             \\
             ///////////////////////////
-            var savecm = (MenuItem)MainContextMenu.Items[1];
-            savecm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + S";
-            savecm.Click += async (s, x) => await SaveFilesAsync().ConfigureAwait(false);
+            var saveCm = (MenuItem)MainContextMenu.Items[1];
+            saveCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + S";
+            saveCm.Click += async (s, x) => await SaveFilesAsync().ConfigureAwait(false);
 
             ///////////////////////////
-            ///     Print          \\\\
+            //       Print          \\\
             ///////////////////////////
-            var printcm = (MenuItem)MainContextMenu.Items[2];
-            printcm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + P";
-            printcm.Click += (s, x) => Print(Pics[FolderIndex]);
+            var printCm = (MenuItem)MainContextMenu.Items[2];
+            printCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + P";
+            printCm.Click += (s, x) => Print(Pics[FolderIndex]);
+
 
             ///////////////////////////
-            ///     Open With      \\\\
+            //     Open With        \\\
             ///////////////////////////
-            var openwcm = (MenuItem)MainContextMenu.Items[3];
-            openwcm.Click += (_, _) => OpenWith();
+            var openWcm = (MenuItem)MainContextMenu.Items[3];
+            openWcm.Click += (_, _) => OpenWith();
 
-            // 4 == seperator
+            // 4 == separator
 
-            var sortfilesbycm = (MenuItem)MainContextMenu.Items[5];
+            ///////////////////////////
+            //     Sort by          \\
+            ///////////////////////////
+            var sortFilesByCm = (MenuItem)MainContextMenu.Items[5];
 
             // FileName
-            var FileNameMenu = (MenuItem)sortfilesbycm.Items[0];
-            var FileNameHeader = (RadioButton)FileNameMenu.Header;
-            FileNameHeader.IsChecked = Settings.Default.SortPreference == 0;
-            FileNameHeader.Click += async delegate
+            var fileNameMenu = (MenuItem)sortFilesByCm.Items[0];
+            var fileNameHeader = (RadioButton)fileNameMenu.Header;
+            fileNameHeader.IsChecked = Settings.Default.SortPreference == 0;
+            fileNameHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
                 await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.Name).ConfigureAwait(false);
             };
 
             // FileSize
-            var filesizeMenu = (MenuItem)sortfilesbycm.Items[1];
+            var filesizeMenu = (MenuItem)sortFilesByCm.Items[1];
             var filesizeHeader = (RadioButton)filesizeMenu.Header;
-            filesizeHeader.IsChecked = Settings.Default.SortPreference == 1;
+            filesizeHeader.IsChecked = Settings.Default.SortPreference == (int) FileLists.SortFilesBy.Name;
             filesizeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -77,100 +82,104 @@ namespace PicView.UILogic.Loading
             };
 
             // FileExtension
-            var FileExtensionMenu = (MenuItem)sortfilesbycm.Items[2];
-            var FileExtensionHeader = (RadioButton)FileExtensionMenu.Header;
-            FileExtensionHeader.IsChecked = Settings.Default.SortPreference == 3;
-            FileExtensionHeader.Click += async delegate
+            var fileExtensionMenu = (MenuItem)sortFilesByCm.Items[2];
+            var fileExtensionHeader = (RadioButton)fileExtensionMenu.Header;
+            fileExtensionHeader.IsChecked = Settings.Default.SortPreference == (int) FileLists.SortFilesBy.Extension;
+            fileExtensionHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
                 await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.FileSize).ConfigureAwait(false);
             };
 
             // CreationTime
-            var CreationTimeMenu = (MenuItem)sortfilesbycm.Items[3];
-            var CreationTimeHeader = (RadioButton)CreationTimeMenu.Header;
-            CreationTimeHeader.IsChecked = Settings.Default.SortPreference == 2;
-            CreationTimeHeader.Click += async delegate
+            var creationTimeMenu = (MenuItem)sortFilesByCm.Items[3];
+            var creationTimeHeader = (RadioButton)creationTimeMenu.Header;
+            creationTimeHeader.IsChecked = Settings.Default.SortPreference == 2;
+            creationTimeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
                 await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.CreationTime).ConfigureAwait(false);
             };
             
             // LastAccessTime
-            var LastAccessTimeMenu = (MenuItem)sortfilesbycm.Items[4];
-            var LastAccessTimeHeader = (RadioButton)LastAccessTimeMenu.Header;
-            LastAccessTimeHeader.IsChecked = Settings.Default.SortPreference == 4;
-            LastAccessTimeHeader.Click += async delegate
+            var lastAccessTimeMenu = (MenuItem)sortFilesByCm.Items[4];
+            var lastAccessTimeHeader = (RadioButton)lastAccessTimeMenu.Header;
+            lastAccessTimeHeader.IsChecked = Settings.Default.SortPreference == (int) FileLists.SortFilesBy.LastAccessTime;
+            lastAccessTimeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
                 await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.LastAccessTime).ConfigureAwait(false);
             };
             
             // LastWriteTime
-            var LastWriteTimeMenu = (MenuItem)sortfilesbycm.Items[5];
-            var LastWriteTimeHeader = (RadioButton)LastWriteTimeMenu.Header;
-            LastWriteTimeHeader.IsChecked = Settings.Default.SortPreference == 5;
-            LastWriteTimeHeader.Click += async delegate
+            var lastWriteTimeMenu = (MenuItem)sortFilesByCm.Items[5];
+            var lastWriteTimeHeader = (RadioButton)lastWriteTimeMenu.Header;
+            lastWriteTimeHeader.IsChecked =
+                Settings.Default.SortPreference == (int) FileLists.SortFilesBy.LastWriteTime;
+            lastWriteTimeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
                 await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.LastWriteTime).ConfigureAwait(false);
             };
             
             // Random
-            var RandomMenu = (MenuItem)sortfilesbycm.Items[6];
-            var RandomHeader = (RadioButton)RandomMenu.Header;
-            RandomHeader.IsChecked = Settings.Default.SortPreference == 6;
-            RandomHeader.Click += async delegate
+            var randomMenu = (MenuItem)sortFilesByCm.Items[6];
+            var randomHeader = (RadioButton)randomMenu.Header;
+            randomHeader.IsChecked = Settings.Default.SortPreference == (int) FileLists.SortFilesBy.Random;
+            randomHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
                 await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.Random).ConfigureAwait(false);
             };
             
-            // 7 = seperator
+            // 7 = separator
 
             // Ascending
-            var AscendingMenu = (MenuItem)sortfilesbycm.Items[8];
-            var AscendingHeader = (RadioButton)AscendingMenu.Header;
-            AscendingHeader.IsChecked = Settings.Default.Ascending;
-            AscendingHeader.Click += async (_, _) =>
+            var ascendingMenu = (MenuItem)sortFilesByCm.Items[8];
+            var ascendingHeader = (RadioButton)ascendingMenu.Header;
+            ascendingHeader.IsChecked = Settings.Default.Ascending;
+            ascendingHeader.Click += async (_, _) =>
             {
                 Settings.Default.Ascending = true;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
 
             // Descending
-            var DescendingMenu = (MenuItem)sortfilesbycm.Items[9];
-            var DescendingHeader = (RadioButton)DescendingMenu.Header;
-            DescendingHeader.IsChecked = Settings.Default.Ascending == false;
-            DescendingHeader.Click += async (_, _) =>
+            var descendingMenu = (MenuItem)sortFilesByCm.Items[9];
+            var descendingHeader = (RadioButton)descendingMenu.Header;
+            descendingHeader.IsChecked = Settings.Default.Ascending == false;
+            descendingHeader.Click += async (_, _) =>
             {
                 Settings.Default.Ascending = false;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
 
-            // 6 == Recent files
+            ///////////////////////////
+            //     Recent files      \\
+            ///////////////////////////
+            //var recentMenu = (MenuItem)MainContextMenu.Items[6];
 
             ///////////////////////////
-            ///     Settings       \\\\
+            //      Settings         \\
             ///////////////////////////
-            var settingscm = (MenuItem)MainContextMenu.Items[7];
+            var settingsCm = (MenuItem)MainContextMenu.Items[7];
 
             // Looping
-            var LoopingMenu = (MenuItem)settingscm.Items[0];
-            var LoopingHeader = (CheckBox)LoopingMenu.Header;
-            LoopingHeader.IsChecked = Settings.Default.Looping;
-            LoopingHeader.Click += (_, _) => UpdateUIValues.SetLooping();
-            LoopingMenu.Click += (_, _) => { UpdateUIValues.SetLooping(); LoopingHeader.IsChecked = !LoopingHeader.IsChecked; };
-
+            var loopingMenu = (MenuItem)settingsCm.Items[0];
+            var loopingHeader = (CheckBox)loopingMenu.Header;
+            loopingHeader.IsChecked = Settings.Default.Looping;
+            loopingHeader.Click += (_, _) => UpdateUIValues.SetLooping();
+            loopingMenu.Click += (_, _) => { UpdateUIValues.SetLooping(); loopingHeader.IsChecked = !loopingHeader.IsChecked; };
+            
             // Scrolling
-            var ScrollingMenu = (MenuItem)settingscm.Items[1];
+            var ScrollingMenu = (MenuItem)settingsCm.Items[1];
             var ScrollingHeader = (CheckBox)ScrollingMenu.Header;
             ScrollingHeader.IsChecked = Settings.Default.ScrollEnabled;
             ScrollingHeader.Click += (_, _) => UpdateUIValues.SetScrolling();
             ScrollingMenu.Click += (_, _) => { UpdateUIValues.SetScrolling(); ScrollingHeader.IsChecked = !ScrollingHeader.IsChecked; };
 
             // ToogleUI
-            var ToogleUIMenu = (MenuItem)settingscm.Items[2];
+            var ToogleUIMenu = (MenuItem)settingsCm.Items[2];
             ToogleUIMenu.InputGestureText = $"{Application.Current.Resources["Alt"]} + Z";
             var ToogleUIHeader = (CheckBox)ToogleUIMenu.Header;
             ToogleUIHeader.IsChecked = Settings.Default.ShowInterface;
@@ -178,25 +187,26 @@ namespace PicView.UILogic.Loading
             ToogleUIMenu.Click += (_, _) => { HideInterfaceLogic.ToggleInterface(); ToogleUIHeader.IsChecked = !ToogleUIHeader.IsChecked; };
 
             // Change bg
-            var ChangeBackgroundMenu = (MenuItem)settingscm.Items[3];
+            var ChangeBackgroundMenu = (MenuItem)settingsCm.Items[3];
             ChangeBackgroundMenu.Click += (_, _) => ConfigColors.ChangeBackground();
+            
 
             // Topmost
-            var TopmostMenu = (MenuItem)settingscm.Items[4];
+            var TopmostMenu = (MenuItem)settingsCm.Items[4];
             var TopmostHeader = (CheckBox)TopmostMenu.Header;
             TopmostHeader.IsChecked = Settings.Default.TopMost;
             TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
             TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
 
             // Fill Image Height
-            var imageHeightMenu = (MenuItem)settingscm.Items[5];
+            var imageHeightMenu = (MenuItem)settingsCm.Items[5];
             var imageHeightHeader = (CheckBox)imageHeightMenu.Header;
             imageHeightHeader.IsChecked = Settings.Default.FillImage;
             imageHeightHeader.Click += UpdateUIValues.SetAutoFill;
             imageHeightMenu.Click += UpdateUIValues.SetAutoFill;
 
             // Ctrl to zoom
-            var ctrlZoomMenu = (MenuItem)settingscm.Items[6];
+            var ctrlZoomMenu = (MenuItem)settingsCm.Items[6];
             var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
             ctrlZoomHeader.IsChecked = Settings.Default.CtrlZoom;
             ctrlZoomMenu.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
@@ -205,7 +215,7 @@ namespace PicView.UILogic.Loading
             // 7 = seperator
 
             // Settings
-            var SettingsMenu = (MenuItem)settingscm.Items[8];
+            var SettingsMenu = (MenuItem)settingsCm.Items[8];
             SettingsMenu.Click += (_, _) => { AllSettingsWindow(); MainContextMenu.IsOpen = false; };
 
             // 8 = seperator

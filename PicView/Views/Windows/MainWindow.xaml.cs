@@ -38,7 +38,7 @@ namespace PicView.Views.Windows
             }
 
             InitializeComponent();
-
+            
             if (Settings.Default.AutoFitWindow == false)
             {
                 // Need to change startup location after initialize component
@@ -59,6 +59,12 @@ namespace PicView.Views.Windows
             ContentRendered += async delegate
             {
                 WindowBlur.EnableBlur(this);
+                // if (Settings.Default.DarkTheme == false)
+                // {
+                //     var w = ConfigureWindows.GetMainWindow;
+                //     w.TitleBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
+                //     w.LowerBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
+                // }
 
                 await StartLoading.ContentRenderedEventAsync().ConfigureAwait(false);
 

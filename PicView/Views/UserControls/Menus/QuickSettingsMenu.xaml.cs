@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Media;
 using PicView.ConfigureSettings;
 using PicView.Properties;
 using PicView.UILogic;
@@ -16,11 +17,23 @@ namespace PicView.Views.UserControls.Menus
         {
             InitializeComponent();
 
-            SettingsButton.TheButton.Click += delegate
+            // SettingsButton
+            SettingsButton.Click += delegate
             {
                 ConfigureWindows.AllSettingsWindow();
                 Close_UserControls();
             };
+            SetButtonIconMouseOverAnimations(
+                SettingsButtonBorder, SettingsButtonBrush, (SolidColorBrush)Resources["SettingsIcon"]);
+            
+            // InfoButton
+            InfoButton.Click += delegate
+            {
+                ConfigureWindows.InfoWindow();
+                Close_UserControls();
+            };
+            SetButtonIconMouseOverAnimations(
+                InfoButton, InfoButtonBrush, (SolidColorBrush)Resources["AboutIcon"]);
 
             // Toggle Scroll
             ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;

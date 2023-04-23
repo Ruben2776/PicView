@@ -34,6 +34,7 @@
                     Fill="{StaticResource IconColorBrush}"
                     Stretch="Fill" />
             </MenuItem.Icon>
+
         </MenuItem>
 
         <!--  Save  -->

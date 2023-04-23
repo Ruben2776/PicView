@@ -78,7 +78,7 @@
 
                     <Button
                         x:Name="RotateRightButton"
-                        Canvas.Left="48"
+                        Canvas.Left="47"
                         Width="47"
                         Height="45"
                         BorderBrush="{x:Null}"
@@ -109,16 +109,33 @@
                         Stroke="{StaticResource BorderBrush}"
                         StrokeThickness="1" />
 
-                    <buttons:FlipButton
+                    <CheckBox
                         x:Name="FlipButton"
-                        Canvas.Left="90"
-                        Width="49"
+                        Canvas.Left="94"
+                        Width="47"
                         Height="45"
                         BorderBrush="{x:Null}"
-                        Foreground="{x:Null}" />
+                        Foreground="{x:Null}">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="FlipButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <CheckBox.Content>
+                            <Path
+                                x:Name="FlipPath"
+                                Width="13"
+                                Height="13"
+                                Margin="14,14.8,0,0"
+                                Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
+                                Stretch="Fill">
+                                <Path.Fill>
+                                    <SolidColorBrush x:Name="FlipIconBrush" Color="{StaticResource IconColor}" />
+                                </Path.Fill>
+                            </Path>
+                        </CheckBox.Content>
+                    </CheckBox>
 
                     <Rectangle
-                        Canvas.Left="136"
+                        Canvas.Left="140"
                         Width="1"
                         Height="45"
                         HorizontalAlignment="Left"
@@ -129,11 +146,11 @@
 
                     <buttons:GoToPicButton
                         x:Name="GoToPic"
-                        Canvas.Left="137"
+                        Canvas.Left="140"
                         Width="91"
                         Height="45" />
 
-                    <Border Canvas.Left="228" CornerRadius="0,8,0,0">
+                    <Border Canvas.Left="230" CornerRadius="0,8,0,0">
                         <buttons:MenuCloseButton x:Name="CloseButton" Height="45" />
                     </Border>
 

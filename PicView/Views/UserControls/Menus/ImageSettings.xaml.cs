@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Media;
+using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Editing.Crop;
 using PicView.ImageHandling;
@@ -21,12 +22,19 @@ namespace PicView.Views.UserControls.Menus
             InitializeComponent();
 
             // RotateLeftButton
-            SetButtonIconMouseOverAnimations(RotateLeftButton, RotateLeftButtonBrush, RotateLeftIconBrush);
             RotateLeftButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(true, RotateLeftButton).ConfigureAwait(false);
+            SetButtonIconMouseOverAnimations(RotateLeftButton, RotateLeftButtonBrush, RotateLeftIconBrush);
 
             // RotateRightButton
+            RotateRightButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(false, RotateRightButton).ConfigureAwait(false);
             SetButtonIconMouseOverAnimations(RotateRightButton, RotateRightButtonBrush, RotateRightIconBrush);
-            RotateRightButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(false, RotateLeftButton).ConfigureAwait(false);
+
+            // FlipButton
+            FlipButton.Click += (_, _) => Rotation.Flip();
+            // Change FlipButton's icon when (un)checked
+            FlipButton.Checked += (_, _) => UpdateUIValues.ChangeFlipButton(true);
+            FlipButton.Unchecked += (_, _) => UpdateUIValues.ChangeFlipButton(false);
+            SetButtonIconMouseOverAnimations(FlipButton, FlipButtonBrush, FlipIconBrush);
 
             // ResizeButton
             SetButtonIconMouseOverAnimations(ResizeButtonBorder, ResizeBorderBrush, (SolidColorBrush)Resources["ResizeIcon"]);

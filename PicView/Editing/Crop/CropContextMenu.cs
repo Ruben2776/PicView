@@ -10,7 +10,8 @@ namespace PicView.Editing.Crop
     {
         public CropContextMenu()
         {
-            var ContextMenu = new ContextMenu();
+            // TODO Add copy function & save as 
+            var contextMenu = new ContextMenu();
 
             var cropIcon = new Path
             {
@@ -29,7 +30,7 @@ namespace PicView.Editing.Crop
             };
             cropCm.Click += async (_, _) => await CropFunctions.PerformCropAsync().ConfigureAwait(false);
 
-            ContextMenu.Items.Add(cropCm);
+            contextMenu.Items.Add(cropCm);
 
             var closeIcon = new Path
             {
@@ -46,11 +47,11 @@ namespace PicView.Editing.Crop
                 InputGestureText = Application.Current.Resources["Esc"] as string,
                 Icon = closeIcon
             };
-            closeCm.Click += (_, _) => { ContextMenu.Visibility = Visibility.Collapsed; CropFunctions.CloseCrop(); };
+            closeCm.Click += (_, _) => { contextMenu.Visibility = Visibility.Collapsed; CropFunctions.CloseCrop(); };
 
-            ContextMenu.Items.Add(closeCm);
+            contextMenu.Items.Add(closeCm);
 
-            UC.GetCropppingTool.ContextMenu = ContextMenu;
+            UC.GetCropppingTool.ContextMenu = contextMenu;
         }
     }
 }

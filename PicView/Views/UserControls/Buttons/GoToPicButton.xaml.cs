@@ -2,8 +2,10 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ConfigureSettings;
+using PicView.Properties;
 using PicView.UILogic;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
@@ -20,9 +22,17 @@ namespace PicView.Views.UserControls.Buttons
             Loaded += delegate
             {
                 TheButton.Click += async (_, _) => await GoToPicEventAsync().ConfigureAwait(false);
+                if (Settings.Default.DarkTheme)
+                {
+                    SetButtonIconMouseOverAnimations(TheButton, GoToPicBrush, (SolidColorBrush)Resources["PlayIconBrush"]);
+                }
+                else
+                {
+                    TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
+                    TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush);
+                    AnimationHelper.LightThemeMouseEvent(TheButton, (SolidColorBrush)Resources["PlayIconBrush"]);
+                }
                 
-                SetButtonIconMouseOverAnimations(TheButton, GoToPicBrush, (SolidColorBrush)Resources["PlayIconBrush"]);
-
                 GoToPicBox.PreviewMouseLeftButtonDown += delegate
                 {
                     GoToPicBox.CaretBrush = new SolidColorBrush(ConfigColors.MainColor);
@@ -31,7 +41,7 @@ namespace PicView.Views.UserControls.Buttons
             };
         }
 
-        internal static async Task GoToPicEventAsync()
+        private static async Task GoToPicEventAsync()
         {
             if (ErrorHandling.CheckOutOfRange()) return;
 
@@ -50,7 +60,7 @@ namespace PicView.Views.UserControls.Buttons
             }
         }
 
-        internal static void ClearGoTo()
+        private static void ClearGoTo()
         {
             GetImageSettingsMenu.GoToPic.GoToPicBox.CaretBrush = new SolidColorBrush(Colors.Transparent);
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope(GetImageSettingsMenu.GoToPic.GoToPicBox), null);
@@ -107,7 +117,7 @@ namespace PicView.Views.UserControls.Buttons
 
                 case Key.Enter: // Execute it!
                     await GoToPicEventAsync().ConfigureAwait(false);
-                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ClearGoTo());
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ClearGoTo);
                     break;
 
                 default:

@@ -66,7 +66,7 @@ namespace PicView.ChangeImage
                 Rotation.RotationAngle = 0;
                 if (GetImageSettingsMenu is not null)
                 {
-                    GetImageSettingsMenu.FlipButton.TheButton.IsChecked= false;
+                    GetImageSettingsMenu.FlipButton.IsChecked= false;
                 }
                 ConfigureWindows.GetMainWindow.FlipButton.IsChecked= false;
 

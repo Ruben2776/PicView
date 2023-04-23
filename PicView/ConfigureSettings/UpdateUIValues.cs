@@ -211,7 +211,7 @@ namespace PicView.ConfigureSettings
             if (GetMainWindow.MainImage.Source is null) return;
 
             var mainFlipButtonPath = GetMainWindow.FlipPath;
-            var menuFlipButtonPath = UC.GetImageSettingsMenu.FlipButton.FlipPath;
+            var menuFlipButtonPath = UC.GetImageSettingsMenu.FlipPath;
 
             if (isChecked)
             {

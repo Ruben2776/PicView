@@ -215,13 +215,7 @@
     <Compile Update="Views\UserControls\Buttons\LefttButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\UserControls\Buttons\InfoButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\UserControls\Buttons\ResizeButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\UserControls\Buttons\SettingsButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\UserControls\Buttons\RightButton.xaml.cs">
@@ -306,14 +300,8 @@
     <Page Update="Views\UserControls\Buttons\LefttButton.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\UserControls\Buttons\InfoButton.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\UserControls\Buttons\ResizeButton.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Buttons\SettingsButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Buttons\RightButton.xaml">

@@ -29,9 +29,9 @@
     <Color
         x:Key="SubtleFadeColor"
         A="255"
-        B="245"
-        G="245"
-        R="245" />
+        B="240"
+        G="240"
+        R="240" />
     <SolidColorBrush x:Key="SubtleFadeBrush" Color="{StaticResource SubtleFadeColor}" />
 
     <!--  Border Brush  -->
@@ -82,13 +82,7 @@
         ViewportUnits="Absolute" />
 
     <!--  Menu background  -->
-    <ImageBrush
-        x:Key="MenuBg"
-        ImageSource="\Themes\Resources\img\noise-texture-100x100 (3).png"
-        Opacity=".9"
-        TileMode="FlipXY"
-        Viewport="0,0,100,100"
-        ViewportUnits="Absolute" />
+    <SolidColorBrush x:Key="MenuBg" Color="#fff" />
 
     <!--  Background Color  -->
     <Color
