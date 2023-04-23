@@ -104,8 +104,6 @@ namespace PicView.ConfigureSettings
                                                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
                 w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
                                                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
-
-
             }
         }
 

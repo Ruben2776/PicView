@@ -69,15 +69,14 @@ namespace PicView.ConfigureSettings
         internal static void SetScrolling()
         {
             if (GalleryFunctions.IsHorizontalFullscreenOpen
-                || GalleryFunctions.IsHorizontalOpen
-                || Rotation.RotationAngle != 0)
+                || GalleryFunctions.IsHorizontalOpen)
                 return;
 
             var settingCcm = MainContextMenu.Items[7] as MenuItem;
             var scrollCm = settingCcm.Items[1] as MenuItem;
             var scrollCmHeader = scrollCm.Header as CheckBox;
 
-            SetScrollBehaviour(Settings.Default.ScrollEnabled);
+            SetScrollBehaviour(!Settings.Default.ScrollEnabled);
             scrollCmHeader.IsChecked = Settings.Default.ScrollEnabled;
             UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
         }
