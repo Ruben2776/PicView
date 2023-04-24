@@ -31,35 +31,13 @@ namespace PicView.Views.UserControls.Menus
             }
 
             // ResizeButton
-            var iconBrush = (SolidColorBrush)Resources["IconBrush"];
-            ResizeButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(ResizeText);
-                ButtonMouseOverAnim(iconBrush);
-                AnimationHelper.MouseEnterBgTexColor(ResizeButtonBrush);
-            };
-            ResizeButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(ResizeText);
-                ButtonMouseLeaveAnim(iconBrush);
-                AnimationHelper.MouseLeaveBgTexColor(ResizeButtonBrush);
-            };
-
+            var resizeIconBrush = (SolidColorBrush)Resources["ResizeIconBrush"];
+            SetButtonIconMouseOverAnimations(ResizeButton, ResizeButtonBrush, resizeIconBrush);
             ResizeButton.Click += (_, _) => ConfigureWindows.ResizeWindow();
 
             // EffectsButton
-            EffectsButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(EffectsText);
-                ButtonMouseOverAnim(EffectsFill);
-                AnimationHelper.MouseEnterBgTexColor(EffectsButtonBrush);
-            };
-            EffectsButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(EffectsText);
-                ButtonMouseLeaveAnim(EffectsFill);
-                AnimationHelper.MouseLeaveBgTexColor(EffectsButtonBrush);
-            };
+            var effectsIconBrush = (SolidColorBrush)Resources["EffectsIconBrush"];
+            SetButtonIconMouseOverAnimations(EffectsButton, EffectsButtonBrush, effectsIconBrush);
             EffectsButton.Click += delegate
             {
                 UC.Close_UserControls();
@@ -67,18 +45,8 @@ namespace PicView.Views.UserControls.Menus
             };
 
             // ColorPickerButton
-            ColorPickerButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(ColorPickerText);
-                ButtonMouseOverAnim(ColorPickerFill);
-                AnimationHelper.MouseEnterBgTexColor(ColorPickerBrush);
-            };
-            ColorPickerButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(ColorPickerText);
-                ButtonMouseLeaveAnim(ColorPickerFill);
-                AnimationHelper.MouseLeaveBgTexColor(ColorPickerBrush);
-            };
+            var colorIconBrush = (SolidColorBrush)Resources["ColorIconBrush"];
+            SetButtonIconMouseOverAnimations(ColorPickerButton, ColorPickerBrush, colorIconBrush);
             ColorPickerButton.Click += delegate
             {
                 if (ConfigureWindows.GetMainWindow.MainImage.Source is null)
@@ -92,18 +60,8 @@ namespace PicView.Views.UserControls.Menus
             };
 
             // ImageInfoButton
-            ImageInfoButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(ImageInfoText);
-                ButtonMouseOverAnim(ImageInfoFill);
-                AnimationHelper.MouseEnterBgTexColor(ImageInfoBrush);
-            };
-            ImageInfoButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(ImageInfoText);
-                ButtonMouseLeaveAnim(ImageInfoFill);
-                AnimationHelper.MouseLeaveBgTexColor(ImageInfoBrush);
-            };
+            var infoIconBrush = (SolidColorBrush)Resources["InfoIconBrush"];
+            SetButtonIconMouseOverAnimations(ImageInfoButton, ImageInfoBrush, infoIconBrush);
             ImageInfoButton.Click += delegate
             {
                 UC.Close_UserControls();
@@ -111,43 +69,14 @@ namespace PicView.Views.UserControls.Menus
             };
 
             // OptimizeImageButton
-            OptimizeImageButton.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(OptimizeImageText);
-                ButtonMouseOverAnim(OptimizeImageFill1);
-                ButtonMouseOverAnim(OptimizeImageFill2);
-                AnimationHelper.MouseEnterBgTexColor(OptimizeImageBrush);
-            };
-            OptimizeImageButton.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(OptimizeImageText);
-                ButtonMouseLeaveAnim(OptimizeImageFill1);
-                ButtonMouseLeaveAnim(OptimizeImageFill2);
-                AnimationHelper.MouseLeaveBgTexColor(OptimizeImageBrush);
-            };
+            var optimizeIconBrush = (SolidColorBrush)Resources["OptimizeIconBrush"];
+            SetButtonIconMouseOverAnimations(OptimizeImageButton, OptimizeImageBrush, optimizeIconBrush);
             OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
 
-            BgBorder.MouseEnter += delegate
-            {
-                ButtonMouseOverAnim(IconBrush1);
-                ButtonMouseOverAnim(IconBrush2);
-                ButtonMouseOverAnim(IconBrush3);
-                ButtonMouseOverAnim(IconBrush4);
-                ButtonMouseOverAnim(IconBrush5);
-                ButtonMouseOverAnim(BgText);
-                AnimationHelper.MouseEnterBgTexColor(BgBrush);
-            };
-
-            BgBorder.MouseLeave += delegate
-            {
-                ButtonMouseLeaveAnim(IconBrush1);
-                ButtonMouseLeaveAnim(IconBrush2);
-                ButtonMouseLeaveAnim(IconBrush3);
-                ButtonMouseLeaveAnim(IconBrush4);
-                ButtonMouseLeaveAnim(IconBrush5);
-                ButtonMouseLeaveAnim(BgText);
-                AnimationHelper.MouseLeaveBgTexColor(BgBrush);
-            };
+            // Change background
+            var changeIconBrush = (SolidColorBrush)Resources["ChangeIconBrush"];
+            SetButtonIconMouseOverAnimations(BgButton, BgBrush, changeIconBrush);
+            OptimizeImageButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
 
             BgButton.Click += (_, _) => ConfigColors.ChangeBackground();
         }

@@ -28,7 +28,7 @@
             <Border
                 Width="277"
                 Height="185"
-                Background="{StaticResource MenuBg}"
+                Background="{StaticResource BackgroundColorBrushAlt}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 CornerRadius="8" />
