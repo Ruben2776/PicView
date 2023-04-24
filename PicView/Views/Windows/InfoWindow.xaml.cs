@@ -7,6 +7,7 @@ using System.Windows.Navigation;
 using AutoUpdaterDotNET;
 using PicView.Animations;
 using PicView.ConfigureSettings;
+using PicView.Properties;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
@@ -79,29 +80,37 @@ namespace PicView.Views.Windows
             CloseButton.TheButton.Click += delegate { Hide(); };
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
-            Iconic.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, IconicBrush); };
-            Iconic.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, IconicBrush); };
+            var color = Settings.Default.DarkTheme ? Colors.White : (Color) Application.Current.Resources["MainColor"];
 
-            Ionic.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, IonicBrush); };
-            Ionic.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, IonicBrush); };
+            Iconic.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, IconicBrush); };
+            Iconic.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, IconicBrush); };
 
-            FontAwesome.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, FontAwesomeBrush); };
-            FontAwesome.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, FontAwesomeBrush); };
+            Ionic.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, IonicBrush); };
+            Ionic.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, IonicBrush); };
 
-            GitHub.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, GitHubBrush); };
-            GitHub.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, GitHubBrush); };
+            FontAwesome.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, FontAwesomeBrush); };
+            FontAwesome.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, FontAwesomeBrush); };
 
-            License.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, LicenseBrush); };
-            License.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, LicenseBrush); };
+            GitHub.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, GitHubBrush); };
+            GitHub.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, GitHubBrush); };
 
-            zondicons.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, zondiconsBrush); };
-            zondicons.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, zondiconsBrush); };
+            License.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, LicenseBrush); };
+            License.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, LicenseBrush); };
 
-            freepik.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, FreepikBrush); };
-            freepik.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, FreepikBrush); };
+            zondicons.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, zondiconsBrush); };
+            zondicons.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, zondiconsBrush); };
 
-            PicViewSite.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, PicViewBrush); };
-            PicViewSite.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, PicViewBrush); };
+            freepik.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, FreepikBrush); };
+            freepik.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, FreepikBrush); };
+
+            PicViewSite.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, PicViewBrush); };
+            PicViewSite.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, PicViewBrush); };
+
+            UpdateButton.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, UpdateText); };
+            UpdateButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(UpdateBrush); };
+            UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, UpdateText); };
+            UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(UpdateBrush); };
+
 
             UpdateButton.MouseLeftButtonDown += delegate
             {
@@ -110,11 +119,6 @@ namespace PicView.Views.Windows
                 AutoUpdater.ShowSkipButton = false;
                 AutoUpdater.Start("https://picview.org/update.xml");
             };
-
-            UpdateButton.MouseEnter += delegate { AnimationHelper.MouseOverColorEvent(255, 255, 255, 255, UpdateText); };
-            UpdateButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(UpdateBrush); };
-            UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(255, 255, 255, 255, UpdateText); };
-            UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(UpdateBrush); };
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
