@@ -27,21 +27,9 @@ namespace PicView.ChangeImage
         {
             InitialPath = file;
             var fileInfo = new FileInfo(file);
-            if (!fileInfo.Exists) // If not file, try to load if URL or base64
+            if (!fileInfo.Exists) // If not file, try to load if URL, base64, archive or directory
             {
-                await LoadPicFromStringAsync(file).ConfigureAwait(false);
-                return;
-            }
-
-            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-            {
-                await LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
-                return;
-            }
-
-            if (file.IsArchive())
-            {
-                await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
+                await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
                 return;
             }
 
@@ -50,27 +38,31 @@ namespace PicView.ChangeImage
 
             if (size.HasValue)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => FitImage(size.Value.Width, size.Value.Height), DispatcherPriority.Send);
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    FitImage(size.Value.Width, size.Value.Height), DispatcherPriority.Send);
             }
 
             var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             if (bitmapSource != null)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => SetMainImage(bitmapSource, fileInfo), DispatcherPriority.Send);
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    SetMainImage(bitmapSource, fileInfo), DispatcherPriority.Send);
+
                 if (!size.HasValue)
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => FitImage(bitmapSource.Width, bitmapSource.Height), DispatcherPriority.Send);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                        FitImage(bitmapSource.Width, bitmapSource.Height), DispatcherPriority.Send);
                 }
             }
             else
             {
                 var errorImage = ImageFunctions.ImageErrorMessage();
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ConfigureWindows.GetMainWindow.MainImage.Source = errorImage);
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    ConfigureWindows.GetMainWindow.MainImage.Source = errorImage);
             }
 
             Pics = FileList(fileInfo);
-
-            FolderIndex = Pics?.IndexOf(fileInfo.FullName) ?? 0;
+            FolderIndex = Pics.IndexOf(fileInfo.FullName);
 
             if (bitmapSource != null)
             {
@@ -86,10 +78,11 @@ namespace PicView.ChangeImage
             if (FolderIndex > 0)
             {
                 Taskbar.Progress((double)FolderIndex / Pics.Count);
+                await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
             }
 
-            await Preloader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
-            await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
+            if (bitmapSource is not null)
+                await Preloader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
@@ -104,7 +97,7 @@ namespace PicView.ChangeImage
             }            
         }
 
-        private static void SetMainImage(ImageSource imageSource, FileSystemInfo fileInfo)
+        private static void SetMainImage(ImageSource imageSource, FileInfo fileInfo)
         {
             if (fileInfo.Extension?.ToLowerInvariant() == ".gif")
             {

@@ -30,6 +30,8 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task LoadPicFromStringAsync(string? path, FileInfo? fileInfo = null)
         {
+            SetLoadingString();
+
             if (fileInfo is not null)
             {
                 if (fileInfo.Exists)

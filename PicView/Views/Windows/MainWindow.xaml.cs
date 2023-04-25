@@ -92,32 +92,20 @@ namespace PicView.Views.Windows
                 GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, true).ConfigureAwait(false);
 
                 // image_button
-                ImageButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(ImagePath1Fill, ImagePath2Fill, ImagePath3Fill);
-                ImageButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ImageMenuBg);
-                ImageButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(ImagePath1Fill, ImagePath2Fill, ImagePath3Fill);
-                ImageButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ImageMenuBg);
+                MouseOverAnimations.SetButtonIconMouseOverAnimations(ImageButton, ImageMenuBg, (SolidColorBrush)Resources["ImageBrush"], true);
+                ImageButton.Click += Toggle_image_menu;
 
                 // SettingsButton
-                SettingsButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(SettingsButtonFill);
-                SettingsButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(SettingsMenuBg);
-                SettingsButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(SettingsButtonFill);
-                SettingsButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(SettingsMenuBg);
-                SettingsButton.Click += Toggle_quick_settings_menu;
-                ImageButton.Click += Toggle_image_menu;
+                MouseOverAnimations.SetButtonIconMouseOverAnimations(SettingsButton, SettingsMenuBg, SettingsButtonFill, true);
+                SettingsButton.Click += Toggle_quick_settings_menu;               
 
                 //FunctionButton
                 var magicBrush = TryFindResource("MagicBrush") as SolidColorBrush;
-                FunctionMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(magicBrush);
-                FunctionMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(EffectsMenuBg);
-                FunctionMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(magicBrush);
-                FunctionMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(EffectsMenuBg);
+                MouseOverAnimations.SetButtonIconMouseOverAnimations(FunctionMenuButton, EffectsMenuBg, magicBrush, true);
                 FunctionMenuButton.Click += Toggle_Functions_menu;
                 
                 //GalleryButton
-                GalleryButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(GalleryBrush);
-                GalleryButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(GalleryBg);
-                GalleryButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(GalleryBrush);
-                GalleryButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(GalleryBg);
+                MouseOverAnimations.SetButtonIconMouseOverAnimations(GalleryButton, GalleryBg, GalleryBrush, true);
                 GalleryButton.Click += async (_, _) =>
                 {
                     if (GalleryFunctions.IsHorizontalOpen)
@@ -131,25 +119,19 @@ namespace PicView.Views.Windows
                 };
 
                 // RotateButton
-                RotateButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(RotateBrush);
-                RotateButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(RotateBg);
-                RotateButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(RotateBrush);
-                RotateButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(RotateBg);
+                MouseOverAnimations.SetButtonIconMouseOverAnimations(RotateButton, RotateBg, RotateBrush, true);
                 RotateButton.Click += async (_, _) =>
                     await Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
 
                 // FlipButton
-                FlipButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FlipBrush);
-                FlipButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FlipBg);
-                FlipButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FlipBrush);
-                FlipButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FlipBg);
+                MouseOverAnimations.SetButtonIconMouseOverAnimations(FlipButton, FlipBg, FlipBrush, true);
                 FlipButton.Click += (_, _) => Rotation.Flip();
                 FlipButton.Checked += (_, _) => UpdateUIValues.ChangeFlipButton(true);
                 FlipButton.Unchecked += (_, _) => UpdateUIValues.ChangeFlipButton(false);
 
                 // TitleText
                 TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-                TitleText.InnerTextBox.PreviewKeyDown += async (sender, e) => await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(sender, e).ConfigureAwait(false);
+                TitleText.InnerTextBox.PreviewKeyDown += async (_, e) => await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(e).ConfigureAwait(false);
                 TitleText.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
                 TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 

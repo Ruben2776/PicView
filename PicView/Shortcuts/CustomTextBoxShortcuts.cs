@@ -6,7 +6,7 @@ namespace PicView.Shortcuts
 {
     internal static class CustomTextBoxShortcuts
     {
-        internal static async Task CustomTextBox_KeyDownAsync(object sender, KeyEventArgs e)
+        internal static async Task CustomTextBox_KeyDownAsync(KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

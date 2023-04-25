@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Threading;
 using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.UILogic;
@@ -18,12 +19,12 @@ namespace PicView.ChangeTitlebar
         /// Returns string with file name, folder position,
         /// zoom, aspect ratio, resolution and file size
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="index"></param>
-        /// <param name="fileInfo"></param>
+        /// <param name="width">Pixel width of the image</param>
+        /// <param name="height">Pixel height of the image</param>
+        /// <param name="index">Current position index of the viewed directory</param>
+        /// <param name="fileInfo">FileInfo of the current image</param>
         /// <returns></returns>
-        internal static string[]? TitleString(int width, int height, int index, FileInfo? fileInfo)
+        internal static string[] TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
             // Check if file info is present or not
             if (fileInfo == null)
@@ -41,7 +42,7 @@ namespace PicView.ChangeTitlebar
             // Check if file exists or not
             if (!fileInfo.Exists)
             {
-                return null;
+                return ReturnError("FileInfo does not exist?");
             }
 
             // Check index validity
@@ -54,8 +55,8 @@ namespace PicView.ChangeTitlebar
                 Application.Current.Resources["File"] :
                 Application.Current.Resources["Files"]);
 
-            var s1 = new StringBuilder(90);
-            s1.Append(fileInfo.Name)
+            var stringBuilder = new StringBuilder(90);
+            stringBuilder.Append(fileInfo.Name)
                 .Append(' ')
                 .Append(index + 1)
                 .Append('/')
@@ -72,19 +73,19 @@ namespace PicView.ChangeTitlebar
             // Check if ZoomPercentage is not empty
             if (!string.IsNullOrEmpty(ZoomPercentage))
             {
-                s1.Append(", ")
+                stringBuilder.Append(", ")
                     .Append(ZoomPercentage);
             }
 
-            s1.Append(" - ")
+            stringBuilder.Append(" - ")
                 .Append(AppName);
 
             var array = new string[3];
-            array[0] = s1.ToString();
-            s1.Remove(s1.Length - (AppName.Length + 3), AppName.Length + 3);   // Remove AppName + " - "
-            array[1] = s1.ToString();
-            s1.Replace(Path.GetFileName(Pics[index]), Pics[index]);
-            array[2] = s1.ToString();
+            array[0] = stringBuilder.ToString();
+            stringBuilder.Remove(stringBuilder.Length - (AppName.Length + 3), AppName.Length + 3);   // Remove AppName + " - "
+            array[1] = stringBuilder.ToString();
+            stringBuilder.Replace(Path.GetFileName(Pics[index]), Pics[index]);
+            array[2] = stringBuilder.ToString();
             return array;
         }
 
@@ -131,7 +132,7 @@ namespace PicView.ChangeTitlebar
         /// <param name="height"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static string[]? TitleString(int width, int height, string path)
+        private static string[] TitleString(int width, int height, string path)
         {
             var s1 = new StringBuilder();
             s1.Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
@@ -150,6 +151,10 @@ namespace PicView.ChangeTitlebar
             return array;
         }
 
+        /// <summary>
+        /// Sets title string with file name,
+        /// zoom, aspect ratio and resolution
+        /// </summary>
         internal static void SetTitleString()
         {
             string[]? titleString;
@@ -217,16 +222,22 @@ namespace PicView.ChangeTitlebar
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
         }
 
+        /// <summary>
+        /// Set loading message for the title, titlebar and the tooltip
+        /// </summary>
         internal static void SetLoadingString()
         {
-            if (Application.Current.Resources["Loading"] is not string s ||
-                ConfigureWindows.GetMainWindow.Title == null || ConfigureWindows.GetMainWindow.TitleText == null)
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
             {
-                return;
-            }
-            ConfigureWindows.GetMainWindow.Title = s;
-            ConfigureWindows.GetMainWindow.TitleText.Text = s;
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = s;
+                if (Application.Current.Resources["Loading"] is not string loading ||
+                    ConfigureWindows.GetMainWindow.Title == null || ConfigureWindows.GetMainWindow.TitleText == null)
+                {
+                    return;
+                }
+                ConfigureWindows.GetMainWindow.Title = loading;
+                ConfigureWindows.GetMainWindow.TitleText.Text = loading;
+                ConfigureWindows.GetMainWindow.TitleText.ToolTip = loading;
+            });
         }
     }
 }

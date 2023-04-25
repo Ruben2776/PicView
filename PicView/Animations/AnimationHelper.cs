@@ -147,9 +147,7 @@ namespace PicView.Animations
 
         #endregion Color Events
 
-        #region Color stuff
-
-        #region Return Color
+        #region Color settings
 
         internal static Color GetPreferredColor()
         {
@@ -169,8 +167,6 @@ namespace PicView.Animations
                 _ => Settings.Default.Blue,
             };
         }
-
-        #endregion Return Color
 
         #endregion Color stuff
 

@@ -22,17 +22,8 @@ namespace PicView.Views.UserControls.Buttons
             Loaded += delegate
             {
                 TheButton.Click += async (_, _) => await GoToPicEventAsync().ConfigureAwait(false);
-                if (Settings.Default.DarkTheme)
-                {
-                    SetButtonIconMouseOverAnimations(TheButton, GoToPicBrush, (SolidColorBrush)Resources["PlayIconBrush"]);
-                }
-                else
-                {
-                    TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(GoToPicBrush, true);
-                    TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(GoToPicBrush);
-                    AnimationHelper.LightThemeMouseEvent(TheButton, (SolidColorBrush)Resources["PlayIconBrush"]);
-                }
-                
+                SetButtonIconMouseOverAnimations(TheButton, GoToPicBrush, (SolidColorBrush)Resources["PlayIconBrush"]);
+
                 GoToPicBox.PreviewMouseLeftButtonDown += delegate
                 {
                     GoToPicBox.CaretBrush = new SolidColorBrush(ConfigColors.MainColor);
