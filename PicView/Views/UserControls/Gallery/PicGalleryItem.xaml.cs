@@ -20,26 +20,26 @@ namespace PicView.Views.UserControls.Gallery
 
             Id = id;
 
-            OuterBorder.Width = OuterBorder.Height = PicGalleryItem_Size;
-            InnerBorder.Width = InnerBorder.Height = PicGalleryItem_Size_s;
+            OuterBorder.Width = OuterBorder.Height = PicGalleryItemSize;
+            InnerBorder.Width = InnerBorder.Height = PicGalleryItemSizeS;
 
             ThumbImage.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
                 this,
                 false,
-                PicGalleryItem_Size_s,
-                PicGalleryItem_Size
+                PicGalleryItemSizeS,
+                PicGalleryItemSize
             );
 
             ThumbImage.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
                 this,
                 true,
-                PicGalleryItem_Size,
-                PicGalleryItem_Size_s
+                PicGalleryItemSize,
+                PicGalleryItemSizeS
             );
 
             if (!selected) return;
             InnerBorder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPreferredColor());
-            InnerBorder.Width = InnerBorder.Height = PicGalleryItem_Size;
+            InnerBorder.Width = InnerBorder.Height = PicGalleryItemSize;
         }
     }
 }

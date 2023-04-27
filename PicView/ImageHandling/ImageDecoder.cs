@@ -37,7 +37,7 @@ namespace PicView.ImageHandling
                 case ".ico":
                 case ".webp":
                 case ".wbmp":
-                    return await GetWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
+                    return await GetWriteAbleBitmapAsync(fileInfo).ConfigureAwait(false);
 
                 case ".svg":
                     return await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
@@ -192,7 +192,13 @@ namespace PicView.ImageHandling
             }
         }
 
-        private static async Task<WriteableBitmap?> GetWriteableBitmapAsync(FileInfo fileInfo)
+        /// <summary>
+        /// Asynchronously gets a WriteableBitmap from the given file.
+        /// If the file size is equal to or greater than 2 GB, it returns the default bitmap source.
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a <c>WriteableBitmap</c> object if successful; otherwise, it returns null.</returns>
+        private static async Task<WriteableBitmap?> GetWriteAbleBitmapAsync(FileInfo fileInfo)
         {
             if (fileInfo.Length >= 2147483648)
                 return (WriteableBitmap?)await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
@@ -216,7 +222,7 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception:\n{e.Message}");
+                Trace.WriteLine($"{nameof(GetWriteAbleBitmapAsync)} {fileInfo.Name} exception:\n{e.Message}");
 #endif
                 return null;
             }

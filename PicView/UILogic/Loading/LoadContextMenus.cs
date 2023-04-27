@@ -273,17 +273,17 @@ namespace PicView.UILogic.Loading
             // Copy file
             var copyFileCm = (MenuItem)CopyCm.Items[0];
             copyFileCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + C";
-            copyFileCm.Click += (_, _) => Copy_Paste.CopyFile();
+            copyFileCm.Click += (_, _) => CopyPaste.CopyFile();
 
             // FileCopyPath
             var FileCopyPathCm = (MenuItem)CopyCm.Items[1];
             FileCopyPathCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Alt"]} + C";
-            FileCopyPathCm.Click += (_, _) => Copy_Paste.CopyFilePath();
+            FileCopyPathCm.Click += (_, _) => CopyPaste.CopyFilePath();
 
             // CopyImage
             var CopyImageCm = (MenuItem)CopyCm.Items[2];
             CopyImageCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + {Application.Current.Resources["Shift"]} + C";
-            CopyImageCm.Click += (_, _) => Copy_Paste.CopyBitmap();
+            CopyImageCm.Click += (_, _) => CopyPaste.CopyBitmap();
 
             // CopyBase64
             var CopyBase64Cm = (MenuItem)CopyCm.Items[3];
@@ -294,14 +294,14 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var Cutcm = (MenuItem)MainContextMenu.Items[14];
             Cutcm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + X";
-            Cutcm.Click += (_, _) => { MainContextMenu.IsOpen = false; Copy_Paste.Cut(); };
+            Cutcm.Click += (_, _) => { MainContextMenu.IsOpen = false; CopyPaste.Cut(); };
 
             ///////////////////////////
             ///   Paste File       \\\\
             ///////////////////////////
             var pastecm = (MenuItem)MainContextMenu.Items[15];
             pastecm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + V";
-            pastecm.Click += async delegate { MainContextMenu.IsOpen = false; await Copy_Paste.PasteAsync().ConfigureAwait(false); };
+            pastecm.Click += async delegate { MainContextMenu.IsOpen = false; await CopyPaste.PasteAsync().ConfigureAwait(false); };
 
             // 16 = seperator
 

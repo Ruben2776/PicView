@@ -24,8 +24,9 @@ namespace PicView.ImageHandling
             {
                 try
                 {
-                    await using var filestream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);
-                    using var magick = new MagickImage(filestream) 
+                    await using var fileStream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);
+                    // ReSharper disable once IdentifierTypo
+                    using var magickImage = new MagickImage(fileStream) 
                     {
                         ColorSpace = ColorSpace.Transparent,
                         Quality = quality,
@@ -33,11 +34,11 @@ namespace PicView.ImageHandling
 
                     if (percentage is not null)
                     {
-                        magick.Resize(percentage.Value);
+                        magickImage.Resize(percentage.Value);
                     }
                     else
                     {
-                        magick.Resize(width, height);
+                        magickImage.Resize(width, height);
                     }
 
                     if (destination is null)
@@ -46,7 +47,7 @@ namespace PicView.ImageHandling
                         {
                             destination = Path.ChangeExtension(sourceFile.FullName, ext);
                             await using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
-                            await magick.WriteAsync(saveStream).ConfigureAwait(false);
+                            await magickImage.WriteAsync(saveStream).ConfigureAwait(false);
                             DeleteFiles.TryDeleteFile(sourceFile.FullName, true);
                             if (compress.HasValue)
                             {
@@ -55,7 +56,7 @@ namespace PicView.ImageHandling
                         }
                         else
                         {
-                            await magick.WriteAsync(filestream).ConfigureAwait(false);
+                            await magickImage.WriteAsync(fileStream).ConfigureAwait(false);
                             if (compress.HasValue)
                             {
                                 Optimize(compress.Value, sourceFile.FullName);
@@ -74,7 +75,7 @@ namespace PicView.ImageHandling
                         }
 
                         await using var overwriteStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
-                        await magick.WriteAsync(overwriteStream).ConfigureAwait(false);
+                        await magickImage.WriteAsync(overwriteStream).ConfigureAwait(false);
                         if (compress.HasValue)
                         {
                             Optimize(compress.Value, destination);

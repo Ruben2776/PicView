@@ -11,7 +11,7 @@ using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
 {
-    internal static class Copy_Paste
+    internal static class CopyPaste
     {
         /// <summary>
         /// Copy image location to clipboard
@@ -30,10 +30,10 @@ namespace PicView.FileHandling
             if (Pics?.Count <= 0)
             {
                 // Check if from URL and download it
-                string url = FileFunctions.RetrieveFromURL();
+                var url = FileFunctions.RetrieveFromURL();
                 if (!string.IsNullOrEmpty(url)) 
                 {
-                    Copyfile(ArchiveExtraction.TempFilePath);
+                    CopyFile(ArchiveExtraction.TempFilePath);
                 }
                 else
                 {
@@ -42,11 +42,11 @@ namespace PicView.FileHandling
             }
             else if (Pics?.Count > FolderIndex)
             {
-                Copyfile(Pics[FolderIndex]);
+                CopyFile(Pics[FolderIndex]);
             }
         }
 
-        static void Copyfile(string path)
+        private static void CopyFile(string path)
         {
             var paths = new StringCollection { path };
             Clipboard.SetFileDropList(paths);
@@ -95,7 +95,7 @@ namespace PicView.FileHandling
                 }
                 else
                 {
-                    Copyfile(Pics[FolderIndex]);
+                    CopyFile(Pics[FolderIndex]);
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace PicView.FileHandling
 
                 if (string.IsNullOrEmpty(s)) { return; }
 
-                string check = ErrorHandling.CheckIfLoadableString(s);
+                var check = ErrorHandling.CheckIfLoadableString(s);
                 switch (check)
                 {
                     case "": return;

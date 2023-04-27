@@ -70,7 +70,7 @@ namespace PicView.PicGallery
                 UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
                 UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 4 * WindowSizing.MonitorInfo.DpiScaling);
                 UC.GetPicGallery.border.BorderThickness = new Thickness(1);
-                UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItem_Size;  
+                UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;  
 
                 ShowNavigation(false);
                 ShowTopandBottom(false);
@@ -106,13 +106,13 @@ namespace PicView.PicGallery
             if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
             var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
 
-            if (Math.Abs(tempItem.OuterBorder.Height - GalleryNavigation.PicGalleryItem_Size) < 1) { return; }
+            if (Math.Abs(tempItem.OuterBorder.Height - GalleryNavigation.PicGalleryItemSize) < 1) { return; }
 
             for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
             {
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItem_Size_s;
-                item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItem_Size;
+                item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSizeS;
+                item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
             }
         }
 
@@ -184,7 +184,7 @@ namespace PicView.PicGallery
                 return;
             }
 
-            var thumbHolder = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItem_Size));
+            var thumbHolder = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize));
             UpdatePic(i, thumbHolder.Thumb);
         }
 

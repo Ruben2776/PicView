@@ -14,7 +14,7 @@ namespace PicView.Views.UserControls.Buttons
             {
                 SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
 
-                TheButton.Click += async delegate { await Copy_Paste.PasteAsync().ConfigureAwait(false); };
+                TheButton.Click += async delegate { await CopyPaste.PasteAsync().ConfigureAwait(false); };
             };
         }
     }

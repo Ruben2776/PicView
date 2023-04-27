@@ -181,7 +181,7 @@ namespace PicView.Views.Windows
 
             // Button, Brush and Text for Copy function
             SetButtonIconMouseOverAnimations(CopyButton, CopyBrush, CopyText);
-            CopyButton.Click += (_, _) => Copy_Paste.CopyBitmap();
+            CopyButton.Click += (_, _) => CopyPaste.CopyBitmap();
 
             // Button, Brush and Text for Save function
             SetButtonIconMouseOverAnimations(SaveButton, SaveBrush, SaveText);

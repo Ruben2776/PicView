@@ -30,13 +30,8 @@ namespace PicView.FileHandling
             string[] appNames = { "WinRAR.exe", "7z.exe" };
             string[] appPathNames = { "\\WinRAR\\WinRAR.exe", "\\7-Zip\\7z.exe" };
 
-            string? extractAppPath = GetExtractAppPath(appPathNames, appNames);
-            if (extractAppPath == null)
-            {
-                return false;
-            }
-
-            return Extract(path, extractAppPath, extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
+            var extractAppPath = GetExtractAppPath(appPathNames, appNames);
+            return extractAppPath != null && Extract(path, extractAppPath, extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
         }
 
         private static string? GetExtractAppPath(string[] commonPaths, string[] appNames)

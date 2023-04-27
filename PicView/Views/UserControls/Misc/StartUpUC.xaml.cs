@@ -63,7 +63,7 @@ namespace PicView.Views.UserControls.Misc
                 ButtonMouseLeaveAnim(pasteTxt);
             };
 
-            PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
+            PasteButton.Click += async (_, _) => await CopyPaste.PasteAsync().ConfigureAwait(false);
 
             if (Settings.Default.DarkTheme == false)
             {

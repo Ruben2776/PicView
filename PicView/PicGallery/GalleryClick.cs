@@ -18,7 +18,7 @@ using static PicView.UILogic.UC;
 namespace PicView.PicGallery
 {
     /// <summary>
-    /// Logick for what happens when user clicks on
+    /// Logic for what happens when user clicks on
     /// thumbnail gallery item
     /// </summary>
     internal static class GalleryClick
@@ -53,7 +53,7 @@ namespace PicView.PicGallery
                 });
             }
 
-            var from = GalleryNavigation.PicGalleryItem_Size;
+            var from = GalleryNavigation.PicGalleryItemSize;
             var to = new[] { XWidth, XHeight };
             var acceleration = 0.2;
             var deceleration = 0.4;
@@ -90,7 +90,7 @@ namespace PicView.PicGallery
                     GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                     ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                 });
-                await ItemClickAsync(id, false).ConfigureAwait(false);
+                await ItemClickAsync(id).ConfigureAwait(false);
             };
 
             image = new Image
@@ -104,9 +104,9 @@ namespace PicView.PicGallery
             // Need to add border for background to pictures with transparent background
             border = new Border
             {
-                Background = ConfigColors.BackgroundColorBrush
+                Background = ConfigColors.BackgroundColorBrush,
+                Child = image
             };
-            border.Child = image;
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
@@ -126,7 +126,7 @@ namespace PicView.PicGallery
                         DecelerationRatio = deceleration,
                         FillBehavior = FillBehavior.Stop
                     };
-                    GetPicGallery.Container.BeginAnimation(FrameworkElement.OpacityProperty, da3);
+                    GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, da3);
                 }
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
@@ -137,7 +137,7 @@ namespace PicView.PicGallery
             }, DispatcherPriority.Send);
         }
 
-        internal static async Task ItemClickAsync(int id, bool resize = true)
+        private static async Task ItemClickAsync(int id)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync( () =>
             {

@@ -13,7 +13,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.Copy_Paste;
+using static PicView.FileHandling.CopyPaste;
 using static PicView.FileHandling.DeleteFiles;
 using static PicView.FileHandling.Open_Save;
 using static PicView.UILogic.ConfigureWindows;

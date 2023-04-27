@@ -178,7 +178,7 @@ namespace PicView.Animations
             {
                 return;
             }
-            if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItem_Size_s && unHover == false)
+            if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItemSizeS && unHover == false)
             {
                 // Make sure it is not run consecutively
                 return;

@@ -25,11 +25,11 @@ namespace PicView.Views.UserControls.Menus
 
             // CopyButton
             SetButtonIconMouseOverAnimations(CopyButton, CopyButtonBrush, CopyButtonIconBrush);
-            CopyButton.Click += (_, _) => Copy_Paste.Copy();
+            CopyButton.Click += (_, _) => CopyPaste.Copy();
 
             // PasteButton
             SetButtonIconMouseOverAnimations(PasteButton, PasteButtonBrush, PasteButtonIconBrush);
-            PasteButton.Click += async (_, _) => await Copy_Paste.PasteAsync().ConfigureAwait(false);
+            PasteButton.Click += async (_, _) => await CopyPaste.PasteAsync().ConfigureAwait(false);
             PasteButton.PreviewMouseLeftButtonDown += delegate { UC.Close_UserControls(); };
 
             // FileLocationBorder
