@@ -150,6 +150,7 @@ namespace PicView.UILogic.Sizing
 
                 GetMainWindow.ParentContainer.Width = double.NaN;
                 GetMainWindow.ParentContainer.Height = double.NaN;
+
             }
 
             // Update margin when from fullscreen gallery and when not
@@ -162,19 +163,30 @@ namespace PicView.UILogic.Sizing
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen) return;
 
+            // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
+            var interfaceSize =
+                GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
+                + GetMainWindow.MinButton.Width + GetMainWindow.FullscreenButton.Width + GetMainWindow.CloseButton.Width;
+
             if (Settings.Default.AutoFitWindow)
             {
                 CenterWindowOnScreen(Settings.Default.KeepCentered); // Vertically center or vertically and horizontally center
 
-                GetMainWindow.TitleText.MaxWidth = maxWidth;
+                var titleBarMaxWidth = RotationAngle is 0 or 180 ?
+                    Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+
+                if (Settings.Default.ScrollEnabled)
+                {
+                    GetMainWindow.TitleText.MaxWidth = titleBarMaxWidth;
+                }
+                else
+                {
+                    GetMainWindow.TitleText.MaxWidth = titleBarMaxWidth - interfaceSize < interfaceSize ?
+                        interfaceSize : titleBarMaxWidth - interfaceSize;
+                }
             }
             else
             {
-                // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
-                var interfaceSize =
-                    GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
-                    + GetMainWindow.MinButton.Width + GetMainWindow.FullscreenButton.Width + GetMainWindow.CloseButton.Width;
-
                 // Fix title width to window size
                 GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
             }
