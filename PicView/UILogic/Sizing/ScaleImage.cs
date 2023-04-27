@@ -75,7 +75,7 @@ namespace PicView.UILogic.Sizing
 
             double maxWidth, maxHeight;
             var borderSpaceHeight = Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height + 6;
-            var borderSpaceWidth = Settings.Default.Fullscreen && Settings.Default.ShowAltInterfaceButtons ? 0 : 20 * MonitorInfo.DpiScaling;
+            var borderSpaceWidth = Settings.Default is {Fullscreen: true, ShowAltInterfaceButtons: true} ? 0 : 20 * MonitorInfo.DpiScaling;
 
             var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
@@ -89,7 +89,7 @@ namespace PicView.UILogic.Sizing
                 maxHeight = Settings.Default.FillImage ? monitorHeight - 40 : Math.Min(monitorHeight - PicGalleryItem_Size, height);
                 margin = PicGalleryItem_Size + 5;
             }
-            else if (Settings.Default.AutoFitWindow)
+            else if (Settings.Default.AutoFitWindow || Settings.Default.ScrollEnabled)
             {
                 maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
                 maxHeight = Settings.Default.FillImage ? monitorHeight : Math.Min(monitorHeight - padding, height);
@@ -125,11 +125,8 @@ namespace PicView.UILogic.Sizing
                 GetMainWindow.MainImage.Height = maxWidth * height / width;
                 GetMainWindow.MainImage.Width = maxWidth;
 
-                if (Settings.Default.AutoFitWindow)
-                {
-                    GetMainWindow.ParentContainer.Width = maxWidth;
-                    GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
-                }
+                GetMainWindow.ParentContainer.Width = maxWidth;
+                GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
             }
             else
             {
@@ -146,7 +143,7 @@ namespace PicView.UILogic.Sizing
 
             }
 
-            // Update margin when from fullscreengallery and when not
+            // Update margin when from fullscreen gallery and when not
             GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
 
             if (ZoomLogic.IsZoomed)

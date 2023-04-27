@@ -15,32 +15,31 @@ using PicView.UILogic.Sizing;
 
 namespace PicView.Views.Windows
 {
-    public partial class InfoWindow : Window
+    public partial class InfoWindow
     {
-        private double startheight, extendedheight;
+        private readonly double startHeight;
+        private readonly double extendedHeight;
 
         public InfoWindow()
         {
             InitializeComponent();
 
-            extendedheight = 750;
-            startheight = Height;
+            extendedHeight = 750;
+            startHeight = Height;
 
             // Get version
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            var assembly = Assembly.GetExecutingAssembly();
+            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             appVersion.Text += " " + fvi.FileVersion;
 
             ContentRendered += Window_ContentRendered;
 
             MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
-            if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
-            {
-                WindowSizing.MonitorInfo = MonitorSize.GetMonitorSize();
-                MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
-                Width *= WindowSizing.MonitorInfo.DpiScaling;
-                MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
-            }
+            if (!double.IsNaN(Width)) return; // Fixes if user opens window when loading from startup
+            WindowSizing.MonitorInfo = MonitorSize.GetMonitorSize();
+            MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
+            Width *= WindowSizing.MonitorInfo.DpiScaling;
+            MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
         }
 
         public void ChangeColor()
@@ -49,13 +48,13 @@ namespace PicView.Views.Windows
             AccentBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
         }
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        private void Window_ContentRendered(object? sender, EventArgs e)
         {
             WindowBlur.EnableBlur(this);
             ChangeColor();
 
-            MouseLeftButtonDown += (_, e) =>
-            { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
+            MouseLeftButtonDown += (_, mouseButtonEventArgs) =>
+                { if (mouseButtonEventArgs.LeftButton == MouseButtonState.Pressed) DragMove(); };
 
             // ExpandButton
             ExpandButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(chevronDownBrush);
@@ -63,13 +62,14 @@ namespace PicView.Views.Windows
             ExpandButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(chevronDownBrush);
             ExpandButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ExpandButtonBg);
 
-            ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
+            ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollapse(Height, startHeight, extendedHeight, this, Scroller, xGeo);
 
-            PreviewMouseWheel += (_, e) => // Collapse when scrolling down
+            PreviewMouseWheel += (_, mouseWheelEventArgs) => // Collapse when scrolling down
             {
-                if (e.Delta < 0 && Height == startheight)
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
+                if (mouseWheelEventArgs.Delta < 0 && Height == startHeight)
                 {
-                    UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
+                    UIHelper.ExtendOrCollapse(Height, startHeight, extendedHeight, this, Scroller, xGeo);
                 }
             };
 

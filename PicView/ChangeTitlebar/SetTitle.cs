@@ -113,11 +113,6 @@ namespace PicView.ChangeTitlebar
         internal static void SetTitleString(int width, int height, int index, FileInfo? fileInfo)
         {
             var titleString = TitleString(width, height, index, fileInfo);
-            if (titleString == null)
-            {
-                _ = ErrorHandling.ReloadAsync();
-                return;
-            }
 
             ConfigureWindows.GetMainWindow.Title = titleString[0];
             ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
@@ -175,12 +170,6 @@ namespace PicView.ChangeTitlebar
             {
                 titleString = TitleString((int)preloadValue.BitmapSource.Width,
                     (int)preloadValue.BitmapSource.Height, FolderIndex, preloadValue.FileInfo);
-            }
-           
-            if (titleString == null)
-            {
-                _ = ErrorHandling.ReloadAsync();
-                return;
             }
 
             ConfigureWindows.GetMainWindow.Title = titleString[0];
