@@ -89,7 +89,7 @@ namespace PicView.UILogic.Sizing
                 maxHeight = Settings.Default.FillImage ? monitorHeight - 40 : Math.Min(monitorHeight - PicGalleryItem_Size, height);
                 margin = PicGalleryItem_Size + 5;
             }
-            else if (Settings.Default.AutoFitWindow || Settings.Default.ScrollEnabled)
+            else if (Settings.Default.AutoFitWindow)
             {
                 maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
                 maxHeight = Settings.Default.FillImage ? monitorHeight : Math.Min(monitorHeight - padding, height);
@@ -97,7 +97,15 @@ namespace PicView.UILogic.Sizing
             else
             {
                 maxWidth = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualWidth : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
-                maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
+                if (Settings.Default.ScrollEnabled)
+                {
+                    maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : height;
+                }
+                else
+                {
+                    maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
+                }
+                
             }
 
             switch (RotationAngle) // aspect ratio calculation
@@ -123,10 +131,10 @@ namespace PicView.UILogic.Sizing
             if (Settings.Default.ScrollEnabled)
             {
                 GetMainWindow.MainImage.Height = maxWidth * height / width;
-                GetMainWindow.MainImage.Width = maxWidth;
+                GetMainWindow.MainImage.Width = GetMainWindow.Scroller.Width = maxWidth;
 
                 GetMainWindow.ParentContainer.Width = maxWidth;
-                GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
+                GetMainWindow.ParentContainer.Height = XHeight = GetMainWindow.Scroller.Height = height * AspectRatio;
             }
             else
             {
@@ -138,8 +146,8 @@ namespace PicView.UILogic.Sizing
                     GetMainWindow.ParentContainer.Height = double.NaN;
                 }
 
-                GetMainWindow.MainImage.Width = XWidth = width * AspectRatio;
-                GetMainWindow.MainImage.Height = XHeight = height * AspectRatio;
+                GetMainWindow.MainImage.Width = XWidth = GetMainWindow.Scroller.Width = width * AspectRatio;
+                GetMainWindow.MainImage.Height = XHeight = GetMainWindow.Scroller.Height = height * AspectRatio;
 
             }
 

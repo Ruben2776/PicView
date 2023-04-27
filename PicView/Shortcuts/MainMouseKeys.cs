@@ -65,11 +65,6 @@ namespace PicView.Shortcuts
 
         internal static async Task MouseButtonDownAsync(object sender, MouseButtonEventArgs e)
         {
-            if (GetFileHistory is null)
-            {
-                GetFileHistory = new FileHistory();
-            }
-
             switch (e.ChangedButton)
             {
                 case MouseButton.Right:
@@ -110,6 +105,7 @@ namespace PicView.Shortcuts
                 case MouseButton.XButton2:
                     await GetFileHistory.NextAsync().ConfigureAwait(false);
                     break;
+                default: break;
             }
         }
 
@@ -123,7 +119,7 @@ namespace PicView.Shortcuts
             {
                 GetMainWindow.MainImage.ReleaseMouseCapture();
             }
-            // Stop autoscrolling or dragging image
+            // Stop auto-scrolling or dragging image
             if (IsAutoScrolling)
             {
                 StopAutoScroll();
@@ -132,7 +128,7 @@ namespace PicView.Shortcuts
 
         /// <summary>
         /// Used to drag image
-        /// or getting position for autoscrolltimer
+        /// or getting position for AutoSrollTimer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -140,14 +136,13 @@ namespace PicView.Shortcuts
         {
             if (IsAutoScrolling)
             {
-                // Start automainWindow.Scroller and report position
                 AutoScrollPos = e.GetPosition(GetMainWindow.Scroller);
                 AutoScrollTimer.Start();
             }
 
             if (ColorPicking.IsRunning)
             {
-                if (GetColorPicker.Opacity == 1)
+                if (GetColorPicker.Opacity is 1)
                 {
                     ColorPicking.StartRunning();
                 }
@@ -172,14 +167,14 @@ namespace PicView.Shortcuts
             // Disable normal scroll, so we can use our own values
             e.Handled = true;
 
-            // Make sure not to fire off events when autoscrolling
+            // Make sure not to fire off events when auto-scrolling
             if (IsAutoScrolling)
             {
                 return;
             }
 
             // Determine horizontal scrolling direction
-            bool direction = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
+            var direction = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
@@ -209,12 +204,9 @@ namespace PicView.Shortcuts
                 return true;
             }
 
-            if (GetQuickResize != null && (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused))
-            {
-                return true;
-            }
-
-            return false;
+            return 
+                GetQuickResize != null && (GetQuickResize.WidthBox.IsKeyboardFocused ||
+                                           GetQuickResize.HeightBox.IsKeyboardFocused);
         }
 
         private static bool ShouldHandleScroll()
@@ -229,7 +221,8 @@ namespace PicView.Shortcuts
         {
             if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
             {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => GalleryNavigation.ScrollTo(direction, false, true));
+                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                    GalleryNavigation.ScrollTo(direction, false, true));
             }
             else
             {
@@ -239,7 +232,7 @@ namespace PicView.Shortcuts
 
         private static void HandleScroll(bool direction)
         {
-            var zoomSpeed = 40;
+            const int zoomSpeed = 40;
 
             if (direction)
             {
@@ -271,7 +264,7 @@ namespace PicView.Shortcuts
                 {
                     if (Settings.Default.ScrollEnabled)
                     {
-                        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift || GetMainWindow.Scroller.ScrollableHeight is 0)
                         {
                             await GoToNextImage(next).ConfigureAwait(false);
                         }
