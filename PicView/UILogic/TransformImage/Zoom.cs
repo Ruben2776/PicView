@@ -60,6 +60,9 @@ namespace PicView.UILogic.TransformImage
         /// <returns></returns>
         internal static string StringAspect(int width, int height)
         {
+            if (width is 0 || height is 0)
+                return ") ";
+
             var gcd = GCD(width, height);
             var x = width / gcd;
             var y = height / gcd;
