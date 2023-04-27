@@ -86,8 +86,8 @@ namespace PicView.UILogic.Sizing
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
                 maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
-                maxHeight = Settings.Default.FillImage ? monitorHeight - 40 : Math.Min(monitorHeight - PicGalleryItem_Size, height);
-                margin = PicGalleryItem_Size + 5;
+                maxHeight = Settings.Default.FillImage ? monitorHeight - 40 : Math.Min(monitorHeight - PicGalleryItemSize, height);
+                margin = PicGalleryItemSize + 5;
             }
             else if (Settings.Default.AutoFitWindow)
             {
@@ -96,16 +96,18 @@ namespace PicView.UILogic.Sizing
             }
             else
             {
-                maxWidth = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualWidth : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
+                maxWidth = Settings.Default.FillImage ?
+                    GetMainWindow.ParentContainer.ActualWidth : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
                 if (Settings.Default.ScrollEnabled)
                 {
-                    maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : height;
+                    maxHeight = Settings.Default.FillImage ?
+                        GetMainWindow.ParentContainer.ActualHeight : height;
                 }
                 else
                 {
-                    maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
+                    maxHeight = Settings.Default.FillImage ?
+                        GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
                 }
-                
             }
 
             switch (RotationAngle) // aspect ratio calculation
@@ -131,24 +133,23 @@ namespace PicView.UILogic.Sizing
             if (Settings.Default.ScrollEnabled)
             {
                 GetMainWindow.MainImage.Height = maxWidth * height / width;
-                GetMainWindow.MainImage.Width = GetMainWindow.Scroller.Width = maxWidth;
+                GetMainWindow.MainImage.Width = maxWidth;
 
-                GetMainWindow.ParentContainer.Width = maxWidth;
-                GetMainWindow.ParentContainer.Height = XHeight = GetMainWindow.Scroller.Height = height * AspectRatio;
+                if (Settings.Default.AutoFitWindow)
+                {
+                    GetMainWindow.ParentContainer.Width = maxWidth;
+                    GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
+                }
             }
             else
             {
                 // Fit image by aspect ratio calculation
                 // and update values
-                if (Settings.Default.AutoFitWindow)
-                {
-                    GetMainWindow.ParentContainer.Width = double.NaN;
-                    GetMainWindow.ParentContainer.Height = double.NaN;
-                }
+                GetMainWindow.MainImage.Width = XWidth = width * AspectRatio;
+                GetMainWindow.MainImage.Height = XHeight = height * AspectRatio;
 
-                GetMainWindow.MainImage.Width = XWidth = GetMainWindow.Scroller.Width = width * AspectRatio;
-                GetMainWindow.MainImage.Height = XHeight = GetMainWindow.Scroller.Height = height * AspectRatio;
-
+                GetMainWindow.ParentContainer.Width = double.NaN;
+                GetMainWindow.ParentContainer.Height = double.NaN;
             }
 
             // Update margin when from fullscreen gallery and when not
@@ -161,28 +162,19 @@ namespace PicView.UILogic.Sizing
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen) return;
 
-            // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
-            var interfaceSize = 
-                GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
-                + GetMainWindow.MinButton.Width + GetMainWindow.FullscreenButton.Width + GetMainWindow.CloseButton.Width;
-
             if (Settings.Default.AutoFitWindow)
             {
                 CenterWindowOnScreen(Settings.Default.KeepCentered); // Vertically center or vertically and horizontally center
 
-                // Update mainWindow.TitleBar width to dynamically fit new size
-                var titlebarMaxWidth = RotationAngle is 0 or 180 ? Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
-                if (Settings.Default.ScrollEnabled)
-                {
-                    GetMainWindow.TitleText.MaxWidth = maxWidth;
-                }
-                else
-                {
-                    GetMainWindow.TitleText.MaxWidth = titlebarMaxWidth - interfaceSize < interfaceSize ? interfaceSize : titlebarMaxWidth - interfaceSize;
-                }
+                GetMainWindow.TitleText.MaxWidth = maxWidth;
             }
             else
             {
+                // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
+                var interfaceSize =
+                    GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
+                    + GetMainWindow.MinButton.Width + GetMainWindow.FullscreenButton.Width + GetMainWindow.CloseButton.Width;
+
                 // Fix title width to window size
                 GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
             }
