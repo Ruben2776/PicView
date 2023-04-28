@@ -87,14 +87,14 @@ namespace PicView.Views.Windows
             OpenWith.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(OpenWithBrush);
             OpenWith.MouseLeave += (_, _) => ButtonMouseLeaveAnim(OpenWithFill);
             OpenWith.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(OpenWithBrush);
-            OpenWith.Click += (_, _) => Open_Save.OpenWith();
+            OpenWith.Click += (_, _) => OpenSave.OpenWith();
 
             // ShowInFolder
             ShowInFolder.MouseEnter += (_, _) => ButtonMouseOverAnim(ShowInFolderFill);
             ShowInFolder.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ShowInFolderBrush);
             ShowInFolder.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ShowInFolderFill);
             ShowInFolder.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ShowInFolderBrush);
-            ShowInFolder.Click += (_, _) => Open_Save.Open_In_Explorer();
+            ShowInFolder.Click += (_, _) => OpenSave.Open_In_Explorer();
 
             // Optimize Image
             OptimizeImageButton.MouseEnter += (_, _) => ButtonMouseOverAnim(OptimizeImageFill);

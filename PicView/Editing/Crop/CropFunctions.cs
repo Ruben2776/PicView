@@ -110,7 +110,7 @@ namespace PicView.Editing.Crop
 
             var saveDialog = new SaveFileDialog
             {
-                Filter = Open_Save.FilterFiles,
+                Filter = OpenSave.FilterFiles,
                 Title = $"{Application.Current.Resources["SaveImage"]} - {SetTitle.AppName}",
                 FileName = filename,
             };
@@ -125,7 +125,7 @@ namespace PicView.Editing.Crop
                 return false;
             }
 
-            Open_Save.IsDialogOpen = true;
+            OpenSave.IsDialogOpen = true;
 
             var crop = GetCrop();
             var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;

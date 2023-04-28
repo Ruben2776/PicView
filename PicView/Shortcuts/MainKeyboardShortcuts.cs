@@ -15,7 +15,7 @@ using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.CopyPaste;
 using static PicView.FileHandling.DeleteFiles;
-using static PicView.FileHandling.Open_Save;
+using static PicView.FileHandling.OpenSave;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.TransformImage.ZoomLogic;

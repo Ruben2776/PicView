@@ -17,7 +17,7 @@ namespace PicView.Views.UserControls.Misc
 
             OutputFolderButton.FileMenuButton.Click += (_, _) =>
             {
-                var newFolder = Open_Save.SelectAndReturnFolder();
+                var newFolder = OpenSave.SelectAndReturnFolder();
                 if (string.IsNullOrWhiteSpace(newFolder) == false)
                 {
                     OutPutStringBox.Text = newFolder;

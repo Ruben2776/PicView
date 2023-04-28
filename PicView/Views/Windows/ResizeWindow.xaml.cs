@@ -52,7 +52,7 @@ namespace PicView.Views.Windows
 
                 SourceFolderButton.FileMenuButton.Click += (_, _) =>
                 {
-                    var newFolder = Open_Save.SelectAndReturnFolder();
+                    var newFolder = OpenSave.SelectAndReturnFolder();
                     if (string.IsNullOrWhiteSpace(newFolder) == false)
                     {
                         SourceFolderInput.Text = newFolder;
@@ -62,7 +62,7 @@ namespace PicView.Views.Windows
 
                 OutputFolderButton.FileMenuButton.Click += (_, _) =>
                 {
-                    var newFolder = Open_Save.SelectAndReturnFolder();
+                    var newFolder = OpenSave.SelectAndReturnFolder();
                     if (string.IsNullOrWhiteSpace(newFolder) == false)
                     {
                         OutputFolderInput.Text = newFolder;

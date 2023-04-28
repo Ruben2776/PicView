@@ -16,12 +16,12 @@ namespace PicView.Views.UserControls.Menus
 
             // OpenBorder
             SetButtonIconMouseOverAnimations(OpenBorder, OpenBorderBrush, (SolidColorBrush)Resources["OpenBorderFill"]);
-            OpenBorder.MouseLeftButtonDown += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
-            OpenButton.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
+            OpenBorder.MouseLeftButtonDown += async (_, _) => await OpenSave.OpenAsync().ConfigureAwait(false);
+            OpenButton.Click += async (_, _) => await OpenSave.OpenAsync().ConfigureAwait(false);
 
             // SaveButton
             SetButtonIconMouseOverAnimations(SaveButton, SaveButtonBrush, SaveButtonIconBrush);
-            SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync().ConfigureAwait(false);
+            SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync().ConfigureAwait(false);
 
             // CopyButton
             SetButtonIconMouseOverAnimations(CopyButton, CopyButtonBrush, CopyButtonIconBrush);
@@ -34,13 +34,13 @@ namespace PicView.Views.UserControls.Menus
 
             // FileLocationBorder
             SetButtonIconMouseOverAnimations(FileLocationBorder, FileLocationBrush, (SolidColorBrush)Resources["LocationBorderFill"]);
-            FileLocationBorder.MouseLeftButtonDown += (_, _) => Open_Save.Open_In_Explorer();
-            FileLocationButton.Click += (_, _) => Open_Save.Open_In_Explorer();
+            FileLocationBorder.MouseLeftButtonDown += (_, _) => OpenSave.Open_In_Explorer();
+            FileLocationButton.Click += (_, _) => OpenSave.Open_In_Explorer();
 
             // PrintBorder
             SetButtonIconMouseOverAnimations(PrintBorder, PrintButtonBrush, (SolidColorBrush)Resources["PrintBorderFill"]);
-            PrintBorder.MouseLeftButtonDown += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
-            PrintButton.Click += (_, _) => Open_Save.Print(Navigation.Pics?[Navigation.FolderIndex]);
+            PrintBorder.MouseLeftButtonDown += (_, _) => OpenSave.Print(Navigation.Pics?[Navigation.FolderIndex]);
+            PrintButton.Click += (_, _) => OpenSave.Print(Navigation.Pics?[Navigation.FolderIndex]);
 
             // ReloadButton
             SetButtonIconMouseOverAnimations(ReloadButton, ReloadButtonBrush, (SolidColorBrush)Resources["ReloadButtonIconBrush"]);
@@ -52,8 +52,8 @@ namespace PicView.Views.UserControls.Menus
 
             // OpenWithBorder
             SetButtonIconMouseOverAnimations(OpenWithBorder, OpenWithBorderBrush, (SolidColorBrush)Resources["OpenWithBorderFill"]);
-            OpenWithBorder.MouseLeftButtonDown += (_, _) => Open_Save.OpenWith();
-            OpenWith.Click += (_, _) => Open_Save.OpenWith();
+            OpenWithBorder.MouseLeftButtonDown += (_, _) => OpenSave.OpenWith();
+            OpenWith.Click += (_, _) => OpenSave.OpenWith();
 
             // RenameBorder
             SetButtonIconMouseOverAnimations(RenameBorder, RenameButtonBrush, (SolidColorBrush)Resources["RenameBorderFill"]);

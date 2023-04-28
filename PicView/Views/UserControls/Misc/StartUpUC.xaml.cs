@@ -10,9 +10,8 @@ using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Misc
 {
-    /// <summary>
-    /// Interaction logic for StartUpUC.xaml
-    /// </summary>
+
+    // ReSharper disable once InconsistentNaming
     public partial class StartUpUC : UserControl
     {
         public StartUpUC()
@@ -33,7 +32,7 @@ namespace PicView.Views.UserControls.Misc
                 ButtonMouseLeaveAnim(selectBrush);
             };
 
-            SelectFile.Click += async (_, _) => await Open_Save.OpenAsync().ConfigureAwait(false);
+            SelectFile.Click += async (_, _) => await OpenSave.OpenAsync().ConfigureAwait(false);
 
             OpenLastFileButton.MouseEnter += delegate
             {
@@ -73,23 +72,23 @@ namespace PicView.Views.UserControls.Misc
 
         public void ToggleMenu()
         {
-            if (buttons.IsVisible) { buttons.Visibility = Visibility.Collapsed; }
-            else { buttons.Visibility = Visibility.Visible; }
+            buttons.Visibility = buttons.IsVisible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public void ResponsiveSize(double width)
         {
-            if (width < 1265)
+            switch (width)
             {
-                Logo.Width = 350;
-                buttons.Margin = new Thickness(0, 0, 0, 16);
-                buttons.VerticalAlignment = VerticalAlignment.Bottom;
-            }
-            else if (width > 1265)
-            {
-                Logo.Width = double.NaN;
-                buttons.Margin = new Thickness(0, 220, 25, 16);
-                buttons.VerticalAlignment = VerticalAlignment.Center;
+                case < 1265:
+                    Logo.Width = 350;
+                    buttons.Margin = new Thickness(0, 0, 0, 16);
+                    buttons.VerticalAlignment = VerticalAlignment.Bottom;
+                    break;
+                case > 1265:
+                    Logo.Width = double.NaN;
+                    buttons.Margin = new Thickness(0, 220, 25, 16);
+                    buttons.VerticalAlignment = VerticalAlignment.Center;
+                    break;
             }
         }
 

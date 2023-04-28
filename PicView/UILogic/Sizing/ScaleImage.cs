@@ -74,25 +74,26 @@ namespace PicView.UILogic.Sizing
             if (width <= 0 || height <= 0) { return; }
 
             double maxWidth, maxHeight;
-            var borderSpaceHeight = Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height + 6;
-            var borderSpaceWidth = Settings.Default is {Fullscreen: true, ShowAltInterfaceButtons: true} ? 0 : 20 * MonitorInfo.DpiScaling;
-
-            var monitorWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
-            var monitorHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
-
-            var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
             var margin = 0d;
+            var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
+            var isFullScreenSize = Settings.Default is { Fullscreen: true, FullscreenGalleryHorizontal: true };
+
+            var borderSpaceHeight = isFullScreenSize ? 0 : GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height;
+            var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
+
+            var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
+            var workAreaHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
-                maxHeight = Settings.Default.FillImage ? monitorHeight - 40 : Math.Min(monitorHeight - PicGalleryItemSize, height);
+                maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth, width);
+                maxHeight = Settings.Default.FillImage ? workAreaHeight - UC.GetPicGallery.Scroller.ActualHeight : Math.Min(workAreaHeight - PicGalleryItemSize, height);
                 margin = PicGalleryItemSize + 5;
             }
             else if (Settings.Default.AutoFitWindow)
             {
-                maxWidth = Settings.Default.FillImage ? monitorWidth : Math.Min(monitorWidth - padding, width);
-                maxHeight = Settings.Default.FillImage ? monitorHeight : Math.Min(monitorHeight - padding, height);
+                maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth - padding, width);
+                maxHeight = Settings.Default.FillImage ? workAreaHeight : Math.Min(workAreaHeight - padding, height);
             }
             else
             {
@@ -150,7 +151,6 @@ namespace PicView.UILogic.Sizing
 
                 GetMainWindow.ParentContainer.Width = double.NaN;
                 GetMainWindow.ParentContainer.Height = double.NaN;
-
             }
 
             // Update margin when from fullscreen gallery and when not
@@ -161,7 +161,7 @@ namespace PicView.UILogic.Sizing
                 ZoomLogic.ResetZoom(false);
             }
 
-            if (GalleryFunctions.IsHorizontalFullscreenOpen) return;
+            if (isFullScreenSize) return;
 
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
             var interfaceSize =

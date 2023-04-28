@@ -185,7 +185,7 @@ namespace PicView.Views.Windows
 
             // Button, Brush and Text for Save function
             SetButtonIconMouseOverAnimations(SaveButton, SaveBrush, SaveText);
-            SaveButton.Click += async (_, _) => await Open_Save.SaveFilesAsync();
+            SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync();
 
             #endregion button events
         }

@@ -15,7 +15,7 @@ namespace PicView.Shortcuts
             else if (e.Key == Key.Escape)
             {
                 EditTitleBar.Refocus();
-                Open_Save.IsDialogOpen = true; // Hack to make escape not fall through
+                OpenSave.IsDialogOpen = true; // Hack to make escape not fall through
             }
         }
     }

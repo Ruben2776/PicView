@@ -10,7 +10,7 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.Open_Save;
+using static PicView.FileHandling.OpenSave;
 using static PicView.UILogic.ConfigureWindows;
 
 namespace PicView.UILogic.Loading

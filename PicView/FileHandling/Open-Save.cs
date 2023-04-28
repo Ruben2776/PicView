@@ -17,12 +17,12 @@ using static PicView.UILogic.UC;
 
 namespace PicView.FileHandling
 {
-    internal static class Open_Save
+    internal static class OpenSave
     {
         internal static bool IsDialogOpen { get; set; }
 
         /// <summary>
-        ///  Files filterering string used for file/save dialog
+        ///  Files filtering string used for file/save dialog
         ///  TODO update for and check file support
         /// </summary>
         internal const string FilterFiles =
