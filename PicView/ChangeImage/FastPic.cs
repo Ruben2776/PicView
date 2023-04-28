@@ -29,8 +29,8 @@ namespace PicView.ChangeImage
 
             FolderIndex = index;
             _timer.Start();
-            FileInfo? fileInfo = null;
-            BitmapSource? pic = null;
+            FileInfo? fileInfo;
+            BitmapSource? pic;
             _updateSource = true; // Update it when key released
 
             var preloadValue = Preloader.Get(index);
@@ -79,7 +79,7 @@ namespace PicView.ChangeImage
 
             // Update picture in case it didn't load. Won't happen normally
             
-            BitmapSource? pic = null;
+            BitmapSource? pic;
             var preloadValue = Preloader.Get(FolderIndex);
             if (preloadValue is null)
             {

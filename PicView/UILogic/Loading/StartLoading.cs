@@ -44,45 +44,8 @@ namespace PicView.UILogic.Loading
             ConfigColors.UpdateColor();
         }
 
-        internal static async Task ContentRenderedEventAsync()
+        internal static void AddDictionaries()
         {
-            var args = Environment.GetCommandLineArgs();
-
-            // Determine preferred UI for startup
-            if (Settings.Default.FullscreenGalleryHorizontal)
-            {
-                if (args.Length <= 1)
-                {
-                    Settings.Default.FullscreenGalleryHorizontal = false;
-                }
-                else
-                {
-                    await GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
-                }
-            }
-            else if (Settings.Default.Fullscreen)
-            {
-                if (args.Length <= 1)
-                {
-                    Settings.Default.Fullscreen = false;
-                }
-                else
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => Fullscreen_Restore(true), DispatcherPriority.Send);
-                }
-            }
-
-            // Load image if possible
-            if (args.Length <= 1)
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => Unload(true), DispatcherPriority.Send);
-            }
-            else
-            {
-                await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
-                // TODO maybe load extra images if multiple arguments
-            }
-
             // Add dictionaries
             Application.Current.Resources.MergedDictionaries.Add(
                 new ResourceDictionary
@@ -118,12 +81,9 @@ namespace PicView.UILogic.Loading
                     Source = new Uri(@"/PicView;component/Views/UserControls/Misc/WindowContextMenu.xaml", UriKind.Relative)
                 }
             );
-
-            // Load UI and events
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(AddUiElementsAndUpdateValues);
         }
 
-        private static void AddUiElementsAndUpdateValues()
+        internal static void AddUiElementsAndUpdateValues()
         {
             // Update values
             ConfigureWindows.GetMainWindow.FolderButton.BackgroundEvents();

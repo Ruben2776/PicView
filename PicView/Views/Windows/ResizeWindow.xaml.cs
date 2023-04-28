@@ -298,12 +298,33 @@ namespace PicView.Views.Windows
             try
             {
                 await Parallel.ForEachAsync(sourceFileist, cancelToken.Token, async (sourceFile, token) =>
+                {
+                    if (sourceFileist is null)
                     {
-                        if (sourceFileist is null)
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
+                    if (running is false)
+                    {
+                        cancelToken.Cancel();
+                        if (sourceFileist is not null)
+                        {
+                            sourceFileist.Clear();
+                            sourceFileist = null;
+                        }
+                        await Dispatcher.InvokeAsync(() =>
+                        {
+                            ProgressBar.Value = 0;
+                        }, DispatcherPriority.Render, token);
+                        return;
+                    }
+
+                    var fileInfo = new FileInfo(sourceFile);
+                    StringBuilder sb = new();
+                    sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
+
+                    foreach (var thumb in thumbs)
+                    {
                         if (running is false)
                         {
                             cancelToken.Cancel();
@@ -312,58 +333,37 @@ namespace PicView.Views.Windows
                                 sourceFileist.Clear();
                                 sourceFileist = null;
                             }
-                            await Dispatcher.InvokeAsync(() =>
+                            Dispatcher.Invoke(DispatcherPriority.Background, () =>
                             {
                                 ProgressBar.Value = 0;
-                            }, DispatcherPriority.Render, token);
+                            });
                             return;
                         }
 
-                        var fileInfo = new FileInfo(sourceFile);
-                        StringBuilder sb = new();
-                        sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
+                        sb.Append(await BatchFunctions.RunAsync(fileInfo, thumb.Width, thumb.Height, quality, ext, thumb.Percentage, compress, thumb.Directory, true).ConfigureAwait(false));
+                    }
 
-                        for (int x = 0; x < thumbs.Count; x++)
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        if (sourceFileist is not null)
                         {
-                            if (running is false)
-                            {
-                                cancelToken.Cancel();
-                                if (sourceFileist is not null)
-                                {
-                                    sourceFileist.Clear();
-                                    sourceFileist = null;
-                                }
-                                Dispatcher.Invoke(DispatcherPriority.Background, () =>
-                                {
-                                    ProgressBar.Value = 0;
-                                });
-                                return;
-                            }
-
-                            sb.Append(await BatchFunctions.RunAsync(fileInfo, thumbs[x].Width, thumbs[x].Height, quality, ext, thumbs[x].Percentage, compress, thumbs[x].Directory, true).ConfigureAwait(false));
+                            sourceFileist.Clear();
+                            sourceFileist = null;
                         }
-
-                        if (cancelToken.IsCancellationRequested)
-                        {
-                            if (sourceFileist is not null)
-                            {
-                                sourceFileist.Clear();
-                                sourceFileist = null;
-                            }
-                            await Dispatcher.InvokeAsync(() =>
-                            {
-                                ProgressBar.Value = 0;
-                            }, DispatcherPriority.Render, token);
-                            return;
-                        }
-
                         await Dispatcher.InvokeAsync(() =>
                         {
-                            LogTextBox.Text += sb.ToString();
-                            LogTextBox.ScrollToEnd();
-                            ProgressBar.Value++;
+                            ProgressBar.Value = 0;
                         }, DispatcherPriority.Render, token);
-                    });
+                        return;
+                    }
+
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        LogTextBox.Text += sb.ToString();
+                        LogTextBox.ScrollToEnd();
+                        ProgressBar.Value++;
+                    }, DispatcherPriority.DataBind, token);
+                });
             }
             catch (Exception)
             {

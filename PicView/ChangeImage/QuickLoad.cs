@@ -33,7 +33,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            LoadingPreview(fileInfo);
+            LoadingPreview(fileInfo, false);
             var size = ImageSizeFunctions.GetImageSize(file);
 
             if (size.HasValue)
@@ -97,6 +97,7 @@ namespace PicView.ChangeImage
             }            
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static void SetMainImage(ImageSource imageSource, FileInfo fileInfo)
         {
             if (fileInfo.Extension?.ToLowerInvariant() == ".gif")

@@ -210,6 +210,8 @@ namespace PicView.UILogic.TransformImage
                 || _scaleTransform == null
                 || _translateTransform == null) { return; }
 
+            ZoomValue = 1;
+
             if (animate)
             {
                 BeginZoomAnimation(1);
@@ -218,10 +220,10 @@ namespace PicView.UILogic.TransformImage
             {
                 _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1.0;
                 _translateTransform.X = _translateTransform.Y = 0.0;
+                return;
             }
 
             Tooltip.CloseToolTipMessage();
-            ZoomValue = 1;
 
             // Display non-zoomed values
             if (Pics.Count == 0)

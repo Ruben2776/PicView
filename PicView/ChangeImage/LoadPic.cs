@@ -336,13 +336,16 @@ namespace PicView.ChangeImage
         /// Loads a thumbnail preview of an image file and displays a loading message while it's being loaded.
         /// </summary>
         /// <param name="fileInfo">The file information of the image to be loaded.</param>
-        internal static void LoadingPreview(FileInfo fileInfo)
+        internal static void LoadingPreview(FileInfo fileInfo, bool showloading = true)
         {
             var bitmapSourceHolder = Thumbnails.GetBitmapSourceThumb(fileInfo);
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
             {
-                // Set Loading
-                SetLoadingString();
+                if (showloading)
+                {
+                    // Set Loading
+                    SetLoadingString();
+                }
 
                 ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Wait;
 

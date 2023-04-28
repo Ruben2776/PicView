@@ -57,7 +57,7 @@ namespace PicView.FileHandling
             if (Pics?.Count <= 0)
             {
                 // Check if from URL and locate it
-                string url = FileFunctions.RetrieveFromURL();
+                var url = FileFunctions.RetrieveFromURL();
                 if (!string.IsNullOrEmpty(url))
                 {
                     file = ArchiveExtraction.TempFilePath;
@@ -153,7 +153,7 @@ namespace PicView.FileHandling
             }
 
             string fileName;
-            bool randomized = false;
+            var randomized = false;
 
             if (Pics?.Count > FolderIndex)
             {
@@ -169,7 +169,7 @@ namespace PicView.FileHandling
                 randomized = true;
             }
 
-            var Savedlg = new SaveFileDialog
+            var saveDialog = new SaveFileDialog
             {
                 Filter = FilterFiles,
                 Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
@@ -178,10 +178,10 @@ namespace PicView.FileHandling
 
             if (randomized is false)
             {
-                Savedlg.InitialDirectory = Path.GetDirectoryName(Pics[FolderIndex]);
+                saveDialog.InitialDirectory = Path.GetDirectoryName(Pics[FolderIndex]);
             }
 
-            if (!Savedlg.ShowDialog().HasValue)
+            if (!saveDialog.ShowDialog().HasValue)
             {
                 return;
             }
@@ -194,11 +194,11 @@ namespace PicView.FileHandling
 
             if (Pics?.Count > FolderIndex)
             {
-                success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, null, Pics[FolderIndex], Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, null, Pics[FolderIndex], saveDialog.FileName, null, effectApplied).ConfigureAwait(false);
             }
             else if (source != null)
             {
-                success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, Savedlg.FileName, null, effectApplied).ConfigureAwait(false);
+                success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, saveDialog.FileName, null, effectApplied).ConfigureAwait(false);
             }
 
             if (success == false)
@@ -207,15 +207,12 @@ namespace PicView.FileHandling
             }
 
             //Reload if same pic to show changes
-            else if (Savedlg.FileName == fileName)
+            else if (saveDialog.FileName == fileName)
             {
                 await ReloadAsync().ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                Close_UserControls();
-            });
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, Close_UserControls);
 
             IsDialogOpen = false;
         }
@@ -224,26 +221,25 @@ namespace PicView.FileHandling
         /// Sends the file to Windows print system
         /// </summary>
         /// <param name="path">The file path</param>
-        internal static bool Print(string path)
+        internal static void Print(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                return false;
+                return;
             }
 
             if (!File.Exists(path))
             {
-                return false;
+                return;
             }
 
-            using (var p = new Process())
+            using var process = new Process();
+            process.StartInfo = new ProcessStartInfo(path)
             {
-                p.StartInfo.FileName = path;
-                p.StartInfo.Verb = "print";
-                p.StartInfo.UseShellExecute = true;
-                p.Start();
-            }
-            return true;
+                Verb = "print",
+                UseShellExecute = true,
+            };
+            process.Start();
         }
 
         internal static string? SelectAndReturnFolder()
@@ -255,12 +251,7 @@ namespace PicView.FileHandling
                 IsFolderPicker = true,
             };
 
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                return dialog.FileName;
-            }
-
-            return null;
+            return dialog.ShowDialog() == CommonFileDialogResult.Ok ? dialog.FileName : null;
         }
     }
 }

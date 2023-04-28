@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using PicView.Animations;
 using PicView.ChangeImage;
@@ -56,7 +57,7 @@ namespace PicView.Views.Windows
                 StartLoading.LoadedEvent();
             };
 
-            ContentRendered += async delegate
+            ContentRendered += delegate
             {
                 WindowBlur.EnableBlur(this);
                 // if (Settings.Default.DarkTheme == false)
@@ -65,12 +66,51 @@ namespace PicView.Views.Windows
                 //     w.TitleBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
                 //     w.LowerBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
                 // }
+                Task.Run(() =>
+                {
+                    var args = Environment.GetCommandLineArgs();
 
-                await StartLoading.ContentRenderedEventAsync().ConfigureAwait(false);
+                    // Determine preferred UI for startup
+                    if (Settings.Default.FullscreenGalleryHorizontal)
+                    {
+                        if (args.Length <= 1)
+                        {
+                            Settings.Default.FullscreenGalleryHorizontal = false;
+                        }
+                        else
+                        {
+                            _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                        }
+                    }
+                    else if (Settings.Default.Fullscreen)
+                    {
+                        if (args.Length <= 1)
+                        {
+                            Settings.Default.Fullscreen = false;
+                        }
+                        else
+                        {
+                            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => Fullscreen_Restore(true), DispatcherPriority.Send);
+                        }
+                    }
+
+                    // Load image if possible
+                    if (args.Length <= 1)
+                    {
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => ErrorHandling.Unload(true), DispatcherPriority.Send);
+                    }
+                    else
+                    {
+                        _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                        // TODO maybe load extra images if multiple arguments
+                    }
+                });
+                StartLoading.AddDictionaries();
+                StartLoading.AddUiElementsAndUpdateValues();
 
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
-                KeyUp += (sender, e) => MainKeyboardShortcuts.MainWindow_KeysUp(sender, e);
+                KeyUp += MainKeyboardShortcuts.MainWindow_KeysUp;
                 MouseLeftButtonDown += MainMouseKeys.MouseLeftButtonDown;
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
@@ -120,8 +160,7 @@ namespace PicView.Views.Windows
 
                 // RotateButton
                 MouseOverAnimations.SetButtonIconMouseOverAnimations(RotateButton, RotateBg, RotateBrush, true);
-                RotateButton.Click += async (_, _) =>
-                    await Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
+                RotateButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
 
                 // FlipButton
                 MouseOverAnimations.SetButtonIconMouseOverAnimations(FlipButton, FlipBg, FlipBrush, true);
