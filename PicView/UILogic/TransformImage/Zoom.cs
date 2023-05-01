@@ -20,7 +20,7 @@ namespace PicView.UILogic.TransformImage
         /// Used to determine final point when zooming,
         /// since DoubleAnimation changes value of TranslateTransform continuously.
         /// </summary>
-        internal static double ZoomValue { get; private set; }
+        internal static double ZoomValue { get; private set; } = 1;
 
         /// <summary>
         /// Returns zoom percentage. if 100%, return empty string
@@ -29,7 +29,7 @@ namespace PicView.UILogic.TransformImage
         {
             get
             {
-                if (_scaleTransform == null || ZoomValue is 0 or 1)
+                if (_scaleTransform == null || ZoomValue is 1)
                 {
                     return string.Empty;
                 }

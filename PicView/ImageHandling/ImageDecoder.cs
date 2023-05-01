@@ -20,7 +20,7 @@ namespace PicView.ImageHandling
         /// </summary>
         /// <param name="fileInfo">Cannot be null</param>
         /// <returns></returns>
-        internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo? fileInfo)
+        internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo fileInfo)
         {
             if (fileInfo is not { Length: > 0 }) { return null; }
 
@@ -205,12 +205,8 @@ namespace PicView.ImageHandling
 
             try
             {
-                await using var stream = File.OpenRead(fileInfo.FullName);
-                var data = new byte[stream.Length];
-                // ReSharper disable once MustUseReturnValue
-                await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
-
-                var sKBitmap = SKBitmap.Decode(data);
+                await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+                var sKBitmap = SKBitmap.Decode(fileStream);
                 if (sKBitmap is null) { return null; }
 
                 var skPic = sKBitmap.ToWriteableBitmap();

@@ -26,6 +26,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bitmapSource"></param>
+        /// <param name="fileInfo"></param>
         internal static async Task UpdateImageAsync(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
         {
             bitmapSource ??= ImageFunctions.ImageErrorMessage();

@@ -76,35 +76,33 @@ namespace PicView.SystemIntegration
                 return IntPtr.Zero;
             }
 
-            if (msg == WM_SIZING || msg == 0x0005)
+            if (msg != WM_SIZING && msg != 0x0005) return IntPtr.Zero;
+            var w = ConfigureWindows.GetMainWindow;
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (w == null) { return IntPtr.Zero; }
+
+            if (w.MainImage.Source == null)
             {
-                var w = ConfigureWindows.GetMainWindow;
-                if (w == null) { return IntPtr.Zero; }
-
-                if (w.MainImage.Source == null)
+                if (UC.GetStartUpUC is not null)
                 {
-                    if (UC.GetStartUpUC is not null)
-                    {
-                        UC.GetStartUpUC.ResponsiveSize(w.Width);
-                    }
+                    UC.GetStartUpUC.ResponsiveSize(w.Width);
                 }
-                else
+            }
+            else
+            {
+                if (w.WindowState == WindowState.Maximized)
                 {
-                    if (w.WindowState == WindowState.Maximized)
-                    {
-                        WindowSizing.Restore_From_Move();
-                    }
-                    if (w.MainImage.Source == null) { return IntPtr.Zero; }
-
-                    // Resize gallery
-                    if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
-                    {
-                        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                        UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                    }
-
-                    ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+                    WindowSizing.Restore_From_Move();
                 }
+
+                // Resize gallery
+                if (UC.GetPicGallery != null && GalleryFunctions.IsHorizontalOpen)
+                {
+                    UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                }
+
+                ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
             }
 
             return IntPtr.Zero;
