@@ -131,6 +131,77 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
    
    _* RAW camera formats may be slower to load_
 
+## Shortcuts
+| Shortcut       | Explanation                              |
+|----------------|------------------------------------------|
+| Esc            | Close window or current open menu        |
+| Ctrl + Q       | Exit the application                     |
+| F1             | Open the about window                    |
+| F2             | Rename or move the current file          |
+| F3             | Open and select current file in Explorer |
+| F4             | Open the settings window                 |
+| F5             | Start slideshow                          |
+| F6             | Open the effects window                  |
+| F7             | Reset Zoom                               |
+| F9             | Open the batch resize window             |
+| F11            | Toggle fulscreen                         |
+| C              | Crop Image                               |
+| Ctrl + C       | Copy image or copy crop Image            |
+| Ctrl + V       | Paste from clipholder, URL, File, File Path or Image|
+| Ctrl + X       | Cut image file into clipboard            |
+| O, Ctrl + O    | Open file picker dialog                  |
+| Ctrl + S       | Save as file                             |
+| B              | Toggle background color                  |
+| X              | Toggle scrolling the image               |
+| F              | Flip the image                           |
+| J              | Open the image resize function           |
+| Del            | Send current file to the recycle bin     |
+| Shift + Del    | Permanently delete current file          |
+| I              | Show the image info window               |
+| Ctrl + I       | Show file properties                     |
+| Ctrl + Alt + I | Open the image resize function           |
+| Ctrl + P       | Print the image                          |
+| R              | Reset zoom                               |
+| Ctrl + R       | Reload                                   |
+| L              | Toggle looping                           |
+| E              | Open with another application (Opens highlighted image if in gallery view)|
+| T              | Toggle if the applications should stay above other windows |
+| N              | Open the batch resize window             |
+| Ctrl + N       | Open new window                          |
+| G              | Toggles the gallery view                 |
+| Space          | Centers window on the current screen (If gallery is open, it will scroll to the center of the highlighted image)|
+| 1              | Turns on the `Auto fit window` and sets `Fill image` off |
+| 2              | Turns on the `Auto fit window` and sets `Fill image` on  |
+| 3              | Turns off the `Auto fit window` and sets `Fill image` off|
+| 4              | Turns off the `Auto fit window` and sets `Fill image` on |
+| Home           | Scrolls to the top, when scrolling is enabled            |
+| End            | Scrolls to the bottom, when scrolling is enabled         |
+| Enter          | Opens highlighted image if in gallery view               |
+| A              | Navigate to previous image               |
+| Left           | Navigate to previous image               |
+| Ctrl + A       | Navigate to first image                  |
+| Ctrl + Left    | Navigate to first image                  |
+| D              | Navigate to Next image                   |
+| Right          | Navigate to Next image                   |
+| Ctrl + D       | Navigate to Last image                   |
+| Ctrl + Right   | Navigate to first image                  |
+| Up             | Rotates the image up (clockwise)         |
+| Up             | Scrolls up when scrolling is enabled     |
+| PageUp         | Scrolls up when scrolling is enabled     |
+| Down           | Rotates image down (counterclockwise)    |
+| Down           | Scrolls Down when scrolling is enabled   |
+| PageDown       | Scrolls Down when scrolling is enabled   |
+| +              | Zooms in at cursor position              |
+| -              | Zooms out at cursor position             |
+| Double click   | Reset zoom                               |
+| Mouse Browserback| Go to the previous entry in the file history|
+| Mouse Browserforward| Go to the next entry in the file history|
+| Scrollwheel*  | Navigates back or forth                   |
+| Ctrl + Scrollwheel| Zoom in or out                        |
+
+*Scrollwheel behavior can be changed in settings
+
+
 ## Contributions
 ![Visual Studio 2022](https://img.shields.io/badge/IDE-Visual%20Studio%202022-964ad4.svg?maxAge=3600)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
