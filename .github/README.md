@@ -33,7 +33,7 @@ Winget:
 Powershell $> winget install picview
 ```
 
-## Features
+# Features
 **For a full list of features, check my website at https://picview.org**
 ___
 
@@ -115,7 +115,7 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 * Preview between 27 different image filters that will be applied when copying image or setting it as wallpaper/lockscreen image or saving file locally
 * Image Galleries
 * Sort files by: `name`, `file size`, `date created`, `last accessed`, `latest edit`, `file extension` and `randomized`
-* hover buttons and the colored window border can be toggled on/off in the settings window.
+* hover buttons can be toggled on/off in the settings window.
 * Basic editing: rotate, flip, crop, change file type
 * Drag & drop/paste from clipholder support for files, folders, URLs and archives
 * Scroll function (built with manga/comics in mind)
@@ -205,7 +205,7 @@ _* Scrollwheel behavior can be changed in settings_
 You can also view shortcuts by opening the about window `F1`
 
 
-## Contributions
+# Contributions
 ![Visual Studio 2022](https://img.shields.io/badge/IDE-Visual%20Studio%202022-964ad4.svg?maxAge=3600)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
@@ -232,7 +232,7 @@ If you want to help translate another language or update/improve a current one a
 https://github.com/Ruben2776/PicView/issues/13
 
 
-## Donate
+# Donate
 If you wish to thank me for my work, please
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W46BJFV)
