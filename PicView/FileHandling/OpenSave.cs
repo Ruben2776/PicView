@@ -212,7 +212,7 @@ namespace PicView.FileHandling
                 await ReloadAsync().ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, Close_UserControls);
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(Close_UserControls);
 
             IsDialogOpen = false;
         }

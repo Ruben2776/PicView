@@ -67,6 +67,13 @@ namespace PicView.Shortcuts
                         e.Handled = true;
                         return;
 
+                        case Key.C:
+                        if (ctrlDown)
+                        {
+                            CropFunctions.CopyCrop();
+                        }
+                        return;
+
                     default:
                         e.Handled = true;
                         return;

@@ -32,6 +32,23 @@ namespace PicView.Editing.Crop
 
             contextMenu.Items.Add(cropCm);
 
+            var copyCm = new MenuItem
+            {
+                Header = Application.Current.Resources["CopyImage"] as string,
+                InputGestureText = Application.Current.Resources["Ctrl"] as string + " + C",
+                Icon = new Path
+                {
+                    Data = Geometry.Parse("M1696 384q40 0 68 28t28 68v1216q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-288h-544q-40 0-68-28t-28-68v-672q0-40 20-88t48-76l408-408q28-28 76-48t88-20h416q40 0 68 28t28 68v328q68-40 128-40h416zm-544 213l-299 299h299v-299zm-640-384l-299 299h299v-299zm196 647l316-316v-416h-384v416q0 40-28 68t-68 28h-416v640h512v-256q0-40 20-88t48-76zm956 804v-1152h-384v416q0 40-28 68t-68 28h-416v640h896z"),
+                    Stretch = Stretch.Fill,
+                    Width = 12,
+                    Height = 12,
+                    Fill = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"]
+                }
+            };
+            copyCm.Click += (_, _) => CropFunctions.CopyCrop();
+
+            contextMenu.Items.Add(copyCm);
+
             var closeIcon = new Path
             {
                 Data = Geometry.Parse("M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"),

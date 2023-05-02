@@ -139,11 +139,31 @@ namespace PicView.Editing.Crop
             return false;
         }
 
+        internal static void CopyCrop()
+        {
+            var crop = GetCrop();
+            var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+
+            if (effectApplied)
+            {
+                var frame = ImageDecoder.GetRenderedBitmapFrame();
+                var croppedFrame = new CroppedBitmap(frame, crop);
+                Clipboard.SetImage(croppedFrame);
+            }
+            else
+            {
+                var croppedSource = new CroppedBitmap(source, crop);
+                Clipboard.SetImage(croppedSource);
+            }
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+        }
+
         /// <summary>
         /// Gets the coordinates and dimensions of the cropped area, scaled based on the aspect ratio.
         /// </summary>
         /// <returns>The Int32Rect object containing the X and Y coordinates, width, and height of the cropped area. Returns null if there is no cropped area defined.</returns>
-        internal static Int32Rect? GetCrop()
+        internal static Int32Rect GetCrop()
         {
             var cropArea = CropService.GetCroppedArea(); // Contains the dimensions and coordinates of cropped area
 
