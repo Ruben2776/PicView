@@ -96,6 +96,14 @@ Click the expander button to view GPS coordinates which links to Google or BING 
     <img src="https://picview.org/assets/screenshots/PicView-Crop/Processed%20Pictures/medium/PicView%20Crop%202023-04-25%20191429.png" />
 </h1>
 
+<h3 align="center">
+    Image filters
+</h3>
+
+<h1 align="center">
+    <img src="https://d33wubrfki0l68.cloudfront.net/7fa49db824f06b6b0f7ff10c299560149b36416f/3dc08/assets/video/hlsl-v2-800w.webp" />
+</h1>
+
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
