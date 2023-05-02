@@ -26,7 +26,7 @@ namespace PicView.FileHandling
         ///  TODO update for and check file support
         /// </summary>
         internal const string FilterFiles =
-            "*|*.bmp;*.jpg;*.png;.tif;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;"
+            "*|*.bmp;*.jpg;*.png;*.tif;*.tiff;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;"
             + "|jpg| *.jpg;*.jpeg"                                                                          // JPG
             + "|PNG|*.png;"                                                                                 // PNG
             + "|gif|*.gif;"                                                                                 // GIF
