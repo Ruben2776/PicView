@@ -97,14 +97,13 @@ Click the expander button to view GPS coordinates which links to Google or BING 
 </h1>
 
 
-___
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
 * Quick startup time and built-in preloader to instantly view next image
-* For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `T`.
+* For images with a transparent background, the background can be changed to a checkerboard background, a dark background or a white background by pressing `B`.
 * Interface can be toggled to just show the image by pressing `Alt + Z`.
 * Image EXIF rating
-* Preview between 27 different image filters that will be applied when copying image or setting it as wallpaper or saving file locally
+* Preview between 27 different image filters that will be applied when copying image or setting it as wallpaper/lockscreen image or saving file locally
 * Image Galleries
 * Sort files by: `name`, `file size`, `date created`, `last accessed`, `latest edit`, `file extension` and `randomized`
 * hover buttons and the colored window border can be toggled on/off in the settings window.
