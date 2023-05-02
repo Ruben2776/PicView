@@ -200,7 +200,9 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Scrollwheel*  | Navigates back or forth                   |
 | Ctrl + Scrollwheel| Zoom in or out                        |
 
-*Scrollwheel behavior can be changed in settings
+_* Scrollwheel behavior can be changed in settings_
+
+You can also view shortcuts by opening the about window `F1`
 
 
 ## Contributions
