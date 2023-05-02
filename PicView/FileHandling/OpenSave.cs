@@ -27,9 +27,10 @@ namespace PicView.FileHandling
         /// </summary>
         internal const string FilterFiles =
             "*|*.bmp;*.jpg;*.png;*.tif;*.tiff;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;"
-            + "|jpg|*.jpg;*.jpeg"                                                                          // JPG
+            + "|jpg|*.jpg;*.jpeg;"                                                                          // JPG
             + "|PNG|*.png;"                                                                                 // PNG
             + "|gif|*.gif;"                                                                                 // GIF
+            + "|TIFF|*.tif;*.tiff;"                                                                         // TIF
             + "|ico|*.ico;"                                                                                 // ICO
             + "|svg|*.svg;"                                                                                 // SVG
             + "|webp|*.webp;"                                                                               // WEBP
@@ -39,13 +40,13 @@ namespace PicView.FileHandling
             + "|HEIC|*.heic;*.heif;"                                                                        // HEIC
             + "|HDR|*.hdr;"                                                                                 // HDR
             + "|svg|*.svg;"                                                                                 // SVG
-            + "|Photoshop|*.psd;*.psb"                                                                      // PSD
-            + "|GIMP|*.xcf"                                                                                 // GIMP
-            + "|QOI|*.qoi"                                                                                  // GQOI (Quite OK Image
-            + "|Base64|*.b64"                                                                               // Base64
-            + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab"                           // Archives
-            + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz"                                                        // Comics
-            + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw";      // Camera files
+            + "|Photoshop|*.psd;*.psb;"                                                                     // PSD
+            + "|GIMP|*.xcf;"                                                                                // GIMP
+            + "|QOI|*.qoi;"                                                                                 // GQOI (Quite OK Image
+            + "|Base64|*.b64;"                                                                              // Base64
+            + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab;"                          // Archives
+            + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz;"                                                       // Comics
+            + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;";     // Camera files
 
         /// <summary>
         /// Opens image in File Explorer
