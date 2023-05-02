@@ -22,46 +22,16 @@ PicView is a fast Picture Viewer with compact UI, that can be hidden. Features i
 # Downloads
 Latest releases at https://picview.org/download
 
-
-Winget:
-```powershell
-Powershell $> winget install picview
-```
-
 **Mirrors**
 
 [FossHub](https://www.fosshub.com/PicView.html) <br>
 [MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)
 
-## Contributions
-![Visual Studio 2022](https://img.shields.io/badge/IDE-Visual%20Studio%202022-964ad4.svg?maxAge=3600)
-![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
 
-Pull requests are welcome. Check current issues and asign yourself or create your own issue. 
-
-Improvements to the current code or bug fixes are also welcome!
-
-Built with .NET SDK 6.x and Visual Studio 2022
-
-
-# Translators/Languages
-Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a>, <a href="https://github.com/wcxu21">wcxu21</a><br>
-Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a> <i>(needs updates)</i><br>
-Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
-German by <a href="https://github.com/Brotbox">Brotbox</a> <i>(needs updates)</i><br>
-Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
-French by <a href="https://www.challenger-systems.com/2021/11/picview-156.html">Sylvain LOUIS</a> <br>
-Italian by <a href="https://github.com/franpoli">franpoli</a> <br>
-Russian by <a href="https://github.com/andude10">andude10</a> <br>
-Romanian by <a href="https://crowdin.com/profile/lmg">M. Gabriel Lup</a> <br>
-English and Danish by me<br>
-
-**Looking for translators!**
-If you want to help translate another language or update/improve a current one and be listed here, please take a look at
-https://github.com/Ruben2776/PicView/issues/13
-
-
+Winget:
+```powershell
+Powershell $> winget install picview
+```
 
 ## Features
 **For a full list of features, check my website at https://picview.org**
@@ -98,7 +68,7 @@ Click the expander button to view GPS coordinates which links to Google or BING 
 </h3>
 
 <h1 align="center">
-    <img src="https://picview.org/assets/screenshots/PicView-Horizontal-Image-Gallery-Dark-Theme-900w.webp" />
+    <img src="https://picview.org/assets/screenshots/Horizontal%20Gallery/Horizontal%20Gallery%202023-04-26%20175830.png" />
 </h1>
 
 
@@ -137,6 +107,32 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
    .pgm  .hdr  .cut  .exr  .dib  .emf  .wmf  .wpg  .pcx  .xbm  .xpm .wbmp *
    
    _* RAW camera formats may be slower to load_
+
+## Contributions
+![Visual Studio 2022](https://img.shields.io/badge/IDE-Visual%20Studio%202022-964ad4.svg?maxAge=3600)
+![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
+
+Pull requests are welcome. Check current issues and assign yourself or create your own issue. 
+
+Improvements to the current code or bug fixes are also welcome!
+
+
+# Translators/Languages
+Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a>, <a href="https://github.com/wcxu21">wcxu21</a><br>
+Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a> <i>(needs updates)</i><br>
+Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
+German by <a href="https://github.com/Brotbox">Brotbox</a> <i>(needs updates)</i><br>
+Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
+French by <a href="https://www.challenger-systems.com/2021/11/picview-156.html">Sylvain LOUIS</a> <br>
+Italian by <a href="https://github.com/franpoli">franpoli</a> <br>
+Russian by <a href="https://github.com/andude10">andude10</a> <br>
+Romanian by <a href="https://crowdin.com/profile/lmg">M. Gabriel Lup</a> <br>
+English and Danish by me<br>
+
+**Looking for translators!**
+If you want to help translate another language or update/improve a current one and be listed here, please take a look at
+https://github.com/Ruben2776/PicView/issues/13
 
 
 ## Donate
