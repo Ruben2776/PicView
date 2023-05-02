@@ -27,7 +27,7 @@ namespace PicView.FileHandling
         /// </summary>
         internal const string FilterFiles =
             "*|*.bmp;*.jpg;*.png;*.tif;*.tiff;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;"
-            + "|jpg| *.jpg;*.jpeg"                                                                          // JPG
+            + "|jpg|*.jpg;*.jpeg"                                                                          // JPG
             + "|PNG|*.png;"                                                                                 // PNG
             + "|gif|*.gif;"                                                                                 // GIF
             + "|ico|*.ico;"                                                                                 // ICO
