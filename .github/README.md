@@ -38,6 +38,23 @@ Powershell $> winget install picview
 ___
 
 <h3 align="center">
+    Scroll Image
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/scroll/small/Scroll%202023-04-26%20191101.png" />
+</h1>
+
+<h3 align="center">
+    Crop Image
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/PicView-Crop/Processed%20Pictures/medium/PicView%20Crop%202023-04-25%20191429.png" />
+</h1>
+
+
+<h3 align="center">
     Image Info Window
 </h3>
 
@@ -78,22 +95,6 @@ Click the expander button to view GPS coordinates which links to Google or BING 
 
 <h1 align="center">
     <img src="https://picview.org/assets/screenshots/PicView-Fullscreen-Image-Gallery-dark-theme-900w.webp" />
-</h1>
-
-<h3 align="center">
-    Scroll Image
-</h3>
-
-<h1 align="center">
-    <img src="https://picview.org/assets/screenshots/scroll/small/Scroll%202023-04-26%20191101.png" />
-</h1>
-
-<h3 align="center">
-    Crop Image
-</h3>
-
-<h1 align="center">
-    <img src="https://picview.org/assets/screenshots/PicView-Crop/Processed%20Pictures/medium/PicView%20Crop%202023-04-25%20191429.png" />
 </h1>
 
 <h3 align="center">
