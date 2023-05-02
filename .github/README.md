@@ -80,6 +80,22 @@ Click the expander button to view GPS coordinates which links to Google or BING 
     <img src="https://picview.org/assets/screenshots/PicView-Fullscreen-Image-Gallery-dark-theme-900w.webp" />
 </h1>
 
+<h3 align="center">
+    Scroll Image
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/scroll/small/Scroll%202023-04-26%20191101.png" />
+</h1>
+
+<h3 align="center">
+    Crop Image
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/PicView-Crop/Processed%20Pictures/medium/PicView%20Crop%202023-04-25%20191429.png" />
+</h1>
+
 
 ___
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
