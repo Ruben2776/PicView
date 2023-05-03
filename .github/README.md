@@ -45,6 +45,8 @@ ___
     <img src="https://picview.org/assets/screenshots/scroll/small/Scroll%202023-04-26%20191101.png" />
 </h1>
 
+Press `X` to toggle the scroll function. Click the mousewheel for auto scroll.
+
 <h3 align="center">
     Crop Image
 </h3>
@@ -52,6 +54,9 @@ ___
 <h1 align="center">
     <img src="https://picview.org/assets/screenshots/PicView-Crop/Processed%20Pictures/medium/PicView%20Crop%202023-04-25%20191429.png" />
 </h1>
+
+
+Quickly crop image by pressing `C`. Hold `Shift` for square selection.
 
 
 <h3 align="center">
@@ -81,12 +86,17 @@ Click the expander button to view GPS coordinates which links to Google or BING 
 
 
 <h3 align="center">
-    Horizontal Gallery
+    Image Gallery
 </h3>
 
 <h1 align="center">
     <img src="https://picview.org/assets/screenshots/Horizontal%20Gallery/Horizontal%20Gallery%202023-04-26%20175830.png" />
 </h1>
+
+
+### Press `G` to open or close the image gallery
+
+Navigate the gallery with the `arrow keys` or `W`,`A`,`S`,`D` and load the selected image with `Enter` or the `E` key.
 
 
 <h3 align="center">
@@ -105,6 +115,12 @@ Click the expander button to view GPS coordinates which links to Google or BING 
     <img src="https://d33wubrfki0l68.cloudfront.net/7fa49db824f06b6b0f7ff10c299560149b36416f/3dc08/assets/video/hlsl-v2-800w.webp" />
 </h1>
 
+
+### Use the slider to change the intensity of the effect
+
+
+Save it locally, set is as wallpaper/lock-screen image, or copy it to clip-holder with the effect applied.
+___
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
