@@ -50,10 +50,7 @@ namespace PicView.Editing.Crop
                 await LoadPic.LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                CloseCrop();
-            });
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(CloseCrop);
         }
 
         internal static void CloseCrop()
@@ -139,6 +136,9 @@ namespace PicView.Editing.Crop
             return false;
         }
 
+        /// <summary>
+        /// Copies selected crop area to clipholder, with or without effect applied
+        /// </summary>
         internal static void CopyCrop()
         {
             var crop = GetCrop();
