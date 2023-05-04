@@ -168,7 +168,7 @@ namespace PicView.ChangeImage
             }
             else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
             {
-                await HttpFunctions.LoadPicFromURL(path).ConfigureAwait(false);
+                await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
             }
             else
             {

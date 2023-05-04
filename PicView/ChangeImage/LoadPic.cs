@@ -60,7 +60,7 @@ namespace PicView.ChangeImage
                 switch (check)
                 {
                     default: await LoadPiFromFileAsync(check).ConfigureAwait(false); return;
-                    case "web": await HttpFunctions.LoadPicFromURL(path).ConfigureAwait(false); return;
+                    case "web": await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false); return;
                     case "base64": await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false); return;
                     case "directory": await LoadPicFromFolderAsync(path).ConfigureAwait(false); return;
                     case "zip": await LoadPicFromArchiveAsync(path).ConfigureAwait(false); return;

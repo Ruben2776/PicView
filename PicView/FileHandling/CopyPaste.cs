@@ -133,7 +133,7 @@ namespace PicView.FileHandling
                 {
                     case "": return;
                     default: await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false); return;
-                    case "web": await HttpFunctions.LoadPicFromURL(s).ConfigureAwait(false); return;
+                    case "web": await HttpFunctions.LoadPicFromUrlAsync(s).ConfigureAwait(false); return;
                     case "base64": await UpdateImage.UpdateImageFromBase64PicAsync(s).ConfigureAwait(false); return;
                     case "directory": await LoadPic.LoadPicFromFolderAsync(s).ConfigureAwait(false); return;
                 }
