@@ -19,8 +19,7 @@ namespace PicView.FileHandling
         /// Attempts to download image and display it
         /// </summary>
         /// <param name="url"></param>
-        // ReSharper disable once InconsistentNaming
-        internal static async Task LoadPicFromURL(string url)
+        internal static async Task LoadPicFromUrlAsync(string url)
         {
             ChangeFolder(true);
 
@@ -28,14 +27,14 @@ namespace PicView.FileHandling
 
             try
             {
-                destination = await DownloadData(url).ConfigureAwait(false);
+                destination = await DownloadDataAsync(url).ConfigureAwait(false);
             }
             catch (Exception e)
             {
 #if DEBUG
                 Trace.WriteLine("PicWeb caught exception, message = " + e.Message);
 #endif
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, async () =>
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(async () =>
                 {
                     await ReloadAsync(true).ConfigureAwait(false);
                     ShowTooltipMessage(e.Message, true);
@@ -64,7 +63,7 @@ namespace PicView.FileHandling
                 case "": ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => Unload(true)); return;
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 // Fix not having focus after drag and drop
                 if (!ConfigureWindows.GetMainWindow.IsFocused)
@@ -83,7 +82,7 @@ namespace PicView.FileHandling
         /// <param name="url">The URL of the data to be downloaded.</param>
         /// <param name="displayProgress">True if a progress display should be updated during the download, otherwise false.</param>
         /// <returns>The path to the downloaded file in the temporary directory.</returns>
-        internal static async Task<string> DownloadData(string url, bool displayProgress = true)
+        internal static async Task<string> DownloadDataAsync(string url, bool displayProgress = true)
         {
             // Create temp directory
             var tempPath = Path.GetTempPath();
@@ -102,11 +101,11 @@ namespace PicView.FileHandling
             {
                 if (displayProgress) // Set up progress display
                 {
-                    client.ProgressChanged += async (totalFileSize, totalBytesDownloaded, progressPercentage) =>
-                    await UpdateProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage).ConfigureAwait(false);
+                    client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
+                        UpdateProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
                 }
 
-                await client.StartDownload().ConfigureAwait(false);
+                await client.StartDownloadAsync().ConfigureAwait(false);
             }
 
             return ArchiveExtraction.TempFilePath;
@@ -118,7 +117,7 @@ namespace PicView.FileHandling
         /// <param name="totalFileSize">The total size of the file to be downloaded.</param>
         /// <param name="totalBytesDownloaded">The total number of bytes downloaded so far.</param>
         /// <param name="progressPercentage">The percentage of the download that has been completed.</param>
-        private static async Task UpdateProgressDisplay(
+        private static void UpdateProgressDisplay(
             long? totalFileSize, long? totalBytesDownloaded, double? progressPercentage)
         {
             if (totalFileSize.HasValue && totalBytesDownloaded.HasValue && progressPercentage.HasValue)
@@ -126,7 +125,7 @@ namespace PicView.FileHandling
                 var percentComplete = (string)Application.Current.Resources["PercentComplete"];
                 var displayProgress = $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(
                     DispatcherPriority.Normal,
                     () =>
                     {
@@ -158,10 +157,10 @@ namespace PicView.FileHandling
                 _destinationFilePath = destinationFilePath;
             }
 
-            public async Task StartDownload()
+            public async Task StartDownloadAsync()
             {
                 _httpClient = new HttpClient { Timeout = TimeSpan.FromHours(6) };
-                using var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                using var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
                 await DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);
             }
 
@@ -169,7 +168,7 @@ namespace PicView.FileHandling
             {
                 response.EnsureSuccessStatusCode();
                 var totalBytes = response.Content.Headers.ContentLength;
-                await using var contentStream = await response.Content.ReadAsStreamAsync();
+                await using var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 await ProcessContentStream(totalBytes, contentStream).ConfigureAwait(false);
             }
 
@@ -180,7 +179,7 @@ namespace PicView.FileHandling
                 var totalBytesRead = 0L;
                 while (true)
                 {
-                    var bytesRead = await contentStream.ReadAsync(buffer);
+                    var bytesRead = await contentStream.ReadAsync(buffer).ConfigureAwait(false);
                     if (bytesRead == 0)
                     {
                         break;
