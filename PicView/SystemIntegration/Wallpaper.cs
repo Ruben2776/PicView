@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using Rotation = PicView.UILogic.TransformImage.Rotation;
@@ -30,8 +31,10 @@ namespace PicView.SystemIntegration
         /// <param name="style"></param>
         internal static async Task SetWallpaperAsync(WallpaperStyle style)
         {
+            var url = string.Empty;
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
+                url = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
                 SetTitle.SetLoadingString();
                 Application.Current.MainWindow.Cursor = Cursors.Wait;
             });
@@ -72,7 +75,11 @@ namespace PicView.SystemIntegration
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                SetTitle.SetTitleString();
+                SetTitle.SetTitleString(
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height,
+                    !string.IsNullOrWhiteSpace(url) ? url : checkOutOfRange 
+                    ? Navigation.Pics[Navigation.FolderIndex] : Application.Current.Resources["Image"] as string);
                 Application.Current.MainWindow.Cursor = Cursors.Arrow;
             });
         }

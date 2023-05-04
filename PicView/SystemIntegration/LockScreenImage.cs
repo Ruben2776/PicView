@@ -10,6 +10,8 @@ using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using Rotation = PicView.UILogic.TransformImage.Rotation;
+using System.Security.Policy;
+using PicView.FileHandling;
 
 namespace PicView.SystemIntegration
 {
@@ -17,8 +19,10 @@ namespace PicView.SystemIntegration
     {
         public static async Task<bool> SetLockScreenImageAsync()
         {
+            var url = string.Empty;
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
+                url = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
                 SetTitle.SetLoadingString();
                 Application.Current.MainWindow!.Cursor = Cursors.Wait;
             });
@@ -62,11 +66,12 @@ namespace PicView.SystemIntegration
 
             try
             {
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]);
                 var storageFolder = await StorageFolder.GetFolderFromPathAsync(folderPath);
                 var imageFile = await storageFolder.GetFileAsync(fileName);
 
-                using var stream = await imageFile.OpenAsync(FileAccessMode.Read);
-                await LockScreen.SetImageStreamAsync(stream);
+                using var stream = await imageFile.OpenAsync(FileAccessMode.Read).AsTask().ConfigureAwait(false);
+                await LockScreen.SetImageStreamAsync(stream).AsTask().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -84,7 +89,11 @@ namespace PicView.SystemIntegration
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                SetTitle.SetTitleString();
+                SetTitle.SetTitleString(
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height,
+                                !string.IsNullOrWhiteSpace(url) ? url : checkOutOfRange
+                    ? Navigation.Pics[Navigation.FolderIndex] : Application.Current.Resources["Image"] as string);
                 Application.Current.MainWindow!.Cursor = Cursors.Arrow;
             });
 

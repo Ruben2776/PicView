@@ -174,7 +174,7 @@ namespace PicView.ChangeTitlebar
 
             ConfigureWindows.GetMainWindow.Title = titleString[0];
             ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[1];
         }
 
         /// <summary>
