@@ -32,7 +32,7 @@ namespace PicView.FileHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine("PicWeb caught exception, message = " + e.Message);
+                Trace.WriteLine("LoadPicFromUrlAsync exception = \n" + e.Message);
 #endif
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(async () =>
                 {
@@ -101,8 +101,7 @@ namespace PicView.FileHandling
             {
                 if (displayProgress) // Set up progress display
                 {
-                    client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
-                        UpdateProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
+                    client.ProgressChanged += UpdateProgressDisplay;
                 }
 
                 await client.StartDownloadAsync().ConfigureAwait(false);
@@ -117,23 +116,18 @@ namespace PicView.FileHandling
         /// <param name="totalFileSize">The total size of the file to be downloaded.</param>
         /// <param name="totalBytesDownloaded">The total number of bytes downloaded so far.</param>
         /// <param name="progressPercentage">The percentage of the download that has been completed.</param>
-        private static void UpdateProgressDisplay(
-            long? totalFileSize, long? totalBytesDownloaded, double? progressPercentage)
+        private static void UpdateProgressDisplay(long? totalFileSize, long? totalBytesDownloaded, double? progressPercentage)
         {
-            if (totalFileSize.HasValue && totalBytesDownloaded.HasValue && progressPercentage.HasValue)
-            {
-                var percentComplete = (string)Application.Current.Resources["PercentComplete"];
-                var displayProgress = $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
+            if (!totalFileSize.HasValue || !totalBytesDownloaded.HasValue || !progressPercentage.HasValue) return;
+            var percentComplete = (string)Application.Current.Resources["PercentComplete"];
+            var displayProgress = $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
 
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(
-                    DispatcherPriority.Normal,
-                    () =>
-                    {
-                        ConfigureWindows.GetMainWindow.Title = displayProgress;
-                        ConfigureWindows.GetMainWindow.TitleText.Text = displayProgress;
-                        ConfigureWindows.GetMainWindow.TitleText.ToolTip = displayProgress;
-                    });
-            }
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal,() =>
+            {
+                ConfigureWindows.GetMainWindow.Title = displayProgress;
+                ConfigureWindows.GetMainWindow.TitleText.Text = displayProgress;
+                ConfigureWindows.GetMainWindow.TitleText.ToolTip = displayProgress;
+            });
         }
 
         #endregion UI configured methods
@@ -177,7 +171,7 @@ namespace PicView.FileHandling
                 var buffer = new byte[8192];
                 await using var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
                 var totalBytesRead = 0L;
-                while (true)
+                do
                 {
                     var bytesRead = await contentStream.ReadAsync(buffer).ConfigureAwait(false);
                     if (bytesRead == 0)
@@ -189,9 +183,9 @@ namespace PicView.FileHandling
                     totalBytesRead += bytesRead;
 
                     if (!totalDownloadSize.HasValue) continue;
-                    var progressPercentage = (double)totalBytesRead / totalDownloadSize.Value * 100;
+                    var progressPercentage = (double) totalBytesRead / totalDownloadSize.Value * 100;
                     OnProgressChanged(totalDownloadSize, totalBytesRead, progressPercentage);
-                }
+                } while (true);
             }
 
             private void OnProgressChanged(long? totalDownloadSize, long totalBytesRead, double progressPercentage)

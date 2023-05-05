@@ -86,7 +86,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            UC.GetStartUpUC.ToggleMenu();
+            UC.GetStartUpUC?.ToggleMenu();
             SetTitle.SetLoadingString();
 
             await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);

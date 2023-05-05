@@ -111,15 +111,13 @@ namespace PicView.UILogic.Sizing
             }
             else
             {
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    GetMainWindow.DragMove();                
-                    // Update info for possible new screen, needs more engineering
-                    // Seems to work
-                    MonitorInfo = MonitorSize.GetMonitorSize();
+                if (e.LeftButton != MouseButtonState.Pressed) return;
+                GetMainWindow.DragMove();                
+                // Update info for possible new screen, needs more engineering
+                // Seems to work
+                MonitorInfo = MonitorSize.GetMonitorSize();
 
-                    SetWindowSize();
-                }
+                SetWindowSize();
             }
         }
 
@@ -133,20 +131,16 @@ namespace PicView.UILogic.Sizing
                 return;
             }
 
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                GetMainWindow.DragMove();
-                MonitorInfo = MonitorSize.GetMonitorSize();
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+            GetMainWindow.DragMove();
+            MonitorInfo = MonitorSize.GetMonitorSize();
 
-                SetWindowSize();
-            }
+            SetWindowSize();
         }
 
         /// <summary>
-        /// Function made to restore and drag window from maximized windowstate
+        /// Function made to restore and drag window from maximized window state
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         internal static void Restore_From_Move()
         {
             GetMainWindow.WindowState = WindowState.Normal;
@@ -183,8 +177,11 @@ namespace PicView.UILogic.Sizing
                     GalleryNavigation.ScrollTo();
                 }
 
-                ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
-                ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
+                if (ErrorHandling.CheckOutOfRange() is false)
+                {
+                    ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
+                    ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
+                }
 
                 Settings.Default.Fullscreen = true;
             }
@@ -196,13 +193,13 @@ namespace PicView.UILogic.Sizing
                 if (Settings.Default.ShowInterface)
                 {
                     ShowNavigation(false);
-                    ShowTopandBottom(true);
+                    ShowTopAndBottom(true);
                     ShowShortcuts(false);
                 }
                 else
                 {
                     ShowNavigation(true);
-                    ShowTopandBottom(false);
+                    ShowTopAndBottom(false);
                     ShowShortcuts(true);
                 }
 
@@ -229,9 +226,9 @@ namespace PicView.UILogic.Sizing
 
         internal static void RenderFullscreen()
         {
-            Settings.Default.ScrollEnabled = false; // Don't scroll in fulscreen
+            Settings.Default.ScrollEnabled = false; // Don't scroll in fullscreen
 
-            ShowTopandBottom(false);
+            ShowTopAndBottom(false);
             GetMainWindow.Topmost = true;
 
             GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
@@ -261,10 +258,10 @@ namespace PicView.UILogic.Sizing
             {
                 GetMainWindow.Top = Settings.Default.Top;
                 GetMainWindow.Left = Settings.Default.Left;
-                GetMainWindow.Width = Double.IsNaN(Settings.Default.Width) ? GetMainWindow.Width :
-                    Double.IsNaN(Settings.Default.Width) ? GetMainWindow.ActualWidth : Settings.Default.Width;
-                GetMainWindow.Height = Double.IsNaN(Settings.Default.Height) ? GetMainWindow.Height :
-                    Double.IsNaN(Settings.Default.Height) ? GetMainWindow.ActualHeight : Settings.Default.Height;
+                GetMainWindow.Width = double.IsNaN(Settings.Default.Width) ? GetMainWindow.Width :
+                    double.IsNaN(Settings.Default.Width) ? GetMainWindow.ActualWidth : Settings.Default.Width;
+                GetMainWindow.Height = double.IsNaN(Settings.Default.Height) ? GetMainWindow.Height :
+                    double.IsNaN(Settings.Default.Height) ? GetMainWindow.ActualHeight : Settings.Default.Height;
             });
         }
 
@@ -303,6 +300,7 @@ namespace PicView.UILogic.Sizing
                     Fullscreen_Restore(true);
                     return;
 
+                case WindowState.Minimized:
                 default:
                     return;
             }
@@ -310,7 +308,7 @@ namespace PicView.UILogic.Sizing
 
         internal static void SystemEvents_DisplaySettingsChanged()
         {
-            // Update size when screen resulution changes
+            // Update size when screen resolution changes
             MonitorInfo = MonitorSize.GetMonitorSize();
             TryFitImage();
         }
@@ -320,8 +318,6 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Save settings when closing
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         internal static void Window_Closing()
         {
             GetMainWindow.Hide(); // Make it feel faster

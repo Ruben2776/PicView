@@ -73,7 +73,7 @@ namespace PicView.PicGallery
                 UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;  
 
                 ShowNavigation(false);
-                ShowTopandBottom(false);
+                ShowTopAndBottom(false);
                 ConfigureWindows.GetMainWindow.Focus();
             }
             else

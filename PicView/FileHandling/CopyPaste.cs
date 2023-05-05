@@ -101,7 +101,7 @@ namespace PicView.FileHandling
         }
 
         /// <summary>
-        /// Retrieves the data from the clipboard and attemps to load image, if possible
+        /// Retrieves the data from the clipboard and attempts to load image, if possible
         /// </summary>
         internal static async Task PasteAsync()
         {

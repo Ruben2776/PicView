@@ -32,7 +32,7 @@ namespace PicView.ChangeImage
                 await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
                 return;
             }
-            if (file.IsArchive())
+            if (file.IsArchive()) // Handle if file exist and is archive
             {
                 await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
                 return;

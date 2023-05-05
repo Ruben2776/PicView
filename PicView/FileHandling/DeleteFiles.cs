@@ -53,9 +53,9 @@ namespace PicView.FileHandling
         /// Deletes file or send it to recycle bin
         /// </summary>
         /// <param name="file"></param>
-        /// <param name="Recycle"></param>
+        /// <param name="recycle"></param>
         /// <returns></returns>
-        internal static bool TryDeleteFile(string file, bool Recycle)
+        internal static bool TryDeleteFile(string file, bool recycle)
         {
             // TODO Need to add function to remove from PicGallery
             if (!File.Exists(file))
@@ -65,8 +65,8 @@ namespace PicView.FileHandling
 
             try
             {
-                var recycle = Recycle ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
-                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, recycle);
+                var toRecycleOption = recycle ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
+                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, toRecycleOption);
             }
 #if DEBUG
             catch (Exception e)

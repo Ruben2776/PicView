@@ -197,6 +197,8 @@ namespace PicView.FileHandling
         }
 
         [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+        // ReSharper disable once IdentifierTypo
+        // ReSharper disable once InconsistentNaming
         private static partial Regex URLregex();
 
         /// <summary>
@@ -205,6 +207,7 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="value">The string to find the URL in</param>
         /// <returns>The URL contained in the string, or an empty string if no URL is found or an exception is thrown</returns>
+        // ReSharper disable once InconsistentNaming
         internal static string GetURL(this string value)
         {
             try
@@ -223,6 +226,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// Returns the URL path if it exists or an empty string if not.
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         internal static string RetrieveFromURL()
         {
             // Check if from URL and download it

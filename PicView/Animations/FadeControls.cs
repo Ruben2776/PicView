@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
+using PicView.ChangeImage;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
@@ -36,12 +37,9 @@ namespace PicView.Animations
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {
-                if (GetCropppingTool != null)
+                if (GetCropppingTool is {IsVisible: true})
                 {
-                    if (GetCropppingTool.IsVisible)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 if (Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
@@ -50,7 +48,7 @@ namespace PicView.Animations
                 }
 
                 // Don't run, if already being animated || prevent lag
-                if (Getx2.Opacity > 0 && Getx2.Opacity < 1)
+                if (Getx2.Opacity is > 0 and < 1)
                 {
                     return;
                 }
@@ -65,9 +63,9 @@ namespace PicView.Animations
                     return;
                 }
 
-                TimeSpan timespan = TimeSpan.FromSeconds(show ? .5 : 1);
+                var timespan = TimeSpan.FromSeconds(show ? .5 : 1);
 
-                int opacity = show ? 1 : 0;
+                var opacity = show ? 1 : 0;
 
                 AnimationHelper.Fade(GetClickArrowLeft, opacity, timespan);
                 AnimationHelper.Fade(GetClickArrowRight, opacity, timespan);
