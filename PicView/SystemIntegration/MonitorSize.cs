@@ -14,19 +14,19 @@ namespace PicView.SystemIntegration
         /// <summary>
         /// Gets the pixel width of the current monitor's working area.
         /// </summary>
-        internal readonly double Width { get; }
+        internal double Width { get; }
         /// <summary>
         /// Gets the pixel height of the current monitor's working area.
         /// </summary>
-        internal readonly double Height { get; }
+        internal double Height { get; }
         /// <summary>
         /// Gets the DPI scaling factor of the current monitor.
         /// </summary>
-        internal readonly double DpiScaling { get; }
+        internal double DpiScaling { get; }
         /// <summary>
         /// Gets the available working area of the current monitor.
         /// </summary>
-        internal readonly Rect WorkArea { get; }
+        internal Rect WorkArea { get; }
 
         #region IEquatable<T>
         public bool Equals(MonitorSize other)
@@ -77,11 +77,8 @@ namespace PicView.SystemIntegration
                     SystemParameters.WorkArea);
             
             Screen? currentMonitor = null;
-            PresentationSource? source = null;
+            PresentationSource? source;
             double dpiScaling = 0;
-            Rect? workArea = null;
-            double monitorWidth = 0;
-            double monitorHeight = 0;
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () => // Avoid threading errors
             {
                 // Get the current monitor screen information
@@ -93,9 +90,9 @@ namespace PicView.SystemIntegration
             });
 
             // Get the available work area of the monitor screen
-            workArea = currentMonitor.WorkingArea;
-            monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
-            monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
+            Rect? workArea = currentMonitor.WorkingArea;
+            var monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
+            var monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
             // Return a new instance of the MonitorSize struct
             return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea.Value);

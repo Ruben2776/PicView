@@ -19,7 +19,7 @@ namespace PicView.Editing.Crop
 {
     internal static class CropFunctions
     {
-        internal static CropService? CropService { get; private set; }
+        private static CropService? CropService { get; set; }
 
         internal static void StartCrop()
         {
@@ -66,7 +66,7 @@ namespace PicView.Editing.Crop
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
         }
 
-        internal static void InitilizeCrop()
+        internal static void InitializeCrop()
         {
             GetCropppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
             GetCropppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
@@ -90,7 +90,7 @@ namespace PicView.Editing.Crop
         /// Save crop from file dialog
         /// </summary>
         /// <returns>Whether it's the same file that is being viewed or not</returns>
-        internal static async Task<bool> SaveCrop()
+        private static async Task<bool> SaveCrop()
         {
             string filename;
             string? directory;
@@ -163,7 +163,7 @@ namespace PicView.Editing.Crop
         /// Gets the coordinates and dimensions of the cropped area, scaled based on the aspect ratio.
         /// </summary>
         /// <returns>The Int32Rect object containing the X and Y coordinates, width, and height of the cropped area. Returns null if there is no cropped area defined.</returns>
-        internal static Int32Rect GetCrop()
+        private static Int32Rect GetCrop()
         {
             var cropArea = CropService.GetCroppedArea(); // Contains the dimensions and coordinates of cropped area
 

@@ -36,15 +36,15 @@ namespace PicView.SystemIntegration
             {
                 url = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
                 SetTitle.SetLoadingString();
-                Application.Current.MainWindow.Cursor = Cursors.Wait;
+                Application.Current.MainWindow!.Cursor = Cursors.Wait;
             });
 
-            bool hasEffect = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
-            double rotationAngle = Rotation.RotationAngle;
-            bool isFlipped = Rotation.IsFlipped;
-            bool shouldSaveImage = hasEffect || rotationAngle != 0 || isFlipped;
-            bool checkOutOfRange = ErrorHandling.CheckOutOfRange();
-            bool effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+            var hasEffect = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+            var rotationAngle = Rotation.RotationAngle;
+            var isFlipped = Rotation.IsFlipped;
+            var shouldSaveImage = hasEffect || rotationAngle != 0 || isFlipped;
+            var checkOutOfRange = ErrorHandling.CheckOutOfRange();
+            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
             BitmapSource? bitmapSource = null;
             string? imagePath = null;
@@ -52,9 +52,9 @@ namespace PicView.SystemIntegration
             if (shouldSaveImage || checkOutOfRange)
             {
                 // Create a temporary directory
-                string tempDirectory = Path.GetTempPath();
-                string tempFileName = Path.GetRandomFileName();
-                string destinationPath = Path.Combine(tempDirectory, tempFileName);
+                var tempDirectory = Path.GetTempPath();
+                var tempFileName = Path.GetRandomFileName();
+                var destinationPath = Path.Combine(tempDirectory, tempFileName);
 
                 if (checkOutOfRange)
                 {
@@ -80,34 +80,8 @@ namespace PicView.SystemIntegration
                     (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height,
                     !string.IsNullOrWhiteSpace(url) ? url : checkOutOfRange 
                     ? Navigation.Pics[Navigation.FolderIndex] : Application.Current.Resources["Image"] as string);
-                Application.Current.MainWindow.Cursor = Cursors.Arrow;
+                Application.Current.MainWindow!.Cursor = Cursors.Arrow;
             });
-        }
-
-        /// <summary>
-        /// Determine if .jpg files are supported as wallpaper in the current
-        /// operating system. The .jpg wallpapers are not supported before
-        /// Windows Vista.
-        /// </summary>
-        public static bool SupportJpgAsWallpaper
-        {
-            get
-            {
-                return Environment.OSVersion.Version >= new Version(6, 0);
-            }
-        }
-
-        /// <summary>
-        /// Determine if the fit and fill wallpaper styles are supported in
-        /// the current operating system. The styles are not supported before
-        /// Windows 7.
-        /// </summary>
-        public static bool SupportFitFillWallpaperStyles
-        {
-            get
-            {
-                return Environment.OSVersion.Version >= new Version(6, 1);
-            }
         }
 
         /// <summary>
@@ -115,7 +89,7 @@ namespace PicView.SystemIntegration
         /// </summary>
         /// <param name="path">Path of the wallpaper</param>
         /// <param name="style">Wallpaper style</param>
-        public static void SetDesktopWallpaper(string path, WallpaperStyle style)
+        private static void SetDesktopWallpaper(string path, WallpaperStyle style)
         {
             // Set the wallpaper style and tile.
             // Two registry values are set in the Control Panel\Desktop key.
@@ -164,20 +138,19 @@ namespace PicView.SystemIntegration
 
             key.Close();
 
-            /// TODO Check if support for execotic file formats can be converted and
-            /// works for Windows supported standard images, such as PSD to jpg?
+            // TODO Check if support for exotic file formats can be converted and
+            // works for Windows supported standard images, such as PSD to jpg?
 
             // If the specified image file is neither .bmp nor .jpg, - or -
             // if the image is a .jpg file but the operating system is Windows Server
             // 2003 or Windows XP/2000 that does not support .jpg as the desktop
             // wallpaper, convert the image file to .bmp and save it to the
             // %appdata%\Microsoft\Windows\Themes folder.
-            string ext = Path.GetExtension(path);
+            var ext = Path.GetExtension(path);
             if ((!ext.Equals(".bmp", StringComparison.OrdinalIgnoreCase) &&
                 !ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase))
                 ||
-                (ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
-                !SupportJpgAsWallpaper))
+                ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase))
             {
                 var dest = string.Format(CultureInfo.CurrentCulture, @"{0}\Microsoft\Windows\Themes\{1}.jpg",
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -188,7 +161,7 @@ namespace PicView.SystemIntegration
                 }
             }
 
-            // Set the desktop wallpapaer by calling the Win32 API SystemParametersInfo
+            // Set the desktop wallpaper by calling the Win32 API SystemParametersInfo
             // with the SPI_SETDESKWALLPAPER desktop parameter. The changes should
             // persist, and also be immediately visible.
             if (!NativeMethods.SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path,

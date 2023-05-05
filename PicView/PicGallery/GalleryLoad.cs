@@ -144,7 +144,7 @@ namespace PicView.PicGallery
             var count = Navigation.Pics.Count;
             var index = Navigation.FolderIndex;
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 if (count != Navigation.Pics.Count)
                 {
@@ -175,7 +175,7 @@ namespace PicView.PicGallery
             }));
         }
 
-        internal static async Task UpdatePic(int i)
+        private static async Task UpdatePic(int i)
         {
             if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
             {
@@ -188,7 +188,7 @@ namespace PicView.PicGallery
             UpdatePic(i, thumbHolder.Thumb);
         }
 
-        internal static void UpdatePic(int i, BitmapSource pic)
+        internal static void UpdatePic(int i, BitmapSource? pic)
         {
             try
             {

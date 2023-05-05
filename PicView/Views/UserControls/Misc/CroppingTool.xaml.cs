@@ -12,7 +12,7 @@ namespace PicView.Views.UserControls.Misc
         {
             InitializeComponent();
 
-            Loaded += delegate { CropFunctions.InitilizeCrop(); };
+            Loaded += delegate { CropFunctions.InitializeCrop(); };
         }
     }
 }

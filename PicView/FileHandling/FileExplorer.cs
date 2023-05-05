@@ -16,16 +16,16 @@ namespace PicView.FileHandling
     {
         public static void OpenFolderAndSelectFile(string folderPath, string fileName)
         {
-            IntPtr nativeFolder = GetNativeFolder(folderPath);
+            var nativeFolder = GetNativeFolder(folderPath);
             if (nativeFolder == IntPtr.Zero)
             {
                 return;
             }
 
-            IntPtr nativeFile = GetNativeFile(folderPath, fileName);
-            IntPtr[] fileArray = GetFileArray(nativeFile);
+            var nativeFile = GetNativeFile(folderPath, fileName);
+            var fileArray = GetFileArray(nativeFile);
 
-            int result = Shell32Wrapper.SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
+            var result = Shell32Wrapper.SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
             if (result != 0)
             {
                 // Log error, operation failed
@@ -37,9 +37,7 @@ namespace PicView.FileHandling
 
         private static IntPtr GetNativeFolder(string folderPath)
         {
-            IntPtr nativeFolder;
-            uint psfgaoOut;
-            Shell32Wrapper.SHParseDisplayName(folderPath, IntPtr.Zero, out nativeFolder, 0, out psfgaoOut);
+            Shell32Wrapper.SHParseDisplayName(folderPath, IntPtr.Zero, out var nativeFolder, 0, out _);
 
             if (nativeFolder == IntPtr.Zero)
             {
@@ -51,9 +49,7 @@ namespace PicView.FileHandling
 
         private static IntPtr GetNativeFile(string folderPath, string fileName)
         {
-            IntPtr nativeFile;
-            uint psfgaoOut;
-            Shell32Wrapper.SHParseDisplayName(Path.Combine(folderPath, fileName), IntPtr.Zero, out nativeFile, 0, out psfgaoOut);
+            Shell32Wrapper.SHParseDisplayName(Path.Combine(folderPath, fileName), IntPtr.Zero, out var nativeFile, 0, out _);
 
             if (nativeFile == IntPtr.Zero)
             {
@@ -65,12 +61,7 @@ namespace PicView.FileHandling
 
         private static IntPtr[] GetFileArray(IntPtr nativeFile)
         {
-            if (nativeFile == IntPtr.Zero)
-            {
-                return Array.Empty<IntPtr>();
-            }
-
-            return new[] { nativeFile };
+            return nativeFile == IntPtr.Zero ? Array.Empty<IntPtr>() : new[] { nativeFile };
         }
 
         private static void FreeNativeFolder(IntPtr nativeFolder)
