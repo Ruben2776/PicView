@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
@@ -52,31 +54,25 @@ namespace PicView.UILogic
         {
             Settings.Default.ShowInterface = true;
 
-            ShowTopandBottom(true);
+            ShowTopAndBottom(true);
             ShowNavigation(false);
             ShowShortcuts(false);
 
-            if (ActivityTimer != null)
-            {
-                ActivityTimer.Stop();
-            }
+            ActivityTimer?.Stop();
         }
 
-        internal static void ShowMinimalInterface()
+        private static void ShowMinimalInterface()
         {
-            ShowTopandBottom(false);
+            ShowTopAndBottom(false);
             ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
             ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
 
             Settings.Default.ShowInterface = false;
 
-            if (ActivityTimer != null)
-            {
-                ActivityTimer.Start();
-            }
+            ActivityTimer?.Start();
         }
 
-        internal static void ShowTopandBottom(bool show)
+        internal static void ShowTopAndBottom(bool show)
         {
             if (show)
             {
@@ -104,8 +100,12 @@ namespace PicView.UILogic
 
             if (show)
             {
-                UC.GetClickArrowLeft.Visibility =
-                UC.GetClickArrowRight.Visibility =
+                if (ErrorHandling.CheckOutOfRange() is false)
+                {
+                    UC.GetClickArrowLeft.Visibility =
+                    UC.GetClickArrowRight.Visibility = Visibility.Visible;
+                }
+
                 UC.Getx2.Visibility =
                 UC.GetRestorebutton.Visibility =
                 UC.GetMinus.Visibility = Visibility.Visible;
@@ -127,7 +127,7 @@ namespace PicView.UILogic
                 return;
             }
 
-            if (show)
+            if (show && !ErrorHandling.CheckOutOfRange())
             {
                 UC.GetGalleryShortcut.Visibility = Visibility.Visible;
             }
