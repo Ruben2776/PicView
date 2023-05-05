@@ -131,7 +131,7 @@ namespace PicView.ChangeImage
 
             if (folderChanged)
             {
-                Preloader.Clear();
+                PreLoader.Clear();
 
                 Pics = FileList(fileInfo);
 
@@ -143,7 +143,7 @@ namespace PicView.ChangeImage
                 if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
                     InitialPath = fileInfo.FullName;
             }
-            else if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+            else if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
 
             FolderIndex = Pics.IndexOf(fileInfo.FullName);
             await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
@@ -171,7 +171,7 @@ namespace PicView.ChangeImage
                 {
                     BackupPath = Pics[FolderIndex];
                 }
-                Preloader.Clear();
+                PreLoader.Clear();
                 GalleryFunctions.Clear();
                 var extraction = Extract(archive);
                 if (!extraction)
@@ -219,7 +219,7 @@ namespace PicView.ChangeImage
 
             if (folderChanged)
             {
-                Preloader.Clear();
+                PreLoader.Clear();
             }
 
             Pics = FileList(fileInfo);
@@ -269,7 +269,7 @@ namespace PicView.ChangeImage
         internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
         {
             FolderIndex = index;
-            var preloadValue = Preloader.Get(index);
+            var preloadValue = PreLoader.Get(index);
             fileInfo ??= preloadValue?.FileInfo ?? new FileInfo(Pics[index]);
 
             if (!fileInfo.Exists)
@@ -281,7 +281,7 @@ namespace PicView.ChangeImage
                 }
                 else // Fix deleting files outside application
                 {
-                    Preloader.Clear();
+                    PreLoader.Clear();
                     Pics = FileList(fileInfo);
                     var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
                     await GoToNextImage(navigateTo).ConfigureAwait(false);
@@ -299,7 +299,7 @@ namespace PicView.ChangeImage
                 {
                     var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
                                          ImageFunctions.ImageErrorMessage();
-                    preloadValue = new Preloader.PreloadValue(bitmapSource, false, fileInfo);
+                    preloadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
                     if (index != FolderIndex) return;
                 }
                 while (preloadValue.IsLoading)
@@ -327,8 +327,8 @@ namespace PicView.ChangeImage
             {
                 Taskbar.Progress((double)index / Pics.Count);
 
-                await Preloader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
-                await Preloader.PreLoadAsync(index).ConfigureAwait(false);
+                await PreLoader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+                await PreLoader.PreLoadAsync(index).ConfigureAwait(false);
             }
 
             // Add recent files, except when browsing archive

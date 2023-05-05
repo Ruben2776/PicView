@@ -93,7 +93,7 @@ namespace PicView.UILogic
         internal static void ShowNavigation(bool show)
         {
             if (UC.GetClickArrowLeft == null || UC.GetClickArrowRight == null
-                || UC.Getx2 == null || UC.GetMinus == null || UC.GetRestorebutton == null)
+                || UC.GetX2 == null || UC.GetMinus == null || UC.GetRestoreButton == null)
             {
                 return;
             }
@@ -106,16 +106,16 @@ namespace PicView.UILogic
                     UC.GetClickArrowRight.Visibility = Visibility.Visible;
                 }
 
-                UC.Getx2.Visibility =
-                UC.GetRestorebutton.Visibility =
+                UC.GetX2.Visibility =
+                UC.GetRestoreButton.Visibility =
                 UC.GetMinus.Visibility = Visibility.Visible;
             }
             else
             {
                 UC.GetClickArrowLeft.Visibility =
                 UC.GetClickArrowRight.Visibility =
-                UC.Getx2.Visibility =
-                UC.GetRestorebutton.Visibility =
+                UC.GetX2.Visibility =
+                UC.GetRestoreButton.Visibility =
                 UC.GetMinus.Visibility = Visibility.Collapsed;
             }
         }

@@ -83,11 +83,11 @@ namespace PicView.ChangeImage
             if (FolderIndex > 0)
             {
                 Taskbar.Progress((double)FolderIndex / Pics.Count);
-                await Preloader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
+                await PreLoader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
             }
 
             if (bitmapSource is not null)
-                await Preloader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
+                await PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
             if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {

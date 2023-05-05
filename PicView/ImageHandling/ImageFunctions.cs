@@ -91,10 +91,10 @@ namespace PicView.ImageHandling
                 return;
             }
 
-            var preloadValue = Preloader.Get(Navigation.FolderIndex);
+            var preloadValue = PreLoader.Get(Navigation.FolderIndex);
             if (preloadValue == null)
             {
-                await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
+                await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
             }
 
             var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);

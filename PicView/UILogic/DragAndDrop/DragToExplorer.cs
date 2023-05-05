@@ -44,7 +44,7 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            if (UC.GetCropppingTool is { IsVisible: true }) return;
+            if (UC.GetCroppingTool is { IsVisible: true }) return;
 
             if (Settings.Default.ShowInterface == false)
             {

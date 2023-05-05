@@ -33,7 +33,7 @@ namespace PicView.ChangeImage
             BitmapSource? pic;
             _updateSource = true; // Update it when key released
 
-            var preloadValue = Preloader.Get(index);
+            var preloadValue = PreLoader.Get(index);
 
             if (preloadValue != null)
             {
@@ -54,8 +54,8 @@ namespace PicView.ChangeImage
             {
                 fileInfo = new FileInfo(Pics[index]);
                 LoadPic.LoadingPreview(fileInfo);
-                await Preloader.AddAsync(index, fileInfo).ConfigureAwait(false);
-                preloadValue = Preloader.Get(index);
+                await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                preloadValue = PreLoader.Get(index);
                 if (preloadValue is null)
                 {
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
@@ -68,7 +68,7 @@ namespace PicView.ChangeImage
             Taskbar.Progress((double)index / Pics.Count);
             await UpdateImage.UpdateImageAsync(index, pic, fileInfo).ConfigureAwait(false);
             _updateSource = false;
-            await Preloader.PreLoadAsync(index).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(index).ConfigureAwait(false);
         }
 
         internal static async Task FastPicUpdateAsync()
@@ -80,17 +80,17 @@ namespace PicView.ChangeImage
             // Update picture in case it didn't load. Won't happen normally
             
             BitmapSource? pic;
-            var preloadValue = Preloader.Get(FolderIndex);
+            var preloadValue = PreLoader.Get(FolderIndex);
             if (preloadValue is null)
             {
-                await Preloader.AddAsync(FolderIndex).ConfigureAwait(false);
-                preloadValue = Preloader.Get(FolderIndex);
+                await PreLoader.AddAsync(FolderIndex).ConfigureAwait(false);
+                preloadValue = PreLoader.Get(FolderIndex);
                 if (preloadValue is null)
                 {
                     var fileInfo = new FileInfo(Pics[FolderIndex]);
                     var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
                                          ImageFunctions.ImageErrorMessage();
-                    preloadValue = new Preloader.PreloadValue(bitmapSource, false, fileInfo);
+                    preloadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
                 }
             }
             while (preloadValue.IsLoading)

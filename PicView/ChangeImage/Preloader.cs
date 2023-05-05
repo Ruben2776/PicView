@@ -9,16 +9,16 @@ namespace PicView.ChangeImage
 {
 
     /// <summary>
-    /// The Preloader class is responsible for loading and caching images.
-    /// It contains an internal class named PreloadValue, which stores information about each image,
+    /// The PreLoader class is responsible for loading and caching images.
+    /// It contains an internal class named PreLoadValue, which stores information about each image,
     /// including the image's BitmapSource, whether the image is currently being loaded, and the image's FileInfo object.
     /// </summary>
-    internal static class Preloader
+    internal static class PreLoader
     {
         /// <summary>
         /// Represents a value that is preloaded and cached, including information about the image file and whether it is currently being loaded.
         /// </summary>
-        internal class PreloadValue
+        internal class PreLoadValue
         {
             /// <summary>
             /// The BitmapSource of the image
@@ -36,12 +36,12 @@ namespace PicView.ChangeImage
             internal FileInfo? FileInfo;
 
             /// <summary>
-            /// Constructs a new PreloadValue object with the specified values
+            /// Constructs a new PreLoadValue object with the specified values
             /// </summary>
             /// <param name="bitmap">The BitmapSource image that is preloaded and cached.</param>
             /// <param name="loading">Whether the image is currently being loaded</param>
             /// <param name="fileInfo">The file info of the image</param>
-            internal PreloadValue(BitmapSource? bitmap, bool loading, FileInfo? fileInfo)
+            internal PreLoadValue(BitmapSource? bitmap, bool loading, FileInfo? fileInfo)
             {
                 BitmapSource = bitmap;
                 IsLoading = loading;
@@ -52,10 +52,10 @@ namespace PicView.ChangeImage
         /// <summary>
         /// A dictionary containing the preloaded images
         /// </summary>
-        private static readonly ConcurrentDictionary<int, PreloadValue> PreloadList = new();
+        private static readonly ConcurrentDictionary<int, PreLoadValue> PreLoadList = new();
 
         /// <summary>
-        /// Sets the number of iterations to load infront 
+        /// Sets the number of iterations to load in front 
         /// </summary>
         private const int PositiveIterations = 8;
 
@@ -67,7 +67,7 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Set the maximum number of bitmaps to be cached
         /// </summary>
-        internal const int MaxCount = PositiveIterations + NegativeIterations + 1;
+        internal const int MaxCount = PositiveIterations + NegativeIterations + 2;
 
 #if DEBUG
         // ReSharper disable once ConvertToConstant.Local
@@ -75,28 +75,28 @@ namespace PicView.ChangeImage
 #endif
 
         /// <summary>
-        /// Adds a file to the preloader from the specified index. Returns true if a new value was added.
+        /// Adds a file to the PreLoader from the specified index. Returns true if a new value was added.
         /// </summary>
         /// <param name="index">Index of the image in the list of Pics</param>
         /// <param name="fileInfo">The file info of the image</param>
         /// <param name="bitmapSource">The bitmap source of the image</param>
-        /// <returns>Preloadvalue that can be null</returns>
+        /// <returns>PreLoadValue that can be null</returns>
         internal static async Task AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
         {
             if (index < 0 || index >= Pics.Count) return;
 
             try
             {
-                var preloadValue = new PreloadValue(null, true, null);
-                var add = PreloadList.TryAdd(index, preloadValue);
+                var preLoadValue = new PreLoadValue(null, true, null);
+                var add = PreLoadList.TryAdd(index, preLoadValue);
                 if (add)
                 {
                     fileInfo ??= new FileInfo(Pics[index]);
                     bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
                                      ImageFunctions.ImageErrorMessage();
-                    preloadValue.BitmapSource = bitmapSource;
-                    preloadValue.IsLoading = false;
-                    preloadValue.FileInfo = fileInfo;
+                    preLoadValue.BitmapSource = bitmapSource;
+                    preLoadValue.IsLoading = false;
+                    preLoadValue.FileInfo = fileInfo;
 
 #if DEBUG
                     if (ShowAddRemove)
@@ -121,9 +121,9 @@ namespace PicView.ChangeImage
         {
             if (index < 0 || index >= Pics.Count) { return; }
 
-            PreloadList.TryRemove(index, out var preloadValue);
-            preloadValue.FileInfo = null;
-            _= AddAsync(index, null, preloadValue.BitmapSource).ConfigureAwait(true);
+            PreLoadList.TryRemove(index, out var preLoadValue);
+            preLoadValue.FileInfo = null;
+            _= AddAsync(index, null, preLoadValue.BitmapSource).ConfigureAwait(true);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Clear()
         {
-            PreloadList.Clear();
+            PreLoadList.Clear();
         }
 
         /// <summary>
@@ -140,9 +140,9 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="key">The corresponding filename</param>
         /// <returns></returns>
-        internal static PreloadValue? Get(int key)
+        internal static PreLoadValue? Get(int key)
         {
-            return PreloadList.TryGetValue(key, out var preloadValue) ? preloadValue : null;
+            return PreLoadList.TryGetValue(key, out var preLoadValue) ? preLoadValue : null;
         }
 
         /// <summary>
@@ -154,13 +154,13 @@ namespace PicView.ChangeImage
             if (key >= Pics?.Count || key < 0)
                 return;
 
-            if (!PreloadList.ContainsKey(key))
+            if (!PreLoadList.ContainsKey(key))
                 return;
 
             try
             {
-                _ = PreloadList[key];
-                var remove = PreloadList.TryRemove(key, out _);
+                _ = PreLoadList[key];
+                var remove = PreLoadList.TryRemove(key, out _);
 #if DEBUG
                 if (remove && ShowAddRemove)
                     Trace.WriteLine($"{Pics[key]} removed at {Pics.IndexOf(Pics[key])}");
@@ -176,7 +176,7 @@ namespace PicView.ChangeImage
         }
 
         /// <summary>
-        /// An asynchronous task that iterates through filenames and caches the decoded images to the preload list
+        /// An asynchronous task that iterates through file names and caches the decoded images to the PreLoad list
         /// </summary>
         /// <param name="currentIndex">The starting point for the iteration.</param>
         internal static Task PreLoadAsync(int currentIndex) => Task.Run(() =>
@@ -185,7 +185,7 @@ namespace PicView.ChangeImage
 
 #if DEBUG
             if (ShowAddRemove)
-                Trace.WriteLine($"\nPreloading started at {currentIndex}\n");
+                Trace.WriteLine($"\nPreLoading started at {currentIndex}\n");
 #endif
             if (!Reverse)
             {
@@ -195,19 +195,19 @@ namespace PicView.ChangeImage
 
                 Parallel.For(0, PositiveIterations, i =>
                 {
-                    int index = (nextStartingIndex + i) % Pics.Count;
+                    var index = (nextStartingIndex + i) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
                 Parallel.For(0, NegativeIterations, i =>
                 {
-                    int index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
+                    var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
                 if (Pics.Count > MaxCount + NegativeIterations)
                 {
-                    for (int i = 0; i < NegativeIterations; i++)
+                    for (var i = 0; i < NegativeIterations; i++)
                     {
-                        int index = (deleteIndex - i + Pics.Count) % Pics.Count;
+                        var index = (deleteIndex - i + Pics.Count) % Pics.Count;
                         Remove(index);
                     }
                 }
@@ -220,29 +220,29 @@ namespace PicView.ChangeImage
 
                 Parallel.For(0, PositiveIterations, i =>
                 {
-                    int index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                    var index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
                 Parallel.For(0, NegativeIterations, i =>
                 {
-                    int index = (prevStartingIndex + i) % Pics.Count;
+                    var index = (prevStartingIndex + i) % Pics.Count;
                     _ = AddAsync(index).ConfigureAwait(false);
                 });
                 if (Pics.Count > MaxCount + NegativeIterations)
                 {
-                    for (int i = 0; i < NegativeIterations; i++)
+                    for (var i = 0; i < NegativeIterations; i++)
                     {
-                        int index = (deleteIndex + i) % Pics.Count;
+                        var index = (deleteIndex + i) % Pics.Count;
                         Remove(index);
                     }
                 }
             }
 
-            while (PreloadList.Count > MaxCount)
+            while (PreLoadList.Count > MaxCount)
             {
                 try
                 {
-                    Remove(PreloadList.Keys.First());
+                    Remove(PreLoadList.Keys.Last());
                 }
                 catch (Exception e)
                 {

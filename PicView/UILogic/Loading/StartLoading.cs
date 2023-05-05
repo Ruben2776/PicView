@@ -102,36 +102,36 @@ namespace PicView.UILogic.Loading
             {
                 GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
-                Getx2.Opacity =
+                GetX2.Opacity =
                 GetMinus.Opacity =
-                GetRestorebutton.Opacity =
+                GetRestoreButton.Opacity =
                 GetGalleryShortcut.Opacity =
                 0;
 
                 GetClickArrowLeft.Visibility =
                 GetClickArrowRight.Visibility =
-                Getx2.Visibility =
+                GetX2.Visibility =
                 GetMinus.Visibility =
                 GetGalleryShortcut.Visibility =
-                GetRestorebutton.Visibility =
+                GetRestoreButton.Visibility =
                 Visibility.Visible;
             }
             else if (Settings.Default.Fullscreen)
             {
                 GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
-                Getx2.Opacity =
+                GetX2.Opacity =
                 GetMinus.Opacity =
-                GetRestorebutton.Opacity =
+                GetRestoreButton.Opacity =
                 GetGalleryShortcut.Opacity =
                 1;
 
                 GetClickArrowLeft.Visibility =
                 GetClickArrowRight.Visibility =
-                Getx2.Visibility =
+                GetX2.Visibility =
                 GetMinus.Visibility =
                 GetGalleryShortcut.Visibility =
-                GetRestorebutton.Visibility =
+                GetRestoreButton.Visibility =
                 Visibility.Visible;
             }
 

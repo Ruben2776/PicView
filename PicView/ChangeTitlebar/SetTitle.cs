@@ -153,7 +153,7 @@ namespace PicView.ChangeTitlebar
         internal static void SetTitleString()
         {
             string[]? titleString;
-            var preloadValue = Preloader.Get(FolderIndex);
+            var preloadValue = PreLoader.Get(FolderIndex);
             if (preloadValue is null)
             {
                 if (ConfigureWindows.GetMainWindow.MainImage.Source is null)

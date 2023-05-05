@@ -44,7 +44,7 @@ namespace PicView.UILogic
                 }
             }
 
-            bool toReturn = false;
+            var toReturn = false;
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
@@ -53,11 +53,9 @@ namespace PicView.UILogic
                     toReturn = true;
                 }
 
-                if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
-                {
-                    Clear();
-                    toReturn = true;
-                }
+                if (ConfigureWindows.GetMainWindow.MainImage.Source != null) return;
+                Clear();
+                toReturn = true;
             }, DispatcherPriority.DataBind);
 
             if (toReturn) { return; }
@@ -430,10 +428,10 @@ namespace PicView.UILogic
             }
 
             var castRating = rating.GetType();
-            if (castRating.Equals(typeof(int))) // Try and convert to int to avoid exception
+            if (castRating == typeof(int)) // Try and convert to int to avoid exception
             {
-                int intRating = (int)rating;
-                intRating = intRating >= 0 && intRating <= 5 ? intRating : 0;
+                var intRating = (int)rating;
+                intRating = intRating is >= 0 and <= 5 ? intRating : 0;
                 UpdateStars((intRating));
                 return;
             }
@@ -444,7 +442,7 @@ namespace PicView.UILogic
                 return;
             }
 
-            int percent = Convert.ToInt32(rating.ToString());
+            var percent = Convert.ToInt32(rating.ToString());
             var stars = Math.Ceiling(percent / 20d);
 
             UpdateStars((int)stars);

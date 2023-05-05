@@ -15,6 +15,7 @@ namespace PicView.Shortcuts
     {
         internal static async Task QuickResizePreviewKeys(KeyEventArgs e, string width, string height)
         {
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (e.Key)
             {
                 case Key.D0:
@@ -138,9 +139,9 @@ namespace PicView.Shortcuts
 
         private static async Task<bool> FireResizeAsync(string widthText, string heightText)
         {
-            var fileInfo = Preloader.Get(Navigation.FolderIndex)?.FileInfo;
+            var fileInfo = PreLoader.Get(Navigation.FolderIndex)?.FileInfo;
             fileInfo ??= new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            Preloader.Remove(Navigation.FolderIndex);
+            PreLoader.Remove(Navigation.FolderIndex);
             if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
             {
                 var resize = await ImageSizeFunctions.ResizeImageAsync(fileInfo, width, height, 0).ConfigureAwait(false);

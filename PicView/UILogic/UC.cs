@@ -10,9 +10,11 @@ using PicView.Views.UserControls.Misc;
 
 namespace PicView.UILogic
 {
+    // ReSharper disable once InconsistentNaming
     internal static class UC
     {
-        internal static StartUpUC? GetStartUpUC { get; set; }
+        // ReSharper disable once InconsistentNaming
+        internal static StartUpUC? GetStartUpUC { get; private set; }
         internal static ImageSettings? GetImageSettingsMenu { get; set; }
         internal static FileMenu? GetFileMenu { get; set; }
         internal static QuickSettingsMenu? GetQuickSettingsMenu { get; set; }
@@ -21,20 +23,20 @@ namespace PicView.UILogic
         internal static AutoScrollSign? GetAutoScrollSign { get; set; }
         internal static ClickArrow? GetClickArrowLeft { get; set; }
         internal static ClickArrow? GetClickArrowRight { get; set; }
-        internal static X2? Getx2 { get; set; }
+        internal static X2? GetX2 { get; set; }
         internal static Minus? GetMinus { get; set; }
-        internal static Restorebutton? GetRestorebutton { get; set; }
+        internal static Restorebutton? GetRestoreButton { get; set; }
         internal static Views.UserControls.Gallery.PicGallery? GetPicGallery { get; set; }
         internal static GalleryShortcut? GetGalleryShortcut { get; set; }
-        internal static CroppingTool? GetCropppingTool { get; set; }
+        internal static CroppingTool? GetCroppingTool { get; set; }
         internal static ColorPicker? GetColorPicker { get; set; }
         internal static GripButton? GetGripButton { get; set; }
         internal static QuickResize? GetQuickResize { get; set; }
 
-        private static bool imageSettingsMenuOpen;
-        private static bool fileMenuOpen;
-        private static bool quickSettingsMenuOpen;
-        private static bool toolsAndEffectsMenuOpen;
+        private static bool _imageSettingsMenuOpen;
+        private static bool _fileMenuOpen;
+        private static bool _quickSettingsMenuOpen;
+        private static bool _toolsAndEffectsMenuOpen;
 
         #region Toggle open close menus
 
@@ -43,10 +45,10 @@ namespace PicView.UILogic
         /// </summary>
         internal static bool ImageSettingsMenuOpen
         {
-            get { return imageSettingsMenuOpen; }
-            set
+            get => _imageSettingsMenuOpen;
+            private set
             {
-                imageSettingsMenuOpen = value;
+                _imageSettingsMenuOpen = value;
                 GetImageSettingsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
@@ -59,20 +61,16 @@ namespace PicView.UILogic
                     da.To = 1;
                     Tooltip.CloseToolTipMessage();
                 }
+                
+                // ReSharper disable once ConstantConditionalAccessQualifier
+                GetImageSettingsMenu?.BeginAnimation(UIElement.OpacityProperty, da);
 
-                if (GetImageSettingsMenu != null)
+                if (GetImageSettingsMenu == null) return;
+                if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
                 {
-                    GetImageSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
-                }
-
-                if (GetImageSettingsMenu != null)
-                {
-                    if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
-                    {
-                        GetImageSettingsMenu.GoToPic.GoToPicBox.Text =
-                            (Navigation.FolderIndex + 1)
-                            .ToString(CultureInfo.CurrentCulture);
-                    }
+                    GetImageSettingsMenu.GoToPic.GoToPicBox.Text =
+                        (Navigation.FolderIndex + 1)
+                        .ToString(CultureInfo.CurrentCulture);
                 }
             }
         }
@@ -82,10 +80,10 @@ namespace PicView.UILogic
         /// </summary>
         internal static bool FileMenuOpen
         {
-            get { return fileMenuOpen; }
-            set
+            get => _fileMenuOpen;
+            private set
             {
-                fileMenuOpen = value;
+                _fileMenuOpen = value;
                 GetFileMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
@@ -99,10 +97,8 @@ namespace PicView.UILogic
                     Tooltip.CloseToolTipMessage();
                 }
 
-                if (GetFileMenu != null)
-                {
-                    GetFileMenu.BeginAnimation(UIElement.OpacityProperty, da);
-                }
+                // ReSharper disable once ConstantConditionalAccessQualifier
+                GetFileMenu?.BeginAnimation(UIElement.OpacityProperty, da);
             }
         }
 
@@ -111,15 +107,15 @@ namespace PicView.UILogic
         /// </summary>
         internal static bool QuickSettingsMenuOpen
         {
-            get { return quickSettingsMenuOpen; }
-            set
+            get => _quickSettingsMenuOpen;
+            private set
             {
                 if (GetQuickSettingsMenu == null)
                 {
                     return;
                 }
 
-                quickSettingsMenuOpen = value;
+                _quickSettingsMenuOpen = value;
                 GetQuickSettingsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
@@ -135,7 +131,9 @@ namespace PicView.UILogic
                     da.To = 1;
                     Tooltip.CloseToolTipMessage();
                 }
-                GetQuickSettingsMenu.BeginAnimation(UIElement.OpacityProperty, da);
+
+                // ReSharper disable once ConstantConditionalAccessQualifier
+                GetQuickSettingsMenu?.BeginAnimation(UIElement.OpacityProperty, da);
             }
         }
 
@@ -144,10 +142,10 @@ namespace PicView.UILogic
         /// </summary>
         internal static bool ToolsAndEffectsMenuOpen
         {
-            get { return toolsAndEffectsMenuOpen; }
-            set
+            get => _toolsAndEffectsMenuOpen;
+            private set
             {
-                toolsAndEffectsMenuOpen = value;
+                _toolsAndEffectsMenuOpen = value;
                 GetToolsAndEffectsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
@@ -161,10 +159,8 @@ namespace PicView.UILogic
                     Tooltip.CloseToolTipMessage();
                 }
 
-                if (GetToolsAndEffectsMenu != null)
-                {
-                    GetToolsAndEffectsMenu.BeginAnimation(UIElement.OpacityProperty, da);
-                }
+                // ReSharper disable once ConstantConditionalAccessQualifier
+                GetToolsAndEffectsMenu?.BeginAnimation(UIElement.OpacityProperty, da);
             }
         }
 

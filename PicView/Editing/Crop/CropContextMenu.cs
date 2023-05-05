@@ -68,7 +68,7 @@ namespace PicView.Editing.Crop
 
             contextMenu.Items.Add(closeCm);
 
-            UC.GetCropppingTool.ContextMenu = contextMenu;
+            UC.GetCroppingTool.ContextMenu = contextMenu;
         }
     }
 }

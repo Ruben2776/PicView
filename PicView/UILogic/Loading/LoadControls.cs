@@ -53,7 +53,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void Loadx2()
         {
-            Getx2 = new X2
+            GetX2 = new X2
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -62,10 +62,10 @@ namespace PicView.UILogic.Loading
                 ToolTip = Application.Current.Resources["Close"]
             };
 
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(Getx2);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetX2);
 
 #if DEBUG
-            Trace.WriteLine(nameof(Getx2) + " loaded ");
+            Trace.WriteLine(nameof(GetX2) + " loaded ");
 #endif
         }
 
@@ -95,7 +95,7 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void LoadRestoreButton()
         {
-            GetRestorebutton = new Restorebutton
+            GetRestoreButton = new Restorebutton
             {
                 Focusable = false,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -104,10 +104,10 @@ namespace PicView.UILogic.Loading
                 Margin = new Thickness(0, 0, 50, 0)
             };
 
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetRestorebutton);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetRestoreButton);
 
 #if DEBUG
-            Trace.WriteLine(nameof(GetRestorebutton) + " loaded ");
+            Trace.WriteLine(nameof(GetRestoreButton) + " loaded ");
 #endif
         }
 
@@ -268,12 +268,12 @@ namespace PicView.UILogic.Loading
         /// </summary>
         internal static void LoadCroppingTool()
         {
-            GetCropppingTool = new CroppingTool();
+            GetCroppingTool = new CroppingTool();
 
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCropppingTool);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCroppingTool);
 
 #if DEBUG
-            Trace.WriteLine(nameof(GetCropppingTool) + " loaded ");
+            Trace.WriteLine(nameof(GetCroppingTool) + " loaded ");
 #endif
         }
 

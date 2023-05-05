@@ -7,11 +7,11 @@ namespace PicView.UILogic
 {
     internal static class ConfigureWindows
     {
-        internal static SettingsWindow? GetSettingsWindow { get; set; }
-        internal static InfoWindow? GetInfoWindow { get; set; }
-        internal static EffectsWindow? GetEffectsWindow { get; set; }
-        internal static ImageInfoWindow? GetImageInfoWindow { get; set; }
-        internal static ResizeWindow? GetResizeWindow { get; set; }
+        internal static SettingsWindow? GetSettingsWindow { get; private set; }
+        internal static InfoWindow? GetInfoWindow { get; private set; }
+        internal static EffectsWindow? GetEffectsWindow { get; private set; }
+        internal static ImageInfoWindow? GetImageInfoWindow { get; private set; }
+        internal static ResizeWindow? GetResizeWindow { get; private set; }
 
         /// <summary>
         /// The Main Window?
@@ -27,7 +27,7 @@ namespace PicView.UILogic
 
         internal static bool IsMainWindowTopMost
         {
-            get { return Settings.Default.TopMost; }
+            get => Settings.Default.TopMost;
             set
             {
                 Settings.Default.TopMost = value;

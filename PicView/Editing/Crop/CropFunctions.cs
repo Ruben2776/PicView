@@ -26,19 +26,19 @@ namespace PicView.Editing.Crop
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
             if (RotationAngle is not 0 && !ZoomLogic.IsZoomed) { return; }
 
-            if (GetCropppingTool == null)
+            if (GetCroppingTool == null)
             {
                 LoadControls.LoadCroppingTool();
             }
 
-            GetCropppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
+            GetCroppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
+            GetCroppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
 
             ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
 
-            if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetCropppingTool))
+            if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetCroppingTool))
             {
-                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCropppingTool);
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCroppingTool);
             }
         }
 
@@ -63,18 +63,18 @@ namespace PicView.Editing.Crop
             {
                 SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
             }
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCroppingTool);
         }
 
         internal static void InitializeCrop()
         {
-            GetCropppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
+            GetCroppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
+            GetCroppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
 
-            CropService = new CropService(GetCropppingTool);
+            CropService = new CropService(GetCroppingTool);
 
             var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-            GetCropppingTool.RootGrid.Background =
+            GetCroppingTool.RootGrid.Background =
                 new SolidColorBrush(Color.FromArgb(
                     25,
                     chosenColorBrush.Color.R,
@@ -82,8 +82,8 @@ namespace PicView.Editing.Crop
                     chosenColorBrush.Color.B
                 ));
 
-            GetCropppingTool.RootGrid.PreviewMouseDown += (_, e) => CropService.Adorner.RaiseEvent(e);
-            GetCropppingTool.RootGrid.PreviewMouseLeftButtonUp += (_, e) => CropService.Adorner.RaiseEvent(e);
+            GetCroppingTool.RootGrid.PreviewMouseDown += (_, e) => CropService.Adorner.RaiseEvent(e);
+            GetCroppingTool.RootGrid.PreviewMouseLeftButtonUp += (_, e) => CropService.Adorner.RaiseEvent(e);
         }
 
         /// <summary>

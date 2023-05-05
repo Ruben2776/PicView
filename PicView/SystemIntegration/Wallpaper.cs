@@ -39,12 +39,11 @@ namespace PicView.SystemIntegration
                 Application.Current.MainWindow!.Cursor = Cursors.Wait;
             });
 
-            var hasEffect = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
             var rotationAngle = Rotation.RotationAngle;
             var isFlipped = Rotation.IsFlipped;
-            var shouldSaveImage = hasEffect || rotationAngle != 0 || isFlipped;
+            var shouldSaveImage = effectApplied || rotationAngle != 0 || isFlipped;
             var checkOutOfRange = ErrorHandling.CheckOutOfRange();
-            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
             BitmapSource? bitmapSource = null;
             string? imagePath = null;
@@ -65,7 +64,7 @@ namespace PicView.SystemIntegration
                     imagePath = Navigation.Pics[Navigation.FolderIndex];
                 }
 
-                await SaveImages.SaveImageAsync(rotationAngle, isFlipped, bitmapSource, imagePath, destinationPath, null, hasEffect).ConfigureAwait(false);
+                await SaveImages.SaveImageAsync(rotationAngle, isFlipped, bitmapSource, imagePath, destinationPath, null, effectApplied).ConfigureAwait(false);
                 SetDesktopWallpaper(destinationPath, style);
             }
             else

@@ -53,7 +53,7 @@ namespace PicView.Shortcuts
 
             #region CroppingKeys
 
-            if (GetCropppingTool is { IsVisible: true })
+            if (GetCroppingTool is { IsVisible: true })
             {
                 switch (e.Key)
                 {
@@ -288,7 +288,7 @@ namespace PicView.Shortcuts
                         }
                         else if (!MainContextMenu.IsVisible)
                         {
-                            if (GetCropppingTool != null && GetCropppingTool.IsVisible)
+                            if (GetCroppingTool != null && GetCroppingTool.IsVisible)
                             {
                                 return;
                             }

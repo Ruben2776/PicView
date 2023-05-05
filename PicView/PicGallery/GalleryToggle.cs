@@ -41,9 +41,9 @@ namespace PicView.PicGallery
 
                 GetClickArrowLeft.Visibility =
                 GetClickArrowRight.Visibility =
-                Getx2.Visibility =
+                GetX2.Visibility =
                 GetMinus.Visibility =
-                GetRestorebutton.Visibility =
+                GetRestoreButton.Visibility =
                 GetGalleryShortcut.Visibility = Visibility.Hidden;
             });
 

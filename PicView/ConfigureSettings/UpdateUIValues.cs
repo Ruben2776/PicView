@@ -32,10 +32,10 @@ namespace PicView.ConfigureSettings
 
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, SetTitle.SetLoadingString);
 
-            var preloadValue = Preloader.Get(Navigation.FolderIndex);
+            var preloadValue = PreLoader.Get(Navigation.FolderIndex);
             var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
             
-            Preloader.Clear();
+            PreLoader.Clear();
             var sortGallery = false;
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
@@ -62,7 +62,7 @@ namespace PicView.ConfigureSettings
             }
 
             Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
-            await Preloader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+            await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
             await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
         }
 
@@ -194,7 +194,7 @@ namespace PicView.ConfigureSettings
             Settings.Default.Save();
 
             if (ErrorHandling.CheckOutOfRange()) { return; }
-            var preloadValue = Preloader.Get(Navigation.FolderIndex);
+            var preloadValue = PreLoader.Get(Navigation.FolderIndex);
             if (preloadValue is null) { return; }
             Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
 

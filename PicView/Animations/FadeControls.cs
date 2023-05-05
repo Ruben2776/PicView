@@ -26,7 +26,7 @@ namespace PicView.Animations
             if (Settings.Default.ShowInterface && Settings.Default.Fullscreen == false
                 || GetClickArrowRight == null
                 || GetClickArrowLeft == null
-                || Getx2 == null
+                || GetX2 == null
                 || GetGalleryShortcut == null
                 || Scroll.IsAutoScrolling
                 || GalleryFunctions.IsHorizontalFullscreenOpen
@@ -37,7 +37,7 @@ namespace PicView.Animations
 
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {
-                if (GetCropppingTool is {IsVisible: true})
+                if (GetCroppingTool is {IsVisible: true})
                 {
                     return;
                 }
@@ -48,7 +48,7 @@ namespace PicView.Animations
                 }
 
                 // Don't run, if already being animated || prevent lag
-                if (Getx2.Opacity is > 0 and < 1)
+                if (GetX2.Opacity is > 0 and < 1)
                 {
                     return;
                 }
@@ -58,7 +58,7 @@ namespace PicView.Animations
                     GetClickArrowLeft.Opacity =
                     GetClickArrowRight.Opacity =
                     GetGalleryShortcut.Opacity =
-                    Getx2.Opacity =
+                    GetX2.Opacity =
                     GetMinus.Opacity = 0;
                     return;
                 }
@@ -70,9 +70,9 @@ namespace PicView.Animations
                 AnimationHelper.Fade(GetClickArrowLeft, opacity, timespan);
                 AnimationHelper.Fade(GetClickArrowRight, opacity, timespan);
                 AnimationHelper.Fade(GetGalleryShortcut, opacity, timespan);
-                AnimationHelper.Fade(Getx2, opacity, timespan);
+                AnimationHelper.Fade(GetX2, opacity, timespan);
                 AnimationHelper.Fade(GetMinus, opacity, timespan);
-                AnimationHelper.Fade(GetRestorebutton, opacity, timespan);
+                AnimationHelper.Fade(GetRestoreButton, opacity, timespan);
             }));
         }
 

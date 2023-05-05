@@ -59,14 +59,14 @@ namespace PicView.ImageHandling
 
             if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex)
             {
-                var preloadValue = Preloader.Get(Navigation.FolderIndex);
+                var preloadValue = PreLoader.Get(Navigation.FolderIndex);
                 if (preloadValue is null)
                 {
-                    await Preloader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-                    preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
+                    await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
+                    preloadValue = new PreLoader.PreLoadValue(null, false, fileInfo);
                     if (preloadValue is null)
                     {
-                        preloadValue = new Preloader.PreloadValue(null, false, fileInfo);
+                        preloadValue = new PreLoader.PreLoadValue(null, false, fileInfo);
                         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => preloadValue.BitmapSource = ImageDecoder.GetRenderedBitmapFrame());
                     }
                 }

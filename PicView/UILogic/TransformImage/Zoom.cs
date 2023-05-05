@@ -244,7 +244,7 @@ namespace PicView.UILogic.TransformImage
         internal static void Zoom(bool isZoomIn)
         {
             // Disable zoom if cropping tool is active
-            if (UC.GetCropppingTool != null && UC.GetCropppingTool.IsVisible)
+            if (UC.GetCroppingTool != null && UC.GetCroppingTool.IsVisible)
             {
                 return;
             }

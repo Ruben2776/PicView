@@ -15,6 +15,7 @@ namespace PicView.UILogic
         /// <param name="time">How long until it fades away</param>
         internal static void ShowTooltipMessage(object message, bool center, TimeSpan time)
         {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (GetToolTipMessage == null || message == null)
             {
                 return;
@@ -44,6 +45,7 @@ namespace PicView.UILogic
         /// Shows a black tooltip on screen for a small time
         /// </summary>
         /// <param name="message">The message to display</param>
+        /// <param name="center"></param>
         internal static void ShowTooltipMessage(object message, bool center = false)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
@@ -53,7 +55,7 @@ namespace PicView.UILogic
         }
 
         /// <summary>
-        /// Hides the Messagebox ToolTipStyle
+        /// Hides the MessageBox ToolTipStyle
         /// </summary>
         internal static void CloseToolTipMessage()
         {

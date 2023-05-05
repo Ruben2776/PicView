@@ -27,7 +27,7 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {
                 value = Pics.Count < FolderIndex || Pics.Count < 1 ||
-                        UC.GetCropppingTool is { IsVisible: true } || (UC.GetQuickResize?.Opacity > 0);
+                        UC.GetCroppingTool is { IsVisible: true } || (UC.GetQuickResize?.Opacity > 0);
             }));
             return value;
         }
@@ -130,7 +130,7 @@ namespace PicView.ChangeImage
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(GalleryFunctions.Clear));
             }
 
-            Preloader.Clear();
+            PreLoader.Clear();
             DeleteTempFiles();
         }
 
@@ -197,7 +197,7 @@ namespace PicView.ChangeImage
 
         private static async Task ResetValues(FileInfo fileInfo)
         {
-            Preloader.Clear();
+            PreLoader.Clear();
             Pics = FileLists.FileList(fileInfo);
 
             bool containerCheck = false;
@@ -237,7 +237,7 @@ namespace PicView.ChangeImage
 
             Pics?.Clear();
 
-            Preloader.Clear();
+            PreLoader.Clear();
             GalleryFunctions.Clear();
             ScaleImage.XWidth = ScaleImage.XHeight = 0;
 

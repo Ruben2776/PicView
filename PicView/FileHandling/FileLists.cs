@@ -84,6 +84,7 @@ namespace PicView.FileHandling
 
             // Get the directory path based on whether the file is a directory or not
             var directory = isDirectory ? fileInfo.FullName : fileInfo.DirectoryName;
+            if (directory is null) return null; 
 
             // Check if the subdirectories are to be included in the search
             var searchOption = Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempZipFile)

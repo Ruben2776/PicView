@@ -97,11 +97,11 @@ namespace PicView.ChangeImage
                     }
                     break;
                 case NavigateTo.First:
-                    if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+                    if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
                     next = 0;
                     break;
                 case NavigateTo.Last:
-                    if (Pics.Count > Preloader.MaxCount) Preloader.Clear();
+                    if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
                     next = Pics.Count - 1;
                     break;
                 default: return;
