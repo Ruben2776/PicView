@@ -27,9 +27,14 @@ namespace PicView.ChangeImage
         {
             InitialPath = file;
             var fileInfo = new FileInfo(file);
-            if (!fileInfo.Exists) // If not file, try to load if URL, base64, archive or directory
+            if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
             {
                 await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
+                return;
+            }
+            if (file.IsArchive())
+            {
+                await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
                 return;
             }
 

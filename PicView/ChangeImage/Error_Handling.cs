@@ -221,15 +221,20 @@ namespace PicView.ChangeImage
         /// </summary>
         internal static void Unload(bool showStartup)
         {
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["NoImage"];
-            ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
-            ConfigureWindows.GetMainWindow.MainImage.Source = null;
-            ConfigureWindows.GetMainWindow.MainImage.Width = 0;
-            ConfigureWindows.GetMainWindow.MainImage.Height = 0;
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke((Action)(() =>
+            {
+                ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text =
+                    (string)Application.Current.Resources["NoImage"];
+                ConfigureWindows.GetMainWindow.Title = Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
+                ConfigureWindows.GetMainWindow.MainImage.Source = null;
+                ConfigureWindows.GetMainWindow.MainImage.Width = 0;
+                ConfigureWindows.GetMainWindow.MainImage.Height = 0;
 
-            WindowSizing.SetWindowBehavior();
+                WindowSizing.SetWindowBehavior();
 
-            UC.ToggleStartUpUC(!showStartup);
+                UC.ToggleStartUpUC(!showStartup);
+            }));
+
             Pics?.Clear();
 
             Preloader.Clear();

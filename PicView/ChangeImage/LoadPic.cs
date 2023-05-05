@@ -45,6 +45,10 @@ namespace PicView.ChangeImage
                         await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
                     }
                 }
+                else if (path is not null && !string.IsNullOrWhiteSpace(path.GetURL()) || !string.IsNullOrWhiteSpace(fileInfo.LinkTarget.GetURL()))
+                {
+                    await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
+                }
                 else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
                 {
                     await LoadPicFromFolderAsync(fileInfo, 0).ConfigureAwait(false);
@@ -220,9 +224,16 @@ namespace PicView.ChangeImage
 
             Pics = FileList(fileInfo);
 
-            if (Pics.Count <= 0)
+            if (Pics.Count <= 0) // If no files, reload if possible or unload if not
             {
-                await ReloadAsync().ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(BackupPath))
+                {
+                    await ReloadAsync(true).ConfigureAwait(false);
+                }
+                else
+                {
+                    Unload(true);
+                }
                 return;
             }
 
