@@ -46,7 +46,7 @@ namespace PicView.ChangeTitlebar
             }
 
             // Check index validity
-            if (Pics?.Count < index || index >= Pics.Count)
+            if (index < 0 || index >= Pics.Count)
             {
                 return ReturnError("index invalid");
             }
