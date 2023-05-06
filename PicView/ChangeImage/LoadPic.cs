@@ -318,17 +318,26 @@ namespace PicView.ChangeImage
         #endregion
 
         #region Loading Preview
-        
+
         /// <summary>
         /// Loads a thumbnail preview of an image file and displays a loading message while it's being loaded.
         /// </summary>
         /// <param name="fileInfo">The file information of the image to be loaded.</param>
-        internal static void LoadingPreview(FileInfo fileInfo, bool showloading = true)
+        /// <param name="showLoading"></param>
+        internal static void LoadingPreview(FileInfo fileInfo, bool showLoading = true)
         {
-            var bitmapSourceHolder = Thumbnails.GetBitmapSourceThumb(fileInfo);
+            var isLogo = false;
+            var thumb = Thumbnails.GetThumb(FolderIndex, fileInfo);
+            if (thumb is null)
+            {
+                thumb = ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+                isLogo = true;
+            }
+
+            var bitmapSourceHolder = new Thumbnails.LogoOrThumbHolder(thumb, isLogo);
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
             {
-                if (showloading)
+                if (showLoading)
                 {
                     // Set Loading
                     SetLoadingString();

@@ -152,8 +152,22 @@ namespace PicView.PicGallery
                 }
 
                 Add(i, index);
-                await UpdatePic(i).ConfigureAwait(false);
             }
+
+            for (var i = 0; i < count; i++)
+            {
+                if (count != Navigation.Pics.Count)
+                {
+                    throw new TaskCanceledException();
+                }
+
+                Add(i, index);
+            }
+
+            Parallel.For(0, count, i =>
+            {
+                _= UpdatePic(i).ConfigureAwait(false);
+            });
         }
 
         internal static void Add(int i, int index)

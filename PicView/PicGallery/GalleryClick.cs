@@ -61,7 +61,7 @@ namespace PicView.PicGallery
 
             var da = new DoubleAnimation
             {
-                From = 0,
+                From = from,
                 To = to[0],
                 Duration = duration,
                 AccelerationRatio = acceleration,
@@ -71,7 +71,7 @@ namespace PicView.PicGallery
 
             var da0 = new DoubleAnimation
             {
-                From = 0,
+                From = from,
                 To = to[1],
                 Duration = duration,
                 AccelerationRatio = acceleration,
@@ -95,7 +95,7 @@ namespace PicView.PicGallery
 
             image = new Image
             {
-                Source = GetThumb(id),
+                Source = GetThumb(id) ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(),
                 Stretch = Stretch.Fill,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
