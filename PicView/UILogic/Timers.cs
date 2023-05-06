@@ -34,10 +34,7 @@ namespace PicView.UILogic
             {
                 try
                 {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
-                    {
-                        GalleryNavigation.ScrollTo();
-                    }));
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(GalleryNavigation.ScrollTo));
                 }
                 catch (Exception)
                 {

@@ -70,7 +70,7 @@ namespace PicView.ImageHandling
 
         internal static LogoOrThumbHolder GetBitmapSourceThumb(FileInfo fileInfo, int size = 500)
         {
-            if (fileInfo.Length > 2e+7)
+            if (fileInfo.Length > 1e+9)
             {
                 return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
             }

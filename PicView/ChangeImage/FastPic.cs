@@ -1,7 +1,6 @@
-﻿using System.IO;
+﻿using PicView.ImageHandling;
+using System.IO;
 using System.Windows.Media.Imaging;
-using PicView.ImageHandling;
-using PicView.SystemIntegration;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -33,13 +32,13 @@ namespace PicView.ChangeImage
             BitmapSource? pic;
             _updateSource = true; // Update it when key released
 
-            var preloadValue = PreLoader.Get(index);
+            var preLoadValue = PreLoader.Get(index);
 
-            if (preloadValue != null)
+            if (preLoadValue != null)
             {
-                fileInfo = preloadValue.FileInfo ?? new FileInfo(Pics[index]);
+                fileInfo = preLoadValue.FileInfo ?? new FileInfo(Pics[index]);
                 var showThumb = true;
-                while (preloadValue.IsLoading)
+                while (preLoadValue.IsLoading)
                 {
                     if (showThumb)
                     {
@@ -48,25 +47,22 @@ namespace PicView.ChangeImage
                     }
                     await Task.Delay(10).ConfigureAwait(false);
                 }
-                pic = preloadValue.BitmapSource;
             }
             else
             {
                 fileInfo = new FileInfo(Pics[index]);
                 LoadPic.LoadingPreview(fileInfo);
                 await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
-                preloadValue = PreLoader.Get(index);
-                if (preloadValue is null)
+                preLoadValue = PreLoader.Get(index);
+                if (preLoadValue is null)
                 {
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
                     return;
                 }
-
-                pic = preloadValue.BitmapSource;
             }
 
-            Taskbar.Progress((double)index / Pics.Count);
-            await UpdateImage.UpdateImageAsync(index, pic, fileInfo).ConfigureAwait(false);
+            await UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
+
             _updateSource = false;
             await PreLoader.PreLoadAsync(index).ConfigureAwait(false);
         }
@@ -78,27 +74,25 @@ namespace PicView.ChangeImage
             if (_updateSource == false) { return; }
 
             // Update picture in case it didn't load. Won't happen normally
-            
-            BitmapSource? pic;
-            var preloadValue = PreLoader.Get(FolderIndex);
-            if (preloadValue is null)
+
+            var preLoadValue = PreLoader.Get(FolderIndex);
+            if (preLoadValue is null)
             {
                 await PreLoader.AddAsync(FolderIndex).ConfigureAwait(false);
-                preloadValue = PreLoader.Get(FolderIndex);
-                if (preloadValue is null)
+                preLoadValue = PreLoader.Get(FolderIndex);
+                if (preLoadValue is null)
                 {
                     var fileInfo = new FileInfo(Pics[FolderIndex]);
                     var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
                                          ImageFunctions.ImageErrorMessage();
-                    preloadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
+                    preLoadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
                 }
             }
-            while (preloadValue.IsLoading)
+            while (preLoadValue.IsLoading)
             {
                 await Task.Delay(10).ConfigureAwait(false);
             }
-            pic = preloadValue.BitmapSource;
-            await UpdateImage.UpdateImageAsync(FolderIndex, pic, preloadValue.FileInfo).ConfigureAwait(false);
+            await UpdateImage.UpdateImageAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
         }
     }
 }

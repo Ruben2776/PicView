@@ -1,17 +1,20 @@
-﻿using System.IO;
+﻿using PicView.FileHandling;
+using PicView.ImageHandling;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.SystemIntegration;
+using PicView.UILogic;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
+using static PicView.ChangeImage.PreLoader;
 using static PicView.ChangeTitlebar.SetTitle;
+using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
@@ -25,13 +28,12 @@ namespace PicView.ChangeImage
         /// Update picture, size it and set the title from index
         /// </summary>
         /// <param name="index"></param>
-        /// <param name="bitmapSource"></param>
-        /// <param name="fileInfo"></param>
-        internal static async Task UpdateImageAsync(int index, BitmapSource? bitmapSource, FileInfo? fileInfo = null)
+        /// <param name="preLoadValue"></param>
+        internal static async Task UpdateImageAsync(int index, PreLoadValue preLoadValue)
         {
-            bitmapSource ??= ImageFunctions.ImageErrorMessage();
+            preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
 
-            var ext = fileInfo is null ? Path.GetExtension(Pics[index]) : fileInfo.Extension;
+            var ext = preLoadValue.FileInfo is null ? Path.GetExtension(Pics[index]) : preLoadValue.FileInfo.Extension;
             var isGif = ext.Equals(".gif", StringComparison.OrdinalIgnoreCase);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
@@ -41,14 +43,14 @@ namespace PicView.ChangeImage
                 }
                 else
                 {
-                    ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                    ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
                 }
             }, DispatcherPriority.Send);
 
-            var titleString = TitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, index, fileInfo);
+            var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight, index, preLoadValue.FileInfo);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+                FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
 
                 ConfigureWindows.GetMainWindow.Title = titleString[0];
                 ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
@@ -73,6 +75,30 @@ namespace PicView.ChangeImage
 
                 ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
             }, DispatcherPriority.Send);
+
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
+                GalleryNavigation.FullscreenGalleryNavigation();
+
+            if (GetToolTipMessage is { IsVisible: true })
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);
+
+            if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
+                await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
+
+            if (Pics.Count > 1)
+            {
+                Taskbar.Progress((double)index / Pics.Count);
+
+                await AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
+                await PreLoadAsync(index).ConfigureAwait(false);
+            }
+
+            // Add recent files, except when browsing archive
+            if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > index)
+            {
+                GetFileHistory ??= new FileHistory();
+                GetFileHistory.Add(Pics[index]);
+            }
         }
 
         /// <summary>

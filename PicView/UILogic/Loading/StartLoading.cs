@@ -1,12 +1,9 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ConfigureSettings;
-using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
-using static PicView.ChangeImage.ErrorHandling;
+using System.Windows;
+using System.Windows.Controls;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
 using static PicView.UILogic.Loading.LoadControls;

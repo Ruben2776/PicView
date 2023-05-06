@@ -131,6 +131,8 @@ namespace PicView.UILogic.Sizing
                     break;
             }
 
+            if (width * AspectRatio < 0 || height * AspectRatio < 0) return; // Fix weird error when entering fullscreen gallery
+
             if (Settings.Default.ScrollEnabled)
             {
                 GetMainWindow.MainImage.Height = maxWidth * height / width;

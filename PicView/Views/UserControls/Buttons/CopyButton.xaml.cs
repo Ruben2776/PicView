@@ -13,7 +13,7 @@ namespace PicView.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                if (Properties.Settings.Default.DarkTheme)
+                if (Settings.Default.DarkTheme)
                 {
                     SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
                 }

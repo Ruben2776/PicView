@@ -269,8 +269,8 @@ namespace PicView.ChangeImage
         internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
         {
             FolderIndex = index;
-            var preloadValue = PreLoader.Get(index);
-            fileInfo ??= preloadValue?.FileInfo ?? new FileInfo(Pics[index]);
+            var preLoadValue = PreLoader.Get(index);
+            fileInfo ??= preLoadValue?.FileInfo ?? new FileInfo(Pics[index]);
 
             if (!fileInfo.Exists)
             {
@@ -291,18 +291,18 @@ namespace PicView.ChangeImage
 
             // If the preload value for the image is null or the image is still loading,
             // display the loading preview and wait until the image is loaded.
-            if (preloadValue is null or { IsLoading : true })
+            if (preLoadValue is null or { IsLoading : true })
             {
                 LoadingPreview(fileInfo);
 
-                if (preloadValue is null)
+                if (preLoadValue is null)
                 {
                     var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
                                          ImageFunctions.ImageErrorMessage();
-                    preloadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
+                    preLoadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
                     if (index != FolderIndex) return;
                 }
-                while (preloadValue.IsLoading)
+                while (preLoadValue.IsLoading)
                 {
                     await Task.Delay(10).ConfigureAwait(false);
 
@@ -312,31 +312,7 @@ namespace PicView.ChangeImage
 
             if (index != FolderIndex) return; // Skip loading if user went to next value
 
-            await UpdateImage.UpdateImageAsync(index, preloadValue.BitmapSource, preloadValue.FileInfo).ConfigureAwait(false);
-
-            if (GalleryFunctions.IsHorizontalFullscreenOpen)
-                GalleryNavigation.FullscreenGalleryNavigation();
-
-            if (GetToolTipMessage is { IsVisible : true })
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);
-
-            if (ConfigureWindows.GetImageInfoWindow is { IsVisible : true})
-                await ImageInfo.UpdateValuesAsync(preloadValue.FileInfo).ConfigureAwait(false);
-
-            if (Pics.Count > 1)
-            {
-                Taskbar.Progress((double)index / Pics.Count);
-
-                await PreLoader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
-                await PreLoader.PreLoadAsync(index).ConfigureAwait(false);
-            }
-
-            // Add recent files, except when browsing archive
-            if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > index)
-            {
-                GetFileHistory ??= new FileHistory();
-                GetFileHistory.Add(Pics[index]);
-            }
+            await UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
         }
         
         #endregion
