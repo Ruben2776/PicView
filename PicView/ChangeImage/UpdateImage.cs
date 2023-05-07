@@ -32,9 +32,8 @@ internal static class UpdateImage
     internal static async Task UpdateImageAsync(int index, PreLoadValue preLoadValue)
     {
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
-
-        var ext = preLoadValue.FileInfo is null ? Path.GetExtension(Pics[index]) : preLoadValue.FileInfo.Extension;
-        var isGif = ext.Equals(".gif", StringComparison.OrdinalIgnoreCase);
+        var isGif = preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase);
+        
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             if (isGif) // Loads gif from XamlAnimatedGif if necessary   
@@ -47,7 +46,9 @@ internal static class UpdateImage
             }
         }, DispatcherPriority.Send);
 
-        var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight, index, preLoadValue.FileInfo);
+        var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,
+            index, preLoadValue.FileInfo);
+        
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
@@ -104,11 +105,11 @@ internal static class UpdateImage
     /// <summary>
     /// Update picture, size it and set the title from string
     /// </summary>
-    /// <param name="imageName"></param>
+    /// <param name="name"></param>
     /// <param name="bitmapSource"></param>
     /// <param name="isGif"></param>
     /// <param name="file"></param>
-    internal static async Task UpdateImageAsync(string imageName, BitmapSource? bitmapSource, bool isGif = false, string? file = null)
+    internal static async Task UpdateImageAsync(string name, BitmapSource? bitmapSource, bool isGif = false, string? file = null)
     {
         Size? imageSize = null;
         if (isGif)
@@ -135,14 +136,14 @@ internal static class UpdateImage
                 if (imageSize.HasValue)
                 {
                     FitImage(imageSize.Value.Width, imageSize.Value.Height);
-                    SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, imageName);
+                    SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, name);
                 }
                 AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
             }
             else if (bitmapSource != null)
             {
                 ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, imageName);
+                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, name);
                 FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
             }
             else
