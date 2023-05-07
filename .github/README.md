@@ -213,8 +213,9 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Double click   | Reset zoom                               |
 | Mouse Browserback| Go to the previous entry in the file history|
 | Mouse Browserforward| Go to the next entry in the file history|
-| Scrollwheel*  | Navigates back or forth                   |
+| Scrollwheel*   | Navigates back or forth                  |
 | Ctrl + Scrollwheel| Zoom in or out                        |
+| Alt + Z        | Show or hide UI                          |
 
 _* Scrollwheel behavior can be changed in settings_
 
