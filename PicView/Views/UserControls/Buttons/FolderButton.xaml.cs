@@ -1,25 +1,24 @@
-﻿using System.Windows.Controls;
-using PicView.Animations;
+﻿using PicView.Animations;
+using System.Windows.Controls;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.Views.UserControls.Buttons;
+
+public partial class FolderButton : UserControl
 {
-    public partial class FolderButton : UserControl
+    public FolderButton()
     {
-        public FolderButton()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            // FileMenuButton
-            FileMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FolderFill);
-            FileMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FolderFill);
-        }
+        // FileMenuButton
+        FileMenuButton.MouseEnter += (_, _) => MouseOverAnimations.ButtonMouseOverAnim(FolderFill);
+        FileMenuButton.MouseLeave += (_, _) => MouseOverAnimations.ButtonMouseLeaveAnim(FolderFill);
+    }
 
-        internal void BackgroundEvents()
-        {
-            FileMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FileMenuBg);
-            FileMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FileMenuBg);
-            FileMenuButton.Click += Toggle_open_menu;
-        }
+    internal void BackgroundEvents()
+    {
+        FileMenuButton.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FileMenuBg);
+        FileMenuButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FileMenuBg);
+        FileMenuButton.Click += Toggle_open_menu;
     }
 }

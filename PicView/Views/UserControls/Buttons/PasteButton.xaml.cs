@@ -1,21 +1,20 @@
-﻿using System.Windows.Controls;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
+using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.Views.UserControls.Buttons;
+
+public partial class PasteButton : UserControl
 {
-    public partial class PasteButton : UserControl
+    public PasteButton()
     {
-        public PasteButton()
+        InitializeComponent();
+
+        Loaded += delegate
         {
-            InitializeComponent();
+            SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
 
-            Loaded += delegate
-            {
-                SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
-
-                TheButton.Click += async delegate { await CopyPaste.PasteAsync().ConfigureAwait(false); };
-            };
-        }
+            TheButton.Click += async delegate { await CopyPaste.PasteAsync().ConfigureAwait(false); };
+        };
     }
 }

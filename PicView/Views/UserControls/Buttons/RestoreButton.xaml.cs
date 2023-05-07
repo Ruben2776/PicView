@@ -1,40 +1,39 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
+using System.Windows;
+using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.Views.UserControls.Buttons;
+
+/// <summary>
+/// Cool shady close button!
+/// </summary>
+public partial class Restorebutton : UserControl
 {
-    /// <summary>
-    /// Cool shady close button!
-    /// </summary>
-    public partial class Restorebutton : UserControl
+    public Restorebutton()
     {
-        public Restorebutton()
+        InitializeComponent();
+
+        TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen); };
+
+        MouseEnter += delegate
         {
-            InitializeComponent();
-
-            TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen); };
-
-            MouseEnter += delegate
+            if (!Settings.Default.Fullscreen)
             {
-                if (!Settings.Default.Fullscreen)
-                {
-                    ToolTip = Application.Current.Resources["Fullscreen"];
-                }
-                else
-                {
-                    ToolTip = Application.Current.Resources["RestoreDown"];
-                }
-
-                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
-            };
-
-            MouseLeave += delegate
+                ToolTip = Application.Current.Resources["Fullscreen"];
+            }
+            else
             {
-                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
-            };
-        }
+                ToolTip = Application.Current.Resources["RestoreDown"];
+            }
+
+            MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
+        };
+
+        MouseLeave += delegate
+        {
+            MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+        };
     }
 }

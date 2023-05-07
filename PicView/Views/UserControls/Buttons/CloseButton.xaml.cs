@@ -1,29 +1,28 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.Properties;
+using System.Windows;
+using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.Views.UserControls.Buttons;
+
+public partial class CloseButton : UserControl
 {
-    public partial class CloseButton : UserControl
+    public CloseButton()
     {
-        public CloseButton()
+        InitializeComponent();
+
+        Loaded += delegate
         {
-            InitializeComponent();
+            MouseEnter += (_, _) => ButtonMouseOverAnim(CloseButtonBrush, true);
+            MouseLeave += (_, _) => ButtonMouseLeaveAnim(CloseButtonBrush, true);
 
-            Loaded += delegate
+            if (!Settings.Default.DarkTheme)
             {
-                MouseEnter += (_, _) => ButtonMouseOverAnim(CloseButtonBrush, true);
-                MouseLeave += (_, _) => ButtonMouseLeaveAnim(CloseButtonBrush, true);
+                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+            }
 
-                if (!Settings.Default.DarkTheme)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
-
-                ToolTip = Application.Current.Resources["Close"];
-            };
-        }
+            ToolTip = Application.Current.Resources["Close"];
+        };
     }
 }

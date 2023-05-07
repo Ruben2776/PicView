@@ -1,231 +1,230 @@
-﻿using System.Diagnostics;
+﻿using PicView.ChangeImage;
+using PicView.ImageHandling;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls.Gallery;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls.Gallery;
 using static PicView.UILogic.HideInterfaceLogic;
 
-namespace PicView.PicGallery
+namespace PicView.PicGallery;
+
+internal static class GalleryLoad
 {
-    internal static class GalleryLoad
+    internal static bool IsLoading { get; private set; }
+
+    private const int _fullscreenItems = 37;
+    private const int _galleryItems = 23;
+
+    internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
     {
-        internal static bool IsLoading { get; private set; }
+        // Add events and set fields, when it's loaded.
+        UC.GetPicGallery.Scroller.PreviewMouseWheel += (_, e) => GalleryNavigation.ScrollTo(e.Delta > 0);
+        UC.GetPicGallery.Scroller.ScrollChanged += (_, _) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
+        UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
+        UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
+    }
 
-        private const int _fullscreenItems = 37;
-        private const int _galleryItems = 23;
-
-        internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
+    internal static void LoadLayout()
+    {
+        if (UC.GetPicGallery == null)
         {
-            // Add events and set fields, when it's loaded.
-            UC.GetPicGallery.Scroller.PreviewMouseWheel += (_, e) => GalleryNavigation.ScrollTo(e.Delta > 0);
-            UC.GetPicGallery.Scroller.ScrollChanged += (_, _) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
-            UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
-            UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
+            UC.GetPicGallery = new Views.UserControls.Gallery.PicGallery
+            {
+                Opacity = 0
+            };
+
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
+            Panel.SetZIndex(UC.GetPicGallery, 999);
         }
 
-        internal static void LoadLayout()
+        if (Settings.Default.FullscreenGalleryHorizontal)
         {
-            if (UC.GetPicGallery == null)
-            {
-                UC.GetPicGallery = new Views.UserControls.Gallery.PicGallery
-                {
-                    Opacity = 0
-                };
+            WindowSizing.RenderFullscreen();
 
-                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
-                Panel.SetZIndex(UC.GetPicGallery, 999);
-            }
+            // Make sure booleans are correct
+            GalleryFunctions.IsHorizontalOpen = true;
+            GalleryFunctions.IsHorizontalFullscreenOpen = true;
 
-            if (Settings.Default.FullscreenGalleryHorizontal)
-            {
-                WindowSizing.RenderFullscreen();
+            // Set size
+            GalleryNavigation.SetSize(_fullscreenItems);
+            UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
+            UC.GetPicGallery.Height = double.NaN;
 
-                // Make sure booleans are correct
-                GalleryFunctions.IsHorizontalOpen = true;
-                GalleryFunctions.IsHorizontalFullscreenOpen = true;
+            // Set alignment
+            UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
+            UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
 
-                // Set size
-                GalleryNavigation.SetSize(_fullscreenItems);
-                UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
-                UC.GetPicGallery.Height = double.NaN;
+            // Set scrollbar visibility and orientation
+            UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+            UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
 
-                // Set alignment
-                UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
-                UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
+            // Set style
+            UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
+            UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 4 * WindowSizing.MonitorInfo.DpiScaling);
+            UC.GetPicGallery.border.BorderThickness = new Thickness(1);
+            UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
 
-                // Set scrollbar visibility and orientation
-                UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-                UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
+            ShowNavigation(false);
+            ShowTopAndBottom(false);
+            ConfigureWindows.GetMainWindow.Focus();
+        }
+        else
+        {
+            // Make sure booleans are correct
+            GalleryFunctions.IsHorizontalOpen = true;
+            GalleryFunctions.IsHorizontalFullscreenOpen = false;
 
-                // Set style
-                UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
-                UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 4 * WindowSizing.MonitorInfo.DpiScaling);
-                UC.GetPicGallery.border.BorderThickness = new Thickness(1);
-                UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;  
+            // Set size
+            GalleryNavigation.SetSize(_galleryItems);
+            UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+            UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
 
-                ShowNavigation(false);
-                ShowTopAndBottom(false);
-                ConfigureWindows.GetMainWindow.Focus();
-            }
-            else
-            {
-                // Make sure booleans are correct
-                GalleryFunctions.IsHorizontalOpen = true;
-                GalleryFunctions.IsHorizontalFullscreenOpen = false;
+            // Set alignment
+            UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
+            UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Stretch;
 
-                // Set size
-                GalleryNavigation.SetSize(_galleryItems);
-                UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+            // Set scrollbar visibility and orientation
+            UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+            UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
 
-                // Set alignment
-                UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
-                UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Stretch;
-
-                // Set scrollbar visibility and orientation
-                UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-                UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-                UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
-
-                // Set style
-                UC.GetPicGallery.x2.Visibility = Visibility.Visible;
-                UC.GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
-                UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
-                UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
-            }
-
-            if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
-            var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
-
-            if (Math.Abs(tempItem.OuterBorder.Height - GalleryNavigation.PicGalleryItemSize) < 1) { return; }
-
-            for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
-            {
-                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSizeS;
-                item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
-            }
+            // Set style
+            UC.GetPicGallery.x2.Visibility = Visibility.Visible;
+            UC.GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
+            UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
+            UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
         }
 
-        internal static async Task LoadAsync()
+        if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
+        var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
+
+        if (Math.Abs(tempItem.OuterBorder.Height - GalleryNavigation.PicGalleryItemSize) < 1) { return; }
+
+        for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
         {
-            IsLoading = true;
-            var source = new CancellationTokenSource();
-            var task = Task.Run(() => LoopAsync(source.Token), source.Token);
-            try
+            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+            item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSizeS;
+            item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
+        }
+    }
+
+    internal static async Task LoadAsync()
+    {
+        IsLoading = true;
+        var source = new CancellationTokenSource();
+        var task = Task.Run(() => LoopAsync(source.Token), source.Token);
+        try
+        {
+            await task.ConfigureAwait(false);
+            IsLoading = false;
+        }
+        catch (TaskCanceledException)
+        {
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
             {
-                await task.ConfigureAwait(false);
-                IsLoading = false;
-            }
-            catch (TaskCanceledException)
+                UC.GetPicGallery.Container.Children.Clear();
+                await LoadAsync().ConfigureAwait(false); // restart when changing directory
+            }));
+        }
+        finally { source.Dispose(); }
+    }
+
+    private static async Task LoopAsync(CancellationToken cancellationToken)
+    {
+        if (UC.GetPicGallery is null) { return; }
+
+        var count = Navigation.Pics.Count;
+        var index = Navigation.FolderIndex;
+
+        for (var i = 0; i < count; i++)
+        {
+            if (count != Navigation.Pics.Count)
             {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(async () =>
-                {
-                    UC.GetPicGallery.Container.Children.Clear();
-                    await LoadAsync().ConfigureAwait(false); // restart when changing directory
-                }));
+                throw new TaskCanceledException();
             }
-            finally { source.Dispose(); }
+
+            Add(i, index);
         }
 
-        private static async Task LoopAsync(CancellationToken cancellationToken)
+        for (var i = 0; i < count; i++)
         {
-            if (UC.GetPicGallery is null) { return; }
-
-            var count = Navigation.Pics.Count;
-            var index = Navigation.FolderIndex;
-
-            for (var i = 0; i < count; i++)
+            if (count != Navigation.Pics.Count)
             {
-                if (count != Navigation.Pics.Count)
-                {
-                    throw new TaskCanceledException();
-                }
-
-                Add(i, index);
+                throw new TaskCanceledException();
             }
 
-            for (var i = 0; i < count; i++)
-            {
-                if (count != Navigation.Pics.Count)
-                {
-                    throw new TaskCanceledException();
-                }
-
-                Add(i, index);
-            }
-
-            Parallel.For(0, count, i =>
-            {
-                _= UpdatePic(i).ConfigureAwait(false);
-            });
+            Add(i, index);
         }
 
-        internal static void Add(int i, int index)
+        Parallel.For(0, count, i =>
+        {
+            _ = UpdatePic(i).ConfigureAwait(false);
+        });
+    }
+
+    internal static void Add(int i, int index)
+    {
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+        {
+            var selected = i == index;
+            var item = new PicGalleryItem(null, i, selected);
+            item.MouseLeftButtonDown += async delegate
+            {
+                await GalleryClick.ClickAsync(i).ConfigureAwait(false);
+            };
+
+            UC.GetPicGallery.Container.Children.Add(item);
+
+            if (!selected) { return; }
+            GalleryNavigation.SelectedGalleryItem = i;
+            Timers.PicGalleryTimerHack();
+        }));
+    }
+
+    private static async Task UpdatePic(int i)
+    {
+        if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+        {
+            GalleryFunctions.Clear();
+            await LoadAsync().ConfigureAwait(false); // restart when changing directory
+            return;
+        }
+
+        var thumbHolder = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize));
+        UpdatePic(i, thumbHolder.Thumb);
+    }
+
+    internal static void UpdatePic(int i, BitmapSource? pic)
+    {
+        try
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
             {
-                var selected = i == index;
-                var item = new PicGalleryItem(null, i, selected);
-                item.MouseLeftButtonDown += async delegate
+                if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                 {
-                    await GalleryClick.ClickAsync(i).ConfigureAwait(false);
-                };
+                    GalleryFunctions.Clear();
+                    LoadAsync().ConfigureAwait(false); // restart when changing directory
+                    return;
+                }
 
-                UC.GetPicGallery.Container.Children.Add(item);
-
-                if (!selected) { return; }
-                GalleryNavigation.SelectedGalleryItem = i;
-                Timers.PicGalleryTimerHack();
+                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                item.ThumbImage.Source = pic ?? ImageFunctions.ShowLogo();
             }));
         }
-
-        private static async Task UpdatePic(int i)
+        catch (Exception e)
         {
-            if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
-            {
-                GalleryFunctions.Clear();
-                await LoadAsync().ConfigureAwait(false); // restart when changing directory
-                return;
-            }
-
-            var thumbHolder = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize));
-            UpdatePic(i, thumbHolder.Thumb);
-        }
-
-        internal static void UpdatePic(int i, BitmapSource? pic)
-        {
-            try
-            {
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
-                {
-                    if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
-                    {
-                        GalleryFunctions.Clear();
-                        LoadAsync().ConfigureAwait(false); // restart when changing directory
-                        return;
-                    }
-
-                    var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                    item.ThumbImage.Source = pic ?? ImageFunctions.ShowLogo();
-                }));
-            }
-            catch (Exception e)
-            {
 #if DEBUG
-                Trace.WriteLine(e.Message);
+            Trace.WriteLine(e.Message);
 #endif
-                // Suppress task cancellation
-            }
+            // Suppress task cancellation
         }
     }
 }

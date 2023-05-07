@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.Views.UserControls.Misc;
+
+/// <summary>
+/// Interaction logic for AutoScrollSign.xaml
+/// </summary>
+public partial class AutoScrollSign : UserControl
 {
-    /// <summary>
-    /// Interaction logic for AutoScrollSign.xaml
-    /// </summary>
-    public partial class AutoScrollSign : UserControl
+    public AutoScrollSign()
     {
-        public AutoScrollSign()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

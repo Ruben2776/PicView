@@ -1,18 +1,17 @@
-﻿using System.Windows.Controls;
-using PicView.PicGallery;
+﻿using PicView.PicGallery;
+using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Gallery
+namespace PicView.Views.UserControls.Gallery;
+
+/// <summary>
+/// Interaction logic for PicGallery.xaml
+/// </summary>
+public partial class PicGallery : UserControl
 {
-    /// <summary>
-    /// Interaction logic for PicGallery.xaml
-    /// </summary>
-    public partial class PicGallery : UserControl
+    public PicGallery()
     {
-        public PicGallery()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            Loaded += GalleryLoad.PicGallery_Loaded;
-        }
+        Loaded += GalleryLoad.PicGallery_Loaded;
     }
 }

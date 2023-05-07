@@ -1,24 +1,23 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.Views.UserControls.Misc;
+
+public partial class DragDropOverlayPic : UserControl
 {
-    public partial class DragDropOverlayPic : UserControl
+    public DragDropOverlayPic(ImageSource source)
     {
-        public DragDropOverlayPic(ImageSource source)
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            UpdateSource(source);
-        }
+        UpdateSource(source);
+    }
 
-        public void UpdateSource(ImageSource source)
-        {
-            if (source == null) { return; }
+    public void UpdateSource(ImageSource source)
+    {
+        if (source == null) { return; }
 
-            ContentHolderSource.ImageSource = source;
-            ContentHolder.Width = source.Width;
-            ContentHolder.Height = source.Height;
-        }
+        ContentHolderSource.ImageSource = source;
+        ContentHolder.Width = source.Width;
+        ContentHolder.Height = source.Height;
     }
 }

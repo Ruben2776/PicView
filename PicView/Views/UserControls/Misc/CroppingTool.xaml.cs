@@ -1,18 +1,17 @@
-﻿using System.Windows.Controls;
-using PicView.Editing.Crop;
+﻿using PicView.Editing.Crop;
+using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.Views.UserControls.Misc;
+
+/// <summary>
+/// Interaction logic for CroppingTool.xaml
+/// </summary>
+public partial class CroppingTool : UserControl
 {
-    /// <summary>
-    /// Interaction logic for CroppingTool.xaml
-    /// </summary>
-    public partial class CroppingTool : UserControl
+    public CroppingTool()
     {
-        public CroppingTool()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            Loaded += delegate { CropFunctions.InitializeCrop(); };
-        }
+        Loaded += delegate { CropFunctions.InitializeCrop(); };
     }
 }

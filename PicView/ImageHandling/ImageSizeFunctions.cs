@@ -1,139 +1,138 @@
-﻿using System.Diagnostics;
+﻿using ImageMagick;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using ImageMagick;
 
-namespace PicView.ImageHandling
+namespace PicView.ImageHandling;
+
+internal static class ImageSizeFunctions
 {
-    internal static class ImageSizeFunctions
+    internal static Size? GetImageSize(string file)
     {
-        internal static Size? GetImageSize(string file)
+        if (!File.Exists(file))
         {
-            if (!File.Exists(file))
-            {
-                return null;
-            }
+            return null;
+        }
 
-            using var magick = new MagickImage();
-            try
+        using var magick = new MagickImage();
+        try
+        {
+            magick.Ping(file);
+            if (magick.Width <= 0)
             {
-                magick.Ping(file);
-                if (magick.Width <= 0)
-                {
-                    magick.Read(file);
-                }
+                magick.Read(file);
             }
+        }
 #if DEBUG
-            catch (MagickException e)
-            {
-                Trace.WriteLine("ImageSize returned " + file + " null\n" + e.Message);
-                return null;
-            }
+        catch (MagickException e)
+        {
+            Trace.WriteLine("ImageSize returned " + file + " null\n" + e.Message);
+            return null;
+        }
 #else
         catch (MagickException)
         {
             return null;
         }
 #endif
-            return new Size(magick.Width, magick.Height);
+        return new Size(magick.Width, magick.Height);
+    }
+
+    internal static async Task<bool> ResizeImageAsync(FileInfo fileInfo, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
+    {
+        if (fileInfo.Exists == false) { return false; }
+        if (width < 0 && percentage is not null || height < 0 && percentage is not null) { return false; }
+
+        var magick = new MagickImage
+        {
+            ColorSpace = ColorSpace.Transparent
+        };
+
+        if (quality > 0) // not inputting quality results in lower file size
+        {
+            magick.Quality = quality;
         }
 
-        internal static async Task<bool> ResizeImageAsync(FileInfo fileInfo, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
+        try
         {
-            if (fileInfo.Exists == false) { return false; }
-            if (width < 0 && percentage is not null || height < 0 && percentage is not null) { return false; }
-
-            var magick = new MagickImage
-            {
-                ColorSpace = ColorSpace.Transparent
-            };
-
-            if (quality > 0) // not inputting quality results in lower file size
-            {
-                magick.Quality = quality;
-            }
-
-            try
-            {
-                if (fileInfo.Length < 2147483648)
-                    await magick.ReadAsync(fileInfo).ConfigureAwait(false);
-                // ReSharper disable once MethodHasAsyncOverload
-                else magick.Read(fileInfo);
-            }
-            catch (MagickException e)
-            {
+            if (fileInfo.Length < 2147483648)
+                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
+            // ReSharper disable once MethodHasAsyncOverload
+            else magick.Read(fileInfo);
+        }
+        catch (MagickException e)
+        {
 #if DEBUG
-                Trace.WriteLine($"{nameof(ResizeImageAsync)} magic read exception caught \n {e.Message}");
+            Trace.WriteLine($"{nameof(ResizeImageAsync)} magic read exception caught \n {e.Message}");
 #endif
-                return false;
+            return false;
+        }
+
+        try
+        {
+            if (percentage is not null)
+            {
+                magick.Resize(percentage.Value);
+            }
+            else
+            {
+                magick.Resize(width, height);
             }
 
-            try
+            if (destination is null)
             {
-                if (percentage is not null)
+                if (ext is not null)
                 {
-                    magick.Resize(percentage.Value);
+                    Path.ChangeExtension(fileInfo.Extension, ext);
                 }
-                else
-                {
-                    magick.Resize(width, height);
-                }
-
-                if (destination is null)
-                {
-                    if (ext is not null)
-                    {
-                        Path.ChangeExtension(fileInfo.Extension, ext);
-                    }
-                    await magick.WriteAsync(fileInfo).ConfigureAwait(false);
-                }
-                else
-                {
-                    var dir = Path.GetDirectoryName(destination);
-                    if (dir is null) { return false; }
-                    if (Directory.Exists(dir) == false)
-                    {
-                        Directory.CreateDirectory(dir);
-                    }
-                    if (ext is not null)
-                    {
-                        Path.ChangeExtension(destination, ext);
-                    }
-                    await magick.WriteAsync(destination).ConfigureAwait(false);
-                }
+                await magick.WriteAsync(fileInfo).ConfigureAwait(false);
             }
-            catch (MagickException e)
+            else
             {
+                var dir = Path.GetDirectoryName(destination);
+                if (dir is null) { return false; }
+                if (Directory.Exists(dir) == false)
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                if (ext is not null)
+                {
+                    Path.ChangeExtension(destination, ext);
+                }
+                await magick.WriteAsync(destination).ConfigureAwait(false);
+            }
+        }
+        catch (MagickException e)
+        {
 #if DEBUG
-                Trace.WriteLine($"{nameof(ResizeImageAsync)} exception caught \n {e.Message}");
+            Trace.WriteLine($"{nameof(ResizeImageAsync)} exception caught \n {e.Message}");
 #endif
-                return false;
-            }
+            return false;
+        }
 
-            magick.Dispose();
+        magick.Dispose();
 
-            if (!compress.HasValue) return true;
-            ImageOptimizer imageOptimizer = new()
-            {
-                OptimalCompression = compress.Value,
-            };
+        if (!compress.HasValue) return true;
+        ImageOptimizer imageOptimizer = new()
+        {
+            OptimalCompression = compress.Value,
+        };
 
-            var x = destination ?? fileInfo.FullName;
+        var x = destination ?? fileInfo.FullName;
 
-            if (imageOptimizer.IsSupported(x) == false)
-            {
-                return true;
-            }
-            try
-            {
-                imageOptimizer.Compress(x);
-            }
-            catch (Exception)
-            {
-                return true;
-            }
-
+        if (imageOptimizer.IsSupported(x) == false)
+        {
             return true;
         }
+        try
+        {
+            imageOptimizer.Compress(x);
+        }
+        catch (Exception)
+        {
+            return true;
+        }
+
+        return true;
     }
 }

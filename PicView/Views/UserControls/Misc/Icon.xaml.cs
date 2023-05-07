@@ -1,27 +1,26 @@
-﻿using System.Windows;
+﻿using PicView.ConfigureSettings;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
-using PicView.ConfigureSettings;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.Views.UserControls.Misc;
+
+/// <summary>
+/// Interaction logic for Logo.xaml
+/// </summary>
+public partial class Icon : UserControl
 {
-    /// <summary>
-    /// Interaction logic for Logo.xaml
-    /// </summary>
-    public partial class Icon : UserControl
+    public Icon()
     {
-        public Icon()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public void ChangeColor()
+    public void ChangeColor()
+    {
+        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
         {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
-            {
-                BaseBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
-            });
-        }
+            BaseBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
+        });
     }
 }
