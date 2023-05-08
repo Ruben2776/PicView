@@ -164,8 +164,9 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | F7                   | Reset Zoom                                                                                                       |
 | F9                   | Open the batch resize window                                                                                     |
 | F11                  | Toggle fulscreen                                                                                                 |
+| Alt + Enter          | Toggle fulscreen                                                                                                 |
 | C                    | Crop Image                                                                                                       |
-| Ctrl + C             | Copy image or copy crop Image                                                                                    |
+| Ctrl + C             | Copy image or copy cropped image                                                                                 |
 | Ctrl + V             | Paste from clipholder, URL, File, File Path or Image                                                             |
 | Ctrl + X             | Cut image file into clipboard                                                                                    |
 | O, Ctrl + O          | Open file picker dialog                                                                                          |
@@ -183,12 +184,12 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | R                    | Reset zoom                                                                                                       |
 | Ctrl + R             | Reload                                                                                                           |
 | L                    | Toggle looping                                                                                                   |
-| E                    | Open with another application (Opens highlighted image if in gallery view)                                       |
+| E                    | Open with another application (opens highlighted image if in gallery view)                                       |
 | T                    | Toggle if the applications should stay above other windows                                                       |
 | N                    | Open the batch resize window                                                                                     |
 | Ctrl + N             | Open new window                                                                                                  |
 | G                    | Toggles the gallery view                                                                                         |
-| Space                | Centers window on the current screen (If gallery is open, it will scroll to the center of the highlighted image) |
+| Space                | Centers window on the current screen (if gallery is open, it will scroll to the center of the highlighted image) |
 | 1                    | Turns on the `Auto fit window` and sets `Fill image` off                                                         |
 | 2                    | Turns on the `Auto fit window` and sets `Fill image` on                                                          |
 | 3                    | Turns off the `Auto fit window` and sets `Fill image` off                                                        |
@@ -208,8 +209,8 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Up                   | Scrolls up when scrolling is enabled                                                                             |
 | PageUp               | Scrolls up when scrolling is enabled                                                                             |
 | Down                 | Rotates image down (counterclockwise)                                                                            |
-| Down                 | Scrolls Down when scrolling is enabled                                                                           |
-| PageDown             | Scrolls Down when scrolling is enabled                                                                           |
+| Down                 | Scrolls down when scrolling is enabled                                                                           |
+| PageDown             | Scrolls down when scrolling is enabled                                                                           |
 | +                    | Zooms in at cursor position                                                                                      |
 | -                    | Zooms out at cursor position                                                                                     |
 | Double click         | Reset zoom                                                                                                       |
