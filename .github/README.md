@@ -201,15 +201,15 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Left                 | Navigate to previous image                                                                                       |
 | Ctrl + A             | Navigate to first image                                                                                          |
 | Ctrl + Left          | Navigate to first image                                                                                          |
-| D                    | Navigate to Next image                                                                                           |
-| Right                | Navigate to Next image                                                                                           |
-| Ctrl + D             | Navigate to Last image                                                                                           |
+| D                    | Navigate to next image                                                                                           |
+| Right                | Navigate to next image                                                                                           |
+| Ctrl + D             | Navigate to last image                                                                                           |
 | Ctrl + Right         | Navigate to first image                                                                                          |
-| Up                   | Rotates the image up (clockwise)                                                                                 |
-| Up                   | Scrolls up when scrolling is enabled                                                                             |
+| Up ⇔ W              | Rotates the image up (clockwise)                                                                                 |
+| Up ⇔ W              | Scrolls up when scrolling is enabled                                                                             |
 | PageUp               | Scrolls up when scrolling is enabled                                                                             |
-| Down                 | Rotates image down (counterclockwise)                                                                            |
-| Down                 | Scrolls down when scrolling is enabled                                                                           |
+| Down ⇔ S            | Rotates image down (counterclockwise)                                                                            |
+| Down ⇔ S            | Scrolls down when scrolling is enabled                                                                           |
 | PageDown             | Scrolls down when scrolling is enabled                                                                           |
 | +                    | Zooms in at cursor position                                                                                      |
 | -                    | Zooms out at cursor position                                                                                     |
