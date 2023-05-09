@@ -6,65 +6,29 @@ namespace PicView.Translations;
 
 internal static class LoadLanguage
 {
-    internal static void DetermineLanguage()
+    internal static void DetermineLanguage(bool check)
     {
-        if (Settings.Default.UserLanguage != "en")
+        if (check)
         {
             TrySetSource(new Uri(@"/PicView;component/Translations/" + Settings.Default.UserLanguage + ".xaml", UriKind.Relative));
             return;
         }
 
-        Uri source;
-        switch (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)
+        var source = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName switch
         {
-            case "da":
-                source = new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative);
-                break;
-
-            case "de":
-                source = new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative);
-                break;
-
-            case "es":
-                source = new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative);
-                break;
-
-            case "ko":
-                source = new Uri(@"/PicView;component/Translations/ko.xaml", UriKind.Relative);
-                break;
-
-            case "zh_CN":
-                source = new Uri(@"/PicView;component/Translations/zh_CN.xaml", UriKind.Relative);
-                break;
-
-            case "zh_TW":
-                source = new Uri(@"/PicView;component/Translations/zh_TW.xaml", UriKind.Relative);
-                break;
-
-            case "pl":
-                source = new Uri(@"/PicView;component/Translations/pl.xaml", UriKind.Relative);
-                break;
-
-            case "fr":
-                source = new Uri(@"/PicView;component/Translations/fr.xaml", UriKind.Relative);
-                break;
-
-            case "it":
-                source = new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative);
-                break;
-
-            case "ru":
-                source = new Uri(@"/PicView;component/Translations/ru.xaml", UriKind.Relative);
-                break;
-
-            case "ro":
-                source = new Uri(@"/PicView;component/Translations/ro.xaml", UriKind.Relative);
-                break;
-
-            default:
-                source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);
-                break;
-        }
+            "da" => new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative),
+            "de" => new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative),
+            "es" => new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative),
+            "ko" => new Uri(@"/PicView;component/Translations/ko.xaml", UriKind.Relative),
+            "zh_CN" => new Uri(@"/PicView;component/Translations/zh_CN.xaml", UriKind.Relative),
+            "zh_TW" => new Uri(@"/PicView;component/Translations/zh_TW.xaml", UriKind.Relative),
+            "pl" => new Uri(@"/PicView;component/Translations/pl.xaml", UriKind.Relative),
+            "fr" => new Uri(@"/PicView;component/Translations/fr.xaml", UriKind.Relative),
+            "it" => new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative),
+            "ru" => new Uri(@"/PicView;component/Translations/ru.xaml", UriKind.Relative),
+            "ro" => new Uri(@"/PicView;component/Translations/ro.xaml", UriKind.Relative),
+            _ => new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
+        };
         TrySetSource(source);
     }
 
