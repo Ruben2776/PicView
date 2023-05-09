@@ -5,8 +5,7 @@ src="https://picview.org/assets/screenshots/uix3/950/uix3-950w.png" width="950" 
 <img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
 </h1>
 
-PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, light & dark theme, image info and more. The app can automatically adjusts itself to your screen.
-
+PicView is a fast and efficient picture viewer that comes equipped with a clean and concise user interface that can be conveniently hidden when not needed. It supports a vast range of image file types, including `WEBP`, `GIF`, `SVG`, `PNG`, `JXL`, `HEIC`, `PSD` and more. Additionally, PicView also includes features such as EXIF data display, image compression, batch resizing, viewing images within archives/comic books, image effects, galleries, and more.
 
 <p align=center>
     <a href="https://github.com/Ruben2776/PicView/releases">
@@ -201,15 +200,15 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Left                 | Navigate to previous image                                                                                       |
 | Ctrl + A             | Navigate to first image                                                                                          |
 | Ctrl + Left          | Navigate to first image                                                                                          |
-| D                    | Navigate to Next image                                                                                           |
-| Right                | Navigate to Next image                                                                                           |
-| Ctrl + D             | Navigate to Last image                                                                                           |
+| D                    | Navigate to next image                                                                                           |
+| Right                | Navigate to next image                                                                                           |
+| Ctrl + D             | Navigate to last image                                                                                           |
 | Ctrl + Right         | Navigate to first image                                                                                          |
-| Up                   | Rotates the image up (clockwise)                                                                                 |
-| Up                   | Scrolls up when scrolling is enabled                                                                             |
+| Up ⇔ W              | Rotates the image up (clockwise)                                                                                 |
+| Up ⇔ W              | Scrolls up when scrolling is enabled                                                                             |
 | PageUp               | Scrolls up when scrolling is enabled                                                                             |
-| Down                 | Rotates image down (counterclockwise)                                                                            |
-| Down                 | Scrolls down when scrolling is enabled                                                                           |
+| Down ⇔ S            | Rotates image down (counterclockwise)                                                                            |
+| Down ⇔ S            | Scrolls down when scrolling is enabled                                                                           |
 | PageDown             | Scrolls down when scrolling is enabled                                                                           |
 | +                    | Zooms in at cursor position                                                                                      |
 | -                    | Zooms out at cursor position                                                                                     |
