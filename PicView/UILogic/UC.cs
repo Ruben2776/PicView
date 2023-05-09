@@ -32,6 +32,7 @@ internal static class UC
     internal static ColorPicker? GetColorPicker { get; set; }
     internal static GripButton? GetGripButton { get; set; }
     internal static QuickResize? GetQuickResize { get; set; }
+    internal static SpinWaiter? GetSpinWaiter { get; set; }
 
     private static bool _imageSettingsMenuOpen;
     private static bool _fileMenuOpen;
