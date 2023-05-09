@@ -7,13 +7,11 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using PicView.UILogic.Loading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
-using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
 
 namespace PicView.ChangeImage;

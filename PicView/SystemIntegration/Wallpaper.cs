@@ -31,6 +31,7 @@ public static class Wallpaper // Taken from a Microsoft sample...
     /// <param name="style"></param>
     internal static async Task SetWallpaperAsync(WallpaperStyle style)
     {
+        // TODO fix wallpaper setting incorrect title
         var url = string.Empty;
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
