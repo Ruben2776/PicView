@@ -97,6 +97,17 @@ internal static class SaveImages
                 magickImage.Resize(0, height.Value);
             }
 
+            if (!string.IsNullOrEmpty(ext)) 
+            {
+                switch (ext.ToLowerInvariant()) 
+                {
+                    case ".webp": magickImage.Format = MagickFormat.WebP; break;
+                    case ".jpg": magickImage.Format = MagickFormat.Jpeg; break;
+                    case ".png": magickImage.Format = MagickFormat.Png; break;
+                    default: break;
+                }
+            }
+
             if (destination is not null)
             {
                 await magickImage.WriteAsync(ext is not null ? Path.ChangeExtension(destination, ext) : destination).ConfigureAwait(false);
