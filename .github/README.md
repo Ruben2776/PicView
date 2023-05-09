@@ -5,7 +5,9 @@ src="https://picview.org/assets/screenshots/uix3/950/uix3-950w.png" width="950" 
 <img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
 </h1>
 
-PicView is a fast and efficient picture viewer that comes equipped with a clean and concise user interface that can be conveniently hidden when not needed. It supports a vast range of image file types, including `WEBP`, `GIF`, `SVG`, `PNG`, `JXL`, `HEIC`, `PSD` and more. Additionally, PicView also includes features such as EXIF data display, image compression, batch resizing, viewing images within archives/comic books, image effects, galleries, and more.
+PicView is a fast and efficient picture viewer that comes equipped with a clean and concise user interface that can be conveniently hidden when not needed. It supports a vast range of image file types, including `WEBP`, `GIF`, `SVG`, `PNG`, `JXL`, `HEIC`, `PSD` and many others. 
+
+Additionally, PicView also includes features such as EXIF data display, image compression, batch resizing, viewing images within archives/comic books, image effects, galleries, and more.
 
 <p align=center>
     <a href="https://github.com/Ruben2776/PicView/releases">
