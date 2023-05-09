@@ -3,43 +3,42 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.PicGallery.GalleryNavigation;
 
-namespace PicView.Views.UserControls.Gallery
+namespace PicView.Views.UserControls.Gallery;
+
+public partial class PicGalleryItem : UserControl
 {
-    public partial class PicGalleryItem : UserControl
+    internal int Id { get; set; }
+
+    public PicGalleryItem(ImageSource? pic, int id, bool selected)
     {
-        internal int Id { get; set; }
+        InitializeComponent();
 
-        public PicGalleryItem(ImageSource? pic, int id, bool selected)
+        if (pic != null)
         {
-            InitializeComponent();
-
-            if (pic != null)
-            {
-                img.Source = pic;
-            }
-
-            Id = id;
-
-            outterborder.Width = outterborder.Height = PicGalleryItem_Size;
-            innerborder.Width = innerborder.Height = PicGalleryItem_Size_s;
-
-            img.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
-                this,
-                false,
-                PicGalleryItem_Size_s,
-                PicGalleryItem_Size
-            );
-
-            img.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
-                this,
-                true,
-                PicGalleryItem_Size,
-                PicGalleryItem_Size_s
-            );
-
-            if (!selected) return;
-            innerborder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPrefferedColor());
-            innerborder.Width = innerborder.Height = PicGalleryItem_Size;
+            ThumbImage.Source = pic;
         }
+
+        Id = id;
+
+        OuterBorder.Width = OuterBorder.Height = PicGalleryItemSize;
+        InnerBorder.Width = InnerBorder.Height = PicGalleryItemSizeS;
+
+        ThumbImage.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
+            this,
+            false,
+            PicGalleryItemSizeS,
+            PicGalleryItemSize
+        );
+
+        ThumbImage.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
+            this,
+            true,
+            PicGalleryItemSize,
+            PicGalleryItemSizeS
+        );
+
+        if (!selected) return;
+        InnerBorder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPreferredColor());
+        InnerBorder.Width = InnerBorder.Height = PicGalleryItemSize;
     }
 }

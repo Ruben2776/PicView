@@ -5,7 +5,6 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
-using PicView.UILogic;
 using PicView.Views.UserControls.Misc;
 using System.IO;
 using System.Text;
@@ -16,288 +15,289 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using static PicView.UILogic.Sizing.WindowSizing;
 
-namespace PicView.Views.Windows
-{
-    public partial class ResizeWindow : Window
-    {
-        private bool running;
-        private readonly List<BatchFunctions.ThumbNailHolder> thumbs = new();
+namespace PicView.Views.Windows;
 
-        public ResizeWindow()
+public partial class ResizeWindow : Window
+{
+    private bool running;
+    private readonly List<BatchFunctions.ThumbNailHolder> thumbs = new();
+
+    public ResizeWindow()
+    {
+        Title = Application.Current.Resources["BatchResize"] + " - PicView";
+        MaxHeight = MonitorInfo.WorkArea.Height;
+        Width *= MonitorInfo.DpiScaling;
+        if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
         {
-            Title = Application.Current.Resources["BatchResize"] + " - PicView";
+            MonitorInfo = MonitorSize.GetMonitorSize();
             MaxHeight = MonitorInfo.WorkArea.Height;
             Width *= MonitorInfo.DpiScaling;
-            if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
+        }
+
+        InitializeComponent();
+
+        ContentRendered += (sender, e) =>
+        {
+            WindowBlur.EnableBlur(this);
+            Owner = null; // Remove owner, so that minimizing main-window will not minimize this
+
+            if (ErrorHandling.CheckOutOfRange() == false)
             {
-                MonitorInfo = MonitorSize.GetMonitorSize();
-                MaxHeight = MonitorInfo.WorkArea.Height;
-                Width *= MonitorInfo.DpiScaling;
+                SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
+                OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
             }
 
-            InitializeComponent();
+            SetTextBoxDragEvent(SourceFolderInput);
+            SetTextBoxDragEvent(OutputFolderInput);
 
-            ContentRendered += (sender, e) =>
+            SourceFolderButton.FileMenuButton.Click += (_, _) =>
             {
-                WindowBlur.EnableBlur(this);
-                Owner = null; // Remove owner, so that minizing mainwindow will not minize this
-
-                if (ErrorHandling.CheckOutOfRange() == false)
+                var newFolder = OpenSave.SelectAndReturnFolder();
+                if (string.IsNullOrWhiteSpace(newFolder) == false)
                 {
-                    SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
-                    OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
+                    SourceFolderInput.Text = newFolder;
+                }
+                Focus();
+            };
+
+            OutputFolderButton.FileMenuButton.Click += (_, _) =>
+            {
+                var newFolder = OpenSave.SelectAndReturnFolder();
+                if (string.IsNullOrWhiteSpace(newFolder) == false)
+                {
+                    OutputFolderInput.Text = newFolder;
+                }
+                Focus();
+            };
+
+            ThumbnailsComboBox.SelectionChanged += delegate
+            {
+                var selected = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
+                if (!int.TryParse(selected?.Content.ToString(), out var count)) return;
+                GeneratedThumbnailsContainer.Children.Clear();
+
+                if (count <= 0) { return; }
+
+                var size = new string[count + 1];
+                var newSize = new string[size.Length];
+                switch (count)
+                {
+                    case 7:
+                        size[7] = "xxs"; size[6] = "xs"; size[5] = "small"; size[4] = "medium"; size[3] = "large"; size[2] = "xl"; size[1] = "xxl";
+                        newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80";
+                        break;
+
+                    case 6:
+                        size[6] = "xxs"; size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
+                        newSize[6] = "20"; newSize[5] = "30"; newSize[4] = "40"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
+                        break;
+
+                    case 5:
+                        size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
+                        newSize[5] = "20"; newSize[4] = "30"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
+                        break;
+
+                    case 4:
+                        size[4] = "xs"; size[3] = "small"; size[2] = "medium"; size[1] = "large";
+                        newSize[4] = "25"; newSize[3] = "40"; newSize[2] = "50"; newSize[1] = "70";
+                        break;
+
+                    case 3:
+                        size[3] = "small"; size[2] = "medium"; size[1] = "large";
+                        newSize[3] = "25"; newSize[2] = "50"; newSize[1] = "70";
+                        break;
+
+                    case 2:
+                        size[1] = "small"; size[2] = "medium";
+                        newSize[1] = "30"; newSize[2] = "50";
+                        break;
+
+                    default:
+                        size[1] = "small";
+                        newSize[1] = "30";
+                        break;
                 }
 
-                SetTextboxDragEvent(SourceFolderInput);
-                SetTextboxDragEvent(OutputFolderInput);
-
-                SourceFolderButton.FileMenuButton.Click += (_, _) =>
+                for (int i = 1; i <= count; i++)
                 {
-                    var newFolder = Open_Save.SelectAndReturnFolder();
-                    if (string.IsNullOrWhiteSpace(newFolder) == false)
-                    {
-                        SourceFolderInput.Text = newFolder;
-                    }
-                    Focus();
-                };
+                    GeneratedThumbnailsContainer.Children.Add(new ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
+                }
+            };
 
-                OutputFolderButton.FileMenuButton.Click += (_, _) =>
-                {
-                    var newFolder = Open_Save.SelectAndReturnFolder();
-                    if (string.IsNullOrWhiteSpace(newFolder) == false)
-                    {
-                        OutputFolderInput.Text = newFolder;
-                    }
-                    Focus();
-                };
-
-                ThumbnailsComboBox.SelectionChanged += delegate
-                {
-                    var selected = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
-                    if (int.TryParse(selected?.Content.ToString(), out var count))
-                    {
-                        GeneratedThumbnailsContainer.Children.Clear();
-
-                        if (count <= 0) { return; }
-
-                        var size = new string[count + 1];
-                        var newSize = new string[size.Length];
-                        switch (count)
-                        {
-                            case 7:
-                                size[7] = "xxs"; size[6] = "xs"; size[5] = "small"; size[4] = "medium"; size[3] = "large"; size[2] = "xl"; size[1] = "xxl";
-                                newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80";
-                                break;
-
-                            case 6:
-                                size[6] = "xxs"; size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
-                                newSize[6] = "20"; newSize[5] = "30"; newSize[4] = "40"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
-                                break;
-
-                            case 5:
-                                size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
-                                newSize[5] = "20"; newSize[4] = "30"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
-                                break;
-
-                            case 4:
-                                size[4] = "xs"; size[3] = "small"; size[2] = "medium"; size[1] = "large";
-                                newSize[4] = "25"; newSize[3] = "40"; newSize[2] = "50"; newSize[1] = "70";
-                                break;
-
-                            case 3:
-                                size[3] = "small"; size[2] = "medium"; size[1] = "large";
-                                newSize[3] = "25"; newSize[2] = "50"; newSize[1] = "70";
-                                break;
-
-                            case 2:
-                                size[1] = "small"; size[2] = "medium";
-                                newSize[1] = "30"; newSize[2] = "50";
-                                break;
-
-                            default:
-                                size[1] = "small";
-                                newSize[1] = "30";
-                                break;
-                        }
-
-                        for (int i = 1; i <= count; i++)
-                        {
-                            GeneratedThumbnailsContainer.Children.Add(new ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
-                        }
-                    }
-                };
-
-                MouseLeftButtonDown += (_, e) =>
+            MouseLeftButtonDown += (_, e) =>
                 { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
-                KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
+            KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
 
-                // CloseButton
-                CloseButton.TheButton.Click += delegate { Hide(); };
+            // CloseButton
+            CloseButton.TheButton.Click += delegate { Hide(); };
 
-                // MinButton
-                MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
+            // MinButton
+            MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
-                TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
+            TitleBar.MouseLeftButtonDown += delegate { DragMove(); };
 
-                StartButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(StartText); };
-                StartButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(StartBrush); };
-                StartButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(StartText); };
-                StartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(StartBrush); };
+            StartButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(StartText); };
+            StartButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(StartBrush); };
+            StartButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(StartText); };
+            StartButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(StartBrush); };
 
-                StartButton.MouseLeftButtonDown += async (_, _) => await Load().ConfigureAwait(false);
+            StartButton.MouseLeftButtonDown += async (_, _) => await Load().ConfigureAwait(false);
 
-                CancelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CancelText); };
-                CancelButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CancelBrush); };
-                CancelButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CancelText); };
-                CancelButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CancelBrush); };
+            CancelButton.MouseEnter += delegate { MouseOverAnimations.ButtonMouseOverAnim(CancelText); };
+            CancelButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(CancelBrush); };
+            CancelButton.MouseLeave += delegate { MouseOverAnimations.ButtonMouseLeaveAnim(CancelText); };
+            CancelButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(CancelBrush); };
 
-                CancelButton.MouseLeftButtonDown += (_, _) => running = false;
-            };
-        }
+            CancelButton.MouseLeftButtonDown += (_, _) => running = false;
+        };
+    }
 
-        private async Task Load()
+    private async Task Load()
+    {
+        running = true;
+        var source = new CancellationTokenSource();
+        var task = Task.Run(() => LoopAsync(source.Token), source.Token);
+        try
         {
-            running = true;
-            CancellationTokenSource source = new CancellationTokenSource();
-            Task task = Task.Run(() => LoopAsync(source.Token), source.Token);
-            try
-            {
-                await task.ConfigureAwait(false);
-                running = false;
-            }
-            catch (TaskCanceledException)
-            {
-                Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
-                {
-                    LogTextBox.Text = string.Empty;
-                    ProgressBar.Value = 0;
-                });
-            }
-            finally { source.Dispose(); }
+            await task.ConfigureAwait(false);
+            running = false;
         }
-
-        private async Task LoopAsync(CancellationToken cancellationToken)
+        catch (TaskCanceledException)
         {
-            running = true;
-
-            bool toResize = false;
-            int width = 0, height = 0;
-            Percentage? percentage = null;
-
-            int quality = 100;
-            bool? compress = null;
-
-            string? ext = null;
-
-            bool sameDir = false;
-
-            var cancelToken = new CancellationTokenSource();
-
-            int thumbW = 0, thumbH = 0;
-            Percentage? thumbPercentage = null;
-
-            List<string>? sourceFileist = null;
-            string outputFolder = "";
-
-            await ConfigureWindows.GetResizeWindow.Dispatcher.InvokeAsync(() =>
+            Dispatcher.Invoke(DispatcherPriority.ContextIdle, () =>
             {
-                LogTextBox.Text = String.Empty;
+                LogTextBox.Text = string.Empty;
+                ProgressBar.Value = 0;
+            });
+        }
+        finally { source.Dispose(); }
+    }
 
-                toResize = NoResize.IsSelected == false;
+    private async Task LoopAsync(CancellationToken cancellationToken)
+    {
+        running = true;
 
-                if (LosslessCompressionChoice.IsSelected)
-                {
-                    compress = true;
-                }
-                else if (LossyCompressionChoice.IsSelected)
-                {
-                    compress = false;
-                }
+        bool toResize = false;
+        int width = 0, height = 0;
+        Percentage? percentage = null;
 
-                var selectedQ = QualityPercentage.SelectedItem as ComboBoxItem;
-                var parseQ = selectedQ.Content.ToString();
-                parseQ = parseQ.Remove(parseQ.Length - 1);
-                if (int.TryParse(parseQ, out var q))
-                {
-                    quality = q;
-                }
+        int quality = 100;
+        bool? compress = null;
 
-                if (webp.IsSelected)
+        string? ext = null;
+
+        bool sameDir = false;
+
+        var cancelToken = new CancellationTokenSource();
+
+        int thumbW = 0, thumbH = 0;
+        Percentage? thumbPercentage = null;
+
+        List<string>? sourceFileist = null;
+        string? outputFolder = "";
+
+        await Dispatcher.InvokeAsync(() =>
+        {
+            LogTextBox.Text = String.Empty;
+
+            toResize = NoResize.IsSelected == false;
+
+            if (LosslessCompressionChoice.IsSelected)
+            {
+                compress = true;
+            }
+            else if (LossyCompressionChoice.IsSelected)
+            {
+                compress = false;
+            }
+
+            var selectedQ = QualityPercentage.SelectedItem as ComboBoxItem;
+            var parseQ = selectedQ.Content.ToString();
+            parseQ = parseQ.Remove(parseQ.Length - 1);
+            if (int.TryParse(parseQ, out var q))
+            {
+                quality = q;
+            }
+
+            if (webp.IsSelected)
+            {
+                ext = ".webp";
+            }
+            else if (png.IsSelected)
+            {
+                ext = ".png";
+            }
+            else if (jpg.IsSelected)
+            {
+                ext = ".jpg";
+            }
+            else
+            {
+                ext = null;
+            }
+
+            if (toResize)
+            {
+                if (PercentageResize.IsSelected && int.TryParse(PercentageBox.Text, out var number))
                 {
-                    ext = ".webp";
-                }
-                else if (png.IsSelected)
-                {
-                    ext = ".png";
-                }
-                else if (jpg.IsSelected)
-                {
-                    ext = ".jpg";
+                    percentage = new Percentage(number);
                 }
                 else
                 {
-                    ext = null;
-                }
-
-                if (toResize)
-                {
-                    if (PercentageResize.IsSelected && int.TryParse(PercentageBox.Text, out var number))
+                    if (WidthResize.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
                     {
-                        percentage = new Percentage(number);
+                        width = resizeWidth;
                     }
-                    else
+                    else if (HeightResize.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
                     {
-                        if (WidthResize.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
-                        {
-                            width = resizeWidth;
-                        }
-                        else if (HeightResize.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
-                        {
-                            height = resizeHeight;
-                        }
+                        height = resizeHeight;
                     }
                 }
+            }
 
-                if (ErrorHandling.CheckOutOfRange() == false)
+            if (ErrorHandling.CheckOutOfRange() == false)
+            {
+                sameDir = Path.GetDirectoryName(Navigation.Pics[0]) == Path.GetDirectoryName(SourceFolderInput.Text);
+            }
+
+            sourceFileist = sameDir ? Navigation.Pics : FileLists.FileList(new FileInfo(SourceFolderInput.Text));
+            outputFolder = OutputFolderInput.Text + @"\";
+
+            for (int i = 0; i < GeneratedThumbnailsContainer.Children.Count; i++)
+            {
+                var container = (ThumbnailOutputUC)GeneratedThumbnailsContainer.Children[i];
+                if (container == null) { continue; }
+                if (container.Percentage.IsSelected && int.TryParse(container.ValueBox.Text, out var number))
                 {
-                    sameDir = Path.GetDirectoryName(Navigation.Pics[0]) == Path.GetDirectoryName(SourceFolderInput.Text);
+                    thumbPercentage = new Percentage(number);
+                    thumbW = 0;
+                    thumbH = 0;
                 }
-
-                sourceFileist = sameDir ? Navigation.Pics : FileLists.FileList(new FileInfo(SourceFolderInput.Text));
-                outputFolder = OutputFolderInput.Text + @"\";
-
-                for (int i = 0; i < GeneratedThumbnailsContainer.Children.Count; i++)
+                else
                 {
-                    var container = (ThumbnailOutputUC)GeneratedThumbnailsContainer.Children[i];
-                    if (container == null) { continue; }
-                    if (container.Percentage.IsSelected && int.TryParse(container.ValueBox.Text, out var number))
+                    if (container.WidthBox.IsSelected && int.TryParse(container.ValueBox.Text, out var resizeWidth))
                     {
-                        thumbPercentage = new Percentage(number);
-                        thumbW = 0;
+                        thumbW = resizeWidth;
                         thumbH = 0;
                     }
-                    else
+                    else if (container.HeightBox.IsSelected && int.TryParse(container.ValueBox.Text, out var resizeHeight))
                     {
-                        if (container.WidthBox.IsSelected && int.TryParse(container.ValueBox.Text, out var resizeWidth))
-                        {
-                            thumbW = resizeWidth;
-                            thumbH = 0;
-                        }
-                        else if (container.HeightBox.IsSelected && int.TryParse(container.ValueBox.Text, out var resizeHeight))
-                        {
-                            thumbW = 0;
-                            thumbH = resizeHeight;
-                        }
-                        thumbPercentage = null;
+                        thumbW = 0;
+                        thumbH = resizeHeight;
                     }
-                    thumbs.Add(new BatchFunctions.ThumbNailHolder(container.OutPutStringBox.Text, thumbW, thumbH, thumbPercentage));
+                    thumbPercentage = null;
                 }
+                thumbs.Add(new BatchFunctions.ThumbNailHolder(container.OutPutStringBox.Text, thumbW, thumbH, thumbPercentage));
+            }
 
-                ProgressBar.Maximum = sourceFileist.Count;
-            }, DispatcherPriority.Normal, cancellationToken);
+            ProgressBar.Maximum = sourceFileist.Count;
+            ProgressBar.Value = 0;
+        }, DispatcherPriority.Normal, cancellationToken);
 
-            for (int i = 0; i < sourceFileist.Count; i++)
+        try
+        {
+            await Parallel.ForEachAsync(sourceFileist, cancelToken.Token, async (sourceFile, token) =>
             {
                 if (sourceFileist is null)
                 {
@@ -312,22 +312,18 @@ namespace PicView.Views.Windows
                         sourceFileist.Clear();
                         sourceFileist = null;
                     }
-                    Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                    await Dispatcher.InvokeAsync(() =>
                     {
                         ProgressBar.Value = 0;
-                    });
+                    }, DispatcherPriority.Render, token);
                     return;
                 }
 
-                FileInfo fileInfo;
-                lock (sourceFileist)
-                {
-                    fileInfo = new FileInfo(sourceFileist[i]);
-                }
+                var fileInfo = new FileInfo(sourceFile);
                 StringBuilder sb = new();
                 sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
 
-                for (int x = 0; x < thumbs.Count; x++)
+                foreach (var thumb in thumbs)
                 {
                     if (running is false)
                     {
@@ -344,7 +340,7 @@ namespace PicView.Views.Windows
                         return;
                     }
 
-                    sb.Append(await BatchFunctions.RunAsync(fileInfo, thumbs[x].Width, thumbs[x].Height, quality, ext, thumbs[x].Percentage, compress, thumbs[x].Directory, true).ConfigureAwait(false));
+                    sb.Append(await BatchFunctions.RunAsync(fileInfo, thumb.Width, thumb.Height, quality, ext, thumb.Percentage, compress, thumb.Directory, true).ConfigureAwait(false));
                 }
 
                 if (cancelToken.IsCancellationRequested)
@@ -354,58 +350,66 @@ namespace PicView.Views.Windows
                         sourceFileist.Clear();
                         sourceFileist = null;
                     }
-                    Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                    await Dispatcher.InvokeAsync(() =>
                     {
                         ProgressBar.Value = 0;
-                    });
+                    }, DispatcherPriority.Render, token);
                     return;
                 }
 
-                Dispatcher.Invoke(DispatcherPriority.Background, () =>
+                await Dispatcher.InvokeAsync(() =>
                 {
                     LogTextBox.Text += sb.ToString();
                     LogTextBox.ScrollToEnd();
                     ProgressBar.Value++;
-                });
-            }
+                }, DispatcherPriority.DataBind, token);
+            });
         }
-
-        internal static void SetTextboxDragEvent(TextBox textBox)
+        catch (Exception)
         {
-            textBox.PreviewDragOver += (_, e) =>
+            sourceFileist?.Clear();
+            await Dispatcher.InvokeAsync(() =>
             {
-                e.Handled = true; // Needs this to allow drag to work
+                ProgressBar.Value = 0;
+            }, DispatcherPriority.Render, cancellationToken);
+        }
+    }
 
-                textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundHoverHighlightBrush"];
-            };
+    internal static void SetTextBoxDragEvent(TextBox textBox)
+    {
+        textBox.PreviewDragOver += (_, e) =>
+        {
+            e.Handled = true; // Needs this to allow drag to work
 
-            textBox.PreviewDragLeave += (_, _) =>
+            textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundHoverHighlightBrush"];
+        };
+
+        textBox.PreviewDragLeave += (_, _) =>
+        {
+            textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
+        };
+
+        textBox.Drop += (_, e) =>
+        {
+            if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
-                textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
-            };
+                var data = e.Data.GetData(DataFormats.Text);
 
-            textBox.Drop += (_, e) =>
-            {
-                if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
+                if (data != null)
                 {
-                    var data = e.Data.GetData(DataFormats.Text);
-
-                    if (data != null)
+                    var text = data.ToString();
+                    if (Directory.Exists(text))
                     {
-                        var text = data.ToString();
-                        if (Directory.Exists(text))
-                        {
-                            textBox.Text = text;
-                        }
+                        textBox.Text = text;
                     }
                 }
-                else if (Directory.Exists(files[0]))
-                {
-                    textBox.Text = files[0];
-                }
+            }
+            else if (Directory.Exists(files[0]))
+            {
+                textBox.Text = files[0];
+            }
 
-                textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
-            };
-        }
+            textBox.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
+        };
     }
 }

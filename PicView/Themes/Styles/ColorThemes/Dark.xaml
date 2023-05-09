@@ -13,7 +13,7 @@
     <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
 
     <!--  Main Color faded  -->
-    <Color x:Key="MainColorFaded">#FFB1B1B1</Color>
+    <Color x:Key="MainColorFaded">#FFCFCFCF</Color>
     <SolidColorBrush x:Key="MainColorFadedBrush" Color="{StaticResource MainColorFaded}" />
 
     <!--  Fade Color  -->
@@ -46,6 +46,7 @@
         x:Key="MenuShadow"
         BlurRadius="5"
         Direction="85"
+        RenderingBias="Quality"
         ShadowDepth="3"
         Color="#2B3E392D" />
 
@@ -77,7 +78,7 @@
     <ImageBrush
         x:Key="MenuBg"
         ImageSource="\Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png"
-        Opacity=".85"
+        Opacity=".9"
         TileMode="FlipXY"
         Viewport="0,0,200,200"
         ViewportUnits="Absolute" />

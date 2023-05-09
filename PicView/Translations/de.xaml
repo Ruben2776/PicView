@@ -122,6 +122,8 @@
     <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Anwendung neustarten</system:String>
     <system:String x:Key="CheckForUpdates">Auf Updates prüfen</system:String>
+    <system:String x:Key="AllowZoomOut">Vermeide das Herauszoomen des Bildes, wenn es bereits maximale Größe hat</system:String>
+    <system:String x:Key="AdjustNavSpeed">Geschwindigkeit anpassen, wenn Taste gedrückt gehalten wird</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativ Farben</system:String>
@@ -192,6 +194,7 @@
     <system:String x:Key="Folder">Ordner</system:String>
     <system:String x:Key="FullPath">Gesamter Pfad</system:String>
     <system:String x:Key="RenameFile">Datei umbenennen</system:String>
+    <system:String x:Key="UnsupportedFile">Nicht unterstützte Datei</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Dateien sortieren</system:String>
@@ -289,6 +292,7 @@
     <system:String x:Key="UnexpectedError">Ein unbekannter Fehler ist aufgetreten</system:String>
     <system:String x:Key="NoImages">Keine Bilder</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">Es ist ein Fehler beim bewegen der Dateien aufgetreten</system:String>
+    <system:String x:Key="UnableToRender">Kann Bild nicht rendern</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Loslassen um Bild zu laden</system:String>

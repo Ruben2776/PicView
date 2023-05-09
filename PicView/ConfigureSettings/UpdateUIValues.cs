@@ -4,202 +4,251 @@ using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
+using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
 
-namespace PicView.ConfigureSettings
+namespace PicView.ConfigureSettings;
+
+// ReSharper disable once InconsistentNaming
+internal static class UpdateUIValues
 {
-    internal static class UpdateUIValues
+    // Todo Rewrite to use MVVM.. One day.
+
+    internal static async Task ChangeSortingAsync(FileLists.SortFilesBy sortFilesBy, bool changeOrder = false)
     {
-        // Todo Rewrite to use MVVM.. One day.
-
-        internal static async Task ChangeSortingAsync(short sorting, bool changeOrder = false)
+        if (changeOrder == false)
         {
-            if (changeOrder == false)
-            {
-                Settings.Default.SortPreference = sorting;
-            }
-
-            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                SetTitle.SetLoadingString();
-            });
-
-            FileInfo fileInfo;
-            var preloadValue = Preloader.Get(Navigation.FolderIndex);
-            if (preloadValue is not null && preloadValue.FileInfo is not null)
-            {
-                fileInfo = preloadValue.FileInfo;
-            }
-            else
-            {
-                fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            }
-            
-            Preloader.Clear();
-            bool sortGallery = false;
-            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > 0)
-                    sortGallery = true;
-            });
-
-            if (sortGallery)
-            {
-                try
-                {
-                    await GalleryFunctions.SortGallery(fileInfo).ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    Tooltip.ShowTooltipMessage(e);
-                    GalleryFunctions.Clear();
-                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                Navigation.Pics = FileLists.FileList(fileInfo);
-            }
-
-            Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
-            await Preloader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
-            await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
+            Settings.Default.SortPreference = (int)sortFilesBy;
         }
 
-        internal static void SetScrolling()
+        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, SetTitle.SetLoadingString);
+
+        var preloadValue = PreLoader.Get(Navigation.FolderIndex);
+        var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
+
+        PreLoader.Clear();
+        var sortGallery = false;
+        await GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen
-                || GalleryFunctions.IsHorizontalOpen
-                || Rotation.RotationAngle != 0)
+            if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > 0)
+                sortGallery = true;
+        });
+
+        if (sortGallery)
+        {
+            try
+            {
+                await GalleryFunctions.SortGallery(new FileInfo(Navigation.InitialPath)).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                ShowTooltipMessage(e);
+                GalleryFunctions.Clear();
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            }
+        }
+        else
+        {
+            Navigation.Pics = FileLists.FileList(new FileInfo(Navigation.InitialPath));
+        }
+
+        Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
+        await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+        await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
+    }
+
+    internal static void SetScrolling()
+    {
+        if (GalleryFunctions.IsHorizontalFullscreenOpen
+            || GalleryFunctions.IsHorizontalOpen)
             return;
 
-            var settingscm = MainContextMenu.Items[7] as MenuItem;
-            var scrollcm = settingscm.Items[1] as MenuItem;
-            var scrollcmHeader = scrollcm.Header as CheckBox;
+        var settingCcm = MainContextMenu.Items[7] as MenuItem;
+        var scrollCm = settingCcm.Items[1] as MenuItem;
+        var scrollCmHeader = scrollCm.Header as CheckBox;
 
-            if (Settings.Default.ScrollEnabled)
-            {
-                SetScrollBehaviour(false);
-                scrollcmHeader.IsChecked = false;
-                UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = false;
-            }
-            else
-            {
-                SetScrollBehaviour(true);
-                scrollcmHeader.IsChecked = true;
-                UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = true;
-            }
+        SetScrollBehaviour(!Settings.Default.ScrollEnabled);
+        scrollCmHeader.IsChecked = Settings.Default.ScrollEnabled;
+        UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
+    }
+
+    internal static void SetScrolling(bool value)
+    {
+        Settings.Default.ScrollEnabled = value;
+        SetScrolling();
+    }
+
+    internal static void SetLooping()
+    {
+        var settingsCm = MainContextMenu.Items[7] as MenuItem;
+        var loopCm = settingsCm.Items[0] as MenuItem;
+        var loopCmHeader = loopCm.Header as CheckBox;
+
+        Settings.Default.Looping = !Settings.Default.Looping;
+        loopCmHeader.IsChecked = Settings.Default.Looping;
+        UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = Settings.Default.Looping;
+
+        ShowTooltipMessage(Settings.Default.Looping ?
+                Application.Current.Resources["LoopingEnabled"] : Application.Current.Resources["LoopingDisabled"],
+            UC.UserControls_Open());
+    }
+
+    internal static void SetTopMost()
+    {
+        if (Settings.Default.Fullscreen)
+        {
+            return;
         }
 
-        internal static void SetScrolling(bool value)
+        var settingCcm = (MenuItem)MainContextMenu.Items[7];
+        var topMostMenu = (MenuItem)settingCcm.Items[4];
+        var topMostHeader = (CheckBox)topMostMenu.Header;
+
+        Settings.Default.TopMost = !Settings.Default.TopMost;
+        GetMainWindow.Topmost = Settings.Default.TopMost;
+        topMostHeader.IsChecked = Settings.Default.TopMost;
+
+        if (GetSettingsWindow is not null)
         {
-            Settings.Default.ScrollEnabled = value;
-            SetScrolling();
+            GetSettingsWindow.TopmostRadio.IsChecked = Settings.Default.TopMost;
         }
 
-        internal static void SetLooping()
+        if (UC.GetQuickSettingsMenu is not null)
         {
-            var settingscm = MainContextMenu.Items[7] as MenuItem;
-            var loopcm = settingscm.Items[0] as MenuItem;
-            var loopcmHeader = loopcm.Header as CheckBox;
-
-            if (Settings.Default.Looping)
-            {
-                Settings.Default.Looping = false;
-                loopcmHeader.IsChecked = false;
-                UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = false;
-                ShowTooltipMessage(Application.Current.Resources["LoopingDisabled"]);
-            }
-            else
-            {
-                Settings.Default.Looping = true;
-                loopcmHeader.IsChecked = true;
-                UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = true;
-                ShowTooltipMessage(Application.Current.Resources["LoopingEnabled"]);
-            }
+            UC.GetQuickSettingsMenu.StayOnTop.IsChecked = Settings.Default.TopMost;
         }
+    }
 
-        internal static void SetTopMost()
-        {
-            if (Settings.Default.Fullscreen)
-            {
-                return;
-            }
+    internal static void SetAutoFit(object sender, RoutedEventArgs e)
+    {
+        if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
+        SetScalingBehaviour(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow, Settings.Default.FillImage);
+    }
 
-            var settingscm = (MenuItem)MainContextMenu.Items[7];
-            var TopmostMenu = (MenuItem)settingscm.Items[4];
-            var TopmostHeader = (CheckBox)TopmostMenu.Header;
+    internal static void SetAutoFill(object sender, RoutedEventArgs e)
+    {
+        SetScalingBehaviour(Settings.Default.AutoFitWindow, !Settings.Default.FillImage);
+        var settingsCm = MainContextMenu.Items[7] as MenuItem;
+        var fillCm = settingsCm.Items[5] as MenuItem;
+        var fillCmHeader = fillCm.Header as CheckBox;
+        fillCmHeader.IsChecked = Settings.Default.FillImage;
+    }
 
-            if (Settings.Default.TopMost)
-            {
-                Settings.Default.TopMost = false;
-                GetMainWindow.Topmost = false;
-                TopmostHeader.IsChecked = false;
+    internal static void SetScalingBehaviour(bool autoFit, bool fill)
+    {
+        Settings.Default.FillImage = fill;
+        Settings.Default.AutoFitWindow = autoFit;
 
-                if (GetSettingsWindow is not null)
-                {
-                    GetSettingsWindow.TopmostRadio.IsChecked = false;
-                }
-            }
-            else
-            {
-                Settings.Default.TopMost = true;
-                GetMainWindow.Topmost = true;
-                TopmostHeader.IsChecked = true;
+        UC.GetQuickSettingsMenu.SetFit.IsChecked = autoFit;
+        UC.GetQuickSettingsMenu.ToggleFill.IsChecked = fill;
 
-                if (GetSettingsWindow is not null)
-                {
-                    GetSettingsWindow.TopmostRadio.IsChecked = true;
-                }
-            }
-        }
-
-        internal static void SetAutoFit(object sender, RoutedEventArgs e)
-        {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
-            SetScalingBehaviour(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow, Settings.Default.FillImage);
-        }
-
-        internal static void SetAutoFill(object sender, RoutedEventArgs e)
-        {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen) { return; }
-            SetScalingBehaviour(Settings.Default.AutoFitWindow, !Settings.Default.FillImage);
-        }
-
-        internal static void SetScalingBehaviour(bool autoFit, bool fill)
-        {
-            Settings.Default.FillImage = fill;
-            Settings.Default.AutoFitWindow = autoFit;
-
-            if (autoFit)
-            {
-                UC.GetQuickSettingsMenu.SetFit.IsChecked = true;
-            }
-            else
-            {
-                UC.GetQuickSettingsMenu.SetFit.IsChecked = false;
-            }
-
-            if (fill)
-            {
-                UC.GetQuickSettingsMenu.ToggleFill.IsChecked = true;
-            }
-            else
-            {
-                UC.GetQuickSettingsMenu.ToggleFill.IsChecked = false;
-            }
-
+        if (!GalleryFunctions.IsHorizontalFullscreenOpen)
             WindowSizing.SetWindowBehavior();
 
-            ScaleImage.TryFitImage();
+        ScaleImage.TryFitImage();
+        Settings.Default.Save();
+    }
+
+    internal static void ToggleQuickResize()
+    {
+        UC.Close_UserControls();
+
+        if (UC.GetQuickResize is null)
+        {
+            LoadControls.LoadQuickResize();
         }
+        if (UC.GetQuickResize.Visibility == Visibility.Collapsed)
+        {
+            UC.GetQuickResize.Show();
+        }
+        else
+        {
+            UC.GetQuickResize.Hide();
+        }
+    }
+
+    internal static void ToggleIncludeSubdirectories()
+    {
+        Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
+
+        GetMainWindow.Dispatcher.Invoke(() =>
+        {
+            if (GetSettingsWindow is not null)
+            {
+                GetSettingsWindow.SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
+            }
+            if (UC.GetQuickSettingsMenu is not null)
+            {
+                UC.GetQuickSettingsMenu.SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
+            }
+        });
+        Settings.Default.Save();
+
+        if (ErrorHandling.CheckOutOfRange()) { return; }
+        var preloadValue = PreLoader.Get(Navigation.FolderIndex);
+        if (preloadValue is null) { return; }
+        Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
+
+        GetMainWindow.Dispatcher.Invoke(() =>
+        {
+            SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
+                Navigation.FolderIndex, preloadValue.FileInfo);
+        });
+    }
+
+    internal static void ChangeFlipButton(bool isChecked)
+    {
+        if (GetMainWindow.MainImage.Source is null) return;
+
+        var mainFlipButtonPath = GetMainWindow.FlipPath;
+        var menuFlipButtonPath = UC.GetImageSettingsMenu.FlipPath;
+
+        if (isChecked)
+        {
+            mainFlipButtonPath.Data = menuFlipButtonPath.Data =
+                Geometry.Parse("M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
+        }
+
+        else
+        {
+            mainFlipButtonPath.Data = menuFlipButtonPath.Data =
+                Geometry.Parse("M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192 L192, 96z");
+        }
+    }
+
+    internal static void SetCtrlToZoom(bool value)
+    {
+        if (Settings.Default.CtrlZoom == value)
+        {
+            return;
+        }
+        Settings.Default.CtrlZoom = value;
+
+        if (GetSettingsWindow is not null)
+        {
+            if (value)
+            {
+                GetSettingsWindow.CtrlZoom.IsChecked = true;
+                GetSettingsWindow.ScrollZoom.IsChecked = false;
+            }
+            else
+            {
+                GetSettingsWindow.CtrlZoom.IsChecked = false;
+                GetSettingsWindow.ScrollZoom.IsChecked = true;
+            }
+        }
+        var settingCcm = (MenuItem)MainContextMenu.Items[7];
+        var ctrlZoomMenu = (MenuItem)settingCcm.Items[6];
+        var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
+        ctrlZoomHeader.IsChecked = Settings.Default.CtrlZoom;
+        MainContextMenu.IsOpen = false;
     }
 }

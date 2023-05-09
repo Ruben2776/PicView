@@ -8,110 +8,104 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.UILogic.UC;
 
-namespace PicView.PicGallery
+namespace PicView.PicGallery;
+
+internal static class GalleryFunctions
 {
-    internal static class GalleryFunctions
+    internal static bool IsHorizontalOpen { get; set; }
+    internal static bool IsHorizontalFullscreenOpen { get; set; }
+
+    private class TempPics
     {
-        internal static bool IsHorizontalOpen { get; set; }
-        internal static bool IsHorizontalFullscreenOpen { get; set; }
+        internal readonly BitmapSource pic;
+        public readonly string name;
 
-        public class tempPics
+        public TempPics(BitmapSource pic, string name)
         {
-            internal BitmapSource pic;
-            public string name;
-
-            public tempPics(BitmapSource pic, string name)
-            {
-                this.pic = pic;
-                this.name = name;
-            }
+            this.pic = pic;
+            this.name = name;
         }
+    }
 
-        private static IEnumerable<T> OrderBySequence<T, TId>(this IEnumerable<T> source, IEnumerable<TId> order, Func<T, TId> idSelector)
+    private static IEnumerable<T> OrderBySequence<T, TId>(this IEnumerable<T> source,
+        IEnumerable<TId> order, Func<T, TId> idSelector) where TId : notnull
+    {
+        var lookup = source?.ToDictionary(idSelector, t => t);
+        foreach (var id in order)
         {
-            var lookup = source?.ToDictionary(idSelector, t => t);
-            foreach (var id in order)
-            {
-                yield return lookup[id];
-            }
+            yield return lookup[id];
         }
+    }
 
-        internal static async Task SortGallery(FileInfo? fileInfo = null)
+    internal static async Task SortGallery(FileInfo? fileInfo = null)
+    {
+        fileInfo ??= new FileInfo(Navigation.Pics[0]);
+
+        var thumbs = new List<TempPics>();
+
+        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
         {
-            if (fileInfo is null)
+            for (int i = 0; i < Navigation.Pics.Count; i++)
             {
-                fileInfo = new FileInfo(Navigation.Pics[0]);
-            }
-
-            var thumbs = new List<tempPics>();
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
-            {
-                for (int i = 0; i < Navigation.Pics.Count; i++)
+                try
                 {
-                    try
-                    {
-                        var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                        thumbs.Add(new tempPics(picGalleryItem?.img?.Source as BitmapSource, Navigation.Pics[i]));
-                    }
-                    catch (Exception e)
-                    {
-                        Tooltip.ShowTooltipMessage(e);
-                        Clear();
-                    }
+                    var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
+                    thumbs.Add(new TempPics(picGalleryItem?.ThumbImage?.Source as BitmapSource, Navigation.Pics[i]));
                 }
-
-                Clear();
-            }));
-
-            Navigation.Pics.Clear(); // Cancel task if running
-            Navigation.Pics = FileLists.FileList(fileInfo);
-
-            try
-            {
-                thumbs = thumbs.OrderBySequence(Navigation.Pics, pic => pic.name).ToList();
+                catch (Exception e)
+                {
+                    Tooltip.ShowTooltipMessage(e);
+                    Clear();
+                }
             }
-            catch (Exception)
+
+            Clear();
+        }));
+
+        Navigation.Pics.Clear(); // Cancel task if running
+        Navigation.Pics = FileLists.FileList(fileInfo);
+
+        try
+        {
+            thumbs = thumbs.OrderBySequence(Navigation.Pics, pic => pic.name).ToList();
+        }
+        catch (Exception)
+        {
+            thumbs = null;
+            Clear();
+            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            return;
+        }
+
+        for (int i = 0; i < Navigation.Pics.Count; i++)
+        {
+            GalleryLoad.Add(i, Navigation.FolderIndex);
+        }
+
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryNavigation.ScrollTo);
+
+        for (int i = 0; i < Navigation.Pics.Count; i++)
+        {
+            GalleryLoad.UpdatePic(i, thumbs[i].pic);
+        }
+
+        thumbs = null;
+    }
+
+    internal static void Clear()
+    {
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
+        {
+            if (GetPicGallery == null)
             {
-                thumbs = null;
-                Clear();
-                await GalleryLoad.LoadAsync().ConfigureAwait(false);
                 return;
             }
 
-            for (int i = 0; i < Navigation.Pics.Count; i++)
-            {
-                GalleryLoad.Add(i, Navigation.FolderIndex);
-            }
-
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
-            {
-                GalleryNavigation.ScrollTo();
-            }));
-
-            for (int i = 0; i < Navigation.Pics.Count; i++)
-            {
-                GalleryLoad.UpdatePic(i, thumbs[i].pic);
-            }
-
-            thumbs = null;
-        }
-
-        internal static void Clear()
-        {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
-            {
-                if (GetPicGallery == null)
-                {
-                    return;
-                }
-
-                GetPicGallery.Container.Children.Clear();
+            GetPicGallery.Container.Children.Clear();
 
 #if DEBUG
-                Trace.WriteLine("Cleared Gallery children");
+            Trace.WriteLine("Cleared Gallery children");
 #endif
-            }));
-        }
+        }));
     }
 }

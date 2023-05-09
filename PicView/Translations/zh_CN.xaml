@@ -22,7 +22,7 @@
     <system:String x:Key="NewWindow">新窗口</system:String>
 
     <!--  About window  -->
-    <system:String x:Key="About">About</system:String>
+    <system:String x:Key="About">关于</system:String>
     <system:String x:Key="InfoWindowTitle">信息与快捷键</system:String>
     <system:String x:Key="ApplicationShortcuts">应用程序快捷键</system:String>
     <system:String x:Key="SavedOnNextStartUp">（保存至下次启动）</system:String>
@@ -122,6 +122,8 @@
     <system:String x:Key="SecAbbreviation">秒</system:String>
     <system:String x:Key="RestartApp">重新启动应用程序</system:String>
     <system:String x:Key="CheckForUpdates">检查更新</system:String>
+    <system:String x:Key="AllowZoomOut">在最大尺寸时避免缩小图像</system:String>
+    <system:String x:Key="AdjustNavSpeed">按住键时调整速度</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">反色</system:String>
@@ -192,6 +194,7 @@
     <system:String x:Key="Folder">文件夹</system:String>
     <system:String x:Key="FullPath">完整路径</system:String>
     <system:String x:Key="RenameFile">重命名文件</system:String>
+    <system:String x:Key="UnsupportedFile">不支持的文件格式</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">排序方式</system:String>
@@ -289,6 +292,7 @@
     <system:String x:Key="UnexpectedError">发生未知错误</system:String>
     <system:String x:Key="NoImages">无图像</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">移动文件时发生错误</system:String>
+    <system:String x:Key="UnableToRender">无法渲染图像</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">拖放以打开图像</system:String>

@@ -11,13 +11,13 @@
     Focusable="False"
     mc:Ignorable="d">
     <Border
-        x:Name="outterborder"
+        x:Name="OuterBorder"
         Width="230"
         Height="230"
         FocusVisualStyle="{x:Null}"
         Focusable="False">
         <Border
-            x:Name="innerborder"
+            x:Name="InnerBorder"
             Width="200"
             Height="200"
             Background="{StaticResource BackgroundColorBrushAlt}"
@@ -26,7 +26,7 @@
             FocusVisualStyle="{x:Null}"
             Focusable="False">
             <Image
-                x:Name="img"
+                x:Name="ThumbImage"
                 FocusVisualStyle="{x:Null}"
                 Focusable="False"
                 RenderOptions.BitmapScalingMode="Linear"

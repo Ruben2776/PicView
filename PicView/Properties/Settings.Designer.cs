@@ -265,7 +265,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoFitWindow {
             get {
                 return ((bool)(this["AutoFitWindow"]));
@@ -457,18 +457,6 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Maximized {
-            get {
-                return ((bool)(this["Maximized"]));
-            }
-            set {
-                this["Maximized"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool Ascending {
             get {
@@ -488,6 +476,30 @@ namespace PicView.Properties {
             }
             set {
                 this["HorizontalReverseScroll"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AvoidZoomingOut {
+            get {
+                return ((bool)(this["AvoidZoomingOut"]));
+            }
+            set {
+                this["AvoidZoomingOut"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.7")]
+        public double NavSpeed {
+            get {
+                return ((double)(this["NavSpeed"]));
+            }
+            set {
+                this["NavSpeed"] = value;
             }
         }
     }

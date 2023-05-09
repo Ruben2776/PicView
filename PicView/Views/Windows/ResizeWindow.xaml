@@ -54,7 +54,7 @@
         </Style>
     </Window.Resources>
 
-    <DockPanel Background="{StaticResource NoisyBg}">
+    <DockPanel Background="{StaticResource MenuBg}">
         <DockPanel
             x:Name="TitleBar"
             Height="30"

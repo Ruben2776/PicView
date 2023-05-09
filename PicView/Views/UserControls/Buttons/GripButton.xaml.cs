@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.Views.UserControls.Buttons;
+
+/// <summary>
+/// Interaction logic for CropButton.xaml
+/// </summary>
+public partial class GripButton : UserControl
 {
-    /// <summary>
-    /// Interaction logic for CropButton.xaml
-    /// </summary>
-    public partial class GripButton : UserControl
+    public GripButton()
     {
-        public GripButton()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

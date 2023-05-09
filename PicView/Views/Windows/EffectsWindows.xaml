@@ -6,502 +6,443 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
-    Width="413"
-    Height="470"
+    Width="600"
+    Height="580"
     AllowsTransparency="True"
-    BorderBrush="{DynamicResource BorderBrush}"
+    BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
     Foreground="{StaticResource MainColorBrush}"
     ResizeMode="CanMinimize"
     Style="{DynamicResource MyWindowStyle}"
-    WindowStartupLocation="CenterOwner"
     WindowStyle="None"
     mc:Ignorable="d">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Width" Value="135" />
+            <Setter Property="Margin" Value="10,5,5,5" />
+            <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+            <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
+        </Style>
+        <Style x:Key="CheckBorder" TargetType="Border">
+            <Setter Property="Margin" Value="5,3,5,3" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Background" Value="{StaticResource BackgroundColorBrushAlt}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+    </Window.Resources>
 
-    <DockPanel Background="{StaticResource NoisyBg}" LastChildFill="True">
-        <DockPanel
-            x:Name="TitleBar"
-            Height="30"
+    <DockPanel LastChildFill="True">
+        <Border
             Background="{StaticResource WindowBackgroundColorBrush}"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="0,0,0,1"
             DockPanel.Dock="Top">
+            <DockPanel>
 
-            <misc:Icon />
+                <misc:Icon x:Name="Logo" />
 
-            <buttons:CloseButton
-                x:Name="CloseButton"
-                Width="30"
-                Height="30"
-                DockPanel.Dock="Right" />
+                <StackPanel
+                    Background="{StaticResource AltInterfaceBrush}"
+                    DockPanel.Dock="Right"
+                    Orientation="Horizontal">
 
-            <buttons:MinButton
-                x:Name="MinButton"
-                Width="30"
-                Height="30"
-                DockPanel.Dock="Right" />
+                    <buttons:MinButton
+                        x:Name="MinButton"
+                        Width="30"
+                        Height="30"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,1,0"
+                        DockPanel.Dock="Right" />
 
-            <TextBlock
-                Width="Auto"
-                Margin="0,0,0,0"
-                VerticalAlignment="Center"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
-                FontSize="14"
-                Text="{StaticResource Effects}"
-                TextAlignment="Center" />
-        </DockPanel>
+                    <buttons:CloseButton
+                        x:Name="CloseButton"
+                        Width="30"
+                        Height="30"
+                        DockPanel.Dock="Right" />
+                </StackPanel>
 
-        <Rectangle
-            Height="1"
-            DockPanel.Dock="Top"
-            Fill="{StaticResource BorderBrush}" />
-
-        <StackPanel>
+                <TextBlock
+                    Width="Auto"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                    FontSize="14"
+                    Text="{StaticResource Effects}"
+                    TextAlignment="Center" />
+            </DockPanel>
+        </Border>
+        <StackPanel Background="{StaticResource MenuBg}">
 
             <WrapPanel
                 x:Name="EffectsContainer"
-                Margin="0,10,0,0"
+                Margin="0,15,0,0"
                 HorizontalAlignment="Center"
                 Orientation="Horizontal">
 
-                <CheckBox x:Name="NegativeButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="NegativeButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource NegativeColors}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="NegativeColorsText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="NegativeButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="NegativeButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource NegativeColors}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="NegativeColorsText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="GrayscaleButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="GrayscaleButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource BlackAndWhite}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="GrayscaleText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="GrayscaleButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="GrayscaleButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource BlackAndWhite}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="GrayscaleText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="ColorToneButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="ColorToneButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource ColorTone}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="ColorToneText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="ColorToneButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="ColorToneButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource ColorTone}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="ColorToneText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="OldMovieButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="OldMovieButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource OldMovie}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="OldMovieText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="OldMovieButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="OldMovieButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource OldMovie}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="OldMovieText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="BloomButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="BloomButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Bloom}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="BloomText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="BloomButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="BloomButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Bloom}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="BloomText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="GloomButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="GloomButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Gloom}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="GloomText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="GloomButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="GloomButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Gloom}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="GloomText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="MonochromeButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="MonochromeButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Monochrome}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="MonochromeText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="MonochromeButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="MonochromeButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Monochrome}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="MonochromeText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="WavewarperButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="WaveWarperButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource WaveWarper}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="WaveWarperText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="WavewarperButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="WaveWarperButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource WaveWarper}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="WaveWarperText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="UnderwaterButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="UnderwaterButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Underwater}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="UnderwaterText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="UnderwaterButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="UnderwaterButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Underwater}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="UnderwaterText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="BandedSwirlButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="BandedSwirlButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource BandedSwirl}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="BandedSwirlText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="BandedSwirlButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="BandedSwirlButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource BandedSwirl}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="BandedSwirlText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="SwirlButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="SwirlButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="Swirl"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="SwirlText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="SwirlButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="SwirlButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="Swirl">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="SwirlText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="RippleButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="RippleButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Ripple}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="RippleText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="RippleButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="RippleButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Ripple}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="RippleText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="RippleAltButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="RippleAltButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource RippleAlt}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="RippleAltText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="RippleAltButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="RippleAltButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource RippleAlt}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="RippleAltText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="BlurButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="BlurButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Blur}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="BlurText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="BlurButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="BlurButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Blur}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="BlurText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="DirectionalBlurButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="DirectionalBlurButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource DirectionalBlur}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="DirectionalBlurText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="DirectionalBlurButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="DirectionalBlurButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource DirectionalBlur}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="DirectionalBlurText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="TelescopicBlurButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="TelescopicBlurButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource TelescopicBlur}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="TelescopicBlurText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="TelescopicBlurButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="TelescopicBlurButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource TelescopicBlur}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="TelescopicBlurText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="PixelateButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="PixelateButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Pixelate}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="PixelateText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="PixelateButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="PixelateButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Pixelate}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="PixelateText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="EmbossedButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="EmbossedButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Embossed}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="EmbossedText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="EmbossedButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="EmbossedButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Embossed}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="EmbossedText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="SmoothMagnifyButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="SmoothMagnifyButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource SmoothMagnify}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="SmoothMagnifyText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="SmoothMagnifyButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="SmoothMagnifyButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource SmoothMagnify}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="SmoothMagnifyText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="PivotButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="PivotButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Pivot}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="PivotText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="PivotButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="PivotButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Pivot}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="PivotText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="PaperfoldButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="PaperfoldButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource PaperFold}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="PaperFoldText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="PaperfoldButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="PaperfoldButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource PaperFold}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="PaperFoldText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="PencilSketchButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="PencilSketchButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource PencilSketch}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="PencilSketchText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="PencilSketchButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="PencilSketchButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource PencilSketch}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="PencilSketchText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="SketchButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="SketchButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Sketch}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="SketchText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="SketchButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="SketchButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Sketch}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="SketchText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="TonemappingButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="ToneMappingButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource ToneMapping}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="ToneMappingText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="ToneMappingButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="ToneMappingButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource ToneMapping}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="ToneMappingText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="FrostyOutlineButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="FrostyOutlineButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource FrostyOutline}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="FrostyOutlineText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="FrostyOutlineButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="FrostyOutlineButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource FrostyOutline}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="FrostyOutlineText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="BandsButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="BandsButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource Bands}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="BandsText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="BandsButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="BandsButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource Bands}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="BandsText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
 
-                <CheckBox x:Name="GlasTileButton" Margin="0,2,0,2">
-                    <CheckBox.Background>
-                        <SolidColorBrush x:Name="GlasTileButtonBrush" Color="Transparent" />
-                    </CheckBox.Background>
-                    <TextBlock
-                        Width="140"
-                        Margin="8,2,9,0"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        Text="{StaticResource GlassTile}"
-                        TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="GlassTileText" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </CheckBox>
+                <Border Style="{StaticResource CheckBorder}">
+                    <CheckBox x:Name="GlasTileButton">
+                        <CheckBox.Background>
+                            <SolidColorBrush x:Name="GlasTileButtonBrush" Color="Transparent" />
+                        </CheckBox.Background>
+                        <TextBlock Text="{StaticResource GlassTile}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="GlassTileText" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </CheckBox>
+                </Border>
+
+
             </WrapPanel>
 
             <Slider
                 x:Name="IntensitySlider"
-                Width="229"
+                Width="265"
                 Height="30"
                 Margin="0,10,0,7"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
+                IsEnabled="False"
                 IsMoveToPointEnabled="True"
                 IsSnapToTickEnabled="True"
                 Maximum="200"
@@ -513,9 +454,10 @@
                 Margin="0,0,0,5"
                 HorizontalAlignment="Center"
                 Orientation="Horizontal">
+
                 <ComboBox
                     x:Name="WallpaperBox"
-                    Margin="0,0,10,0"
+                    Margin="0,0,3,0"
                     HorizontalAlignment="Left"
                     IsTabStop="False">
                     <ComboBoxItem
@@ -529,32 +471,57 @@
                 </ComboBox>
 
                 <Border
+                    MinWidth="165"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
                     Focusable="False">
                     <Button
-                        x:Name="SetAsButton"
-                        Margin="15,10,15,10"
+                        x:Name="SetAsWallpaperButton"
                         Content="{StaticResource SetAsWallpaper}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold">
                         <Button.Background>
-                            <SolidColorBrush x:Name="SetAsBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="SetAsWallpaperButtonBrush" Color="Transparent" />
                         </Button.Background>
                         <Button.Foreground>
-                            <SolidColorBrush x:Name="SetAsText" Color="{StaticResource MainColor}" />
+                            <SolidColorBrush x:Name="SetAsWallpaperText" Color="{StaticResource MainColor}" />
                         </Button.Foreground>
                     </Button>
                 </Border>
+
+                <Border
+                    Height="35"
+                    MinWidth="195"
+                    Margin="13,0,0,0"
+                    Background="{StaticResource BackgroundColorBrushAlt}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Focusable="False">
+                    <Button
+                        x:Name="SetAsLockScreenButton"
+                        Content="{StaticResource SetAsLockScreenImage}"
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold">
+                        <Button.Background>
+                            <SolidColorBrush x:Name="SetAsLockscreenButtonBrush" Color="Transparent" />
+                        </Button.Background>
+                        <Button.Foreground>
+                            <SolidColorBrush x:Name="SetAsLockscreenText" Color="{StaticResource MainColor}" />
+                        </Button.Foreground>
+                    </Button>
+                </Border>
+
             </StackPanel>
 
+
             <StackPanel
-                Margin="0,0,0,5"
+                Margin="0,10,0,5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 Orientation="Horizontal">
 
                 <Border
+                    Height="35"
+                    MinWidth="85"
                     Margin="0,0,5,0"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -563,11 +530,10 @@
                     Focusable="False">
                     <Button
                         x:Name="SaveButton"
-                        Margin="15,10,15,10"
                         Content="{StaticResource Save}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold">
                         <Button.Background>
-                            <SolidColorBrush x:Name="SaveBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="SaveBrush" Color="Transparent" />
                         </Button.Background>
                         <Button.Foreground>
                             <SolidColorBrush x:Name="SaveText" Color="{StaticResource MainColor}" />
@@ -576,7 +542,8 @@
                 </Border>
 
                 <Border
-                    Margin="5,0,0,0"
+                    Height="35"
+                    MinWidth="85"
                     Background="{StaticResource BackgroundColorBrushAlt}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
@@ -584,12 +551,11 @@
                     Focusable="False">
                     <Button
                         x:Name="CopyButton"
-                        Margin="15,10,15,10"
                         Content="{StaticResource Copy}"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                         ToolTip="{StaticResource CopyImageTooltip}">
                         <Button.Background>
-                            <SolidColorBrush x:Name="CopyBrush" Color="{StaticResource BackgroundColorAlt}" />
+                            <SolidColorBrush x:Name="CopyBrush" Color="Transparent" />
                         </Button.Background>
                         <Button.Foreground>
                             <SolidColorBrush x:Name="CopyText" Color="{StaticResource MainColor}" />

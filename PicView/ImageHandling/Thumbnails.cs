@@ -1,5 +1,4 @@
 ﻿using ImageMagick;
-using Microsoft.WindowsAPICodePack.Shell;
 using PicView.ChangeImage;
 using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
@@ -8,156 +7,103 @@ using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
-namespace PicView.ImageHandling
+namespace PicView.ImageHandling;
+
+internal static class Thumbnails
 {
-    internal static class Thumbnails
+    /// <summary>
+    /// Load thumbnail at provided index
+    /// </summary>
+    /// <returns></returns>
+    internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
     {
-        /// <summary>
-        /// Load thumbnail at provided index
-        /// or full image if preloaded.
-        /// </summary>
-        /// <returns></returns>
-        internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
+        BitmapSource? pic;
+
+        if (GetPicGallery != null && GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
         {
-            if (ErrorHandling.CheckOutOfRange())
+            var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
+            pic = (BitmapSource)y.ThumbImage.Source;
+        }
+        else
+        {
+            if (fileInfo is null)
+            {
+                var preLoadValue = PreLoader.Get(x);
+                if (preLoadValue is null)
+                {
+                    fileInfo = new FileInfo(Pics[x]);
+                }
+                else
+                {
+                    return preLoadValue.BitmapSource;
+                }
+            }
+            try
+            {
+                using var image = new MagickImage();
+                image.Ping(fileInfo);
+                var thumb = image.GetExifProfile()?.CreateThumbnail();
+                pic = thumb?.ToBitmapSource();
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-            BitmapSource? pic;
-
-            if (GetPicGallery != null
-                && GetPicGallery.Container.Children.Count > 0
-                && x < GetPicGallery.Container.Children.Count
-                && GetPicGallery.Container.Children.Count == Pics.Count)
-            {
-                var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
-                pic = (BitmapSource)y.img.Source;
-            }
-            else
-            {
-                fileInfo ??= new FileInfo(Pics[x]);
-                pic = GetBitmapSourceThumb(fileInfo).Thumb;
-            }
-
-            if (pic == null)
-            {
-                return null;
-            }
-
-            if (!pic.IsFrozen)
-            {
-                pic.Freeze();
-            }
-
-            return pic;
         }
 
-        internal class LogoOrThumbHolder
+        if (pic is { IsFrozen: false })
         {
-            internal BitmapSource Thumb;
-
-            internal bool isLogo;
-
-            internal readonly double Size = 256; // Set it to the size of the logo
-
-            public LogoOrThumbHolder(BitmapSource Thumb, bool isLogo)
-            {
-                this.Thumb = Thumb;
-                this.isLogo = isLogo;
-            }
+            pic.Freeze();
         }
 
-        internal static LogoOrThumbHolder GetBitmapSourceThumb(FileInfo fileInfo, int size = 500)
+        return pic;
+    }
+
+    internal class LogoOrThumbHolder
+    {
+        internal readonly BitmapSource Thumb;
+
+        internal readonly bool isLogo;
+
+        internal const double Size = 256; // Set it to the size of the logo
+
+        public LogoOrThumbHolder(BitmapSource thumb, bool isLogo)
         {
-            if (fileInfo.Length > 2e+7)
+            Thumb = thumb;
+            this.isLogo = isLogo;
+        }
+    }
+
+    internal static LogoOrThumbHolder GetBitmapSourceThumb(FileInfo fileInfo, int size)
+    {
+        try
+        {
+            using var image = new MagickImage();
+            image.Ping(fileInfo);
+            var thumb = image.GetExifProfile()?.CreateThumbnail();
+            if (thumb is not null)
+            {
+                var bitmapThumb = thumb.ToBitmapSource();
+                bitmapThumb.Freeze();
+                return new LogoOrThumbHolder(bitmapThumb, false);
+            }
+
+            if (fileInfo.Length > 5.0e+8)
             {
                 return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
             }
-
-            try
-            {
-                switch (fileInfo.Extension)
-                {
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".jpe":
-                    case ".png":
-                    case ".bmp":
-                    case ".gif":
-                    case ".ico":
-                    case ".jfif":
-                    case ".wbmp":
-                        return new LogoOrThumbHolder(GetWindowsThumbnail(fileInfo.FullName) ?? ImageFunctions.ImageErrorMessage(), false);
-                    case ".b64":
-                        return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
-                }
-                var thumb = GetMagickImageThumb(fileInfo, size);
-                if (thumb is null)
-                {
-                    return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
-                }
-                return new LogoOrThumbHolder(thumb, false);
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
-#endif
-                return new LogoOrThumbHolder(ImageFunctions.ImageErrorMessage(), false);
-            }
+            image.Read(fileInfo);
+            image.Thumbnail(new MagickGeometry(size, size));
+            var bmp = image.ToBitmapSource();
+            bmp.Freeze();
+            return new LogoOrThumbHolder(bmp, false);
         }
-
-        /// <summary>
-        /// Returns BitmapSource at specified quality and pixel size
-        /// </summary>
-        /// <param name="fileInfo"></param>
-        /// <param name="quality"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        private static BitmapSource? GetMagickImageThumb(FileInfo fileInfo, int size = 500)
+        catch (Exception e)
         {
-            try
-            {
-                using (MagickImage image = new MagickImage(fileInfo))
-                {
-                    image.Thumbnail(new MagickGeometry(size, size));
-                    var bmp = image.ToBitmapSource();
-                    bmp.Freeze();
-                    return bmp;
-                }
-            }
 #if DEBUG
-            catch (Exception e)
-            {
-                Trace.WriteLine("GetMagickImage returned " + fileInfo + " null, \n" + e.Message);
-                return null;
-            }
-#else
-                catch (Exception) { return null; }
+            Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
 #endif
-        }
-
-        /// <summary>
-        /// Returns a Windows Thumbnail
-        /// </summary>
-        /// <param name="path">The path to the file</param>
-        /// <returns></returns>
-        private static BitmapSource? GetWindowsThumbnail(string path)
-        {
-            try
-            {
-                BitmapSource pic = ShellFile.FromFilePath(path).Thumbnail.BitmapSource;
-                pic.Freeze();
-                return pic;
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine(nameof(GetWindowsThumbnail) + " " + e.Message);
-#endif
-                return null;
-            }
+            return new LogoOrThumbHolder(ImageFunctions.ImageErrorMessage(), false);
         }
     }
 }

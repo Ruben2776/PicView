@@ -63,7 +63,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="AutoFitWindow" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="FillImage" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -110,14 +110,17 @@
     <Setting Name="CtrlZoom" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Maximized" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="Ascending" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HorizontalReverseScroll" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AvoidZoomingOut" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="NavSpeed" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.7</Value>
     </Setting>
   </Settings>
 </SettingsFile>

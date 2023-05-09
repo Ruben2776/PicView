@@ -122,6 +122,8 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Перезапустить приложение</system:String>
     <system:String x:Key="CheckForUpdates">Проверить наличие обновлений</system:String>
+    <system:String x:Key="AllowZoomOut">Избегайте уменьшения изображения, когда оно уже находится в максимальном размере</system:String>
+    <system:String x:Key="AdjustNavSpeed">Настроить скорость при удержании клавиши</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Обратные цвета</system:String>
@@ -192,6 +194,7 @@
     <system:String x:Key="Folder">Папка</system:String>
     <system:String x:Key="FullPath">Полный путь</system:String>
     <system:String x:Key="RenameFile">Переименовать файл</system:String>
+    <system:String x:Key="UnsupportedFile">Неподдерживаемый файл</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Сортировать файлы по</system:String>
@@ -289,6 +292,7 @@
     <system:String x:Key="UnexpectedError">Произошла неизвестная ошибка</system:String>
     <system:String x:Key="NoImages">Нет изображений</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">Произошла ошибка при перемещении файла</system:String>
+    <system:String x:Key="UnableToRender">Невозможно отобразить изображение</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Перетащите, чтобы загрузить изображение</system:String>

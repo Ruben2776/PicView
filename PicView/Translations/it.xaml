@@ -122,6 +122,8 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Riavvia l'applicazione</system:String>
     <system:String x:Key="CheckForUpdates">Controlla gli aggiornamenti</system:String>
+    <system:String x:Key="AllowZoomOut">Evitare lo zoom dell'immagine quando è già alla dimensione massima</system:String>
+    <system:String x:Key="AdjustNavSpeed">Regola la velocità quando il tasto viene tenuto premuto</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Colori negativi</system:String>
@@ -192,6 +194,7 @@
     <system:String x:Key="Folder">Cartella</system:String>
     <system:String x:Key="FullPath">Percorso completo</system:String>
     <system:String x:Key="RenameFile">Rinomina il file</system:String>
+    <system:String x:Key="UnsupportedFile">File non supportato</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Ordina file per</system:String>
@@ -289,6 +292,7 @@
     <system:String x:Key="UnexpectedError">Si è verificato un errore sconosciuto</system:String>
     <system:String x:Key="NoImages">Nessuna immagine</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">Si è verificato un errore durante lo spostamento del file</system:String>
+    <system:String x:Key="UnableToRender">Impossibile renderizzare l'immagine</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Rilascia l'immagine di caricamento</system:String>

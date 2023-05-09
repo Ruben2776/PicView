@@ -122,6 +122,8 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Repornește aplicația</system:String>
     <system:String x:Key="CheckForUpdates">Caută actualizări</system:String>
+    <system:String x:Key="AllowZoomOut">Evitați micșorarea imaginii când aceasta este deja la dimensiunea maximă</system:String>
+    <system:String x:Key="AdjustNavSpeed">Ajustați viteza atunci când tasta este ținută apăsată</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Culori negative</system:String>
@@ -192,6 +194,7 @@
     <system:String x:Key="Folder">Dosar</system:String>
     <system:String x:Key="FullPath">Cale completă</system:String>
     <system:String x:Key="RenameFile">Redenumire fișier</system:String>
+    <system:String x:Key="UnsupportedFile">Fișier neacceptat</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Sortare fișiere după</system:String>
@@ -289,6 +292,7 @@
     <system:String x:Key="UnexpectedError">A apărut o eroare necunoscută</system:String>
     <system:String x:Key="NoImages">Fără imagini</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">A apărut o eroare la mutarea fișierului</system:String>
+    <system:String x:Key="UnableToRender">Nu se poate reda imaginea</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Fixează pentru a încărca imaginea</system:String>

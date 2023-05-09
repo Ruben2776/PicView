@@ -122,6 +122,8 @@
     <system:String x:Key="SecAbbreviation">Sec.</system:String>
     <system:String x:Key="RestartApp">Restart the application</system:String>
     <system:String x:Key="CheckForUpdates">Check for updates</system:String>
+    <system:String x:Key="AllowZoomOut">Avoid zooming out the image when it is already at the maximum size</system:String>
+    <system:String x:Key="AdjustNavSpeed">Adjust speed when key is held down</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Colors</system:String>
@@ -192,6 +194,7 @@
     <system:String x:Key="Folder">Folder</system:String>
     <system:String x:Key="FullPath">Full path</system:String>
     <system:String x:Key="RenameFile">Rename file</system:String>
+    <system:String x:Key="UnsupportedFile">Unsupported file</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Sort files by</system:String>
@@ -289,6 +292,7 @@
     <system:String x:Key="UnexpectedError">An unknown error occured</system:String>
     <system:String x:Key="NoImages">No Images</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">An error occured moving file</system:String>
+    <system:String x:Key="UnableToRender">Unable to render image</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Drop to load image</system:String>

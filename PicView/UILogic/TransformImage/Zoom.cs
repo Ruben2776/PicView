@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeTitlebar;
-using PicView.PicGallery;
 using PicView.Properties;
 using System.Windows;
 using System.Windows.Input;
@@ -8,342 +7,378 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 
-namespace PicView.UILogic.TransformImage
+namespace PicView.UILogic.TransformImage;
+
+internal static class ZoomLogic
 {
-    internal static class ZoomLogic
+    private static ScaleTransform? _scaleTransform;
+    private static TranslateTransform? _translateTransform;
+    private static Point _origin;
+    private static Point _start;
+
+    /// <summary>
+    /// Used to determine final point when zooming,
+    /// since DoubleAnimation changes value of TranslateTransform continuously.
+    /// </summary>
+    internal static double ZoomValue { get; private set; } = 1;
+
+    /// <summary>
+    /// Returns zoom percentage. if 100%, return empty string
+    /// </summary>
+    internal static string ZoomPercentage
     {
-        private static ScaleTransform? scaleTransform;
-        internal static TranslateTransform? translateTransform;
-        private static Point origin;
-        private static Point start;
-
-        /// <summary>
-        /// Used to determine final point when zooming,
-        /// since DoubleAnimation changes value of TranslateTransform continuesly.
-        /// </summary>
-        internal static double ZoomValue { get; set; }
-
-        /// <summary>
-        /// Returns zoom percentage. if 100%, return empty string
-        /// </summary>
-        internal static string ZoomPercentage
+        get
         {
-            get
+            if (_scaleTransform == null || ZoomValue is 1)
             {
-                if (scaleTransform == null || ZoomValue == 0 || ZoomValue == 1)
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
+            }
 
-                var zoom = Math.Round(ZoomValue * 100);
+            var zoom = Math.Round(ZoomValue * 100);
 
-                return zoom + "%";
+            return zoom + "%";
+        }
+    }
+
+    internal static bool IsZoomed
+    {
+        get
+        {
+            if (_scaleTransform is null)
+            {
+                return false;
+            }
+            return ZoomValue is not 1;
+        }
+    }
+
+    /// <summary>
+    /// Returns aspect ratio as a formatted string
+    /// </summary>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <returns></returns>
+    internal static string StringAspect(int width, int height)
+    {
+        if (width is 0 || height is 0)
+            return ") ";
+
+        var gcd = GCD(width, height);
+        var x = width / gcd;
+        var y = height / gcd;
+
+        if (x > 48 || y > 18)
+        {
+            return ") ";
+        }
+
+        return $", {x} : {y}) ";
+    }
+
+    /// <summary>
+    /// Greatest Common Divisor
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    // ReSharper disable once InconsistentNaming
+    internal static int GCD(int x, int y)
+    {
+        while (true)
+        {
+            if (y == 0) return x;
+            var x1 = x;
+            x = y;
+            y = x1 % y;
+        }
+    }
+
+    /// <summary>
+    /// Manipulates the required elements to allow zooming
+    /// by modifying ScaleTransform and TranslateTransform
+    /// </summary>
+    internal static void InitializeZoom()
+    {
+        // Initialize transforms
+        ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform = new TransformGroup
+        {
+            Children = new TransformCollection {
+                new ScaleTransform(),
+                new TranslateTransform()
+            }
+        };
+
+        ConfigureWindows.GetMainWindow.ParentContainer.ClipToBounds =
+            ConfigureWindows.GetMainWindow.MainImageBorder.ClipToBounds = true;
+
+        // Set transforms to UI elements
+        _scaleTransform = (ScaleTransform)((TransformGroup)
+                ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
+            .Children.First(tr => tr is ScaleTransform);
+
+        _translateTransform = (TranslateTransform)((TransformGroup)
+                ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
+            .Children.First(tr => tr is TranslateTransform);
+    }
+
+    /// <summary>
+    /// Prepares the image for panning by capturing the mouse position when the left mouse button is pressed.
+    /// </summary>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+    // ReSharper disable once UnusedParameter.Global
+    internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
+    {
+        if (ConfigureWindows.GetMainWindow.IsActive == false)
+        {
+            return;
+        }
+        // Report position for image drag
+        ConfigureWindows.GetMainWindow.MainImage.CaptureMouse();
+        _start = e.GetPosition(ConfigureWindows.GetMainWindow.ParentContainer);
+        _origin = new Point(_translateTransform.X, _translateTransform.Y);
+    }
+
+    /// <summary>
+    /// Pans the image by modifying its X,Y coordinates, keeping it in bounds.
+    /// </summary>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
+    // ReSharper disable once UnusedParameter.Global
+    internal static void PanImage(object sender, MouseEventArgs e)
+    {
+        if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive ||
+            _scaleTransform.ScaleX is 1)
+        {
+            return;
+        }
+
+        // Drag image by modifying X,Y coordinates
+        var dragMousePosition = _start - e.GetPosition(ConfigureWindows.GetMainWindow);
+
+        var newXproperty = _origin.X - dragMousePosition.X;
+        var newYproperty = _origin.Y - dragMousePosition.Y;
+
+        // Keep panning it in bounds
+        if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen &&
+            !Settings.Default.FullscreenGalleryHorizontal) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
+        {
+            var actualScrollWidth = ConfigureWindows.GetMainWindow.Scroller.ActualWidth;
+            var actualBorderWidth = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth;
+            var actualScrollHeight = ConfigureWindows.GetMainWindow.Scroller.ActualHeight;
+            var actualBorderHeight = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight;
+
+            var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
+            var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
+            var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
+            var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
+
+            if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
+            {
+                newXproperty = maxX;
+            }
+
+            if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
+            {
+                newYproperty = maxY;
+            }
+
+            if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
+            {
+                newXproperty = 0;
+            }
+            if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+            {
+                newYproperty = 0;
             }
         }
 
-        internal static bool IsZoomed
+        // TODO Don't pan image out of screen border
+        _translateTransform.X = newXproperty;
+        _translateTransform.Y = newYproperty;
+
+        e.Handled = true;
+    }
+
+    /// <summary>
+    /// Resets the zoom of the <see cref="ConfigureWindows.GetMainWindow.MainImage"/> to its original size.
+    /// </summary>
+    /// <param name="animate">Determines whether to animate the reset or not.</param>
+    internal static void ResetZoom(bool animate = true)
+    {
+        if (ConfigureWindows.GetMainWindow.MainImage.Source == null
+            || _scaleTransform == null
+            || _translateTransform == null) { return; }
+
+        ZoomValue = 1;
+
+        if (animate)
         {
-            get
-            {
-                if (scaleTransform is null)
-                {
-                    return false;
-                }
-                return scaleTransform.ScaleX != 1.0;
-            }
+            BeginZoomAnimation(1);
+        }
+        else
+        {
+            _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1.0;
+            _translateTransform.X = _translateTransform.Y = 0.0;
+            return;
         }
 
-        /// <summary>
-        /// Returns aspect ratio as a formatted string
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        internal static string StringAspect(int width, int height)
+        Tooltip.CloseToolTipMessage();
+
+        // Display non-zoomed values
+        if (Pics.Count == 0)
         {
-            var gcd = GCD(width, height);
-            var x = width / gcd;
-            var y = height / gcd;
+            // Display values from web
+            SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+        }
+        else
+        {
+            SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
+        }
+    }
 
-            if (x > 48 || y > 18)
-            {
-                return ") ";
-            }
-
-            return $", {x} : {y}) ";
+    /// <summary>
+    /// Zooms in or out the <see cref="ConfigureWindows.GetMainWindow.MainImage"/> by the given amount.
+    /// </summary>
+    /// <param name="isZoomIn">Determines whether to zoom in or out.</param>
+    internal static void Zoom(bool isZoomIn)
+    {
+        // Disable zoom if cropping tool is active
+        if (UC.GetCroppingTool != null && UC.GetCroppingTool.IsVisible)
+        {
+            return;
         }
 
-        /// <summary>
-        /// Greatest Common Divisor
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        internal static int GCD(int x, int y)
+        var currentZoom = _scaleTransform.ScaleX;
+        var zoomSpeed = Settings.Default.ZoomSpeed;
+
+        switch (currentZoom)
         {
-            return y == 0 ? x : GCD(y, x % y);
-        }
-
-        /// <summary>
-        /// Manipulates the required elements to allow zooming
-        /// by modifying ScaleTransform and TranslateTransform
-        /// </summary>
-        internal static void InitializeZoom()
-        {
-            // Initialize transforms
-            ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform = new TransformGroup
-            {
-                Children = new TransformCollection {
-                            new ScaleTransform(),
-                            new TranslateTransform()
-                        }
-            };
-
-            ConfigureWindows.GetMainWindow.ParentContainer.ClipToBounds = ConfigureWindows.GetMainWindow.MainImageBorder.ClipToBounds = true;
-
-            // Set transforms to UI elements
-            scaleTransform = (ScaleTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform).Children.First(tr => tr is ScaleTransform);
-            translateTransform = (TranslateTransform)((TransformGroup)ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform).Children.First(tr => tr is TranslateTransform);
-        }
-
-        internal static void PreparePanImage(object sender, MouseButtonEventArgs e)
-        {
-            if (ConfigureWindows.GetMainWindow.IsActive == false)
-            {
+            // Increase speed based on the current zoom level
+            case > 14 when isZoomIn:
                 return;
-            }
-            // Report position for image drag
-            ConfigureWindows.GetMainWindow.MainImage.CaptureMouse();
-            start = e.GetPosition(ConfigureWindows.GetMainWindow.ParentContainer);
-            origin = new Point(translateTransform.X, translateTransform.Y);
+            case > 4:
+                zoomSpeed += 1.5;
+                break;
+            case > 3.2:
+                zoomSpeed += 1;
+                break;
+            case > 1.6:
+                zoomSpeed += 0.5;
+                break;
         }
 
-        internal static void PanImage(object sender, MouseEventArgs e)
+        if (!isZoomIn)
         {
-            // Check if mouse capture is allowed and window is active
-            if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive)
-            {
-                return;
-            }
-
-            if (scaleTransform.ScaleX == 1)
-            {
-                if (!Settings.Default.Fullscreen && !GalleryFunctions.IsHorizontalFullscreenOpen)
-                    return;
-            }
-
-            // Calculate the change in mouse position
-            var dragDelta = start - e.GetPosition(ConfigureWindows.GetMainWindow);
-
-            // Update the image position
-            var dragMousePosition = start - e.GetPosition(ConfigureWindows.GetMainWindow);
-
-            var newXproperty = origin.X - dragMousePosition.X;
-            var newYproperty = origin.Y - dragMousePosition.Y;
-
-            // Keep panning it in bounds 
-            if (Properties.Settings.Default.AutoFitWindow) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
-            {
-                var isXOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualWidth < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
-                var isYOutOfBorder = ConfigureWindows.GetMainWindow.Scroller.ActualHeight < (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
-                var maxX = ConfigureWindows.GetMainWindow.Scroller.ActualWidth - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth * scaleTransform.ScaleX);
-                var maxY = ConfigureWindows.GetMainWindow.Scroller.ActualHeight - (ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight * scaleTransform.ScaleY);
-
-                if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
-                {
-                    newXproperty = maxX;
-                }
-
-                if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
-                {
-                    newYproperty = maxY;
-                }
-
-                if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
-                {
-                    newXproperty = 0;
-                }
-                if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
-                {
-                    newYproperty = 0;
-                }
-            }
-
-            translateTransform.X = newXproperty;
-            translateTransform.Y = newYproperty;
-
-            e.Handled = true;
+            zoomSpeed = -zoomSpeed;
         }
 
-        /// <summary>
-        /// Resets element values to their loaded values
-        /// </summary>
-        internal static void ResetZoom(bool animate = true)
+        currentZoom += zoomSpeed;
+        currentZoom = Math.Max(0.09, currentZoom);
+        if (Settings.Default.AvoidZoomingOut && currentZoom < 1.0)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Source == null
-                || scaleTransform == null
-                || translateTransform == null) { return; }
+            ResetZoom();
+        }
+        else
+        {
+            Zoom(currentZoom);
+        }
+    }
 
-            if (animate)
-            {
-                BeginZoomAnimation(1);
-            }
-            else
-            {
-                scaleTransform.ScaleX = scaleTransform.ScaleY = 1.0;
-                translateTransform.X = translateTransform.Y = 0.0;
-            }
+    /// <summary>
+    /// Zooms the main image to the specified zoom value.
+    /// </summary>
+    /// <param name="value">The new zoom value.</param>
+    private static void Zoom(double value)
+    {
+        ZoomValue = value;
 
+        BeginZoomAnimation(ZoomValue);
+
+        // Displays zoom-percentage in the center window
+        if (!string.IsNullOrEmpty(ZoomPercentage))
+        {
+            Tooltip.ShowTooltipMessage(ZoomPercentage, true);
+        }
+        else
+        {
             Tooltip.CloseToolTipMessage();
-            ZoomValue = 1;
-
-            // Display non-zoomed values
+        }
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+        {
+            // Display updated values
             if (Pics.Count == 0)
             {
-                /// Display values from web
+                //  values from web
                 SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
             }
             else
             {
                 SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
             }
-        }
+        });
+    }
 
-        /// <summary>
-        /// Determine zoom direction and speed
-        /// </summary>
-        /// <param name="i">increment</param>
-        internal static void Zoom(bool isZoomIn)
+    /// <summary>
+    /// Begins the zoom animation for the main image.
+    /// </summary>
+    /// <param name="zoomValue">The zoom value to animate to.</param>
+    private static void BeginZoomAnimation(double zoomValue)
+    {
+        var relative = Mouse.GetPosition(ConfigureWindows.GetMainWindow.MainImageBorder);
+
+        // Calculate new position
+        var absoluteX = relative.X * _scaleTransform.ScaleX + _translateTransform.X;
+        var absoluteY = relative.Y * _scaleTransform.ScaleY + _translateTransform.Y;
+
+        // Reset to zero if value is one, which is reset
+        var newTranslateValueX = Math.Abs(zoomValue - 1) > .1 ? absoluteX - relative.X * zoomValue : 0;
+        var newTranslateValueY = Math.Abs(zoomValue - 1) > .1 ? absoluteY - relative.Y * zoomValue : 0;
+
+        var duration = new Duration(TimeSpan.FromSeconds(.25));
+
+        var scaleAnim = new DoubleAnimation(zoomValue, duration)
         {
-            // Disable zoom if cropping tool is active
-            if (UC.GetCropppingTool != null && UC.GetCropppingTool.IsVisible)
-            {
-                return;
-            }
+            // Set stop to make sure animation doesn't hold ownership of scale-transform
+            FillBehavior = FillBehavior.Stop
+        };
 
-            var currentZoom = scaleTransform.ScaleX;
-            var zoomSpeed = Settings.Default.ZoomSpeed;
-
-            // Increase speed based on the current zoom level
-            if (currentZoom > 14 && isZoomIn)
-            {
-                return;
-            }
-            else if (currentZoom > 4)
-            {
-                zoomSpeed += 1.5;
-            }
-            else if (currentZoom > 3.2)
-            {
-                zoomSpeed += 1;
-            }
-            else if (currentZoom > 1.6)
-            {
-                zoomSpeed += 0.5;
-            }
-
-            if (!isZoomIn)
-            {
-                zoomSpeed = -zoomSpeed;
-            }
-
-            currentZoom += zoomSpeed;
-            currentZoom = Math.Max(0.09, currentZoom);
-            Zoom(currentZoom);
-        }
-
-        /// <summary>
-        /// Zooms to given value
-        /// </summary>
-        /// <param name="value"></param>
-        internal static void Zoom(double value)
+        scaleAnim.Completed += delegate
         {
-            ZoomValue = value;
+            // Hack it to keep the intended value
+            _scaleTransform.ScaleX = _scaleTransform.ScaleY = zoomValue;
+        };
 
-            BeginZoomAnimation(ZoomValue);
-
-            /// Displays zoompercentage in the center window
-            if (!string.IsNullOrEmpty(ZoomPercentage))
-            {
-                Tooltip.ShowTooltipMessage(ZoomPercentage, true);
-            }
-            else
-            {
-                Tooltip.CloseToolTipMessage();
-            }
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
-            {
-                // Display updated values
-                if (Pics.Count == 0)
-                {
-                    ///  values from web
-                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-                }
-                else
-                {
-                    SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
-                }
-            });
-        }
-
-        private static void BeginZoomAnimation(double zoomValue)
+        var translateAnimX = new DoubleAnimation(_translateTransform.X, newTranslateValueX, duration)
         {
-            // TODO Make zoom work when image rotated
-            Point relative = Mouse.GetPosition(ConfigureWindows.GetMainWindow.MainImageBorder);
+            // Set stop to make sure animation doesn't hold ownership of translateTransform
+            FillBehavior = FillBehavior.Stop
+        };
 
-            // Calculate new position
-            double absoluteX = relative.X * scaleTransform.ScaleX + translateTransform.X;
-            double absoluteY = relative.Y * scaleTransform.ScaleY + translateTransform.Y;
+        translateAnimX.Completed += delegate
+        {
+            // Hack it to keep the intended value
+            _translateTransform.X = newTranslateValueX;
+        };
 
-            // Reset to zero if value is one, which is reset
-            double newTranslateValueX = zoomValue != 1 ? absoluteX - relative.X * zoomValue : 0;
-            double newTranslateValueY = zoomValue != 1 ? absoluteY - relative.Y * zoomValue : 0;
+        var translateAnimY = new DoubleAnimation(_translateTransform.Y, newTranslateValueY, duration)
+        {
+            // Set stop to make sure animation doesn't hold ownership of translateTransform
+            FillBehavior = FillBehavior.Stop
+        };
 
-            var duration = new Duration(TimeSpan.FromSeconds(.25));
+        translateAnimY.Completed += delegate
+        {
+            // Hack it to keep the intended value
+            _translateTransform.Y = newTranslateValueY;
+        };
 
-            var scaleAnim = new DoubleAnimation(zoomValue, duration)
-            {
-                // Set stop to make sure animation doesn't hold ownership of scaletransform
-                FillBehavior = FillBehavior.Stop
-            };
+        // Start animations
 
-            scaleAnim.Completed += delegate
-            {
-                // Hack it to keep the intended value
-                scaleTransform.ScaleX = scaleTransform.ScaleY = zoomValue;
-            };
+        _translateTransform.BeginAnimation(TranslateTransform.XProperty, translateAnimX);
+        _translateTransform.BeginAnimation(TranslateTransform.YProperty, translateAnimY);
 
-            var translateAnimX = new DoubleAnimation(translateTransform.X, newTranslateValueX, duration)
-            {
-                // Set stop to make sure animation doesn't hold ownership of translateTransform
-                FillBehavior = FillBehavior.Stop
-            };
-
-            translateAnimX.Completed += delegate
-            {
-                // Hack it to keep the intended value
-                translateTransform.X = newTranslateValueX;
-            };
-
-            var translateAnimY = new DoubleAnimation(translateTransform.Y, newTranslateValueY, duration)
-            {
-                // Set stop to make sure animation doesn't hold ownership of translateTransform
-                FillBehavior = FillBehavior.Stop
-            };
-
-            translateAnimY.Completed += delegate
-            {
-                // Hack it to keep the intended value
-                translateTransform.Y = newTranslateValueY;
-            };
-
-            // Start animations
-
-            translateTransform.BeginAnimation(TranslateTransform.XProperty, translateAnimX);
-            translateTransform.BeginAnimation(TranslateTransform.YProperty, translateAnimY);
-
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
-        }
+        _scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+        _scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
     }
 }

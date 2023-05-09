@@ -122,6 +122,8 @@
     <system:String x:Key="SecAbbreviation">Sek.</system:String>
     <system:String x:Key="RestartApp">Zrestartuj aplikację</system:String>
     <system:String x:Key="CheckForUpdates">Sprawdź aktualizacje</system:String>
+    <system:String x:Key="AllowZoomOut">Unikaj zmniejszania obrazu, gdy jest już w maksymalnym rozmiarze</system:String>
+    <system:String x:Key="AdjustNavSpeed">Dostosuj prędkość, gdy klawisz jest trzymany wciśnięty</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Przeciwne kolory</system:String>
@@ -192,6 +194,7 @@
     <system:String x:Key="Folder">Folder</system:String>
     <system:String x:Key="FullPath">Pełna ścieżka</system:String>
     <system:String x:Key="RenameFile">Zmień nazwę</system:String>
+    <system:String x:Key="UnsupportedFile">Nieobsługiwany plik</system:String>
 
     <!--  Sort files  -->
     <system:String x:Key="SortFilesBy">Posortuj pliki po</system:String>
@@ -289,6 +292,7 @@
     <system:String x:Key="UnexpectedError">Wystąpił nieznany błąd</system:String>
     <system:String x:Key="NoImages">Brak obrazów</system:String>
     <system:String x:Key="AnErrorOccuredMovingFile">Wystąpił błąd podczas przenoszenia pliku</system:String>
+    <system:String x:Key="UnableToRender">Nie można wyświetlić obrazu</system:String>
 
     <!--  Drag and drop  -->
     <system:String x:Key="DragOverString">Upuść obraz, aby wczytać</system:String>

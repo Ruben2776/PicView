@@ -15,164 +15,177 @@ using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.UC;
 
-namespace PicView.Editing.Crop
+namespace PicView.Editing.Crop;
+
+internal static class CropFunctions
 {
-    internal static class CropFunctions
+    private static CropService? CropService { get; set; }
+
+    internal static void StartCrop()
     {
-        internal static CropService? CropService { get; private set; }
+        if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
+        if (RotationAngle is not 0 && !ZoomLogic.IsZoomed) { return; }
 
-        internal static void StartCrop()
+        if (GetCroppingTool == null)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
-
-            if (GetCropppingTool == null)
-            {
-                LoadControls.LoadCroppingTool();
-            }
-
-            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
-
-            ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
-
-            if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetCropppingTool))
-            {
-                ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCropppingTool);
-            }
+            LoadControls.LoadCroppingTool();
         }
 
-        internal static async Task PerformCropAsync()
-        {
-            var sameFile = await SaveCrop().ConfigureAwait(true);
-            if (sameFile)
-            {
-                await LoadPic.LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
-            }
+        GetCroppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
+        GetCroppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                CloseCrop();
-            });
+        ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
+
+        if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetCroppingTool))
+        {
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetCroppingTool);
+        }
+    }
+
+    internal static async Task PerformCropAsync()
+    {
+        var sameFile = await SaveCrop().ConfigureAwait(true);
+        if (sameFile)
+        {
+            await LoadPic.LoadPiFromFileAsync(Pics[FolderIndex]).ConfigureAwait(false);
         }
 
-        internal static void CloseCrop()
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(CloseCrop);
+    }
+
+    internal static void CloseCrop()
+    {
+        if (Pics.Count == 0)
         {
-            if (Pics.Count == 0)
-            {
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-            }
-            else
-            {
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
-            }
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCropppingTool);
+            SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+        }
+        else
+        {
+            SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width, (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
+        }
+        ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCroppingTool);
+    }
+
+    internal static void InitializeCrop()
+    {
+        GetCroppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
+        GetCroppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
+
+        CropService = new CropService(GetCroppingTool);
+
+        var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
+        GetCroppingTool.RootGrid.Background =
+            new SolidColorBrush(Color.FromArgb(
+                25,
+                chosenColorBrush.Color.R,
+                chosenColorBrush.Color.G,
+                chosenColorBrush.Color.B
+            ));
+
+        GetCroppingTool.RootGrid.PreviewMouseDown += (_, e) => CropService.Adorner.RaiseEvent(e);
+        GetCroppingTool.RootGrid.PreviewMouseLeftButtonUp += (_, e) => CropService.Adorner.RaiseEvent(e);
+    }
+
+    /// <summary>
+    /// Save crop from file dialog
+    /// </summary>
+    /// <returns>Whether it's the same file that is being viewed or not</returns>
+    private static async Task<bool> SaveCrop()
+    {
+        string filename;
+        string? directory;
+        if (ErrorHandling.CheckOutOfRange() == false)
+        {
+            filename = Path.GetRandomFileName();
+            directory = null;
+        }
+        else
+        {
+            filename = Path.GetFileName(Pics[FolderIndex]);
+            directory = Path.GetDirectoryName(filename);
         }
 
-        internal static void InitilizeCrop()
+        var saveDialog = new SaveFileDialog
         {
-            GetCropppingTool.Width = RotationAngle == 0 || RotationAngle == 180 ? XWidth : XHeight;
-            GetCropppingTool.Height = RotationAngle == 0 || RotationAngle == 180 ? XHeight : XWidth;
+            Filter = OpenSave.FilterFiles,
+            Title = $"{Application.Current.Resources["SaveImage"]} - {SetTitle.AppName}",
+            FileName = filename,
+        };
 
-            CropService = new CropService(GetCropppingTool);
-
-            var chosenColorBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-            GetCropppingTool.RootGrid.Background =
-                new SolidColorBrush(Color.FromArgb(
-                    25,
-                    chosenColorBrush.Color.R,
-                    chosenColorBrush.Color.G,
-                    chosenColorBrush.Color.B
-                ));
-
-            GetCropppingTool.RootGrid.PreviewMouseDown += (s, e) => CropService.Adorner.RaiseEvent(e);
-            GetCropppingTool.RootGrid.PreviewMouseLeftButtonUp += (s, e) => CropService.Adorner.RaiseEvent(e);
+        if (directory is not null)
+        {
+            saveDialog.InitialDirectory = directory;
         }
 
-        /// <summary>
-        /// Save crop from file dialog
-        /// </summary>
-        /// <returns>Whether it's the same file that is being viewed or not</returns>
-        internal static async Task<bool> SaveCrop()
+        if (!saveDialog.ShowDialog().HasValue)
         {
-            string filename;
-            string? directory;
-            if (ErrorHandling.CheckOutOfRange() == false)
-            {
-                filename = Path.GetRandomFileName();
-                directory = null;
-            }
-            else
-            {
-                filename = Path.GetFileName(Pics[FolderIndex]);
-                directory = Path.GetDirectoryName(filename);
-            }
-
-            var Savedlg = new SaveFileDialog
-            {
-                Filter = Open_Save.FilterFiles,
-                Title = $"{Application.Current.Resources["SaveImage"]} - {SetTitle.AppName}",
-                FileName = filename,
-            };
-
-            if (directory is not null)
-            {
-                Savedlg.InitialDirectory = directory;
-            }
-
-            if (!Savedlg.ShowDialog().HasValue)
-            {
-                return false;
-            }
-
-            Open_Save.IsDialogOpen = true;
-
-            var crop = GetCrop();
-            var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
-            var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
-
-            var success = await SaveImages.SaveImageAsync(RotationAngle, Flipped, source, null, Savedlg.FileName, crop, effectApplied).ConfigureAwait(false);
-            if (success)
-            {
-                return Savedlg.FileName == Pics[FolderIndex];
-            }
             return false;
         }
 
-        /// <summary>
-        /// Gets the coordinates and dimensions of the cropped area, scaled based on the aspect ratio.
-        /// </summary>
-        /// <returns>The Int32Rect object containing the X and Y coordinates, width, and height of the cropped area. Returns null if there is no cropped area defined.</returns>
-        internal static Int32Rect? GetCrop()
+        OpenSave.IsDialogOpen = true;
+
+        var crop = GetCrop();
+        var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+        var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+
+        var success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, saveDialog.FileName, crop, effectApplied).ConfigureAwait(false);
+        if (success)
         {
-            // Get the cropped area dimensions and coordinates
-            var cropArea = CropService.GetCroppedArea();
-
-            // Return null if there is no cropped area defined
-            if (cropArea == null) return null;
-
-            var zoomValue = ZoomLogic.ZoomValue == 0 ? 1 : ZoomLogic.ZoomValue; // TODO: Make crop work with zoom
-            // Calculate the scaled dimensions and coordinates of the cropped area based on the aspect ratio
-            int x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / (AspectRatio * zoomValue));
-            int y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / (AspectRatio * zoomValue));
-            int width, height;
-
-            // Calculate the scaled width and height of the cropped area based on the rotation angle
-            switch (RotationAngle)
-            {
-                case 0:
-                case 180:
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / zoomValue);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / zoomValue);
-                    break;  
-
-                default:
-                    width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / zoomValue);
-                    height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / zoomValue);
-                    break;
-            }
-
-            // Return the Int32Rect object containing the scaled dimensions and coordinates of the cropped area
-            return new Int32Rect(x, y, width, height);
+            return saveDialog.FileName == Pics[FolderIndex];
         }
+        return false;
+    }
+
+    /// <summary>
+    /// Copies selected crop area to clipholder, with or without effect applied
+    /// </summary>
+    internal static void CopyCrop()
+    {
+        var crop = GetCrop();
+        var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+        var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
+
+        if (effectApplied)
+        {
+            var frame = ImageDecoder.GetRenderedBitmapFrame();
+            var croppedFrame = new CroppedBitmap(frame, crop);
+            Clipboard.SetImage(croppedFrame);
+        }
+        else
+        {
+            var croppedSource = new CroppedBitmap(source, crop);
+            Clipboard.SetImage(croppedSource);
+        }
+        Tooltip.ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+    }
+
+    /// <summary>
+    /// Gets the coordinates and dimensions of the cropped area, scaled based on the aspect ratio.
+    /// </summary>
+    /// <returns>The Int32Rect object containing the X and Y coordinates, width, and height of the cropped area. Returns null if there is no cropped area defined.</returns>
+    private static Int32Rect GetCrop()
+    {
+        var cropArea = CropService.GetCroppedArea(); // Contains the dimensions and coordinates of cropped area
+
+        // TODO add support for zooming in
+        int x, y, width, height;
+
+        x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
+        y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
+
+        switch (RotationAngle) // Degrees the image has been rotated by
+        {
+            case 0:
+            case 180:
+                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                break;
+            default:
+                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
+                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                break;
+        }
+
+        return new Int32Rect(x, y, width, height);
     }
 }

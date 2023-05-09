@@ -5,44 +5,43 @@ using PicView.UILogic;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.Views.UserControls.Buttons;
+
+/// <summary>
+/// Cool shady close button!
+/// </summary>
+public partial class X2 : UserControl
 {
-    /// <summary>
-    /// Cool shady close button!
-    /// </summary>
-    public partial class X2 : UserControl
+    public X2()
     {
-        public X2()
+        InitializeComponent();
+        MouseLeftButtonDown += (_, _) =>
         {
-            InitializeComponent();
-            MouseLeftButtonUp += (_, _) =>
+            if (GalleryFunctions.IsHorizontalFullscreenOpen)
             {
-                if (GalleryFunctions.IsHorizontalFullscreenOpen)
+                SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+            }
+            else if (GalleryFunctions.IsHorizontalOpen)
+            {
+                GalleryToggle.CloseHorizontalGallery();
+            }
+            else if (Settings.Default.ShowInterface == false || Settings.Default.Fullscreen)
+            {
+                if (UC.GetPicGallery is null or { IsVisible: false })
                 {
                     SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
                 }
-                else if (GalleryFunctions.IsHorizontalOpen)
-                {
-                    GalleryToggle.CloseHorizontalGallery();
-                }
-                else if (Settings.Default.ShowInterface == false || Settings.Default.Fullscreen)
-                {
-                    if (UC.GetPicGallery is null || UC.GetPicGallery.IsVisible == false)
-                    {
-                        SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-                    }
-                }
-            };
+            }
+        };
 
-            MouseEnter += (_, _) =>
-            {
-                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
-            };
+        MouseEnter += (_, _) =>
+        {
+            MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
+        };
 
-            MouseLeave += (_, _) =>
-            {
-                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
-            };
-        }
+        MouseLeave += (_, _) =>
+        {
+            MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+        };
     }
 }

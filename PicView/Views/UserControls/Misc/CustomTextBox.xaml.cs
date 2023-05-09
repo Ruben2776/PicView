@@ -1,29 +1,28 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.Views.UserControls.Misc;
+
+/// <summary>
+/// Interaction logic for CustomTextBox.xaml
+/// </summary>
+public partial class CustomTextBox : UserControl
 {
-    /// <summary>
-    /// Interaction logic for CustomTextBox.xaml
-    /// </summary>
-    public partial class CustomTextBox : UserControl
+    public CustomTextBox()
     {
-        public CustomTextBox()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public string Text
-        {
-            get => InnerTextBox.Text;
-            set => InnerTextBox.Text = value;
-        }
+    public string Text
+    {
+        get => InnerTextBox.Text;
+        set => InnerTextBox.Text = value;
+    }
 
-        public new bool IsFocused
+    public new bool IsFocused
+    {
+        get
         {
-            get
-            {
-                return InnerTextBox.IsFocused;
-            }
+            return InnerTextBox.IsFocused;
         }
     }
 }

@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.Views.UserControls.Misc;
+
+/// <summary>
+/// Interaction logic for LinkChain.xaml
+/// </summary>
+public partial class LinkChain : UserControl
 {
-    /// <summary>
-    /// Interaction logic for LinkChain.xaml
-    /// </summary>
-    public partial class LinkChain : UserControl
+    public LinkChain()
     {
-        public LinkChain()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
