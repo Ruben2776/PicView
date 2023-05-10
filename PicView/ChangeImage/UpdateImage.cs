@@ -44,6 +44,11 @@ internal static class UpdateImage
             {
                 ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
             }
+
+            if (GetSpinWaiter is {IsVisible: true})
+            {
+                GetSpinWaiter.Visibility = Visibility.Collapsed;
+            }
         }, DispatcherPriority.Send);
 
         var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,

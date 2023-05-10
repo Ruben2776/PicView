@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.UILogic.Loading;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;
@@ -66,6 +67,10 @@ internal static class Scroll
         if (AutoScrollOrigin.HasValue == false)
         {
             return;
+        }
+        if (GetAutoScrollSign is null)
+        {
+            LoadControls.LoadAutoScrollSign();
         }
         Canvas.SetTop(GetAutoScrollSign, AutoScrollOrigin.Value.Y);
         Canvas.SetLeft(GetAutoScrollSign, AutoScrollOrigin.Value.X);

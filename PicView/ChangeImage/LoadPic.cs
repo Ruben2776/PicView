@@ -4,6 +4,7 @@ using PicView.PicGallery;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
@@ -11,7 +12,6 @@ using static PicView.ChangeImage.Navigation;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
-using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
 
 namespace PicView.ChangeImage;
@@ -324,15 +324,8 @@ internal static class LoadPic
     /// <param name="showLoading"></param>
     internal static void LoadingPreview(FileInfo fileInfo, bool showLoading = true)
     {
-        var isLogo = false;
         var thumb = Thumbnails.GetThumb(FolderIndex, fileInfo);
-        if (thumb is null)
-        {
-            thumb = ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
-            isLogo = true;
-        }
 
-        var bitmapSourceHolder = new Thumbnails.LogoOrThumbHolder(thumb, isLogo);
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
         {
             if (showLoading)
@@ -342,12 +335,9 @@ internal static class LoadPic
             }
 
             ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Wait;
+            GetSpinWaiter.Visibility = Visibility.Visible;
 
-            ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSourceHolder.Thumb;
-            // Set to logo size or don't allow image size to stretch the whole screen, fixes when opening new image from unloaded status
-            if (!bitmapSourceHolder.isLogo && !(XWidth < 1)) return;
-            ConfigureWindows.GetMainWindow.MainImage.Width = Thumbnails.LogoOrThumbHolder.Size;
-            ConfigureWindows.GetMainWindow.MainImage.Height = Thumbnails.LogoOrThumbHolder.Size;
+            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
         });
     }
 

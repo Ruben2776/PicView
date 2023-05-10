@@ -137,8 +137,8 @@ internal static class StartLoading
         LoadImageSettingsMenu();
         LoadQuickSettingsMenu();
         LoadToolsAndEffectsMenu();
-        LoadAutoScrollSign();
         LoadTooltipStyle();
+        LoadSpinWaiter();
 
         // Initialize things!
         InitializeZoom();
