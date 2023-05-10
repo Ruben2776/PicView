@@ -6,15 +6,14 @@ namespace PicView.Translations;
 
 internal static class LoadLanguage
 {
-    internal static void DetermineLanguage(bool check)
+    /// <summary>
+    /// Determines the language to use for the application based on the user's culture or the user's preferred language setting.
+    /// </summary>
+    /// <param name="isFromCulture">If true, the language will be determined based on the user's culture. Otherwise, it will be determined based on the user's preferred language setting.</param>
+    internal static void DetermineLanguage(bool isFromCulture)
     {
-        if (check)
-        {
-            TrySetSource(new Uri(@"/PicView;component/Translations/" + Settings.Default.UserLanguage + ".xaml", UriKind.Relative));
-            return;
-        }
-
-        var source = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName switch
+        var isoLanguage = isFromCulture ? CultureInfo.CurrentCulture.TwoLetterISOLanguageName : Settings.Default.UserLanguage;
+        var source = isoLanguage switch
         {
             "da" => new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative),
             "de" => new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative),
@@ -32,6 +31,10 @@ internal static class LoadLanguage
         TrySetSource(source);
     }
 
+    /// <summary>
+    /// Tries to set the source of the application's resources to the specified URI. If an exception occurs, falls back to the English translation.
+    /// </summary>
+    /// <param name="source">The URI of the resource dictionary to use.</param>
     private static void TrySetSource(Uri source)
     {
         try
@@ -49,6 +52,7 @@ internal static class LoadLanguage
             };
         }
     }
+
 
     internal static void ChangeLanguage(int language)
     {

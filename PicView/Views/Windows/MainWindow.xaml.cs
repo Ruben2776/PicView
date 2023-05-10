@@ -29,13 +29,13 @@ public partial class MainWindow
         // Updates settings from older version to newer version
         if (Settings.Default.CallUpgrade)
         {
-            LoadLanguage.DetermineLanguage(false);
+            LoadLanguage.DetermineLanguage(true);
             Settings.Default.Upgrade();
             Settings.Default.CallUpgrade = false;
         }
-        else
+        else if (Settings.Default.UserLanguage != "en")
         {
-            LoadLanguage.DetermineLanguage(Settings.Default.UserLanguage != "en");
+            LoadLanguage.DetermineLanguage(false);
         }
 
         if (Settings.Default.DarkTheme == false)
