@@ -37,6 +37,21 @@ internal static class SaveImages
             else if (string.IsNullOrEmpty(path) == false)
             {
                 await magickImage.ReadAsync(path).ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(destination) && Path.GetExtension(path) != Path.GetExtension(destination))
+                {
+                    switch (Path.GetExtension(destination).ToLowerInvariant())
+                    {
+                        case ".jpeg":
+                        case ".jpg": magickImage.Format = MagickFormat.Jpeg; break;
+                        case ".png": magickImage.Format = MagickFormat.Png; break;
+                        case ".jxl": magickImage.Format = MagickFormat.Jxl; break;
+                        case ".gif": magickImage.Format = MagickFormat.Gif; break;
+                        case ".webp": magickImage.Format = MagickFormat.WebP; break;
+                        case ".heic": magickImage.Format = MagickFormat.Heic; break;
+                        case ".heif": magickImage.Format = MagickFormat.Heif; break;
+                        default: break;
+                    }
+                }
             }
             else
             {
