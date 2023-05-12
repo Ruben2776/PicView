@@ -121,7 +121,33 @@ Navigate the gallery with the `arrow keys` or `W`,`A`,`S`,`D` and load the selec
 
 
 Save it locally, set is as wallpaper/lock-screen image, or copy it to clip-holder with the effect applied.
+
+
+<h3 align="center">
+    Batch Resizing
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/batch%20resize/batch%20resize%20dark%202023-05-12%20121358.webp" />
+</h1>
+
+
+### Convert/Optimize all your pictures
+All files from the `Source folder` will be selected for processing and will be sent to `Output folder`. The default name for the output folder will be **Processed Pictures**.
+
+If the *Output folder* is the same as the *Source folder*, or left blank, the files will be overwrittten.
+
+The `Convert to` dropdown option allows you to convert all the files to a popular format.
+
+The `Compression` dropdown option allows you to compress the files, either without losing quality or sacrifing some quality for greater reduced file size.
+
+The `Quality` dropdown option allows you to change quality of supported file types. The higher the Quality setting, the more detail is preserved in the image, but the larger the file size.
+
+The `Resize` dropdown option allows you to resize the picture by **height**, **width** and **percentage** while keeping the aspect ratio of the image.
+
 ___
+
+### Other features
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
