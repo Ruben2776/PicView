@@ -59,22 +59,7 @@ internal static class Thumbnails
         return pic;
     }
 
-    internal class LogoOrThumbHolder
-    {
-        internal readonly BitmapSource Thumb;
-
-        internal readonly bool isLogo;
-
-        internal const double Size = 256; // Set it to the size of the logo
-
-        public LogoOrThumbHolder(BitmapSource thumb, bool isLogo)
-        {
-            Thumb = thumb;
-            this.isLogo = isLogo;
-        }
-    }
-
-    internal static LogoOrThumbHolder GetBitmapSourceThumb(FileInfo fileInfo, int size)
+    internal static BitmapSource GetBitmapSourceThumb(FileInfo fileInfo, int size)
     {
         try
         {
@@ -84,26 +69,27 @@ internal static class Thumbnails
             if (thumb is not null)
             {
                 var bitmapThumb = thumb.ToBitmapSource();
-                bitmapThumb.Freeze();
-                return new LogoOrThumbHolder(bitmapThumb, false);
+                bitmapThumb?.Freeze();
+                return bitmapThumb ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
             }
 
             if (fileInfo.Length > 5.0e+8)
             {
-                return new LogoOrThumbHolder(ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(), true);
+                return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
             }
-            image.Read(fileInfo);
-            image.Thumbnail(new MagickGeometry(size, size));
-            var bmp = image.ToBitmapSource();
-            bmp.Freeze();
-            return new LogoOrThumbHolder(bmp, false);
+
+            image?.Read(fileInfo);
+            image?.Thumbnail(new MagickGeometry(size, size));
+            var bmp = image?.ToBitmapSource();
+            bmp?.Freeze();
+            return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
         }
         catch (Exception e)
         {
 #if DEBUG
             Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
 #endif
-            return new LogoOrThumbHolder(ImageFunctions.ImageErrorMessage(), false);
+            return ImageFunctions.ImageErrorMessage();
         }
     }
 }

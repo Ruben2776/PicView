@@ -198,8 +198,8 @@ internal static class GalleryLoad
             return;
         }
 
-        var thumbHolder = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize));
-        UpdatePic(i, thumbHolder.Thumb);
+        var source = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize));
+        UpdatePic(i, source);
     }
 
     internal static void UpdatePic(int i, BitmapSource? pic)

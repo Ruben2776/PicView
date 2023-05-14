@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
+using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.Properties;
@@ -76,8 +77,8 @@ internal static class ImageDragAndDrop
                 }
             }
             // File
-            var thumb = GetBitmapSourceThumb(new FileInfo(files[0]), 300);
-            element = new DragDropOverlayPic(thumb.Thumb);
+            var thumb = Path.GetExtension(files[0]) is ".b64" or ".txt" ? ImageFunctions.ShowLogo() : GetBitmapSourceThumb(new FileInfo(files[0]), 300);
+            element = new DragDropOverlayPic(thumb);
         }
 
         // Tell that it's succeeded
