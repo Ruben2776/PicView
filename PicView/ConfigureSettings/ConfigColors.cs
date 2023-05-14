@@ -141,7 +141,7 @@ internal static class ConfigColors
     /// </summary>
     /// <param name="bitmap">The bitmap to check.</param>
     /// <returns>True if the bitmap has any transparent pixels, false otherwise.</returns>
-    static bool HasTransparentBackground(BitmapSource bitmap)
+    private static bool HasTransparentBackground(BitmapSource bitmap)
     {
         // Convert the bitmap to the Bgra32 pixel format if necessary
         if (bitmap.Format != PixelFormats.Bgra32)

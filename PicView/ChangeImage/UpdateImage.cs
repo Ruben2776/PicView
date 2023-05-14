@@ -91,11 +91,10 @@ internal static class UpdateImage
         if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
             await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
 
+        await AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
         if (Pics.Count > 1)
         {
             Taskbar.Progress((double)index / Pics.Count);
-
-            await AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
             await PreLoadAsync(index).ConfigureAwait(false);
         }
 
