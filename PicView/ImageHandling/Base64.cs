@@ -27,31 +27,30 @@ internal static class Base64
 
     private static async Task<BitmapSource?> GetBitmapSourceFromBase64Async(string base64String)
     {
-        var base64Data = Convert.FromBase64String(base64String);
-        using var magickImage = new MagickImage
-        {
-            Quality = 100,
-            ColorSpace = ColorSpace.Transparent
-        };
-
-        var readSettings = new MagickReadSettings
-        {
-            Density = new Density(300, 300),
-            BackgroundColor = MagickColors.Transparent
-        };
-
         try
         {
+            var base64Data = Convert.FromBase64String(base64String);
+            using var magickImage = new MagickImage
+            {
+                Quality = 100,
+                ColorSpace = ColorSpace.Transparent
+            };
+
+            var readSettings = new MagickReadSettings
+            {
+                Density = new Density(300, 300),
+                BackgroundColor = MagickColors.Transparent
+            };
+
             await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings).ConfigureAwait(false);
+            var bitmapSource = magickImage.ToBitmapSource();
+            bitmapSource.Freeze();
+            return bitmapSource;
         }
         catch (MagickException)
         {
             return null;
         }
-
-        var bitmapSource = magickImage.ToBitmapSource();
-        bitmapSource.Freeze();
-        return bitmapSource;
     }
 
     internal static bool IsBase64String(string base64)
