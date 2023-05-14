@@ -51,7 +51,7 @@ public partial class ImageInfoWindow : Window
 
         KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(Scroller, e, this);
 
-        // Hack to deselect border on mouse click
+        // Deselect border on mouse click
         MouseLeftButtonDown += delegate
         {
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), null);
