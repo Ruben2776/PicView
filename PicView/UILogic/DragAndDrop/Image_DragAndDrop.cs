@@ -99,8 +99,6 @@ internal static class ImageDragAndDrop
     /// <param name="e"></param>
     internal static void Image_DragLeave(object sender, DragEventArgs e)
     {
-        // TODO fix base64 image not returning to normal
-
         // Switch to previous image if available
 
         if (_dropOverlay != null)

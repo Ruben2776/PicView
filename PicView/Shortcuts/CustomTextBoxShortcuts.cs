@@ -15,7 +15,7 @@ internal static class CustomTextBoxShortcuts
         else if (e.Key == Key.Escape)
         {
             EditTitleBar.Refocus();
-            OpenSave.IsDialogOpen = true; // Hack to make escape not fall through
+            OpenSave.IsDialogOpen = true; // Make escape not fall through
         }
     }
 }

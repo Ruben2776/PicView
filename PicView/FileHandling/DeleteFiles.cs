@@ -57,7 +57,6 @@ internal static class DeleteFiles
     /// <returns></returns>
     internal static bool TryDeleteFile(string file, bool recycle)
     {
-        // TODO Need to add function to remove from PicGallery
         if (!File.Exists(file))
         {
             return false;
@@ -84,10 +83,10 @@ internal static class DeleteFiles
     /// Delete file or move it to recycle bin, navigate to next pic
     /// and display information
     /// </summary>
-    /// <param name="Recyclebin"></param>
-    internal static async Task DeleteFileAsync(bool Recyclebin)
+    /// <param name="recycle"></param>
+    internal static async Task DeleteFileAsync(bool recycle)
     {
-        if (!TryDeleteFile(Pics[FolderIndex], Recyclebin))
+        if (!TryDeleteFile(Pics[FolderIndex], recycle))
         {
             ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]);
             return;
@@ -114,6 +113,6 @@ internal static class DeleteFiles
 
         await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
 
-        ShowTooltipMessage(Recyclebin ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
+        ShowTooltipMessage(recycle ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
     }
 }
