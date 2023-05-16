@@ -154,6 +154,10 @@ internal static class UpdateImage
             {
                 UnexpectedError();
             }
+            if (GetSpinWaiter is { IsVisible: true })
+            {
+                GetSpinWaiter.Visibility = Visibility.Collapsed;
+            }
         }, DispatcherPriority.Send);
 
         CloseToolTipMessage();
