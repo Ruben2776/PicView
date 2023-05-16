@@ -365,7 +365,6 @@
     <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
     <PackageLicenseExpression> GPL-3.0-only</PackageLicenseExpression>
-    <AssemblyOriginatorKeyFile>PicViewSignFile.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>True</DelaySign>
     <LangVersion>preview</LangVersion>
     <Authors>Ruben2776</Authors>
