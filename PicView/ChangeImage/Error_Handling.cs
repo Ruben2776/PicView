@@ -69,7 +69,7 @@ internal static class ErrorHandling
 
         if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
 
-        if (Settings.Default.FullscreenGalleryHorizontal)
+        if (Settings.Default.FullscreenGallery)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, (Action)(() =>
             {

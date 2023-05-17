@@ -90,7 +90,7 @@ internal static class MainKeyboardShortcuts
             case Key.Right:
             case Key.D:
                 // exit if browsing horizontal PicGallery
-                if (GalleryFunctions.IsHorizontalOpen)
+                if (GalleryFunctions.IsGalleryOpen)
                 {
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Right);
                     return;
@@ -110,7 +110,7 @@ internal static class MainKeyboardShortcuts
             case Key.BrowserBack:
             case Key.Left:
             case Key.A:
-                if (GalleryFunctions.IsHorizontalOpen)
+                if (GalleryFunctions.IsGalleryOpen)
                 {
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Left);
                     return;
@@ -127,15 +127,12 @@ internal static class MainKeyboardShortcuts
                 }
                 return;
 
-            case Key.PageUp:
-                if (GetPicGallery != null)
+            case Key.PageUp when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
                 {
-                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                    {
-                        GalleryNavigation.ScrollTo(true, ctrlDown);
-                        return;
-                    }
+                    GalleryNavigation.ScrollTo(true, ctrlDown);
+                    return;
                 }
+            case Key.PageUp:
                 if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                 {
                     GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
@@ -143,15 +140,12 @@ internal static class MainKeyboardShortcuts
 
                 return;
 
-            case Key.PageDown:
-                if (GetPicGallery != null)
+            case Key.PageDown when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
                 {
-                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                    {
-                        GalleryNavigation.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-                        return;
-                    }
+                    GalleryNavigation.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                    return;
                 }
+            case Key.PageDown:
                 return;
 
             case Key.Up:
@@ -160,7 +154,7 @@ internal static class MainKeyboardShortcuts
                 {
                     GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                 }
-                else if (GalleryFunctions.IsHorizontalOpen && GetPicGallery != null)
+                else if (GalleryFunctions.IsGalleryOpen && GetPicGallery != null)
                 {
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Up);
                 }
@@ -177,7 +171,7 @@ internal static class MainKeyboardShortcuts
                 }
                 else if (GetPicGallery != null)
                 {
-                    if (GalleryFunctions.IsHorizontalOpen)
+                    if (GalleryFunctions.IsGalleryOpen)
                     {
                         GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
                     }
@@ -193,13 +187,13 @@ internal static class MainKeyboardShortcuts
                 return;
 
             case Key.S:
-                if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
+                if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                 {
                     await SaveFilesAsync().ConfigureAwait(false);
                     return; // Fix saving file
                 }
 
-                if (GalleryFunctions.IsHorizontalOpen)
+                if (GalleryFunctions.IsGalleryOpen)
                 {
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
                     return;
@@ -217,18 +211,12 @@ internal static class MainKeyboardShortcuts
             // Zoom
             case Key.Add:
             case Key.OemPlus:
-                if (!GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
-                {
-                    Zoom(true);
-                }
+                Zoom(true);
                 return;
 
             case Key.Subtract:
             case Key.OemMinus:
-                if (!GalleryFunctions.IsHorizontalFullscreenOpen || !GalleryFunctions.IsHorizontalOpen)
-                {
-                    Zoom(false);
-                }
+                Zoom(false);
                 return;
         }
 
@@ -246,7 +234,7 @@ internal static class MainKeyboardShortcuts
                     {
                         Close_UserControls();
                     }
-                    else if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
+                    else if (GalleryFunctions.IsGalleryOpen)
                     {
                         GalleryToggle.CloseCurrentGallery();
                     }
@@ -262,19 +250,19 @@ internal static class MainKeyboardShortcuts
                     {
                         ColorPicking.StopRunning(false);
                     }
-                    else if (GetEffectsWindow != null && GetEffectsWindow.IsVisible)
+                    else if (GetEffectsWindow is {IsVisible: true})
                     {
                         GetEffectsWindow.Hide();
                     }
-                    else if (GetImageInfoWindow != null && GetImageInfoWindow.IsVisible)
+                    else if (GetImageInfoWindow is {IsVisible: true})
                     {
                         GetImageInfoWindow.Hide();
                     }
-                    else if (GetInfoWindow != null && GetInfoWindow.IsVisible)
+                    else if (GetInfoWindow is { IsVisible: true })
                     {
                         GetInfoWindow.Hide();
                     }
-                    else if (GetSettingsWindow != null && GetSettingsWindow.IsVisible)
+                    else if (GetSettingsWindow is { IsVisible: true })
                     {
                         GetSettingsWindow.Hide();
                     }
@@ -288,7 +276,7 @@ internal static class MainKeyboardShortcuts
                     }
                     else if (!MainContextMenu.IsVisible)
                     {
-                        if (GetCroppingTool != null && GetCroppingTool.IsVisible)
+                        if (GetCroppingTool is { IsVisible: true })
                         {
                             return;
                         }
@@ -298,7 +286,7 @@ internal static class MainKeyboardShortcuts
 
                 // B
                 case Key.B:
-                    if (!GalleryFunctions.IsHorizontalOpen)
+                    if (!GalleryFunctions.IsGalleryOpen)
                     {
                         ConfigColors.ChangeBackground();
                     }
@@ -319,7 +307,7 @@ internal static class MainKeyboardShortcuts
 
                 // X, Ctrl + X
                 case Key.X:
-                    if (GalleryFunctions.IsHorizontalOpen is false)
+                    if (GalleryFunctions.IsGalleryOpen is false)
                     {
                         if (ctrlDown)
                         {
@@ -333,7 +321,7 @@ internal static class MainKeyboardShortcuts
                     break;
                 // F
                 case Key.F:
-                    if (!GalleryFunctions.IsHorizontalOpen)
+                    if (!GalleryFunctions.IsGalleryOpen)
                     {
                         Flip();
                     }
@@ -341,7 +329,7 @@ internal static class MainKeyboardShortcuts
 
                 // J
                 case Key.J:
-                    if (!GalleryFunctions.IsHorizontalOpen)
+                    if (!GalleryFunctions.IsGalleryOpen)
                     {
                         UpdateUIValues.ToggleQuickResize();
                     }
@@ -349,7 +337,7 @@ internal static class MainKeyboardShortcuts
 
                 // Delete, Shift + Delete
                 case Key.Delete:
-                    if (!GalleryFunctions.IsHorizontalOpen)
+                    if (!GalleryFunctions.IsGalleryOpen)
                     {
                         await DeleteFileAsync(!shiftDown).ConfigureAwait(false);
                     }
@@ -357,7 +345,7 @@ internal static class MainKeyboardShortcuts
 
                 // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
                 case Key.C:
-                    if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
+                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
                         if (shiftDown)
                         {
@@ -375,7 +363,7 @@ internal static class MainKeyboardShortcuts
                                 CopyFile();
                         }
                     }
-                    else if (!GalleryFunctions.IsHorizontalOpen)
+                    else if (!GalleryFunctions.IsGalleryOpen)
                     {
                         CropFunctions.StartCrop();
                     }
@@ -383,14 +371,14 @@ internal static class MainKeyboardShortcuts
 
                 // Ctrl + V
                 case Key.V:
-                    if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
+                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
                         await PasteAsync().ConfigureAwait(false);
                     }
                     break;
 
                 case Key.I:
-                    if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
+                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
                         if (altDown)
                         {
@@ -409,7 +397,7 @@ internal static class MainKeyboardShortcuts
 
                 // Ctrl + P
                 case Key.P:
-                    if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
+                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
                         Print(Pics[FolderIndex]);
                     }
@@ -417,7 +405,7 @@ internal static class MainKeyboardShortcuts
 
                 //  R
                 case Key.R:
-                    if (ctrlDown && !GalleryFunctions.IsHorizontalOpen)
+                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
                         await ReloadAsync().ConfigureAwait(false);
                     }
@@ -434,7 +422,7 @@ internal static class MainKeyboardShortcuts
 
                 // E
                 case Key.E:
-                    if (!GalleryFunctions.IsHorizontalOpen)
+                    if (!GalleryFunctions.IsGalleryOpen)
                     {
                         OpenWith();
                     }
@@ -463,11 +451,11 @@ internal static class MainKeyboardShortcuts
 
                 // G
                 case Key.G:
-                    if (GalleryFunctions.IsHorizontalOpen)
+                    if (GalleryFunctions.IsGalleryOpen)
                     {
                         GalleryToggle.CloseHorizontalGallery();
                     }
-                    else if (GalleryFunctions.IsHorizontalFullscreenOpen == false)
+                    else if (Settings.Default.FullscreenGallery == false)
                     {
                         await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
                     }
@@ -477,7 +465,7 @@ internal static class MainKeyboardShortcuts
                 case Key.Space:
                     if (GetPicGallery != null)
                     {
-                        if (GalleryFunctions.IsHorizontalOpen || GalleryFunctions.IsHorizontalFullscreenOpen)
+                        if (GalleryFunctions.IsGalleryOpen)
                         {
                             GalleryNavigation.ScrollTo();
                             return;
@@ -488,7 +476,7 @@ internal static class MainKeyboardShortcuts
 
                 // 1
                 case Key.D1:
-                    if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
+                    if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
                                               || Settings.Default.Fullscreen) { break; }
 
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"]);
@@ -497,7 +485,7 @@ internal static class MainKeyboardShortcuts
 
                 // 2
                 case Key.D2:
-                    if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
+                    if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
                                               || Settings.Default.Fullscreen) { break; }
 
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"]);
@@ -506,7 +494,7 @@ internal static class MainKeyboardShortcuts
 
                 // 3
                 case Key.D3:
-                    if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
+                    if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
                                               || Settings.Default.Fullscreen) { break; }
 
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"]);
@@ -515,7 +503,7 @@ internal static class MainKeyboardShortcuts
 
                 // 4
                 case Key.D4:
-                    if (QuickSettingsMenuOpen || GalleryFunctions.IsHorizontalOpen
+                    if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
                                               || Settings.Default.Fullscreen) { break; }
 
                     Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"]);
@@ -544,7 +532,7 @@ internal static class MainKeyboardShortcuts
 
                 // F5
                 case Key.F5:
-                    if (!GalleryFunctions.IsHorizontalOpen || !GalleryFunctions.IsHorizontalFullscreenOpen)
+                    if (!GalleryFunctions.IsGalleryOpen)
                     {
                         Slideshow.StartSlideshow();
                     }
@@ -582,7 +570,7 @@ internal static class MainKeyboardShortcuts
 
                 // Enter
                 case Key.Enter:
-                    if (GalleryFunctions.IsHorizontalFullscreenOpen || GalleryFunctions.IsHorizontalOpen)
+                    if (GalleryFunctions.IsGalleryOpen)
                     {
                         await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
                     }
@@ -602,14 +590,14 @@ internal static class MainKeyboardShortcuts
         {
             if (e.SystemKey == Key.Z)
             {
-                if (GalleryFunctions.IsHorizontalOpen || !GalleryFunctions.IsHorizontalFullscreenOpen)
+                if (GalleryFunctions.IsGalleryOpen)
                 {
                     HideInterfaceLogic.ToggleInterface();
                 }
             }
             else if (e.SystemKey == Key.Enter)
             {
-                if (Settings.Default.FullscreenGalleryHorizontal == false)
+                if (Settings.Default.FullscreenGallery == false)
                 {
                     WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
                 }

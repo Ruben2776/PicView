@@ -19,8 +19,8 @@ internal static class GalleryLoad
 {
     internal static bool IsLoading { get; private set; }
 
-    private const int FullscreenItems = 37;
-    private const int GalleryItems = 23;
+    internal const int FullscreenItems = 37;
+    internal const int GalleryItems = 23;
 
     internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
     {
@@ -44,13 +44,11 @@ internal static class GalleryLoad
             Panel.SetZIndex(UC.GetPicGallery, 999);
         }
 
-        if (Settings.Default.FullscreenGalleryHorizontal)
+        GalleryFunctions.IsGalleryOpen = true;
+
+        if (Settings.Default.FullscreenGallery)
         {
             WindowSizing.RenderFullscreen();
-
-            // Make sure booleans are correct
-            GalleryFunctions.IsHorizontalOpen = true;
-            GalleryFunctions.IsHorizontalFullscreenOpen = true;
 
             // Set size
             GalleryNavigation.SetSize(FullscreenItems);
@@ -79,8 +77,7 @@ internal static class GalleryLoad
         else
         {
             // Make sure booleans are correct
-            GalleryFunctions.IsHorizontalOpen = true;
-            GalleryFunctions.IsHorizontalFullscreenOpen = false;
+            GalleryFunctions.IsGalleryOpen = true;
 
             // Set size
             GalleryNavigation.SetSize(GalleryItems);

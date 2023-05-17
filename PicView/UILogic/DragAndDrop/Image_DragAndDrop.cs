@@ -29,7 +29,7 @@ internal static class ImageDragAndDrop
     /// <param name="e"></param>
     internal static void Image_DragEnter(object sender, DragEventArgs e)
     {
-        if (GalleryFunctions.IsHorizontalOpen) return;
+        if (GalleryFunctions.IsGalleryOpen) return;
 
         UIElement? element = null;
 
@@ -120,7 +120,7 @@ internal static class ImageDragAndDrop
     /// <param name="e"></param>
     internal static async Task Image_Drop(object sender, DragEventArgs e)
     {
-        if (GalleryFunctions.IsHorizontalOpen)
+        if (GalleryFunctions.IsGalleryOpen)
         {
             return;
         }

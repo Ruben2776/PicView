@@ -81,7 +81,7 @@ internal static class UpdateImage
             ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
         }, DispatcherPriority.Send);
 
-        if (GalleryFunctions.IsHorizontalFullscreenOpen)
+        if (Settings.Default.FullscreenGallery)
             GalleryNavigation.FullscreenGalleryNavigation();
 
         if (GetToolTipMessage is { IsVisible: true })

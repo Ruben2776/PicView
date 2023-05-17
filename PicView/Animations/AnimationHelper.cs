@@ -174,7 +174,7 @@ internal static class AnimationHelper
 
     internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
     {
-        if (item.Id == Navigation.FolderIndex || item.Id == GalleryNavigation.SelectedGalleryItem || GalleryFunctions.IsHorizontalFullscreenOpen)
+        if (item.Id == Navigation.FolderIndex || item.Id == GalleryNavigation.SelectedGalleryItem || Settings.Default.FullscreenGallery)
         {
             return;
         }

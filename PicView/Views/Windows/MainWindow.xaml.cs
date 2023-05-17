@@ -75,11 +75,11 @@ public partial class MainWindow
                 var args = Environment.GetCommandLineArgs();
 
                 // Determine preferred UI for startup
-                if (Settings.Default.FullscreenGalleryHorizontal)
+                if (Settings.Default.FullscreenGallery)
                 {
                     if (args.Length <= 1)
                     {
-                        Settings.Default.FullscreenGalleryHorizontal = false;
+                        Settings.Default.FullscreenGallery = false;
                     }
                     else
                     {
@@ -152,11 +152,11 @@ public partial class MainWindow
             MouseOverAnimations.SetButtonIconMouseOverAnimations(GalleryButton, GalleryBg, GalleryBrush, true);
             GalleryButton.Click += async (_, _) =>
             {
-                if (GalleryFunctions.IsHorizontalOpen)
+                if (GalleryFunctions.IsGalleryOpen)
                 {
                     GalleryToggle.CloseHorizontalGallery();
                 }
-                else if (GalleryFunctions.IsHorizontalFullscreenOpen == false)
+                else if (Settings.Default.FullscreenGallery == false)
                 {
                     await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
                 }

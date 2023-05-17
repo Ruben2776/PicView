@@ -88,7 +88,7 @@ internal static class Rotation
     private static void Rotate(double degrees)
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
-            Settings.Default.FullscreenGalleryHorizontal == false && GalleryFunctions.IsHorizontalOpen)
+            Settings.Default.FullscreenGallery == false && GalleryFunctions.IsGalleryOpen)
         { return; }
 
         var rt = new RotateTransform { Angle = RotationAngle = degrees };

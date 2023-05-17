@@ -26,6 +26,7 @@ internal static class QuickLoad
     /// <param name="file"></param>
     internal static async Task QuickLoadAsync(string file)
     {
+        var mainWindow = ConfigureWindows.GetMainWindow;
         InitialPath = file;
         var fileInfo = new FileInfo(file);
         if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
@@ -41,33 +42,36 @@ internal static class QuickLoad
 
         LoadingPreview(fileInfo, false);
         var size = ImageSizeFunctions.GetImageSize(file);
+        if (Properties.Settings.Default.FullscreenGallery)
+        {
+            GalleryNavigation.SetSize(GalleryLoad.FullscreenItems);
+        }
 
         if (size.HasValue)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            await mainWindow.Dispatcher.InvokeAsync(() =>
                 FitImage(size.Value.Width, size.Value.Height), DispatcherPriority.Send);
         }
 
         var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
         if (bitmapSource != null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            await mainWindow.Dispatcher.InvokeAsync(() =>
                 SetMainImage(bitmapSource, fileInfo), DispatcherPriority.Send);
 
             if (!size.HasValue)
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                await mainWindow.Dispatcher.InvokeAsync(() =>
                     FitImage(bitmapSource.Width, bitmapSource.Height), DispatcherPriority.Send);
             }
         }
         else
         {
             var errorImage = ImageFunctions.ImageErrorMessage();
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                ConfigureWindows.GetMainWindow.MainImage.Source = errorImage);
+            await mainWindow.Dispatcher.InvokeAsync(() => mainWindow.MainImage.Source = errorImage);
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        await mainWindow.Dispatcher.InvokeAsync(() =>
         {
             if (UC.GetSpinWaiter is { IsVisible: true })
             {
@@ -80,12 +84,12 @@ internal static class QuickLoad
 
         if (bitmapSource != null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            await mainWindow.Dispatcher.InvokeAsync(() =>
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo), DispatcherPriority.Send);
         }
         else
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            await mainWindow.Dispatcher.InvokeAsync(() =>
                 SetTitleString(0, 0, FolderIndex, fileInfo), DispatcherPriority.Send);
         }
 
@@ -98,7 +102,7 @@ internal static class QuickLoad
         if (bitmapSource is not null)
             await PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
-        if (GalleryFunctions.IsHorizontalFullscreenOpen)
+        if (Properties.Settings.Default.FullscreenGallery)
         {
             await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }

@@ -25,7 +25,7 @@ internal static class GalleryClick
 {
     internal static async Task ClickAsync(int id)
     {
-        if (GalleryFunctions.IsHorizontalOpen == false)
+        if (GalleryFunctions.IsGalleryOpen == false)
         {
             await ItemClickAsync(id).ConfigureAwait(false);
             return;
@@ -45,7 +45,7 @@ internal static class GalleryClick
         var size = ImageSizeFunctions.GetImageSize(Pics[id]);
         if (size.HasValue)
         {
-            GalleryFunctions.IsHorizontalOpen = false;
+            GalleryFunctions.IsGalleryOpen = false;
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 SetTitle.SetLoadingString();
@@ -86,7 +86,7 @@ internal static class GalleryClick
                 border.Opacity = 0;
                 GetPicGallery.grid.Children.Remove(border);
                 image = null;
-                GalleryFunctions.IsHorizontalOpen = false;
+                GalleryFunctions.IsGalleryOpen = false;
                 GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
             });

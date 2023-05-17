@@ -72,9 +72,9 @@ public partial class ImageSettings
         {
             UC.Close_UserControls();
 
-            if (Settings.Default.FullscreenGalleryHorizontal == false)
+            if (Settings.Default.FullscreenGallery == false)
             {
-                Settings.Default.FullscreenGalleryHorizontal = true;
+                Settings.Default.FullscreenGallery = true;
             }
 
             await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
@@ -83,9 +83,9 @@ public partial class ImageSettings
         {
             UC.Close_UserControls();
 
-            if (Settings.Default.FullscreenGalleryHorizontal == false)
+            if (Settings.Default.FullscreenGallery == false)
             {
-                Settings.Default.FullscreenGalleryHorizontal = true;
+                Settings.Default.FullscreenGallery = true;
             }
 
             await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);

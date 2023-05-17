@@ -28,8 +28,8 @@ internal static class FadeControls
             || GetX2 == null
             || GetGalleryShortcut == null
             || Scroll.IsAutoScrolling
-            || GalleryFunctions.IsHorizontalFullscreenOpen
-            || GalleryFunctions.IsHorizontalOpen)
+            || Settings.Default.FullscreenGallery
+            || GalleryFunctions.IsGalleryOpen)
         {
             return;
         }

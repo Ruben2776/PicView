@@ -171,7 +171,7 @@ internal static class WindowSizing
             RenderFullscreen();
 
             // Handle if browsing gallery
-            if (GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 GalleryLoad.LoadLayout();
                 GalleryNavigation.ScrollTo();

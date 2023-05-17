@@ -218,12 +218,12 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FullscreenGalleryHorizontal {
+        public bool FullscreenGallery {
             get {
-                return ((bool)(this["FullscreenGalleryHorizontal"]));
+                return ((bool)(this["FullscreenGallery"]));
             }
             set {
-                this["FullscreenGalleryHorizontal"] = value;
+                this["FullscreenGallery"] = value;
             }
         }
         

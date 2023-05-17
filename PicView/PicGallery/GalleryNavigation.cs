@@ -17,7 +17,7 @@ internal static class GalleryNavigation
     {
         PicGalleryItemSize = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
 
-        PicGalleryItemSizeS = !Settings.Default.FullscreenGalleryHorizontal ? PicGalleryItemSize - 20 : PicGalleryItemSize - 10;
+        PicGalleryItemSizeS = !Settings.Default.FullscreenGallery ? PicGalleryItemSize - 20 : PicGalleryItemSize - 10;
     }
 
     internal static double PicGalleryItemSize { get; private set; }
@@ -67,8 +67,13 @@ internal static class GalleryNavigation
     internal static void ScrollTo()
     {
         if (GetPicGallery == null || PicGalleryItemSize < 1) { return; }
+        if (!GalleryFunctions.IsGalleryOpen) return;
 
-        if (GalleryFunctions.IsHorizontalOpen)
+        if (Settings.Default.FullscreenGallery)
+        {
+            GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+        }
+        else
         {
             if (GetPicGallery.Container.Children.Count < FolderIndex) { return; }
 
@@ -80,14 +85,6 @@ internal static class GalleryNavigation
             if (SelectedGalleryItem == FolderIndex) return;
             SetSelected(SelectedGalleryItem, false);
             SelectedGalleryItem = FolderIndex;
-        }
-        else if (GalleryFunctions.IsHorizontalFullscreenOpen)
-        {
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
-        }
-        else
-        {
-            GetPicGallery.Scroller.ScrollToVerticalOffset(CenterScrollPosition);
         }
     }
 
@@ -224,7 +221,7 @@ internal static class GalleryNavigation
             SetSelected(FolderIndex, true);
             SelectedGalleryItem = FolderIndex;
 
-            if (Settings.Default.FullscreenGalleryHorizontal)
+            if (Settings.Default.FullscreenGallery)
             {
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
             }

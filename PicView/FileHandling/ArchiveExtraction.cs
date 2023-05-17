@@ -145,7 +145,7 @@ internal static class ArchiveExtraction
                 GetFileHistory ??= new FileHistory();
                 GetFileHistory.Add(TempZipFile);
 
-                if (Settings.Default.FullscreenGalleryHorizontal)
+                if (Settings.Default.FullscreenGallery)
                 {
                     await GalleryLoad.LoadAsync().ConfigureAwait(false);
                 }

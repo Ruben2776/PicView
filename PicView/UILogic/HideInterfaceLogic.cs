@@ -15,7 +15,7 @@ internal static class HideInterfaceLogic
     /// </summary>
     internal static void ToggleInterface()
     {
-        if (GalleryFunctions.IsHorizontalFullscreenOpen || Settings.Default.Fullscreen)
+        if (Settings.Default.FullscreenGallery || Settings.Default.Fullscreen)
         {
             return;
         }

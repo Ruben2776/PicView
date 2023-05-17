@@ -176,11 +176,11 @@ internal static class MainMouseKeys
         // Determine horizontal scrolling direction
         var direction = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
 
-        if (GalleryFunctions.IsHorizontalFullscreenOpen)
+        if (Settings.Default.FullscreenGallery)
         {
             await HandleFullscreenGalleryAsync(direction, e).ConfigureAwait(false);
         }
-        else if (GalleryFunctions.IsHorizontalOpen)
+        else if (GalleryFunctions.IsGalleryOpen)
         {
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));

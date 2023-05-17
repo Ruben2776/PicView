@@ -17,11 +17,11 @@ public partial class X2 : UserControl
         InitializeComponent();
         MouseLeftButtonDown += (_, _) =>
         {
-            if (GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (Settings.Default.FullscreenGallery)
             {
                 SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
             }
-            else if (GalleryFunctions.IsHorizontalOpen)
+            else if (GalleryFunctions.IsGalleryOpen)
             {
                 GalleryToggle.CloseHorizontalGallery();
             }

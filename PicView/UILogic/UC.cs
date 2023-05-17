@@ -227,7 +227,7 @@ internal static class UC
     /// <param name="e"></param>
     internal static void Toggle_open_menu(object sender, RoutedEventArgs e)
     {
-        if (GalleryFunctions.IsHorizontalOpen)
+        if (GalleryFunctions.IsGalleryOpen)
         {
             return;
         }
@@ -263,7 +263,7 @@ internal static class UC
     /// <param name="e"></param>
     internal static void Toggle_image_menu(object sender, RoutedEventArgs e)
     {
-        if (GalleryFunctions.IsHorizontalOpen)
+        if (GalleryFunctions.IsGalleryOpen)
         {
             return;
         }
@@ -299,7 +299,7 @@ internal static class UC
     /// <param name="e"></param>
     internal static void Toggle_quick_settings_menu(object sender, RoutedEventArgs e)
     {
-        if (GalleryFunctions.IsHorizontalOpen)
+        if (GalleryFunctions.IsGalleryOpen)
         {
             return;
         }
@@ -335,7 +335,7 @@ internal static class UC
     /// <param name="e"></param>
     internal static void Toggle_Functions_menu(object sender, RoutedEventArgs e)
     {
-        if (GalleryFunctions.IsHorizontalOpen)
+        if (GalleryFunctions.IsGalleryOpen)
         {
             return;
         }

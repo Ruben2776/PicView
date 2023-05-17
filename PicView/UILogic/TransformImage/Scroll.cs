@@ -39,7 +39,7 @@ internal static class Scroll
     /// </summary>
     internal static void SetScrollBehaviour(bool scrolling)
     {
-        if (Settings.Default.Fullscreen || Settings.Default.FullscreenGalleryHorizontal)
+        if (Settings.Default.Fullscreen || Settings.Default.FullscreenGallery)
         {
             return;
         }

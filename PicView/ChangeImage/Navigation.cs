@@ -108,7 +108,7 @@ internal static class Navigation
         }
 
         // If the horizontal fullscreen gallery is open, deselect current index
-        if (GalleryFunctions.IsHorizontalFullscreenOpen) GalleryNavigation.SetSelected(FolderIndex, false);
+        if (Settings.Default.FullscreenGallery) GalleryNavigation.SetSelected(FolderIndex, false);
 
         if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
         else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
@@ -124,7 +124,7 @@ internal static class Navigation
     {
         if (!arrow) // Normal buttons
         {
-            if (GalleryFunctions.IsHorizontalOpen)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 GalleryNavigation.ScrollTo(!right);
                 return;

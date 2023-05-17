@@ -24,8 +24,8 @@ internal static class DragToExplorer
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null
             || Keyboard.Modifiers == ModifierKeys.Shift
             || Keyboard.Modifiers == ModifierKeys.Alt
-            || GalleryFunctions.IsHorizontalFullscreenOpen
-            || GalleryFunctions.IsHorizontalOpen
+            || Settings.Default.FullscreenGallery
+            || GalleryFunctions.IsGalleryOpen
             || Settings.Default.Fullscreen
             || Scroll.IsAutoScrolling
             || ZoomLogic.IsZoomed

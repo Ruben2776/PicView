@@ -12,8 +12,7 @@ namespace PicView.PicGallery;
 
 internal static class GalleryFunctions
 {
-    internal static bool IsHorizontalOpen { get; set; }
-    internal static bool IsHorizontalFullscreenOpen { get; set; }
+    internal static bool IsGalleryOpen { get; set; }
 
     private class TempPics
     {

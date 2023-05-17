@@ -25,15 +25,14 @@ internal static class GalleryToggle
             return;
         }
 
-        IsHorizontalOpen = true;
-        IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+        IsGalleryOpen = true;
 
         await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
         {
             GalleryLoad.LoadLayout();
             GetPicGallery.Visibility = Visibility.Visible;
 
-            bool fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
+            var fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
             if (fade == false)
             {
                 GetPicGallery.Opacity = 1;
@@ -62,10 +61,8 @@ internal static class GalleryToggle
             GalleryLoad.LoadLayout();
             GetPicGallery.Visibility = Visibility.Visible;
 
-            if (Settings.Default.FullscreenGalleryHorizontal)
+            if (Settings.Default.FullscreenGallery)
             {
-                IsHorizontalFullscreenOpen = true;
-                IsHorizontalOpen = false;
 
                 var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
                             select x;
@@ -78,8 +75,6 @@ internal static class GalleryToggle
             }
             else
             {
-                IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
-
                 var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
                             select x;
                 foreach (var item in check)
@@ -112,11 +107,11 @@ internal static class GalleryToggle
 
     internal static void CloseCurrentGallery()
     {
-        if (IsHorizontalFullscreenOpen)
+        if (Settings.Default.FullscreenGallery)
         {
             CloseFullscreenGallery();
         }
-        else if (IsHorizontalOpen)
+        else if (IsGalleryOpen)
         {
             CloseHorizontalGallery();
         }
@@ -126,7 +121,7 @@ internal static class GalleryToggle
     {
         if (GetPicGallery is null) { return; }
 
-        IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+        IsGalleryOpen = false;
 
         // Restore interface elements if needed
         if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen)
@@ -152,7 +147,7 @@ internal static class GalleryToggle
 
     internal static void CloseFullscreenGallery()
     {
-        Settings.Default.FullscreenGalleryHorizontal = IsHorizontalFullscreenOpen = IsHorizontalOpen = false;
+        Settings.Default.FullscreenGallery = IsGalleryOpen = false;
 
         GetPicGallery.Visibility = Visibility.Collapsed;
 

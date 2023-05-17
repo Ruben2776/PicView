@@ -133,7 +133,7 @@ internal static class LoadPic
 
             Pics = FileList(fileInfo);
 
-            if (GalleryFunctions.IsHorizontalFullscreenOpen)
+            if (Properties.Settings.Default.FullscreenGallery)
             {
                 await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
@@ -244,7 +244,7 @@ internal static class LoadPic
             await LoadPicAtIndexAsync(0, fileInfo).ConfigureAwait(false);
         }
 
-        if (GalleryFunctions.IsHorizontalFullscreenOpen)
+        if (Properties.Settings.Default.FullscreenGallery)
         {
             await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }
