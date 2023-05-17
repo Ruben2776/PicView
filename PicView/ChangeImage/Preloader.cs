@@ -194,11 +194,13 @@ internal static class PreLoader
 
             Parallel.For(0, PositiveIterations, i =>
             {
+                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
                 var index = (nextStartingIndex + i) % Pics.Count;
                 _ = AddAsync(index).ConfigureAwait(false);
             });
             Parallel.For(0, NegativeIterations, i =>
             {
+                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
                 var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
                 _ = AddAsync(index).ConfigureAwait(false);
             });
@@ -206,6 +208,7 @@ internal static class PreLoader
             {
                 for (var i = 0; i < NegativeIterations; i++)
                 {
+                    if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
                     var index = (deleteIndex - i + Pics.Count) % Pics.Count;
                     Remove(index);
                 }
@@ -219,11 +222,13 @@ internal static class PreLoader
 
             Parallel.For(0, PositiveIterations, i =>
             {
+                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
                 var index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
                 _ = AddAsync(index).ConfigureAwait(false);
             });
             Parallel.For(0, NegativeIterations, i =>
             {
+                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
                 var index = (prevStartingIndex + i) % Pics.Count;
                 _ = AddAsync(index).ConfigureAwait(false);
             });
@@ -231,6 +236,7 @@ internal static class PreLoader
             {
                 for (var i = 0; i < NegativeIterations; i++)
                 {
+                    if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
                     var index = (deleteIndex + i) % Pics.Count;
                     Remove(index);
                 }
