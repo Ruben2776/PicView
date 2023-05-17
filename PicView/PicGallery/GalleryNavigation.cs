@@ -75,7 +75,7 @@ internal static class GalleryNavigation
             var selectedItem = GetPicGallery.Container.Children[FolderIndex];
             var selectedScrollTo = selectedItem.TranslatePoint(new Point(), GetPicGallery.Container);
             // ReSharper disable once PossibleLossOfFraction
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(selectedScrollTo.X - (HorizontalItems / 2) * PicGalleryItemSize + (PicGalleryItemSizeS / 2));
+            GetPicGallery.Scroller.ScrollToHorizontalOffset(selectedScrollTo.X - HorizontalItems / 2 * PicGalleryItemSize + (PicGalleryItemSizeS / 2));
 
             if (SelectedGalleryItem == FolderIndex) return;
             SetSelected(SelectedGalleryItem, false);

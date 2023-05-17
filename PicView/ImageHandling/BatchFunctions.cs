@@ -51,7 +51,7 @@ internal static class BatchFunctions
                         DeleteFiles.TryDeleteFile(sourceFile.FullName, true);
                         if (compress.HasValue)
                         {
-                            Optimize(compress.Value, destination);
+                            ImageFunctions.OptimizeImage(destination, compress.Value);
                         }
                     }
                     else
@@ -59,7 +59,7 @@ internal static class BatchFunctions
                         await magickImage.WriteAsync(fileStream).ConfigureAwait(false);
                         if (compress.HasValue)
                         {
-                            Optimize(compress.Value, sourceFile.FullName);
+                            ImageFunctions.OptimizeImage(sourceFile.FullName, compress.Value);
                         }
                     }
                 }
@@ -78,7 +78,7 @@ internal static class BatchFunctions
                     await magickImage.WriteAsync(overwriteStream).ConfigureAwait(false);
                     if (compress.HasValue)
                     {
-                        Optimize(compress.Value, destination);
+                        ImageFunctions.OptimizeImage(destination, compress.Value);
                     }
                 }
             }
@@ -100,7 +100,7 @@ internal static class BatchFunctions
 
         if (sourceFile.DirectoryName + @"\" == outputFolder)
         {
-            await ImageFunctions.OptimizeImageAsync(sourceFile.FullName).ConfigureAwait(false);
+            ImageFunctions.OptimizeImage(sourceFile.FullName);
         }
         else if (ext is null)
         {
@@ -123,7 +123,7 @@ internal static class BatchFunctions
             return string.Empty;
         }
 
-        Optimize(compress.Value, destination);
+        ImageFunctions.OptimizeImage(destination, compress.Value);
         try
         {
             var newSize = new FileInfo(sourceFile.FullName).Length.GetReadableFileSize();
@@ -136,22 +136,6 @@ internal static class BatchFunctions
         }
 
         return sb.ToString();
-    }
-
-    private static bool Optimize(bool isLossless, string file)
-    {
-        ImageOptimizer imageOptimizer = new()
-        {
-            OptimalCompression = isLossless
-        };
-        try
-        {
-            return imageOptimizer.Compress(file);
-        }
-        catch (Exception)
-        {
-            return false;
-        }
     }
 
     internal class ThumbNailHolder

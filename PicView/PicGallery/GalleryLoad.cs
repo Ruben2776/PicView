@@ -19,8 +19,8 @@ internal static class GalleryLoad
 {
     internal static bool IsLoading { get; private set; }
 
-    private const int _fullscreenItems = 37;
-    private const int _galleryItems = 23;
+    private const int FullscreenItems = 37;
+    private const int GalleryItems = 23;
 
     internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
     {
@@ -53,7 +53,7 @@ internal static class GalleryLoad
             GalleryFunctions.IsHorizontalFullscreenOpen = true;
 
             // Set size
-            GalleryNavigation.SetSize(_fullscreenItems);
+            GalleryNavigation.SetSize(FullscreenItems);
             UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
             UC.GetPicGallery.Height = double.NaN;
 
@@ -83,7 +83,7 @@ internal static class GalleryLoad
             GalleryFunctions.IsHorizontalFullscreenOpen = false;
 
             // Set size
-            GalleryNavigation.SetSize(_galleryItems);
+            GalleryNavigation.SetSize(GalleryItems);
             UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
             UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
 

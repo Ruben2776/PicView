@@ -63,7 +63,7 @@ internal static class ImageFunctions
     {
         if (ErrorHandling.CheckOutOfRange()) { return; }
 
-        bool toCenter = false;
+        var toCenter = false;
 
         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
         {
@@ -72,7 +72,7 @@ internal static class ImageFunctions
 
         Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
 
-        var success = await OptimizeImageAsync(Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+        var success = await Task.FromResult(OptimizeImage(Navigation.Pics[Navigation.FolderIndex])).ConfigureAwait(false);
 
         if (success)
         {
@@ -123,7 +123,7 @@ internal static class ImageFunctions
     /// <param name="file">The file path of the image to optimize.</param>
     /// <param name="lossless">Specifies whether to use lossless compression. Default is true.</param>
     /// <returns>True if the optimization was successful, false otherwise.</returns>
-    internal static async Task<bool> OptimizeImageAsync(string file, bool lossless = true) => await Task.Run(() =>
+    internal static bool OptimizeImage(string file, bool lossless = true)
     {
         // Create a new ImageOptimizer with the specified lossless compression option
         ImageOptimizer imageOptimizer = new()
@@ -158,7 +158,7 @@ internal static class ImageFunctions
             // Return false to indicate that the optimization was not successful
             return false;
         }
-    });
+    }
 
     internal static RenderTargetBitmap ImageErrorMessage()
     {
