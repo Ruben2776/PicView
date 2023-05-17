@@ -124,6 +124,7 @@
     <system:String x:Key="CheckForUpdates">Søg efter opdateringer</system:String>
     <system:String x:Key="AllowZoomOut">Undgå at zoome ud på billedet, når det allerede er i maksimal størrelse</system:String>
     <system:String x:Key="AdjustNavSpeed">Juster hastighed, når tasten holdes nede</system:String>
+    <system:String x:Key="ToggleTaskbarProgress">Vis fremskridt i proceslinjen</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Farver</system:String>

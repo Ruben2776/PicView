@@ -124,6 +124,7 @@
     <system:String x:Key="CheckForUpdates">检查更新</system:String>
     <system:String x:Key="AllowZoomOut">在最大尺寸时避免缩小图像</system:String>
     <system:String x:Key="AdjustNavSpeed">按住键时调整速度</system:String>
+    <system:String x:Key="ToggleTaskbarProgress">显示任务栏进度</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">反色</system:String>

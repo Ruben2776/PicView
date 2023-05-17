@@ -218,12 +218,12 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FullscreenGallery {
+        public bool FullscreenGalleryHorizontal {
             get {
-                return ((bool)(this["FullscreenGallery"]));
+                return ((bool)(this["FullscreenGalleryHorizontal"]));
             }
             set {
-                this["FullscreenGallery"] = value;
+                this["FullscreenGalleryHorizontal"] = value;
             }
         }
         
@@ -500,6 +500,30 @@ namespace PicView.Properties {
             }
             set {
                 this["NavSpeed"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FullscreenGallery {
+            get {
+                return ((bool)(this["FullscreenGallery"]));
+            }
+            set {
+                this["FullscreenGallery"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsTaskbarProgressEnabled {
+            get {
+                return ((bool)(this["IsTaskbarProgressEnabled"]));
+            }
+            set {
+                this["IsTaskbarProgressEnabled"] = value;
             }
         }
     }

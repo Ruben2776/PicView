@@ -15,6 +15,9 @@ internal static class Taskbar
     /// <param name="ii">size</param>
     internal static void Progress(double d)
     {
+        if (!Properties.Settings.Default.IsTaskbarProgressEnabled)
+            return;
+
         TaskbarItemInfo taskbar = new()
         {
             ProgressState = TaskbarItemProgressState.Normal,

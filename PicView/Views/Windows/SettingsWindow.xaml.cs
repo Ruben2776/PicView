@@ -7,6 +7,7 @@ using PicView.SystemIntegration;
 using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using PicView.ChangeImage;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
 
@@ -148,6 +150,20 @@ public partial class SettingsWindow : Window
             AltUIRadio.Click += delegate
             {
                 Settings.Default.ShowAltInterfaceButtons = !Settings.Default.ShowAltInterfaceButtons;
+            };
+
+            TaskbarRadio.IsChecked = Settings.Default.IsTaskbarProgressEnabled;
+            TaskbarRadio.Click += delegate
+            {
+                Settings.Default.IsTaskbarProgressEnabled = !Settings.Default.IsTaskbarProgressEnabled;
+                if (!Settings.Default.IsTaskbarProgressEnabled)
+                {
+                    Taskbar.NoProgress();
+                }
+                else
+                {
+                    Taskbar.Progress((double)Navigation.FolderIndex / Navigation.Pics.Count);
+                }
             };
 
             CtrlZoom.IsChecked = Settings.Default.CtrlZoom;
@@ -358,6 +374,10 @@ public partial class SettingsWindow : Window
         // AltUIRadio
         AltUIRadio.MouseEnter += delegate { ButtonMouseOverAnim(AltUIText); };
         AltUIRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(AltUIText); };
+
+        // TaskbarRadio
+        TaskbarRadio.MouseEnter += delegate { ButtonMouseOverAnim(TaskbarText); };
+        TaskbarRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(TaskbarText); };
 
         // ScrollZoom
         ScrollZoom.MouseEnter += delegate

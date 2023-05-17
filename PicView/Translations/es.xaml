@@ -124,6 +124,7 @@
     <system:String x:Key="CheckForUpdates">Compruebe las actualizaciones</system:String>
     <system:String x:Key="AllowZoomOut">Evite hacer zoom out en la imagen cuando ya esté en tamaño máximo</system:String>
     <system:String x:Key="AdjustNavSpeed">Ajustar velocidad cuando la tecla se mantiene presionada</system:String>
+    <system:String x:Key="ToggleTaskbarProgress">Mostrar el progreso en la barra de tareas</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativo</system:String>
