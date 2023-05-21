@@ -76,7 +76,7 @@ internal static class ScaleImage
         double maxWidth, maxHeight;
         var margin = 0d;
         var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
-        var isFullScreenSize = Settings.Default is { Fullscreen: true, FullscreenGallery: true };
+        var isFullScreenSize = Settings.Default.Fullscreen || Settings.Default.FullscreenGallery;
 
         var borderSpaceHeight = isFullScreenSize ? 0 : GetMainWindow.LowerBar.Height + GetMainWindow.TitleBar.Height;
         var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;

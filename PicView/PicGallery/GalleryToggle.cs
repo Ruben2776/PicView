@@ -49,13 +49,8 @@ internal static class GalleryToggle
         await LoadAndScrollToAsync().ConfigureAwait(false);
     }
 
-    internal static async Task OpenFullscreenGalleryAsync(bool startup)
+    internal static async Task OpenFullscreenGalleryAsync()
     {
-        if (Pics?.Count < 1 && !startup)
-        {
-            return;
-        }
-
         await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
         {
             GalleryLoad.LoadLayout();
@@ -93,11 +88,7 @@ internal static class GalleryToggle
             GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
         });
 
-        if (startup == false)
-        {
-            ScaleImage.TryFitImage();
-        }
-
+        ScaleImage.TryFitImage();
         await LoadAndScrollToAsync().ConfigureAwait(false);
     }
 

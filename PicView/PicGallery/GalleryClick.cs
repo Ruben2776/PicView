@@ -25,7 +25,7 @@ internal static class GalleryClick
 {
     internal static async Task ClickAsync(int id)
     {
-        if (GalleryFunctions.IsGalleryOpen == false)
+        if (Settings.Default.FullscreenGallery)
         {
             await ItemClickAsync(id).ConfigureAwait(false);
             return;

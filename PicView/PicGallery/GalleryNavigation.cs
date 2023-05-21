@@ -216,11 +216,11 @@ internal static class GalleryNavigation
 
     internal static void FullscreenGalleryNavigation()
     {
+        SetSelected(FolderIndex, true);
+        SelectedGalleryItem = FolderIndex;
+
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
-            SetSelected(FolderIndex, true);
-            SelectedGalleryItem = FolderIndex;
-
             if (Settings.Default.FullscreenGallery)
             {
                 GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
@@ -229,9 +229,9 @@ internal static class GalleryNavigation
             {
                 GetPicGallery.Scroller.ScrollToVerticalOffset(CenterScrollPosition);
             }
-
-            Tooltip.CloseToolTipMessage();
         });
+
+        Tooltip.CloseToolTipMessage();
     }
 
     #endregion Horizontal Gallery Navigation

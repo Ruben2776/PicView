@@ -21,9 +21,11 @@
                 Panel.ZIndex="1" />
             <ScrollViewer
                 x:Name="Scroller"
+                CanContentScroll="False"
                 FocusVisualStyle="{x:Null}"
                 Focusable="False"
-                HorizontalScrollBarVisibility="Visible"
+                HorizontalScrollBarVisibility="Visible" 
+                IsDeferredScrollingEnabled="False"
                 VerticalScrollBarVisibility="Disabled">
                 <ScrollViewer.Style>
                     <Style TargetType="{x:Type ScrollViewer}">

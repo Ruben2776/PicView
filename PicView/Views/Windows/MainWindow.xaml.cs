@@ -70,7 +70,7 @@ public partial class MainWindow
             //     w.TitleBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
             //     w.LowerBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
             // }
-            Task.Run(() =>
+            Task.Run(async() =>
             {
                 var args = Environment.GetCommandLineArgs();
 
@@ -83,7 +83,8 @@ public partial class MainWindow
                     }
                     else
                     {
-                        _ = GalleryToggle.OpenFullscreenGalleryAsync(true).ConfigureAwait(false);
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadLayout, DispatcherPriority.Send);
+                        await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
                     }
                 }
                 else if (Settings.Default.Fullscreen)
@@ -105,7 +106,7 @@ public partial class MainWindow
                 }
                 else
                 {
-                    _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                    await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                     // TODO maybe load extra images if multiple arguments
                 }
             });

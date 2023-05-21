@@ -77,7 +77,7 @@ public partial class ImageSettings
                 Settings.Default.FullscreenGallery = true;
             }
 
-            await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
+            await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
         };
         FullScreenGalleryButton.Click += async delegate
         {
@@ -88,7 +88,7 @@ public partial class ImageSettings
                 Settings.Default.FullscreenGallery = true;
             }
 
-            await GalleryToggle.OpenFullscreenGalleryAsync(false).ConfigureAwait(false);
+            await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
         };
 
         // ContainedGalleryBorder

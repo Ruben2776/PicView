@@ -18,37 +18,37 @@ internal static class Thumbnails
     internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
     {
         BitmapSource? pic;
-
-        if (GetPicGallery != null && GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
+        try
         {
-            var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
-            pic = (BitmapSource)y.ThumbImage.Source;
-        }
-        else
-        {
-            if (fileInfo is null)
+            if (GetPicGallery != null && GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
             {
-                var preLoadValue = PreLoader.Get(x);
-                if (preLoadValue is null)
-                {
-                    fileInfo = new FileInfo(Pics[x]);
-                }
-                else
-                {
-                    return preLoadValue.BitmapSource;
-                }
+                var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
+                pic = (BitmapSource)y.ThumbImage.Source;
             }
-            try
+            else
             {
+                if (fileInfo is null)
+                {
+                    var preLoadValue = PreLoader.Get(x);
+                    if (preLoadValue is null)
+                    {
+                        fileInfo = new FileInfo(Pics[x]);
+                    }
+                    else
+                    {
+                        return preLoadValue.BitmapSource;
+                    }
+                }
+
                 using var image = new MagickImage();
                 image.Ping(fileInfo);
                 var thumb = image.GetExifProfile()?.CreateThumbnail();
                 pic = thumb?.ToBitmapSource();
             }
-            catch (Exception)
-            {
-                return null;
-            }
+        }
+        catch (Exception)
+        {
+            return null;
         }
 
         if (pic is { IsFrozen: false })

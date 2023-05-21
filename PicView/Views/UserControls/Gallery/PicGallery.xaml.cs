@@ -6,7 +6,7 @@ namespace PicView.Views.UserControls.Gallery;
 /// <summary>
 /// Interaction logic for PicGallery.xaml
 /// </summary>
-public partial class PicGallery : UserControl
+public partial class PicGallery
 {
     public PicGallery()
     {
