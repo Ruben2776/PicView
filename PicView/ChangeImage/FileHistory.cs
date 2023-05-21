@@ -1,4 +1,5 @@
-﻿using PicView.ChangeTitlebar;
+﻿using System.Diagnostics;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.UILogic;
 using System.Globalization;
@@ -208,25 +209,34 @@ internal class FileHistory
 
     internal void RefreshRecentItemsMenu()
     {
-        var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
-
-        for (int i = 0; i < MaxCount; i++)
+        try
         {
-            if (_fileHistory.Count == i)
-            {
-                return;
-            }
+            var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
 
-            var item = MenuItem(_fileHistory[i], i);
-            if (item is null) { break; }
-            if (cm.Items.Count <= i)
+            for (int i = 0; i < MaxCount; i++)
             {
-                cm.Items.Add(item);
+                if (_fileHistory.Count == i)
+                {
+                    return;
+                }
+
+                var item = MenuItem(_fileHistory[i], i);
+                if (item is null) { break; }
+                if (cm.Items.Count <= i)
+                {
+                    cm.Items.Add(item);
+                }
+                else
+                {
+                    cm.Items[i] = item;
+                }
             }
-            else
-            {
-                cm.Items[i] = item;
-            }
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Trace.WriteLine(e);
+#endif
         }
     }
 }

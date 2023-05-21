@@ -393,6 +393,8 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Border
@@ -553,7 +555,7 @@
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="0,0,1,0">
+                        BorderThickness="0,0,1,1">
                         <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -573,7 +575,7 @@
                         Padding="0,3,0,3"
                         Background="{StaticResource BackgroundColorBrush}"
                         BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="0,0,1,0">
+                        BorderThickness="0,0,1,1">
                         <StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -629,6 +631,122 @@
                             Style="{StaticResource txtItalic}"
                             Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
                             TextWrapping="Wrap" />
+                    </Border>
+
+
+                    <Border
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,0,1,0">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="12"
+                            Text="{StaticResource ResourceKey=NextFolder}" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,1,1">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock FontSize="12" Text="D" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        Grid.Row="5"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundSubtleHighlightBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,1,1">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock
+                                d:Text="Right"
+                                FontSize="12"
+                                Text="{StaticResource ResourceKey=Right}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1,1,1,1">
+                        <TextBlock
+                            Margin="10,3,0,3"
+                            FontSize="12"
+                            Text="{StaticResource ResourceKey=PrevFolder}" />
+                    </Border>
+
+                    <Border
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,1,1">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock
+                                d:Text="Right"
+                                FontSize="12"
+                                Text="A" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        Grid.Row="6"
+                        Grid.Column="2"
+                        Padding="0,3,0,3"
+                        Background="{StaticResource BackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,1,1">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock FontSize="12" Text="{StaticResource ResourceKey=Shift}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{StaticResource MainColorFadedBrush}"
+                                Text=" + " />
+                            <TextBlock
+                                d:Text="Right"
+                                FontSize="12"
+                                Text="{StaticResource ResourceKey=Left}" />
+                        </StackPanel>
                     </Border>
                 </Grid>
 

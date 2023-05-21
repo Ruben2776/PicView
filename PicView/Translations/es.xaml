@@ -170,6 +170,8 @@
     <system:String x:Key="FirstImage">Primera imagen</system:String>
     <system:String x:Key="ToggleLooping">Alternar bucles</system:String>
     <system:String x:Key="Slideshow">Presentación</system:String>
+    <system:String x:Key="NextFolder">Navegar a la siguiente carpeta</system:String>
+    <system:String x:Key="PrevFolder">Navegar a la carpeta anterior</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">Zoom</system:String>

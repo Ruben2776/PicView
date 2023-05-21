@@ -170,6 +170,8 @@
     <system:String x:Key="FirstImage">Первое изображение</system:String>
     <system:String x:Key="ToggleLooping">Переключить цикл</system:String>
     <system:String x:Key="Slideshow">Слайдшоу</system:String>
+    <system:String x:Key="NextFolder">Перейти к следующей папке</system:String>
+    <system:String x:Key="PrevFolder">Перейти к предыдущей папке</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">Зуммирование</system:String>

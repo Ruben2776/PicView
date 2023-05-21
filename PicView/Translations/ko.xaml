@@ -170,6 +170,8 @@
     <system:String x:Key="FirstImage">첫번째 이미지</system:String>
     <system:String x:Key="ToggleLooping">순환 전환</system:String>
     <system:String x:Key="Slideshow">슬라이드쇼</system:String>
+    <system:String x:Key="NextFolder">다음 폴더로 이동</system:String>
+    <system:String x:Key="PrevFolder">이전 폴더로 이동</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">줌</system:String>

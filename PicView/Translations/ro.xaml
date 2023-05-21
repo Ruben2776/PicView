@@ -170,6 +170,8 @@
     <system:String x:Key="FirstImage">Prima imagine</system:String>
     <system:String x:Key="ToggleLooping">Comutare repetare</system:String>
     <system:String x:Key="Slideshow">Prezentare</system:String>
+    <system:String x:Key="NextFolder">Navighează la următorul folder</system:String>
+    <system:String x:Key="PrevFolder">Navighează la folderul anterior</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">Transfocare</system:String>

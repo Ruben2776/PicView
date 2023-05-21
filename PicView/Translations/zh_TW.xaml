@@ -170,6 +170,8 @@
     <system:String x:Key="FirstImage">第一張圖片</system:String>
     <system:String x:Key="ToggleLooping">切換迴圈</system:String>
     <system:String x:Key="Slideshow">幻燈片</system:String>
+    <system:String x:Key="NextFolder">導覽至下一個資料夾</system:String>
+    <system:String x:Key="PrevFolder">導覽至上一個資料夾</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">縮放</system:String>

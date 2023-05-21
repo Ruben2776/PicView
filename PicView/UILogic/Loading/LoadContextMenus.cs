@@ -341,5 +341,34 @@ internal static class LoadContextMenus
         GetMainWindow.MinButton.ContextMenu = WindowContextMenu;
         GetMainWindow.FullscreenButton.ContextMenu = WindowContextMenu;
         GetMainWindow.CloseButton.ContextMenu = WindowContextMenu;
+
+        NavigationContextMenu = (ContextMenu)Application.Current.Resources["navCM"];
+
+        var nextCm = (MenuItem)NavigationContextMenu.Items[0];
+        nextCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Next).ConfigureAwait(false); 
+
+        var prevCm = (MenuItem)NavigationContextMenu.Items[1];
+        prevCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+
+        // 2 = separator
+        var firstCm = (MenuItem)NavigationContextMenu.Items[3];
+        firstCm.Click += async (_, _) => await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
+        firstCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + D";
+
+        var lastCm = (MenuItem)NavigationContextMenu.Items[4];
+        lastCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
+        lastCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + A";
+
+        // 5 = separator
+        var nextFolderCm = (MenuItem)NavigationContextMenu.Items[6];
+        nextFolderCm.Click += async (_, _) => await GoToNextFolder(true).ConfigureAwait(false);
+        nextFolderCm.InputGestureText = $"{Application.Current.Resources["Shift"]} + D";
+
+        var prevFolderCm = (MenuItem)NavigationContextMenu.Items[7];
+        prevFolderCm.Click += async (_, _) => await GoToNextFolder(false).ConfigureAwait(false);
+        prevFolderCm.InputGestureText = $"{Application.Current.Resources["Shift"]} + A";
+
+        GetMainWindow.LeftButton.ContextMenu = NavigationContextMenu;
+        GetMainWindow.RightButton.ContextMenu = NavigationContextMenu;
     }
 }

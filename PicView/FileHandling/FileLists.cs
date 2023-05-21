@@ -1,4 +1,5 @@
-﻿using PicView.Properties;
+﻿using PicView.ChangeImage;
+using PicView.Properties;
 using PicView.SystemIntegration;
 using System.IO;
 using static PicView.FileHandling.ArchiveExtraction;
@@ -48,6 +49,8 @@ internal static class FileLists
         Random = 6
     }
 
+    #region File List
+
     /// <summary>
     /// Returns a list of file paths for the specified directory sorted according to the specified sort preference.
     /// </summary>
@@ -73,11 +76,8 @@ internal static class FileLists
     /// <returns>A list of file names.</returns>
     private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
     {
-        switch (fileInfo)
-        {
-            case null: return null;
-            case not null: break;
-        }
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (fileInfo == null) return null;
 
         // Check if the file is a directory or not
         var isDirectory = fileInfo.Attributes.HasFlag(FileAttributes.Directory);
@@ -150,4 +150,47 @@ internal static class FileLists
                 return items.OrderBy(f => Guid.NewGuid()).ToList();
         }
     }
+
+    /// <summary>
+    /// Returns the next or previous list of file paths based on the current directory.
+    /// </summary>
+    /// <param name="next">True to retrieve the next directory, false to retrieve the previous directory.</param>
+    /// <returns>
+    /// A list of file paths for the next or previous directory.
+    /// Returns null if there are no files in the directory or an error occurs.
+    /// </returns>
+    internal static List<string>? NextFileList(bool next)
+    {
+        try
+        {
+            var indexChange = next ? 1 : -1;
+            var currentFolder = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
+            var parentFolder = Path.GetDirectoryName(currentFolder);
+            var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
+            var directoryIndex = Array.IndexOf(directories, currentFolder);
+            if (Settings.Default.Looping)
+                directoryIndex = (directoryIndex + indexChange + directories.Length) % directories.Length;
+            else
+            {
+                directoryIndex += indexChange;
+                if (directoryIndex < 0 || directoryIndex >= directories.Length)
+                    return null;
+            }
+            for (var i = directoryIndex; i < directories.Length; i++)
+            {
+                var fileInfo = new FileInfo(directories[i]);
+                var fileList = FileList(fileInfo);
+                if (fileList is { Count: > 0 })
+                    return fileList;
+            }
+
+            return null;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    #endregion File List
 }

@@ -25,6 +25,8 @@ internal static class ConfigureWindows
 
     internal static ContextMenu? WindowContextMenu { get; set; }
 
+    internal static ContextMenu? NavigationContextMenu { get; set; }
+
     internal static bool IsMainWindowTopMost
     {
         get => Settings.Default.TopMost;

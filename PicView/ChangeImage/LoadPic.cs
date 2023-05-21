@@ -201,7 +201,6 @@ internal static class LoadPic
     /// <param name="index"></param>
     internal static async Task LoadPicFromFolderAsync(FileInfo fileInfo, int index = -1)
     {
-        // TODO add new function that can go to next/prev folder
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             SetLoadingString();

@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.ConfigureSettings;
 using PicView.ProcessHandling;
 using PicView.Properties;
@@ -7,7 +8,6 @@ using PicView.SystemIntegration;
 using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -15,13 +15,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using PicView.ChangeImage;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
 
 namespace PicView.Views.Windows;
 
-public partial class SettingsWindow : Window
+public partial class SettingsWindow
 {
     public SettingsWindow()
     {

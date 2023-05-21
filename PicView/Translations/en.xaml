@@ -170,6 +170,8 @@
     <system:String x:Key="FirstImage">First image</system:String>
     <system:String x:Key="ToggleLooping">Toggle looping</system:String>
     <system:String x:Key="Slideshow">Slideshow</system:String>
+    <system:String x:Key="NextFolder">Navigate to next folder</system:String>
+    <system:String x:Key="PrevFolder">Navigate to previous folder</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">Zoom</system:String>

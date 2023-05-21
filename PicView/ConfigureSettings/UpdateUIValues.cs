@@ -67,8 +67,7 @@ internal static class UpdateUIValues
 
     internal static void SetScrolling()
     {
-        if (Settings.Default.FullscreenGallery
-            || GalleryFunctions.IsGalleryOpen)
+        if (Settings.Default.FullscreenGallery || GalleryFunctions.IsGalleryOpen)
             return;
 
         var settingCcm = MainContextMenu.Items[7] as MenuItem;

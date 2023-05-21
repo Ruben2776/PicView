@@ -170,6 +170,8 @@
     <system:String x:Key="FirstImage">Première image</system:String>
     <system:String x:Key="ToggleLooping">Basculer en boucle</system:String>
     <system:String x:Key="Slideshow">Diaporama</system:String>
+    <system:String x:Key="NextFolder">Accéder au dossier suivant</system:String>
+    <system:String x:Key="PrevFolder">Accéder au dossier précédent</system:String>
 
     <!--  Zoom related  -->
     <system:String x:Key="Zoom">Zoomer</system:String>

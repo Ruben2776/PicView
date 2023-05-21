@@ -33,6 +33,7 @@ internal static class DragToExplorer
             || UC.UserControls_Open()
             || ConfigureWindows.MainContextMenu.IsVisible
             || ConfigureWindows.WindowContextMenu.IsVisible
+            || ConfigureWindows.NavigationContextMenu.IsVisible
             || ColorPicking.IsRunning)
         {
             return;

@@ -90,7 +90,7 @@ internal static class MainKeyboardShortcuts
             case Key.Right:
             case Key.D:
                 // exit if browsing horizontal PicGallery
-                if (GalleryFunctions.IsGalleryOpen)
+                if (GalleryFunctions.IsGalleryOpen && !Settings.Default.FullscreenGallery)
                 {
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Right);
                     return;
@@ -99,6 +99,10 @@ internal static class MainKeyboardShortcuts
                 if (ctrlDown && !e.IsRepeat)
                 {
                     await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
+                }
+                else if (shiftDown)
+                {
+                    await GoToNextFolder(true).ConfigureAwait(false);
                 }
                 else
                 {
@@ -110,7 +114,7 @@ internal static class MainKeyboardShortcuts
             case Key.BrowserBack:
             case Key.Left:
             case Key.A:
-                if (GalleryFunctions.IsGalleryOpen)
+                if (GalleryFunctions.IsGalleryOpen && !Settings.Default.FullscreenGallery)
                 {
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Left);
                     return;
@@ -119,6 +123,10 @@ internal static class MainKeyboardShortcuts
                 if (ctrlDown && !e.IsRepeat)
                 {
                     await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
+                }
+                else if (shiftDown)
+                {
+                    await GoToNextFolder(false).ConfigureAwait(false);
                 }
                 else
                 {
@@ -137,7 +145,6 @@ internal static class MainKeyboardShortcuts
                 {
                     GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                 }
-
                 return;
 
             case Key.PageDown when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:

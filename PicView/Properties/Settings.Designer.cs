@@ -217,18 +217,6 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool FullscreenGalleryHorizontal {
-            get {
-                return ((bool)(this["FullscreenGalleryHorizontal"]));
-            }
-            set {
-                this["FullscreenGalleryHorizontal"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5000")]
         public double SlideTimer {
             get {

@@ -1,4 +1,6 @@
-﻿using PicView.PicGallery;
+﻿using PicView.ChangeTitlebar;
+using PicView.FileHandling;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
 
@@ -112,6 +114,29 @@ internal static class Navigation
 
         if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
         else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Navigates to the next or previous folder based on the current directory.
+    /// </summary>
+    /// <param name="next">True to navigate to the next folder, false to navigate to the previous folder.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    internal static async Task GoToNextFolder(bool next)
+    {
+        SetTitle.SetLoadingString();
+        var fileList = await Task.FromResult(FileLists.NextFileList(next)).ConfigureAwait(false);
+        if (fileList is null or {Count: <= 0})
+        {
+            SetTitle.SetTitleString();
+            return;
+        }
+        ErrorHandling.ChangeFolder();
+        Pics = fileList;
+        await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+        if (Settings.Default.FullscreenGallery)
+        {
+            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+        }
     }
 
     /// <summary>
