@@ -3,6 +3,9 @@ using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
+using PicView.Views.UserControls.Gallery;
+using System.Windows.Threading;
+using System;
 
 namespace PicView.ChangeImage;
 
@@ -135,7 +138,7 @@ internal static class Navigation
         await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
         if (Settings.Default.FullscreenGallery)
         {
-            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            await GalleryLoad.ReloadGallery().ConfigureAwait(false);
         }
     }
 

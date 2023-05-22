@@ -139,9 +139,7 @@ internal static class ErrorHandling
     /// </summary>
     internal static async Task ReloadAsync(bool fromBackup = false)
     {
-        string? path = fromBackup
-            ? BackupPath ?? null
-            : GetReloadPath();
+        var path = fromBackup ? BackupPath ?? null : GetReloadPath();
         if (path == null)
         {
             UnexpectedError();
@@ -178,12 +176,15 @@ internal static class ErrorHandling
         string? GetReloadPath()
         {
             if (CheckOutOfRange())
+            {
                 return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
                 {
-                    var path = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                    return path == (string)Application.Current.Resources["Loading"] ? InitialPath : path;
+                    var fileName = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                    return fileName == (string) Application.Current.Resources["Loading"] ? InitialPath : fileName;
                 });
-            if (string.IsNullOrWhiteSpace(InitialPath) == false
+            }
+
+            if (string.IsNullOrWhiteSpace(InitialPath) == false 
                 && Settings.Default.IncludeSubDirectories
                 && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
             {
@@ -191,7 +192,6 @@ internal static class ErrorHandling
             }
 
             return Pics[FolderIndex];
-
         }
     }
 

@@ -115,54 +115,89 @@ internal static class GalleryLoad
 
     internal static async Task LoadAsync()
     {
+        if (UC.GetPicGallery is null || IsLoading) { return; }
+
         IsLoading = true;
         var source = new CancellationTokenSource();
         try
         {
-            await LoopAsync(source.Token).ConfigureAwait(false);
+            await Task.Run(async () =>
+            {
+                var count = Navigation.Pics.Count;
+                var index = Navigation.FolderIndex;
+
+                for (var i = 0; i < count; i++)
+                {
+                    try
+                    {
+                        if (count != Navigation.Pics.Count)
+                        {
+                            throw new TaskCanceledException();
+                        }
+
+                        Add(i, index);
+                    }
+                    catch (Exception)
+                    {
+                        //GalleryFunctions.Clear();
+                        //IsLoading = false;
+                    }
+                }
+
+                await Task.Run(() =>
+                {
+                    Parallel.For(0, count, i =>
+                    {
+                        try
+                        {
+                            if (count != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                            {
+                                throw new TaskCanceledException();
+                            }
+
+                            var bitmapSource = Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize);
+                            UpdatePic(i, bitmapSource);
+                        }
+                        catch (Exception exception)
+                        {
+                            //GalleryFunctions.Clear();
+                            //IsLoading = false;
+                        }
+                    });
+                }, source.Token);
+            }, source.Token).ConfigureAwait(false);
         }
-        catch (TaskCanceledException)
+        catch (Exception)
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background,
-                new Action(() => { UC.GetPicGallery.Container.Children.Clear(); }));
-            await LoadAsync().ConfigureAwait(false);
+            GalleryFunctions.Clear();
+            IsLoading = false;
         }
         finally
         {
             IsLoading = false;
             source.Dispose();
         }
+        IsLoading = false;
     }
 
-    private static async Task LoopAsync(CancellationToken cancellationToken)
+
+    internal static async Task ReloadGallery()
     {
-        if (UC.GetPicGallery is null) { return; }
-
-        var count = Navigation.Pics.Count;
-        var index = Navigation.FolderIndex;
-
-        for (int i = 0; i < count; i++)
+        if (Settings.Default.FullscreenGallery)
         {
-            if (count != Navigation.Pics.Count)
+            while (IsLoading)
             {
-                throw new TaskCanceledException();
+                await Task.Delay(200).ConfigureAwait(false);
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    if (UC.GetPicGallery.Container.Children.Count is 0)
+                    {
+                        IsLoading = false;
+                    }
+                }));
             }
-
-            Add(i, index);
+            await LoadAsync().ConfigureAwait(false);
         }
-
-        await Parallel.ForEachAsync(Navigation.Pics, cancellationToken, async (item, token) =>
-        {
-            if (count != Navigation.Pics.Count)
-            {
-                throw new TaskCanceledException();
-            }
-            if (cancellationToken.IsCancellationRequested)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-            }
-            await UpdatePic(item).ConfigureAwait(false);
-        });
     }
 
     internal static void Add(int i, int index)
@@ -206,7 +241,7 @@ internal static class GalleryLoad
                 if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
                 {
                     GalleryFunctions.Clear();
-                    LoadAsync().ConfigureAwait(false); // restart when changing directory
+                    //LoadAsync().ConfigureAwait(false); // restart when changing directory
                     return;
                 }
 

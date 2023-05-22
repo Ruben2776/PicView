@@ -1,6 +1,7 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
+using PicView.Properties;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
@@ -133,11 +134,6 @@ internal static class LoadPic
 
             Pics = FileList(fileInfo);
 
-            if (Properties.Settings.Default.FullscreenGallery)
-            {
-                await GalleryLoad.LoadAsync().ConfigureAwait(false);
-            }
-
             if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
                 InitialPath = fileInfo.FullName;
         }
@@ -145,6 +141,10 @@ internal static class LoadPic
 
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
         await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
+        if ( folderChanged && Settings.Default.FullscreenGallery)
+        {
+            await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+        }
     }
 
     #endregion
@@ -243,9 +243,9 @@ internal static class LoadPic
             await LoadPicAtIndexAsync(0, fileInfo).ConfigureAwait(false);
         }
 
-        if (Properties.Settings.Default.FullscreenGallery)
+        if (Settings.Default.FullscreenGallery)
         {
-            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            await GalleryLoad.ReloadGallery().ConfigureAwait(false);
         }
 
         if (folderChanged || string.IsNullOrWhiteSpace(InitialPath))

@@ -412,9 +412,10 @@ internal static class MainKeyboardShortcuts
 
                 //  R
                 case Key.R:
-                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
+                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen || ctrlDown && Settings.Default.FullscreenGallery)
                     {
-                        await ReloadAsync().ConfigureAwait(false);
+                        BackupPath = Pics[FolderIndex];
+                        await ReloadAsync(true).ConfigureAwait(false);
                     }
                     else
                     {

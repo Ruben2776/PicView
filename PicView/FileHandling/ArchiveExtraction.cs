@@ -147,7 +147,7 @@ internal static class ArchiveExtraction
 
                 if (Settings.Default.FullscreenGallery)
                 {
-                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                    await GalleryLoad.ReloadGallery().ConfigureAwait(false);
                 }
             }
             else
