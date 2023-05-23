@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using PicView.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -9,6 +10,17 @@ namespace PicView.ImageHandling;
 
 internal static class SaveImages
 {
+    /// <summary>
+    /// Saves an image asynchronously with optional transformations.
+    /// </summary>
+    /// <param name="rotate">The rotation angle in degrees.</param>
+    /// <param name="flipped">Indicates whether the image should be flipped horizontally.</param>
+    /// <param name="bitmapSource">The BitmapSource representing the image.</param>
+    /// <param name="path">The path of the image file to read.</param>
+    /// <param name="destination">The path of the destination file to save the image.</param>
+    /// <param name="rect">The rectangle specifying the crop area.</param>
+    /// <param name="hlsl">Indicates whether an HLSL effect has been applied.</param>
+    /// <returns>True if the image is saved successfully; otherwise, false.</returns>
     internal static async Task<bool> SaveImageAsync(double rotate, bool flipped, BitmapSource? bitmapSource, string? path, string destination, Int32Rect? rect, bool hlsl)
     {
         MagickImage? magickImage = new();
@@ -73,13 +85,30 @@ internal static class SaveImages
                 }
                 await magickImage.WriteAsync(destination).ConfigureAwait(false);
             }
-            
+
             magickImage.Dispose();
         }
-        catch (Exception) { return false; }
+        catch (Exception exception) 
+        {
+#if DEBUG
+            Trace.WriteLine(exception);
+#endif
+            return false;
+        }
         return true;
     }
 
+    /// <summary>
+    /// Saves an image from a stream or file path asynchronously with optional transformations.
+    /// </summary>
+    /// <param name="stream">The stream containing the image data.</param>
+    /// <param name="path">The path of the image file to read.</param>
+    /// <param name="destination">The path of the destination file to save the image.</param>
+    /// <param name="width">The target width of the image.</param>
+    /// <param name="height">The target height of the image.</param>
+    /// <param name="quality">The quality level of the image.</param>
+    /// <param name="ext">The file extension of the output image.</param>
+    /// <returns>True if the image is saved successfully; otherwise, false.</returns>
     internal static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination, int? width, int? height, int? quality, string? ext)
     {
         try
@@ -110,9 +139,9 @@ internal static class SaveImages
                 magickImage.Resize(0, height.Value);
             }
 
-            if (!string.IsNullOrEmpty(ext)) 
+            if (!string.IsNullOrEmpty(ext))
             {
-                switch (ext.ToLowerInvariant()) 
+                switch (ext.ToLowerInvariant())
                 {
                     case ".webp": magickImage.Format = MagickFormat.WebP; break;
                     case ".jpg": magickImage.Format = MagickFormat.Jpeg; break;
@@ -130,8 +159,11 @@ internal static class SaveImages
                 await magickImage.WriteAsync(ext is not null ? Path.ChangeExtension(path, ext) : path).ConfigureAwait(false);
             }
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+#if DEBUG
+            Trace.WriteLine(exception);
+#endif
             return false;
         }
         return true;
