@@ -26,7 +26,7 @@ internal static class ErrorHandling
         bool value = true;
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
         {
-            value = Pics.Count < FolderIndex || Pics.Count < 1 ||
+            value = Pics.Count < FolderIndex || Pics.Count <= 0 ||
                     UC.GetCroppingTool is { IsVisible: true } || (UC.GetQuickResize?.Opacity > 0);
         }));
         return value;

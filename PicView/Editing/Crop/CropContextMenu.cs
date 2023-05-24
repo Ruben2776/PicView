@@ -10,7 +10,7 @@ internal class CropContextMenu
 {
     public CropContextMenu()
     {
-        // TODO Add copy function & save as 
+        // TODO Add save as crop
         var contextMenu = new ContextMenu();
 
         var cropIcon = new Path
