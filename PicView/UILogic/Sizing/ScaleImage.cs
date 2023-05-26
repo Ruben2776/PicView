@@ -87,7 +87,7 @@ internal static class ScaleImage
         if (Settings.Default.FullscreenGallery)
         {
             maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth, width);
-            maxHeight = Settings.Default.FillImage ? workAreaHeight - UC.GetPicGallery.Scroller.ActualHeight : Math.Min(workAreaHeight - PicGalleryItemSize, height);
+            maxHeight = Settings.Default.FillImage ? workAreaHeight - UC.GetPicGallery.Scroller.ActualHeight : Math.Min(workAreaHeight - UC.GetPicGallery.Scroller.ActualHeight, height);
             margin = PicGalleryItemSize + 5;
         }
         else if (Settings.Default.AutoFitWindow)
