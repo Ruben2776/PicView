@@ -70,25 +70,28 @@ internal static class SaveImages
             {
                 magickImage.Rotate(rotate);
             }
-            if (!string.IsNullOrEmpty(destination) && Path.GetExtension(path) != Path.GetExtension(destination))
+            if (!string.IsNullOrEmpty(destination))
             {
-                switch (Path.GetExtension(destination).ToLowerInvariant())
+                if (Path.GetExtension(path) != Path.GetExtension(destination))
                 {
-                    case ".jpeg":
-                    case ".jpg": magickImage.Format = MagickFormat.Jpeg; break;
-                    case ".png": magickImage.Format = MagickFormat.Png; break;
-                    case ".jxl": magickImage.Format = MagickFormat.Jxl; break;
-                    case ".gif": magickImage.Format = MagickFormat.Gif; break;
-                    case ".webp": magickImage.Format = MagickFormat.WebP; break;
-                    case ".heic": magickImage.Format = MagickFormat.Heic; break;
-                    case ".heif": magickImage.Format = MagickFormat.Heif; break;
+                    switch (Path.GetExtension(destination).ToLowerInvariant())
+                    {
+                        case ".jpeg":
+                        case ".jpg": magickImage.Format = MagickFormat.Jpeg; break;
+                        case ".png": magickImage.Format = MagickFormat.Png; break;
+                        case ".jxl": magickImage.Format = MagickFormat.Jxl; break;
+                        case ".gif": magickImage.Format = MagickFormat.Gif; break;
+                        case ".webp": magickImage.Format = MagickFormat.WebP; break;
+                        case ".heic": magickImage.Format = MagickFormat.Heic; break;
+                        case ".heif": magickImage.Format = MagickFormat.Heif; break;
+                    }
                 }
                 await magickImage.WriteAsync(destination).ConfigureAwait(false);
             }
 
             magickImage.Dispose();
         }
-        catch (Exception exception) 
+        catch (Exception exception)
         {
 #if DEBUG
             Trace.WriteLine(exception);

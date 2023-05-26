@@ -33,6 +33,27 @@ public static class LockScreenHelper
         var shouldSaveImage = hasEffect || rotationAngle != 0 || isFlipped;
         var checkOutOfRange = ErrorHandling.CheckOutOfRange();
 
+        if (Navigation.Pics.Count <= 0)
+        {
+            shouldSaveImage = true;
+        }
+        else
+        {
+            var extension = Path.GetExtension(Navigation.Pics[Navigation.FolderIndex]).ToLowerInvariant();
+            switch (extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                case ".png":
+                case ".gif":
+                case ".bmp":
+                    break;
+                default:
+                    shouldSaveImage = true;
+                    break;
+            }
+        }
+
         if (shouldSaveImage || checkOutOfRange)
         {
             // Create a temporary directory
@@ -88,10 +109,13 @@ public static class LockScreenHelper
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            SetTitle.SetTitleString(
-                (int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-                (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height,
-                !string.IsNullOrWhiteSpace(url) ? url : checkOutOfRange
+            if (string.IsNullOrWhiteSpace(url))
+                SetTitle.SetTitleString();
+            else
+                SetTitle.SetTitleString(
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height,
+                    !string.IsNullOrWhiteSpace(url) ? url : checkOutOfRange
                     ? Navigation.Pics[Navigation.FolderIndex] : Application.Current.Resources["Image"] as string);
             Application.Current.MainWindow!.Cursor = Cursors.Arrow;
         });

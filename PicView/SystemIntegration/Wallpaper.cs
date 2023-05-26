@@ -48,6 +48,26 @@ public static class Wallpaper // Taken from a Microsoft sample...
 
         BitmapSource? bitmapSource = null;
         string? imagePath = null;
+        if (Navigation.Pics.Count <= 0)
+        {
+            shouldSaveImage = true;
+        }
+        else
+        {
+            var extension = Path.GetExtension(Navigation.Pics[Navigation.FolderIndex]).ToLowerInvariant();
+            switch (extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                case ".png":
+                case ".gif":
+                case ".bmp":
+                    break;
+                default:
+                    shouldSaveImage = true;
+                    break;
+            }
+        }
 
         if (shouldSaveImage || checkOutOfRange)
         {
@@ -75,10 +95,13 @@ public static class Wallpaper // Taken from a Microsoft sample...
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            SetTitle.SetTitleString(
-                (int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-                (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height,
-                !string.IsNullOrWhiteSpace(url) ? url : checkOutOfRange
+            if (string.IsNullOrWhiteSpace(url))
+                SetTitle.SetTitleString();
+            else
+                SetTitle.SetTitleString(
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
+                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height,
+                    !string.IsNullOrWhiteSpace(url) ? url : checkOutOfRange
                     ? Navigation.Pics[Navigation.FolderIndex] : Application.Current.Resources["Image"] as string);
             Application.Current.MainWindow!.Cursor = Cursors.Arrow;
         });
@@ -137,29 +160,6 @@ public static class Wallpaper // Taken from a Microsoft sample...
         }
 
         key.Close();
-
-        // TODO Check if support for exotic file formats can be converted and
-        // works for Windows supported standard images, such as PSD to jpg?
-
-        // If the specified image file is neither .bmp nor .jpg, - or -
-        // if the image is a .jpg file but the operating system is Windows Server
-        // 2003 or Windows XP/2000 that does not support .jpg as the desktop
-        // wallpaper, convert the image file to .bmp and save it to the
-        // %appdata%\Microsoft\Windows\Themes folder.
-        var ext = Path.GetExtension(path);
-        if ((!ext.Equals(".bmp", StringComparison.OrdinalIgnoreCase) &&
-             !ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase))
-            ||
-            ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase))
-        {
-            var dest = string.Format(CultureInfo.CurrentCulture, @"{0}\Microsoft\Windows\Themes\{1}.jpg",
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                Path.GetFileNameWithoutExtension(path));
-            if (string.IsNullOrEmpty(dest))
-            {
-                return;
-            }
-        }
 
         // Set the desktop wallpaper by calling the Win32 API SystemParametersInfo
         // with the SPI_SETDESKWALLPAPER desktop parameter. The changes should
