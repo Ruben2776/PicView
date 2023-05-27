@@ -196,7 +196,15 @@ internal static class MainKeyboardShortcuts
             case Key.S:
                 if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                 {
-                    await SaveFilesAsync().ConfigureAwait(false);
+                    if (shiftDown)
+                    {
+                        await SaveFilesAsync(false).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
+                    }
+                    
                     return; // Fix saving file
                 }
 

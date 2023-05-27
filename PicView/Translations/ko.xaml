@@ -125,6 +125,7 @@
     <system:String x:Key="AllowZoomOut">이미 최대 크기인 경우 이미지 축소를 피하십시오</system:String>
     <system:String x:Key="AdjustNavSpeed">키를 누른 상태에서 속도 조절</system:String>
     <system:String x:Key="ToggleTaskbarProgress">작업 표시줄 진행률 표시</system:String>
+    <system:String x:Key="ShowFileSavingDialog">파일 저장 대화상자 표시</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">네거티브 컬러</system:String>

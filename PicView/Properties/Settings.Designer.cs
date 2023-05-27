@@ -514,5 +514,17 @@ namespace PicView.Properties {
                 this["IsTaskbarProgressEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowFileSavingDialog {
+            get {
+                return ((bool)(this["ShowFileSavingDialog"]));
+            }
+            set {
+                this["ShowFileSavingDialog"] = value;
+            }
+        }
     }
 }

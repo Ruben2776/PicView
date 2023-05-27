@@ -1,5 +1,6 @@
 ﻿using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
+using PicView.Properties;
 using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.UILogic;
@@ -185,7 +186,7 @@ public partial class EffectsWindow : Window
 
         // Button, Brush and Text for Save function
         SetButtonIconMouseOverAnimations(SaveButton, SaveBrush, SaveText);
-        SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync();
+        SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync(Settings.Default.ShowFileSavingDialog);
 
         #endregion button events
     }

@@ -146,7 +146,7 @@ internal static class OpenSave
     /// <summary>
     /// Open a File Dialog, where the user can save a supported file type.
     /// </summary>
-    internal static async Task SaveFilesAsync()
+    internal static async Task SaveFilesAsync(bool showFileDialog)
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
         {
@@ -155,14 +155,11 @@ internal static class OpenSave
 
         string fileName;
         var randomized = false;
-
+        SaveFileDialog? saveDialog = null;
+        
         if (Pics?.Count > FolderIndex)
         {
-            if (string.IsNullOrEmpty(Pics[FolderIndex]))
-            {
-                return;
-            }
-            fileName = Path.GetFileName(Pics[FolderIndex]);
+            fileName = showFileDialog ? Path.GetFileName(Pics[FolderIndex]) : Pics[FolderIndex];
         }
         else
         {
@@ -170,24 +167,27 @@ internal static class OpenSave
             randomized = true;
         }
 
-        var saveDialog = new SaveFileDialog
+        if (showFileDialog)
         {
-            Filter = FilterFiles,
-            Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
-            FileName = fileName,
-        };
+            saveDialog = new SaveFileDialog
+            {
+                Filter = FilterFiles,
+                Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
+                FileName = fileName,
+            };
+            IsDialogOpen = true;
 
-        if (randomized is false)
-        {
-            saveDialog.InitialDirectory = Path.GetDirectoryName(Pics[FolderIndex]);
+            if (randomized is false)
+            {
+                saveDialog.InitialDirectory = Path.GetDirectoryName(Pics[FolderIndex]);
+            }
+
+            if (!saveDialog.ShowDialog().HasValue)
+            {
+                IsDialogOpen = false;
+                return;
+            }
         }
-
-        if (!saveDialog.ShowDialog().HasValue)
-        {
-            return;
-        }
-
-        IsDialogOpen = true;
 
         var success = false;
         var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
@@ -195,7 +195,7 @@ internal static class OpenSave
 
         if (Pics?.Count > FolderIndex)
         {
-            success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, null, Pics[FolderIndex], saveDialog.FileName, null, effectApplied).ConfigureAwait(false);
+            success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, null, Pics[FolderIndex], fileName, null, effectApplied).ConfigureAwait(false);
         }
         else if (source != null)
         {
@@ -208,7 +208,7 @@ internal static class OpenSave
         }
 
         //Reload if same pic to show changes
-        else if (saveDialog.FileName == fileName)
+        else if (fileName == Pics[FolderIndex])
         {
             await ReloadAsync().ConfigureAwait(false);
         }

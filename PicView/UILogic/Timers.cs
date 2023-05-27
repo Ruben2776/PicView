@@ -21,25 +21,4 @@ internal static class Timers
         };
         ActivityTimer.Elapsed += (_, _) => Fade(false);
     }
-
-    internal static void PicGalleryTimerHack()
-    {
-        Timer timer = new() // Dirty code to make it scroll to selected item after start up
-        {
-            AutoReset = false,
-            Enabled = true,
-            Interval = 100
-        };
-        timer.Elapsed += async delegate
-        {
-            try
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(GalleryNavigation.ScrollTo));
-            }
-            catch (Exception)
-            {
-                // Suppress task cancellation
-            }
-        };
-    }
 }

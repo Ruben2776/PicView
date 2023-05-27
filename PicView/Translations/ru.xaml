@@ -125,6 +125,7 @@
     <system:String x:Key="AllowZoomOut">Избегайте уменьшения изображения, когда оно уже находится в максимальном размере</system:String>
     <system:String x:Key="AdjustNavSpeed">Настроить скорость при удержании клавиши</system:String>
     <system:String x:Key="ToggleTaskbarProgress">Отображение прогресса на панели задач</system:String>
+    <system:String x:Key="ShowFileSavingDialog">Показать диалоговое окно сохранения файла</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Обратные цвета</system:String>

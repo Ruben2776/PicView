@@ -125,6 +125,7 @@
     <system:String x:Key="AllowZoomOut">Évitez de zoomer sur l'image lorsqu'elle est déjà à sa taille maximale</system:String>
     <system:String x:Key="AdjustNavSpeed">Ajuster la vitesse lorsque la touche est maintenue enfoncée</system:String>
     <system:String x:Key="ToggleTaskbarProgress">Afficher la progression dans la barre des tâches</system:String>
+    <system:String x:Key="ShowFileSavingDialog">Afficher la boîte de dialogue d'enregistrement de fichier</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Couleurs négatives</system:String>

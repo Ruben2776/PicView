@@ -1,6 +1,7 @@
 ﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.FileHandling;
+using PicView.Properties;
 using PicView.UILogic;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,7 +22,7 @@ public partial class FileMenu : UserControl
 
         // SaveButton
         SetButtonIconMouseOverAnimations(SaveButton, SaveButtonBrush, SaveButtonIconBrush);
-        SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync().ConfigureAwait(false);
+        SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
 
         // CopyButton
         SetButtonIconMouseOverAnimations(CopyButton, CopyButtonBrush, CopyButtonIconBrush);

@@ -125,6 +125,7 @@
     <system:String x:Key="AllowZoomOut">Evitați micșorarea imaginii când aceasta este deja la dimensiunea maximă</system:String>
     <system:String x:Key="AdjustNavSpeed">Ajustați viteza atunci când tasta este ținută apăsată</system:String>
     <system:String x:Key="ToggleTaskbarProgress">Afișează progresul în bara de activități</system:String>
+    <system:String x:Key="ShowFileSavingDialog">Afișează dialogul de salvare fișier</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Culori negative</system:String>

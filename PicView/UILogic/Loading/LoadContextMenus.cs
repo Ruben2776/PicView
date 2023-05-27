@@ -37,7 +37,7 @@ internal static class LoadContextMenus
         ///////////////////////////
         var saveCm = (MenuItem)MainContextMenu.Items[1];
         saveCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + S";
-        saveCm.Click += async (s, x) => await SaveFilesAsync().ConfigureAwait(false);
+        saveCm.Click += async (s, x) => await SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
 
         ///////////////////////////
         //       Print          \\\

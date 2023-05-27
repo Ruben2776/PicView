@@ -165,6 +165,12 @@ public partial class SettingsWindow
                 }
             };
 
+            SaveDialogRadio.IsChecked = Settings.Default.ShowFileSavingDialog;
+            SaveDialogRadio.Click += delegate
+            {
+                Settings.Default.ShowFileSavingDialog = !Settings.Default.ShowFileSavingDialog;
+            };
+
             CtrlZoom.IsChecked = Settings.Default.CtrlZoom;
             ScrollZoom.IsChecked = !Settings.Default.CtrlZoom;
 
@@ -377,6 +383,10 @@ public partial class SettingsWindow
         // TaskbarRadio
         TaskbarRadio.MouseEnter += delegate { ButtonMouseOverAnim(TaskbarText); };
         TaskbarRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(TaskbarText); };
+
+        // SaveDialogRadio
+        SaveDialogRadio.MouseEnter += delegate { ButtonMouseOverAnim(SaveDialogText); };
+        SaveDialogRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveDialogText); };
 
         // ScrollZoom
         ScrollZoom.MouseEnter += delegate
