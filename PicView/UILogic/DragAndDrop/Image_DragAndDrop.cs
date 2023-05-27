@@ -5,9 +5,11 @@ using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.Views.UserControls.Misc;
+using SkiaSharp;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
@@ -130,7 +132,17 @@ internal static class ImageDragAndDrop
         // Get files as strings
         if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
         {
-            await LoadUrlAsync(e).ConfigureAwait(false);
+            var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
+            
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (memoryStream is not null)
+            {
+                await LoadUrlAsync(memoryStream).ConfigureAwait(false);
+            }
+            else
+            {
+                await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat)).ConfigureAwait(false);
+            }
             return;
         }
 
@@ -176,16 +188,13 @@ internal static class ImageDragAndDrop
         }
     }
 
-    private static async Task LoadUrlAsync(DragEventArgs e)
+    private static async Task LoadUrlAsync(MemoryStream memoryStream)
     {
-        // ReSharper disable once AssignNullToNotNullAttribute
-        var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url") ?? throw new Exception();
-        {
-            var dataStr = Encoding.Unicode.GetString(memoryStream.ToArray());
-            var parts = dataStr.Split((char)10);
+        var dataStr = Encoding.Unicode.GetString(memoryStream.ToArray());
+        var parts = dataStr.Split((char)10);
 
-            await HttpFunctions.LoadPicFromUrlAsync(parts[0]).ConfigureAwait(false);
-        }
+        await HttpFunctions.LoadPicFromUrlAsync(parts[0]).ConfigureAwait(false);
+        await memoryStream.DisposeAsync().ConfigureAwait(false);
     }
 
     private static void AddDragOverlay(UIElement element)
