@@ -187,6 +187,7 @@ internal static class OpenSave
                 IsDialogOpen = false;
                 return;
             }
+            fileName = saveDialog.FileName;
         }
 
         var success = false;
@@ -214,7 +215,6 @@ internal static class OpenSave
         }
 
         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(Close_UserControls);
-
         IsDialogOpen = false;
     }
 
