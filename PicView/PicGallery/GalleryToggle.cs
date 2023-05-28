@@ -5,6 +5,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
@@ -58,7 +59,6 @@ internal static class GalleryToggle
 
             if (Settings.Default.FullscreenGallery)
             {
-
                 var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
                             select x;
                 foreach (var item in check)
@@ -82,7 +82,7 @@ internal static class GalleryToggle
 
             GetMainWindow.Focus();
 
-            // Fix not showing up opacity bug..
+            // Fix not showing up opacity bug...
             VisualStateManager.GoToElementState(GetPicGallery, "Opacity", false);
             VisualStateManager.GoToElementState(GetPicGallery.Container, "Opacity", false);
             GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
@@ -144,7 +144,7 @@ internal static class GalleryToggle
 
         ConfigColors.UpdateColor();
 
-        HideInterfaceLogic.ShowStandardInterface();
+        HideInterfaceLogic.ToggleInterface();
         GetPicGallery.x2.Visibility = Visibility.Collapsed;
 
         // Restore settings
@@ -182,6 +182,51 @@ internal static class GalleryToggle
     }
 
     #endregion Close
+
+    #region Toggle
+
+    internal static async Task ToggleFullscreenGalleryAsync()
+    {
+        if (Settings.Default.FullscreenGallery)
+        {
+            CloseFullscreenGallery();
+        }
+        else
+        {
+            Settings.Default.FullscreenGallery = true;
+            if (GetPicGallery is null) // Use timer to fix incorrect calculated size
+            {
+                var timer = new System.Timers.Timer(TimeSpan.FromSeconds(.4))
+                {
+                    AutoReset = false,
+                    Enabled = true
+                };
+                timer.Elapsed += delegate
+                {
+                    GetMainWindow.Dispatcher.Invoke(() =>
+                    {
+                        if (GetMainWindow.MainImage.Source is null) return;
+                        if (GetPicGallery == null)
+                        {
+                            GetPicGallery = new Views.UserControls.Gallery.PicGallery
+                            {
+                                Opacity = 0
+                            };
+
+                            GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
+                            Panel.SetZIndex(GetPicGallery, 999);
+                        }
+                        ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+                    });
+
+                    timer.Dispose();
+                };
+            }
+            await OpenFullscreenGalleryAsync().ConfigureAwait(false);
+        }
+    }
+
+    #endregion Toggle
 
     private static async Task LoadAndScrollToAsync()
     {

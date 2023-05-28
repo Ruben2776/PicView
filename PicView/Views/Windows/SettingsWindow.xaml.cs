@@ -175,10 +175,9 @@ public partial class SettingsWindow
             ShowBottomRadio.Click += delegate
             {
                 Settings.Default.ShowBottomNavBar = !Settings.Default.ShowBottomNavBar;
-                if (Settings.Default.ShowInterface)
-                {
-                    HideInterfaceLogic.ShowTopAndBottom(true);
-                }
+                if (!Settings.Default.ShowInterface) return;
+                HideInterfaceLogic.ShowTopAndBottom(true);
+                ScaleImage.TryFitImage();
             };
 
             CtrlZoom.IsChecked = Settings.Default.CtrlZoom;

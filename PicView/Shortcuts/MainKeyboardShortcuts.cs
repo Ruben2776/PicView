@@ -574,6 +574,11 @@ internal static class MainKeyboardShortcuts
                     WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
                     break;
 
+                // F12
+                case Key.F12:
+                    await GalleryToggle.ToggleFullscreenGalleryAsync().ConfigureAwait(false);
+                    break;
+
                 // Home
                 case Key.Home:
                     GetMainWindow.Scroller.ScrollToHome();

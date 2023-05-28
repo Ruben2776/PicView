@@ -82,8 +82,6 @@ internal static class HideInterfaceLogic
             ConfigureWindows.GetMainWindow.TitleBar.Visibility = Visibility.Collapsed;
             ConfigureWindows.GetMainWindow.LowerBar.Visibility = Visibility.Collapsed;
         }
-
-
     }
 
     /// <summary>
