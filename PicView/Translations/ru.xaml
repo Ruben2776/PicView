@@ -126,6 +126,7 @@
     <system:String x:Key="AdjustNavSpeed">Настроить скорость при удержании клавиши</system:String>
     <system:String x:Key="ToggleTaskbarProgress">Отображение прогресса на панели задач</system:String>
     <system:String x:Key="ShowFileSavingDialog">Показать диалоговое окно сохранения файла</system:String>
+    <system:String x:Key="ShowBottomToolbar">Показать нижнюю панель инструментов</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Обратные цвета</system:String>

@@ -126,6 +126,7 @@
     <system:String x:Key="AdjustNavSpeed">Adjust speed when key is held down</system:String>
     <system:String x:Key="ToggleTaskbarProgress">Display taskbar progress</system:String>
     <system:String x:Key="ShowFileSavingDialog">Show file saving dialog</system:String>
+    <system:String x:Key="ShowBottomToolbar">Show bottom toolbar</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Colors</system:String>

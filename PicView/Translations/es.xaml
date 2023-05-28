@@ -126,6 +126,7 @@
     <system:String x:Key="AdjustNavSpeed">Ajustar velocidad cuando la tecla se mantiene presionada</system:String>
     <system:String x:Key="ToggleTaskbarProgress">Mostrar el progreso en la barra de tareas</system:String>
     <system:String x:Key="ShowFileSavingDialog">Mostrar el cuadro de diálogo de guardar archivo</system:String>
+    <system:String x:Key="ShowBottomToolbar">Mostrar barra de herramientas inferior</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativo</system:String>

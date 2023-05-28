@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
 using System.Windows;
@@ -75,14 +74,16 @@ internal static class HideInterfaceLogic
     {
         if (show)
         {
-            ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                ConfigureWindows.GetMainWindow.LowerBar.Visibility = Visibility.Visible;
+            ConfigureWindows.GetMainWindow.TitleBar.Visibility = Visibility.Visible;
+            ConfigureWindows.GetMainWindow.LowerBar.Visibility = Settings.Default.ShowBottomNavBar ? Visibility.Visible : Visibility.Collapsed;
         }
         else
         {
-            ConfigureWindows.GetMainWindow.TitleBar.Visibility =
-                ConfigureWindows.GetMainWindow.LowerBar.Visibility = Visibility.Collapsed;
+            ConfigureWindows.GetMainWindow.TitleBar.Visibility = Visibility.Collapsed;
+            ConfigureWindows.GetMainWindow.LowerBar.Visibility = Visibility.Collapsed;
         }
+
+
     }
 
     /// <summary>
@@ -103,6 +104,7 @@ internal static class HideInterfaceLogic
             {
                 UC.GetClickArrowLeft.Visibility =
                     UC.GetClickArrowRight.Visibility = Visibility.Visible;
+
             }
 
             UC.GetX2.Visibility =

@@ -604,12 +604,9 @@ internal static class MainKeyboardShortcuts
 
         if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt)
         {
-            if (e.SystemKey == Key.Z)
+            if (e.SystemKey == Key.Z && !GalleryFunctions.IsGalleryOpen)
             {
-                if (GalleryFunctions.IsGalleryOpen)
-                {
-                    HideInterfaceLogic.ToggleInterface();
-                }
+                HideInterfaceLogic.ToggleInterface();
             }
             else if (e.SystemKey == Key.Enter)
             {

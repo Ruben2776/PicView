@@ -171,6 +171,16 @@ public partial class SettingsWindow
                 Settings.Default.ShowFileSavingDialog = !Settings.Default.ShowFileSavingDialog;
             };
 
+            ShowBottomRadio.IsChecked = Settings.Default.ShowBottomNavBar;
+            ShowBottomRadio.Click += delegate
+            {
+                Settings.Default.ShowBottomNavBar = !Settings.Default.ShowBottomNavBar;
+                if (Settings.Default.ShowInterface)
+                {
+                    HideInterfaceLogic.ShowTopAndBottom(true);
+                }
+            };
+
             CtrlZoom.IsChecked = Settings.Default.CtrlZoom;
             ScrollZoom.IsChecked = !Settings.Default.CtrlZoom;
 
@@ -387,6 +397,10 @@ public partial class SettingsWindow
         // SaveDialogRadio
         SaveDialogRadio.MouseEnter += delegate { ButtonMouseOverAnim(SaveDialogText); };
         SaveDialogRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveDialogText); };
+
+        // ShowBottomRadio
+        ShowBottomRadio.MouseEnter += delegate { ButtonMouseOverAnim(ShowBottomText); };
+        ShowBottomRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(ShowBottomText); };
 
         // ScrollZoom
         ScrollZoom.MouseEnter += delegate

@@ -38,6 +38,11 @@ internal static class StartLoading
                 ConfigureWindows.GetMainWindow.LowerBar.Visibility
                     = Visibility.Collapsed;
         }
+        else if (!Settings.Default.ShowBottomNavBar)
+        {
+            ConfigureWindows.GetMainWindow.LowerBar.Visibility
+                = Visibility.Collapsed;
+        }
         ConfigColors.UpdateColor();
     }
 

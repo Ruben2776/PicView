@@ -126,6 +126,7 @@
     <system:String x:Key="AdjustNavSpeed">Juster hastighed, når tasten holdes nede</system:String>
     <system:String x:Key="ToggleTaskbarProgress">Vis fremskridt i proceslinjen</system:String>
     <system:String x:Key="ShowFileSavingDialog">Vis gem fil dialogen</system:String>
+    <system:String x:Key="ShowBottomToolbar">Vis værktøjslinjen i bunden</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Farver</system:String>

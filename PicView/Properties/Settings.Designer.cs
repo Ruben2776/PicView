@@ -526,5 +526,17 @@ namespace PicView.Properties {
                 this["ShowFileSavingDialog"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowBottomNavBar {
+            get {
+                return ((bool)(this["ShowBottomNavBar"]));
+            }
+            set {
+                this["ShowBottomNavBar"] = value;
+            }
+        }
     }
 }
