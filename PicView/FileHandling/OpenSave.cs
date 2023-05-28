@@ -165,6 +165,7 @@ internal static class OpenSave
         {
             fileName = Path.GetRandomFileName();
             randomized = true;
+            showFileDialog = true;
         }
 
         if (showFileDialog)
@@ -200,7 +201,7 @@ internal static class OpenSave
         }
         else if (source != null)
         {
-            success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, saveDialog.FileName, null, effectApplied).ConfigureAwait(false);
+            success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, source, null, fileName, null, effectApplied).ConfigureAwait(false);
         }
 
         if (success == false)
