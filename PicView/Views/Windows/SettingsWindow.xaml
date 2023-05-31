@@ -240,6 +240,27 @@
                         </CheckBox.Content>
                     </CheckBox>
 
+                    <CheckBox
+                        x:Name="SaveDialogRadio"
+                        Margin="0,1,0,0"
+                        Padding="5,0,0,0"
+                        HorizontalContentAlignment="Center"
+                        Focusable="False"
+                        IsChecked="True">
+                        <CheckBox.Foreground>
+                            <SolidColorBrush x:Name="SaveDialogText" Color="{StaticResource MainColor}" />
+                        </CheckBox.Foreground>
+                        <CheckBox.Content>
+                            <TextBlock
+                                Width="279"
+                                Focusable="False"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
+                                Text="{StaticResource ShowFileSavingDialog}"
+                                TextWrapping="Wrap" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
                     <Label
                         x:Name="LanguageLabel"
                         Margin="0,15,0,0"
@@ -509,26 +530,6 @@
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 FontSize="13"
                                 Text="{StaticResource ToggleTaskbarProgress}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
-                    </CheckBox>
-
-                    <CheckBox
-                        x:Name="SaveDialogRadio"
-                        Margin="7,0,0,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False"
-                        IsChecked="True">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="SaveDialogText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                Focusable="False"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                FontSize="13"
-                                Text="{StaticResource ShowFileSavingDialog}"
                                 TextWrapping="Wrap" />
                         </CheckBox.Content>
                     </CheckBox>

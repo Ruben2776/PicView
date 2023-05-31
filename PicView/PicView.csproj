@@ -359,7 +359,7 @@
   </ItemGroup>
 	
   <PropertyGroup>
-    <FileVersion>1.8.1</FileVersion>
+    <FileVersion>1.8.5</FileVersion>
     <SignAssembly>False</SignAssembly>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
@@ -370,7 +370,7 @@
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon-raster.128b.png</PackageIcon>
-    <AssemblyVersion>1.8.1</AssemblyVersion>
+    <AssemblyVersion>1.8.5</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
