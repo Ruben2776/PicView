@@ -191,6 +191,7 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | F7                   | Reset Zoom                                                                                                       |
 | F9                   | Open the batch resize window                                                                                     |
 | F11                  | Toggle fulscreen                                                                                                 |
+| F12                  | Toggle viewing fulscreen gallery                                                                                 |
 | Alt + Enter          | Toggle fulscreen                                                                                                 |
 | C                    | Crop Image                                                                                                       |
 | Ctrl + C             | Copy image or copy cropped image                                                                                 |
@@ -232,6 +233,8 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Right                | Navigate to next image                                                                                           |
 | Ctrl + D             | Navigate to last image                                                                                           |
 | Ctrl + Right         | Navigate to first image                                                                                          |
+| Ctrl + Shift + Right | Navigate to next folder                                                                                          |
+| Ctrl + Shift + Left  | Navigate to previous folder                                                                                      |
 | Up ⇔ W              | Rotates the image up (clockwise)                                                                                 |
 | Up ⇔ W              | Scrolls up when scrolling is enabled                                                                             |
 | PageUp               | Scrolls up when scrolling is enabled                                                                             |
