@@ -343,9 +343,9 @@ internal static class ZoomLogic
             FillBehavior = FillBehavior.Stop
         };
 
+        // Set intended values after animations
         scaleAnim.Completed += delegate
         {
-            // Hack it to keep the intended value
             _scaleTransform.ScaleX = _scaleTransform.ScaleY = zoomValue;
         };
 
@@ -357,7 +357,6 @@ internal static class ZoomLogic
 
         translateAnimX.Completed += delegate
         {
-            // Hack it to keep the intended value
             _translateTransform.X = newTranslateValueX;
         };
 
@@ -369,7 +368,6 @@ internal static class ZoomLogic
 
         translateAnimY.Completed += delegate
         {
-            // Hack it to keep the intended value
             _translateTransform.Y = newTranslateValueY;
         };
 

@@ -90,8 +90,8 @@ public static class LockScreenHelper
             var storageFolder = await StorageFolder.GetFolderFromPathAsync(folderPath);
             var imageFile = await storageFolder.GetFileAsync(fileName);
 
-            using var stream = await imageFile.OpenAsync(FileAccessMode.Read).AsTask().ConfigureAwait(false);
-            await LockScreen.SetImageStreamAsync(stream).AsTask().ConfigureAwait(false);
+            using var stream = await imageFile.OpenAsync(FileAccessMode.Read);
+            await LockScreen.SetImageStreamAsync(stream);
         }
         catch (Exception ex)
         {

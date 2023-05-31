@@ -7,6 +7,11 @@ namespace PicView.ImageHandling;
 
 internal static class ImageSizeFunctions
 {
+    /// <summary>
+    /// Gets the size of an image file.
+    /// </summary>
+    /// <param name="file">The path of the image file.</param>
+    /// <returns>The size of the image if the file exists and the size can be determined; otherwise, null.</returns>
     internal static Size? GetImageSize(string file)
     {
         if (!File.Exists(file))
@@ -38,6 +43,18 @@ internal static class ImageSizeFunctions
         return new Size(magick.Width, magick.Height);
     }
 
+    /// <summary>
+    /// Resizes an image asynchronously with optional compression and format conversion.
+    /// </summary>
+    /// <param name="fileInfo">The FileInfo of the image file to resize.</param>
+    /// <param name="width">The target width of the image.</param>
+    /// <param name="height">The target height of the image.</param>
+    /// <param name="quality">The quality level of the image.</param>
+    /// <param name="percentage">The percentage value to resize the image.</param>
+    /// <param name="destination">The path of the destination file to save the resized image.</param>
+    /// <param name="compress">Indicates whether to compress the image.</param>
+    /// <param name="ext">The file extension of the output image.</param>
+    /// <returns>True if the image is resized and saved successfully; otherwise, false.</returns>
     internal static async Task<bool> ResizeImageAsync(FileInfo fileInfo, int width, int height, int quality = 100, Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
     {
         if (fileInfo.Exists == false) { return false; }
@@ -84,6 +101,17 @@ internal static class ImageSizeFunctions
                 if (ext is not null)
                 {
                     Path.ChangeExtension(fileInfo.Extension, ext);
+                    switch (Path.GetExtension(ext).ToLowerInvariant())
+                    {
+                        case ".jpeg":
+                        case ".jpg": magick.Format = MagickFormat.Jpeg; break;
+                        case ".png": magick.Format = MagickFormat.Png; break;
+                        case ".jxl": magick.Format = MagickFormat.Jxl; break;
+                        case ".gif": magick.Format = MagickFormat.Gif; break;
+                        case ".webp": magick.Format = MagickFormat.WebP; break;
+                        case ".heic": magick.Format = MagickFormat.Heic; break;
+                        case ".heif": magick.Format = MagickFormat.Heif; break;
+                    }
                 }
                 await magick.WriteAsync(fileInfo).ConfigureAwait(false);
             }

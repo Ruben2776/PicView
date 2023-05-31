@@ -35,51 +35,51 @@ internal static class GalleryClick
         {
             ConfigureWindows.GetMainWindow.Focus();
             ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
-            var z = GetPicGallery.Container.Children[id] as PicGalleryItem;
-            ConfigureWindows.GetMainWindow.MainImage.Source = z.ThumbImage.Source;
+            var galleryItem = GetPicGallery.Container.Children[id] as PicGalleryItem;
+            ConfigureWindows.GetMainWindow.MainImage.Source = galleryItem.ThumbImage.Source;
         });
 
         Border? border = null;
         Image? image = null;
 
-        var size = ImageSizeFunctions.GetImageSize(Pics[id]);
-        if (size.HasValue)
+        var imageSize = ImageSizeFunctions.GetImageSize(Pics[id]);
+        if (imageSize.HasValue)
         {
             GalleryFunctions.IsGalleryOpen = false;
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 SetTitle.SetLoadingString();
-                FitImage(size.Value.Width, size.Value.Height);
+                FitImage(imageSize.Value.Width, imageSize.Value.Height);
             });
         }
 
-        var from = GalleryNavigation.PicGalleryItemSize;
-        var to = new[] { XWidth, XHeight };
+        var fromSize = GalleryNavigation.PicGalleryItemSize;
+        var toSize = new[] { XWidth, XHeight };
         var acceleration = 0.2;
         var deceleration = 0.4;
         var duration = TimeSpan.FromSeconds(.3);
 
-        var da = new DoubleAnimation
+        var widthAnimation = new DoubleAnimation
         {
-            From = from,
-            To = to[0],
+            From = fromSize,
+            To = toSize[0],
             Duration = duration,
             AccelerationRatio = acceleration,
             DecelerationRatio = deceleration,
             FillBehavior = FillBehavior.Stop
         };
 
-        var da0 = new DoubleAnimation
+        var heightAnimation = new DoubleAnimation
         {
-            From = from,
-            To = to[1],
+            From = fromSize,
+            To = toSize[1],
             Duration = duration,
             AccelerationRatio = acceleration,
             DecelerationRatio = deceleration,
             FillBehavior = FillBehavior.Stop
         };
 
-        da.Completed += async delegate
+        widthAnimation.Completed += async delegate
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
@@ -117,7 +117,7 @@ internal static class GalleryClick
             }
             else
             {
-                var da3 = new DoubleAnimation
+                var opacityAnimation = new DoubleAnimation
                 {
                     From = 1,
                     To = 0,
@@ -126,16 +126,17 @@ internal static class GalleryClick
                     DecelerationRatio = deceleration,
                     FillBehavior = FillBehavior.Stop
                 };
-                GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, da3);
+                GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
             }
 
             GetPicGallery.x2.Visibility = Visibility.Hidden;
             GetPicGallery.grid.Children.Add(border);
 
-            border.BeginAnimation(FrameworkElement.WidthProperty, da);
-            border.BeginAnimation(FrameworkElement.HeightProperty, da0);
+            border.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
+            border.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
         }, DispatcherPriority.Send);
     }
+
 
     private static async Task ItemClickAsync(int id)
     {
