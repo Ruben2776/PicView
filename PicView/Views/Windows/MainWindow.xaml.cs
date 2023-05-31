@@ -29,9 +29,9 @@ public partial class MainWindow
         // Updates settings from older version to newer version
         if (Settings.Default.CallUpgrade)
         {
-            LoadLanguage.DetermineLanguage(true);
             Settings.Default.Upgrade();
             Settings.Default.CallUpgrade = false;
+            LoadLanguage.DetermineLanguage(Settings.Default.UserLanguage != "en");
         }
         else if (Settings.Default.UserLanguage != "en")
         {
