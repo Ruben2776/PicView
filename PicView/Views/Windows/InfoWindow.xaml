@@ -339,7 +339,6 @@
                             </Image>
                         </Hyperlink>
                     </TextBlock>
-
                 </StackPanel>
 
                 <Border
@@ -632,7 +631,6 @@
                             Text="{StaticResource ResourceKey=SavedOnNextStartUp}"
                             TextWrapping="Wrap" />
                     </Border>
-
 
                     <Border
                         Grid.Row="5"

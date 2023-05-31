@@ -23,7 +23,6 @@ public partial class CopyButton : UserControl
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ButtonBrush);
                 AnimationHelper.LightThemeMouseEvent(this, IconBrush);
             }
-
         };
     }
 }

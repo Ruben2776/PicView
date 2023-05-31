@@ -126,9 +126,11 @@ public class CropService
             case TouchPoint.OutsideRectangle when cropTool.Width >= 1 && cropTool.Height >= 1:
                 // Don't deselect when clicking outside rect
                 return;
+
             case TouchPoint.OutsideRectangle:
                 currentToolState = createState;
                 break;
+
             case TouchPoint.InsideRectangle:
                 currentToolState = dragState;
                 break;

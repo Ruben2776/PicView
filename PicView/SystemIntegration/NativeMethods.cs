@@ -140,5 +140,4 @@ internal static partial class NativeMethods
     }
 
     #endregion GetPixelColor
-
 }

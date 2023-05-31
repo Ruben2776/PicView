@@ -24,8 +24,8 @@ internal static class MouseOverAnimations
         {
             uIElement.MouseLeftButtonDown += delegate
             {
-                ButtonMouseOverAnim(iconBrush, false, true);
-                ButtonMouseOverAnim(backgroundBrush, false, true);
+                ButtonMouseOverAnim(iconBrush);
+                ButtonMouseOverAnim(backgroundBrush);
                 AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
             };
 
@@ -97,7 +97,7 @@ internal static class MouseOverAnimations
 
     #region 1x
 
-    internal static void ButtonMouseOverAnim(Brush brush, bool transparent = false, bool alpha = false)
+    internal static void ButtonMouseOverAnim(Brush brush, bool transparent = false)
     {
         if (transparent)
         {
@@ -115,7 +115,7 @@ internal static class MouseOverAnimations
         }
     }
 
-    internal static void ButtonMouseLeaveAnim(Brush brush, bool transparent = false, bool alpha = false)
+    internal static void ButtonMouseLeaveAnim(Brush brush, bool transparent = false)
     {
         if (transparent)
         {
@@ -133,7 +133,7 @@ internal static class MouseOverAnimations
         }
     }
 
-    internal static void ButtonMouseLeaveAnimBgColor(Brush brush, bool alpha = false)
+    internal static void ButtonMouseLeaveAnimBgColor(Brush brush)
     {
         AnimationHelper.MouseLeaveColorEvent(
             BackgroundBorderColor.A,
@@ -145,38 +145,4 @@ internal static class MouseOverAnimations
     }
 
     #endregion 1x
-
-    #region 2x
-
-    // internal static void ButtonMouseOverAnim(Brush brush, Brush brush2, bool transparent = false, bool alpha = false)
-    // {
-    //     ButtonMouseOverAnim(brush, transparent, alpha);
-    //     ButtonMouseOverAnim(brush2, transparent, alpha);
-    // }
-    //
-    // internal static void ButtonMouseLeaveAnim(Brush brush, Brush brush2, bool transparent = false, bool alpha = false)
-    // {
-    //     ButtonMouseLeaveAnim(brush, transparent, alpha);
-    //     ButtonMouseLeaveAnim(brush2, transparent, alpha);
-    // }
-
-    #endregion 2x
-
-    #region 3x
-
-    internal static void ButtonMouseOverAnim(Brush brush, Brush brush2, Brush brush3, bool transparent = false, bool alpha = false)
-    {
-        ButtonMouseOverAnim(brush, transparent, alpha);
-        ButtonMouseOverAnim(brush2, transparent, alpha);
-        ButtonMouseOverAnim(brush3, transparent, alpha);
-    }
-
-    internal static void ButtonMouseLeaveAnim(Brush brush, Brush brush2, Brush brush3, bool transparent = false, bool alpha = false)
-    {
-        ButtonMouseLeaveAnim(brush, transparent, alpha);
-        ButtonMouseLeaveAnim(brush2, transparent, alpha);
-        ButtonMouseLeaveAnim(brush3, transparent, alpha);
-    }
-
-    #endregion 3x
 }

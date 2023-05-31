@@ -1,9 +1,8 @@
 ﻿using PicView.ProcessHandling;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Misc;
 
-public partial class LinkTextBox : UserControl
+public partial class LinkTextBox
 {
     public LinkTextBox()
     {
@@ -18,6 +17,7 @@ public partial class LinkTextBox : UserControl
         linkButton.TheButton.Click += (_, _) => ProcessLogic.Hyperlink_RequestNavigate(ValueBox.Text);
     }
 
+    // ReSharper disable once InconsistentNaming
     public void SetURL(string url, string name)
     {
         ValueBox.Text = url;

@@ -111,7 +111,6 @@ public partial class InfoWindow
         UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, UpdateText); };
         UpdateButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(UpdateBrush); };
 
-
         UpdateButton.MouseLeftButtonDown += delegate
         {
             AutoUpdater.ShowRemindLaterButton = false;

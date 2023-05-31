@@ -2,12 +2,11 @@
 using PicView.Properties;
 using PicView.UILogic.Sizing;
 using System.Windows;
-using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons;
 
-public partial class FullscreenButton : UserControl
+public partial class FullscreenButton
 {
     public FullscreenButton()
     {

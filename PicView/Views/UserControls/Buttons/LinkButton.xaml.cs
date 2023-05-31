@@ -1,11 +1,10 @@
 ﻿using PicView.Animations;
 using PicView.Properties;
-using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons;
 
-public partial class LinkButton : UserControl
+public partial class LinkButton
 {
     public LinkButton()
     {

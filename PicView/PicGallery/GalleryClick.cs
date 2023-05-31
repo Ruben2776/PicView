@@ -137,7 +137,6 @@ internal static class GalleryClick
         }, DispatcherPriority.Send);
     }
 
-
     private static async Task ItemClickAsync(int id)
     {
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>

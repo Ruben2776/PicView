@@ -105,6 +105,7 @@ internal static class MainMouseKeys
             case MouseButton.XButton2:
                 await GetFileHistory.NextAsync().ConfigureAwait(false);
                 break;
+
             default: break;
         }
     }
@@ -185,12 +186,10 @@ internal static class MainMouseKeys
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
         }
-
         else if (ShouldHandleScroll())
         {
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(direction));
         }
-
         else
         {
             await HandleNavigateOrZoomAsync(direction, e).ConfigureAwait(false);

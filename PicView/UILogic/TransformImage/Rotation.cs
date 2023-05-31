@@ -61,6 +61,7 @@ internal static class Rotation
             }
         }
     }
+
     /// <summary>
     /// Rotates the image by 90 degrees.
     /// </summary>

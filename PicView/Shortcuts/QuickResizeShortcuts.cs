@@ -58,6 +58,7 @@ internal static partial class QuickResizeShortcuts
 
                 e.Handled = true;// only allowed on ctrl
                 return;
+
             case Key.Escape: // Escape logic
                 UC.GetQuickResize.Hide();
                 e.Handled = true;

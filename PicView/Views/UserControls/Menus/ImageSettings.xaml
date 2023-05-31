@@ -345,8 +345,6 @@
                         </StackPanel>
                     </Border>
 
-
-
                     <Border
                         x:Name="FullscreenGalleryBorder"
                         Canvas.Left="5"
@@ -381,7 +379,6 @@
                                     Foreground="{StaticResource FullScreenIcon}"
                                     Text="{StaticResource ShowFullscreenGallery}"
                                     TextWrapping="Wrap" />
-
                             </StackPanel>
                         </Button>
                     </Border>
@@ -419,7 +416,6 @@
                                     Foreground="{StaticResource ContainedIcon}"
                                     Text="{StaticResource ShowHorizontalGallery}"
                                     TextWrapping="Wrap" />
-
                             </StackPanel>
                         </Button>
                     </Border>

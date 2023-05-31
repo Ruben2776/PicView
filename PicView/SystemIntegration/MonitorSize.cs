@@ -15,24 +15,29 @@ internal readonly struct MonitorSize : IEquatable<MonitorSize>
     /// Gets the pixel width of the current monitor's working area.
     /// </summary>
     internal double Width { get; }
+
     /// <summary>
     /// Gets the pixel height of the current monitor's working area.
     /// </summary>
     internal double Height { get; }
+
     /// <summary>
     /// Gets the DPI scaling factor of the current monitor.
     /// </summary>
     internal double DpiScaling { get; }
+
     /// <summary>
     /// Gets the available working area of the current monitor.
     /// </summary>
     internal Rect WorkArea { get; }
 
     #region IEquatable<T>
+
     public bool Equals(MonitorSize other)
     {
         throw new NotImplementedException();
     }
+
     public override bool Equals(object? obj) => obj != null && obj is MonitorSize size && Equals(size);
 
     public static bool operator ==(MonitorSize e1, MonitorSize e2)
@@ -49,7 +54,8 @@ internal readonly struct MonitorSize : IEquatable<MonitorSize>
     {
         throw new NotImplementedException();
     }
-    #endregion
+
+    #endregion IEquatable<T>
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MonitorSize"/> struct with the specified monitor information.
@@ -96,6 +102,5 @@ internal readonly struct MonitorSize : IEquatable<MonitorSize>
 
         // Return a new instance of the MonitorSize struct
         return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea.Value);
-
     }
 }

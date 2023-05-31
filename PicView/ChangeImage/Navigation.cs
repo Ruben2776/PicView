@@ -3,9 +3,6 @@ using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
-using PicView.Views.UserControls.Gallery;
-using System.Windows.Threading;
-using System;
 
 namespace PicView.ChangeImage;
 
@@ -101,14 +98,17 @@ internal static class Navigation
                     next = newIndex;
                 }
                 break;
+
             case NavigateTo.First:
                 if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
                 next = 0;
                 break;
+
             case NavigateTo.Last:
                 if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
                 next = Pics.Count - 1;
                 break;
+
             default: return;
         }
 
@@ -128,7 +128,7 @@ internal static class Navigation
     {
         SetTitle.SetLoadingString();
         var fileList = await Task.FromResult(FileLists.NextFileList(next)).ConfigureAwait(false);
-        if (fileList is null or {Count: <= 0})
+        if (fileList is null or { Count: <= 0 })
         {
             SetTitle.SetTitleString();
             return;

@@ -110,9 +110,9 @@ internal static class ImageInfo
                 if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
                 {
                     // 0 == GPS
-                    var latitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
+                    var latitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
                     latitudeBox.SetValues(data[15], data[16], true);
-                    var longitudeBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
+                    var longitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
                     longitudeBox.SetValues(data[17], data[18], true);
 
                     var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
@@ -120,178 +120,178 @@ internal static class ImageInfo
                     var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[4];
                     linkY.SetURL(data[20], "Google");
 
-                    var latitude = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[5];
+                    var latitude = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[5];
                     latitude.SetValues(data[21], data[22], true);
 
                     // 6 == Origin
-                    var title = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
+                    var title = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
                     title.SetValues(data[23], data[24], true);
-                    var dateTakenBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
+                    var dateTakenBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
                     dateTakenBox.SetValues(data[25], data[26], true);
 
-                    var authorBox = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
+                    var authorBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
                     authorBox.SetValues(data[27], data[28], true);
-                    var subject = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[10];
+                    var subject = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[10];
                     subject.SetValues(data[29], data[30], true);
 
-                    var program = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[11];
+                    var program = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[11];
                     program.SetValues(data[31], data[32], true);
-                    var copyright = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[12];
+                    var copyright = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[12];
                     copyright.SetValues(data[33], data[34], true);
 
                     // 13 == Image
-                    var resolutionUnit = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[14];
+                    var resolutionUnit = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[14];
                     resolutionUnit.SetValues(data[35], data[36], true);
-                    var colorRepresentation = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[15];
+                    var colorRepresentation = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[15];
                     colorRepresentation.SetValues(data[37], data[38], true);
 
-                    var compression = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[16];
+                    var compression = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[16];
                     compression.SetValues(data[39], data[40], true);
-                    var compressionBits = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[17];
+                    var compressionBits = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[17];
                     compressionBits.SetValues(data[41], data[42], true);
 
                     // 18 == Camera
-                    var cameraMaker = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[19];
+                    var cameraMaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[19];
                     cameraMaker.SetValues(data[43], data[44], true);
-                    var cameraModel = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[20];
+                    var cameraModel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[20];
                     cameraModel.SetValues(data[45], data[46], true);
 
-                    var fstop = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[21];
+                    var fstop = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[21];
                     fstop.SetValues(data[47], data[48], true);
-                    var exposure = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[22];
+                    var exposure = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[22];
                     exposure.SetValues(data[49], data[50], true);
 
-                    var isoSpeed = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[23];
+                    var isoSpeed = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[23];
                     isoSpeed.SetValues(data[51], data[52], true);
-                    var exposureBias = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[24];
+                    var exposureBias = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[24];
                     exposureBias.SetValues(data[53], data[54], true);
 
-                    var maxAperture = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[25];
+                    var maxAperture = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[25];
                     maxAperture.SetValues(data[55], data[56], true);
 
-                    var focal = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[26];
+                    var focal = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[26];
                     focal.SetValues(data[57], data[58], true);
-                    var flength35 = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[27];
+                    var flength35 = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[27];
                     flength35.SetValues(data[59], data[60], true);
 
-                    var flashMode = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[28];
+                    var flashMode = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[28];
                     flashMode.SetValues(data[61], data[62], true);
-                    var flashEnergy = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[29];
+                    var flashEnergy = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[29];
                     flashEnergy.SetValues(data[63], data[64], true);
 
-                    var meteringMode = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[30];
+                    var meteringMode = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[30];
                     meteringMode.SetValues(data[65], data[66], true);
 
                     // 31 == Film
-                    var lensmaker = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[32];
+                    var lensmaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[32];
                     lensmaker.SetValues(data[67], data[68], true);
-                    var lensmodel = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[33];
+                    var lensmodel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[33];
                     lensmodel.SetValues(data[69], data[70], true);
 
-                    var flashManufacturer = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[34];
+                    var flashManufacturer = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[34];
                     flashManufacturer.SetValues(data[71], data[72], true);
-                    var flashModel = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[35];
+                    var flashModel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[35];
                     flashModel.SetValues(data[73], data[74], true);
 
-                    var camSerialNumber = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[36];
+                    var camSerialNumber = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[36];
                     camSerialNumber.SetValues(data[75], data[76], true);
 
-                    var contrast = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[37];
+                    var contrast = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[37];
                     contrast.SetValues(data[77], data[78], true);
-                    var brightness = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[38];
+                    var brightness = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[38];
                     brightness.SetValues(data[79], data[80], true);
 
-                    var lightSource = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[39];
+                    var lightSource = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[39];
                     lightSource.SetValues(data[81], data[82], true);
 
-                    var exposureProgram = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[40];
+                    var exposureProgram = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[40];
                     exposureProgram.SetValues(data[83], data[84], true);
 
-                    var saturation = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[41];
+                    var saturation = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[41];
                     saturation.SetValues(data[85], data[86], true);
-                    var sharpness = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[42];
+                    var sharpness = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[42];
                     sharpness.SetValues(data[87], data[88], true);
 
-                    var whiteBalance = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[43];
+                    var whiteBalance = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[43];
                     whiteBalance.SetValues(data[89], data[90], true);
-                    var photometricInterpolation = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[44];
+                    var photometricInterpolation = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[44];
                     photometricInterpolation.SetValues(data[91], data[92], true);
 
-                    var digitalZoom = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[45];
+                    var digitalZoom = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[45];
                     digitalZoom.SetValues(data[93], data[94], true);
 
-                    var exifversion = (TextboxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[46];
+                    var exifversion = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[46];
                     exifversion.SetValues(data[95], data[96], true);
                 }
                 else
                 {
-                    var latitudeBox = new TextboxInfo(data[15], data[16], true);
-                    var longitudeBox = new TextboxInfo(data[17], data[18], true);
+                    var latitudeBox = new TextBoxInfo(data[15], data[16], true);
+                    var longitudeBox = new TextBoxInfo(data[17], data[18], true);
 
                     var linkX = new LinkTextBox(data[19], "Bing");
                     var linkY = new LinkTextBox(data[20], "Google");
 
-                    var altitude = new TextboxInfo(data[21], data[22], true);
+                    var altitude = new TextBoxInfo(data[21], data[22], true);
 
-                    var title = new TextboxInfo(data[23], data[24], true);
-                    var subject = new TextboxInfo(data[25], data[26], true);
+                    var title = new TextBoxInfo(data[23], data[24], true);
+                    var subject = new TextBoxInfo(data[25], data[26], true);
 
-                    var authorBox = new TextboxInfo(data[27], data[28], true);
-                    var dateTakenBox = new TextboxInfo(data[29], data[30], true);
+                    var authorBox = new TextBoxInfo(data[27], data[28], true);
+                    var dateTakenBox = new TextBoxInfo(data[29], data[30], true);
 
-                    var program = new TextboxInfo(data[31], data[32], true);
-                    var copyright = new TextboxInfo(data[33], data[34], true);
+                    var program = new TextBoxInfo(data[31], data[32], true);
+                    var copyright = new TextBoxInfo(data[33], data[34], true);
 
-                    var resolutionUnit = new TextboxInfo(data[35], data[36], true);
-                    var colorRepresentation = new TextboxInfo(data[37], data[38], true);
+                    var resolutionUnit = new TextBoxInfo(data[35], data[36], true);
+                    var colorRepresentation = new TextBoxInfo(data[37], data[38], true);
 
-                    var compression = new TextboxInfo(data[39], data[40], true);
-                    var compressionBits = new TextboxInfo(data[41], data[42], true);
+                    var compression = new TextBoxInfo(data[39], data[40], true);
+                    var compressionBits = new TextBoxInfo(data[41], data[42], true);
 
-                    var cameraMaker = new TextboxInfo(data[43], data[44], true);
-                    var cameraModel = new TextboxInfo(data[45], data[46], true);
+                    var cameraMaker = new TextBoxInfo(data[43], data[44], true);
+                    var cameraModel = new TextBoxInfo(data[45], data[46], true);
 
-                    var fstop = new TextboxInfo(data[47], data[48], true);
-                    var exposure = new TextboxInfo(data[49], data[50], true);
+                    var fstop = new TextBoxInfo(data[47], data[48], true);
+                    var exposure = new TextBoxInfo(data[49], data[50], true);
 
-                    var isoSpeed = new TextboxInfo(data[51], data[52], true);
-                    var exposureBias = new TextboxInfo(data[53], data[54], true);
+                    var isoSpeed = new TextBoxInfo(data[51], data[52], true);
+                    var exposureBias = new TextBoxInfo(data[53], data[54], true);
 
-                    var maxAperture = new TextboxInfo(data[55], data[56], true);
+                    var maxAperture = new TextBoxInfo(data[55], data[56], true);
 
-                    var focal = new TextboxInfo(data[57], data[58], true);
-                    var flength35 = new TextboxInfo(data[59], data[60], true);
+                    var focal = new TextBoxInfo(data[57], data[58], true);
+                    var flength35 = new TextBoxInfo(data[59], data[60], true);
 
-                    var flashMode = new TextboxInfo(data[61], data[62], true);
-                    var flashEnergy = new TextboxInfo(data[63], data[64], true);
+                    var flashMode = new TextBoxInfo(data[61], data[62], true);
+                    var flashEnergy = new TextBoxInfo(data[63], data[64], true);
 
-                    var metering = new TextboxInfo(data[65], data[66], true);
+                    var metering = new TextBoxInfo(data[65], data[66], true);
 
-                    var lensmaker = new TextboxInfo(data[67], data[68], true);
-                    var lensmodel = new TextboxInfo(data[69], data[70], true);
+                    var lensmaker = new TextBoxInfo(data[67], data[68], true);
+                    var lensmodel = new TextBoxInfo(data[69], data[70], true);
 
-                    var flashManufacturer = new TextboxInfo(data[71], data[72], true);
-                    var flashModel = new TextboxInfo(data[73], data[74], true);
+                    var flashManufacturer = new TextBoxInfo(data[71], data[72], true);
+                    var flashModel = new TextBoxInfo(data[73], data[74], true);
 
-                    var camSerialNumber = new TextboxInfo(data[75], data[76], true);
+                    var camSerialNumber = new TextBoxInfo(data[75], data[76], true);
 
-                    var contrast = new TextboxInfo(data[77], data[78], true);
-                    var brightness = new TextboxInfo(data[79], data[80], true);
+                    var contrast = new TextBoxInfo(data[77], data[78], true);
+                    var brightness = new TextBoxInfo(data[79], data[80], true);
 
-                    var lightSource = new TextboxInfo(data[81], data[82], true);
+                    var lightSource = new TextBoxInfo(data[81], data[82], true);
 
-                    var exposureProgram = new TextboxInfo(data[83], data[84], true);
+                    var exposureProgram = new TextBoxInfo(data[83], data[84], true);
 
-                    var saturation = new TextboxInfo(data[85], data[86], true);
-                    var sharpness = new TextboxInfo(data[87], data[88], true);
+                    var saturation = new TextBoxInfo(data[85], data[86], true);
+                    var sharpness = new TextBoxInfo(data[87], data[88], true);
 
-                    var whiteBalance = new TextboxInfo(data[89], data[90], true);
+                    var whiteBalance = new TextBoxInfo(data[89], data[90], true);
 
-                    var photometricInterpolation = new TextboxInfo(data[91], data[92], true);
+                    var photometricInterpolation = new TextBoxInfo(data[91], data[92], true);
 
-                    var digitalZoom = new TextboxInfo(data[93], data[94], true);
+                    var digitalZoom = new TextBoxInfo(data[93], data[94], true);
 
-                    var exifversion = new TextboxInfo(data[95], data[96], true);
+                    var exifversion = new TextBoxInfo(data[95], data[96], true);
 
                     var gps = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["GPS"];
                     ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(gps);

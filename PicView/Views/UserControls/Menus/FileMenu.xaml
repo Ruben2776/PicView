@@ -381,10 +381,6 @@
                     </Button>
                 </StackPanel>
             </Border>
-
-
-
-
         </Canvas>
 
         <Rectangle

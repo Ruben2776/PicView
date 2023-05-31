@@ -76,7 +76,7 @@ internal static class LoadPic
         }
     }
 
-    #endregion
+    #endregion Load Pic from String
 
     #region Load Pic from File
 
@@ -141,13 +141,13 @@ internal static class LoadPic
 
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
         await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
-        if ( folderChanged && Settings.Default.FullscreenGallery)
+        if (folderChanged && Settings.Default.FullscreenGallery)
         {
             await GalleryLoad.ReloadGallery().ConfigureAwait(false);
         }
     }
 
-    #endregion
+    #endregion Load Pic from File
 
     #region Load Pic from Archive
 
@@ -179,7 +179,7 @@ internal static class LoadPic
         }).ConfigureAwait(false);
     }
 
-    #endregion
+    #endregion Load Pic from Archive
 
     #region Load Pic from Folder
 
@@ -254,9 +254,9 @@ internal static class LoadPic
         }
     }
 
-    #endregion
+    #endregion Load Pic from Folder
 
-    #region Load Pic at Index 
+    #region Load Pic at Index
 
     /// <summary>
     /// Loads the image at the specified index asynchronously and updates the UI.
@@ -312,7 +312,7 @@ internal static class LoadPic
         await UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
     }
 
-    #endregion
+    #endregion Load Pic at Index
 
     #region Loading Preview
 
@@ -340,6 +340,5 @@ internal static class LoadPic
         });
     }
 
-
-    #endregion
+    #endregion Loading Preview
 }

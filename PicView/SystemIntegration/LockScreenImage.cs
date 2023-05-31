@@ -48,6 +48,7 @@ public static class LockScreenHelper
                 case ".gif":
                 case ".bmp":
                     break;
+
                 default:
                     shouldSaveImage = true;
                     break;

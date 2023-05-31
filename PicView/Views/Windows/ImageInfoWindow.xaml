@@ -270,8 +270,6 @@
             <buttons:StarOutlineButton x:Name="Star4" />
             <buttons:StarOutlineButton x:Name="Star5" />
 
-
-
             <Rectangle
                 Width="1"
                 Height="30"

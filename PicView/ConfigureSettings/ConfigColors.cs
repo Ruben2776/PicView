@@ -25,7 +25,6 @@ internal static class ConfigColors
     /// </summary>
     internal static Color MainColor { get; set; }
 
-
     internal static void UpdateColor()
     {
         var getColor = AnimationHelper.GetPreferredColor();
@@ -186,7 +185,7 @@ internal static class ConfigColors
     #region Change Theme
 
     /// <summary>
-    /// changes the UI theme of the application to a light or dark theme. 
+    /// changes the UI theme of the application to a light or dark theme.
     /// It updates the resource dictionary of the application with the specified theme.
     /// </summary>
     /// <param name="useDarkTheme"></param>
@@ -227,7 +226,7 @@ internal static class ConfigColors
     }
 
     /// <summary>
-    /// Changes the color theme of the application. 
+    /// Changes the color theme of the application.
     /// It takes a ColorOption value and updates the ColorTheme setting of the application to the corresponding value.
     /// The method then calls the UpdateColor method, which updates the application's color scheme to match the new theme.
     /// </summary>

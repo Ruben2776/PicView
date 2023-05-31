@@ -5,11 +5,9 @@ using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.Views.UserControls.Misc;
-using SkiaSharp;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ImageHandling.Thumbnails;
@@ -133,7 +131,7 @@ internal static class ImageDragAndDrop
         if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
         {
             var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
-            
+
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (memoryStream is not null)
             {

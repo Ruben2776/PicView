@@ -102,7 +102,6 @@ internal static class HideInterfaceLogic
             {
                 UC.GetClickArrowLeft.Visibility =
                     UC.GetClickArrowRight.Visibility = Visibility.Visible;
-
             }
 
             UC.GetX2.Visibility =

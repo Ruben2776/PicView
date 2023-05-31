@@ -1,9 +1,8 @@
-﻿using System.Windows.Controls;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace PicView.Views.UserControls.Misc;
 
-public partial class DragDropOverlayPic : UserControl
+public partial class DragDropOverlayPic
 {
     public DragDropOverlayPic(ImageSource source)
     {
@@ -12,7 +11,7 @@ public partial class DragDropOverlayPic : UserControl
         UpdateSource(source);
     }
 
-    public void UpdateSource(ImageSource source)
+    private void UpdateSource(ImageSource source)
     {
         if (source == null) { return; }
 

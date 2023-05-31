@@ -2,16 +2,15 @@
 using PicView.Properties;
 using PicView.UILogic.Sizing;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Buttons;
 
 /// <summary>
 /// Cool shady close button!
 /// </summary>
-public partial class Restorebutton : UserControl
+public partial class RestoreButton
 {
-    public Restorebutton()
+    public RestoreButton()
     {
         InitializeComponent();
 

@@ -156,7 +156,7 @@ internal static class OpenSave
         string fileName;
         var randomized = false;
         SaveFileDialog? saveDialog = null;
-        
+
         if (Pics?.Count > FolderIndex)
         {
             fileName = showFileDialog ? Path.GetFileName(Pics[FolderIndex]) : Pics[FolderIndex];
