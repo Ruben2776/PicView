@@ -235,6 +235,8 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Ctrl + Right         | Navigate to first image                                                                                          |
 | Ctrl + Shift + Right | Navigate to next folder                                                                                          |
 | Ctrl + Shift + Left  | Navigate to previous folder                                                                                      |
+| Ctrl + Shift + D     | Navigate to next folder                                                                                          |
+| Ctrl + Shift + A     | Navigate to previous folder                                                                                      |
 | Up ⇔ W              | Rotates the image up (clockwise)                                                                                 |
 | Up ⇔ W              | Scrolls up when scrolling is enabled                                                                             |
 | PageUp               | Scrolls up when scrolling is enabled                                                                             |
