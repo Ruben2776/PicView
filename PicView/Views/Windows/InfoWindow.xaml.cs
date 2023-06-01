@@ -117,6 +117,7 @@ public partial class InfoWindow
             AutoUpdater.ShowRemindLaterButton = false;
             AutoUpdater.ReportErrors = true;
             AutoUpdater.ShowSkipButton = false;
+            AutoUpdater.SetOwner(this);
             AutoUpdater.Start("https://picview.org/update.xml");
         };
     }
