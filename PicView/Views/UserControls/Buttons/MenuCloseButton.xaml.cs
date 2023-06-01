@@ -1,13 +1,12 @@
 ﻿using PicView.Animations;
 using PicView.Properties;
 using PicView.UILogic;
-using System.Windows.Controls;
 using System.Windows.Input;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons;
 
-public partial class MenuCloseButton : UserControl
+public partial class MenuCloseButton
 {
     public MenuCloseButton()
     {

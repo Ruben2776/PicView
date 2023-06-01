@@ -257,12 +257,15 @@ internal static class ZoomLogic
             // Increase speed based on the current zoom level
             case > 14 when isZoomIn:
                 return;
+
             case > 4:
                 zoomSpeed += 1.5;
                 break;
+
             case > 3.2:
                 zoomSpeed += 1;
                 break;
+
             case > 1.6:
                 zoomSpeed += 0.5;
                 break;

@@ -180,11 +180,11 @@ internal static class ErrorHandling
                 return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
                 {
                     var fileName = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                    return fileName == (string) Application.Current.Resources["Loading"] ? InitialPath : fileName;
+                    return fileName == (string)Application.Current.Resources["Loading"] ? InitialPath : fileName;
                 });
             }
 
-            if (string.IsNullOrWhiteSpace(InitialPath) == false 
+            if (string.IsNullOrWhiteSpace(InitialPath) == false
                 && Settings.Default.IncludeSubDirectories
                 && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
             {

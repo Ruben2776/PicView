@@ -1,11 +1,6 @@
-﻿using System.Windows.Controls;
+﻿namespace PicView.Views.UserControls.Misc;
 
-namespace PicView.Views.UserControls.Misc;
-
-/// <summary>
-/// Interaction logic for CustomTextBox.xaml
-/// </summary>
-public partial class CustomTextBox : UserControl
+public partial class CustomTextBox
 {
     public CustomTextBox()
     {
@@ -18,11 +13,5 @@ public partial class CustomTextBox : UserControl
         set => InnerTextBox.Text = value;
     }
 
-    public new bool IsFocused
-    {
-        get
-        {
-            return InnerTextBox.IsFocused;
-        }
-    }
+    public new bool IsFocused => InnerTextBox.IsFocused;
 }

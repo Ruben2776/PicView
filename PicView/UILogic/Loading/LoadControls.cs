@@ -95,7 +95,7 @@ internal static class LoadControls
     /// </summary>
     internal static void LoadRestoreButton()
     {
-        GetRestoreButton = new Restorebutton
+        GetRestoreButton = new RestoreButton
         {
             Focusable = false,
             VerticalAlignment = VerticalAlignment.Top,

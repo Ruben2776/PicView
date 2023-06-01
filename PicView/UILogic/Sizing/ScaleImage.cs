@@ -1,5 +1,4 @@
 ﻿using PicView.ChangeImage;
-using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.TransformImage;
 using System.Windows;

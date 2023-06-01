@@ -104,7 +104,6 @@ internal static class DeleteFiles
         PreLoader.Clear();
         Pics.Remove(Pics[FolderIndex]);
 
-
         if (Pics.Count <= 0)
         {
             ErrorHandling.UnexpectedError();

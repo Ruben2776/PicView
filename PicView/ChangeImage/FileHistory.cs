@@ -1,7 +1,8 @@
-﻿using System.Diagnostics;
-using PicView.ChangeTitlebar;
+﻿using PicView.ChangeTitlebar;
 using PicView.FileHandling;
+using PicView.Properties;
 using PicView.UILogic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -77,7 +78,6 @@ internal class FileHistory
         {
             Tooltip.ShowTooltipMessage(e.Message);
         }
-
     }
 
     internal async Task OpenLastFileAsync()
@@ -125,11 +125,14 @@ internal class FileHistory
         }
 
         var index = _fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
-        index++;
-
-        if (index >= MaxCount)
+        if (Settings.Default.Looping)
         {
-            return;
+            index = (index + 1 + _fileHistory.Count) % _fileHistory.Count;
+        }
+        else
+        {
+            index++;
+            if (index >= MaxCount) return;
         }
 
         if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
@@ -149,9 +152,15 @@ internal class FileHistory
         }
 
         var index = _fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
-        index--;
-
-        if (index < 0) { return; }
+        if (Settings.Default.Looping)
+        {
+            index = (index - 1 + _fileHistory.Count) % _fileHistory.Count;
+        }
+        else
+        {
+            index--;
+            if (index < 0) { return; }
+        }
 
         if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
         {
@@ -202,7 +211,7 @@ internal class FileHistory
 
         menuItem.Click += async (_, _) => await LoadPic.LoadPicFromStringAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false);
         var ext = Path.GetExtension(filePath);
-        var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext.Substring(0, 5) : ext;
+        var ext5 = !string.IsNullOrWhiteSpace(ext) && ext.Length >= 5 ? ext[..5] : ext;
         menuItem.InputGestureText = ext5;
         return menuItem;
     }
@@ -213,7 +222,7 @@ internal class FileHistory
         {
             var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
 
-            for (int i = 0; i < MaxCount; i++)
+            for (var i = 0; i < MaxCount; i++)
             {
                 if (_fileHistory.Count == i)
                 {
@@ -221,7 +230,6 @@ internal class FileHistory
                 }
 
                 var item = MenuItem(_fileHistory[i], i);
-                if (item is null) { break; }
                 if (cm.Items.Count <= i)
                 {
                     cm.Items.Add(item);

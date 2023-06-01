@@ -179,6 +179,7 @@ internal static class GalleryNavigation
             case Direction.Right:
                 SelectedGalleryItem += VerticalItems;
                 break;
+
             default:
                 throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
         }

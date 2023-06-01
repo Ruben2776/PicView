@@ -1,12 +1,8 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Misc;
 
-/// <summary>
-/// Interaction logic for DragDropOverlay.xaml
-/// </summary>
-public partial class DragDropOverlay : UserControl
+public partial class DragDropOverlay
 {
     public DragDropOverlay(UIElement element)
     {

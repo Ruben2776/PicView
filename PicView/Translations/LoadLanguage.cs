@@ -53,7 +53,6 @@ internal static class LoadLanguage
         }
     }
 
-
     internal static void ChangeLanguage(int language)
     {
         var choice = (Languages)language;

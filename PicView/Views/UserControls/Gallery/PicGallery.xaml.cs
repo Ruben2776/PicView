@@ -1,5 +1,4 @@
 ﻿using PicView.PicGallery;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Gallery;
 

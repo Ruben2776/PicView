@@ -18,6 +18,7 @@ internal readonly struct Position : IEquatable<Position>
     }
 
     #region IEquatable<T>
+
     public override bool Equals(object? obj) => obj != null && obj is Position size && Equals(size);
 
     public static bool operator ==(Position e1, Position e2)
@@ -39,5 +40,6 @@ internal readonly struct Position : IEquatable<Position>
     {
         throw new NotImplementedException();
     }
-    #endregion
+
+    #endregion IEquatable<T>
 }

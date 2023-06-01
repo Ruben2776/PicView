@@ -1,11 +1,11 @@
 ﻿using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.Views.Windows;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Misc;
 
-public partial class ThumbnailOutputUC : UserControl
+// ReSharper disable once InconsistentNaming
+public partial class ThumbnailOutputUC
 {
     public ThumbnailOutputUC(int i, string folderPath, string filename, string value)
     {

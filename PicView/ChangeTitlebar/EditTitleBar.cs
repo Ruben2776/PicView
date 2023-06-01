@@ -12,7 +12,7 @@ namespace PicView.ChangeTitlebar;
 
 internal static class EditTitleBar
 {
-    private static string? backupTitle;
+    private static string? _backupTitle;
 
     internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
@@ -65,7 +65,7 @@ internal static class EditTitleBar
 
         e.Handled = true;
 
-        backupTitle = ConfigureWindows.GetMainWindow.TitleText.Text;
+        _backupTitle = ConfigureWindows.GetMainWindow.TitleText.Text;
         ConfigureWindows.GetMainWindow.TitleText.Text = Pics[FolderIndex];
     }
 
@@ -111,8 +111,8 @@ internal static class EditTitleBar
         Keyboard.ClearFocus();
         ConfigureWindows.GetMainWindow.Focus();
 
-        if (!backup || backupTitle == null) return;
-        ConfigureWindows.GetMainWindow.TitleText.Text = backupTitle;
-        backupTitle = string.Empty;
+        if (!backup || _backupTitle == null) return;
+        ConfigureWindows.GetMainWindow.TitleText.Text = _backupTitle;
+        _backupTitle = string.Empty;
     }
 }

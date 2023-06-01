@@ -70,7 +70,7 @@ public partial class MainWindow
             //     w.TitleBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
             //     w.LowerBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
             // }
-            Task.Run(async() =>
+            Task.Run(async () =>
             {
                 var args = Environment.GetCommandLineArgs();
 
@@ -130,7 +130,6 @@ public partial class MainWindow
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
             ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += DragToExplorer.DragFile;
-
 
             // ClickArrows
             GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, false).ConfigureAwait(false);

@@ -46,7 +46,6 @@ internal static class LoadContextMenus
         printCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + P";
         printCm.Click += (s, x) => Print(Pics[FolderIndex]);
 
-
         ///////////////////////////
         //     Open With        \\\
         ///////////////////////////
@@ -63,7 +62,7 @@ internal static class LoadContextMenus
         // FileName
         var fileNameMenu = (MenuItem)sortFilesByCm.Items[0];
         var fileNameHeader = (RadioButton)fileNameMenu.Header;
-        fileNameHeader.IsChecked = Settings.Default.SortPreference == 0;
+        fileNameHeader.IsChecked = Settings.Default.SortPreference == (int)FileLists.SortFilesBy.Name;
         fileNameHeader.Click += async delegate
         {
             MainContextMenu.IsOpen = false;
@@ -73,7 +72,7 @@ internal static class LoadContextMenus
         // FileSize
         var filesizeMenu = (MenuItem)sortFilesByCm.Items[1];
         var filesizeHeader = (RadioButton)filesizeMenu.Header;
-        filesizeHeader.IsChecked = Settings.Default.SortPreference == (int)FileLists.SortFilesBy.Name;
+        filesizeHeader.IsChecked = Settings.Default.SortPreference == (int)FileLists.SortFilesBy.FileSize;
         filesizeHeader.Click += async delegate
         {
             MainContextMenu.IsOpen = false;
@@ -87,13 +86,13 @@ internal static class LoadContextMenus
         fileExtensionHeader.Click += async delegate
         {
             MainContextMenu.IsOpen = false;
-            await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.FileSize).ConfigureAwait(false);
+            await UpdateUIValues.ChangeSortingAsync(FileLists.SortFilesBy.Extension).ConfigureAwait(false);
         };
 
         // CreationTime
         var creationTimeMenu = (MenuItem)sortFilesByCm.Items[3];
         var creationTimeHeader = (RadioButton)creationTimeMenu.Header;
-        creationTimeHeader.IsChecked = Settings.Default.SortPreference == 2;
+        creationTimeHeader.IsChecked = Settings.Default.SortPreference == (int)FileLists.SortFilesBy.CreationTime;
         creationTimeHeader.Click += async delegate
         {
             MainContextMenu.IsOpen = false;
@@ -188,7 +187,6 @@ internal static class LoadContextMenus
         // Change bg
         var ChangeBackgroundMenu = (MenuItem)settingsCm.Items[3];
         ChangeBackgroundMenu.Click += (_, _) => ConfigColors.ChangeBackground();
-
 
         // Topmost
         var TopmostMenu = (MenuItem)settingsCm.Items[4];
@@ -318,10 +316,6 @@ internal static class LoadContextMenus
         var CloseCm = (MenuItem)MainContextMenu.Items[19];
         CloseCm.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
 
-
-
-
-
         // Add Window contextmenu
         WindowContextMenu = (ContextMenu)Application.Current.Resources["windowCM"];
 
@@ -345,7 +339,7 @@ internal static class LoadContextMenus
         NavigationContextMenu = (ContextMenu)Application.Current.Resources["navCM"];
 
         var nextCm = (MenuItem)NavigationContextMenu.Items[0];
-        nextCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Next).ConfigureAwait(false); 
+        nextCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
 
         var prevCm = (MenuItem)NavigationContextMenu.Items[1];
         prevCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);

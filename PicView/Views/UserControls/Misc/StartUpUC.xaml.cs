@@ -3,7 +3,6 @@ using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.Properties;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using static PicView.Animations.MouseOverAnimations;
@@ -11,7 +10,7 @@ using static PicView.Animations.MouseOverAnimations;
 namespace PicView.Views.UserControls.Misc;
 
 // ReSharper disable once InconsistentNaming
-public partial class StartUpUC : UserControl
+public partial class StartUpUC
 {
     public StartUpUC()
     {
@@ -83,6 +82,7 @@ public partial class StartUpUC : UserControl
                 buttons.Margin = new Thickness(0, 0, 0, 16);
                 buttons.VerticalAlignment = VerticalAlignment.Bottom;
                 break;
+
             case > 1265:
                 Logo.Width = double.NaN;
                 buttons.Margin = new Thickness(0, 220, 25, 16);

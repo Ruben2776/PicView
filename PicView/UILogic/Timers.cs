@@ -1,6 +1,4 @@
-﻿using PicView.PicGallery;
-using System.Windows.Threading;
-using static PicView.Animations.FadeControls;
+﻿using static PicView.Animations.FadeControls;
 using static PicView.UILogic.TransformImage.Scroll;
 using Timer = System.Timers.Timer;
 

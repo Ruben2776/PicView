@@ -3,14 +3,11 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Buttons;
 
-/// <summary>
-/// Cool shady close button!
-/// </summary>
-public partial class X2 : UserControl
+
+public partial class X2
 {
     public X2()
     {

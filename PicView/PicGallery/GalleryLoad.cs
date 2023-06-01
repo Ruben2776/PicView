@@ -181,7 +181,6 @@ internal static class GalleryLoad
         IsLoading = false;
     }
 
-
     internal static async Task ReloadGallery()
     {
         if (Settings.Default.FullscreenGallery)

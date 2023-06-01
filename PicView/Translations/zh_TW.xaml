@@ -399,5 +399,4 @@
     <system:String x:Key="Cancel">取消</system:String>
 
     <system:String x:Key="None">沒有任何</system:String>
-
 </ResourceDictionary>

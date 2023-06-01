@@ -5,7 +5,6 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -58,6 +57,7 @@ public static class Wallpaper // Taken from a Microsoft sample...
                 case ".gif":
                 case ".bmp":
                     break;
+
                 default:
                     shouldSaveImage = true;
                     break;

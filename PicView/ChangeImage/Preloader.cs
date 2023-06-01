@@ -54,7 +54,7 @@ internal static class PreLoader
     private static readonly ConcurrentDictionary<int, PreLoadValue> PreLoadList = new();
 
     /// <summary>
-    /// Sets the number of iterations to load in front 
+    /// Sets the number of iterations to load in front
     /// </summary>
     private const int PositiveIterations = 8;
 
@@ -69,8 +69,10 @@ internal static class PreLoader
     internal const int MaxCount = PositiveIterations + NegativeIterations + 2;
 
 #if DEBUG
+
     // ReSharper disable once ConvertToConstant.Local
     private static readonly bool ShowAddRemove = false;
+
 #endif
 
     /// <summary>
@@ -165,7 +167,6 @@ internal static class PreLoader
                 Trace.WriteLine($"{Pics[key]} removed at {Pics.IndexOf(Pics[key])}");
 #endif
         }
-
         catch (Exception e)
         {
 #if DEBUG

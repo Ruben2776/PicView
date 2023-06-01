@@ -15,6 +15,7 @@ internal static class UC
 {
     // ReSharper disable once InconsistentNaming
     internal static StartUpUC? GetStartUpUC { get; private set; }
+
     internal static ImageSettings? GetImageSettingsMenu { get; set; }
     internal static FileMenu? GetFileMenu { get; set; }
     internal static QuickSettingsMenu? GetQuickSettingsMenu { get; set; }
@@ -25,7 +26,7 @@ internal static class UC
     internal static ClickArrow? GetClickArrowRight { get; set; }
     internal static X2? GetX2 { get; set; }
     internal static Minus? GetMinus { get; set; }
-    internal static Restorebutton? GetRestoreButton { get; set; }
+    internal static RestoreButton? GetRestoreButton { get; set; }
     internal static Views.UserControls.Gallery.PicGallery? GetPicGallery { get; set; }
     internal static GalleryShortcut? GetGalleryShortcut { get; set; }
     internal static CroppingTool? GetCroppingTool { get; set; }

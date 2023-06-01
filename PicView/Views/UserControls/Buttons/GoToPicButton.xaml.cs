@@ -98,6 +98,7 @@ public partial class GoToPicButton : UserControl
 
                 e.Handled = true;// only allowed on ctrl
                 return;
+
             case Key.Escape: // Escape logic
                 GoToPicBox.Text = FolderIndex.ToString(CultureInfo.CurrentCulture);
                 ClearGoTo();

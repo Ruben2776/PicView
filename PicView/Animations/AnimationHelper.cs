@@ -56,6 +56,7 @@ internal static class AnimationHelper
     #endregion Fade
 
     #region Color Events
+
     internal static void MouseEnterBgTexColor(Brush brush)
     {
         ColorAnimation.From = Color.FromArgb(0, 0, 0, 0);
@@ -168,7 +169,7 @@ internal static class AnimationHelper
         };
     }
 
-    #endregion Color stuff
+    #endregion Color settings
 
     #region Size Animation
 

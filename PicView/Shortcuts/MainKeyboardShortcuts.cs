@@ -204,7 +204,7 @@ internal static class MainKeyboardShortcuts
                     {
                         await SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
                     }
-                    
+
                     return; // Fix saving file
                 }
 
@@ -265,11 +265,11 @@ internal static class MainKeyboardShortcuts
                     {
                         ColorPicking.StopRunning(false);
                     }
-                    else if (GetEffectsWindow is {IsVisible: true})
+                    else if (GetEffectsWindow is { IsVisible: true })
                     {
                         GetEffectsWindow.Hide();
                     }
-                    else if (GetImageInfoWindow is {IsVisible: true})
+                    else if (GetImageInfoWindow is { IsVisible: true })
                     {
                         GetImageInfoWindow.Hide();
                     }

@@ -1,4 +1,5 @@
-﻿using PicView.Animations;
+﻿using System.Globalization;
+using PicView.Animations;
 using PicView.Shortcuts;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
@@ -33,16 +34,18 @@ public partial class QuickResize : UserControl
 
             PercentageBox.PreviewKeyDown += async (_, e) =>
             {
-                // Prevent alt tab navigation and instead move back to WidthBox
-                if (e.Key == Key.Tab)
+                switch (e.Key)
                 {
-                    e.Handled = true;
-                    WidthBox.Focus();
-                }
-                if (e.Key == Key.Enter)
-                {
-                    e.Handled = true;
-                    await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+                    // Prevent alt tab navigation and instead move back to WidthBox
+                    case Key.Tab:
+                        e.Handled = true;
+                        WidthBox.Focus();
+                        break;
+
+                    case Key.Enter:
+                        e.Handled = true;
+                        await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
+                        break;
                 }
             };
 
@@ -69,9 +72,9 @@ public partial class QuickResize : UserControl
 
             ApplyButton.MouseLeftButtonDown += async (_, _) => await QuickResizeShortcuts.Fire(WidthBox.Text, HeightBox.Text).ConfigureAwait(false);
 
-            for (int i = 0; i < PercentageBox.Items.Count; i++)
+            foreach (var t in PercentageBox.Items)
             {
-                var item = (ComboBoxItem)PercentageBox.Items[i];
+                var item = (ComboBoxItem)t;
                 item.GotFocus += (_, _) =>
                 {
                     if (item.IsMouseOver is false)
@@ -86,11 +89,7 @@ public partial class QuickResize : UserControl
 
     private void PercentageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var originalWidth = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-        var originalHeight = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
-
-        var content = ((ComboBoxItem)PercentageBox.SelectedItem).Content as string;
-        if (content == null) { return; }
+        if (((ComboBoxItem)PercentageBox.SelectedItem).Content is not string content) { return; }
 
         var value = decimal.Parse(content.TrimEnd('%', ' ')) / 100M; // Convert from percentage to decimal
 
@@ -104,8 +103,8 @@ public partial class QuickResize : UserControl
         Visibility = Visibility.Visible;
         AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
         PercentageBox.SelectedIndex = 0;
-        WidthBox.Text = ConfigureWindows.GetMainWindow.MainImage.Source?.Width.ToString();
-        HeightBox.Text = ConfigureWindows.GetMainWindow.MainImage?.Source?.Height.ToString();
+        WidthBox.Text = ConfigureWindows.GetMainWindow.MainImage.Source?.Width.ToString(CultureInfo.CurrentCulture);
+        HeightBox.Text = ConfigureWindows.GetMainWindow.MainImage?.Source?.Height.ToString(CultureInfo.CurrentCulture);
 
         var timer = new Timer(401) { AutoReset = false, Enabled = true };
         timer.Elapsed += delegate

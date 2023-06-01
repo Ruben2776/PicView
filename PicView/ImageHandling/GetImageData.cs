@@ -356,6 +356,7 @@ internal static class GetImageData
                 case 1:
                     authorsValue = authorsArray[0];
                     break;
+
                 case >= 2:
                     {
                         var sb = new StringBuilder();

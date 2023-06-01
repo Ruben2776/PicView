@@ -1,11 +1,10 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
-using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Buttons;
 
-public partial class RightButton : UserControl
+public partial class RightButton
 {
     public RightButton()
     {

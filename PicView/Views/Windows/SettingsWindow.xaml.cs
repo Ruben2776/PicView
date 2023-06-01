@@ -443,7 +443,6 @@ public partial class SettingsWindow
             AvoidZoomText.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         };
 
-
         if (!Settings.Default.DarkTheme) // Add white hover text on light theme
         {
             BlueRadio.MouseEnter += delegate

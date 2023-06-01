@@ -32,10 +32,10 @@ internal static class UpdateImage
     {
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
         var isGif = preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase);
-        
+
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (isGif) // Loads gif from XamlAnimatedGif if necessary   
+            if (isGif) // Loads gif from XamlAnimatedGif if necessary
             {
                 AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
             }
@@ -44,7 +44,7 @@ internal static class UpdateImage
                 ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
             }
 
-            if (GetSpinWaiter is {IsVisible: true})
+            if (GetSpinWaiter is { IsVisible: true })
             {
                 GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
@@ -52,7 +52,7 @@ internal static class UpdateImage
 
         var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,
             index, preLoadValue.FileInfo);
-        
+
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);

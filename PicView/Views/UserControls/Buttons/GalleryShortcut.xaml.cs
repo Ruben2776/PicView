@@ -1,13 +1,12 @@
 ﻿using PicView.Animations;
 using PicView.PicGallery;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Buttons;
 
 /// <summary>
 /// Cool shady close button!
 /// </summary>
-public partial class GalleryShortcut : UserControl
+public partial class GalleryShortcut
 {
     public GalleryShortcut()
     {

@@ -472,7 +472,6 @@
                             Foreground="{StaticResource MainColorFadedBrush}"
                             Text="{StaticResource SecAbbreviation}" />
                     </StackPanel>
-
                 </StackPanel>
             </TabItem>
             <TabItem>
@@ -513,7 +512,6 @@
                         </CheckBox.Content>
                     </CheckBox>
 
-
                     <CheckBox
                         x:Name="TaskbarRadio"
                         Margin="7,0,0,0"
@@ -534,7 +532,6 @@
                         </CheckBox.Content>
                     </CheckBox>
 
-
                     <CheckBox
                         x:Name="ShowBottomRadio"
                         Margin="7,0,0,0"
@@ -554,7 +551,6 @@
                                 TextWrapping="Wrap" />
                         </CheckBox.Content>
                     </CheckBox>
-
 
                     <Label
                         Margin="0,20,0,5"
@@ -786,5 +782,4 @@
             </TabItem>
         </TabControl>
     </DockPanel>
-
 </Window>

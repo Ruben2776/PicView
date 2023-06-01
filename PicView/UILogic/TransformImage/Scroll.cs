@@ -1,11 +1,11 @@
 ﻿using PicView.ChangeImage;
 using PicView.Properties;
+using PicView.UILogic.Loading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using PicView.UILogic.Loading;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.UC;

@@ -431,8 +431,6 @@
                         </TextBlock>
                     </CheckBox>
                 </Border>
-
-
             </WrapPanel>
 
             <Slider
@@ -509,9 +507,7 @@
                         </Button.Foreground>
                     </Button>
                 </Border>
-
             </StackPanel>
-
 
             <StackPanel
                 Margin="0,10,0,5"
@@ -563,9 +559,6 @@
                     </Button>
                 </Border>
             </StackPanel>
-
-
-
         </StackPanel>
     </DockPanel>
 </Window>

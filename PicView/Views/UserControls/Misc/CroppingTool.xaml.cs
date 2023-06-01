@@ -1,12 +1,8 @@
 ﻿using PicView.Editing.Crop;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Misc;
 
-/// <summary>
-/// Interaction logic for CroppingTool.xaml
-/// </summary>
-public partial class CroppingTool : UserControl
+public partial class CroppingTool
 {
     public CroppingTool()
     {

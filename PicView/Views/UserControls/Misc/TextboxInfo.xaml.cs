@@ -1,14 +1,10 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 
 namespace PicView.Views.UserControls.Misc;
 
-/// <summary>
-/// Interaction logic for TextboxInfo.xaml
-/// </summary>
-public partial class TextboxInfo : UserControl
+public partial class TextBoxInfo
 {
-    public TextboxInfo(string valueDesc, string value, bool readOnly)
+    public TextBoxInfo(string valueDesc, string value, bool readOnly)
     {
         InitializeComponent();
         SetValues(valueDesc, value, readOnly);

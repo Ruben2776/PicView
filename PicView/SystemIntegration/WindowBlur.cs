@@ -16,6 +16,7 @@ internal static partial class WindowBlur
     }
 
     #region IEquatable<T>
+
     private struct AccentPolicy : IEquatable<AccentPolicy>
     {
         public AccentState AccentState;
@@ -72,7 +73,9 @@ internal static partial class WindowBlur
             throw new NotImplementedException();
         }
     }
-    #endregion
+
+    #endregion IEquatable<T>
+
     private enum WindowCompositionAttribute
     {
         AccentPolicy = 19
@@ -108,5 +111,4 @@ internal static partial class WindowBlur
             throw new Exception("Failed to enable blur on window.");
         }
     }
-
 }

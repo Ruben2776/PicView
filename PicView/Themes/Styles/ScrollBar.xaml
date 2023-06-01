@@ -218,7 +218,6 @@
         </Border>
     </ControlTemplate>
 
-
     <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
         <Track
             Name="PART_Track"

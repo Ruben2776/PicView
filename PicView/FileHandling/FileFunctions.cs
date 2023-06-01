@@ -197,8 +197,6 @@ internal static partial class FileFunctions
     }
 
     [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
-    // ReSharper disable once IdentifierTypo
-    // ReSharper disable once InconsistentNaming
     private static partial Regex URLregex();
 
     /// <summary>

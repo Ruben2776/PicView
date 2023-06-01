@@ -180,6 +180,7 @@ internal static class CropFunctions
                 width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
                 height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
                 break;
+
             default:
                 width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
                 height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);

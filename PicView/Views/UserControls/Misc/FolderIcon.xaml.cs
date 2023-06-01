@@ -1,11 +1,6 @@
-﻿using System.Windows.Controls;
+﻿namespace PicView.Views.UserControls.Misc;
 
-namespace PicView.Views.UserControls.Misc;
-
-/// <summary>
-/// Interaction logic for FolderIcon.xaml
-/// </summary>
-public partial class FolderIcon : UserControl
+public partial class FolderIcon
 {
     public FolderIcon()
     {
