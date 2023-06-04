@@ -42,6 +42,8 @@ public class CropService
         InsideRectangle
     }
 
+    internal CropContextMenu CropCM { get; set; }
+
     public CropService(FrameworkElement? adornedElement)
     {
         if (adornedElement == null)
@@ -53,7 +55,7 @@ public class CropService
         UC.Close_UserControls();
 
         // Show context menu
-        _ = new CropContextMenu();
+        CropCM ??= new CropContextMenu();
 
         canvas = new Canvas
         {

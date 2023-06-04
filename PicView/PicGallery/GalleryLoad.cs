@@ -156,7 +156,11 @@ internal static class GalleryLoad
                         }
 
                         var bitmapSource = Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize);
-                        UpdatePic(i, bitmapSource);
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
+                        {
+                            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                            item.ThumbImage.Source = bitmapSource;
+                        }));
                     }
                     catch (Exception e)
                     {

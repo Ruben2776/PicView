@@ -64,12 +64,6 @@ public partial class MainWindow
         ContentRendered += delegate
         {
             WindowBlur.EnableBlur(this);
-            // if (Settings.Default.DarkTheme == false)
-            // {
-            //     var w = ConfigureWindows.GetMainWindow;
-            //     w.TitleBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
-            //     w.LowerBar.Background = (ImageBrush) Application.Current.Resources["NoisyBg"];
-            // }
             Task.Run(async () =>
             {
                 var args = Environment.GetCommandLineArgs();
