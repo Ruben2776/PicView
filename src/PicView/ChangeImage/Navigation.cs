@@ -113,11 +113,6 @@ internal static class Navigation
         }
 
         // If the horizontal fullscreen gallery is open, deselect current index
-        if (Settings.Default.FullscreenGallery) GalleryNavigation.SetSelected(FolderIndex, false);
-
-        if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
-        else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
-
         if (Settings.Default.FullscreenGallery)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -133,7 +128,9 @@ internal static class Navigation
                 UC.GetPicGallery.Scroller.ScrollToHorizontalOffset(GalleryNavigation.CenterScrollPosition);
             });
         }
-            
+
+        if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
+        else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
     }
 
     /// <summary>
