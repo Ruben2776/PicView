@@ -75,7 +75,7 @@ internal static class GalleryNavigation
         }
         else
         {
-            if (GetPicGallery.Container.Children.Count < FolderIndex) { return; }
+            if (GetPicGallery.Container.Children.Count < FolderIndex || GetPicGallery.Container.Children.Count <= 0) { return; }
 
             var selectedItem = GetPicGallery.Container.Children[FolderIndex];
             var selectedScrollTo = selectedItem.TranslatePoint(new Point(), GetPicGallery.Container);

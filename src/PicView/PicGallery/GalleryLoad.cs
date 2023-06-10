@@ -19,9 +19,6 @@ internal static class GalleryLoad
 {
     internal static bool IsLoading { get; private set; }
 
-    internal const int FullscreenItems = 37;
-    internal const int GalleryItems = 23;
-
     internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
     {
         // Add events and set fields, when it's loaded.
@@ -51,7 +48,7 @@ internal static class GalleryLoad
             WindowSizing.RenderFullscreen();
 
             // Set size
-            GalleryNavigation.SetSize(FullscreenItems);
+            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
             UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
             UC.GetPicGallery.Height = double.NaN;
 
@@ -80,7 +77,7 @@ internal static class GalleryLoad
             GalleryFunctions.IsGalleryOpen = true;
 
             // Set size
-            GalleryNavigation.SetSize(GalleryItems);
+            GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItems);
             UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
             UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
 
@@ -158,6 +155,10 @@ internal static class GalleryLoad
                         var bitmapSource = Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize);
                         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
                         {
+                            if (i > UC.GetPicGallery.Container.Children.Count)
+                            {
+                                return;
+                            }
                             var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                             item.ThumbImage.Source = bitmapSource;
                         }));

@@ -2,6 +2,7 @@
 using PicView.Properties;
 using PicView.UILogic.TransformImage;
 using System.Windows;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
@@ -86,7 +87,7 @@ internal static class ScaleImage
         if (Settings.Default.FullscreenGallery)
         {
             maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth, width);
-            maxHeight = Settings.Default.FillImage ? workAreaHeight - UC.GetPicGallery.Scroller.ActualHeight : Math.Min(workAreaHeight - UC.GetPicGallery.Scroller.ActualHeight, height);
+            maxHeight = Settings.Default.FillImage ? workAreaHeight - PicGalleryItemSize : Math.Min(workAreaHeight - PicGalleryItemSize, height);
             margin = PicGalleryItemSize + 5;
         }
         else if (Settings.Default.AutoFitWindow)

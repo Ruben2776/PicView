@@ -135,11 +135,18 @@ internal static class Navigation
         }
         ErrorHandling.ChangeFolder();
         Pics = fileList;
-        await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
-        if (Settings.Default.FullscreenGallery)
+        if (GalleryFunctions.IsGalleryOpen)
         {
-            await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+            if (Settings.Default.FullscreenGallery)
+            {
+                _ = GalleryLoad.ReloadGallery().ConfigureAwait(false);
+            }
+            else
+            {
+                GalleryToggle.CloseCurrentGallery();
+            }
         }
+        await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
+using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using System.IO;
@@ -42,9 +43,9 @@ internal static class QuickLoad
 
         LoadingPreview(fileInfo, false);
         var size = ImageSizeFunctions.GetImageSize(file);
-        if (Properties.Settings.Default.FullscreenGallery)
+        if (Settings.Default.FullscreenGallery)
         {
-            GalleryNavigation.SetSize(GalleryLoad.FullscreenItems);
+            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
         }
 
         if (size.HasValue)
@@ -102,7 +103,7 @@ internal static class QuickLoad
         if (bitmapSource is not null)
             await PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
-        if (Properties.Settings.Default.FullscreenGallery)
+        if (Settings.Default.FullscreenGallery)
         {
             await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }

@@ -265,6 +265,11 @@ internal static class LoadPic
     /// <param name="fileInfo">The file information for the image. If not specified, the file information will be obtained from the image list using the specified index.</param>
     internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
     {
+        if (index < 0 || index >= Pics.Count)
+        {
+            await ReloadAsync().ConfigureAwait(false);
+            return;
+        }
         FolderIndex = index;
         var preLoadValue = PreLoader.Get(index);
         fileInfo ??= preLoadValue?.FileInfo ?? new FileInfo(Pics[index]);
