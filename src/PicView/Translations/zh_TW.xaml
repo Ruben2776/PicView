@@ -127,6 +127,8 @@
     <system:String x:Key="ToggleTaskbarProgress">顯示工作列進度</system:String>
     <system:String x:Key="ShowFileSavingDialog">顯示檔案儲存對話方塊</system:String>
     <system:String x:Key="ShowBottomToolbar">查看底部工具列</system:String>
+    <system:String x:Key="BottomGalleryItems">底部圖庫項目</system:String>
+    <system:String x:Key="ExpandedGalleryItems">展開的圖庫項目</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">負片</system:String>

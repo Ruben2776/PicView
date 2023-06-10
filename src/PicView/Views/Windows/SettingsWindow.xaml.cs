@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using PicView.PicGallery;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
 
@@ -80,9 +81,38 @@ public partial class SettingsWindow
             NavTxt.Text = NavSlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
             NavSlider.ValueChanged += (_, e) =>
             {
-                Settings.Default.NavSpeed = e.NewValue; NavTxt.Text =
-                    e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
+                Settings.Default.NavSpeed = e.NewValue;
+                NavTxt.Text = e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
                 Settings.Default.Save();
+            };
+
+            // SetExpandedGallerySlider
+            SetExpandedGallerySlider.Value = Settings.Default.ExpandedGalleryItems;
+            SetExpandedGalleryText.Text = SetExpandedGallerySlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
+            SetExpandedGallerySlider.ValueChanged += (_, e) =>
+            {
+                Settings.Default.ExpandedGalleryItems = (int)e.NewValue;
+                SetExpandedGalleryText.Text = e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
+                Settings.Default.Save();
+                if (GalleryFunctions.IsGalleryOpen)
+                {
+                    GalleryLoad.LoadLayout();
+                }
+            };
+
+            // SetBottomGallerySlider
+            SetBottomGallerySlider.Value = Settings.Default.BottomGalleryItems;
+            SetBottomGalleryText.Text = SetBottomGallerySlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
+            SetBottomGallerySlider.ValueChanged += (_, e) =>
+            {
+                Settings.Default.BottomGalleryItems = (int)e.NewValue;
+                SetBottomGalleryText.Text = e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
+                Settings.Default.Save();
+                if (GalleryFunctions.IsGalleryOpen)
+                {
+                    GalleryLoad.LoadLayout();
+                    ScaleImage.TryFitImage();
+                }
             };
 
             // Themes

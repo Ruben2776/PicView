@@ -127,6 +127,8 @@
     <system:String x:Key="ToggleTaskbarProgress">Fortschritt in der Taskleiste anzeigen</system:String>
     <system:String x:Key="ShowFileSavingDialog">Dateispeicherdialog anzeigen</system:String>
     <system:String x:Key="ShowBottomToolbar">Unterste Symbolleiste anzeigen</system:String>
+    <system:String x:Key="BottomGalleryItems">Anzahl der Galerieelemente unten</system:String>
+    <system:String x:Key="ExpandedGalleryItems">Erweiterte Galerieelemente</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativ Farben</system:String>

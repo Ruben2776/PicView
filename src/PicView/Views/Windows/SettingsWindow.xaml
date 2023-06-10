@@ -296,8 +296,7 @@
 
                     <RadioButton
                         x:Name="CtrlZoom"
-                        Margin="0,0,0,5"
-                        Padding="5,0,0,0"
+                        Margin="5,0,6,5"
                         d:IsChecked="True"
                         BorderThickness="0"
                         Focusable="False"
@@ -306,7 +305,7 @@
                             <SolidColorBrush x:Name="CtrlZoomText" Color="{StaticResource MainColor}" />
                         </RadioButton.Foreground>
                         <TextBlock
-                            Width="270"
+                            Width="275"
                             Focusable="False"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                             Text="{StaticResource CtrlToZoom}"
@@ -315,14 +314,14 @@
 
                     <RadioButton
                         x:Name="ScrollZoom"
-                        Padding="5,0,0,0"
+                        Margin="5,0,6,5"
                         Focusable="False"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto">
                         <RadioButton.Foreground>
                             <SolidColorBrush x:Name="ScrollZoomText" Color="{StaticResource MainColor}" />
                         </RadioButton.Foreground>
                         <TextBlock
-                            Width="270"
+                            Width="275"
                             Focusable="False"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                             Text="{StaticResource ScrollToZoom}"
@@ -559,10 +558,10 @@
                         Content="{StaticResource HighlightColor}" />
 
                     <WrapPanel
-                        Margin="5,3,5,8"
+                        Margin="0,3,0,8"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
-                        ItemWidth="146"
+                        ItemWidth="151"
                         Orientation="Horizontal">
 
                         <RadioButton
@@ -709,6 +708,84 @@
                             </RadioButton.Foreground>
                         </RadioButton>
                     </WrapPanel>
+
+                    <Label
+                        Margin="0,10,0,4"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="{StaticResource ExpandedGalleryItems}" />
+
+                    <StackPanel
+                        Margin="0,3,0,5"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+
+                        <Slider
+                            x:Name="SetExpandedGallerySlider"
+                            Width="245"
+                            Height="30"
+                            d:Value="32"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="35"
+                            Minimum="10"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight" />
+
+                        <TextBox
+                            x:Name="SetExpandedGalleryText"
+                            Width="50"
+                            Margin="5,3"
+                            Padding="0,4,0,4"
+                            VerticalAlignment="Center"
+                            d:Text="2"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="12"
+                            IsReadOnly="True"
+                            IsTabStop="False"
+                            Text="{Binding ElementName=SetExpandedGallerySlider, Path=Value}"
+                            TextAlignment="Center" />
+                    </StackPanel>
+
+                    <Label
+                        Margin="0,10,0,4"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="{StaticResource BottomGalleryItems}" />
+
+                    <StackPanel
+                        Margin="5,3,0,5"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+
+                        <Slider
+                            x:Name="SetBottomGallerySlider"
+                            Width="240"
+                            Height="30"
+                            d:Value="32"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            Maximum="50"
+                            Minimum="20"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight" />
+
+                        <TextBox
+                            x:Name="SetBottomGalleryText"
+                            Width="50"
+                            Margin="5,3"
+                            Padding="0,4,0,4"
+                            VerticalAlignment="Center"
+                            d:Text="2"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            FontSize="12"
+                            IsReadOnly="True"
+                            IsTabStop="False"
+                            Text="{Binding ElementName=SetExpandedGallerySlider, Path=Value}"
+                            TextAlignment="Center" />
+                    </StackPanel>
 
                     <Label
                         Margin="0,10,0,0"

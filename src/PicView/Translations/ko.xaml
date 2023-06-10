@@ -127,6 +127,8 @@
     <system:String x:Key="ToggleTaskbarProgress">작업 표시줄 진행률 표시</system:String>
     <system:String x:Key="ShowFileSavingDialog">파일 저장 대화상자 표시</system:String>
     <system:String x:Key="ShowBottomToolbar">하단 도구 모음 표시</system:String>
+    <system:String x:Key="BottomGalleryItems">하단 갤러리 항목</system:String>
+    <system:String x:Key="ExpandedGalleryItems">확장된 갤러리 항목</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">네거티브 컬러</system:String>

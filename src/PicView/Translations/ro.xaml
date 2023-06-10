@@ -127,6 +127,8 @@
     <system:String x:Key="ToggleTaskbarProgress">Afișează progresul în bara de activități</system:String>
     <system:String x:Key="ShowFileSavingDialog">Afișează dialogul de salvare fișier</system:String>
     <system:String x:Key="ShowBottomToolbar">Afișează bara de instrumente de jos</system:String>
+    <system:String x:Key="BottomGalleryItems">Elemente galerie inferioară</system:String>
+    <system:String x:Key="ExpandedGalleryItems">Elemente galerie extinse</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Culori negative</system:String>

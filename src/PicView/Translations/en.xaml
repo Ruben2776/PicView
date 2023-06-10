@@ -127,6 +127,8 @@
     <system:String x:Key="ToggleTaskbarProgress">Display taskbar progress</system:String>
     <system:String x:Key="ShowFileSavingDialog">Show file saving dialog</system:String>
     <system:String x:Key="ShowBottomToolbar">Show bottom toolbar</system:String>
+    <system:String x:Key="BottomGalleryItems">Bottom Gallery Items</system:String>
+    <system:String x:Key="ExpandedGalleryItems">Expanded Gallery Items</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Colors</system:String>

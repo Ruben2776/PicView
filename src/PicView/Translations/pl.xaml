@@ -127,6 +127,8 @@
     <system:String x:Key="ToggleTaskbarProgress">Wyświetl postęp na pasku zadań</system:String>
     <system:String x:Key="ShowFileSavingDialog">Pokaż okno zapisywania pliku</system:String>
     <system:String x:Key="ShowBottomToolbar">Pokaż dolny pasek narzędzi</system:String>
+    <system:String x:Key="BottomGalleryItems">Liczba elementów na dole galerii</system:String>
+    <system:String x:Key="ExpandedGalleryItems">Rozszerzone elementy galerii</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Przeciwne kolory</system:String>

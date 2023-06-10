@@ -127,6 +127,8 @@
     <system:String x:Key="ToggleTaskbarProgress">显示任务栏进度</system:String>
     <system:String x:Key="ShowFileSavingDialog">查看文件保存对话框</system:String>
     <system:String x:Key="ShowBottomToolbar">查看底部工具栏</system:String>
+    <system:String x:Key="BottomGalleryItems">底部图库项目</system:String>
+    <system:String x:Key="ExpandedGalleryItems">展开的图库项目</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">反色</system:String>
