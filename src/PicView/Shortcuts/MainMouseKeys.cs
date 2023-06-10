@@ -221,7 +221,7 @@ internal static class MainMouseKeys
         if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
         {
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                GalleryNavigation.ScrollTo(direction, false, true));
+                GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
         }
         else
         {

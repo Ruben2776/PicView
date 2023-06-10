@@ -137,7 +137,7 @@ internal static class MainKeyboardShortcuts
 
             case Key.PageUp when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
                 {
-                    GalleryNavigation.ScrollTo(true, ctrlDown);
+                    GalleryNavigation.ScrollTo(true, ctrlDown, shiftDown);
                     return;
                 }
             case Key.PageUp:

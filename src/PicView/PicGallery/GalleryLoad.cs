@@ -22,7 +22,6 @@ internal static class GalleryLoad
     internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
     {
         // Add events and set fields, when it's loaded.
-        UC.GetPicGallery.Scroller.PreviewMouseWheel += (_, e) => GalleryNavigation.ScrollTo(e.Delta > 0);
         UC.GetPicGallery.Scroller.ScrollChanged += (_, _) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
         UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
         UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
@@ -217,9 +216,6 @@ internal static class GalleryLoad
             };
 
             UC.GetPicGallery.Container.Children.Add(item);
-            if (!selected) { return; }
-            GalleryNavigation.SelectedGalleryItem = i;
-            GalleryNavigation.ScrollTo();
         });
     }
 

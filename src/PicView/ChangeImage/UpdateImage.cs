@@ -81,9 +81,6 @@ internal static class UpdateImage
             ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
         }, DispatcherPriority.Send);
 
-        if (Settings.Default.FullscreenGallery)
-            GalleryNavigation.FullscreenGalleryNavigation();
-
         if (GetToolTipMessage is { IsVisible: true })
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);
 

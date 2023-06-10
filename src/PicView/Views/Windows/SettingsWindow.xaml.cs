@@ -108,11 +108,10 @@ public partial class SettingsWindow
                 Settings.Default.BottomGalleryItems = (int)e.NewValue;
                 SetBottomGalleryText.Text = e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
                 Settings.Default.Save();
-                if (GalleryFunctions.IsGalleryOpen)
-                {
-                    GalleryLoad.LoadLayout();
-                    ScaleImage.TryFitImage();
-                }
+                if (!Settings.Default.FullscreenGallery) return;
+
+                GalleryLoad.LoadLayout();
+                ScaleImage.TryFitImage();
             };
 
             // Themes

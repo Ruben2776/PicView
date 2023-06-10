@@ -43,7 +43,7 @@ internal static class GalleryNavigation
         }
     }
 
-    private static double CenterScrollPosition
+    internal static double CenterScrollPosition
     {
         get
         {
@@ -69,6 +69,8 @@ internal static class GalleryNavigation
         if (GetPicGallery == null || PicGalleryItemSize < 1) { return; }
         if (!GalleryFunctions.IsGalleryOpen) return;
 
+        GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
+
         if (Settings.Default.FullscreenGallery)
         {
             GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
@@ -92,6 +94,7 @@ internal static class GalleryNavigation
     /// <param name="speedUp"></param>
     internal static void ScrollTo(bool next, bool end = false, bool speedUp = false)
     {
+        GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
         if (end)
         {
             if (next)
@@ -105,11 +108,24 @@ internal static class GalleryNavigation
         }
         else
         {
-            var speed = speedUp ? PicGalleryItemSize * 4.7 : PicGalleryItemSize / 2;
-            var offset = next ? -speed : speed;
+            if (Settings.Default.FullscreenGallery)
+            {
+                GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
+                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.2;
+                var offset = next ? -speed : speed;
 
-            var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
+                var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
+            }
+            else
+            {
+                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems / 1.7;
+                var offset = next ? -speed : speed;
+
+                var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
+
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
+            }
         }
     }
 
@@ -218,14 +234,8 @@ internal static class GalleryNavigation
 
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
-            if (Settings.Default.FullscreenGallery)
-            {
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
-            }
-            else
-            {
-                GetPicGallery.Scroller.ScrollToVerticalOffset(CenterScrollPosition);
-            }
+            GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
+            GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
         });
 
         Tooltip.CloseToolTipMessage();

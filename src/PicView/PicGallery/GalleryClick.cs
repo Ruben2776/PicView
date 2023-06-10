@@ -141,6 +141,7 @@ internal static class GalleryClick
     {
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
+            GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
             // Deselect current item
             GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
             GalleryNavigation.SetSelected(FolderIndex, false);
@@ -155,6 +156,7 @@ internal static class GalleryClick
             // Select next item
             GalleryNavigation.SetSelected(id, true);
             GalleryNavigation.SelectedGalleryItem = id;
+            GetPicGallery.Scroller.ScrollToHorizontalOffset(GalleryNavigation.CenterScrollPosition);
         });
         // Change image
         await LoadPic.LoadPicAtIndexAsync(id).ConfigureAwait(false);

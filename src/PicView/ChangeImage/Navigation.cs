@@ -117,6 +117,23 @@ internal static class Navigation
 
         if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
         else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+
+        if (Settings.Default.FullscreenGallery)
+        {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UC.GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
+                // Deselect current item
+                GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+                GalleryNavigation.SetSelected(FolderIndex, false);
+
+                // Select next item
+                GalleryNavigation.SetSelected(next, true);
+                GalleryNavigation.SelectedGalleryItem = next;
+                UC.GetPicGallery.Scroller.ScrollToHorizontalOffset(GalleryNavigation.CenterScrollPosition);
+            });
+        }
+            
     }
 
     /// <summary>

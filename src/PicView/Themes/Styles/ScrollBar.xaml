@@ -219,10 +219,7 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
-        <Track
-            Name="PART_Track"
-            Grid.Column="1"
-            IsDirectionReversed="False">
+        <Track Name="PART_Track" IsDirectionReversed="False">
             <Track.Thumb>
                 <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
             </Track.Thumb>
