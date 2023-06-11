@@ -25,12 +25,12 @@
                 VerticalAlignment="Top"
                 Background="{StaticResource AltInterfaceBrush}"
                 CornerRadius="8,8,0,0">
-                <Canvas Width="275" Height="45">
+                <Canvas Width="282" Height="45">
 
                     <Border
                         Canvas.Left="-1"
                         Canvas.Top="-1"
-                        Width="278"
+                        Width="285"
                         Height="46"
                         Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
@@ -87,7 +87,6 @@
                             <SolidColorBrush x:Name="RotateRightButtonBrush" Color="Transparent" />
                         </Button.Background>
                         <Path
-                            Canvas.Top="19"
                             Width="15"
                             Height="15"
                             Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
@@ -147,19 +146,19 @@
                     <buttons:GoToPicButton
                         x:Name="GoToPic"
                         Canvas.Left="140"
-                        Width="91"
+                        Width="97"
                         Height="45" />
 
-                    <Border Canvas.Left="230" CornerRadius="0,8,0,0">
-                        <buttons:MenuCloseButton x:Name="CloseButton" Height="45" />
+                    <Border Canvas.Left="237" CornerRadius="0,8,0,0">
+                        <buttons:MenuCloseButton Height="45" />
                     </Border>
 
                     <Border
                         x:Name="ResizeButtonBorder"
                         Canvas.Left="5"
                         Canvas.Top="51"
+                        Width="133"
                         Height="37"
-                        BorderBrush="{StaticResource BorderBrush}"
                         Style="{StaticResource ButtonBorder}"
                         ToolTip="{StaticResource ResizeImage}">
                         <StackPanel Orientation="Horizontal">
@@ -214,10 +213,10 @@
 
                     <Border
                         x:Name="CropButtonBorder"
-                        Canvas.Left="140"
+                        Canvas.Left="144"
                         Canvas.Top="51"
+                        Width="133"
                         Height="37"
-                        BorderBrush="{StaticResource BorderBrush}"
                         Style="{StaticResource ButtonBorder}">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.Background>
@@ -235,7 +234,7 @@
                                 BorderBrush="{x:Null}"
                                 Foreground="{x:Null}">
                                 <Button.Background>
-                                    <SolidColorBrush x:Name="CropButtonBrush" Color="Transparent" />
+                                    <SolidColorBrush Color="Transparent" />
                                 </Button.Background>
                                 <Button.Content>
                                     <TextBlock
@@ -255,6 +254,7 @@
                         x:Name="SlideShowBorder"
                         Canvas.Left="5"
                         Canvas.Top="91"
+                        Width="133"
                         Height="37"
                         Style="{StaticResource ButtonBorder}"
                         ToolTip="{StaticResource ResourceKey=StartSlideshow}">
@@ -263,8 +263,8 @@
                                 <SolidColorBrush x:Name="SlideShowBorderBrush" Color="Transparent" />
                             </StackPanel.Background>
                             <Path
-                                Width="20"
-                                Height="20"
+                                Width="17"
+                                Height="17"
                                 Margin="11,0,4,0"
                                 Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
                                 Fill="{StaticResource SlideshowIcon}"
@@ -286,8 +286,9 @@
 
                     <Border
                         x:Name="OptimizeBorder"
-                        Canvas.Left="140"
+                        Canvas.Left="144"
                         Canvas.Top="91"
+                        Width="133"
                         Height="37"
                         Style="{StaticResource ButtonBorder}"
                         ToolTip="{StaticResource ResourceKey=OptimizeImage}">
@@ -349,7 +350,7 @@
                         x:Name="FullscreenGalleryBorder"
                         Canvas.Left="5"
                         Canvas.Top="132"
-                        Width="265"
+                        Width="271"
                         Height="35"
                         Style="{StaticResource ButtonBorder}">
                         <Button
@@ -387,7 +388,7 @@
                         x:Name="ContainedGalleryBorder"
                         Canvas.Left="5"
                         Canvas.Top="171"
-                        Width="265"
+                        Width="271"
                         Height="35"
                         Style="{StaticResource ButtonBorder}">
                         <Button
@@ -430,7 +431,7 @@
             HorizontalAlignment="Left"
             Fill="{StaticResource BackgroundColorBrushAlt}" />
         <Polygon
-            Margin="34,-6,0,0"
+            Margin="38,-6,0,0"
             Panel.ZIndex="-1"
             Fill="{StaticResource BackgroundColorBrushAlt}"
             Points="0,0 15,30, 30,0"

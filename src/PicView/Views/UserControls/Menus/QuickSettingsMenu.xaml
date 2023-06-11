@@ -269,7 +269,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                                Text="{StaticResource FillImageHeight}"
+                                Text="{StaticResource StretchImage}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">
