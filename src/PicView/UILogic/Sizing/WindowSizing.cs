@@ -174,7 +174,7 @@ internal static class WindowSizing
             if (GalleryFunctions.IsGalleryOpen)
             {
                 GalleryLoad.LoadLayout();
-                GalleryNavigation.ScrollTo();
+                GalleryNavigation.ScrollToGalleryCenter();
             }
 
             if (ErrorHandling.CheckOutOfRange() is false)

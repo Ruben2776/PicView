@@ -251,7 +251,7 @@ internal static class GalleryToggle
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
             {
                 GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.ScrollTo();
+                GalleryNavigation.ScrollToGalleryCenter();
             });
         }
         catch (TaskCanceledException)

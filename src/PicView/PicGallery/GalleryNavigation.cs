@@ -3,6 +3,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
@@ -59,42 +60,34 @@ internal static class GalleryNavigation
 
     #endregion int calculations
 
-    #region ScrollTo
+    #region ScrollToGalleryCenter
 
     /// <summary>
     /// Scrolls to center of current item
     /// </summary>
-    internal static void ScrollTo()
+    internal static void ScrollToGalleryCenter()
     {
         if (GetPicGallery == null || PicGalleryItemSize < 1) { return; }
         if (!GalleryFunctions.IsGalleryOpen) return;
 
+        if (GetPicGallery.Container.Children.Count < FolderIndex || GetPicGallery.Container.Children.Count <= 0) { return; }
+
         GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
-
-        if (Settings.Default.FullscreenGallery)
-        {
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
-        }
-        else
-        {
-            if (GetPicGallery.Container.Children.Count < FolderIndex || GetPicGallery.Container.Children.Count <= 0) { return; }
-
-            var selectedItem = GetPicGallery.Container.Children[FolderIndex];
-            var selectedScrollTo = selectedItem.TranslatePoint(new Point(), GetPicGallery.Container);
-            // ReSharper disable once PossibleLossOfFraction
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(selectedScrollTo.X - HorizontalItems / 2 * PicGalleryItemSize + (PicGalleryItemSizeS / 2));
-        }
+        GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+        GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
     }
 
     /// <summary>
-    /// Scrolls a page back or forth
+    /// Scrolls the gallery horizontally based on the specified parameters.
     /// </summary>
-    /// <param name="next"></param>
-    /// <param name="end"></param>
-    /// <param name="speedUp"></param>
-    internal static void ScrollTo(bool next, bool end = false, bool speedUp = false)
+    /// <param name="next">Specifies whether to scroll to the next item or the previous item.</param>
+    /// <param name="end">Specifies whether to scroll to the end of the gallery.</param>
+    /// <param name="speedUp">Specifies whether to scroll at a faster speed.</param>
+    /// <param name="animate">Specifies whether to animate the scrolling.</param>
+    internal static void ScrollGallery(bool next, bool end, bool speedUp, bool animate)
     {
-        GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
+        GetPicGallery.Scroller.CanContentScroll = !animate; // Base animations on CanContentScroll
+
         if (end)
         {
             if (next)
@@ -110,26 +103,48 @@ internal static class GalleryNavigation
         {
             if (Settings.Default.FullscreenGallery)
             {
-                GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
-                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.2;
-                var offset = next ? -speed : speed;
+                if (animate)
+                {
+                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems * 0.1;
+                    var offset = next ? -speed : speed;
 
-                var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
+                    var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
+                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
+                }
+                else
+                {
+                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.2;
+                    var offset = next ? -speed : speed;
+
+                    var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
+                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
+                }
             }
             else
             {
-                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems / 1.7;
-                var offset = next ? -speed : speed;
+                if (animate)
+                {
+                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems / 1.2;
+                    var offset = next ? -speed : speed;
 
-                var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
+                    var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
 
-                GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
+                    GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
+                }
+                else
+                {
+                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.3;
+                    var offset = next ? -speed : speed;
+
+                    var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
+
+                    GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
+                }
             }
         }
     }
 
-    #endregion ScrollTo
+    #endregion ScrollToGalleryCenter
 
     #region Select and deselect behaviour
 

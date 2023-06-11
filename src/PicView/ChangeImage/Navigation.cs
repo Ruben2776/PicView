@@ -175,7 +175,7 @@ internal static class Navigation
         {
             if (GalleryFunctions.IsGalleryOpen)
             {
-                GalleryNavigation.ScrollTo(!right);
+                GalleryNavigation.ScrollGallery(!right, false, false, true);
                 return;
             }
 

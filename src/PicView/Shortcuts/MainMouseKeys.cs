@@ -184,7 +184,7 @@ internal static class MainMouseKeys
         else if (GalleryFunctions.IsGalleryOpen)
         {
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
+                GalleryNavigation.ScrollGallery(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift, false));
         }
         else if (ShouldHandleScroll())
         {
@@ -221,7 +221,7 @@ internal static class MainMouseKeys
         if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
         {
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-                GalleryNavigation.ScrollTo(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift));
+                GalleryNavigation.ScrollGallery(direction, false, (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift, false));
         }
         else
         {

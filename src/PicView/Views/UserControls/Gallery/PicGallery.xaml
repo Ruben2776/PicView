@@ -58,7 +58,6 @@
                                             VerticalAlignment="Bottom"
                                             Maximum="{TemplateBinding ScrollableWidth}"
                                             Orientation="Horizontal"
-                                            PreviewMouseLeftButtonDown="PART_HorizontalScrollBar_OnPreviewMouseLeftButtonDown"
                                             ViewportSize="{TemplateBinding ViewportWidth}"
                                             Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
                                             Value="{TemplateBinding HorizontalOffset}" />

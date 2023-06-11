@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 using PicView.PicGallery;
 
 namespace PicView.Views.UserControls.Gallery;
@@ -12,11 +13,5 @@ public partial class PicGallery
     {
         InitializeComponent();
         Loaded += GalleryLoad.PicGallery_Loaded;
-    }
-
-    private void PART_HorizontalScrollBar_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        // Disable animation for scrollbar
-        Scroller.CanContentScroll = true;
     }
 }

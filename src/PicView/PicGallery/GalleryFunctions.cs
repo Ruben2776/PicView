@@ -81,7 +81,7 @@ internal static class GalleryFunctions
             GalleryLoad.Add(i, Navigation.FolderIndex);
         }
 
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryNavigation.ScrollTo);
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryNavigation.ScrollToGalleryCenter);
 
         for (int i = 0; i < Navigation.Pics.Count; i++)
         {

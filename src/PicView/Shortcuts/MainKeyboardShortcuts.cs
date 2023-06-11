@@ -137,7 +137,7 @@ internal static class MainKeyboardShortcuts
 
             case Key.PageUp when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
                 {
-                    GalleryNavigation.ScrollTo(true, ctrlDown, shiftDown);
+                    GalleryNavigation.ScrollGallery(true, ctrlDown, shiftDown, true);
                     return;
                 }
             case Key.PageUp:
@@ -149,7 +149,7 @@ internal static class MainKeyboardShortcuts
 
             case Key.PageDown when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
                 {
-                    GalleryNavigation.ScrollTo(false, (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+                    GalleryNavigation.ScrollGallery(false, ctrlDown, shiftDown, true);
                     return;
                 }
             case Key.PageDown:
@@ -483,7 +483,7 @@ internal static class MainKeyboardShortcuts
                     {
                         if (GalleryFunctions.IsGalleryOpen)
                         {
-                            GalleryNavigation.ScrollTo();
+                            GalleryNavigation.ScrollToGalleryCenter();
                             return;
                         }
                     }
