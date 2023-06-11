@@ -71,9 +71,6 @@ internal static class GalleryNavigation
         if (!GalleryFunctions.IsGalleryOpen) return;
 
         if (GetPicGallery.Container.Children.Count < FolderIndex || GetPicGallery.Container.Children.Count <= 0) { return; }
-
-        GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
-        GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
         GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
     }
 
