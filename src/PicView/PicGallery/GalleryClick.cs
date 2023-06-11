@@ -156,7 +156,7 @@ internal static class GalleryClick
             // Select next item
             GalleryNavigation.SetSelected(id, true);
             GalleryNavigation.SelectedGalleryItem = id;
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(GalleryNavigation.CenterScrollPosition);
+            GalleryNavigation.ScrollToGalleryCenter();
         });
         // Change image
         await LoadPic.LoadPicAtIndexAsync(id).ConfigureAwait(false);

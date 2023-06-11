@@ -239,18 +239,18 @@ internal static class ConfigColors
 
     internal static Color GetSecondaryAccentColor => Settings.Default.ColorTheme switch
     {
-        0 => Color.FromRgb(182, 251, 95), // Blue
+        0 => Color.FromRgb(234, 182, 60), // Blue
         2 => Color.FromRgb(255, 237, 38), // Pink
         3 => Color.FromRgb(248, 175, 60), // Orange
         4 => Color.FromRgb(209, 237, 93), // Green
         5 => Color.FromRgb(250, 192, 92), // Red
         6 => Color.FromRgb(254, 172, 150), // Teal
-        7 => Color.FromRgb(79, 209, 117), // Aqua
-        8 => Color.FromRgb(252, 139, 111), // Golden
-        9 => Color.FromRgb(214, 232, 97), // Purple
+        7 => Color.FromRgb(228, 209, 17), // Aqua
+        8 => Color.FromRgb(255, 253, 42), // Golden
+        9 => Color.FromRgb(209, 237, 93), // Purple
         10 => Color.FromRgb(180, 246, 88), // Cyan
         11 => Color.FromRgb(255, 237, 38), // Magenta
-        12 => Color.FromRgb(202, 253, 82), // Lime
+        12 => Color.FromRgb(255, 253, 42), // Lime
         _ => throw new ArgumentOutOfRangeException(nameof(Settings.Default.ColorTheme)),
     };
 

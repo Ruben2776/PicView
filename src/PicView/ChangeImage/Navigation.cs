@@ -125,7 +125,7 @@ internal static class Navigation
                 // Select next item
                 GalleryNavigation.SetSelected(next, true);
                 GalleryNavigation.SelectedGalleryItem = next;
-                UC.GetPicGallery.Scroller.ScrollToHorizontalOffset(GalleryNavigation.CenterScrollPosition);
+                GalleryNavigation.ScrollToGalleryCenter();
             });
         }
 

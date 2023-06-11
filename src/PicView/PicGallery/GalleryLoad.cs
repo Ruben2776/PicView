@@ -23,7 +23,6 @@ internal static class GalleryLoad
     {
         // Add events and set fields, when it's loaded.
         UC.GetPicGallery.Scroller.ScrollChanged += (_, _) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
-        UC.GetPicGallery.Scroller.RequestBringIntoView += (_, e) => e.Handled = true;
         UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
         UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
     }

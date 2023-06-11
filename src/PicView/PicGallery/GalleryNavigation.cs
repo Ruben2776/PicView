@@ -44,7 +44,7 @@ internal static class GalleryNavigation
         }
     }
 
-    internal static double CenterScrollPosition
+    private static double CenterScrollPosition
     {
         get
         {
@@ -77,7 +77,7 @@ internal static class GalleryNavigation
     /// <summary>
     /// Scrolls the gallery horizontally based on the specified parameters.
     /// </summary>
-    /// <param name="next">Specifies whether to scroll to the next item or the previous item.</param>
+    /// <param name="next">Specifies whether to scroll to the next or the previous page.</param>
     /// <param name="end">Specifies whether to scroll to the end of the gallery.</param>
     /// <param name="speedUp">Specifies whether to scroll at a faster speed.</param>
     /// <param name="animate">Specifies whether to animate the scrolling.</param>
