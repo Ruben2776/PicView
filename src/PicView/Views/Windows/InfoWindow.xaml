@@ -197,7 +197,7 @@
             x:Name="Scroller"
             Background="{StaticResource MenuBg}"
             CanContentScroll="False"
-            Focusable="False"
+            Focusable="True"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Hidden">
 

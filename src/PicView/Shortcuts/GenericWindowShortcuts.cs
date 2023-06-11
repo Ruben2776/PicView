@@ -16,13 +16,11 @@ internal static class GenericWindowShortcuts
                 ConfigureWindows.GetMainWindow.Focus();
                 break;
 
-            case Key.S:
             case Key.Down:
                 if (scrollViewer == null) { return; }
                 scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 10);
                 break;
 
-            case Key.W:
             case Key.Up:
                 if (scrollViewer == null) { return; }
                 scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 10);
