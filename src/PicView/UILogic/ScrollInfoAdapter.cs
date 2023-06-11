@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -214,7 +215,7 @@ namespace PicView.UILogic
             else
             {
                 _computedHorizontalOffset = offset;
-                Animate(HorizontalScrollOffsetProperty, offset, 0);
+                Animate(HorizontalScrollOffsetProperty, offset);
             }
         }
 
@@ -227,28 +228,37 @@ namespace PicView.UILogic
             else
             {
                 _computedVerticalOffset = offset;
-                Animate(VerticalScrollOffsetProperty, offset, 0);
+                Animate(VerticalScrollOffsetProperty, offset);
             }
         }
 
         #region not exposed methods
 
-        private void Animate(DependencyProperty property, double targetValue, int duration = 700)
+        private void Animate(DependencyProperty property, double targetValue)
         {
-            //make a smooth animation that starts and ends slowly
-            var keyFramesAnimation = new DoubleAnimationUsingKeyFrames
+            try
             {
-                Duration = TimeSpan.FromSeconds(.8)
-            };
-            keyFramesAnimation.KeyFrames.Add(
-                new SplineDoubleKeyFrame(
-                    targetValue,
-                    KeyTime.FromTimeSpan(TimeSpan.FromSeconds(.8)),
-                    new KeySpline(0.5, 0.0, 0.5, 1.0)
-                )
-            );
+                //make a smooth animation that starts and ends slowly
+                var keyFramesAnimation = new DoubleAnimationUsingKeyFrames
+                {
+                    Duration = TimeSpan.FromSeconds(.8)
+                };
+                keyFramesAnimation.KeyFrames.Add(
+                    new SplineDoubleKeyFrame(
+                        targetValue,
+                        KeyTime.FromTimeSpan(TimeSpan.FromSeconds(.8)),
+                        new KeySpline(0.5, 0.0, 0.5, 1.0)
+                    )
+                );
 
-            BeginAnimation(property, keyFramesAnimation);
+                BeginAnimation(property, keyFramesAnimation);
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Trace.WriteLine(exception);
+#endif
+            }
         }
 
         private void VerticalScroll(double val)
@@ -332,8 +342,17 @@ namespace PicView.UILogic
 
         private static void OnHorizontalScrollOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var smoothScrollViewer = (ScrollInfoAdapter)d;
-            smoothScrollViewer._child.SetHorizontalOffset((double)e.NewValue);
+            try
+            {
+                var smoothScrollViewer = (ScrollInfoAdapter)d;
+                smoothScrollViewer._child.SetHorizontalOffset((double)e.NewValue);
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Trace.WriteLine(exception);
+#endif
+            }
         }
 
         public Rect MakeVisible(Visual visual, Rect rectangle)
