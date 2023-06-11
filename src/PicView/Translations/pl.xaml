@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Skopiuj jako obraz Schowka Windows</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Wklej plik</system:String>
+    <system:String x:Key="FilePaste">Wklej</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Wytnij plik</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Pokaż pełnokrenową galerię</system:String>
     <system:String x:Key="ShowHorizontalGallery">Pokaż poziomą galerię</system:String>
 
-    <system:String x:Key="FillImageHeight">Dopasuj zdjęcie do wysokości</system:String>
+    <system:String x:Key="StretchImage">Rozciągnij obraz</system:String>
 
     <system:String x:Key="OptimizeImage">Optymalizuj zdjęcie</system:String>
 

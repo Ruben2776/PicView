@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">将图片复制至剪贴板</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">粘贴文件</system:String>
+    <system:String x:Key="FilePaste">粘贴</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">剪切文件</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">打开全屏相册</system:String>
     <system:String x:Key="ShowHorizontalGallery">显示预览图相册</system:String>
 
-    <system:String x:Key="FillImageHeight">适应图片高度</system:String>
+    <system:String x:Key="StretchImage">拉伸图像</system:String>
 
     <system:String x:Key="OptimizeImage">优化图像</system:String>
 

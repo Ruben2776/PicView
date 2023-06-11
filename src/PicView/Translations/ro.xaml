@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Copiere ca imagine din memoria temporară</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Lipire fișier</system:String>
+    <system:String x:Key="FilePaste">Lipi</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Tăiere fișier</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Arată galeria pe tot ecranul</system:String>
     <system:String x:Key="ShowHorizontalGallery">Arată galeria pe orizontală</system:String>
 
-    <system:String x:Key="FillImageHeight">Umple înălțimea imaginii</system:String>
+    <system:String x:Key="StretchImage">Întinde imaginea</system:String>
 
     <system:String x:Key="OptimizeImage">Optimizare imagine</system:String>
 

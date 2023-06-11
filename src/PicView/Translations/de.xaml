@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Kopieren als Windows Zwischenablage Bild</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Datei-Pfad</system:String>
+    <system:String x:Key="FilePaste">Einfügen</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Datei ausschneiden</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Vollbild Galerie anzeigen</system:String>
     <system:String x:Key="ShowHorizontalGallery">Eingegrenze Galerie anzeigen</system:String>
 
-    <system:String x:Key="FillImageHeight">Bildhöhe anpassen</system:String>
+    <system:String x:Key="StretchImage">Bild strecken</system:String>
 
     <system:String x:Key="OptimizeImage">Bild optimieren</system:String>
 

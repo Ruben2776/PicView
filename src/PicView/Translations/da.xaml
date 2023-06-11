@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Kopier som Windows-klippebordsbillede</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Indsæt fil</system:String>
+    <system:String x:Key="FilePaste">Indsæt</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Klip fil</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Vis fuldskærmsgalleri</system:String>
     <system:String x:Key="ShowHorizontalGallery">Vis vandret galleri</system:String>
 
-    <system:String x:Key="FillImageHeight">Fyld billedhøjde</system:String>
+    <system:String x:Key="StretchImage">Stræk billedet</system:String>
 
     <system:String x:Key="OptimizeImage">Optimer billede</system:String>
 

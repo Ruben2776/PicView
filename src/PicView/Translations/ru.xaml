@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Копировать как изображение из буфера обмена Windows</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Вставить файл</system:String>
+    <system:String x:Key="FilePaste">Вставить</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Вырезать файл</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Показать полноэкранную галерею</system:String>
     <system:String x:Key="ShowHorizontalGallery">Показать горизонтальную галерею</system:String>
 
-    <system:String x:Key="FillImageHeight">Высота заливки изображения</system:String>
+    <system:String x:Key="StretchImage">Растянуть изображение</system:String>
 
     <system:String x:Key="OptimizeImage">Оптимизировать изображение</system:String>
 

@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Windows 클립보드 이미지로 복사</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">파일 붙여넣기</system:String>
+    <system:String x:Key="FilePaste">붙여넣기</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">파일 잘라내기</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">전체 화면 갤러리 표시</system:String>
     <system:String x:Key="ShowHorizontalGallery">수평 갤러리 표시</system:String>
 
-    <system:String x:Key="FillImageHeight">이미지 높이 채우기</system:String>
+    <system:String x:Key="StretchImage">이미지 늘리기</system:String>
 
     <system:String x:Key="OptimizeImage">이미지 최적화</system:String>
 

@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Copier en tant qu'image du presse-papiers Windows</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Coller le fichier</system:String>
+    <system:String x:Key="FilePaste">Coller</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Couper le fichier</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Afficher la galerie en plein écran</system:String>
     <system:String x:Key="ShowHorizontalGallery">Afficher la galerie en horizontale</system:String>
 
-    <system:String x:Key="FillImageHeight">Remplir la hauteur de l'image</system:String>
+    <system:String x:Key="StretchImage">Étirer l'image</system:String>
 
     <system:String x:Key="OptimizeImage">Optimiser l'image</system:String>
 

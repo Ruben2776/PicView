@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Copiar como imagen del portapapeles de Windows</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Pegar archivo</system:String>
+    <system:String x:Key="FilePaste">Pegar</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Cortar archivo</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Mostrar galería en pantalla completa</system:String>
     <system:String x:Key="ShowHorizontalGallery">Mostrar galería horizontal</system:String>
 
-    <system:String x:Key="FillImageHeight">Rellenar a la altura de imagen</system:String>
+    <system:String x:Key="StretchImage">Estirar imagen</system:String>
 
     <system:String x:Key="OptimizeImage">Optimizar la imagen</system:String>
 

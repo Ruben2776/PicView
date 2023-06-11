@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Copia come immagine negli appunti di Windows</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Incolla il file</system:String>
+    <system:String x:Key="FilePaste">Incolla</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Taglia il file</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Mostra galleria a schermo intero</system:String>
     <system:String x:Key="ShowHorizontalGallery">Mostra galleria orizzontale</system:String>
 
-    <system:String x:Key="FillImageHeight">Riempi l'altezza dell'immagine</system:String>
+    <system:String x:Key="StretchImage">Estendi immagine</system:String>
 
     <system:String x:Key="OptimizeImage">Ottimizza immagine</system:String>
 

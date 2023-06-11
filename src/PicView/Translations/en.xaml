@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Copy as Windows clipboard image</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Paste file</system:String>
+    <system:String x:Key="FilePaste">Paste</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Cut file</system:String>
@@ -358,7 +358,7 @@
     <system:String x:Key="ShowFullscreenGallery">Show fullscreen gallery</system:String>
     <system:String x:Key="ShowHorizontalGallery">Show horizontal gallery</system:String>
 
-    <system:String x:Key="FillImageHeight">Fill image height</system:String>
+    <system:String x:Key="StretchImage">Stretch image</system:String>
 
     <system:String x:Key="OptimizeImage">Optimize Image</system:String>
 
