@@ -11,8 +11,8 @@ namespace PicView.UILogic.TransformImage;
 
 internal static class ZoomLogic
 {
-    private static ScaleTransform? _scaleTransform;
-    private static TranslateTransform? _translateTransform;
+    public static ScaleTransform? ScaleTransform;
+    public static TranslateTransform? TranslateTransform;
     private static Point _origin;
     private static Point _start;
 
@@ -29,7 +29,7 @@ internal static class ZoomLogic
     {
         get
         {
-            if (_scaleTransform == null || ZoomValue is 1)
+            if (ScaleTransform == null || ZoomValue is 1)
             {
                 return string.Empty;
             }
@@ -44,7 +44,7 @@ internal static class ZoomLogic
     {
         get
         {
-            if (_scaleTransform is null)
+            if (ScaleTransform is null)
             {
                 return false;
             }
@@ -112,11 +112,11 @@ internal static class ZoomLogic
             ConfigureWindows.GetMainWindow.MainImageBorder.ClipToBounds = true;
 
         // Set transforms to UI elements
-        _scaleTransform = (ScaleTransform)((TransformGroup)
+        ScaleTransform = (ScaleTransform)((TransformGroup)
                 ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
             .Children.First(tr => tr is ScaleTransform);
 
-        _translateTransform = (TranslateTransform)((TransformGroup)
+        TranslateTransform = (TranslateTransform)((TransformGroup)
                 ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
             .Children.First(tr => tr is TranslateTransform);
     }
@@ -136,7 +136,7 @@ internal static class ZoomLogic
         // Report position for image drag
         ConfigureWindows.GetMainWindow.MainImage.CaptureMouse();
         _start = e.GetPosition(ConfigureWindows.GetMainWindow.ParentContainer);
-        _origin = new Point(_translateTransform.X, _translateTransform.Y);
+        _origin = new Point(TranslateTransform.X, TranslateTransform.Y);
     }
 
     /// <summary>
@@ -148,7 +148,7 @@ internal static class ZoomLogic
     internal static void PanImage(object sender, MouseEventArgs e)
     {
         if (!ConfigureWindows.GetMainWindow.MainImage.IsMouseCaptured || !ConfigureWindows.GetMainWindow.IsActive ||
-            _scaleTransform.ScaleX is 1)
+            ScaleTransform.ScaleX is 1)
         {
             return;
         }
@@ -168,10 +168,10 @@ internal static class ZoomLogic
             var actualScrollHeight = ConfigureWindows.GetMainWindow.Scroller.ActualHeight;
             var actualBorderHeight = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight;
 
-            var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
-            var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
-            var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
-            var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
+            var isXOutOfBorder = actualScrollWidth < actualBorderWidth * ScaleTransform.ScaleX;
+            var isYOutOfBorder = actualScrollHeight < actualBorderHeight * ScaleTransform.ScaleY;
+            var maxX = actualScrollWidth - actualBorderWidth * ScaleTransform.ScaleX;
+            var maxY = actualScrollHeight - actualBorderHeight * ScaleTransform.ScaleY;
 
             if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
             {
@@ -194,8 +194,8 @@ internal static class ZoomLogic
         }
 
         // TODO Don't pan image out of screen border
-        _translateTransform.X = newXproperty;
-        _translateTransform.Y = newYproperty;
+        TranslateTransform.X = newXproperty;
+        TranslateTransform.Y = newYproperty;
 
         e.Handled = true;
     }
@@ -207,8 +207,8 @@ internal static class ZoomLogic
     internal static void ResetZoom(bool animate = true)
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null
-            || _scaleTransform == null
-            || _translateTransform == null) { return; }
+            || ScaleTransform == null
+            || TranslateTransform == null) { return; }
 
         ZoomValue = 1;
 
@@ -218,8 +218,8 @@ internal static class ZoomLogic
         }
         else
         {
-            _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1.0;
-            _translateTransform.X = _translateTransform.Y = 0.0;
+            ScaleTransform.ScaleX = ScaleTransform.ScaleY = 1.0;
+            TranslateTransform.X = TranslateTransform.Y = 0.0;
             return;
         }
 
@@ -249,7 +249,7 @@ internal static class ZoomLogic
             return;
         }
 
-        var currentZoom = _scaleTransform.ScaleX;
+        var currentZoom = ScaleTransform.ScaleX;
         var zoomSpeed = Settings.Default.ZoomSpeed;
 
         switch (currentZoom)
@@ -331,8 +331,8 @@ internal static class ZoomLogic
         var relative = Mouse.GetPosition(ConfigureWindows.GetMainWindow.MainImageBorder);
 
         // Calculate new position
-        var absoluteX = relative.X * _scaleTransform.ScaleX + _translateTransform.X;
-        var absoluteY = relative.Y * _scaleTransform.ScaleY + _translateTransform.Y;
+        var absoluteX = relative.X * ScaleTransform.ScaleX + TranslateTransform.X;
+        var absoluteY = relative.Y * ScaleTransform.ScaleY + TranslateTransform.Y;
 
         // Reset to zero if value is one, which is reset
         var newTranslateValueX = Math.Abs(zoomValue - 1) > .1 ? absoluteX - relative.X * zoomValue : 0;
@@ -349,10 +349,10 @@ internal static class ZoomLogic
         // Set intended values after animations
         scaleAnim.Completed += delegate
         {
-            _scaleTransform.ScaleX = _scaleTransform.ScaleY = zoomValue;
+            ScaleTransform.ScaleX = ScaleTransform.ScaleY = zoomValue;
         };
 
-        var translateAnimX = new DoubleAnimation(_translateTransform.X, newTranslateValueX, duration)
+        var translateAnimX = new DoubleAnimation(TranslateTransform.X, newTranslateValueX, duration)
         {
             // Set stop to make sure animation doesn't hold ownership of translateTransform
             FillBehavior = FillBehavior.Stop
@@ -360,10 +360,10 @@ internal static class ZoomLogic
 
         translateAnimX.Completed += delegate
         {
-            _translateTransform.X = newTranslateValueX;
+            TranslateTransform.X = newTranslateValueX;
         };
 
-        var translateAnimY = new DoubleAnimation(_translateTransform.Y, newTranslateValueY, duration)
+        var translateAnimY = new DoubleAnimation(TranslateTransform.Y, newTranslateValueY, duration)
         {
             // Set stop to make sure animation doesn't hold ownership of translateTransform
             FillBehavior = FillBehavior.Stop
@@ -371,15 +371,15 @@ internal static class ZoomLogic
 
         translateAnimY.Completed += delegate
         {
-            _translateTransform.Y = newTranslateValueY;
+            TranslateTransform.Y = newTranslateValueY;
         };
 
         // Start animations
 
-        _translateTransform.BeginAnimation(TranslateTransform.XProperty, translateAnimX);
-        _translateTransform.BeginAnimation(TranslateTransform.YProperty, translateAnimY);
+        ScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+        ScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
 
-        _scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
-        _scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+        TranslateTransform.BeginAnimation(TranslateTransform.XProperty, translateAnimX);
+        TranslateTransform.BeginAnimation(TranslateTransform.YProperty, translateAnimY);
     }
 }

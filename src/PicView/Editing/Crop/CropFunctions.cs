@@ -23,8 +23,7 @@ internal static class CropFunctions
 
     internal static void StartCrop()
     {
-        if (ConfigureWindows.GetMainWindow.MainImage.Source == null) { return; }
-        if (RotationAngle is 0 && ZoomLogic.IsZoomed) { return; }
+        if (ConfigureWindows.GetMainWindow.MainImage.Source == null || ZoomLogic.IsZoomed) return;
 
         if (GetCroppingTool == null)
         {
@@ -165,25 +164,36 @@ internal static class CropFunctions
     /// <returns>The Int32Rect object containing the X and Y coordinates, width, and height of the cropped area. Returns null if there is no cropped area defined.</returns>
     private static Int32Rect GetCrop()
     {
-        var cropArea = CropService.GetCroppedArea(); // Contains the dimensions and coordinates of cropped area
+        var cropArea = CropService.GetCroppedArea();
+        var transformX = ZoomLogic.TranslateTransform.X;
+        var transformY = ZoomLogic.TranslateTransform.Y;
+        var scaleX = ZoomLogic.ScaleTransform.ScaleX;
+        var scaleY = ZoomLogic.ScaleTransform.ScaleY;
+        transformX = transformX is 0 ? 1 : transformX;
+        transformY = transformY is 0 ? 1 : transformY;
 
-        // TODO add support for zooming in
-        int x, y, width, height;
+        // Calculate scaled coordinates of the crop area
+        var scaledX = cropArea.CroppedRectAbsolute.X / transformX;
+        var scaledY = cropArea.CroppedRectAbsolute.Y / transformY;
+        var scaledWidth = cropArea.CroppedRectAbsolute.Width / scaleX;
+        var scaledHeight = cropArea.CroppedRectAbsolute.Height / scaleY;
 
-        x = Convert.ToInt32(cropArea.CroppedRectAbsolute.X / AspectRatio);
-        y = Convert.ToInt32(cropArea.CroppedRectAbsolute.Y / AspectRatio);
+        // Apply aspect ratio
+        var x = Convert.ToInt32(scaledX / AspectRatio);
+        var y = Convert.ToInt32(scaledY / AspectRatio);
+        var width = Convert.ToInt32(scaledWidth / AspectRatio);
+        var height = Convert.ToInt32(scaledHeight / AspectRatio);
 
-        switch (RotationAngle) // Degrees the image has been rotated by
+        // Adjust dimensions based on rotation angle
+        switch (RotationAngle)
         {
             case 0:
             case 180:
-                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
-                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
-                break;
+                break; // No adjustment needed
 
             default:
-                width = Convert.ToInt32(cropArea.CroppedRectAbsolute.Height / AspectRatio);
-                height = Convert.ToInt32(cropArea.CroppedRectAbsolute.Width / AspectRatio);
+                // Swap width and height
+                (width, height) = (height, width);
                 break;
         }
 
