@@ -1,0 +1,129 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  Chosen Color  -->
+    <Color x:Key="ChosenColor">#FFDB5B3D</Color>
+    <SolidColorBrush x:Key="ChosenColorBrush" Color="{DynamicResource ChosenColor}" />
+
+    <!--  Main Color  -->
+    <Color x:Key="MainColor">#FFf6f4f4</Color>
+    <SolidColorBrush x:Key="MainColorBrush" Color="{StaticResource MainColor}" />
+
+    <!--  Icon Color  -->
+    <Color x:Key="IconColor">#eeebebeb</Color>
+    <SolidColorBrush x:Key="IconColorBrush" Color="{StaticResource IconColor}" />
+
+    <!--  Main Color faded  -->
+    <Color x:Key="MainColorFaded">#FFCFCFCF</Color>
+    <SolidColorBrush x:Key="MainColorFadedBrush" Color="{StaticResource MainColorFaded}" />
+
+    <!--  Fade Color  -->
+    <Color x:Key="FadeColor">#F2222222</Color>
+    <SolidColorBrush x:Key="FadeColorBrush" Color="{StaticResource FadeColor}" />
+
+    <!--  Subtle Fade Color  -->
+    <Color x:Key="SubtleFadeColor">#F2252525</Color>
+    <SolidColorBrush x:Key="SubtleFadeBrush" Color="{StaticResource SubtleFadeColor}" />
+
+    <!--  Border Brush  -->
+    <Color x:Key="BorderColor">#FF3A3A3A</Color>
+    <Color
+        x:Key="BorderColorAlt"
+        A="230"
+        B="27"
+        G="27"
+        R="27" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="BorderBrushAlt" Color="{StaticResource BorderColorAlt}" />
+
+    <!--  Alt Interface  -->
+    <Color x:Key="AltInterface">#A7222222</Color>
+    <Color x:Key="AltInterfaceW">#A72e2c2c</Color>
+    <SolidColorBrush x:Key="AltInterfaceBrush" Color="{StaticResource AltInterface}" />
+    <SolidColorBrush x:Key="AltInterfaceWBrush" Color="{StaticResource AltInterfaceW}" />
+
+    <!--  Shadows  -->
+    <DropShadowEffect
+        x:Key="MenuShadow"
+        BlurRadius="5"
+        Direction="85"
+        RenderingBias="Quality"
+        ShadowDepth="3"
+        Color="#2B3E392D" />
+
+    <DropShadowEffect
+        x:Key="MenuShadowButtonBorder"
+        BlurRadius="7"
+        Direction="358"
+        RenderingBias="Quality"
+        ShadowDepth="1"
+        Color="#3F000000" />
+
+    <DropShadowEffect
+        x:Key="TextShadow"
+        BlurRadius="15"
+        Direction="9"
+        ShadowDepth="1"
+        Color="#2B3E392D" />
+
+    <!--  Texture  -->
+    <ImageBrush
+        x:Key="NoisyBg"
+        ImageSource="\Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png"
+        Opacity=".75"
+        TileMode="FlipXY"
+        Viewport="0,0,200,200"
+        ViewportUnits="Absolute" />
+
+    <!--  Menu background  -->
+    <ImageBrush
+        x:Key="MenuBg"
+        ImageSource="\Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png"
+        Opacity=".9"
+        TileMode="FlipXY"
+        Viewport="0,0,200,200"
+        ViewportUnits="Absolute" />
+
+    <!--  Background Color  -->
+    <Color x:Key="BackgroundColor">#FF2e2e2e</Color>
+    <SolidColorBrush x:Key="BackgroundColorBrush" Color="{StaticResource BackgroundColor}" />
+
+    <!--  Background Color Alt  -->
+    <Color x:Key="BackgroundColorAlt">#F81F1F1F</Color>
+    <SolidColorBrush x:Key="BackgroundColorBrushAlt" Color="{StaticResource BackgroundColorAlt}" />
+
+    <!--  Window Background Color  -->
+    <Color
+        x:Key="WindowBackgroundColor"
+        A="245"
+        B="37"
+        G="37"
+        R="37" />
+    <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}" />
+
+    <!--  Background Color Fade  -->
+    <Color
+        x:Key="BackgroundColorFade"
+        A="100"
+        B="23"
+        G="23"
+        R="23" />
+    <SolidColorBrush x:Key="BackgroundColorBrushFade" Color="{StaticResource BackgroundColorFade}" />
+
+    <!--  Background Color Fade  Subtle  -->
+    <Color x:Key="BackgroundColorFadeSubtle">#EE222222</Color>
+    <SolidColorBrush x:Key="BackgroundColorBrushFadeSubtle" Color="{StaticResource BackgroundColorFadeSubtle}" />
+
+    <!--  Background Subtle Highlight  -->
+    <Color x:Key="BackgroundSubtleHighlight">#1f1c1c</Color>
+    <SolidColorBrush x:Key="BackgroundSubtleHighlightBrush" Color="{StaticResource BackgroundSubtleHighlight}" />
+
+    <!--  Background Hover Highlight  -->
+    <Color
+        x:Key="BackgroundHoverHighlight"
+        A="100"
+        B="75"
+        G="75"
+        R="75" />
+    <SolidColorBrush x:Key="BackgroundHoverHighlightBrush" Color="{StaticResource BackgroundHoverHighlight}" />
+</ResourceDictionary>

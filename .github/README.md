@@ -5,8 +5,9 @@ src="https://picview.org/assets/screenshots/uix3/950/uix3-950w.png" width="950" 
 <img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
 </h1>
 
-PicView is a fast Picture Viewer with compact UI, that can be hidden. Features image effects, galleries, light & dark theme, image info and more. The app can automatically adjusts itself to your screen.
+PicView is a fast and efficient picture viewer that comes equipped with a clean and concise user interface that can be conveniently hidden when not needed. It supports a vast range of image file types, including `WEBP`, `GIF`, `SVG`, `PNG`, `JXL`, `HEIC`, `PSD` and many others. 
 
+Additionally, PicView also includes features such as EXIF data display, image compression, batch resizing, viewing images within archives/comic books, image effects, galleries, and more.
 
 <p align=center>
     <a href="https://github.com/Ruben2776/PicView/releases">
@@ -120,7 +121,33 @@ Navigate the gallery with the `arrow keys` or `W`,`A`,`S`,`D` and load the selec
 
 
 Save it locally, set is as wallpaper/lock-screen image, or copy it to clip-holder with the effect applied.
+
+
+<h3 align="center">
+    Batch Resizing
+</h3>
+
+<h1 align="center">
+    <img src="https://picview.org/assets/screenshots/batch%20resize/batch%20resize%20dark%202023-05-12%20121358.webp" />
+</h1>
+
+
+### Convert/Optimize all your pictures
+All files from the `Source folder` will be selected for processing and will be sent to `Output folder`. The default name for the output folder will be **Processed Pictures**.
+
+If the *Output folder* is the same as the *Source folder*, or left blank, the files will be overwrittten.
+
+The `Convert to` dropdown option allows you to convert all the files to a popular format.
+
+The `Compression` dropdown option allows you to compress the files, either without losing quality or sacrifing some quality for greater reduced file size.
+
+The `Quality` dropdown option allows you to change quality of supported file types. The higher the Quality setting, the more detail is preserved in the image, but the larger the file size.
+
+The `Resize` dropdown option allows you to resize the picture by **height**, **width** and **percentage** while keeping the aspect ratio of the image.
+
 ___
+
+### Other features
 
 If you have 7-Zip or WinRAR installed, you can view images inside archives, such as `.zip`, `.rar`, etc, and comic book archives (`.cbr`, `.cb7`, `.cbt`, .`cbz`, `.cba`).
 
@@ -164,6 +191,7 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | F7                   | Reset Zoom                                                                                                       |
 | F9                   | Open the batch resize window                                                                                     |
 | F11                  | Toggle fulscreen                                                                                                 |
+| F12                  | Toggle viewing fulscreen gallery                                                                                 |
 | Alt + Enter          | Toggle fulscreen                                                                                                 |
 | C                    | Crop Image                                                                                                       |
 | Ctrl + C             | Copy image or copy cropped image                                                                                 |
@@ -205,6 +233,10 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 | Right                | Navigate to next image                                                                                           |
 | Ctrl + D             | Navigate to last image                                                                                           |
 | Ctrl + Right         | Navigate to first image                                                                                          |
+| Ctrl + Shift + Right | Navigate to next folder                                                                                          |
+| Ctrl + Shift + Left  | Navigate to previous folder                                                                                      |
+| Ctrl + Shift + D     | Navigate to next folder                                                                                          |
+| Ctrl + Shift + A     | Navigate to previous folder                                                                                      |
 | Up ⇔ W              | Rotates the image up (clockwise)                                                                                 |
 | Up ⇔ W              | Scrolls up when scrolling is enabled                                                                             |
 | PageUp               | Scrolls up when scrolling is enabled                                                                             |

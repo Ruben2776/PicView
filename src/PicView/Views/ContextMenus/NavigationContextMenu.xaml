@@ -1,0 +1,188 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ContextMenu x:Key="navCM">
+
+        <!--  Next  -->
+        <MenuItem
+            Foreground="{StaticResource MainColorBrush}"
+            Header="{StaticResource NextImage}"
+            InputGestureText="D"
+            StaysOpenOnClick="True">
+            <MenuItem.Icon>
+                <Viewbox Width="14" Height="14">
+                    <Path Data="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" Fill="{StaticResource IconColorBrush}" />
+                </Viewbox>
+            </MenuItem.Icon>
+        </MenuItem>
+
+        <!--  Prev  -->
+        <MenuItem
+            Foreground="{StaticResource MainColorBrush}"
+            Header="{StaticResource PrevImage}"
+            InputGestureText="A"
+            StaysOpenOnClick="True">
+            <MenuItem.Icon>
+                <Viewbox Width="14" Height="14">
+                    <Path Data="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z" Fill="{StaticResource IconColorBrush}" />
+                </Viewbox>
+            </MenuItem.Icon>
+        </MenuItem>
+
+        <Separator />
+
+        <!--  First Image  -->
+        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource FirstImage}">
+            <MenuItem.Icon>
+                <Image Width="14" Height="14">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingImage.Drawing>
+                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M400,111L400,401C400,418.44,383,429.52,369,421.16L121.09,272.79C108.97,265.54,108.97,246.46,121.09,239.21L369,90.84C383,82.48,400,93.56,400,111z">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Flat"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Flat"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,80L112,432">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Round"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Round"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+            </MenuItem.Icon>
+        </MenuItem>
+
+        <!--  Last Image  -->
+        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource LastImage}">
+            <MenuItem.Icon>
+                <Image Width="14" Height="14">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingImage.Drawing>
+                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Flat"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Flat"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M400,80L400,432">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Round"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Round"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+            </MenuItem.Icon>
+        </MenuItem>
+
+        <Separator />
+
+        <!--  Next folder  -->
+        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource NextFolder}">
+            <MenuItem.Icon>
+                <Image Width="14" Height="14">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingImage.Drawing>
+                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M64,192L64,120A40,40,0,0,1,104,80L179.89,80A40,40,0,0,1,202.08,86.72L229.92,105.28A40,40,0,0,0,252.11,112L408,112A40,40,0,0,1,448,152L448,192">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Flat"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Flat"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M479.9,226.55L463.68,392A40,40,0,0,1,423.75,432L88.25,432A40,40,0,0,1,48.32,392L32.1,226.55A32,32,0,0,1,64,192L448.1,192A32,32,0,0,1,479.9,226.55z">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Round"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Round"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+            </MenuItem.Icon>
+        </MenuItem>
+
+        <!--  Prev folder  -->
+        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource PrevFolder}">
+            <MenuItem.Icon>
+                <Image Width="14" Height="14">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingImage.Drawing>
+                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M64,192L64,120A40,40,0,0,1,104,80L179.89,80A40,40,0,0,1,202.08,86.72L229.92,105.28A40,40,0,0,0,252.11,112L408,112A40,40,0,0,1,448,152L448,192">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Flat"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Flat"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M479.9,226.55L463.68,392A40,40,0,0,1,423.75,432L88.25,432A40,40,0,0,1,48.32,392L32.1,226.55A32,32,0,0,1,64,192L448.1,192A32,32,0,0,1,479.9,226.55z">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource IconColorBrush}"
+                                                EndLineCap="Round"
+                                                LineJoin="Miter"
+                                                MiterLimit="1"
+                                                StartLineCap="Round"
+                                                Thickness="32" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+</ResourceDictionary>
