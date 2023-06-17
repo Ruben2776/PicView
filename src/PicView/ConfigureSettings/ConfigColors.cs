@@ -78,12 +78,12 @@ internal static class ConfigColors
                         w.MinButton.Background =
                             w.FullscreenButton.Background =
                                 isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
-                                    : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
+                                    : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
 
             w.TitleBar.Background =
                 isFocused ? (SolidColorBrush)Application.Current.Resources["SubtleFadeBrush"]
                     : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
-            w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
+            w.LowerBar.Background = isFocused ? (ImageBrush)Application.Current.Resources["NoisyBg"]
                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
         }
         else
@@ -247,7 +247,7 @@ internal static class ConfigColors
         6 => Color.FromRgb(254, 172, 150), // Teal
         7 => Color.FromRgb(228, 209, 17), // Aqua
         8 => Color.FromRgb(255, 253, 42), // Golden
-        9 => Color.FromRgb(229, 237, 93), // Purple
+        9 => Color.FromRgb(237, 184, 135), // Purple
         10 => Color.FromRgb(255, 253, 66), // Cyan
         11 => Color.FromRgb(255, 237, 38), // Magenta
         12 => Color.FromRgb(255, 253, 42), // Lime
