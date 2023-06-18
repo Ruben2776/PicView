@@ -44,8 +44,10 @@ internal static class ScaleImage
                     {
                         FitImage(XWidth, XHeight);
                     }
+
                     return;
                 }
+
                 var pic = preloadValue.BitmapSource;
                 if (pic != null)
                 {
@@ -71,14 +73,20 @@ internal static class ScaleImage
     /// <param name="height">The pixel height of the image</param>
     internal static void FitImage(double width, double height)
     {
-        if (width <= 0 || height <= 0) { return; }
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
 
         double maxWidth, maxHeight;
         var margin = 0d;
-        var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
+        var padding =
+            MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
         var isFullScreenSize = Settings.Default.Fullscreen || Settings.Default.FullscreenGallery;
 
-        var borderSpaceHeight = isFullScreenSize ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight;
+        var borderSpaceHeight = isFullScreenSize
+            ? 0
+            : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight;
         var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
 
         var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
@@ -87,7 +95,9 @@ internal static class ScaleImage
         if (Settings.Default.FullscreenGallery)
         {
             maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth, width);
-            maxHeight = Settings.Default.FillImage ? workAreaHeight - PicGalleryItemSize : Math.Min(workAreaHeight - PicGalleryItemSize, height);
+            maxHeight = Settings.Default.FillImage
+                ? workAreaHeight - PicGalleryItemSize
+                : Math.Min(workAreaHeight - PicGalleryItemSize, height);
             margin = PicGalleryItemSize + 5;
         }
         else if (Settings.Default.AutoFitWindow)
@@ -97,17 +107,18 @@ internal static class ScaleImage
         }
         else
         {
-            maxWidth = Settings.Default.FillImage ?
-                GetMainWindow.ParentContainer.ActualWidth : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
+            maxWidth = Settings.Default.FillImage
+                ? GetMainWindow.ParentContainer.ActualWidth
+                : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
             if (Settings.Default.ScrollEnabled)
             {
-                maxHeight = Settings.Default.FillImage ?
-                    GetMainWindow.ParentContainer.ActualHeight : height;
+                maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : height;
             }
             else
             {
-                maxHeight = Settings.Default.FillImage ?
-                    GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
+                maxHeight = Settings.Default.FillImage
+                    ? GetMainWindow.ParentContainer.ActualHeight
+                    : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
             }
         }
 
@@ -125,13 +136,16 @@ internal static class ScaleImage
 
             default:
                 var rotationRadians = RotationAngle * Math.PI / 180;
-                var newWidth = Math.Abs(width * Math.Cos(rotationRadians)) + Math.Abs(height * Math.Sin(rotationRadians));
-                var newHeight = Math.Abs(width * Math.Sin(rotationRadians)) + Math.Abs(height * Math.Cos(rotationRadians));
+                var newWidth = Math.Abs(width * Math.Cos(rotationRadians)) +
+                               Math.Abs(height * Math.Sin(rotationRadians));
+                var newHeight = Math.Abs(width * Math.Sin(rotationRadians)) +
+                                Math.Abs(height * Math.Cos(rotationRadians));
                 AspectRatio = Math.Min(maxWidth / newWidth, maxHeight / newHeight);
                 break;
         }
 
-        if (width * AspectRatio < 0 || height * AspectRatio < 0) return; // Fix weird error when entering fullscreen gallery
+        if (width * AspectRatio < 0 || height * AspectRatio < 0)
+            return; // Fix weird error when entering fullscreen gallery
 
         if (Settings.Default.ScrollEnabled)
         {
@@ -163,19 +177,27 @@ internal static class ScaleImage
             ZoomLogic.ResetZoom(false);
         }
 
+        if (IsFlipped)
+        {
+            Flip();
+        }
+
         if (isFullScreenSize) return;
 
         // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
         var interfaceSize =
-            GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width + GetMainWindow.RotateButton.Width
+            GetMainWindow.Logo.Width + GetMainWindow.GalleryButton.Width + GetMainWindow.RotateButton.Width +
+            GetMainWindow.RotateButton.Width
             + GetMainWindow.MinButton.Width + GetMainWindow.FullscreenButton.Width + GetMainWindow.CloseButton.Width;
 
         if (Settings.Default.AutoFitWindow)
         {
-            CenterWindowOnScreen(Settings.Default.KeepCentered); // Vertically center or vertically and horizontally center
+            CenterWindowOnScreen(Settings.Default
+                .KeepCentered); // Vertically center or vertically and horizontally center
 
-            var titleBarMaxWidth = RotationAngle is 0 or 180 ?
-                Math.Max(XWidth, GetMainWindow.MinWidth) : Math.Max(XHeight, GetMainWindow.MinHeight);
+            var titleBarMaxWidth = RotationAngle is 0 or 180
+                ? Math.Max(XWidth, GetMainWindow.MinWidth)
+                : Math.Max(XHeight, GetMainWindow.MinHeight);
 
             if (Settings.Default.ScrollEnabled)
             {
@@ -183,8 +205,9 @@ internal static class ScaleImage
             }
             else
             {
-                GetMainWindow.TitleText.MaxWidth = titleBarMaxWidth - interfaceSize < interfaceSize ?
-                    interfaceSize : titleBarMaxWidth - interfaceSize;
+                GetMainWindow.TitleText.MaxWidth = titleBarMaxWidth - interfaceSize < interfaceSize
+                    ? interfaceSize
+                    : titleBarMaxWidth - interfaceSize;
             }
         }
         else

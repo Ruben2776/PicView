@@ -50,6 +50,7 @@ public partial class MainWindow
             // Need to change startup location after initialize component
             WindowStartupLocation = WindowStartupLocation.Manual;
         }
+
         Topmost = Settings.Default.TopMost;
 
         Loaded += (_, _) =>
@@ -77,7 +78,8 @@ public partial class MainWindow
                     }
                     else
                     {
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadLayout, DispatcherPriority.Send);
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadLayout,
+                            DispatcherPriority.Send);
                         await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
                     }
                 }
@@ -89,14 +91,16 @@ public partial class MainWindow
                     }
                     else
                     {
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => Fullscreen_Restore(true), DispatcherPriority.Send);
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => Fullscreen_Restore(true),
+                            DispatcherPriority.Send);
                     }
                 }
 
                 // Load image if possible
                 if (args.Length <= 1)
                 {
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => ErrorHandling.Unload(true), DispatcherPriority.Send);
+                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => ErrorHandling.Unload(true),
+                        DispatcherPriority.Send);
                 }
                 else
                 {
@@ -108,7 +112,8 @@ public partial class MainWindow
             StartLoading.AddUiElementsAndUpdateValues();
 
             // keyboard and Mouse_Keys Keys
-            KeyDown += async (sender, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
+            KeyDown += async (sender, e) =>
+                await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
             KeyUp += MainKeyboardShortcuts.MainWindow_KeysUp;
             MouseLeftButtonDown += MainMouseKeys.MouseLeftButtonDown;
             MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
@@ -126,15 +131,19 @@ public partial class MainWindow
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += DragToExplorer.DragFile;
 
             // ClickArrows
-            GetClickArrowLeft.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
-            GetClickArrowRight.MouseLeftButtonDown += async (_, _) => await Navigation.PicButtonAsync(true, true).ConfigureAwait(false);
+            GetClickArrowLeft.MouseLeftButtonDown += async (_, _) =>
+                await Navigation.PicButtonAsync(true, false).ConfigureAwait(false);
+            GetClickArrowRight.MouseLeftButtonDown += async (_, _) =>
+                await Navigation.PicButtonAsync(true, true).ConfigureAwait(false);
 
             // image_button
-            MouseOverAnimations.SetButtonIconMouseOverAnimations(ImageButton, ImageMenuBg, (SolidColorBrush)Resources["ImageBrush"], true);
+            MouseOverAnimations.SetButtonIconMouseOverAnimations(ImageButton, ImageMenuBg,
+                (SolidColorBrush)Resources["ImageBrush"], true);
             ImageButton.Click += Toggle_image_menu;
 
             // SettingsButton
-            MouseOverAnimations.SetButtonIconMouseOverAnimations(SettingsButton, SettingsMenuBg, SettingsButtonFill, true);
+            MouseOverAnimations.SetButtonIconMouseOverAnimations(SettingsButton, SettingsMenuBg, SettingsButtonFill,
+                true);
             SettingsButton.Click += Toggle_quick_settings_menu;
 
             //FunctionButton
@@ -158,25 +167,27 @@ public partial class MainWindow
 
             // RotateButton
             MouseOverAnimations.SetButtonIconMouseOverAnimations(RotateButton, RotateBg, RotateBrush, true);
-            RotateButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
+            RotateButton.Click += async (_, _) =>
+                await Rotation.RotateAndMoveCursor(false, RotateButton).ConfigureAwait(false);
 
             // FlipButton
             MouseOverAnimations.SetButtonIconMouseOverAnimations(FlipButton, FlipBg, FlipBrush, true);
             FlipButton.Click += (_, _) => Rotation.Flip();
-            FlipButton.Checked += (_, _) => UpdateUIValues.ChangeFlipButton(true);
-            FlipButton.Unchecked += (_, _) => UpdateUIValues.ChangeFlipButton(false);
 
             // TitleText
             TitleText.GotKeyboardFocus += EditTitleBar.EditTitleBar_Text;
-            TitleText.InnerTextBox.PreviewKeyDown += async (_, e) => await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(e).ConfigureAwait(false);
+            TitleText.InnerTextBox.PreviewKeyDown += async (_, e) =>
+                await CustomTextBoxShortcuts.CustomTextBox_KeyDownAsync(e).ConfigureAwait(false);
             TitleText.PreviewMouseLeftButtonDown += EditTitleBar.Bar_PreviewMouseLeftButtonDown;
             TitleText.PreviewMouseRightButtonDown += EditTitleBar.Bar_PreviewMouseRightButtonDown;
 
             // ParentContainer
-            ParentContainer.Drop += async (sender, e) => await ImageDragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
+            ParentContainer.Drop += async (sender, e) =>
+                await ImageDragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
             ParentContainer.DragEnter += ImageDragAndDrop.Image_DragEnter;
             ParentContainer.DragLeave += ImageDragAndDrop.Image_DragLeave;
-            ParentContainer.PreviewMouseWheel += async (sender, e) => await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
+            ParentContainer.PreviewMouseWheel += async (sender, e) =>
+                await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
 
             CloseButton.TheButton.Click += (_, _) => SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
 
@@ -204,7 +215,8 @@ public partial class MainWindow
 
     protected override void OnRenderSizeChanged(SizeChangedInfo? sizeInfo)
     {
-        if (sizeInfo == null || sizeInfo is { WidthChanged: false, HeightChanged: false } || Settings.Default.AutoFitWindow == false)
+        if (sizeInfo == null || sizeInfo is { WidthChanged: false, HeightChanged: false } ||
+            Settings.Default.AutoFitWindow == false)
         {
             Navigation.RightButtonClicked = false;
             Navigation.LeftButtonClicked = false;
@@ -214,8 +226,10 @@ public partial class MainWindow
         }
 
         //Keep position when size has changed
-        Top += ((sizeInfo.PreviousSize.Height / MonitorInfo.DpiScaling) - (sizeInfo.NewSize.Height / MonitorInfo.DpiScaling)) / 2;
-        Left += ((sizeInfo.PreviousSize.Width / MonitorInfo.DpiScaling) - (sizeInfo.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
+        Top += ((sizeInfo.PreviousSize.Height / MonitorInfo.DpiScaling) -
+                (sizeInfo.NewSize.Height / MonitorInfo.DpiScaling)) / 2;
+        Left += ((sizeInfo.PreviousSize.Width / MonitorInfo.DpiScaling) -
+                 (sizeInfo.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
 
         // Move cursor after resize when the button has been pressed
         if (Navigation.RightButtonClicked)

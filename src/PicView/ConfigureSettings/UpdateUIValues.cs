@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.UILogic.TransformImage;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
@@ -61,7 +62,8 @@ internal static class UpdateUIValues
         }
 
         Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
-        await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+        await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource)
+            .ConfigureAwait(false);
         await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
     }
 
@@ -95,8 +97,10 @@ internal static class UpdateUIValues
         loopCmHeader.IsChecked = Settings.Default.Looping;
         UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = Settings.Default.Looping;
 
-        ShowTooltipMessage(Settings.Default.Looping ?
-                Application.Current.Resources["LoopingEnabled"] : Application.Current.Resources["LoopingDisabled"],
+        ShowTooltipMessage(
+            Settings.Default.Looping
+                ? Application.Current.Resources["LoopingEnabled"]
+                : Application.Current.Resources["LoopingDisabled"],
             UC.UserControls_Open());
     }
 
@@ -128,8 +132,13 @@ internal static class UpdateUIValues
 
     internal static void SetAutoFit(object sender, RoutedEventArgs e)
     {
-        if (Settings.Default.FullscreenGallery) { return; }
-        SetScalingBehaviour(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow, Settings.Default.FillImage);
+        if (Settings.Default.FullscreenGallery)
+        {
+            return;
+        }
+
+        SetScalingBehaviour(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow,
+            Settings.Default.FillImage);
     }
 
     internal static void SetAutoFill(object sender, RoutedEventArgs e)
@@ -164,6 +173,7 @@ internal static class UpdateUIValues
         {
             LoadControls.LoadQuickResize();
         }
+
         if (UC.GetQuickResize.Visibility == Visibility.Collapsed)
         {
             UC.GetQuickResize.Show();
@@ -184,6 +194,7 @@ internal static class UpdateUIValues
             {
                 GetSettingsWindow.SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
             }
+
             if (UC.GetQuickSettingsMenu is not null)
             {
                 UC.GetQuickSettingsMenu.SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
@@ -191,9 +202,17 @@ internal static class UpdateUIValues
         });
         Settings.Default.Save();
 
-        if (ErrorHandling.CheckOutOfRange()) { return; }
+        if (ErrorHandling.CheckOutOfRange())
+        {
+            return;
+        }
+
         var preloadValue = PreLoader.Get(Navigation.FolderIndex);
-        if (preloadValue is null) { return; }
+        if (preloadValue is null)
+        {
+            return;
+        }
+
         Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
 
         GetMainWindow.Dispatcher.Invoke(() =>
@@ -203,22 +222,24 @@ internal static class UpdateUIValues
         });
     }
 
-    internal static void ChangeFlipButton(bool isChecked)
+    internal static void ChangeFlipButton()
     {
         if (GetMainWindow.MainImage.Source is null) return;
 
         var mainFlipButtonPath = GetMainWindow.FlipPath;
         var menuFlipButtonPath = UC.GetImageSettingsMenu.FlipPath;
 
-        if (isChecked)
+        if (Rotation.IsFlipped)
         {
             mainFlipButtonPath.Data = menuFlipButtonPath.Data =
-                Geometry.Parse("M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
+                Geometry.Parse(
+                    "M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448, 192z");
         }
         else
         {
             mainFlipButtonPath.Data = menuFlipButtonPath.Data =
-                Geometry.Parse("M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192 L192, 96z");
+                Geometry.Parse(
+                    "M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192 L192, 96z");
         }
     }
 
@@ -228,6 +249,7 @@ internal static class UpdateUIValues
         {
             return;
         }
+
         Settings.Default.CtrlZoom = value;
 
         if (GetSettingsWindow is not null)
@@ -243,6 +265,7 @@ internal static class UpdateUIValues
                 GetSettingsWindow.ScrollZoom.IsChecked = true;
             }
         }
+
         var settingCcm = (MenuItem)MainContextMenu.Items[7];
         var ctrlZoomMenu = (MenuItem)settingCcm.Items[6];
         var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;

@@ -21,22 +21,22 @@ public partial class ImageSettings
         InitializeComponent();
 
         // RotateLeftButton
-        RotateLeftButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(true, RotateLeftButton).ConfigureAwait(false);
+        RotateLeftButton.Click += async (_, _) =>
+            await Rotation.RotateAndMoveCursor(true, RotateLeftButton).ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(RotateLeftButton, RotateLeftButtonBrush, RotateLeftIconBrush);
 
         // RotateRightButton
-        RotateRightButton.Click += async (_, _) => await Rotation.RotateAndMoveCursor(false, RotateRightButton).ConfigureAwait(false);
+        RotateRightButton.Click += async (_, _) =>
+            await Rotation.RotateAndMoveCursor(false, RotateRightButton).ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(RotateRightButton, RotateRightButtonBrush, RotateRightIconBrush);
 
         // FlipButton
         FlipButton.Click += (_, _) => Rotation.Flip();
-        // Change FlipButton's icon when (un)checked
-        FlipButton.Checked += (_, _) => UpdateUIValues.ChangeFlipButton(true);
-        FlipButton.Unchecked += (_, _) => UpdateUIValues.ChangeFlipButton(false);
         SetButtonIconMouseOverAnimations(FlipButton, FlipButtonBrush, FlipIconBrush);
 
         // ResizeButton
-        SetButtonIconMouseOverAnimations(ResizeButtonBorder, ResizeBorderBrush, (SolidColorBrush)Resources["ResizeIcon"]);
+        SetButtonIconMouseOverAnimations(ResizeButtonBorder, ResizeBorderBrush,
+            (SolidColorBrush)Resources["ResizeIcon"]);
         ResizeButton.Click += (_, _) => UpdateUIValues.ToggleQuickResize();
         ResizeButtonBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.ToggleQuickResize();
 
@@ -47,11 +47,14 @@ public partial class ImageSettings
 
         // OptimizeButton
         SetButtonIconMouseOverAnimations(OptimizeBorder, BgBorderBrush, (SolidColorBrush)Resources["OptimizeIcon"]);
-        OptimizeButton.Click += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
-        OptimizeBorder.MouseLeftButtonDown += async (_, _) => await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+        OptimizeButton.Click += async (_, _) =>
+            await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+        OptimizeBorder.MouseLeftButtonDown += async (_, _) =>
+            await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
 
         // SlideShowBorder
-        SetButtonIconMouseOverAnimations(SlideShowBorder, SlideShowBorderBrush, (SolidColorBrush)Resources["SlideshowIcon"]);
+        SetButtonIconMouseOverAnimations(SlideShowBorder, SlideShowBorderBrush,
+            (SolidColorBrush)Resources["SlideshowIcon"]);
         SlideShowButton.Click += delegate
         {
             UC.Close_UserControls();
@@ -67,7 +70,8 @@ public partial class ImageSettings
         SlideShowBorder.ToolTip = s;
 
         // FullscreenGalleryBorder
-        SetButtonIconMouseOverAnimations(FullScreenGalleryButton, FullScreenBrush, (SolidColorBrush)Resources["FullScreenIcon"]);
+        SetButtonIconMouseOverAnimations(FullScreenGalleryButton, FullScreenBrush,
+            (SolidColorBrush)Resources["FullScreenIcon"]);
         FullscreenGalleryBorder.MouseLeftButtonDown += async delegate
         {
             UC.Close_UserControls();
@@ -92,7 +96,8 @@ public partial class ImageSettings
         };
 
         // ContainedGalleryBorder
-        SetButtonIconMouseOverAnimations(ContainedGalleryButton, ContainedButtonBrush, (SolidColorBrush)Resources["ContainedIcon"]);
+        SetButtonIconMouseOverAnimations(ContainedGalleryButton, ContainedButtonBrush,
+            (SolidColorBrush)Resources["ContainedIcon"]);
         ContainedGalleryBorder.MouseLeftButtonDown += async delegate
         {
             UC.Close_UserControls();

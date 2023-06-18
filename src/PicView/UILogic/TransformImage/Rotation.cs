@@ -1,4 +1,5 @@
-﻿using PicView.PicGallery;
+﻿using PicView.ConfigureSettings;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
@@ -30,7 +31,10 @@ internal static class Rotation
     internal static async Task RotateAndMoveCursor(bool up, UIElement uIElement)
     {
         Rotate(false, up);
-        if (Settings.Default.AutoFitWindow == false) { return; }
+        if (Settings.Default.AutoFitWindow == false)
+        {
+            return;
+        }
 
         // Move cursor after rotating
         await Task.Delay(50).ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
@@ -71,12 +75,18 @@ internal static class Rotation
         if (up)
         {
             RotationAngle += 90;
-            if (RotationAngle >= 360) { RotationAngle -= 360; }
+            if (RotationAngle >= 360)
+            {
+                RotationAngle -= 360;
+            }
         }
         else
         {
             RotationAngle -= 90;
-            if (RotationAngle < 0) { RotationAngle += 360; }
+            if (RotationAngle < 0)
+            {
+                RotationAngle += 360;
+            }
         }
 
         Rotate(RotationAngle);
@@ -90,11 +100,14 @@ internal static class Rotation
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
             Settings.Default.FullscreenGallery == false && GalleryFunctions.IsGalleryOpen)
-        { return; }
+        {
+            return;
+        }
 
         var rt = new RotateTransform { Angle = RotationAngle = degrees };
 
-        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width,
+            ConfigureWindows.GetMainWindow.MainImage.Source.Height);
 
         // If it's flipped, keep it flipped when rotating
         if (IsFlipped)
@@ -140,6 +153,8 @@ internal static class Rotation
         tg.Children.Add(flip);
         tg.Children.Add(rt);
         ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = tg;
+
+        UpdateUIValues.ChangeFlipButton();
     }
 
     /// <summary>
