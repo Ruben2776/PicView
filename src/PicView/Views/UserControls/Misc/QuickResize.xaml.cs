@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using PicView.Properties;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Views.UserControls.Misc;
@@ -98,8 +99,8 @@ public partial class QuickResize : UserControl
 
     public void Show()
     {
-        grid.Width = ScaleImage.XWidth;
-        grid.Height = ScaleImage.XHeight;
+        grid.Width = Settings.Default.AutoFitWindow ? ScaleImage.XWidth : ConfigureWindows.GetMainWindow.ActualWidth;
+        grid.Height = Settings.Default.AutoFitWindow ? ScaleImage.XHeight : ConfigureWindows.GetMainWindow.ActualHeight;
         Visibility = Visibility.Visible;
         AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
         PercentageBox.SelectedIndex = 0;
