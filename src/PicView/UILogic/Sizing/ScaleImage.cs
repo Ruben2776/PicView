@@ -1,8 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.Properties;
-using PicView.UILogic.TransformImage;
 using System.Windows;
-using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
