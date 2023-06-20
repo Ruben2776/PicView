@@ -4,6 +4,7 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
+using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -68,17 +69,16 @@ internal static class UpdateImage
                 ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
-            // Reset transforms if needed
-            if (!Rotation.IsFlipped && Rotation.RotationAngle == 0) return;
-            Rotation.IsFlipped = false;
-            Rotation.RotationAngle = 0;
-            if (GetImageSettingsMenu is not null)
+            // Reset transforms
+            if (ZoomLogic.IsZoomed)
             {
-                GetImageSettingsMenu.FlipButton.IsChecked = false;
+                ZoomLogic.ResetZoom(false);
             }
-            ConfigureWindows.GetMainWindow.FlipButton.IsChecked = false;
 
-            ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = null;
+            if (Rotation.IsFlipped)
+            {
+                Rotation.Flip();
+            }
         }, DispatcherPriority.Send);
 
         if (GetToolTipMessage is { IsVisible: true })
