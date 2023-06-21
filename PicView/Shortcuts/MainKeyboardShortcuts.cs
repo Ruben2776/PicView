@@ -106,8 +106,7 @@ internal static class MainKeyboardShortcuts
                 }
                 else
                 {
-                    FastPicRunning = e.IsRepeat; // Report if key held down
-                    await GoToNextImage(NavigateTo.Next, FastPicRunning).ConfigureAwait(false);
+                    await GoToNextImage(NavigateTo.Next, e.IsRepeat).ConfigureAwait(false);
                 }
                 return;
 
@@ -130,8 +129,7 @@ internal static class MainKeyboardShortcuts
                 }
                 else
                 {
-                    FastPicRunning = e.IsRepeat; // Report if key held down
-                    await GoToNextImage(NavigateTo.Previous, FastPicRunning).ConfigureAwait(false);
+                    await GoToNextImage(NavigateTo.Previous, e.IsRepeat).ConfigureAwait(false);
                 }
                 return;
 

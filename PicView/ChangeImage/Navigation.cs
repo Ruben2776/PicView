@@ -63,8 +63,6 @@ internal static class Navigation
     /// </summary>
     internal static bool ClickArrowLeftClicked { get; set; }
 
-    internal static bool FastPicRunning { get; set; }
-
     internal static FileHistory? GetFileHistory;
 
     #endregion Static fields
