@@ -18,9 +18,9 @@ namespace PicView.ChangeImage;
 internal static class ErrorHandling
 {
     /// <summary>
-    /// Returns true, if navigating will result in out of rang exception
+    /// Check if index is valid and user is intended to change image
     /// </summary>
-    /// <returns></returns>
+    /// <returns>True if not indended to change image or index is not valid</returns>
     internal static bool CheckOutOfRange()
     {
         bool value = true;
