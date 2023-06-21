@@ -26,7 +26,7 @@ internal static class OpenSave
     ///  TODO update for and check file support
     /// </summary>
     internal const string FilterFiles =
-        "*|*.bmp;*.jpg;*.png;*.tif;*.tiff;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;"
+        "*|*.bmp;*.jpg;*.png;*.tif;*.tiff;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.wdp;*.thm;"
         + "|jpg|*.jpg;*.jpeg;"                                                                          // JPG
         + "|PNG|*.png;"                                                                                 // PNG
         + "|gif|*.gif;"                                                                                 // GIF
@@ -42,7 +42,8 @@ internal static class OpenSave
         + "|svg|*.svg;"                                                                                 // SVG
         + "|Photoshop|*.psd;*.psb;"                                                                     // PSD
         + "|GIMP|*.xcf;"                                                                                // GIMP
-        + "|QOI|*.qoi;"                                                                                 // GQOI (Quite OK Image
+        + "|QOI|*.qoi;"                                                                                 // GQOI (Quite OK Image)
+        + "|THM|*.thm;"                                                                                 // THM (Video Thumbnail File)
         + "|Base64|*.b64;"                                                                              // Base64
         + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab;"                          // Archives
         + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz;"                                                       // Comics
