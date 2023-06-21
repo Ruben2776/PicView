@@ -1,0 +1,404 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!--  Text in the title bar  -->
+    <system:String x:Key="Loading">불러오는 중...</system:String>
+    <system:String x:Key="NoImage">불러온 이미지가 없습니다</system:String>
+    <system:String x:Key="Files">파일</system:String>
+    <system:String x:Key="File">파일</system:String>
+    <system:String x:Key="PercentComplete">% 완료...</system:String>
+    <system:String x:Key="CropMessage">닫으려면 Esc를 누르고, 저장하려면 Enter를 누릅니다</system:String>
+    <system:String x:Key="ClipboardImage">클립보드 이미지</system:String>
+    <system:String x:Key="Base64Image">Base64 이미지</system:String>
+
+    <!--  Generic Window  -->
+    <system:String x:Key="Close">닫기</system:String>
+    <system:String x:Key="RestoreDown">복원 다운</system:String>
+    <system:String x:Key="Maximize">최대화</system:String>
+    <system:String x:Key="Minimize">최소화</system:String>
+    <system:String x:Key="Fullscreen">전체 화면</system:String>
+    <system:String x:Key="NewWindow">새 창</system:String>
+
+    <!--  About window  -->
+    <system:String x:Key="About">정보</system:String>
+    <system:String x:Key="InfoWindowTitle">정보 및 한국어 번역: 비너스걸</system:String>
+    <system:String x:Key="ApplicationShortcuts">응용 프로그램 바로가기</system:String>
+    <system:String x:Key="SavedOnNextStartUp">(다음 시작 시 저장됨)</system:String>
+    <system:String x:Key="ImageControl">이미지 제어</system:String>
+    <system:String x:Key="FileManagement">파일 관리</system:String>
+    <system:String x:Key="DragFileTo">파일을 Windows 탐색기 또는 다른 응용 프로그램/브라우저로 끌어다 놓기</system:String>
+    <system:String x:Key="DragImage">이미지 끌기</system:String>
+    <system:String x:Key="AdditionalFunctions">부가 기능</system:String>
+    <system:String x:Key="Reload">다시 불러오기</system:String>
+    <system:String x:Key="Credits">크레딧</system:String>
+    <system:String x:Key="IconsUsed">사용된 아이콘:</system:String>
+    <system:String x:Key="GithubRepo">Github 저장소</system:String>
+    <system:String x:Key="ViewLicenseFile">라이선스 파일 보기</system:String>
+    <system:String x:Key="Version">버전:</system:String>
+
+    <!--  Info window, window scaling  -->
+    <system:String x:Key="WindowScaling">창 비율</system:String>
+    <system:String x:Key="NormalWindow">일반 창</system:String>
+    <system:String x:Key="FillHeight">⇔ 높이 채우기</system:String>
+    <system:String x:Key="AutoFitWindow">창 자동 맞춤</system:String>
+
+    <!--  info window, interface configuration  -->
+    <system:String x:Key="InterfaceConfiguration">인터페이스 구성</system:String>
+    <system:String x:Key="HideShowInterface">인터페이스 숨기기/표시</system:String>
+    <system:String x:Key="ToggleFullscreen">전체 화면 전환</system:String>
+
+    <!--  Info window, window management  -->
+    <system:String x:Key="WindowManagement">창 관리</system:String>
+    <system:String x:Key="InfoWindow">정보 창</system:String>
+    <system:String x:Key="SettingsWindow">설정 창</system:String>
+    <system:String x:Key="EscCloseTooltip">현재 열려 있는 창/메뉴 닫기</system:String>
+    <system:String x:Key="CloseApp">전체 응용 프로그램 닫기</system:String>
+    <system:String x:Key="MoveWindow">창 이동</system:String>
+    <system:String x:Key="CenterWindow">창 가운데</system:String>
+
+    <!--  Settings window, colors  -->
+    <system:String x:Key="HighlightColor">강조 색상</system:String>
+
+    <system:String x:Key="Blue">파랑</system:String>
+    <system:String x:Key="Cyan">옥색</system:String>
+    <system:String x:Key="Aqua">물색</system:String>
+    <system:String x:Key="Teal">청록</system:String>
+
+    <system:String x:Key="Lime">라임</system:String>
+    <system:String x:Key="Green">녹색</system:String>
+    <system:String x:Key="Golden">금색</system:String>
+    <system:String x:Key="Orange">주황</system:String>
+
+    <system:String x:Key="Red">빨강</system:String>
+    <system:String x:Key="Pink">분홍</system:String>
+    <system:String x:Key="Magenta">자홍</system:String>
+    <system:String x:Key="Purple">자주</system:String>
+
+    <!--  Settings window, theme  -->
+    <system:String x:Key="Theme">테마</system:String>
+    <system:String x:Key="DarkTheme">어두운 테마</system:String>
+    <system:String x:Key="LightTheme">밝은 테마</system:String>
+    <system:String x:Key="ChangingThemeRequiresRestart">* 테마 변경 시 재시작 필요</system:String>
+
+    <!--  Settings window, wallpaper  -->
+    <system:String x:Key="SetCurrentImageAsWallpaper">현재 이미지를 배경화면으로 설정:</system:String>
+
+    <system:String x:Key="Fill">채우기</system:String>
+    <system:String x:Key="Center">가운데</system:String>
+    <system:String x:Key="Fit">맟추기</system:String>
+    <system:String x:Key="Tile">타일</system:String>
+    <system:String x:Key="Stretch">늘이기</system:String>
+
+    <!--  Settings window, language  -->
+    <system:String x:Key="Language">언어</system:String>
+    <system:String x:Key="ChangingLanguageRequiresRestart">* 언어를 변경하려면 다시 시작해야 합니다</system:String>
+
+    <!--  Settings window, Gallery layout  -->
+    <system:String x:Key="FullscreenGalleryLayout">전체 화면 갤러리 레이아웃</system:String>
+    <system:String x:Key="Vertical">수직</system:String>
+    <system:String x:Key="Horizontal">수평</system:String>
+
+    <!--  Settings window, mouse  -->
+    <system:String x:Key="CtrlToZoom">확대/축소하려면 Ctrl, 탐색하려면 스크롤</system:String>
+    <system:String x:Key="ScrollToZoom">마우스 휠로 확대/축소, Ctrl로 탐색</system:String>
+    <system:String x:Key="HorizontalScroll">가로 스크롤</system:String>
+    <system:String x:Key="Reverse">역방향</system:String>
+    <system:String x:Key="Forward">앞으로</system:String>
+
+    <!--  Settings window, misc  -->
+    <system:String x:Key="GeneralSettings">일반 설정</system:String>
+    <system:String x:Key="UISettings">UI 설정</system:String>
+    <system:String x:Key="MiscSettings">기타 설정</system:String>
+    <system:String x:Key="SearchSubdirectory">하위 디렉터리 검색</system:String>
+    <system:String x:Key="StayTopMost">다른 창 위에 유지</system:String>
+    <system:String x:Key="StayCentered">창 중앙 유지</system:String>
+    <system:String x:Key="ColoredWindowBorder">색칠된 창</system:String>
+    <system:String x:Key="ShowButtonsInHiddenUI">숨겨진 UI에 버튼 표시</system:String>
+    <system:String x:Key="Apply">적용</system:String>
+    <system:String x:Key="AdjustTimingForSlideshow">슬라이드쇼 시간 조정</system:String>
+    <system:String x:Key="AdjustTimingForZoom">확대/축소 속도 조정</system:String>
+    <system:String x:Key="SecAbbreviation">초</system:String>
+    <system:String x:Key="RestartApp">응용 프로그램 다시 시작</system:String>
+    <system:String x:Key="CheckForUpdates">업데이트 확인</system:String>
+    <system:String x:Key="AllowZoomOut">이미지가 이미 최대 크기일 때 축소하지 않기</system:String>
+    <system:String x:Key="AdjustNavSpeed">키를 누른 상태에서 속도 조절</system:String>
+    <system:String x:Key="ToggleTaskbarProgress">작업 표시줄 진행률 표시</system:String>
+    <system:String x:Key="ShowFileSavingDialog">파일 저장 대화상자 표시</system:String>
+    <system:String x:Key="ShowBottomToolbar">하단 도구 모음 표시</system:String>
+    <system:String x:Key="BottomGalleryItems">하단 갤러리 항목</system:String>
+    <system:String x:Key="ExpandedGalleryItems">확장된 갤러리 항목</system:String>
+
+    <!--  Effects Window  -->
+    <system:String x:Key="NegativeColors">네거티브 컬러</system:String>
+    <system:String x:Key="BlackAndWhite">흑백</system:String>
+    <system:String x:Key="ColorTone">색조</system:String>
+
+    <system:String x:Key="OldMovie">오래된 영화</system:String>
+    <system:String x:Key="Bloom">화사</system:String>
+    <system:String x:Key="Gloom">우울</system:String>
+
+    <system:String x:Key="Monochrome">단색</system:String>
+    <system:String x:Key="WaveWarper">파도</system:String>
+    <system:String x:Key="Underwater">수중</system:String>
+
+    <system:String x:Key="BandedSwirl">줄무늬 소용돌이</system:String>
+    <system:String x:Key="Ripple">잔물결</system:String>
+    <system:String x:Key="RippleAlt">잔물결 대체</system:String>
+
+    <system:String x:Key="Blur">흐림</system:String>
+    <system:String x:Key="DirectionalBlur">방향성 흐림</system:String>
+    <system:String x:Key="TelescopicBlur">망원경 흐림</system:String>
+
+    <system:String x:Key="Pixelate">픽셀 레이트</system:String>
+    <system:String x:Key="Embossed">양각 무늬</system:String>
+    <system:String x:Key="SmoothMagnify">매끄러운 확대</system:String>
+
+    <system:String x:Key="Pivot">중심점</system:String>
+    <system:String x:Key="PaperFold">종이 접기</system:String>
+    <system:String x:Key="PencilSketch">연필 스케치</system:String>
+
+    <system:String x:Key="Sketch">스케치</system:String>
+    <system:String x:Key="ToneMapping">톤 매핑</system:String>
+    <system:String x:Key="FrostyOutline">서리가 내린 윤곽</system:String>
+
+    <system:String x:Key="Bands">밴드</system:String>
+    <system:String x:Key="GlassTile">유리 타일</system:String>
+
+    <!--  Navigation related  -->
+    <system:String x:Key="Navigation">탐색</system:String>
+    <system:String x:Key="NextImage">다음 이미지</system:String>
+    <system:String x:Key="PrevImage">이전 이미지</system:String>
+    <system:String x:Key="LastImage">마지막 이미지</system:String>
+    <system:String x:Key="FirstImage">첫번째 이미지</system:String>
+    <system:String x:Key="ToggleLooping">순환 전환</system:String>
+    <system:String x:Key="Slideshow">슬라이드쇼</system:String>
+    <system:String x:Key="NextFolder">다음 폴더로 이동</system:String>
+    <system:String x:Key="PrevFolder">이전 폴더로 이동</system:String>
+
+    <!--  Zoom related  -->
+    <system:String x:Key="Zoom">줌</system:String>
+    <system:String x:Key="ZoomIn">확대</system:String>
+    <system:String x:Key="ZoomOut">축소</system:String>
+    <system:String x:Key="Pan">팬</system:String>
+    <system:String x:Key="MouseDrag">마우스 끌기</system:String>
+    <system:String x:Key="ResetZoom">확대/축소 재설정</system:String>
+    <system:String x:Key="ToggleScroll">스크롤 전환</system:String>
+
+    <!--  File related  -->
+    <system:String x:Key="Open">열기</system:String>
+    <system:String x:Key="OpenWith">열기...</system:String>
+    <system:String x:Key="OpenFileDialog">파일 열기 대화 상자</system:String>
+    <system:String x:Key="OpenLastFile">마지막 파일 열기</system:String>
+    <system:String x:Key="ShowInFolder">폴더에 표시</system:String>
+    <system:String x:Key="Save">저장</system:String>
+    <system:String x:Key="SaveImage">이미지 저장</system:String>
+    <system:String x:Key="Print">인쇄</system:String>
+    <system:String x:Key="RecentFiles">최근 파일</system:String>
+    <system:String x:Key="FileProperties">파일 속성</system:String>
+    <system:String x:Key="DeleteFile">파일 삭제</system:String>
+    <system:String x:Key="Folder">폴더</system:String>
+    <system:String x:Key="FullPath">전체 경로</system:String>
+    <system:String x:Key="RenameFile">파일 이름 바꾸기</system:String>
+    <system:String x:Key="UnsupportedFile">지원되지 않는 파일</system:String>
+
+    <!--  Sort files  -->
+    <system:String x:Key="SortFilesBy">파일 정렬</system:String>
+    <system:String x:Key="FileName">파일 이름</system:String>
+    <system:String x:Key="FileSize">파일 크기</system:String>
+    <system:String x:Key="CreationTime">생성 날짜</system:String>
+    <system:String x:Key="FileExtension">파일 확장자</system:String>
+    <system:String x:Key="LastAccessTime">최근 접근 날짜</system:String>
+    <system:String x:Key="LastWriteTime">최근 쓰기 날짜</system:String>
+    <system:String x:Key="Random">무작위</system:String>
+
+    <system:String x:Key="Ascending">오름차순</system:String>
+    <system:String x:Key="Descending">내림차순</system:String>
+
+    <!--  Settings  -->
+    <system:String x:Key="Settings">설정</system:String>
+    <system:String x:Key="Scrolling">스크롤</system:String>
+    <system:String x:Key="Looping">순환</system:String>
+    <system:String x:Key="FitToWindow">창/이미지에 맞춤</system:String>
+    <system:String x:Key="ShowHideUI">인터페이스 표시/숨기기</system:String>
+    <system:String x:Key="ChangeBackground">배경 변경</system:String>
+    <system:String x:Key="ChangeBackgroundTooltip">배경이 투명한 이미지의 배경색 변경</system:String>
+
+    <!--  Copy related  -->
+    <system:String x:Key="Copy">복사</system:String>
+    <system:String x:Key="AddedToClipboard">클립보드에 추가됨</system:String>
+
+    <!--  Copy file  -->
+    <system:String x:Key="CopyFile">파일 복사</system:String>
+    <system:String x:Key="FileCopy">클립보드에 파일 추가</system:String>
+    <system:String x:Key="FileCopyPath">파일 경로 복사</system:String>
+    <system:String x:Key="FileCopyPathMessage">클립보드에 파일 경로 추가</system:String>
+    <system:String x:Key="FileCutMessage">클립보드 이동을 위해 파일 추가</system:String>
+
+    <!--  Copy image  -->
+    <system:String x:Key="CopyImage">이미지 복사</system:String>
+    <system:String x:Key="CopiedImage">클립보드에 이미지 복사</system:String>
+    <system:String x:Key="CopyImageTooltip">Windows 클립보드 이미지로 복사</system:String>
+
+    <!--  Paste  -->
+    <system:String x:Key="FilePaste">붙여넣기</system:String>
+
+    <!--  Cut  -->
+    <system:String x:Key="FileCut">파일 잘라내기</system:String>
+
+    <!--  Image info  -->
+    <system:String x:Key="ImageInfo">이미지 정보</system:String>
+    <system:String x:Key="Image">이미지</system:String>
+    <system:String x:Key="Width">너비</system:String>
+    <system:String x:Key="Height">높이</system:String>
+    <system:String x:Key="Date">날짜</system:String>
+    <system:String x:Key="Created">생성</system:String>
+    <system:String x:Key="Modified">수정</system:String>
+    <system:String x:Key="Size">크기</system:String>
+    <system:String x:Key="Pixels">픽셀</system:String>
+    <system:String x:Key="SizeMp">크기 (mp)</system:String>
+    <system:String x:Key="MegaPixels">메가픽셀</system:String>
+    <system:String x:Key="Resolution">해상도</system:String>
+    <system:String x:Key="Dpi">DPI</system:String>
+    <system:String x:Key="DiskSize">디스크 크기</system:String>
+    <system:String x:Key="AspectRatio">가로 세로 비율</system:String>
+    <system:String x:Key="Portrait">세로</system:String>
+    <system:String x:Key="Landscape">가로</system:String>
+    <system:String x:Key="Square">정사각형</system:String>
+    <system:String x:Key="PrintSizeIn">인쇄 크기 (in)</system:String>
+    <system:String x:Key="PrintSizeCm">인쇄 크기 (cm)</system:String>
+    <system:String x:Key="Centimeters">센티미터</system:String>
+    <system:String x:Key="Inches">인치</system:String>
+    <system:String x:Key="BitDepth">비트 깊이</system:String>
+    <system:String x:Key="SizeTooltip">원하는 크기를 픽셀 또는 백분율로 입력하십시오.</system:String>
+
+    <!--  Keyboard key names  -->
+    <system:String x:Key="Del">Del</system:String>
+    <system:String x:Key="Ctrl">Ctrl</system:String>
+    <system:String x:Key="Shift">Shift</system:String>
+    <system:String x:Key="Alt">Alt</system:String>
+    <system:String x:Key="Space">Space</system:String>
+    <system:String x:Key="Enter">Enter</system:String>
+    <system:String x:Key="Esc">Esc</system:String>
+    <system:String x:Key="NumpadPlus">숫자패드 +</system:String>
+    <system:String x:Key="NumpadMinus">숫자패드 -</system:String>
+    <!--  Mouse key names  -->
+    <system:String x:Key="MouseWheel">마우스 휠</system:String>
+    <system:String x:Key="MouseKeyForward">마우스 키 앞으로</system:String>
+    <system:String x:Key="MouseKeyBack">마우스 키 뒤로</system:String>
+    <system:String x:Key="DoubleClick">더블 클릭</system:String>
+    <!--  Arrow key names  -->
+    <system:String x:Key="Left">왼쪽</system:String>
+    <system:String x:Key="Right">오른쪽</system:String>
+    <system:String x:Key="Up">위로</system:String>
+    <system:String x:Key="Down">아래로</system:String>
+
+    <!--  Error messages  -->
+    <system:String x:Key="SavingFileFailed">파일 저장 실패</system:String>
+    <system:String x:Key="UnexpectedError">알 수 없는 오류 발생</system:String>
+    <system:String x:Key="NoImages">이미지 없음</system:String>
+    <system:String x:Key="AnErrorOccuredMovingFile">파일을 이동하는 중 오류 발생</system:String>
+    <system:String x:Key="UnableToRender">이미지를 렌더링할 수 없습니다</system:String>
+
+    <!--  Drag and drop  -->
+    <system:String x:Key="DragOverString">이미지를 불러오려면 끌기</system:String>
+
+    <!--  Wallpaper  -->
+    <system:String x:Key="SetAs">다음으로 설정...</system:String>
+    <system:String x:Key="SetAsWallpaper">배경화면으로 설정</system:String>
+    <system:String x:Key="SetAsLockScreenImage">잠금 화면 이미지로 설정</system:String>
+
+    <!--  Edit  -->
+    <system:String x:Key="Crop">자르기</system:String>
+    <system:String x:Key="RotateRight">오른쪽으로 회전</system:String>
+    <system:String x:Key="RotateLeft">왼쪽으로 회전</system:String>
+    <system:String x:Key="Flip">수평 뒤집기</system:String>
+    <system:String x:Key="Unflip">뒤집기 취소</system:String>
+
+    <!--  Archives  -->
+    <system:String x:Key="BadArchive">압축파일을 처리할 수 없습니다</system:String>
+    <system:String x:Key="PasswordArchive">암호로 보호된 압축파일은 지원되지 않습니다</system:String>
+
+    <!--  Delete file messages  -->
+    <system:String x:Key="SentFileToRecycleBin">파일을 휴지통으로 보냈습니다</system:String>
+    <system:String x:Key="DeletedFile">삭제된 파일</system:String>
+    <system:String x:Key="AnErrorOccuredWhenDeleting">삭제할 때 오류 발생</system:String>
+
+    <!--  Scaling messages  -->
+    <system:String x:Key="AutoFitWindowMessage">창 자동 맞춤</system:String>
+    <system:String x:Key="AutoFitWindowFillHeight">창 자동 맞춤, 높이 연장</system:String>
+    <system:String x:Key="NormalWindowBehavior">일반적인 창 동작</system:String>
+    <system:String x:Key="NormalWindowBehaviorFillHeight">일반적인 창 동작, 높이 연장</system:String>
+
+    <system:String x:Key="ScrollingEnabled">스크롤 사용함</system:String>
+    <system:String x:Key="ScrollingDisabled">스크롤 사용 안 함</system:String>
+
+    <!--  Misc messages  -->
+    <system:String x:Key="ConvertedToBase64">base64로 변환</system:String>
+    <system:String x:Key="LoopingEnabled">순환 사용함</system:String>
+    <system:String x:Key="LoopingDisabled">순환 사용 안 함</system:String>
+    <system:String x:Key="Applying">적용</system:String>
+
+    <!--  Button hover tooltips  -->
+    <system:String x:Key="ShowInfoWindow">정보 창 표시</system:String>
+    <system:String x:Key="ShowAllSettingsWindow">모든 설정 창 표시</system:String>
+
+    <system:String x:Key="ToggleBackgroundColor">배경색 전환</system:String>
+    <system:String x:Key="ShowImageGallery">이미지 갤러리 표시</system:String>
+    <system:String x:Key="GoToImageAtSpecifiedIndex">지정된 인덱스에서 이미지로 이동</system:String>
+    <system:String x:Key="AdjustZoomLevel">확대/축소 수준 조정</system:String>
+
+    <system:String x:Key="PasteImageFromClipholder">클립 홀더에서 이미지 붙여넣기</system:String>
+    <system:String x:Key="SendCurrentImageToRecycleBin">현재 이미지를 휴지통으로 보내기</system:String>
+    <system:String x:Key="StartSlideshow">슬라이드쇼 시작</system:String>
+    <system:String x:Key="CloseGallery">갤러리 닫기</system:String>
+
+    <!--  Menu buttons text  -->
+    <system:String x:Key="ShowFullscreenGallery">전체 화면 갤러리 표시</system:String>
+    <system:String x:Key="ShowHorizontalGallery">수평 갤러리 표시</system:String>
+
+    <system:String x:Key="StretchImage">이미지 늘리기</system:String>
+
+    <system:String x:Key="OptimizeImage">이미지 최적화</system:String>
+
+    <system:String x:Key="Effects">효과</system:String>
+    <system:String x:Key="EffectsTooltip">이미지 효과 창 표시</system:String>
+
+    <system:String x:Key="CropPicture">사진 자르기</system:String>
+
+    <system:String x:Key="ShowImageInfo">이미지 정보 표시</system:String>
+
+    <system:String x:Key="ColorPickerTool">색 선택 도구</system:String>
+    <system:String x:Key="ColorPickerToolTooltip">이미지에서 색 선택</system:String>
+
+    <!--  Resize Window  -->
+    <system:String x:Key="ShowResizeWindow">크기 조정 창 표시</system:String>
+
+    <system:String x:Key="Resize">크기 조정</system:String>
+    <system:String x:Key="ResizeImage">이미지 크기 조정</system:String>
+    <system:String x:Key="NoResize">크기 조정 안 함</system:String>
+
+    <system:String x:Key="BatchResize">일괄 크기 조정</system:String>
+
+    <system:String x:Key="SourceFolder">원본 폴더</system:String>
+    <system:String x:Key="OutputFolder">출력 폴더</system:String>
+
+    <system:String x:Key="ConvertTo">변환</system:String>
+    <system:String x:Key="NoConversion">변환 안 함</system:String>
+
+    <system:String x:Key="Compression">압축</system:String>
+    <system:String x:Key="Lossless">무손실</system:String>
+    <system:String x:Key="Lossy">손실</system:String>
+
+    <system:String x:Key="Qaulity">품질</system:String>
+    <system:String x:Key="Percentage">백분율</system:String>
+
+    <system:String x:Key="GenerateThumbnails">썸네일 생성</system:String>
+    <system:String x:Key="Thumbnail">썸네일</system:String>
+
+    <system:String x:Key="Start">시작</system:String>
+    <system:String x:Key="Cancel">취소</system:String>
+
+    <system:String x:Key="None">없음</system:String>
+</ResourceDictionary>

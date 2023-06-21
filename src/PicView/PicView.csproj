@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PicView</RootNamespace>
+    <AssemblyName>PicView</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>false</MapFileExtensions>
+    <TargetCulture>en</TargetCulture>
+    <ProductName>PicView</ProductName>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.1</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+		
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile></DocumentationFile>
+    <LangVersion>7.0</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>none</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.0</LangVersion>
+    <DocumentationFile></DocumentationFile>
+    <FileAlignment>1024</FileAlignment>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>PicView.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Themes\Resources\img\icon__Q6k_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Editing\ShaderEffects\PsEffects\BandedSwirlEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\BandsEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\BloomEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\ColorToneEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\DirectionalBlurEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\EmbossedEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\FrostyOutlineEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GlassTilesEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GloomEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GrayscaleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\GrowablePoissonDiskEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\InvertColorEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\MagnifySmoothEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\MonochromeEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\OldMovieEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\PaperFoldEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\PivotEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\PixelateEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\RippleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SketchGraniteEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SketchPencilStrokeEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\SwirlEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\TelescopicBlurPS3Effect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\ToneMappingEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\Transition_RippleEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\UnderwaterEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Editing\ShaderEffects\PsEffects\WaveWarperEffect.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <AppDesigner Include="Properties\" />
+    <None Remove="Themes\Resources\img\icon.png" />
+    <None Remove="Themes\Resources\img\noise-texture-100x100 %283%29.png" />
+    <None Remove="Themes\Resources\img\noisy-texture-200x200-o2-d15-c-ffffff-t1.png" />
+    <Resource Include="Themes\Resources\img\icon.png" />
+    <Resource Include="Themes\Resources\img\noise-texture-100x100 (3).png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Themes\Resources\fonts\Roboto-Black.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-Bold.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-Italic.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-Light.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-LightItalic.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-Medium.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-MediumItalic.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-Regular.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-Thin.ttf" />
+    <Resource Include="Themes\Resources\fonts\Roboto-ThinItalic.ttf" />
+    <Resource Include="Themes\Resources\fonts\texgyreheros-bold.otf" />
+    <Resource Include="Themes\Resources\fonts\texgyreheros-italic.otf" />
+    <Resource Include="Themes\Resources\fonts\texgyreheros-regular.otf" />
+    <Resource Include="Themes\Resources\img\noisy-texture-200x200-o2-d15-c-ffffff-t1.png" />
+    <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.3" />
+    <PackageReference Include="Magick.NET-Q16-OpenMP-x64" Version="13.1.3" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="7.0.5">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.0.5" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
+    <PackageReference Include="SkiaSharp" Version="2.88.3">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
+    <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\LinkButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\GoToPicButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\LefttButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\RightButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\MenuCloseButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\FullscreenButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\CopyButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\MinButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Buttons\CloseButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Gallery\PicGalleryTopButtonsV2.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Misc\DragDropOverlayPic.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UserControls\Misc\LinkChain - Copy %282%29.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LinkChain.xaml.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UserControls\Misc\LinkChain - Copy - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LinkChain - Copy.xaml.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UserControls\Misc\LinkChain - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>LinkChain.xaml.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Translations\da.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\Styles\ColorThemes\Light.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Translations\fr.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Translations\pl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\LinkButton.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\GoToPicButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\LefttButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\RightButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\MenuCloseButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\FullscreenButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\CopyButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\MinButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Buttons\CloseButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Misc\QuickResize.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\UserControls\Gallery\PicGalleryTopButtonsV2.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Misc\DragDropOverlayPic.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\UserControls\Misc\Icon.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Translations\ro.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Editing\ShaderEffects\PsEffects\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Themes\Resources\img\favicon.ico" />
+    <None Remove="Themes\Resources\img\icon__Q6k_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Themes\Resources\img\icon__Q6k_icon.ico" />
+  </ItemGroup>
+	
+  <PropertyGroup>
+    <FileVersion>1.8.6</FileVersion>
+    <SignAssembly>False</SignAssembly>
+    <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
+    <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
+    <PackageLicenseExpression> GPL-3.0-only</PackageLicenseExpression>
+    <DelaySign>True</DelaySign>
+    <LangVersion>preview</LangVersion>
+    <Authors>Ruben2776</Authors>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageIcon>icon-raster.128b.png</PackageIcon>
+    <AssemblyVersion>1.8.6</AssemblyVersion>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Fast Picture Viewer with compact UI that can be hidden. </Description>
+    <PackageTags>picture-viewer,desktop-app,</PackageTags>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+
+</Project>
