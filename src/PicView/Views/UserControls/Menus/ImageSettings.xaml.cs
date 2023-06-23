@@ -101,11 +101,13 @@ public partial class ImageSettings
         ContainedGalleryBorder.MouseLeftButtonDown += async delegate
         {
             UC.Close_UserControls();
+            Settings.Default.IsBottomGalleryShown = true;
             await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
         };
         ContainedGalleryButton.Click += async delegate
         {
             UC.Close_UserControls();
+            Settings.Default.IsBottomGalleryShown = true;
             await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
         };
     }

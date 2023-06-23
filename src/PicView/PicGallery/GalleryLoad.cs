@@ -37,7 +37,6 @@ internal static class GalleryLoad
             };
 
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
-            Panel.SetZIndex(UC.GetPicGallery, 999);
         }
 
         GalleryFunctions.IsGalleryOpen = true;

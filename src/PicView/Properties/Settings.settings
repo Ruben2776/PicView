@@ -137,5 +137,8 @@
     <Setting Name="ExpandedGalleryItems" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">23</Value>
     </Setting>
+    <Setting Name="IsBottomGalleryShown" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

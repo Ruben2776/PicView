@@ -1,17 +1,19 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.UC;
+using Timer = System.Timers.Timer;
 
 namespace PicView.PicGallery;
 
@@ -21,31 +23,114 @@ internal static class GalleryToggle
 
     internal static async Task OpenHorizontalGalleryAsync()
     {
-        if (Pics?.Count < 1)
+        if (Settings.Default.IsBottomGalleryShown && IsGalleryOpen)
         {
-            return;
-        }
-
-        IsGalleryOpen = true;
-
-        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
-        {
-            GalleryLoad.LoadLayout();
-            GetPicGallery.Visibility = Visibility.Visible;
-
-            var fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
-            if (fade == false)
+            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
             {
-                GetPicGallery.Opacity = 1;
+                // Set size
+                GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItems);
+                GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;
+
+                // Set alignment
+                GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+                // Set scrollbar visibility and orientation
+                GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                GetPicGallery.Container.Orientation = Orientation.Vertical;
+
+                // Set style
+                GetPicGallery.x2.Visibility = Visibility.Visible;
+                GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
+                GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
+                GetPicGallery.border.Background =
+                    (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
+                foreach (var child in GetPicGallery.Container.Children)
+                {
+                    var item = (PicGalleryItem)child;
+                    item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSize;
+                    item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
+                }
+
+                var heightAnimation = new DoubleAnimation
+                {
+                    FillBehavior = FillBehavior.Stop,
+                    AccelerationRatio = 0.7,
+                    DecelerationRatio = 0.3,
+                    From = GalleryNavigation.PicGalleryItemSize + 22,
+                    To = GetMainWindow.ParentContainer.ActualHeight,
+                    Duration = TimeSpan.FromSeconds(.5)
+                };
+
+                heightAnimation.Completed += delegate
+                {
+                    GetPicGallery.Height = GetMainWindow.ParentContainer.ActualHeight;
+                    GalleryNavigation.ScrollToGalleryCenter();
+                };
+
+                GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
+            });
+        }
+        else if (Settings.Default.IsBottomGalleryShown)
+        {
+            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+            {
+                if (GetPicGallery == null)
+                {
+                    GetPicGallery = new Views.UserControls.Gallery.PicGallery();
+
+                    GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
+                }
+                GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
+                GetPicGallery.Width = GetMainWindow.Width;
+                GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
+
+                // Set alignment
+                GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
+                GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
+
+                // Set scrollbar visibility and orientation
+                GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                GetPicGallery.Container.Orientation = Orientation.Horizontal;
+
+                // Set style
+                GetPicGallery.x2.Visibility = Visibility.Collapsed;
+                GetPicGallery.Container.Margin = new Thickness(0);
+                GetPicGallery.border.BorderThickness = new Thickness(1);
+                GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
+                GetPicGallery.border.Background =
+                    (SolidColorBrush)Application.Current.Resources["BackgroundSubtleHighlightBrush"];
+            });
+        }
+        else
+        {
+            if (Pics?.Count < 1)
+            {
+                return;
             }
 
-            GetClickArrowLeft.Visibility =
-                GetClickArrowRight.Visibility =
-                    GetX2.Visibility =
-                        GetMinus.Visibility =
-                            GetRestoreButton.Visibility =
-                                GetGalleryShortcut.Visibility = Visibility.Hidden;
-        });
+            IsGalleryOpen = true;
+
+            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+            {
+                GalleryLoad.LoadLayout();
+                GetPicGallery.Visibility = Visibility.Visible;
+
+                var fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
+                if (fade == false)
+                {
+                    GetPicGallery.Opacity = 1;
+                }
+
+                GetClickArrowLeft.Visibility =
+                    GetClickArrowRight.Visibility =
+                        GetX2.Visibility =
+                            GetMinus.Visibility =
+                                GetRestoreButton.Visibility =
+                                    GetGalleryShortcut.Visibility = Visibility.Hidden;
+            });
+        }
 
         await LoadAndScrollToAsync().ConfigureAwait(false);
     }
@@ -196,7 +281,7 @@ internal static class GalleryToggle
             Settings.Default.FullscreenGallery = true;
             if (GetPicGallery is null) // Use timer to fix incorrect calculated size
             {
-                var timer = new System.Timers.Timer(TimeSpan.FromSeconds(.4))
+                var timer = new Timer(TimeSpan.FromSeconds(.4))
                 {
                     AutoReset = false,
                     Enabled = true

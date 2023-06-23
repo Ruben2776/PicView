@@ -155,13 +155,13 @@ public partial class MainWindow
             MouseOverAnimations.SetButtonIconMouseOverAnimations(GalleryButton, GalleryBg, GalleryBrush, true);
             GalleryButton.Click += async (_, _) =>
             {
-                if (GalleryFunctions.IsGalleryOpen)
-                {
-                    GalleryToggle.CloseHorizontalGallery();
-                }
-                else if (Settings.Default.FullscreenGallery == false)
+                if (!GalleryFunctions.IsGalleryOpen || Settings.Default.IsBottomGalleryShown)
                 {
                     await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    GalleryToggle.CloseHorizontalGallery();
                 }
             };
 
