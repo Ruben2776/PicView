@@ -108,6 +108,35 @@ internal static class GalleryLoad
         }
     }
 
+    internal static void LoadBottomGallery()
+    {
+        UC.GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
+        GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
+        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.Width;
+        UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
+
+        // Set alignment
+        UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
+        UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
+
+        // Set scrollbar visibility and orientation
+        UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+        UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+        UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
+
+        // Set style
+        UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
+        UC.GetPicGallery.Container.Margin = new Thickness(0, 1, 0, 0);
+        UC.GetPicGallery.border.BorderThickness = new Thickness(1);
+        UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
+        UC.GetPicGallery.border.Background = Brushes.Transparent;
+
+        if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(UC.GetPicGallery))
+        {
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
+        }
+    }
+
     internal static async Task LoadAsync()
     {
         if (UC.GetPicGallery is null || IsLoading) { return; }

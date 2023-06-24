@@ -465,14 +465,7 @@ internal static class MainKeyboardShortcuts
 
                 // G
                 case Key.G:
-                    if (GalleryFunctions.IsGalleryOpen)
-                    {
-                        GalleryToggle.CloseHorizontalGallery();
-                    }
-                    else if (Settings.Default.FullscreenGallery == false)
-                    {
-                        await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-                    }
+                    await GalleryToggle.ToggleGalleryAsync().ConfigureAwait(false);
                     break;
 
                 // Space

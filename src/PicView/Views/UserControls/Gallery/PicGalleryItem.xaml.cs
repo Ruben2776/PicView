@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using PicView.Properties;
 using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.PicGallery.GalleryNavigation;
@@ -21,16 +22,16 @@ public partial class PicGalleryItem : UserControl
         Id = id;
 
         OuterBorder.Width = OuterBorder.Height = PicGalleryItemSize;
-        InnerBorder.Width = InnerBorder.Height = PicGalleryItemSizeS;
+        InnerBorder.Width = InnerBorder.Height = Settings.Default.IsBottomGalleryShown ? PicGalleryItemSize : PicGalleryItemSizeS;
 
-        ThumbImage.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
+        ThumbImage.MouseEnter += (s, y) => AnimationHelper.AnimateGalleryItemSize(
             this,
             false,
             PicGalleryItemSizeS,
             PicGalleryItemSize
         );
 
-        ThumbImage.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
+        ThumbImage.MouseLeave += (s, y) => AnimationHelper.AnimateGalleryItemSize(
             this,
             true,
             PicGalleryItemSize,

@@ -167,7 +167,7 @@ internal static class GalleryNavigation
             else
             {
                 nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSizeS;
+                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown || Settings.Default.FullscreenGallery ? PicGalleryItemSize : PicGalleryItemSizeS;
             }
         });
     }

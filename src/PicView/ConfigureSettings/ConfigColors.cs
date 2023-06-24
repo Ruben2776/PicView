@@ -5,6 +5,7 @@ using PicView.UILogic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace PicView.ConfigureSettings;
 
@@ -29,7 +30,6 @@ internal static class ConfigColors
     {
         var getColor = AnimationHelper.GetPreferredColor();
         var getColorBrush = new SolidColorBrush(getColor);
-
         Application.Current.Resources["ChosenColor"] = getColor;
         Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 

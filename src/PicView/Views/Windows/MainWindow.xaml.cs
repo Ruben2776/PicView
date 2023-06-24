@@ -95,6 +95,11 @@ public partial class MainWindow
                             DispatcherPriority.Send);
                     }
                 }
+                else if (Settings.Default.IsBottomGalleryShown)
+                {
+                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadBottomGallery,
+                        DispatcherPriority.Send);
+                }
 
                 // Load image if possible
                 if (args.Length <= 1)
@@ -153,17 +158,7 @@ public partial class MainWindow
 
             //GalleryButton
             MouseOverAnimations.SetButtonIconMouseOverAnimations(GalleryButton, GalleryBg, GalleryBrush, true);
-            GalleryButton.Click += async (_, _) =>
-            {
-                if (!GalleryFunctions.IsGalleryOpen || Settings.Default.IsBottomGalleryShown)
-                {
-                    await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    GalleryToggle.CloseHorizontalGallery();
-                }
-            };
+            GalleryButton.Click += async (_, _) => await GalleryToggle.ToggleGalleryAsync().ConfigureAwait(false);
 
             // RotateButton
             MouseOverAnimations.SetButtonIconMouseOverAnimations(RotateButton, RotateBg, RotateBrush, true);

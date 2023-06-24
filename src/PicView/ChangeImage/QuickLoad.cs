@@ -103,7 +103,7 @@ internal static class QuickLoad
         if (bitmapSource is not null)
             await PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
-        if (Settings.Default.FullscreenGallery)
+        if (Settings.Default.FullscreenGallery || Settings.Default.IsBottomGalleryShown)
         {
             await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }

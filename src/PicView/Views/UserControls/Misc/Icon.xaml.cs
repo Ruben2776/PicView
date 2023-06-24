@@ -16,7 +16,14 @@ public partial class Icon
     {
         Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
         {
-            BaseBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
+            try
+            {
+                BaseBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
+            }
+            catch (Exception)
+            {
+                // Unhandled Exception: System.Reflection.TargetParameterCountException: Parameter count mismatch
+            }
         });
     }
 }

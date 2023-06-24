@@ -96,10 +96,13 @@ internal static partial class NativeMethods
             }
 
             // Resize gallery
-            if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
+            if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen || UC.GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
             {
+                if (!Settings.Default.IsBottomGalleryShown)
+                {
+                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                }
                 UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-                UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
             }
 
             ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);

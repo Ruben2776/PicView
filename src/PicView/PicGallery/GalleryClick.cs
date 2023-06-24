@@ -25,7 +25,7 @@ internal static class GalleryClick
 {
     internal static async Task ClickAsync(int id)
     {
-        if (Settings.Default.FullscreenGallery)
+        if (Settings.Default.FullscreenGallery || Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen)
         {
             await ItemClickAsync(id).ConfigureAwait(false);
             return;
@@ -45,16 +45,23 @@ internal static class GalleryClick
         var imageSize = ImageSizeFunctions.GetImageSize(Pics[id]);
         if (imageSize.HasValue)
         {
-            GalleryFunctions.IsGalleryOpen = false;
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 SetTitle.SetLoadingString();
+                if (Settings.Default.IsBottomGalleryShown)
+                {
+                    GalleryToggle.CloseHorizontalGallery();
+                }
+
+                GetPicGallery.Height = Settings.Default.IsBottomGalleryShown
+                    ? GalleryNavigation.PicGalleryItemSize + 22
+                    : 0;
                 FitImage(imageSize.Value.Width, imageSize.Value.Height);
             });
         }
 
         var fromSize = GalleryNavigation.PicGalleryItemSize;
-        var toSize = new[] { XWidth, XHeight };
+        var toSize = new[] { XWidth <= 0 ? ConfigureWindows.GetMainWindow.ActualWidth : XWidth, XHeight <= 0 ? ConfigureWindows.GetMainWindow.ActualHeight : XHeight };
         var acceleration = 0.2;
         var deceleration = 0.4;
         var duration = TimeSpan.FromSeconds(.3);
@@ -83,11 +90,14 @@ internal static class GalleryClick
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
+                if (!Settings.Default.IsBottomGalleryShown)
+                {
+                    GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
+                }
                 border.Opacity = 0;
-                GetPicGallery.grid.Children.Remove(border);
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(border);
                 image = null;
                 GalleryFunctions.IsGalleryOpen = false;
-                GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
             });
             await ItemClickAsync(id).ConfigureAwait(false);
@@ -110,27 +120,19 @@ internal static class GalleryClick
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (Settings.Default.AutoFitWindow)
+            var opacityAnimation = new DoubleAnimation
             {
-                GetPicGallery.Width = XWidth;
-                GetPicGallery.Height = XHeight;
-            }
-            else
-            {
-                var opacityAnimation = new DoubleAnimation
-                {
-                    From = 1,
-                    To = 0,
-                    Duration = duration,
-                    AccelerationRatio = acceleration,
-                    DecelerationRatio = deceleration,
-                    FillBehavior = FillBehavior.Stop
-                };
-                GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
-            }
+                From = 1,
+                To = 0,
+                Duration = duration,
+                AccelerationRatio = acceleration,
+                DecelerationRatio = deceleration,
+                FillBehavior = FillBehavior.Stop
+            };
+            GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
 
             GetPicGallery.x2.Visibility = Visibility.Hidden;
-            GetPicGallery.grid.Children.Add(border);
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(border);
 
             border.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
             border.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);

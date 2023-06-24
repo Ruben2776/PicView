@@ -37,7 +37,7 @@ internal static class UIHelper
             expanded = true;
         }
 
-        AnimationHelper.HeightAnimation(frameworkElement, from, to, expanded);
+        AnimationHelper.AnimateHeight(frameworkElement, from, to, expanded);
 
         if (expanded)
         {

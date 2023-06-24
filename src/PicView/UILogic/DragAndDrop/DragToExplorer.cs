@@ -22,8 +22,7 @@ internal static class DragToExplorer
     internal static void DragFile(object sender, MouseButtonEventArgs e)
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null
-            || Keyboard.Modifiers == ModifierKeys.Shift
-            || Keyboard.Modifiers == ModifierKeys.Alt
+            || Keyboard.Modifiers is ModifierKeys.Shift or ModifierKeys.Alt
             || Settings.Default.FullscreenGallery
             || GalleryFunctions.IsGalleryOpen
             || Settings.Default.Fullscreen
@@ -94,12 +93,19 @@ internal static class DragToExplorer
                 UpdateDragDropWindow(ConfigureWindows.GetMainWindow.MainImage);
             }
 
-            var senderElement = sender as FrameworkElement;
-            var dragObj = new DataObject();
-            dragObj.SetFileDropList(new StringCollection { file });
-            if (senderElement is null) return;
-            DragDrop.AddQueryContinueDragHandler(senderElement, DragContrinueHandler);
-            DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
+            try
+            {
+                var senderElement = sender as FrameworkElement;
+                var dragObj = new DataObject();
+                dragObj.SetFileDropList(new StringCollection { file });
+                if (senderElement is null) return;
+                DragDrop.AddQueryContinueDragHandler(senderElement, DragContrinueHandler);
+                DragDrop.DoDragDrop(senderElement, dragObj, DragDropEffects.Copy);
+            }
+            catch (Exception)
+            {
+                // A drag operation already occurred exception
+            }
         });
     }
 

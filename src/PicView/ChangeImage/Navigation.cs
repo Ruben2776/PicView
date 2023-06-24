@@ -111,7 +111,7 @@ internal static class Navigation
         }
 
         // If the horizontal fullscreen gallery is open, deselect current index
-        if (Settings.Default.FullscreenGallery)
+        if (UC.GetPicGallery is not null)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
