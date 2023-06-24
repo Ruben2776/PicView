@@ -39,10 +39,10 @@ internal static class GalleryLoad
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
         }
 
-        GalleryFunctions.IsGalleryOpen = true;
+        
 
         if (Settings.Default.FullscreenGallery)
-        {
+        {GalleryFunctions.IsGalleryOpen = true;
             WindowSizing.RenderFullscreen();
 
             // Set size
@@ -68,6 +68,10 @@ internal static class GalleryLoad
             ShowNavigation(false);
             ShowTopAndBottom(false);
             ConfigureWindows.GetMainWindow.Focus();
+        }
+        else if (Settings.Default.IsBottomGalleryShown && GalleryFunctions.IsGalleryOpen == false)
+        {
+            LoadBottomGallery();
         }
         else
         {
@@ -103,7 +107,7 @@ internal static class GalleryLoad
         for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
         {
             var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-            item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSizeS;
+            item.InnerBorder.Height = item.InnerBorder.Width = Settings.Default.IsBottomGalleryShown ? GalleryNavigation.PicGalleryItemSize : GalleryNavigation.PicGalleryItemSizeS;
             item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
         }
     }
@@ -114,6 +118,8 @@ internal static class GalleryLoad
         GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
         UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.Width;
         UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
+        UC.GetPicGallery.Visibility = Visibility.Visible;
+        UC.GetPicGallery.Opacity = 1;
 
         // Set alignment
         UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;

@@ -18,7 +18,7 @@ internal static class GalleryNavigation
     {
         PicGalleryItemSize = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
 
-        PicGalleryItemSizeS = !Settings.Default.FullscreenGallery ? PicGalleryItemSize - 20 : PicGalleryItemSize - 10;
+        PicGalleryItemSizeS = Settings.Default.FullscreenGallery ? PicGalleryItemSize - 15 : PicGalleryItemSize - 7;
     }
 
     internal static double PicGalleryItemSize { get; private set; }

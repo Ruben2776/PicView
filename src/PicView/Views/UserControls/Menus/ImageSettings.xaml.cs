@@ -98,17 +98,21 @@ public partial class ImageSettings
         // ContainedGalleryBorder
         SetButtonIconMouseOverAnimations(ContainedGalleryButton, ContainedButtonBrush,
             (SolidColorBrush)Resources["ContainedIcon"]);
-        ContainedGalleryBorder.MouseLeftButtonDown += async delegate
+        ContainedGalleryBorder.MouseLeftButtonDown += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
+        ContainedGalleryButton.Click += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
+    }
+
+    private static async Task ContainedGalleryClick()
+    {
+        UC.Close_UserControls();
+        Settings.Default.IsBottomGalleryShown = !Settings.Default.IsBottomGalleryShown;
+        if (Settings.Default.IsBottomGalleryShown)
         {
-            UC.Close_UserControls();
-            Settings.Default.IsBottomGalleryShown = !Settings.Default.IsBottomGalleryShown;
             await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-        };
-        ContainedGalleryButton.Click += async delegate
+        }
+        else
         {
-            UC.Close_UserControls();
-            Settings.Default.IsBottomGalleryShown = !Settings.Default.IsBottomGalleryShown;
-            await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-        };
+            GalleryToggle.CloseBottomGallery();
+        }
     }
 }

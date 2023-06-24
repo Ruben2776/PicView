@@ -39,31 +39,73 @@ internal static class GalleryClick
             ConfigureWindows.GetMainWindow.MainImage.Source = galleryItem.ThumbImage.Source;
         });
 
-        Border? border = null;
-        Image? image = null;
-
         var imageSize = ImageSizeFunctions.GetImageSize(Pics[id]);
+        DoubleAnimation? galleryCloseAnimation;
+        var image = new Image
+        {
+            Source = GetThumb(id) ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(),
+            Stretch = Stretch.Fill,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        // Need to add border for background to pictures with transparent background
+        var border = new Border
+        {
+            Background = ConfigColors.BackgroundColorBrush,
+            Child = image
+        };
+        ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(border);
+
         if (imageSize.HasValue)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 SetTitle.SetLoadingString();
-                if (Settings.Default.IsBottomGalleryShown)
+                FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                if (!Settings.Default.IsBottomGalleryShown)
                 {
-                    GalleryToggle.CloseHorizontalGallery();
+                    return;
                 }
 
-                GetPicGallery.Height = Settings.Default.IsBottomGalleryShown
-                    ? GalleryNavigation.PicGalleryItemSize + 22
-                    : 0;
-                FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                border.Width = XWidth;
+                border.Height = XHeight;
+                galleryCloseAnimation = new DoubleAnimation
+                {
+                    FillBehavior = FillBehavior.Stop,
+                    AccelerationRatio = 0.5,
+                    DecelerationRatio = 0.5,
+                    From = GetPicGallery.ActualHeight,
+                    To = GalleryNavigation.PicGalleryItemSize + 22,
+                    Duration = TimeSpan.FromSeconds(.5)
+                };
+                GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
+                for (int i = 0; i < GetPicGallery.Container.Children.Count; i++)
+                {
+                    var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
+                    item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSize;
+                    item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
+                }
+                galleryCloseAnimation.Completed += async delegate
+                {
+                    border.Opacity = 0;
+                    ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(border);
+                    image = null;
+                    GalleryFunctions.IsGalleryOpen = false;
+                    ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
+                    GalleryLoad.LoadBottomGallery();
+                    await ItemClickAsync(id).ConfigureAwait(false);
+                };
+
+                GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, galleryCloseAnimation);
             });
         }
+        if (Settings.Default.IsBottomGalleryShown) return;
 
         var fromSize = GalleryNavigation.PicGalleryItemSize;
         var toSize = new[] { XWidth <= 0 ? ConfigureWindows.GetMainWindow.ActualWidth : XWidth, XHeight <= 0 ? ConfigureWindows.GetMainWindow.ActualHeight : XHeight };
-        var acceleration = 0.2;
-        var deceleration = 0.4;
+        const double acceleration = 0.2;
+        const double deceleration = 0.4;
         var duration = TimeSpan.FromSeconds(.3);
 
         var widthAnimation = new DoubleAnimation
@@ -92,8 +134,8 @@ internal static class GalleryClick
             {
                 if (!Settings.Default.IsBottomGalleryShown)
                 {
-                    GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 }
+                GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 border.Opacity = 0;
                 ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(border);
                 image = null;
@@ -101,21 +143,6 @@ internal static class GalleryClick
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
             });
             await ItemClickAsync(id).ConfigureAwait(false);
-        };
-
-        image = new Image
-        {
-            Source = GetThumb(id) ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(),
-            Stretch = Stretch.Fill,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        // Need to add border for background to pictures with transparent background
-        border = new Border
-        {
-            Background = ConfigColors.BackgroundColorBrush,
-            Child = image
         };
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -132,10 +159,12 @@ internal static class GalleryClick
             GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
 
             GetPicGallery.x2.Visibility = Visibility.Hidden;
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(border);
 
-            border.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
-            border.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
+            if (!Settings.Default.IsBottomGalleryShown)
+            {
+                border.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
+                border.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
+            }
         }, DispatcherPriority.Send);
     }
 

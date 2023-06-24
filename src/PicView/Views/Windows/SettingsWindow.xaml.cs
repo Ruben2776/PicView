@@ -108,7 +108,6 @@ public partial class SettingsWindow
                 Settings.Default.BottomGalleryItems = (int)e.NewValue;
                 SetBottomGalleryText.Text = e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
                 Settings.Default.Save();
-                if (!Settings.Default.FullscreenGallery) return;
 
                 GalleryLoad.LoadLayout();
                 ScaleImage.TryFitImage();

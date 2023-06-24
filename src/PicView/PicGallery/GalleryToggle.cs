@@ -42,14 +42,14 @@ internal static class GalleryToggle
 
                     // Set style
                     GetPicGallery.x2.Visibility = Visibility.Visible;
-                    GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
+                    GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 13);
                     GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
                     GetPicGallery.border.Background =
                         (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
                     foreach (var child in GetPicGallery.Container.Children)
                     {
                         var item = (PicGalleryItem)child;
-                        item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSize;
+                        item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSizeS;
                         item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
                     }
 
@@ -75,6 +75,7 @@ internal static class GalleryToggle
 
             case true:
                 await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, GalleryLoad.LoadBottomGallery);
+                ScaleImage.TryFitImage();
                 break;
 
             default:
@@ -167,6 +168,29 @@ internal static class GalleryToggle
         {
             CloseHorizontalGallery();
         }
+    }
+
+    internal static void CloseBottomGallery()
+    {
+        if (GetPicGallery is null) { return; }
+
+        GetMainWindow.Dispatcher.Invoke(() =>
+        {
+            GetPicGallery.Visibility = Visibility.Collapsed;
+                GetPicGallery.Opacity = 0;
+                GetClickArrowLeft.Visibility =
+                    GetClickArrowRight.Visibility =
+                        GetX2.Visibility =
+                            GetMinus.Visibility =
+                                GetRestoreButton.Visibility =
+                                    GetGalleryShortcut.Visibility = Visibility.Hidden;
+            
+            if (GetMainWindow.MainImage.Source is null) return;
+            ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+        });
+
+        IsGalleryOpen = false;
+        Settings.Default.IsBottomGalleryShown = false;
     }
 
     internal static void CloseHorizontalGallery()
@@ -353,10 +377,10 @@ internal static class GalleryToggle
 
         try
         {
-            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
-            {
+            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {GalleryNavigation.ScrollToGalleryCenter();
                 GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.ScrollToGalleryCenter();
+                
             });
         }
         catch (TaskCanceledException)
