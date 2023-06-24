@@ -242,7 +242,7 @@
     <system:String x:Key="CopyImageTooltip">Kopieren als Windows Zwischenablage Bild</system:String>
 
     <!--  Paste  -->
-    <system:String x:Key="FilePaste">Einfügen</system:String>
+    <system:String x:Key="FilePaste">Einsetzen</system:String>
 
     <!--  Cut  -->
     <system:String x:Key="FileCut">Datei ausschneiden</system:String>
