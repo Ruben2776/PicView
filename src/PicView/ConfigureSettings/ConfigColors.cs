@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.PicGallery;
 
 namespace PicView.ConfigureSettings;
 
@@ -37,6 +39,11 @@ internal static class ConfigColors
         ConfigureWindows.GetSettingsWindow?.Logo.ChangeColor();
         ConfigureWindows.GetInfoWindow?.ChangeColor();
         UC.GetStartUpUC?.ChangeColor();
+        if (UC.GetPicGallery is not null)
+        {
+            // Call function to update color
+            GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
+        }
 
         Settings.Default.Save();
     }

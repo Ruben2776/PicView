@@ -30,7 +30,7 @@ internal static class GalleryNavigation
         {
             if (GetPicGallery == null || PicGalleryItemSize == 0) { return 0; }
 
-            return (int)Math.Floor(GetPicGallery.Width / PicGalleryItemSize);
+            return (int)Math.Floor(GetPicGallery.ActualWidth / PicGalleryItemSize);
         }
     }
 
@@ -48,7 +48,7 @@ internal static class GalleryNavigation
     {
         get
         {
-            if (GetPicGallery == null || PicGalleryItemSize == 0) { return 0; }
+            if (GetPicGallery == null || PicGalleryItemSize <= 0) { return 0; }
             if (GetPicGallery.Container.Children.Count <= SelectedGalleryItem) { return 0; }
 
             var selectedScrollTo = GetPicGallery.Container.Children[SelectedGalleryItem].TranslatePoint(new Point(), GetPicGallery.Container);
@@ -67,11 +67,9 @@ internal static class GalleryNavigation
     /// </summary>
     internal static void ScrollToGalleryCenter()
     {
-        if (GetPicGallery == null || PicGalleryItemSize < 1) { return; }
-        if (!GalleryFunctions.IsGalleryOpen) return;
-
-        if (GetPicGallery.Container.Children.Count < FolderIndex || GetPicGallery.Container.Children.Count <= 0) { return; }
-        GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+        var centerScrollPosition = CenterScrollPosition;
+        if (centerScrollPosition == 0) { return; }
+        GetPicGallery.Scroller.ScrollToHorizontalOffset(centerScrollPosition);
     }
 
     /// <summary>

@@ -119,16 +119,23 @@ internal static class Navigation
                 // Deselect current item
                 GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
                 GalleryNavigation.SetSelected(FolderIndex, false);
-
-                // Select next item
-                GalleryNavigation.SetSelected(next, true);
-                GalleryNavigation.SelectedGalleryItem = next;
-                GalleryNavigation.ScrollToGalleryCenter();
             });
         }
 
         if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
         else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+
+        // If the horizontal fullscreen gallery is open, deselect current index
+        if (UC.GetPicGallery is not null)
+        {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                // Select next item
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
+        }
     }
 
     /// <summary>

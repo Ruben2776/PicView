@@ -292,6 +292,10 @@ internal static class GalleryToggle
         }
 
         GetMainWindow.Topmost = Settings.Default.TopMost;
+
+        if (!Settings.Default.IsBottomGalleryShown) return;
+
+        GalleryLoad.LoadBottomGallery();
     }
 
     #endregion Close
