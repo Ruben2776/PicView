@@ -78,7 +78,7 @@ internal static class GalleryClick
                     DecelerationRatio = 0.5,
                     From = GetPicGallery.ActualHeight,
                     To = GalleryNavigation.PicGalleryItemSize + 22,
-                    Duration = TimeSpan.FromSeconds(.5)
+                    Duration = TimeSpan.FromSeconds(.7)
                 };
                 GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
                 for (int i = 0; i < GetPicGallery.Container.Children.Count; i++)
