@@ -58,7 +58,6 @@ public partial class MainWindow
             // Subscribe to Windows resized event || Need to be exactly on load
             HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle)
                 ?.AddHook(NativeMethods.WndProc);
-            ConfigColors.MainWindowUnfocusOrFocus(true);
             StartLoading.LoadedEvent();
         };
 
@@ -203,6 +202,7 @@ public partial class MainWindow
             };
 
             Logo.MouseLeftButtonDown += (_, _) => ConfigureWindows.WindowContextMenu.IsOpen = true;
+            ConfigColors.MainWindowUnfocusOrFocus(true);
         };
     }
 

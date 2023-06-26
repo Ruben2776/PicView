@@ -90,7 +90,7 @@ internal static class ConfigColors
             w.TitleBar.Background =
                 isFocused ? (SolidColorBrush)Application.Current.Resources["SubtleFadeBrush"]
                     : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
-            w.LowerBar.Background = isFocused ? (ImageBrush)Application.Current.Resources["NoisyBg"]
+            w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
                 : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
         }
         else
