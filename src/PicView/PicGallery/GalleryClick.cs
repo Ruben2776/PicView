@@ -63,6 +63,7 @@ internal static class GalleryClick
             {
                 SetTitle.SetLoadingString();
                 FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                // Show closing animation from bottom gallery
                 if (!Settings.Default.IsBottomGalleryShown)
                 {
                     return;
@@ -86,7 +87,7 @@ internal static class GalleryClick
                     item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSize;
                     item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
                 }
-                galleryCloseAnimation.Completed += async delegate
+                galleryCloseAnimation.Completed += delegate
                 {
                     border.Opacity = 0;
                     ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(border);
@@ -94,16 +95,19 @@ internal static class GalleryClick
                     GalleryFunctions.IsGalleryOpen = false;
                     ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                     GalleryLoad.LoadBottomGallery();
-                    await ItemClickAsync(id).ConfigureAwait(false);
                 };
 
                 GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, galleryCloseAnimation);
             });
+            if (Settings.Default.IsBottomGalleryShown)
+                await ItemClickAsync(id).ConfigureAwait(false);
         }
-        if (Settings.Default.IsBottomGalleryShown) return;
+        if (Settings.Default.IsBottomGalleryShown) return; // Only show width and height animation when bottom gallery is not shown
+
+        ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.Manual; // Fix stretching whole screen when auto fitting
 
         var fromSize = GalleryNavigation.PicGalleryItemSize;
-        var toSize = new[] { XWidth <= 0 ? ConfigureWindows.GetMainWindow.ActualWidth : XWidth, XHeight <= 0 ? ConfigureWindows.GetMainWindow.ActualHeight : XHeight };
+        var toSize = new[] { XWidth, XHeight };
         const double acceleration = 0.2;
         const double deceleration = 0.4;
         var duration = TimeSpan.FromSeconds(.3);
@@ -115,7 +119,8 @@ internal static class GalleryClick
             Duration = duration,
             AccelerationRatio = acceleration,
             DecelerationRatio = deceleration,
-            FillBehavior = FillBehavior.Stop
+            FillBehavior = FillBehavior.Stop,
+            AutoReverse = false
         };
 
         var heightAnimation = new DoubleAnimation
@@ -125,22 +130,24 @@ internal static class GalleryClick
             Duration = duration,
             AccelerationRatio = acceleration,
             DecelerationRatio = deceleration,
-            FillBehavior = FillBehavior.Stop
+            FillBehavior = FillBehavior.Stop,
+            AutoReverse = false
         };
 
         widthAnimation.Completed += async delegate
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
-                if (!Settings.Default.IsBottomGalleryShown)
-                {
-                }
                 GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 border.Opacity = 0;
                 ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(border);
                 image = null;
                 GalleryFunctions.IsGalleryOpen = false;
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
+                if (Settings.Default.AutoFitWindow) // Revert back to auto fitting
+                {
+                    ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                }
             });
             await ItemClickAsync(id).ConfigureAwait(false);
         };
@@ -160,11 +167,10 @@ internal static class GalleryClick
 
             GetPicGallery.x2.Visibility = Visibility.Hidden;
 
-            if (!Settings.Default.IsBottomGalleryShown)
-            {
-                border.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
-                border.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
-            }
+            if (Settings.Default.IsBottomGalleryShown) return;
+
+            border.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
+            border.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
         }, DispatcherPriority.Send);
     }
 
@@ -178,7 +184,7 @@ internal static class GalleryClick
             GalleryNavigation.SetSelected(FolderIndex, false);
 
             // Restore interface elements if needed
-            if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen && Settings.Default.ShowAltInterfaceButtons)
+            if (!Settings.Default.ShowInterface || Settings.Default is { Fullscreen: true, ShowAltInterfaceButtons: true })
             {
                 HideInterfaceLogic.ShowNavigation(true);
                 HideInterfaceLogic.ShowShortcuts(true);
@@ -187,7 +193,6 @@ internal static class GalleryClick
             // Select next item
             GalleryNavigation.SetSelected(id, true);
             GalleryNavigation.SelectedGalleryItem = id;
-            GalleryNavigation.ScrollToGalleryCenter();
         });
         // Change image
         await LoadPic.LoadPicAtIndexAsync(id).ConfigureAwait(false);
