@@ -95,6 +95,7 @@ internal static class GalleryClick
                     GalleryFunctions.IsGalleryOpen = false;
                     ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                     GalleryLoad.LoadBottomGallery();
+                    GalleryNavigation.ScrollToGalleryCenter();
                 };
 
                 GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, galleryCloseAnimation);
