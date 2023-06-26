@@ -54,7 +54,7 @@ internal static class GalleryNavigation
             var selectedScrollTo = GetPicGallery.Container.Children[SelectedGalleryItem].TranslatePoint(new Point(), GetPicGallery.Container);
 
             // ReSharper disable once PossibleLossOfFraction
-            return selectedScrollTo.X - (HorizontalItems / 2) * PicGalleryItemSize + (PicGalleryItemSizeS / 2); // Scroll to overlap half of item
+            return selectedScrollTo.X - (HorizontalItems + 1) / 2 * PicGalleryItemSize + PicGalleryItemSizeS / 2; // Scroll to overlap half of item
         }
     }
 
