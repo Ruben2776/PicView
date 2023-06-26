@@ -98,7 +98,7 @@ internal static partial class NativeMethods
             // Resize gallery
             if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen || UC.GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
             {
-                if (!Settings.Default.IsBottomGalleryShown)
+                if (!Settings.Default.IsBottomGalleryShown || GalleryFunctions.IsGalleryOpen && !Settings.Default.FullscreenGallery)
                 {
                     UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }
