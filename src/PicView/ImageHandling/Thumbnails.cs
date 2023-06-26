@@ -1,9 +1,11 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
 using PicView.Views.UserControls.Gallery;
+using SkiaSharp;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
+using SkiaSharp.Views.WPF;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -66,23 +68,50 @@ internal static class Thumbnails
             using var image = new MagickImage();
             image.Ping(fileInfo);
             var thumb = image.GetExifProfile()?.CreateThumbnail();
-            if (thumb is not null)
+            var bitmapThumb = thumb?.ToBitmapSource();
+            if (bitmapThumb != null)
             {
-                var bitmapThumb = thumb.ToBitmapSource();
-                bitmapThumb?.Freeze();
-                return bitmapThumb ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+                bitmapThumb.Freeze();
+                return bitmapThumb;
             }
 
-            if (fileInfo.Length > 5.0e+8)
+            var extension = fileInfo.Extension.ToLowerInvariant();
+            switch (extension)
             {
-                return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
-            }
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                case ".jfif":
+                case ".ico":
+                case ".webp":
+                case ".wbmp":
+                    var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+                    var sKBitmap = SKBitmap.Decode(fileStream);
+                    if (sKBitmap is null)
+                    { return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(); }
 
-            image?.Read(fileInfo);
-            image?.Thumbnail(new MagickGeometry(size, size));
-            var bmp = image?.ToBitmapSource();
-            bmp?.Freeze();
-            return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+                    var skPic = sKBitmap.Resize(new SKImageInfo(size, size, SKColorType.Rgba8888), SKFilterQuality.High).ToWriteableBitmap();
+                    sKBitmap.Dispose();
+                    fileStream.Dispose();
+                    skPic.Freeze();
+                    return skPic;
+
+                case ".svg":
+                    goto default; // TODO test if svg thumb is needed
+
+                case ".b64":
+                    goto default; // TODO test if base64 thumb is needed
+
+                default:
+                    image?.Read(fileInfo);
+                    image?.Thumbnail(new MagickGeometry(size, size));
+                    var bmp = image?.ToBitmapSource();
+                    bmp?.Freeze();
+                    return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+            }
         }
         catch (Exception e)
         {
