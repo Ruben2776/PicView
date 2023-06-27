@@ -237,19 +237,5 @@ internal static class GalleryNavigation
         });
     }
 
-    internal static void FullscreenGalleryNavigation()
-    {
-        SetSelected(FolderIndex, true);
-        SelectedGalleryItem = FolderIndex;
-
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
-        {
-            GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
-        });
-
-        Tooltip.CloseToolTipMessage();
-    }
-
     #endregion Horizontal Gallery Navigation
 }
