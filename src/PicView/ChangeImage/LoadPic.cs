@@ -314,7 +314,7 @@ internal static class LoadPic
 
         if (index != FolderIndex) return; // Skip loading if user went to next value
 
-        await UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
+        _ = UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
     }
 
     #endregion Load Pic at Index
