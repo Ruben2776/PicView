@@ -39,36 +39,7 @@ internal static class GalleryLoad
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
         }
 
-        if (Settings.Default.FullscreenGallery)
-        {
-            GalleryFunctions.IsGalleryOpen = true;
-            WindowSizing.RenderFullscreen();
-
-            // Set size
-            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
-            UC.GetPicGallery.Width = WindowSizing.MonitorInfo.WorkArea.Width;
-            UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
-
-            // Set alignment
-            UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
-            UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
-
-            // Set scrollbar visibility and orientation
-            UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-            UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
-
-            // Set style
-            UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
-            UC.GetPicGallery.Container.Margin = new Thickness(0, 0, 0, 4 * WindowSizing.MonitorInfo.DpiScaling);
-            UC.GetPicGallery.border.BorderThickness = new Thickness(1);
-            UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
-
-            ShowNavigation(false);
-            ShowTopAndBottom(false);
-            ConfigureWindows.GetMainWindow.Focus();
-        }
-        else if (Settings.Default.IsBottomGalleryShown && GalleryFunctions.IsGalleryOpen == false)
+        if (Settings.Default.IsBottomGalleryShown && GalleryFunctions.IsGalleryOpen == false)
         {
             LoadBottomGallery();
             ScaleImage.TryFitImage();
@@ -221,7 +192,7 @@ internal static class GalleryLoad
 
     internal static async Task ReloadGallery()
     {
-        if (Settings.Default.FullscreenGallery)
+        if (Settings.Default.IsBottomGalleryShown)
         {
             while (IsLoading)
             {

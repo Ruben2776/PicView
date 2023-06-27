@@ -71,7 +71,7 @@ internal static partial class NativeMethods
     /// Executes when user manually resized window
     public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (Settings.Default.AutoFitWindow || Settings.Default.FullscreenGallery)
+        if (Settings.Default.AutoFitWindow)
         {
             return IntPtr.Zero;
         }
@@ -98,7 +98,7 @@ internal static partial class NativeMethods
             // Resize gallery
             if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen || UC.GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
             {
-                if (!Settings.Default.IsBottomGalleryShown || GalleryFunctions.IsGalleryOpen && !Settings.Default.FullscreenGallery)
+                if (!Settings.Default.IsBottomGalleryShown)
                 {
                     UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
                 }

@@ -18,7 +18,7 @@ internal static class GalleryNavigation
     {
         PicGalleryItemSize = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
 
-        PicGalleryItemSizeS = Settings.Default.FullscreenGallery ? PicGalleryItemSize - 15 : PicGalleryItemSize - 7;
+        PicGalleryItemSizeS = PicGalleryItemSize - 15;
     }
 
     internal static double PicGalleryItemSize { get; private set; }
@@ -96,45 +96,23 @@ internal static class GalleryNavigation
         }
         else
         {
-            if (Settings.Default.FullscreenGallery)
+            if (animate)
             {
-                if (animate)
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems * 0.1;
-                    var offset = next ? -speed : speed;
+                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems / 1.2;
+                var offset = next ? -speed : speed;
 
-                    var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
-                }
-                else
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.2;
-                    var offset = next ? -speed : speed;
+                var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
 
-                    var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
-                }
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
             }
             else
             {
-                if (animate)
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems / 1.2;
-                    var offset = next ? -speed : speed;
+                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.3;
+                var offset = next ? -speed : speed;
 
-                    var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
+                var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
 
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
-                }
-                else
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.3;
-                    var offset = next ? -speed : speed;
-
-                    var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
-
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
-                }
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
             }
         }
     }
@@ -165,7 +143,7 @@ internal static class GalleryNavigation
             else
             {
                 nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown || Settings.Default.FullscreenGallery ? PicGalleryItemSize : PicGalleryItemSizeS;
+                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen ? PicGalleryItemSize : PicGalleryItemSizeS;
             }
         });
     }

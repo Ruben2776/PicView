@@ -43,10 +43,6 @@ internal static class QuickLoad
 
         LoadingPreview(fileInfo, false);
         var size = ImageSizeFunctions.GetImageSize(file);
-        if (Settings.Default.FullscreenGallery)
-        {
-            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
-        }
 
         if (size.HasValue)
         {
@@ -103,7 +99,7 @@ internal static class QuickLoad
         if (bitmapSource is not null)
             await PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
-        if (Settings.Default.FullscreenGallery || Settings.Default.IsBottomGalleryShown)
+        if (Settings.Default.IsBottomGalleryShown)
         {
             await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }

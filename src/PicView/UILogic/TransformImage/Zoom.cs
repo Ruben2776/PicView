@@ -160,8 +160,7 @@ internal static class ZoomLogic
         var newYproperty = _origin.Y - dragMousePosition.Y;
 
         // Keep panning it in bounds
-        if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen &&
-            !Settings.Default.FullscreenGallery) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
+        if (Settings.Default.AutoFitWindow && !Settings.Default.Fullscreen) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
         {
             var actualScrollWidth = ConfigureWindows.GetMainWindow.Scroller.ActualWidth;
             var actualBorderWidth = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth;

@@ -23,7 +23,6 @@ internal static class DragToExplorer
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null
             || Keyboard.Modifiers is ModifierKeys.Shift or ModifierKeys.Alt
-            || Settings.Default.FullscreenGallery
             || GalleryFunctions.IsGalleryOpen
             || Settings.Default.Fullscreen
             || Scroll.IsAutoScrolling

@@ -68,18 +68,6 @@ internal static class ErrorHandling
         }
 
         if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
-
-        if (Settings.Default.FullscreenGallery)
-        {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, (Action)(() =>
-            {
-                // Remove children before loading new
-                if (UC.GetPicGallery.Container.Children.Count > 0)
-                {
-                    UC.GetPicGallery.Container.Children.Clear();
-                }
-            }));
-        }
         return folderChanged;
     }
 

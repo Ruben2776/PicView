@@ -69,20 +69,7 @@ public partial class MainWindow
                 var args = Environment.GetCommandLineArgs();
 
                 // Determine preferred UI for startup
-                if (Settings.Default.FullscreenGallery)
-                {
-                    if (args.Length <= 1)
-                    {
-                        Settings.Default.FullscreenGallery = false;
-                    }
-                    else
-                    {
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadLayout,
-                            DispatcherPriority.Send);
-                        await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
-                    }
-                }
-                else if (Settings.Default.Fullscreen)
+                if (Settings.Default.Fullscreen)
                 {
                     if (args.Length <= 1)
                     {

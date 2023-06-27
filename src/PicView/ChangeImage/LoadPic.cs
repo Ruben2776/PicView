@@ -141,7 +141,7 @@ internal static class LoadPic
 
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
         await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
-        if (folderChanged && Settings.Default.FullscreenGallery)
+        if (folderChanged && Settings.Default.IsBottomGalleryShown)
         {
             await GalleryLoad.ReloadGallery().ConfigureAwait(false);
         }
@@ -243,7 +243,7 @@ internal static class LoadPic
             await LoadPicAtIndexAsync(0, fileInfo).ConfigureAwait(false);
         }
 
-        if (Settings.Default.FullscreenGallery)
+        if (Settings.Default.IsBottomGalleryShown)
         {
             await GalleryLoad.ReloadGallery().ConfigureAwait(false);
         }

@@ -156,7 +156,7 @@ internal static class Navigation
         Pics = fileList;
         if (GalleryFunctions.IsGalleryOpen)
         {
-            if (Settings.Default.FullscreenGallery)
+            if (Settings.Default.IsBottomGalleryShown)
             {
                 _ = GalleryLoad.ReloadGallery().ConfigureAwait(false);
             }

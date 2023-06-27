@@ -69,37 +69,11 @@ public partial class ImageSettings
         s += " [F5]";
         SlideShowBorder.ToolTip = s;
 
-        // FullscreenGalleryBorder
-        SetButtonIconMouseOverAnimations(FullScreenGalleryButton, FullScreenBrush,
-            (SolidColorBrush)Resources["FullScreenIcon"]);
-        FullscreenGalleryBorder.MouseLeftButtonDown += async delegate
-        {
-            UC.Close_UserControls();
-
-            if (Settings.Default.FullscreenGallery == false)
-            {
-                Settings.Default.FullscreenGallery = true;
-            }
-
-            await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
-        };
-        FullScreenGalleryButton.Click += async delegate
-        {
-            UC.Close_UserControls();
-
-            if (Settings.Default.FullscreenGallery == false)
-            {
-                Settings.Default.FullscreenGallery = true;
-            }
-
-            await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
-        };
-
-        // ContainedGalleryBorder
-        SetButtonIconMouseOverAnimations(ContainedGalleryButton, ContainedButtonBrush,
-            (SolidColorBrush)Resources["ContainedIcon"]);
-        ContainedGalleryBorder.MouseLeftButtonDown += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
-        ContainedGalleryButton.Click += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
+        // BottomGalleryBorder
+        SetButtonIconMouseOverAnimations(BottomGalleryButton, BottomGalleryBrush,
+            (SolidColorBrush)Resources["BottomGalleryIcon"]);
+        BottomGalleryBorder.MouseLeftButtonDown += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
+        BottomGalleryButton.Click += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
     }
 
     private static async Task ContainedGalleryClick()

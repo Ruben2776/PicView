@@ -6,7 +6,6 @@ using System.Windows;
 
 namespace PicView.Views.UserControls.Buttons;
 
-
 public partial class X2
 {
     public X2()
@@ -14,11 +13,7 @@ public partial class X2
         InitializeComponent();
         MouseLeftButtonDown += (_, _) =>
         {
-            if (Settings.Default.FullscreenGallery)
-            {
-                SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-            }
-            else if (GalleryFunctions.IsGalleryOpen)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 GalleryToggle.CloseHorizontalGallery();
             }

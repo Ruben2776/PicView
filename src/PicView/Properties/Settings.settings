@@ -119,9 +119,6 @@
     <Setting Name="NavSpeed" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.7</Value>
     </Setting>
-    <Setting Name="FullscreenGallery" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="IsTaskbarProgressEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

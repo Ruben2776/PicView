@@ -187,7 +187,7 @@ internal static class AnimationHelper
             return;
         }
 
-        if (Settings.Default.FullscreenGallery || Settings.Default.IsBottomGalleryShown)
+        if (!GalleryFunctions.IsGalleryOpen)
         {
             if (unHover)
             {

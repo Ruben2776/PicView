@@ -76,7 +76,7 @@ internal static class ScaleImage
         double maxWidth, maxHeight;
         var margin = 0d;
         var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
-        var isFullScreenSize = Settings.Default.Fullscreen || Settings.Default.FullscreenGallery;
+        var isFullScreenSize = Settings.Default.Fullscreen;
 
         var galleryHeight = 0.0;
         if (UC.GetPicGallery is not null)
@@ -92,12 +92,7 @@ internal static class ScaleImage
         var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
         var workAreaHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-        if (Settings.Default.FullscreenGallery)
-        {
-            maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth, width);
-            maxHeight = Settings.Default.FillImage ? workAreaHeight - PicGalleryItemSize : Math.Min(workAreaHeight - PicGalleryItemSize, height);
-        }
-        else if (Settings.Default.AutoFitWindow)
+        if (Settings.Default.AutoFitWindow)
         {
             maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth - padding, width);
             maxHeight = Settings.Default.FillImage ? workAreaHeight : Math.Min(workAreaHeight - padding, height);
@@ -118,7 +113,7 @@ internal static class ScaleImage
             }
         }
 
-        if (Settings.Default.IsBottomGalleryShown || Settings.Default.FullscreenGallery) // Set to if new gallery opened and Settings.Default.FullscreenGallery
+        if (Settings.Default.IsBottomGalleryShown) // Set to if new gallery opened and Settings.Default.FullscreenGallery
         {
             if (PicGalleryItemSize is 0)
             {

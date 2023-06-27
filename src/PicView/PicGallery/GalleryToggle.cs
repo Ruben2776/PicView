@@ -112,59 +112,13 @@ internal static class GalleryToggle
         await LoadAndScrollToAsync().ConfigureAwait(false);
     }
 
-    internal static async Task OpenFullscreenGalleryAsync()
-    {
-        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-        {
-            GalleryLoad.LoadLayout();
-            GetPicGallery.Visibility = Visibility.Visible;
-
-            if (Settings.Default.FullscreenGallery)
-            {
-                var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
-                            select x;
-                foreach (var item in check)
-                {
-                    GetMainWindow.ParentContainer.Children.Remove(item);
-                }
-
-                GetMainWindow.ParentContainer.Children.Add(new PicGalleryTopButtonsV2());
-            }
-            else
-            {
-                var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
-                            select x;
-                foreach (var item in check)
-                {
-                    GetMainWindow.ParentContainer.Children.Remove(item);
-                }
-
-                GetMainWindow.ParentContainer.Children.Add(new PicGalleryTopButtons());
-            }
-
-            GetMainWindow.Focus();
-
-            // Fix not showing up opacity bug...
-            VisualStateManager.GoToElementState(GetPicGallery, "Opacity", false);
-            VisualStateManager.GoToElementState(GetPicGallery.Container, "Opacity", false);
-            GetPicGallery.Opacity = GetPicGallery.Container.Opacity = 1;
-        });
-
-        ScaleImage.TryFitImage();
-        await LoadAndScrollToAsync().ConfigureAwait(false);
-    }
-
     #endregion Open
 
     #region Close
 
     internal static void CloseCurrentGallery()
     {
-        if (Settings.Default.FullscreenGallery)
-        {
-            CloseFullscreenGallery();
-        }
-        else if (IsGalleryOpen)
+        if (IsGalleryOpen)
         {
             CloseHorizontalGallery();
         }
@@ -177,14 +131,14 @@ internal static class GalleryToggle
         GetMainWindow.Dispatcher.Invoke(() =>
         {
             GetPicGallery.Visibility = Visibility.Collapsed;
-                GetPicGallery.Opacity = 0;
-                GetClickArrowLeft.Visibility =
-                    GetClickArrowRight.Visibility =
-                        GetX2.Visibility =
-                            GetMinus.Visibility =
-                                GetRestoreButton.Visibility =
-                                    GetGalleryShortcut.Visibility = Visibility.Hidden;
-            
+            GetPicGallery.Opacity = 0;
+            GetClickArrowLeft.Visibility =
+                GetClickArrowRight.Visibility =
+                    GetX2.Visibility =
+                        GetMinus.Visibility =
+                            GetRestoreButton.Visibility =
+                                GetGalleryShortcut.Visibility = Visibility.Hidden;
+
             if (GetMainWindow.MainImage.Source is null) return;
             ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
         });
@@ -249,55 +203,6 @@ internal static class GalleryToggle
         GetPicGallery.BeginAnimation(UIElement.OpacityProperty, da);
     }
 
-    internal static void CloseFullscreenGallery()
-    {
-        Settings.Default.FullscreenGallery = IsGalleryOpen = false;
-
-        GetPicGallery.Visibility = Visibility.Collapsed;
-
-        ConfigColors.UpdateColor();
-
-        HideInterfaceLogic.ToggleInterface();
-        GetPicGallery.x2.Visibility = Visibility.Collapsed;
-
-        // Restore settings
-        WindowSizing.SetWindowBehavior();
-
-        if (Settings.Default.AutoFitWindow)
-        {
-            WindowSizing.CenterWindowOnScreen();
-        }
-        else
-        {
-            WindowSizing.SetLastWindowSize();
-        }
-
-        if (GetMainWindow.MainImage.Source is not null)
-        {
-            ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-        }
-
-        var check = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtons>()
-                    select x;
-        if (check.Any())
-        {
-            GetMainWindow.ParentContainer.Children.Remove(check.ElementAt(0));
-        }
-
-        var check2 = from x in GetMainWindow.ParentContainer.Children.OfType<PicGalleryTopButtonsV2>()
-                     select x;
-        if (check2.Any())
-        {
-            GetMainWindow.ParentContainer.Children.Remove(check2.ElementAt(0));
-        }
-
-        GetMainWindow.Topmost = Settings.Default.TopMost;
-
-        if (!Settings.Default.IsBottomGalleryShown) return;
-
-        GalleryLoad.LoadBottomGallery();
-    }
-
     #endregion Close
 
     #region Toggle
@@ -308,54 +213,11 @@ internal static class GalleryToggle
         {
             CloseHorizontalGallery();
         }
-        else if (Settings.Default.FullscreenGallery == false)
+        else if (Settings.Default.IsBottomGalleryShown)
         {
-            if (Settings.Default.IsBottomGalleryShown)
-            {
-                IsGalleryOpen = true; // Force open
-            }
+            IsGalleryOpen = true; // Force open
+
             await OpenHorizontalGalleryAsync().ConfigureAwait(false);
-        }
-    }
-
-    internal static async Task ToggleFullscreenGalleryAsync()
-    {
-        if (Settings.Default.FullscreenGallery)
-        {
-            CloseFullscreenGallery();
-        }
-        else
-        {
-            Settings.Default.FullscreenGallery = true;
-            if (GetPicGallery is null) // Use timer to fix incorrect calculated size
-            {
-                var timer = new Timer(TimeSpan.FromSeconds(.4))
-                {
-                    AutoReset = false,
-                    Enabled = true
-                };
-                timer.Elapsed += delegate
-                {
-                    GetMainWindow.Dispatcher.Invoke(() =>
-                    {
-                        if (GetMainWindow.MainImage.Source is null) return;
-                        if (GetPicGallery == null)
-                        {
-                            GetPicGallery = new Views.UserControls.Gallery.PicGallery
-                            {
-                                Opacity = 0
-                            };
-
-                            GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
-                            Panel.SetZIndex(GetPicGallery, 999);
-                        }
-                        ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
-                    });
-
-                    timer.Dispose();
-                };
-            }
-            await OpenFullscreenGalleryAsync().ConfigureAwait(false);
         }
     }
 
@@ -382,9 +244,9 @@ internal static class GalleryToggle
         try
         {
             await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {GalleryNavigation.ScrollToGalleryCenter();
+            {
+                GalleryNavigation.ScrollToGalleryCenter();
                 GalleryNavigation.SetSelected(FolderIndex, true);
-                
             });
         }
         catch (TaskCanceledException)
