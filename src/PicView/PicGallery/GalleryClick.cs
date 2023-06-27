@@ -31,8 +31,8 @@ internal static class GalleryClick
             return;
         }
 
-        Image image = null;
-        Border border = null;
+        Image? image;
+        Border? border = null;
         var imageSize = await Task.FromResult(ImageSizeFunctions.GetImageSize(Pics[id])).ConfigureAwait(false);
         if (!imageSize.HasValue) return;
 
@@ -93,7 +93,9 @@ internal static class GalleryClick
                 GalleryFunctions.IsGalleryOpen = false;
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                 GalleryLoad.LoadBottomGallery();
+                GetPicGallery.Scroller.CanContentScroll = false;
                 GalleryNavigation.ScrollToGalleryCenter();
+                GetPicGallery.Scroller.CanContentScroll = true;
             };
 
             GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, galleryCloseAnimation);
