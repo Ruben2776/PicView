@@ -95,11 +95,6 @@
     <system:String x:Key="Language">Sprog</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Skiftning af sprog kræver genstart</system:String>
 
-    <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">Orientering af fuldskærmsgalleriet</system:String>
-    <system:String x:Key="Vertical">Lodret</system:String>
-    <system:String x:Key="Horizontal">Vandret</system:String>
-
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Zoom med Ctrl, naviger med musehjulet</system:String>
     <system:String x:Key="ScrollToZoom">Zoom med musehjulet, naviger med Ctrl</system:String>
@@ -355,8 +350,8 @@
     <system:String x:Key="CloseGallery">Luk galleri</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">Vis fuldskærmsgalleri</system:String>
-    <system:String x:Key="ShowHorizontalGallery">Vis vandret galleri</system:String>
+    <system:String x:Key="ShowBottomGallery">Vis nederste galleri</system:String>
+    <system:String x:Key="HideBottomGallery">Skjul nederste galleri</system:String>
 
     <system:String x:Key="StretchImage">Stræk billedet</system:String>
 

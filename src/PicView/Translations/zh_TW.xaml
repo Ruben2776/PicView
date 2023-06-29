@@ -95,11 +95,6 @@
     <system:String x:Key="Language">語言</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* 切換語言需要重新啟動應用程式</system:String>
 
-    <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">全螢幕相簿佈局</system:String>
-    <system:String x:Key="Vertical">垂直</system:String>
-    <system:String x:Key="Horizontal">水平</system:String>
-
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Ctrl + 滑鼠滾輪縮放，滑鼠滾輪導航</system:String>
     <system:String x:Key="ScrollToZoom">滑鼠滾輪縮放，Ctrl + 滑鼠滾輪導航</system:String>
@@ -355,8 +350,8 @@
     <system:String x:Key="CloseGallery">關閉相簿</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">開啟全螢幕相簿</system:String>
-    <system:String x:Key="ShowHorizontalGallery">顯示預覽圖相簿</system:String>
+    <system:String x:Key="ShowBottomGallery">顯示底部圖庫</system:String>
+    <system:String x:Key="HideBottomGallery">隱藏底部圖庫</system:String>
 
     <system:String x:Key="StretchImage">拉伸圖片</system:String>
 

@@ -373,11 +373,12 @@
                                         </DrawingImage>
                                     </Image.Source>
                                 </Image>
-                                <TextBlock
+                                <TextBlock 
+                                    x:Name="ShowBottomGalleryText"
                                     MaxWidth="175"
                                     Margin="10,0,10,0"
                                     Foreground="{StaticResource BottomGalleryIcon}"
-                                    Text="{StaticResource ShowFullscreenGallery}"
+                                    Text="{StaticResource ShowBottomGallery}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </Button>
