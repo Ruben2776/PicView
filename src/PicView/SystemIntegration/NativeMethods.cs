@@ -81,33 +81,28 @@ internal static partial class NativeMethods
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (w == null) { return IntPtr.Zero; }
 
-        if (w.MainImage.Source == null)
+        // Resize gallery
+        if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen || UC.GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
         {
-            if (UC.GetStartUpUC is not null)
+            if (!Settings.Default.IsBottomGalleryShown)
             {
-                UC.GetStartUpUC.ResponsiveSize(w.Width);
+                UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
             }
+            UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
         }
-        else
+
+        if (UC.GetStartUpUC is not null)
         {
-            if (w.WindowState == WindowState.Maximized)
-            {
-                WindowSizing.Restore_From_Move();
-            }
+            UC.GetStartUpUC.ResponsiveSize(w.Width);
+        }
+        if (w.WindowState == WindowState.Maximized)
+        {
+            WindowSizing.Restore_From_Move();
+        }
 
-            // Resize gallery
-            if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen || UC.GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
-            {
-                if (!Settings.Default.IsBottomGalleryShown)
-                {
-                    UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-                }
-                UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-            }
-
+        if (w.MainImage.Source is not null)
             ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
-        }
-
+        
         return IntPtr.Zero;
     }
 

@@ -95,11 +95,6 @@
     <system:String x:Key="Language">Language</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Changing language requires restart</system:String>
 
-    <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">Fullscreen gallery layout</system:String>
-    <system:String x:Key="Vertical">Vertical</system:String>
-    <system:String x:Key="Horizontal">Horizontal</system:String>
-
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Ctrl to zoom, scroll to navigate</system:String>
     <system:String x:Key="ScrollToZoom">Zoom with mousewheel, navigate with Ctrl</system:String>
@@ -355,8 +350,8 @@
     <system:String x:Key="CloseGallery">Close gallery</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">Show fullscreen gallery</system:String>
-    <system:String x:Key="ShowHorizontalGallery">Show horizontal gallery</system:String>
+    <system:String x:Key="ShowBottomGallery">Show bottom gallery</system:String>
+    <system:String x:Key="HideBottomGallery">Hide bottom gallery</system:String>
 
     <system:String x:Key="StretchImage">Stretch image</system:String>
 

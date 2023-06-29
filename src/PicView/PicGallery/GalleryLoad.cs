@@ -88,7 +88,7 @@ internal static class GalleryLoad
         UC.GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
         Panel.SetZIndex(UC.GetPicGallery, 9);
         GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
-        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.Width;
+        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
         UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
         UC.GetPicGallery.Visibility = Visibility.Visible;
         UC.GetPicGallery.Opacity = 1;
