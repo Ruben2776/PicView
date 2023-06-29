@@ -35,7 +35,7 @@ internal static class GalleryLoad
             {
                 Opacity = 0
             };
-
+            Panel.SetZIndex(UC.GetPicGallery, 9);
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
         }
 
@@ -86,6 +86,7 @@ internal static class GalleryLoad
     internal static void LoadBottomGallery()
     {
         UC.GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
+        Panel.SetZIndex(UC.GetPicGallery, 9);
         GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
         UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.Width;
         UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
@@ -156,7 +157,7 @@ internal static class GalleryLoad
                             throw new TaskCanceledException();
                         }
 
-                        var bitmapSource = Thumbnails.GetBitmapSourceThumb(new FileInfo(Navigation.Pics[i]), (int)GalleryNavigation.PicGalleryItemSize);
+                        var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
                         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
                         {
                             if (i > UC.GetPicGallery.Container.Children.Count)
