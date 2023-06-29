@@ -350,8 +350,8 @@
     <system:String x:Key="CloseGallery">關閉相簿</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowBottomGallery">顯示底部圖庫</system:String>
-    <system:String x:Key="HideBottomGallery">隱藏底部圖庫</system:String>
+    <system:String x:Key="ShowBottomGallery">查看底部圖</system:String>
+    <system:String x:Key="HideBottomGallery">收起底部圖</system:String>
 
     <system:String x:Key="StretchImage">拉伸圖片</system:String>
 
