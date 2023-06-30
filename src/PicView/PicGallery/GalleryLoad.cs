@@ -5,13 +5,11 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.UILogic.HideInterfaceLogic;
 
 namespace PicView.PicGallery;
 
@@ -25,6 +23,74 @@ internal static class GalleryLoad
         UC.GetPicGallery.Scroller.ScrollChanged += (_, _) => ConfigureWindows.GetMainWindow.Focus(); // Maintain window focus when scrolling manually
         UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
         UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
+        UC.GetPicGallery.Scroller.ScrollChanged += async (_, e) =>
+        {
+            if (Navigation.Pics.Count < 4000)
+            {
+                return;
+            }
+
+            if (UC.GetPicGallery.Scroller.HorizontalOffset is 0 || IsLoading)
+            {
+                return;
+            }
+
+            double horizontalOffset = UC.GetPicGallery.Scroller.HorizontalOffset;
+            double viewportWidth = UC.GetPicGallery.Scroller.ViewportWidth;
+            double itemWidth = GalleryNavigation.PicGalleryItemSize;
+            int firstVisibleIndex = (int)Math.Floor(horizontalOffset / itemWidth);
+            int lastVisibleIndex = firstVisibleIndex + GalleryNavigation.HorizontalItems * 2;
+
+            IsLoading = true;
+            var source = new CancellationTokenSource();
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var count = Navigation.Pics.Count;
+
+                    Parallel.For(firstVisibleIndex, lastVisibleIndex, i =>
+                    {
+                        try
+                        {
+                            if (count != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                            {
+                                throw new TaskCanceledException();
+                            }
+
+                            var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
+                            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
+                            {
+                                if (i >= UC.GetPicGallery.Container.Children.Count)
+                                {
+                                    return;
+                                }
+                                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                                item.ThumbImage.Source = bitmapSource;
+                            }));
+                        }
+                        catch (Exception e)
+                        {
+#if DEBUG
+                            Trace.WriteLine(e.Message);
+#endif
+                            // Suppress task cancellation
+                        }
+                    });
+                }, source.Token).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                GalleryFunctions.Clear();
+                IsLoading = false;
+            }
+            finally
+            {
+                IsLoading = false;
+                source.Dispose();
+            }
+            IsLoading = false;
+        };
     }
 
     internal static void LoadLayout()
@@ -35,7 +101,7 @@ internal static class GalleryLoad
             {
                 Opacity = 0
             };
-            Panel.SetZIndex(UC.GetPicGallery, 9);
+            Panel.SetZIndex(UC.GetPicGallery, 2);
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
         }
 
@@ -86,7 +152,7 @@ internal static class GalleryLoad
     internal static void LoadBottomGallery()
     {
         UC.GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
-        Panel.SetZIndex(UC.GetPicGallery, 9);
+        Panel.SetZIndex(UC.GetPicGallery, 2);
         GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
         UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
         UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
@@ -107,7 +173,7 @@ internal static class GalleryLoad
         UC.GetPicGallery.Container.Margin = new Thickness(0, 1, 0, 0);
         UC.GetPicGallery.border.BorderThickness = new Thickness(1);
         UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
-        UC.GetPicGallery.border.Background = Brushes.Transparent;
+        UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
 
         if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(UC.GetPicGallery))
         {
@@ -148,6 +214,11 @@ internal static class GalleryLoad
                     }
                 }
 
+                if (count > 4000)
+                {
+                    return;
+                }
+
                 Parallel.For(0, count, i =>
                 {
                     try
@@ -160,7 +231,7 @@ internal static class GalleryLoad
                         var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
                         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
                         {
-                            if (i > UC.GetPicGallery.Container.Children.Count)
+                            if (i >= UC.GetPicGallery.Container.Children.Count)
                             {
                                 return;
                             }

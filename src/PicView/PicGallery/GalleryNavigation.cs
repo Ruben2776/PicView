@@ -24,7 +24,7 @@ internal static class GalleryNavigation
     internal static double PicGalleryItemSize { get; private set; }
     internal static double PicGalleryItemSizeS { get; private set; }
 
-    private static int HorizontalItems
+    internal static int HorizontalItems
     {
         get
         {
@@ -34,7 +34,7 @@ internal static class GalleryNavigation
         }
     }
 
-    private static int VerticalItems
+    internal static int VerticalItems
     {
         get
         {
@@ -44,7 +44,7 @@ internal static class GalleryNavigation
         }
     }
 
-    private static double CenterScrollPosition
+    internal static double CenterScrollPosition
     {
         get
         {
