@@ -61,12 +61,12 @@ internal static class Thumbnails
         return pic;
     }
 
-    internal static BitmapSource GetBitmapSourceThumb(FileInfo fileInfo, int size)
+    internal static BitmapSource GetBitmapSourceThumb(string file, int size)
     {
         try
         {
             using var image = new MagickImage();
-            image.Ping(fileInfo);
+            image.Ping(file);
             var thumb = image.GetExifProfile()?.CreateThumbnail();
             var bitmapThumb = thumb?.ToBitmapSource();
             if (bitmapThumb != null)
@@ -75,43 +75,13 @@ internal static class Thumbnails
                 return bitmapThumb;
             }
 
-            var extension = fileInfo.Extension.ToLowerInvariant();
-            switch (extension)
-            {
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".gif":
-                case ".jfif":
-                case ".ico":
-                case ".webp":
-                case ".wbmp":
-                    var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
-                    var sKBitmap = SKBitmap.Decode(fileStream);
-                    if (sKBitmap is null)
-                    { return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(); }
-
-                    var skPic = sKBitmap.Resize(new SKImageInfo(size, size, SKColorType.Rgba8888), SKFilterQuality.High).ToWriteableBitmap();
-                    sKBitmap.Dispose();
-                    fileStream.Dispose();
-                    skPic.Freeze();
-                    return skPic;
-
-                case ".svg":
-                    goto default; // TODO test if svg thumb is needed
-
-                case ".b64":
-                    goto default; // TODO test if base64 thumb is needed
-
-                default:
-                    image?.Read(fileInfo);
-                    image?.Thumbnail(new MagickGeometry(size, size));
-                    var bmp = image?.ToBitmapSource();
-                    bmp?.Freeze();
-                    return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
-            }
+            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096);
+            image?.Read(fileStream);
+            image?.Thumbnail(new MagickGeometry(size, size));
+            var bmp = image?.ToBitmapSource();
+            bmp?.Freeze();
+            fileStream.Dispose();
+            return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
         }
         catch (Exception e)
         {
