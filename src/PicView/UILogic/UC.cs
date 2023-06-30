@@ -389,10 +389,7 @@ internal static class UC
             return;
         }
 
-        if (GetStartUpUC is null)
-        {
-            GetStartUpUC = new StartUpUC();
-        }
+        GetStartUpUC ??= new StartUpUC();
 
         if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetStartUpUC))
         {

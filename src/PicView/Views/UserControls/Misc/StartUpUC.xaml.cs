@@ -76,7 +76,7 @@ public partial class StartUpUC
 
     public void ResponsiveSize(double width)
     {
-        var bottomMargin = Settings.Default.IsBottomGalleryShown ? UC.GetPicGallery.ActualHeight + 10 : 16;
+        var bottomMargin = Settings.Default.IsBottomGalleryShown ? UC.GetPicGallery.Height + 14 : 16;
         switch (width)
         {
             case < 1265:
