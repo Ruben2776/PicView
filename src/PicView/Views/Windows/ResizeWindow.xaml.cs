@@ -18,7 +18,7 @@ using static PicView.UILogic.Sizing.WindowSizing;
 
 namespace PicView.Views.Windows;
 
-public partial class ResizeWindow : Window
+public partial class ResizeWindow
 {
     private bool running;
     private readonly List<BatchFunctions.ThumbNailHolder> thumbs = new();

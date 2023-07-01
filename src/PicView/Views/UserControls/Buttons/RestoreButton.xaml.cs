@@ -5,9 +5,6 @@ using System.Windows;
 
 namespace PicView.Views.UserControls.Buttons;
 
-/// <summary>
-/// Cool shady close button!
-/// </summary>
 public partial class RestoreButton
 {
     public RestoreButton()
@@ -18,14 +15,8 @@ public partial class RestoreButton
 
         MouseEnter += delegate
         {
-            if (!Settings.Default.Fullscreen)
-            {
-                ToolTip = Application.Current.Resources["Fullscreen"];
-            }
-            else
-            {
-                ToolTip = Application.Current.Resources["RestoreDown"];
-            }
+            ToolTip =
+                !Settings.Default.Fullscreen ? Application.Current.Resources["Fullscreen"] : Application.Current.Resources["RestoreDown"];
 
             MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
         };
