@@ -53,6 +53,9 @@ public partial class InfoWindow
         WindowBlur.EnableBlur(this);
         ChangeColor();
 
+        Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, ExpandBorder, false);
+        Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, ExpandBorder, true);
+
         MouseLeftButtonDown += (_, mouseButtonEventArgs) =>
             { if (mouseButtonEventArgs.LeftButton == MouseButtonState.Pressed) DragMove(); };
 

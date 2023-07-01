@@ -1,5 +1,6 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
@@ -14,15 +15,16 @@ using static PicView.UILogic.ImageInfo;
 
 namespace PicView.Views.Windows;
 
-public partial class ImageInfoWindow : Window
+public partial class ImageInfoWindow
 {
-    private double startheight, extendedheight;
+    private readonly double _startHeight;
+    private readonly double _extendedHeight;
 
     public ImageInfoWindow()
     {
         InitializeComponent();
-        startheight = Height;
-        extendedheight = 750;
+        _startHeight = Height;
+        _extendedHeight = 750;
         ContentRendered += async (_, _) =>
         {
             WindowBlur.EnableBlur(this);
@@ -48,6 +50,8 @@ public partial class ImageInfoWindow : Window
                 await UpdateValuesAsync(null).ConfigureAwait(false);
             }
         };
+        Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, null, ExpandBorder, false);
+        Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, null, ExpandBorder, true);
 
         KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(Scroller, e, this);
 
@@ -109,13 +113,13 @@ public partial class ImageInfoWindow : Window
         ExpandButton.MouseLeave += (_, _) => ButtonMouseLeaveAnim(chevronDownBrush);
         ExpandButton.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ExpandButtonBg);
 
-        ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
+        ExpandButton.Click += (_, _) => UIHelper.ExtendOrCollapse(Height, _startHeight, _extendedHeight, this, Scroller, xGeo);
 
         PreviewMouseWheel += (_, e) => // Collapse when scrolling down
         {
-            if (e.Delta < 0 && Height == startheight)
+            if (e.Delta < 0 && Height == _startHeight)
             {
-                UIHelper.ExtendOrCollapse(Height, startheight, extendedheight, this, Scroller, xGeo);
+                UIHelper.ExtendOrCollapse(Height, _startHeight, _extendedHeight, this, Scroller, xGeo);
             }
         };
 

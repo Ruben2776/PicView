@@ -15,7 +15,6 @@
     ResizeMode="CanMinimize"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}"
-    WindowStartupLocation="CenterOwner"
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
@@ -46,6 +45,7 @@
                 DockPanel.Dock="Right" />
 
             <TextBlock
+                x:Name="TitleText"
                 VerticalAlignment="Center"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                 FontSize="14"

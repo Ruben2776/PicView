@@ -580,6 +580,7 @@
                     <StackPanel Margin="0,7,0,0" DockPanel.Dock="Bottom">
 
                         <Border
+                            x:Name="ExpandBorder"
                             Background="{StaticResource BackgroundColorBrushFade}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="0,1,0,1">

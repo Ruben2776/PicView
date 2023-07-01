@@ -45,6 +45,8 @@ public partial class SettingsWindow
         {
             WindowBlur.EnableBlur(this);
             ChangeColor();
+            Deactivated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
+            Activated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
             var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
 
             AddGenericEvents(colorAnimation);

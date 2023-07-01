@@ -76,6 +76,7 @@
                 DockPanel.Dock="Right" />
 
             <TextBlock
+                x:Name="TitleText"
                 Width="Auto"
                 Margin="0,0,0,0"
                 VerticalAlignment="Center"

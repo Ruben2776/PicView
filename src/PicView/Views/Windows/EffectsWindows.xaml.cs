@@ -8,6 +8,7 @@ using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using PicView.ConfigureSettings;
 using WinRT;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.SystemIntegration.Wallpaper;
@@ -36,6 +37,9 @@ public partial class EffectsWindow : Window
     {
         WindowBlur.EnableBlur(this);
         KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
+
+        Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
+        Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
 
         // CloseButton
         CloseButton.TheButton.Click += delegate { Hide(); ConfigureWindows.GetMainWindow.Focus(); };

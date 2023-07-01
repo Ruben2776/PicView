@@ -3,6 +3,7 @@ using PicView.Properties;
 using PicView.Themes.Resources;
 using PicView.UILogic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -110,6 +111,36 @@ internal static class ConfigColors
                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
             w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
+        }
+    }
+
+    internal static void WindowUnfocusOrFocus(Panel titleBar, TextBlock? title, Border? expander, bool isFocused)
+    {
+        var foregroundColor = isFocused ? (SolidColorBrush)Application.Current.Resources["MainColorBrush"]
+            : (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
+
+        if (title is not null)
+        {
+            title.Foreground = foregroundColor;
+        }
+
+        if (Settings.Default.DarkTheme)
+        {
+            titleBar.Background =
+                isFocused ? (SolidColorBrush)Application.Current.Resources["SubtleFadeBrush"]
+                    : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
+        }
+        else
+        {
+            titleBar.Background =
+                isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
+                    : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFadeSubtle"];
+        }
+        if (expander is not null)
+        {
+            expander.Background =
+                isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"]
+                    : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
         }
     }
 

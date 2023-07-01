@@ -34,45 +34,49 @@
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
-        <Border
+        <DockPanel
+            x:Name="TitleBar"
             Background="{StaticResource WindowBackgroundColorBrush}"
-            BorderBrush="{StaticResource BorderBrush}"
-            BorderThickness="0,0,0,1"
             DockPanel.Dock="Top">
-            <DockPanel>
 
-                <misc:Icon x:Name="Logo" />
+            <misc:Icon x:Name="Logo" />
 
-                <StackPanel
-                    Background="{StaticResource AltInterfaceBrush}"
-                    DockPanel.Dock="Right"
-                    Orientation="Horizontal">
+            <StackPanel
+                Background="{StaticResource AltInterfaceBrush}"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
 
-                    <buttons:MinButton
-                        x:Name="MinButton"
-                        Width="30"
-                        Height="30"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1,0,1,0"
-                        DockPanel.Dock="Right" />
+                <buttons:MinButton
+                    x:Name="MinButton"
+                    Width="30"
+                    Height="30"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1,0,1,0"
+                    DockPanel.Dock="Right" />
 
-                    <buttons:CloseButton
-                        x:Name="CloseButton"
-                        Width="30"
-                        Height="30"
-                        DockPanel.Dock="Right" />
-                </StackPanel>
+                <buttons:CloseButton
+                    x:Name="CloseButton"
+                    Width="30"
+                    Height="30"
+                    DockPanel.Dock="Right" />
+            </StackPanel>
 
-                <TextBlock
-                    Width="Auto"
-                    Margin="0,0,0,0"
-                    VerticalAlignment="Center"
-                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
-                    FontSize="14"
-                    Text="{StaticResource Effects}"
-                    TextAlignment="Center" />
-            </DockPanel>
-        </Border>
+            <TextBlock
+                x:Name="TitleText"
+                Width="Auto"
+                Margin="0,0,0,0"
+                VerticalAlignment="Center"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                FontSize="14"
+                Text="{StaticResource Effects}"
+                TextAlignment="Center" />
+        </DockPanel>
+
+        <Rectangle
+            Height="1"
+            DockPanel.Dock="Top"
+            Fill="{StaticResource BorderBrush}" />
+
         <StackPanel Background="{StaticResource MenuBg}">
 
             <WrapPanel

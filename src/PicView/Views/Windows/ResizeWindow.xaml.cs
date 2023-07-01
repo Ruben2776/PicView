@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Shortcuts;
@@ -40,6 +41,9 @@ public partial class ResizeWindow : Window
         {
             WindowBlur.EnableBlur(this);
             Owner = null; // Remove owner, so that minimizing main-window will not minimize this
+
+            Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
+            Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
 
             if (ErrorHandling.CheckOutOfRange() == false)
             {
