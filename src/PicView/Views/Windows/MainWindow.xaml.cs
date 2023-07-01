@@ -58,7 +58,6 @@ public partial class MainWindow
             // Subscribe to Windows resized event || Need to be exactly on load
             HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle)
                 ?.AddHook(NativeMethods.WndProc);
-            ConfigColors.MainWindowUnfocusOrFocus(true);
             StartLoading.LoadedEvent();
         };
 
@@ -70,20 +69,7 @@ public partial class MainWindow
                 var args = Environment.GetCommandLineArgs();
 
                 // Determine preferred UI for startup
-                if (Settings.Default.FullscreenGallery)
-                {
-                    if (args.Length <= 1)
-                    {
-                        Settings.Default.FullscreenGallery = false;
-                    }
-                    else
-                    {
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadLayout,
-                            DispatcherPriority.Send);
-                        await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
-                    }
-                }
-                else if (Settings.Default.Fullscreen)
+                if (Settings.Default.Fullscreen)
                 {
                     if (args.Length <= 1)
                     {
@@ -94,6 +80,11 @@ public partial class MainWindow
                         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => Fullscreen_Restore(true),
                             DispatcherPriority.Send);
                     }
+                }
+                else if (Settings.Default.IsBottomGalleryShown)
+                {
+                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadBottomGallery,
+                        DispatcherPriority.Send);
                 }
 
                 // Load image if possible
@@ -153,17 +144,7 @@ public partial class MainWindow
 
             //GalleryButton
             MouseOverAnimations.SetButtonIconMouseOverAnimations(GalleryButton, GalleryBg, GalleryBrush, true);
-            GalleryButton.Click += async (_, _) =>
-            {
-                if (GalleryFunctions.IsGalleryOpen)
-                {
-                    GalleryToggle.CloseHorizontalGallery();
-                }
-                else if (Settings.Default.FullscreenGallery == false)
-                {
-                    await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-                }
-            };
+            GalleryButton.Click += async (_, _) => await GalleryToggle.ToggleGalleryAsync().ConfigureAwait(false);
 
             // RotateButton
             MouseOverAnimations.SetButtonIconMouseOverAnimations(RotateButton, RotateBg, RotateBrush, true);
@@ -208,6 +189,7 @@ public partial class MainWindow
             };
 
             Logo.MouseLeftButtonDown += (_, _) => ConfigureWindows.WindowContextMenu.IsOpen = true;
+            ConfigColors.MainWindowUnfocusOrFocus(true);
         };
     }
 

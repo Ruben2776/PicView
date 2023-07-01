@@ -141,9 +141,24 @@ internal static class LoadPic
 
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
         await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
-        if (folderChanged && Settings.Default.FullscreenGallery)
+        if (Settings.Default.IsBottomGalleryShown)
         {
-            await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+            if (folderChanged)
+            {
+                await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+            }
+            else
+            {
+                var checkIfEmpty = false;
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    checkIfEmpty = GetPicGallery?.Container.Children.Count <= 0;
+                });
+                if (checkIfEmpty)
+                {
+                    await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+                }
+            }
         }
     }
 
@@ -243,9 +258,24 @@ internal static class LoadPic
             await LoadPicAtIndexAsync(0, fileInfo).ConfigureAwait(false);
         }
 
-        if (Settings.Default.FullscreenGallery)
+        if (Settings.Default.IsBottomGalleryShown)
         {
-            await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+            if (folderChanged)
+            {
+                await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+            }
+            else
+            {
+                var checkIfEmpty = false;
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    checkIfEmpty = GetPicGallery?.Container.Children.Count <= 0;
+                });
+                if (checkIfEmpty)
+                {
+                    await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+                }
+            }
         }
 
         if (folderChanged || string.IsNullOrWhiteSpace(InitialPath))
@@ -314,7 +344,8 @@ internal static class LoadPic
 
         if (index != FolderIndex) return; // Skip loading if user went to next value
 
-        await UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
+        // Don't await it since that would make selecting next gallery item slow
+        _ = UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
     }
 
     #endregion Load Pic at Index

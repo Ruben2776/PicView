@@ -1,6 +1,7 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ConfigureSettings;
+using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.Shortcuts;
@@ -15,7 +16,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using PicView.PicGallery;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ConfigureSettings.ConfigColors;
 
@@ -87,31 +87,42 @@ public partial class SettingsWindow
             };
 
             // SetExpandedGallerySlider
-            SetExpandedGallerySlider.Value = Settings.Default.ExpandedGalleryItems;
+            SetExpandedGallerySlider.Value = Settings.Default.ExpandedGalleryItemSize;
             SetExpandedGalleryText.Text = SetExpandedGallerySlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
             SetExpandedGallerySlider.ValueChanged += (_, e) =>
             {
-                Settings.Default.ExpandedGalleryItems = (int)e.NewValue;
-                SetExpandedGalleryText.Text = e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
-                Settings.Default.Save();
+                Settings.Default.ExpandedGalleryItemSize = (int)e.NewValue;
+
                 if (GalleryFunctions.IsGalleryOpen)
                 {
                     GalleryLoad.LoadLayout();
                 }
+                else
+                {
+                    GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
+                }
+                SetExpandedGalleryText.Text = GalleryNavigation.ItemsPerPage.ToString();
+                Settings.Default.Save();
             };
 
             // SetBottomGallerySlider
-            SetBottomGallerySlider.Value = Settings.Default.BottomGalleryItems;
+            SetBottomGallerySlider.Value = Settings.Default.BottomGalleryItemSize;
             SetBottomGalleryText.Text = SetBottomGallerySlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
             SetBottomGallerySlider.ValueChanged += (_, e) =>
             {
-                Settings.Default.BottomGalleryItems = (int)e.NewValue;
-                SetBottomGalleryText.Text = e.NewValue.ToString("0.#", CultureInfo.CurrentCulture);
-                Settings.Default.Save();
-                if (!Settings.Default.FullscreenGallery) return;
+                Settings.Default.BottomGalleryItemSize = e.NewValue;
+                if (Settings.Default.IsBottomGalleryShown)
+                {
+                    GalleryLoad.LoadLayout();
+                    ScaleImage.TryFitImage();
+                }
+                else
+                {
+                    GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+                }
 
-                GalleryLoad.LoadLayout();
-                ScaleImage.TryFitImage();
+                SetBottomGalleryText.Text = GalleryNavigation.HorizontalItems.ToString();
+                Settings.Default.Save();
             };
 
             // Themes

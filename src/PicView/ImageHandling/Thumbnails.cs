@@ -1,9 +1,11 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
 using PicView.Views.UserControls.Gallery;
+using SkiaSharp;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
+using SkiaSharp.Views.WPF;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -59,29 +61,26 @@ internal static class Thumbnails
         return pic;
     }
 
-    internal static BitmapSource GetBitmapSourceThumb(FileInfo fileInfo, int size)
+    internal static BitmapSource GetBitmapSourceThumb(string file, int size)
     {
         try
         {
             using var image = new MagickImage();
-            image.Ping(fileInfo);
+            image.Ping(file);
             var thumb = image.GetExifProfile()?.CreateThumbnail();
-            if (thumb is not null)
+            var bitmapThumb = thumb?.ToBitmapSource();
+            if (bitmapThumb != null)
             {
-                var bitmapThumb = thumb.ToBitmapSource();
-                bitmapThumb?.Freeze();
-                return bitmapThumb ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+                bitmapThumb.Freeze();
+                return bitmapThumb;
             }
 
-            if (fileInfo.Length > 5.0e+8)
-            {
-                return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
-            }
-
-            image?.Read(fileInfo);
+            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096);
+            image?.Read(fileStream);
             image?.Thumbnail(new MagickGeometry(size, size));
             var bmp = image?.ToBitmapSource();
             bmp?.Freeze();
+            fileStream.Dispose();
             return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
         }
         catch (Exception e)

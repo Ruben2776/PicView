@@ -8,20 +8,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.CodeDom.Compiler;
-using System.Configuration;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Media;
-
 namespace PicView.Properties {
     
     
-    [CompilerGenerated()]
-    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
-    public sealed partial class Settings : ApplicationSettingsBase {
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.6.0.0")]
+    public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static Settings defaultInstance = ((Settings)(Synchronized(new Settings())));
+        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
         public static Settings Default {
             get {
@@ -29,141 +23,141 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#1a8cf0")]
-        public Color Blue {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#1a8cf0")]
+        public global::System.Windows.Media.Color Blue {
             get {
-                return ((Color)(this["Blue"]));
+                return ((global::System.Windows.Media.Color)(this["Blue"]));
             }
             set {
                 this["Blue"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FFE68BEE")]
-        public Color Pink {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFE68BEE")]
+        public global::System.Windows.Media.Color Pink {
             get {
-                return ((Color)(this["Pink"]));
+                return ((global::System.Windows.Media.Color)(this["Pink"]));
             }
             set {
                 this["Pink"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FFDB5B3D")]
-        public Color Orange {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFDB5B3D")]
+        public global::System.Windows.Media.Color Orange {
             get {
-                return ((Color)(this["Orange"]));
+                return ((global::System.Windows.Media.Color)(this["Orange"]));
             }
             set {
                 this["Orange"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#20E76B")]
-        public Color Green {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#20E76B")]
+        public global::System.Windows.Media.Color Green {
             get {
-                return ((Color)(this["Green"]));
+                return ((global::System.Windows.Media.Color)(this["Green"]));
             }
             set {
                 this["Green"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FFF91110")]
-        public Color Red {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFF91110")]
+        public global::System.Windows.Media.Color Red {
             get {
-                return ((Color)(this["Red"]));
+                return ((global::System.Windows.Media.Color)(this["Red"]));
             }
             set {
                 this["Red"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FF36E6CC")]
-        public Color Aqua {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF36E6CC")]
+        public global::System.Windows.Media.Color Aqua {
             get {
-                return ((Color)(this["Aqua"]));
+                return ((global::System.Windows.Media.Color)(this["Aqua"]));
             }
             set {
                 this["Aqua"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FFFEA955")]
-        public Color Golden {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFEA955")]
+        public global::System.Windows.Media.Color Golden {
             get {
-                return ((Color)(this["Golden"]));
+                return ((global::System.Windows.Media.Color)(this["Golden"]));
             }
             set {
                 this["Golden"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FF44A1A0")]
-        public Color Teal {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF44A1A0")]
+        public global::System.Windows.Media.Color Teal {
             get {
-                return ((Color)(this["Teal"]));
+                return ((global::System.Windows.Media.Color)(this["Teal"]));
             }
             set {
                 this["Teal"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FF9738EB")]
-        public Color Purple {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF9738EB")]
+        public global::System.Windows.Media.Color Purple {
             get {
-                return ((Color)(this["Purple"]));
+                return ((global::System.Windows.Media.Color)(this["Purple"]));
             }
             set {
                 this["Purple"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FF1BA1E2")]
-        public Color Cyan {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF1BA1E2")]
+        public global::System.Windows.Media.Color Cyan {
             get {
-                return ((Color)(this["Cyan"]));
+                return ((global::System.Windows.Media.Color)(this["Cyan"]));
             }
             set {
                 this["Cyan"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FF22CB97")]
-        public Color Lime {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF22CB97")]
+        public global::System.Windows.Media.Color Lime {
             get {
-                return ((Color)(this["Lime"]));
+                return ((global::System.Windows.Media.Color)(this["Lime"]));
             }
             set {
                 this["Lime"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool CallUpgrade {
             get {
                 return ((bool)(this["CallUpgrade"]));
@@ -173,21 +167,21 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("#FFFF35C5")]
-        public Color Magenta {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFF35C5")]
+        public global::System.Windows.Media.Color Magenta {
             get {
-                return ((Color)(this["Magenta"]));
+                return ((global::System.Windows.Media.Color)(this["Magenta"]));
             }
             set {
                 this["Magenta"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ScrollEnabled {
             get {
                 return ((bool)(this["ScrollEnabled"]));
@@ -197,9 +191,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowInterface {
             get {
                 return ((bool)(this["ShowInterface"]));
@@ -209,9 +203,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int SortPreference {
             get {
                 return ((int)(this["SortPreference"]));
@@ -221,9 +215,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("5000")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
         public double SlideTimer {
             get {
                 return ((double)(this["SlideTimer"]));
@@ -233,9 +227,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Looping {
             get {
                 return ((bool)(this["Looping"]));
@@ -245,9 +239,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int BgColorChoice {
             get {
                 return ((int)(this["BgColorChoice"]));
@@ -257,9 +251,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoFitWindow {
             get {
                 return ((bool)(this["AutoFitWindow"]));
@@ -269,9 +263,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool FillImage {
             get {
                 return ((bool)(this["FillImage"]));
@@ -281,9 +275,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public double Top {
             get {
                 return ((double)(this["Top"]));
@@ -293,9 +287,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public double Left {
             get {
                 return ((double)(this["Left"]));
@@ -305,9 +299,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public double Height {
             get {
                 return ((double)(this["Height"]));
@@ -317,9 +311,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public double Width {
             get {
                 return ((double)(this["Width"]));
@@ -329,9 +323,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Fullscreen {
             get {
                 return ((bool)(this["Fullscreen"]));
@@ -341,9 +335,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool IncludeSubDirectories {
             get {
                 return ((bool)(this["IncludeSubDirectories"]));
@@ -353,9 +347,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool DarkTheme {
             get {
                 return ((bool)(this["DarkTheme"]));
@@ -365,9 +359,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("en")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("en")]
         public string UserLanguage {
             get {
                 return ((string)(this["UserLanguage"]));
@@ -377,9 +371,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowAltInterfaceButtons {
             get {
                 return ((bool)(this["ShowAltInterfaceButtons"]));
@@ -389,9 +383,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("3")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int ColorTheme {
             get {
                 return ((int)(this["ColorTheme"]));
@@ -401,9 +395,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0.2")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
         public double ZoomSpeed {
             get {
                 return ((double)(this["ZoomSpeed"]));
@@ -413,9 +407,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool TopMost {
             get {
                 return ((bool)(this["TopMost"]));
@@ -425,9 +419,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool KeepCentered {
             get {
                 return ((bool)(this["KeepCentered"]));
@@ -437,9 +431,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool CtrlZoom {
             get {
                 return ((bool)(this["CtrlZoom"]));
@@ -449,9 +443,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool Ascending {
             get {
                 return ((bool)(this["Ascending"]));
@@ -461,9 +455,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool HorizontalReverseScroll {
             get {
                 return ((bool)(this["HorizontalReverseScroll"]));
@@ -473,9 +467,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AvoidZoomingOut {
             get {
                 return ((bool)(this["AvoidZoomingOut"]));
@@ -485,9 +479,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("0.7")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.7")]
         public double NavSpeed {
             get {
                 return ((double)(this["NavSpeed"]));
@@ -497,21 +491,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("False")]
-        public bool FullscreenGallery {
-            get {
-                return ((bool)(this["FullscreenGallery"]));
-            }
-            set {
-                this["FullscreenGallery"] = value;
-            }
-        }
-        
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsTaskbarProgressEnabled {
             get {
                 return ((bool)(this["IsTaskbarProgressEnabled"]));
@@ -521,9 +503,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowFileSavingDialog {
             get {
                 return ((bool)(this["ShowFileSavingDialog"]));
@@ -533,9 +515,9 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("True")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowBottomNavBar {
             get {
                 return ((bool)(this["ShowBottomNavBar"]));
@@ -545,27 +527,39 @@ namespace PicView.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("37")]
-        public int BottomGalleryItems {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("37")]
+        public double BottomGalleryItemSize {
             get {
-                return ((int)(this["BottomGalleryItems"]));
+                return ((double)(this["BottomGalleryItemSize"]));
             }
             set {
-                this["BottomGalleryItems"] = value;
+                this["BottomGalleryItemSize"] = value;
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("23")]
-        public int ExpandedGalleryItems {
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("23")]
+        public double ExpandedGalleryItemSize {
             get {
-                return ((int)(this["ExpandedGalleryItems"]));
+                return ((double)(this["ExpandedGalleryItemSize"]));
             }
             set {
-                this["ExpandedGalleryItems"] = value;
+                this["ExpandedGalleryItemSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsBottomGalleryShown {
+            get {
+                return ((bool)(this["IsBottomGalleryShown"]));
+            }
+            set {
+                this["IsBottomGalleryShown"] = value;
             }
         }
     }

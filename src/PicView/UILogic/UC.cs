@@ -1,6 +1,7 @@
 ﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.PicGallery;
+using PicView.Properties;
 using PicView.Views.UserControls.Buttons;
 using PicView.Views.UserControls.Menus;
 using PicView.Views.UserControls.Misc;
@@ -74,6 +75,9 @@ internal static class UC
                     (Navigation.FolderIndex + 1)
                     .ToString(CultureInfo.CurrentCulture);
             }
+            GetImageSettingsMenu.ShowBottomGalleryText.Text =
+                Settings.Default.IsBottomGalleryShown ? (string)Application.Current.Resources["HideBottomGallery"]
+                : (string)Application.Current.Resources["ShowBottomGallery"];
         }
     }
 
@@ -385,10 +389,7 @@ internal static class UC
             return;
         }
 
-        if (GetStartUpUC is null)
-        {
-            GetStartUpUC = new StartUpUC();
-        }
+        GetStartUpUC ??= new StartUpUC();
 
         if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetStartUpUC))
         {

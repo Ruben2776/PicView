@@ -119,9 +119,6 @@
     <Setting Name="NavSpeed" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.7</Value>
     </Setting>
-    <Setting Name="FullscreenGallery" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="IsTaskbarProgressEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -131,11 +128,14 @@
     <Setting Name="ShowBottomNavBar" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="BottomGalleryItems" Type="System.Int32" Scope="User">
+    <Setting Name="BottomGalleryItemSize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">37</Value>
     </Setting>
-    <Setting Name="ExpandedGalleryItems" Type="System.Int32" Scope="User">
+    <Setting Name="ExpandedGalleryItemSize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">23</Value>
+    </Setting>
+    <Setting Name="IsBottomGalleryShown" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -5,6 +5,9 @@ using PicView.UILogic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using PicView.ChangeImage;
+using PicView.PicGallery;
 
 namespace PicView.ConfigureSettings;
 
@@ -29,7 +32,6 @@ internal static class ConfigColors
     {
         var getColor = AnimationHelper.GetPreferredColor();
         var getColorBrush = new SolidColorBrush(getColor);
-
         Application.Current.Resources["ChosenColor"] = getColor;
         Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 
@@ -37,6 +39,11 @@ internal static class ConfigColors
         ConfigureWindows.GetSettingsWindow?.Logo.ChangeColor();
         ConfigureWindows.GetInfoWindow?.ChangeColor();
         UC.GetStartUpUC?.ChangeColor();
+        if (UC.GetPicGallery is not null)
+        {
+            // Call function to update color
+            GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
+        }
 
         Settings.Default.Save();
     }
@@ -83,7 +90,7 @@ internal static class ConfigColors
             w.TitleBar.Background =
                 isFocused ? (SolidColorBrush)Application.Current.Resources["SubtleFadeBrush"]
                     : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
-            w.LowerBar.Background = isFocused ? (ImageBrush)Application.Current.Resources["NoisyBg"]
+            w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
                 : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
         }
         else

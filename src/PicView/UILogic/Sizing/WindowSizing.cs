@@ -180,7 +180,8 @@ internal static class WindowSizing
             if (ErrorHandling.CheckOutOfRange() is false)
             {
                 ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
-                ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
+                if (!Settings.Default.IsBottomGalleryShown)
+                    ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
             }
 
             Settings.Default.Fullscreen = true;

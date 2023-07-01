@@ -171,52 +171,63 @@ internal static class AnimationHelper
 
     #endregion Color settings
 
-    #region Size Animation
+    #region Size Animations
 
-    internal static void HoverSizeAnim(PicGalleryItem item, bool unHover, double from, double to)
+    /// <summary>
+    /// Animates the size of a gallery item.
+    /// </summary>
+    /// <param name="item">The gallery item to animate.</param>
+    /// <param name="reduce">Indicates whether the animation is for unhovering the item.</param>
+    /// <param name="fromSize">The initial size of the item.</param>
+    /// <param name="toSize">The target size of the item.</param>
+    internal static void SizeAnim(PicGalleryItem item, bool reduce, double fromSize, double toSize)
     {
-        if (item.Id == Navigation.FolderIndex || item.Id == GalleryNavigation.SelectedGalleryItem || Settings.Default.FullscreenGallery)
-        {
-            return;
-        }
-        if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItemSizeS && unHover == false)
+        if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItemSizeS && !reduce)
         {
             // Make sure it is not run consecutively
             return;
         }
 
-        var da = new DoubleAnimation
+        var animation = new DoubleAnimation
         {
             FillBehavior = FillBehavior.Stop,
             AccelerationRatio = 0.4,
             DecelerationRatio = 0.6
         };
-        da.Completed += delegate
+
+        animation.Completed += delegate
         {
-            item.InnerBorder.Width = to;
-            item.InnerBorder.Height = to;
+            item.InnerBorder.Width = toSize;
+            item.InnerBorder.Height = toSize;
         };
 
-        if (unHover)
+        if (reduce)
         {
-            da.From = from;
-            da.To = to;
-            da.Duration = TimeSpan.FromSeconds(.3);
+            animation.From = fromSize;
+            animation.To = toSize;
+            animation.Duration = TimeSpan.FromSeconds(.3);
         }
         else
         {
-            da.From = from;
-            da.To = to;
-            da.Duration = TimeSpan.FromSeconds(.25);
+            animation.From = fromSize;
+            animation.To = toSize;
+            animation.Duration = TimeSpan.FromSeconds(.25);
         }
 
-        item.InnerBorder.BeginAnimation(FrameworkElement.WidthProperty, da);
-        item.InnerBorder.BeginAnimation(FrameworkElement.HeightProperty, da);
+        item.InnerBorder.BeginAnimation(FrameworkElement.WidthProperty, animation);
+        item.InnerBorder.BeginAnimation(FrameworkElement.HeightProperty, animation);
     }
 
-    internal static void HeightAnimation(FrameworkElement element, double from, double to, bool reverse)
+    /// <summary>
+    /// Animates the height of an element.
+    /// </summary>
+    /// <param name="element">The element to animate.</param>
+    /// <param name="fromHeight">The initial height of the element.</param>
+    /// <param name="toHeight">The target height of the element.</param>
+    /// <param name="reverse">Indicates whether the animation is reversed.</param>
+    internal static void AnimateHeight(FrameworkElement element, double fromHeight, double toHeight, bool reverse)
     {
-        var da = new DoubleAnimation
+        var animation = new DoubleAnimation
         {
             FillBehavior = FillBehavior.Stop,
             AccelerationRatio = 0.4,
@@ -225,24 +236,24 @@ internal static class AnimationHelper
 
         if (reverse)
         {
-            da.From = from;
-            da.To = to;
-            da.Duration = TimeSpan.FromSeconds(.3);
+            animation.From = fromHeight;
+            animation.To = toHeight;
+            animation.Duration = TimeSpan.FromSeconds(.3);
         }
         else
         {
-            da.From = from;
-            da.To = to;
-            da.Duration = TimeSpan.FromSeconds(.25);
+            animation.From = fromHeight;
+            animation.To = toHeight;
+            animation.Duration = TimeSpan.FromSeconds(.25);
         }
 
-        da.Completed += delegate
+        animation.Completed += delegate
         {
-            element.Height = to;
+            element.Height = toHeight;
         };
 
-        element.BeginAnimation(FrameworkElement.HeightProperty, da);
+        element.BeginAnimation(FrameworkElement.HeightProperty, animation);
     }
 
-    #endregion Size Animation
+    #endregion Size Animations
 }

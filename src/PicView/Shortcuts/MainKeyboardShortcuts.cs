@@ -90,8 +90,13 @@ internal static class MainKeyboardShortcuts
             case Key.Right:
             case Key.D:
                 // exit if browsing horizontal PicGallery
-                if (GalleryFunctions.IsGalleryOpen && !Settings.Default.FullscreenGallery)
+                if (GalleryFunctions.IsGalleryOpen)
                 {
+                    if (e.IsRepeat)
+                    {
+                        // Disable animations when key is held down
+                        GetPicGallery.Scroller.CanContentScroll = true; 
+                    }
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Right);
                     return;
                 }
@@ -113,8 +118,13 @@ internal static class MainKeyboardShortcuts
             case Key.BrowserBack:
             case Key.Left:
             case Key.A:
-                if (GalleryFunctions.IsGalleryOpen && !Settings.Default.FullscreenGallery)
+                if (GalleryFunctions.IsGalleryOpen)
                 {
+                    if (e.IsRepeat)
+                    {
+                        // Disable animations when key is held down
+                        GetPicGallery.Scroller.CanContentScroll = true;
+                    }
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Left);
                     return;
                 }
@@ -418,7 +428,7 @@ internal static class MainKeyboardShortcuts
 
                 //  R
                 case Key.R:
-                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen || ctrlDown && Settings.Default.FullscreenGallery)
+                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
                         BackupPath = Pics[FolderIndex];
                         await ReloadAsync(true).ConfigureAwait(false);
@@ -465,14 +475,7 @@ internal static class MainKeyboardShortcuts
 
                 // G
                 case Key.G:
-                    if (GalleryFunctions.IsGalleryOpen)
-                    {
-                        GalleryToggle.CloseHorizontalGallery();
-                    }
-                    else if (Settings.Default.FullscreenGallery == false)
-                    {
-                        await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-                    }
+                    await GalleryToggle.ToggleGalleryAsync().ConfigureAwait(false);
                     break;
 
                 // Space
@@ -574,7 +577,7 @@ internal static class MainKeyboardShortcuts
 
                 // F12
                 case Key.F12:
-                    await GalleryToggle.ToggleFullscreenGalleryAsync().ConfigureAwait(false);
+                    WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
                     break;
 
                 // Home
@@ -613,10 +616,7 @@ internal static class MainKeyboardShortcuts
             }
             else if (e.SystemKey == Key.Enter)
             {
-                if (Settings.Default.FullscreenGallery == false)
-                {
-                    WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
-                }
+                WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
             }
             return;
         }

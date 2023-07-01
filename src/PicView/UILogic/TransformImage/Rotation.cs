@@ -98,8 +98,7 @@ internal static class Rotation
     /// <param name="degrees">The angle in degrees to rotate the image.</param>
     private static void Rotate(double degrees)
     {
-        if (ConfigureWindows.GetMainWindow.MainImage.Source == null ||
-            Settings.Default.FullscreenGallery == false && GalleryFunctions.IsGalleryOpen)
+        if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
         {
             return;
         }

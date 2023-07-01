@@ -1,6 +1,10 @@
-﻿using PicView.Animations;
+﻿using System.Windows;
+using PicView.Animations;
+using PicView.Properties;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.ChangeImage;
+using PicView.PicGallery;
 using static PicView.PicGallery.GalleryNavigation;
 
 namespace PicView.Views.UserControls.Gallery;
@@ -21,21 +25,25 @@ public partial class PicGalleryItem : UserControl
         Id = id;
 
         OuterBorder.Width = OuterBorder.Height = PicGalleryItemSize;
-        InnerBorder.Width = InnerBorder.Height = PicGalleryItemSizeS;
+        InnerBorder.Width = InnerBorder.Height = Settings.Default.IsBottomGalleryShown ? PicGalleryItemSize : PicGalleryItemSizeS;
 
-        ThumbImage.MouseEnter += (s, y) => AnimationHelper.HoverSizeAnim(
-            this,
-            false,
-            PicGalleryItemSizeS,
-            PicGalleryItemSize
-        );
+        ThumbImage.MouseEnter += delegate
+        {
+            InnerBorder.BorderBrush = (SolidColorBrush)Application.Current.Resources["ChosenColorBrush"];
+        };
 
-        ThumbImage.MouseLeave += (s, y) => AnimationHelper.HoverSizeAnim(
-            this,
-            true,
-            PicGalleryItemSize,
-            PicGalleryItemSizeS
-        );
+        ThumbImage.MouseLeave += delegate
+        {
+            if (id == Navigation.FolderIndex) return;
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                if (InnerBorder.Width == PicGalleryItemSize && InnerBorder.Height == PicGalleryItemSize)
+                {
+                    return;
+                }
+            }
+            InnerBorder.BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"];
+        };
 
         if (!selected) return;
         InnerBorder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPreferredColor());

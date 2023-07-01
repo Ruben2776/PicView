@@ -2640,7 +2640,7 @@
                         <TextBlock
                             Margin="10,3,0,3"
                             FontSize="12"
-                            Text="{StaticResource ResourceKey=ShowHorizontalGallery}" />
+                            Text="{StaticResource ResourceKey=ShowImageGallery}" />
                     </Border>
 
                     <Border

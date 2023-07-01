@@ -744,7 +744,7 @@
                             FontSize="12"
                             IsReadOnly="True"
                             IsTabStop="False"
-                            Text="{Binding ElementName=SetExpandedGallerySlider, Path=Value}"
+                            Text="0"
                             TextAlignment="Center" />
                     </StackPanel>
 
@@ -767,7 +767,7 @@
                             d:Value="32"
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
-                            Maximum="50"
+                            Maximum="65"
                             Minimum="20"
                             TickFrequency="1"
                             TickPlacement="BottomRight" />
@@ -783,7 +783,7 @@
                             FontSize="12"
                             IsReadOnly="True"
                             IsTabStop="False"
-                            Text="{Binding ElementName=SetExpandedGallerySlider, Path=Value}"
+                            Text="0"
                             TextAlignment="Center" />
                     </StackPanel>
 

@@ -1,4 +1,5 @@
-﻿using PicView.Properties;
+﻿using PicView.Animations;
+using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
@@ -14,17 +15,17 @@ internal static class GalleryNavigation
 {
     #region int calculations
 
-    internal static void SetSize(int numberOfItems)
+    internal static void SetSize(double numberOfItems)
     {
         PicGalleryItemSize = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
 
-        PicGalleryItemSizeS = !Settings.Default.FullscreenGallery ? PicGalleryItemSize - 20 : PicGalleryItemSize - 10;
+        PicGalleryItemSizeS = PicGalleryItemSize - 15;
     }
 
     internal static double PicGalleryItemSize { get; private set; }
     internal static double PicGalleryItemSizeS { get; private set; }
 
-    private static int HorizontalItems
+    internal static int HorizontalItems
     {
         get
         {
@@ -34,27 +35,37 @@ internal static class GalleryNavigation
         }
     }
 
-    private static int VerticalItems
+    internal static int VerticalItems
     {
         get
         {
             if (GetPicGallery == null || PicGalleryItemSize == 0) { return 0; }
 
-            return (int)Math.Floor((GetPicGallery.Scroller.ViewportHeight - GetPicGallery.Container.Margin.Top) / PicGalleryItemSize);
+            return (int)Math.Floor((ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight - GetPicGallery.Container.Margin.Top) / PicGalleryItemSize);
         }
     }
 
-    private static double CenterScrollPosition
+    internal static int ItemsPerPage
     {
         get
         {
-            if (GetPicGallery == null || PicGalleryItemSize == 0) { return 0; }
+            if (GetPicGallery == null) { return 0; }
+
+            return HorizontalItems * VerticalItems;
+        }
+    }
+
+    internal static double CenterScrollPosition
+    {
+        get
+        {
+            if (GetPicGallery == null || PicGalleryItemSize <= 0) { return 0; }
             if (GetPicGallery.Container.Children.Count <= SelectedGalleryItem) { return 0; }
 
             var selectedScrollTo = GetPicGallery.Container.Children[SelectedGalleryItem].TranslatePoint(new Point(), GetPicGallery.Container);
 
             // ReSharper disable once PossibleLossOfFraction
-            return selectedScrollTo.X - (HorizontalItems / 2) * PicGalleryItemSize + (PicGalleryItemSizeS / 2); // Scroll to overlap half of item
+            return selectedScrollTo.X - (HorizontalItems + 1) / 2 * PicGalleryItemSize + PicGalleryItemSizeS / 2; // Scroll to overlap half of item
         }
     }
 
@@ -67,11 +78,9 @@ internal static class GalleryNavigation
     /// </summary>
     internal static void ScrollToGalleryCenter()
     {
-        if (GetPicGallery == null || PicGalleryItemSize < 1) { return; }
-        if (!GalleryFunctions.IsGalleryOpen) return;
-
-        if (GetPicGallery.Container.Children.Count < FolderIndex || GetPicGallery.Container.Children.Count <= 0) { return; }
-        GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
+        var centerScrollPosition = CenterScrollPosition;
+        if (centerScrollPosition == 0) { return; }
+        GetPicGallery.Scroller.ScrollToHorizontalOffset(centerScrollPosition);
     }
 
     /// <summary>
@@ -98,45 +107,23 @@ internal static class GalleryNavigation
         }
         else
         {
-            if (Settings.Default.FullscreenGallery)
+            if (animate)
             {
-                if (animate)
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems * 0.1;
-                    var offset = next ? -speed : speed;
+                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems / 1.2;
+                var offset = next ? -speed : speed;
 
-                    var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
-                }
-                else
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.2;
-                    var offset = next ? -speed : speed;
+                var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
 
-                    var direction = GetPicGallery.Scroller.HorizontalOffset + offset;
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(direction);
-                }
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
             }
             else
             {
-                if (animate)
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 0.8 : PicGalleryItemSize * HorizontalItems / 1.2;
-                    var offset = next ? -speed : speed;
+                var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.3;
+                var offset = next ? -speed : speed;
 
-                    var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
+                var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
 
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
-                }
-                else
-                {
-                    var speed = speedUp ? PicGalleryItemSize * HorizontalItems * 1.2 : PicGalleryItemSize * HorizontalItems * 0.3;
-                    var offset = next ? -speed : speed;
-
-                    var newOffset = GetPicGallery.Scroller.HorizontalOffset + offset;
-
-                    GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
-                }
+                GetPicGallery.Scroller.ScrollToHorizontalOffset(newOffset);
             }
         }
     }
@@ -150,7 +137,7 @@ internal static class GalleryNavigation
     /// </summary>
     /// <param name="x">location</param>
     /// <param name="selected">selected or deselected</param>
-    internal static void SetSelected(int x, bool selected)
+    internal static void SetSelected(int x, bool selected, bool navigate = false)
     {
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
@@ -162,12 +149,26 @@ internal static class GalleryNavigation
             if (selected)
             {
                 nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSize;
+                if (GalleryFunctions.IsGalleryOpen && navigate)
+                {
+                    AnimationHelper.SizeAnim(nextItem, false, PicGalleryItemSizeS, PicGalleryItemSize);
+                }
+                else
+                {
+                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSize;
+                }
             }
             else
             {
                 nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSizeS;
+                if (GalleryFunctions.IsGalleryOpen && navigate)
+                {
+                    AnimationHelper.SizeAnim(nextItem, true, PicGalleryItemSize, PicGalleryItemSizeS);
+                }
+                else
+                {
+                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen ? PicGalleryItemSize : PicGalleryItemSizeS;
+                }
             }
         });
     }
@@ -222,10 +223,10 @@ internal static class GalleryNavigation
             SelectedGalleryItem = 0;
         }
 
-        SetSelected(SelectedGalleryItem, true);
+        SetSelected(SelectedGalleryItem, true, true);
         if (backup != SelectedGalleryItem && backup != FolderIndex)
         {
-            SetSelected(backup, false); // deselect
+            SetSelected(backup, false, true); // deselect
         }
 
         if (direction is Direction.Up or Direction.Down)
@@ -237,20 +238,6 @@ internal static class GalleryNavigation
             // Keep item in center of ScrollViewer
             GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
         });
-    }
-
-    internal static void FullscreenGalleryNavigation()
-    {
-        SetSelected(FolderIndex, true);
-        SelectedGalleryItem = FolderIndex;
-
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
-        {
-            GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
-            GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
-        });
-
-        Tooltip.CloseToolTipMessage();
     }
 
     #endregion Horizontal Gallery Navigation
