@@ -14,10 +14,10 @@ internal static class SupportedFiles
         ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".gif", ".jfif", ".ico", ".webp", ".wbmp", ".avif",
         ".psd", ".psb",
         ".tif", ".tiff", ".dds", ".tga", ".heic", ".heif", ".hdr", ".xcf", ".jxl", ".jp2", ".qoi", ".thm",
-        ".b64",
+        ".b64", 
         ".svg", ".svgz",
         ".3fr", ".arw", ".cr2", ".cr3", ".crw", ".dcr", ".dng", ".erf", ".kdc", ".mdc", ".mef", ".mos", ".mrw",
-        ".nef", ".nrw", ".orf", ".pef", ".raf", ".raw", ".rw2", ".srf", ".x3f",
+        ".nef", ".nrw", ".orf", ".pef", ".raf", ".raw", ".rw2", ".srf", ".x3f", ".fpx", ".pcd", ".flif",
         ".pgm", ".ppm", ".cut", ".exr", ".dib", ".emf", ".wmf", ".wpg", ".pcx", ".xbm", ".xpm",
     };
 

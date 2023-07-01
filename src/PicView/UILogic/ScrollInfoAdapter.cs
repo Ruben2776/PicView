@@ -35,14 +35,38 @@ namespace PicView.UILogic
 
         public bool CanVerticallyScroll
         {
-            get => _child.CanVerticallyScroll;
-            set => _child.CanVerticallyScroll = value;
+            get
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                return _child is not null && _child.CanVerticallyScroll;
+            }
+            set
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (_child is null)
+                {
+                    return;
+                }
+                _child.CanVerticallyScroll = value;
+            }
         }
 
         public bool CanHorizontallyScroll
         {
-            get => _child.CanHorizontallyScroll;
-            set => _child.CanHorizontallyScroll = value;
+            get
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                return _child is not null && _child.CanHorizontallyScroll;
+            }
+            set
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (_child is null)
+                {
+                    return;
+                }
+                _child.CanHorizontallyScroll = value;
+            }
         }
 
         public double ExtentWidth => _child.ExtentWidth;

@@ -25,38 +25,100 @@ internal static class GalleryClick
 {
     internal static async Task ClickAsync(int id)
     {
-        if (Settings.Default.FullscreenGallery)
+        if (Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen)
         {
             await ItemClickAsync(id).ConfigureAwait(false);
             return;
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+        Image? image;
+        Border? border = null;
+        var imageSize = await Task.FromResult(ImageSizeFunctions.GetImageSize(Pics[id])).ConfigureAwait(false);
+        if (!imageSize.HasValue) return;
+
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             ConfigureWindows.GetMainWindow.Focus();
             ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Hidden;
             var galleryItem = GetPicGallery.Container.Children[id] as PicGalleryItem;
             ConfigureWindows.GetMainWindow.MainImage.Source = galleryItem.ThumbImage.Source;
+
+            image = new Image
+            {
+                Source = GetThumb(id) ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(),
+                Stretch = Stretch.Fill,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // Need to add border for background to pictures with transparent background
+            border = new Border
+            {
+                Background = ConfigColors.BackgroundColorBrush,
+                Child = image
+            };
+            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(border);
+
+            SetTitle.SetLoadingString();
+            FitImage(imageSize.Value.Width, imageSize.Value.Height);
+            // Show closing animation from bottom gallery
+            if (!Settings.Default.IsBottomGalleryShown)
+            {
+                return;
+            }
+
+            border.Width = XWidth;
+            border.Height = XHeight;
+            var galleryCloseAnimation = new DoubleAnimation
+            {
+                FillBehavior = FillBehavior.Stop,
+                AccelerationRatio = 0.5,
+                DecelerationRatio = 0.5,
+                From = GetPicGallery.ActualHeight,
+                To = GalleryNavigation.PicGalleryItemSize + 22,
+                Duration = TimeSpan.FromSeconds(.7)
+            };
+            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+            for (int i = 0; i < GetPicGallery.Container.Children.Count; i++)
+            {
+                var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
+                item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSize;
+                item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
+            }
+            galleryCloseAnimation.Completed += delegate
+            {
+                border.Opacity = 0;
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(border);
+                image = null;
+                GalleryFunctions.IsGalleryOpen = false;
+                ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
+                GalleryLoad.LoadBottomGallery();
+                GetPicGallery.Scroller.CanContentScroll = false;
+                GalleryNavigation.ScrollToGalleryCenter();
+                GetPicGallery.Scroller.CanContentScroll = true;
+            };
+
+            GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, galleryCloseAnimation);
         });
 
-        Border? border = null;
-        Image? image = null;
-
-        var imageSize = ImageSizeFunctions.GetImageSize(Pics[id]);
-        if (imageSize.HasValue)
+        if (Settings.Default.IsBottomGalleryShown)
         {
-            GalleryFunctions.IsGalleryOpen = false;
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Send, () =>
+            await ItemClickAsync(id).ConfigureAwait(false);
+            return; // Only show width and height animation when bottom gallery is not shown
+        }
+
+        if (Settings.Default.AutoFitWindow) // Fix stretching whole screen when auto fitting
+        {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                SetTitle.SetLoadingString();
-                FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.Manual;
             });
         }
 
         var fromSize = GalleryNavigation.PicGalleryItemSize;
         var toSize = new[] { XWidth, XHeight };
-        var acceleration = 0.2;
-        var deceleration = 0.4;
+        const double acceleration = 0.2;
+        const double deceleration = 0.4;
         var duration = TimeSpan.FromSeconds(.3);
 
         var widthAnimation = new DoubleAnimation
@@ -66,7 +128,8 @@ internal static class GalleryClick
             Duration = duration,
             AccelerationRatio = acceleration,
             DecelerationRatio = deceleration,
-            FillBehavior = FillBehavior.Stop
+            FillBehavior = FillBehavior.Stop,
+            AutoReverse = false
         };
 
         var heightAnimation = new DoubleAnimation
@@ -76,61 +139,44 @@ internal static class GalleryClick
             Duration = duration,
             AccelerationRatio = acceleration,
             DecelerationRatio = deceleration,
-            FillBehavior = FillBehavior.Stop
+            FillBehavior = FillBehavior.Stop,
+            AutoReverse = false
         };
 
         widthAnimation.Completed += async delegate
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
+                GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 border.Opacity = 0;
-                GetPicGallery.grid.Children.Remove(border);
+                ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(border);
                 image = null;
                 GalleryFunctions.IsGalleryOpen = false;
-                GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
+                if (Settings.Default.AutoFitWindow) // Revert back to auto fitting
+                {
+                    ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                }
             });
             await ItemClickAsync(id).ConfigureAwait(false);
         };
 
-        image = new Image
-        {
-            Source = GetThumb(id) ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(),
-            Stretch = Stretch.Fill,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        // Need to add border for background to pictures with transparent background
-        border = new Border
-        {
-            Background = ConfigColors.BackgroundColorBrush,
-            Child = image
-        };
-
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (Settings.Default.AutoFitWindow)
+            var opacityAnimation = new DoubleAnimation
             {
-                GetPicGallery.Width = XWidth;
-                GetPicGallery.Height = XHeight;
-            }
-            else
-            {
-                var opacityAnimation = new DoubleAnimation
-                {
-                    From = 1,
-                    To = 0,
-                    Duration = duration,
-                    AccelerationRatio = acceleration,
-                    DecelerationRatio = deceleration,
-                    FillBehavior = FillBehavior.Stop
-                };
-                GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
-            }
+                From = 1,
+                To = 0,
+                Duration = duration,
+                AccelerationRatio = acceleration,
+                DecelerationRatio = deceleration,
+                FillBehavior = FillBehavior.Stop
+            };
+            GetPicGallery.Container.BeginAnimation(UIElement.OpacityProperty, opacityAnimation);
 
             GetPicGallery.x2.Visibility = Visibility.Hidden;
-            GetPicGallery.grid.Children.Add(border);
+
+            if (Settings.Default.IsBottomGalleryShown) return;
 
             border.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
             border.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
@@ -147,7 +193,7 @@ internal static class GalleryClick
             GalleryNavigation.SetSelected(FolderIndex, false);
 
             // Restore interface elements if needed
-            if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen && Settings.Default.ShowAltInterfaceButtons)
+            if (!Settings.Default.ShowInterface || Settings.Default is { Fullscreen: true, ShowAltInterfaceButtons: true })
             {
                 HideInterfaceLogic.ShowNavigation(true);
                 HideInterfaceLogic.ShowShortcuts(true);
@@ -156,7 +202,6 @@ internal static class GalleryClick
             // Select next item
             GalleryNavigation.SetSelected(id, true);
             GalleryNavigation.SelectedGalleryItem = id;
-            GalleryNavigation.ScrollToGalleryCenter();
         });
         // Change image
         await LoadPic.LoadPicAtIndexAsync(id).ConfigureAwait(false);

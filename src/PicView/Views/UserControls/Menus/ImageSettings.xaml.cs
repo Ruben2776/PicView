@@ -69,44 +69,26 @@ public partial class ImageSettings
         s += " [F5]";
         SlideShowBorder.ToolTip = s;
 
-        // FullscreenGalleryBorder
-        SetButtonIconMouseOverAnimations(FullScreenGalleryButton, FullScreenBrush,
-            (SolidColorBrush)Resources["FullScreenIcon"]);
-        FullscreenGalleryBorder.MouseLeftButtonDown += async delegate
+        // BottomGalleryBorder
+        SetButtonIconMouseOverAnimations(BottomGalleryButton, BottomGalleryBrush,
+            (SolidColorBrush)Resources["BottomGalleryIcon"]);
+        BottomGalleryBorder.MouseLeftButtonDown += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
+        BottomGalleryButton.Click += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
+    }
+
+    private static async Task ContainedGalleryClick()
+    {
+        UC.Close_UserControls();
+        Settings.Default.IsBottomGalleryShown = !Settings.Default.IsBottomGalleryShown;
+        if (Settings.Default.IsBottomGalleryShown)
         {
-            UC.Close_UserControls();
-
-            if (Settings.Default.FullscreenGallery == false)
-            {
-                Settings.Default.FullscreenGallery = true;
-            }
-
-            await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
-        };
-        FullScreenGalleryButton.Click += async delegate
-        {
-            UC.Close_UserControls();
-
-            if (Settings.Default.FullscreenGallery == false)
-            {
-                Settings.Default.FullscreenGallery = true;
-            }
-
-            await GalleryToggle.OpenFullscreenGalleryAsync().ConfigureAwait(false);
-        };
-
-        // ContainedGalleryBorder
-        SetButtonIconMouseOverAnimations(ContainedGalleryButton, ContainedButtonBrush,
-            (SolidColorBrush)Resources["ContainedIcon"]);
-        ContainedGalleryBorder.MouseLeftButtonDown += async delegate
-        {
-            UC.Close_UserControls();
+            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+            GalleryFunctions.ReCalculateItemSizes();
             await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-        };
-        ContainedGalleryButton.Click += async delegate
+        }
+        else
         {
-            UC.Close_UserControls();
-            await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
-        };
+            GalleryToggle.CloseBottomGallery();
+        }
     }
 }

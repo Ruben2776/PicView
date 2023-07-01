@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PicView.PicGallery;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
@@ -39,9 +40,30 @@ public partial class GoToPicButton : UserControl
             x--;
             x = x <= 0 ? 0 : x;
             x = x >= Pics.Count ? Pics.Count - 1 : x;
+            // If the gallery is open, deselect current index
+            if (GetPicGallery is not null)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
+                    // Deselect current item
+                    GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+                    GalleryNavigation.SetSelected(FolderIndex, false);
+                });
+            }
             await LoadPic.LoadPicAtIndexAsync(x).ConfigureAwait(false);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture));
+            {
+                GetImageSettingsMenu.GoToPic.GoToPicBox.Text = (x + 1).ToString(CultureInfo.CurrentCulture);
+                if (GetPicGallery is null)
+                {
+                    return;
+                }
+                // Select next item
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
         }
         else if (Pics.Count > 0 && Pics.Count > FolderIndex)
         {

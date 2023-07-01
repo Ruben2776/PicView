@@ -95,11 +95,6 @@
     <system:String x:Key="Language">Язык</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Для изменения языка требуется перезагрузка</system:String>
 
-    <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">Полноэкранный макет галереи</system:String>
-    <system:String x:Key="Vertical">Вертикально</system:String>
-    <system:String x:Key="Horizontal">Горизонтально</system:String>
-
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Ctrl для увеличения, прокрутка для навигации</system:String>
     <system:String x:Key="ScrollToZoom">Масштабирование с помощью колесика мыши, перемещение с помощью Ctrl</system:String>
@@ -355,8 +350,8 @@
     <system:String x:Key="CloseGallery">Закрыть галерею</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">Показать полноэкранную галерею</system:String>
-    <system:String x:Key="ShowHorizontalGallery">Показать горизонтальную галерею</system:String>
+    <system:String x:Key="ShowBottomGallery">Показать нижнюю галерею</system:String>
+    <system:String x:Key="HideBottomGallery">Скрыть нижнюю галерею</system:String>
 
     <system:String x:Key="StretchImage">Растянуть изображение</system:String>
 

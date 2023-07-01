@@ -71,7 +71,7 @@ internal static partial class NativeMethods
     /// Executes when user manually resized window
     public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (Settings.Default.AutoFitWindow || Settings.Default.FullscreenGallery)
+        if (Settings.Default.AutoFitWindow)
         {
             return IntPtr.Zero;
         }
@@ -81,30 +81,28 @@ internal static partial class NativeMethods
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (w == null) { return IntPtr.Zero; }
 
-        if (w.MainImage.Source == null)
+        // Resize gallery
+        if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen || UC.GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
         {
-            if (UC.GetStartUpUC is not null)
+            if (!Settings.Default.IsBottomGalleryShown)
             {
-                UC.GetStartUpUC.ResponsiveSize(w.Width);
-            }
-        }
-        else
-        {
-            if (w.WindowState == WindowState.Maximized)
-            {
-                WindowSizing.Restore_From_Move();
-            }
-
-            // Resize gallery
-            if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
-            {
-                UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
                 UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
             }
-
-            ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+            UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
         }
 
+        if (UC.GetStartUpUC is not null)
+        {
+            UC.GetStartUpUC.ResponsiveSize(w.Width);
+        }
+        if (w.WindowState == WindowState.Maximized)
+        {
+            WindowSizing.Restore_From_Move();
+        }
+
+        if (w.MainImage.Source is not null)
+            ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+        
         return IntPtr.Zero;
     }
 

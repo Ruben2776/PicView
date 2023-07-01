@@ -69,7 +69,7 @@ internal static class UpdateUIValues
 
     internal static void SetScrolling()
     {
-        if (Settings.Default.FullscreenGallery || GalleryFunctions.IsGalleryOpen)
+        if (GalleryFunctions.IsGalleryOpen)
             return;
 
         var settingCcm = MainContextMenu.Items[7] as MenuItem;
@@ -132,11 +132,6 @@ internal static class UpdateUIValues
 
     internal static void SetAutoFit(object sender, RoutedEventArgs e)
     {
-        if (Settings.Default.FullscreenGallery)
-        {
-            return;
-        }
-
         SetScalingBehaviour(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow,
             Settings.Default.FillImage);
     }
@@ -158,9 +153,7 @@ internal static class UpdateUIValues
         UC.GetQuickSettingsMenu.SetFit.IsChecked = autoFit;
         UC.GetQuickSettingsMenu.ToggleFill.IsChecked = fill;
 
-        if (!Settings.Default.FullscreenGallery)
-            WindowSizing.SetWindowBehavior();
-
+        WindowSizing.SetWindowBehavior();
         ScaleImage.TryFitImage();
         Settings.Default.Save();
     }

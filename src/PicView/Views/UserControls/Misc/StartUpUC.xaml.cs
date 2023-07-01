@@ -2,6 +2,7 @@
 using PicView.ConfigureSettings;
 using PicView.FileHandling;
 using PicView.Properties;
+using PicView.UILogic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -75,17 +76,18 @@ public partial class StartUpUC
 
     public void ResponsiveSize(double width)
     {
+        var bottomMargin = Settings.Default.IsBottomGalleryShown ? UC.GetPicGallery.Height + 14 : 16;
         switch (width)
         {
             case < 1265:
                 Logo.Width = 350;
-                buttons.Margin = new Thickness(0, 0, 0, 16);
+                buttons.Margin = new Thickness(0, 0, 0, bottomMargin);
                 buttons.VerticalAlignment = VerticalAlignment.Bottom;
                 break;
 
             case > 1265:
                 Logo.Width = double.NaN;
-                buttons.Margin = new Thickness(0, 220, 25, 16);
+                buttons.Margin = new Thickness(0, 220, 25, bottomMargin);
                 buttons.VerticalAlignment = VerticalAlignment.Center;
                 break;
         }

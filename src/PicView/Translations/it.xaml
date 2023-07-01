@@ -95,11 +95,6 @@
     <system:String x:Key="Language">Linguaggio</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* La modifica della lingua richiede il riavvio</system:String>
 
-    <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">Layout della galleria a schermo intero</system:String>
-    <system:String x:Key="Vertical">Verticale</system:String>
-    <system:String x:Key="Horizontal">Orizzontale</system:String>
-
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Ctrl per ingrandire, scorri per navigare</system:String>
     <system:String x:Key="ScrollToZoom">Scorri per ingrandire, Ctrl per navigare</system:String>
@@ -355,8 +350,8 @@
     <system:String x:Key="CloseGallery">Chiudi la galleria</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">Mostra galleria a schermo intero</system:String>
-    <system:String x:Key="ShowHorizontalGallery">Mostra galleria orizzontale</system:String>
+    <system:String x:Key="ShowBottomGallery">Mostra galleria inferiore</system:String>
+    <system:String x:Key="HideBottomGallery">Nascondi galleria inferiore</system:String>
 
     <system:String x:Key="StretchImage">Estendi immagine</system:String>
 

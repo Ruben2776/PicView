@@ -95,11 +95,6 @@
     <system:String x:Key="Language">Limbă</system:String>
     <system:String x:Key="ChangingLanguageRequiresRestart">* Modificarea limbii necesită repornire&quot;</system:String>
 
-    <!--  Settings window, Gallery layout  -->
-    <system:String x:Key="FullscreenGalleryLayout">Aspectul galeriei pe ecran complet</system:String>
-    <system:String x:Key="Vertical">Vertical</system:String>
-    <system:String x:Key="Horizontal">Orizontal</system:String>
-
     <!--  Settings window, mouse  -->
     <system:String x:Key="CtrlToZoom">Ctrl pentru a transfoca, defilare pentru a naviga</system:String>
     <system:String x:Key="ScrollToZoom">Transfocare cu rotița mausului, navigare cu Ctrl</system:String>
@@ -355,8 +350,8 @@
     <system:String x:Key="CloseGallery">Închide galeria</system:String>
 
     <!--  Menu buttons text  -->
-    <system:String x:Key="ShowFullscreenGallery">Arată galeria pe tot ecranul</system:String>
-    <system:String x:Key="ShowHorizontalGallery">Arată galeria pe orizontală</system:String>
+    <system:String x:Key="ShowBottomGallery">Afișează galeria de jos</system:String>
+    <system:String x:Key="HideBottomGallery">Ascunde galeria de jos</system:String>
 
     <system:String x:Key="StretchImage">Întinde imaginea</system:String>
 

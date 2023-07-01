@@ -77,7 +77,7 @@ internal static class ImageDragAndDrop
                 }
             }
             // File
-            var thumb = Path.GetExtension(files[0]) is ".b64" or ".txt" ? ImageFunctions.ShowLogo() : GetBitmapSourceThumb(new FileInfo(files[0]), 300);
+            var thumb = Path.GetExtension(files[0]) is ".b64" or ".txt" ? ImageFunctions.ShowLogo() : GetBitmapSourceThumb(files[0], 300);
             element = new DragDropOverlayPic(thumb);
         }
 

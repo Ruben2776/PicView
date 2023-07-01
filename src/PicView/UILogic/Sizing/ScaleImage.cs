@@ -1,6 +1,8 @@
 ﻿using PicView.ChangeImage;
 using PicView.Properties;
+using PicView.UILogic.TransformImage;
 using System.Windows;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
@@ -74,21 +76,23 @@ internal static class ScaleImage
         double maxWidth, maxHeight;
         var margin = 0d;
         var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
-        var isFullScreenSize = Settings.Default.Fullscreen || Settings.Default.FullscreenGallery;
+        var isFullScreenSize = Settings.Default.Fullscreen;
 
-        var borderSpaceHeight = isFullScreenSize ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight;
+        var galleryHeight = 0.0;
+        if (UC.GetPicGallery is not null)
+        {
+            if (Settings.Default.IsBottomGalleryShown)
+            {
+                galleryHeight = PicGalleryItemSize + 22;
+            }
+        }
+        var borderSpaceHeight = isFullScreenSize ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
         var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
 
         var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
         var workAreaHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-        if (Settings.Default.FullscreenGallery)
-        {
-            maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth, width);
-            maxHeight = Settings.Default.FillImage ? workAreaHeight - PicGalleryItemSize : Math.Min(workAreaHeight - PicGalleryItemSize, height);
-            margin = PicGalleryItemSize + 5;
-        }
-        else if (Settings.Default.AutoFitWindow)
+        if (Settings.Default.AutoFitWindow)
         {
             maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth - padding, width);
             maxHeight = Settings.Default.FillImage ? workAreaHeight : Math.Min(workAreaHeight - padding, height);
@@ -105,8 +109,17 @@ internal static class ScaleImage
             else
             {
                 maxHeight = Settings.Default.FillImage ?
-                    GetMainWindow.ParentContainer.ActualHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight, height);
+                    GetMainWindow.ParentContainer.ActualHeight - galleryHeight : Math.Min(GetMainWindow.ParentContainer.ActualHeight - galleryHeight, height);
             }
+        }
+
+        if (Settings.Default.IsBottomGalleryShown) // Set to if new gallery opened and Settings.Default.FullscreenGallery
+        {
+            if (PicGalleryItemSize is 0)
+            {
+                SetSize(Settings.Default.BottomGalleryItemSize);
+            }
+            margin = PicGalleryItemSize + 22; // Scrollbar
         }
 
         switch (RotationAngle) // aspect ratio calculation
@@ -151,10 +164,27 @@ internal static class ScaleImage
 
             GetMainWindow.ParentContainer.Width = double.NaN;
             GetMainWindow.ParentContainer.Height = double.NaN;
+
+            if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery is not null)
+            {
+                if (Settings.Default.AutoFitWindow)
+                {
+                    UC.GetPicGallery.Width = XWidth;
+                }
+                else if (!double.IsNaN(GetMainWindow.ParentContainer.Width))
+                {
+                    UC.GetPicGallery.Width = GetMainWindow.ParentContainer.Width;
+                }
+            }
         }
 
         // Update margin when from fullscreen gallery and when not
         GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
+
+        if (ZoomLogic.IsZoomed)
+        {
+            ZoomLogic.ResetZoom(false);
+        }
 
         if (isFullScreenSize) return;
 

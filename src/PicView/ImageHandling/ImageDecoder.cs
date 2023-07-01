@@ -188,7 +188,6 @@ internal static class ImageDecoder
 #if DEBUG
             Trace.WriteLine($"{nameof(GetMagickSvg)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
-            Tooltip.ShowTooltipMessage(e);
             return null;
         }
     }
@@ -278,7 +277,6 @@ internal static class ImageDecoder
 #if DEBUG
             Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception:\n{exception.Message}");
 #endif
-            Tooltip.ShowTooltipMessage(exception);
             return null;
         }
     }

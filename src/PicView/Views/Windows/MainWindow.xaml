@@ -191,7 +191,7 @@
         <Grid
             x:Name="LowerBar"
             Height="25"
-            Background="{StaticResource NoisyBg}"
+            Background="{StaticResource BackgroundColorBrushAlt}"
             DockPanel.Dock="Bottom">
 
             <Canvas
