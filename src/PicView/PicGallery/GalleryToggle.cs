@@ -26,6 +26,10 @@ internal static class GalleryToggle
             case true when IsGalleryOpen:
                 await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
                 {
+                    if (GetPicGallery is null)
+                    {
+                        GalleryLoad.LoadLayout();
+                    }
                     // Set size
                     GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
                     GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;

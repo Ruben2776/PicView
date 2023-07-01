@@ -77,11 +77,11 @@ public partial class MainWindow
                     }
                     else
                     {
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => Fullscreen_Restore(true),
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => Fullscreen_Restore(true),
                             DispatcherPriority.Send);
                     }
                 }
-                else if (Settings.Default.IsBottomGalleryShown)
+                if (Settings.Default.IsBottomGalleryShown)
                 {
                     ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadBottomGallery,
                         DispatcherPriority.Send);

@@ -3,9 +3,6 @@ using PicView.PicGallery;
 
 namespace PicView.Views.UserControls.Buttons;
 
-/// <summary>
-/// Cool shady close button!
-/// </summary>
 public partial class GalleryShortcut
 {
     public GalleryShortcut()
