@@ -239,8 +239,7 @@ internal static class WindowSizing
 
         TryFitImage();
 
-        GetMainWindow.Top = 0;
-        GetMainWindow.Left = 0;
+        CenterWindowOnScreen();
     }
 
     /// <summary>
