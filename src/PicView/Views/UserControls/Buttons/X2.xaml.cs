@@ -1,6 +1,5 @@
 ﻿using PicView.Animations;
 using PicView.PicGallery;
-using PicView.Properties;
 using PicView.UILogic;
 using System.Windows;
 
@@ -17,12 +16,9 @@ public partial class X2
             {
                 GalleryToggle.CloseHorizontalGallery();
             }
-            else if (Settings.Default.ShowInterface == false || Settings.Default.Fullscreen)
+            else
             {
-                if (UC.GetPicGallery is null or { IsVisible: false })
-                {
-                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-                }
+                SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
             }
         };
 
