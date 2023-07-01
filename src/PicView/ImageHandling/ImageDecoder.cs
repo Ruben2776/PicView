@@ -3,6 +3,7 @@ using ImageMagick.Formats;
 using PicView.UILogic;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -166,7 +167,7 @@ internal static class ImageDecoder
             }
             else
             {
-                await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+                await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
                 var data = new byte[fileStream.Length];
                 // ReSharper disable once MustUseReturnValue
                 await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
@@ -205,7 +206,7 @@ internal static class ImageDecoder
 
         try
         {
-            await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+            await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync:fileInfo.Length > 1e+8);
             var sKBitmap = SKBitmap.Decode(fileStream);
             if (sKBitmap is null) { return null; }
 
