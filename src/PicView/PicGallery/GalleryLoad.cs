@@ -38,8 +38,14 @@ internal static class GalleryLoad
             double horizontalOffset = UC.GetPicGallery.Scroller.HorizontalOffset;
             double viewportWidth = UC.GetPicGallery.Scroller.ViewportWidth;
             double itemWidth = GalleryNavigation.PicGalleryItemSize;
-            int firstVisibleIndex = (int)Math.Floor(horizontalOffset / itemWidth);
+            int firstVisibleIndex = true ? Navigation.FolderIndex - GalleryNavigation.HorizontalItems / 2 : (int)Math.Floor(horizontalOffset / itemWidth);
             int lastVisibleIndex = firstVisibleIndex + GalleryNavigation.HorizontalItems * 2;
+
+            if (Navigation.Reverse)
+            {
+                firstVisibleIndex = lastVisibleIndex;
+                lastVisibleIndex = firstVisibleIndex;
+            }
 
             IsLoading = true;
             var source = new CancellationTokenSource();
@@ -49,7 +55,7 @@ internal static class GalleryLoad
                 {
                     var count = Navigation.Pics.Count;
 
-                    Parallel.For(firstVisibleIndex, lastVisibleIndex, i =>
+                    Parallel.For(firstVisibleIndex, lastVisibleIndex, (i, loopState) =>
                     {
                         try
                         {
@@ -74,7 +80,9 @@ internal static class GalleryLoad
 #if DEBUG
                             Trace.WriteLine(e.Message);
 #endif
-                            // Suppress task cancellation
+                            GalleryFunctions.Clear();
+                            IsLoading = false;
+                            loopState.Stop();
                         }
                     });
                 }, source.Token).ConfigureAwait(false);
@@ -187,78 +195,71 @@ internal static class GalleryLoad
 
         IsLoading = true;
         var source = new CancellationTokenSource();
-        try
+
+        var count = Navigation.Pics.Count;
+        var index = Navigation.FolderIndex;
+
+        for (var i = 0; i < count; i++)
         {
-            await Task.Run(() =>
+            try
             {
-                var count = Navigation.Pics.Count;
-                var index = Navigation.FolderIndex;
-
-                for (var i = 0; i < count; i++)
+                if (count != Navigation.Pics.Count)
                 {
-                    try
-                    {
-                        if (count != Navigation.Pics.Count)
-                        {
-                            throw new TaskCanceledException();
-                        }
-
-                        Add(i, index);
-                    }
-                    catch (Exception e)
-                    {
-#if DEBUG
-                        Trace.WriteLine(e.Message);
-#endif
-                        // Suppress task cancellation
-                    }
+                    throw new TaskCanceledException();
                 }
 
-                if (count > 4000)
-                {
-                    return;
-                }
-
-                Parallel.For(0, count, i =>
-                {
-                    try
-                    {
-                        if (count != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
-                        {
-                            throw new TaskCanceledException();
-                        }
-
-                        var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
-                        {
-                            if (i >= UC.GetPicGallery.Container.Children.Count)
-                            {
-                                return;
-                            }
-                            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                            item.ThumbImage.Source = bitmapSource;
-                        }));
-                    }
-                    catch (Exception e)
-                    {
+                Add(i, index);
+            }
+            catch (Exception e)
+            {
 #if DEBUG
-                        Trace.WriteLine(e.Message);
+                Trace.WriteLine(e.Message);
 #endif
-                        // Suppress task cancellation
+                GalleryFunctions.Clear();
+                IsLoading = false;
+            }
+        }
+
+        if (count > 4000)
+        {
+            IsLoading = false;
+            return;
+        }
+
+        await Task.Run(() =>
+        {
+            Parallel.For(0, count, (i, loopState) =>
+            {
+                try
+                {
+                    if (count != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                    {
+                        throw new TaskCanceledException();
                     }
-                });
-            }, source.Token).ConfigureAwait(false);
-        }
-        catch (Exception)
-        {
-            GalleryFunctions.Clear();
-            IsLoading = false;
-        }
-        finally
-        {
-            IsLoading = false;
-            source.Dispose();
-        }
+
+                    var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
+                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
+                    {
+                        if (i >= UC.GetPicGallery.Container.Children.Count)
+                        {
+                            return;
+                        }
+                        var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                        item.ThumbImage.Source = bitmapSource;
+                    }));
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine(e.Message);
+#endif
+                    GalleryFunctions.Clear();
+                    IsLoading = false;
+                    loopState.Stop();
+                }
+            });
+        }, source.Token).ConfigureAwait(false);
+
         IsLoading = false;
     }
 
