@@ -58,7 +58,9 @@
                     Name="GalleryButton"
                     Canvas.Left="42"
                     Width="29"
-                    Height="30">
+                    Height="30"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False">
                     <Button.Background>
                         <SolidColorBrush x:Name="GalleryBg" Color="Transparent" />
                     </Button.Background>
@@ -89,7 +91,9 @@
                     Name="RotateButton"
                     Canvas.Left="72"
                     Width="29"
-                    Height="30">
+                    Height="30"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False">
                     <Button.Background>
                         <SolidColorBrush x:Name="RotateBg" Color="Transparent" />
                     </Button.Background>
@@ -116,7 +120,9 @@
                     Name="FlipButton"
                     Canvas.Left="102"
                     Width="29"
-                    Height="30">
+                    Height="30"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False">
                     <CheckBox.Background>
                         <SolidColorBrush x:Name="FlipBg" Color="Transparent" />
                     </CheckBox.Background>
