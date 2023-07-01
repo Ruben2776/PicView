@@ -30,7 +30,7 @@ internal static class GalleryLoad
                 return;
             }
 
-            if (UC.GetPicGallery.Scroller.HorizontalOffset is 0 || IsLoading)
+            if (UC.GetPicGallery.Scroller.HorizontalOffset is 0)
             {
                 return;
             }
@@ -38,66 +38,53 @@ internal static class GalleryLoad
             double horizontalOffset = UC.GetPicGallery.Scroller.HorizontalOffset;
             double viewportWidth = UC.GetPicGallery.Scroller.ViewportWidth;
             double itemWidth = GalleryNavigation.PicGalleryItemSize;
-            int firstVisibleIndex = true ? Navigation.FolderIndex - GalleryNavigation.HorizontalItems / 2 : (int)Math.Floor(horizontalOffset / itemWidth);
-            int lastVisibleIndex = firstVisibleIndex + GalleryNavigation.HorizontalItems * 2;
+            int firstVisibleIndex = (int)Math.Floor(horizontalOffset / itemWidth / GalleryNavigation.HorizontalItems);
+            //int firstVisibleIndex = true ? Math.Max(Navigation.FolderIndex - GalleryNavigation.HorizontalItems, 0) : (int)Math.Floor(horizontalOffset / itemWidth);
+            int lastVisibleIndex = Math.Max(firstVisibleIndex + GalleryNavigation.HorizontalItems * 3, Navigation.Pics.Count);
+            //int lastVisibleIndex = (int)Math.Ceiling((horizontalOffset + viewportWidth) / itemWidth) - 1;
 
-            if (Navigation.Reverse)
-            {
-                firstVisibleIndex = lastVisibleIndex;
-                lastVisibleIndex = firstVisibleIndex;
-            }
+            // Adjust the range based on the number of items in Navigation.Pics
+            int itemCount = Navigation.Pics.Count;
+            firstVisibleIndex = Math.Max(0, Math.Min(firstVisibleIndex, itemCount - 1));
+            lastVisibleIndex = Math.Max(0, Math.Min(lastVisibleIndex, itemCount - 1));
 
-            IsLoading = true;
             var source = new CancellationTokenSource();
-            try
+            await Task.Run(() =>
             {
-                await Task.Run(() =>
+                var count = Navigation.Pics.Count;
+
+                Parallel.For(firstVisibleIndex, lastVisibleIndex, (i, loopState) =>
                 {
-                    var count = Navigation.Pics.Count;
-
-                    Parallel.For(firstVisibleIndex, lastVisibleIndex, (i, loopState) =>
+                    try
                     {
-                        try
+                        if (count != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
                         {
-                            if (count != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
-                            {
-                                throw new TaskCanceledException();
-                            }
+                            throw new TaskCanceledException();
+                        }
 
-                            var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
-                            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
-                            {
-                                if (i >= UC.GetPicGallery.Container.Children.Count)
-                                {
-                                    return;
-                                }
-                                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                                item.ThumbImage.Source = bitmapSource;
-                            }));
-                        }
-                        catch (Exception e)
+                        var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
                         {
+                            if (i >= UC.GetPicGallery.Container.Children.Count)
+                            {
+                                return;
+                            }
+                            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                            item.ThumbImage.Source = bitmapSource;
+                        }));
+                    }
+                    catch (Exception e)
+                    {
 #if DEBUG
-                            Trace.WriteLine(e.Message);
+                        Trace.WriteLine(e.Message);
 #endif
-                            GalleryFunctions.Clear();
-                            IsLoading = false;
-                            loopState.Stop();
-                        }
-                    });
-                }, source.Token).ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                GalleryFunctions.Clear();
-                IsLoading = false;
-            }
-            finally
-            {
-                IsLoading = false;
-                source.Dispose();
-            }
-            IsLoading = false;
+                        IsLoading = false;
+                        loopState.Stop();
+                    }
+                });
+            }, source.Token).ConfigureAwait(false);
+
+            source.Dispose();
         };
     }
 
@@ -124,7 +111,7 @@ internal static class GalleryLoad
             GalleryFunctions.IsGalleryOpen = true;
 
             // Set size
-            GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItems);
+            GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
             UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
             UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
 
@@ -144,24 +131,14 @@ internal static class GalleryLoad
             UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
         }
 
-        if (UC.GetPicGallery.Container.Children.Count <= 0) { return; }
-        var tempItem = (PicGalleryItem)UC.GetPicGallery.Container.Children[0];
-
-        if (Math.Abs(tempItem.OuterBorder.Height - GalleryNavigation.PicGalleryItemSize) < 1) { return; }
-
-        for (int i = 0; i < UC.GetPicGallery.Container.Children.Count; i++)
-        {
-            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-            item.InnerBorder.Height = item.InnerBorder.Width = Settings.Default.IsBottomGalleryShown ? GalleryNavigation.PicGalleryItemSize : GalleryNavigation.PicGalleryItemSizeS;
-            item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
-        }
+        GalleryFunctions.ReCalculateItemSizes();
     }
 
     internal static void LoadBottomGallery()
     {
         UC.GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
         Panel.SetZIndex(UC.GetPicGallery, 2);
-        GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
+        GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
         UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
         UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
         UC.GetPicGallery.Visibility = Visibility.Visible;
@@ -198,6 +175,8 @@ internal static class GalleryLoad
 
         var count = Navigation.Pics.Count;
         var index = Navigation.FolderIndex;
+        var start = 0;
+        var countChanged = false;
 
         for (var i = 0; i < count; i++)
         {
@@ -222,17 +201,19 @@ internal static class GalleryLoad
 
         if (count > 4000)
         {
-            IsLoading = false;
-            return;
+            start = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
+            start = start < 0 ? 0 : start;
+            count = (start + GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
+            countChanged = true;
         }
 
         await Task.Run(() =>
         {
-            Parallel.For(0, count, (i, loopState) =>
+            Parallel.For(start, count, (i, loopState) =>
             {
                 try
                 {
-                    if (count != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                    if (count != Navigation.Pics.Count && !countChanged || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
                     {
                         throw new TaskCanceledException();
                     }
@@ -253,7 +234,6 @@ internal static class GalleryLoad
 #if DEBUG
                     Trace.WriteLine(e.Message);
 #endif
-                    GalleryFunctions.Clear();
                     IsLoading = false;
                     loopState.Stop();
                 }

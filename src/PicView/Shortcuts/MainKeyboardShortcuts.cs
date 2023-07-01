@@ -92,6 +92,11 @@ internal static class MainKeyboardShortcuts
                 // exit if browsing horizontal PicGallery
                 if (GalleryFunctions.IsGalleryOpen)
                 {
+                    if (e.IsRepeat)
+                    {
+                        // Disable animations when key is held down
+                        GetPicGallery.Scroller.CanContentScroll = true; 
+                    }
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Right);
                     return;
                 }
@@ -115,6 +120,11 @@ internal static class MainKeyboardShortcuts
             case Key.A:
                 if (GalleryFunctions.IsGalleryOpen)
                 {
+                    if (e.IsRepeat)
+                    {
+                        // Disable animations when key is held down
+                        GetPicGallery.Scroller.CanContentScroll = true;
+                    }
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Left);
                     return;
                 }

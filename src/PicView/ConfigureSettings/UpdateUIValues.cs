@@ -153,6 +153,7 @@ internal static class UpdateUIValues
         UC.GetQuickSettingsMenu.SetFit.IsChecked = autoFit;
         UC.GetQuickSettingsMenu.ToggleFill.IsChecked = fill;
 
+        WindowSizing.SetWindowBehavior();
         ScaleImage.TryFitImage();
         Settings.Default.Save();
     }

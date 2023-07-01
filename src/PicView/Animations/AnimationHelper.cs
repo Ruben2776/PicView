@@ -171,36 +171,18 @@ internal static class AnimationHelper
 
     #endregion Color settings
 
-    #region Gallery Animations
+    #region Size Animations
 
     /// <summary>
     /// Animates the size of a gallery item.
     /// </summary>
     /// <param name="item">The gallery item to animate.</param>
-    /// <param name="unHover">Indicates whether the animation is for unhovering the item.</param>
+    /// <param name="reduce">Indicates whether the animation is for unhovering the item.</param>
     /// <param name="fromSize">The initial size of the item.</param>
     /// <param name="toSize">The target size of the item.</param>
-    internal static void AnimateGalleryItemSize(PicGalleryItem item, bool unHover, double fromSize, double toSize)
+    internal static void SizeAnim(PicGalleryItem item, bool reduce, double fromSize, double toSize)
     {
-        if (item.Id == Navigation.FolderIndex || item.Id == GalleryNavigation.SelectedGalleryItem)
-        {
-            return;
-        }
-
-        if (!GalleryFunctions.IsGalleryOpen)
-        {
-            if (unHover)
-            {
-                item.InnerBorder.BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"];
-            }
-            else
-            {
-                item.InnerBorder.BorderBrush = (SolidColorBrush)Application.Current.Resources["ChosenColorBrush"];
-            }
-            return;
-        }
-
-        if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItemSizeS && !unHover)
+        if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItemSizeS && !reduce)
         {
             // Make sure it is not run consecutively
             return;
@@ -219,7 +201,7 @@ internal static class AnimationHelper
             item.InnerBorder.Height = toSize;
         };
 
-        if (unHover)
+        if (reduce)
         {
             animation.From = fromSize;
             animation.To = toSize;
@@ -273,5 +255,5 @@ internal static class AnimationHelper
         element.BeginAnimation(FrameworkElement.HeightProperty, animation);
     }
 
-    #endregion Gallery Animations
+    #endregion Size Animations
 }

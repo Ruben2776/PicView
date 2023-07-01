@@ -1,4 +1,5 @@
-﻿using PicView.Properties;
+﻿using PicView.Animations;
+using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
@@ -14,7 +15,7 @@ internal static class GalleryNavigation
 {
     #region int calculations
 
-    internal static void SetSize(int numberOfItems)
+    internal static void SetSize(double numberOfItems)
     {
         PicGalleryItemSize = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
 
@@ -30,7 +31,7 @@ internal static class GalleryNavigation
         {
             if (GetPicGallery == null || PicGalleryItemSize == 0) { return 0; }
 
-            return (int)Math.Floor(GetPicGallery.ActualWidth / PicGalleryItemSize);
+            return (int)Math.Floor(GetPicGallery.Width / PicGalleryItemSize);
         }
     }
 
@@ -40,7 +41,17 @@ internal static class GalleryNavigation
         {
             if (GetPicGallery == null || PicGalleryItemSize == 0) { return 0; }
 
-            return (int)Math.Floor((GetPicGallery.Scroller.ViewportHeight - GetPicGallery.Container.Margin.Top) / PicGalleryItemSize);
+            return (int)Math.Floor((ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight - GetPicGallery.Container.Margin.Top) / PicGalleryItemSize);
+        }
+    }
+
+    internal static int ItemsPerPage
+    {
+        get
+        {
+            if (GetPicGallery == null) { return 0; }
+
+            return HorizontalItems * VerticalItems;
         }
     }
 
@@ -126,7 +137,7 @@ internal static class GalleryNavigation
     /// </summary>
     /// <param name="x">location</param>
     /// <param name="selected">selected or deselected</param>
-    internal static void SetSelected(int x, bool selected)
+    internal static void SetSelected(int x, bool selected, bool navigate = false)
     {
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
@@ -138,12 +149,26 @@ internal static class GalleryNavigation
             if (selected)
             {
                 nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSize;
+                if (GalleryFunctions.IsGalleryOpen && navigate)
+                {
+                    AnimationHelper.SizeAnim(nextItem, false, PicGalleryItemSizeS, PicGalleryItemSize);
+                }
+                else
+                {
+                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSize;
+                }
             }
             else
             {
                 nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen ? PicGalleryItemSize : PicGalleryItemSizeS;
+                if (GalleryFunctions.IsGalleryOpen && navigate)
+                {
+                    AnimationHelper.SizeAnim(nextItem, true, PicGalleryItemSize, PicGalleryItemSizeS);
+                }
+                else
+                {
+                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen ? PicGalleryItemSize : PicGalleryItemSizeS;
+                }
             }
         });
     }
@@ -198,10 +223,10 @@ internal static class GalleryNavigation
             SelectedGalleryItem = 0;
         }
 
-        SetSelected(SelectedGalleryItem, true);
+        SetSelected(SelectedGalleryItem, true, true);
         if (backup != SelectedGalleryItem && backup != FolderIndex)
         {
-            SetSelected(backup, false); // deselect
+            SetSelected(backup, false, true); // deselect
         }
 
         if (direction is Direction.Up or Direction.Down)

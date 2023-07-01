@@ -117,7 +117,7 @@ internal static class ScaleImage
         {
             if (PicGalleryItemSize is 0)
             {
-                SetSize(Settings.Default.BottomGalleryItems);
+                SetSize(Settings.Default.BottomGalleryItemSize);
             }
             margin = PicGalleryItemSize + 22; // Scrollbar
         }

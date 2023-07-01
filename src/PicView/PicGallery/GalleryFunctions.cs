@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
+using PicView.Properties;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
@@ -13,6 +14,22 @@ namespace PicView.PicGallery;
 internal static class GalleryFunctions
 {
     internal static bool IsGalleryOpen { get; set; }
+
+    internal static void ReCalculateItemSizes()
+    {
+        if (GetPicGallery is null) { return; }
+        if (GetPicGallery.Container.Children.Count <= 0) { return; }
+        var tempItem = (PicGalleryItem)GetPicGallery.Container.Children[0];
+
+        if (Math.Abs(tempItem.OuterBorder.Height - GalleryNavigation.PicGalleryItemSize) < 1) { return; }
+
+        for (int i = 0; i < GetPicGallery.Container.Children.Count; i++)
+        {
+            var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
+            item.InnerBorder.Height = item.InnerBorder.Width = Settings.Default.IsBottomGalleryShown ? GalleryNavigation.PicGalleryItemSize : GalleryNavigation.PicGalleryItemSizeS;
+            item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
+        }
+    }
 
     private class TempPics
     {

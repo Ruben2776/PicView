@@ -82,6 +82,8 @@ public partial class ImageSettings
         Settings.Default.IsBottomGalleryShown = !Settings.Default.IsBottomGalleryShown;
         if (Settings.Default.IsBottomGalleryShown)
         {
+            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+            GalleryFunctions.ReCalculateItemSizes();
             await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
         }
         else

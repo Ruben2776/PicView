@@ -530,24 +530,24 @@ namespace PicView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("37")]
-        public int BottomGalleryItems {
+        public double BottomGalleryItemSize {
             get {
-                return ((int)(this["BottomGalleryItems"]));
+                return ((double)(this["BottomGalleryItemSize"]));
             }
             set {
-                this["BottomGalleryItems"] = value;
+                this["BottomGalleryItemSize"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("23")]
-        public int ExpandedGalleryItems {
+        public double ExpandedGalleryItemSize {
             get {
-                return ((int)(this["ExpandedGalleryItems"]));
+                return ((double)(this["ExpandedGalleryItemSize"]));
             }
             set {
-                this["ExpandedGalleryItems"] = value;
+                this["ExpandedGalleryItemSize"] = value;
             }
         }
         

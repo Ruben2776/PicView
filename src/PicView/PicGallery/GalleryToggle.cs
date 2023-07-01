@@ -27,7 +27,7 @@ internal static class GalleryToggle
                 await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
                 {
                     // Set size
-                    GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItems);
+                    GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
                     GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;
 
                     // Set alignment
@@ -161,7 +161,7 @@ internal static class GalleryToggle
                 To = GalleryNavigation.PicGalleryItemSize + 22,
                 Duration = TimeSpan.FromSeconds(.5)
             };
-            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItems);
+            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
             for (int i = 0; i < GetPicGallery.Container.Children.Count; i++)
             {
                 var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
@@ -215,6 +215,10 @@ internal static class GalleryToggle
         {
             IsGalleryOpen = true; // Force open
 
+            await OpenHorizontalGalleryAsync().ConfigureAwait(false);
+        }
+        else
+        {
             await OpenHorizontalGalleryAsync().ConfigureAwait(false);
         }
     }
