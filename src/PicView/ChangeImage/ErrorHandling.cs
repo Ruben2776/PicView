@@ -221,6 +221,10 @@ internal static class ErrorHandling
             WindowSizing.SetWindowBehavior();
 
             UC.ToggleStartUpUC(!showStartup);
+            if (UC.GetSpinWaiter is { IsVisible: true })
+            {
+                UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
+            }
         }));
 
         Pics?.Clear();

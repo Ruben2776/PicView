@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.ConfigureSettings;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using System.Windows;
@@ -44,6 +45,39 @@ internal static class StartLoading
                 = Visibility.Collapsed;
         }
         ConfigColors.UpdateColor();
+
+        var args = Environment.GetCommandLineArgs();
+
+        // Determine preferred UI for startup
+        if (Settings.Default.Fullscreen)
+        {
+            if (args.Length <= 1)
+            {
+                Settings.Default.Fullscreen = false;
+            }
+            else
+            {
+                Fullscreen_Restore(true);
+            }
+        }
+
+        if (Settings.Default.IsBottomGalleryShown)
+        {
+            GalleryLoad.LoadBottomGallery();
+        }
+
+        // Load image if possible
+        if (args.Length <= 1)
+        {
+            ErrorHandling.Unload(true);
+        }
+        else
+        {
+            Task.Run(() =>
+            {
+                _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+            });
+        }
     }
 
     internal static void AddDictionaries()

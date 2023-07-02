@@ -64,41 +64,7 @@ public partial class MainWindow
         ContentRendered += delegate
         {
             WindowBlur.EnableBlur(this);
-            Task.Run(async () =>
-            {
-                var args = Environment.GetCommandLineArgs();
 
-                // Determine preferred UI for startup
-                if (Settings.Default.Fullscreen)
-                {
-                    if (args.Length <= 1)
-                    {
-                        Settings.Default.Fullscreen = false;
-                    }
-                    else
-                    {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => Fullscreen_Restore(true),
-                            DispatcherPriority.Send);
-                    }
-                }
-                if (Settings.Default.IsBottomGalleryShown)
-                {
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryLoad.LoadBottomGallery,
-                        DispatcherPriority.Send);
-                }
-
-                // Load image if possible
-                if (args.Length <= 1)
-                {
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => ErrorHandling.Unload(true),
-                        DispatcherPriority.Send);
-                }
-                else
-                {
-                    await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
-                    // TODO maybe load extra images if multiple arguments
-                }
-            });
             StartLoading.AddDictionaries();
             StartLoading.AddUiElementsAndUpdateValues();
 
@@ -190,6 +156,7 @@ public partial class MainWindow
 
             Logo.MouseLeftButtonDown += (_, _) => ConfigureWindows.WindowContextMenu.IsOpen = true;
             ConfigColors.MainWindowUnfocusOrFocus(true);
+            // Make sure to fix loading spinner showing up
         };
     }
 
