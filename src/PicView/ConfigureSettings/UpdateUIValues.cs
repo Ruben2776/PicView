@@ -15,6 +15,7 @@ using PicView.UILogic.TransformImage;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
+using PicView.Views.Windows;
 
 namespace PicView.ConfigureSettings;
 
@@ -30,7 +31,7 @@ internal static class UpdateUIValues
             Settings.Default.SortPreference = (int)sortFilesBy;
         }
 
-        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, SetTitle.SetLoadingString);
+        await GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
 
         var preloadValue = PreLoader.Get(Navigation.FolderIndex);
         var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
@@ -65,6 +66,10 @@ internal static class UpdateUIValues
         await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource)
             .ConfigureAwait(false);
         await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
+        if (Settings.Default.IsBottomGalleryShown)
+        {
+            await GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
+        }
     }
 
     internal static void SetScrolling()
