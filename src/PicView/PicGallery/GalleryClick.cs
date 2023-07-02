@@ -203,6 +203,7 @@ internal static class GalleryClick
             GalleryNavigation.SetSelected(id, true);
             GalleryNavigation.SelectedGalleryItem = id;
         });
+        if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
         // Change image
         await LoadPic.LoadPicAtIndexAsync(id).ConfigureAwait(false);
     }
