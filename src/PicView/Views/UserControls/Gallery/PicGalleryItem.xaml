@@ -20,7 +20,7 @@
             x:Name="InnerBorder"
             Width="200"
             Height="200"
-            Background="{StaticResource BackgroundColorBrushAlt}"
+            Background="{StaticResource NoisyBg}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="2"
             FocusVisualStyle="{x:Null}"
