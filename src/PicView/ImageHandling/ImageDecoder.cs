@@ -205,7 +205,7 @@ internal static class ImageDecoder
 
         try
         {
-            await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync:fileInfo.Length > 1e+8);
+            await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
             var sKBitmap = SKBitmap.Decode(fileStream);
             if (sKBitmap is null) { return null; }
 

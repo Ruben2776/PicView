@@ -2,10 +2,10 @@
 using PicView.ChangeImage;
 using PicView.Views.UserControls.Gallery;
 using SkiaSharp;
+using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
-using SkiaSharp.Views.WPF;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -75,13 +75,61 @@ internal static class Thumbnails
                 return bitmapThumb;
             }
 
-            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096);
-            image?.Read(fileStream);
-            image?.Thumbnail(new MagickGeometry(size, size));
-            var bmp = image?.ToBitmapSource();
-            bmp?.Freeze();
-            fileStream.Dispose();
-            return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+            var extension = Path.GetExtension(file).ToLowerInvariant();
+            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+            switch (extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                case ".jfif":
+                case ".ico":
+                case ".webp":
+                case ".wbmp":
+
+                    var sKBitmap = SKBitmap.Decode(fileStream);
+                    if (sKBitmap is null)
+                    { return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(); }
+
+                    var skPic = sKBitmap.Resize(new SKImageInfo(size, size, SKColorType.Rgba8888), SKFilterQuality.High).ToWriteableBitmap();
+                    sKBitmap.Dispose();
+                    fileStream.Dispose();
+                    skPic.Freeze();
+                    return skPic;
+
+                case ".svg":
+                    var svgImage = new MagickImage
+                    {
+                        Quality = 100,
+                        ColorSpace = ColorSpace.Transparent,
+                        BackgroundColor = MagickColors.Transparent,
+                        Format = MagickFormat.Svg,
+                    };
+
+                    svgImage.Read(fileStream);
+                    svgImage.Settings.BackgroundColor = MagickColors.Transparent;
+                    svgImage.Settings.FillColor = MagickColors.Transparent;
+                    svgImage.Settings.SetDefine("svg:xml-parse-huge", "true");
+                    svgImage.Resize(new MagickGeometry(size, size));
+
+                    var bitmap = svgImage.ToBitmapSource();
+                    bitmap.Freeze();
+                    svgImage.Dispose();
+                    return bitmap;
+
+                case ".b64":
+                    return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+
+                default:
+                    image?.Read(fileStream);
+                    image?.Thumbnail(new MagickGeometry(size, size));
+                    var bmp = image?.ToBitmapSource();
+                    bmp?.Freeze();
+                    return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+            }
         }
         catch (Exception e)
         {
