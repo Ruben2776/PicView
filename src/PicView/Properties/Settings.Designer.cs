@@ -229,7 +229,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool Looping {
             get {
                 return ((bool)(this["Looping"]));
@@ -253,7 +253,7 @@ namespace PicView.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoFitWindow {
             get {
                 return ((bool)(this["AutoFitWindow"]));
@@ -560,6 +560,18 @@ namespace PicView.Properties {
             }
             set {
                 this["IsBottomGalleryShown"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowAltInterfaceBottomGallery {
+            get {
+                return ((bool)(this["ShowAltInterfaceBottomGallery"]));
+            }
+            set {
+                this["ShowAltInterfaceBottomGallery"] = value;
             }
         }
     }

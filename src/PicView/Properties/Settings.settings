@@ -54,13 +54,13 @@
       <Value Profile="(Default)">5000</Value>
     </Setting>
     <Setting Name="Looping" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="BgColorChoice" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="AutoFitWindow" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="FillImage" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -135,6 +135,9 @@
       <Value Profile="(Default)">23</Value>
     </Setting>
     <Setting Name="IsBottomGalleryShown" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowAltInterfaceBottomGallery" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
