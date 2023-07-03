@@ -1,6 +1,5 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
-using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
@@ -44,11 +43,6 @@ internal static class UpdateImage
             {
                 ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
             }
-
-            if (GetSpinWaiter is { IsVisible: true })
-            {
-                GetSpinWaiter.Visibility = Visibility.Collapsed;
-            }
         }, DispatcherPriority.Send);
 
         var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,
@@ -56,6 +50,10 @@ internal static class UpdateImage
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
+            if (Rotation.RotationAngle is not 0)
+            {
+                Rotation.Rotate(0);
+            }
             FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
 
             ConfigureWindows.GetMainWindow.Title = titleString[0];
@@ -78,6 +76,11 @@ internal static class UpdateImage
             if (Rotation.IsFlipped)
             {
                 Rotation.Flip();
+            }
+
+            if (GetSpinWaiter is { IsVisible: true })
+            {
+                GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
         }, DispatcherPriority.Send);
 

@@ -96,7 +96,7 @@ internal static class Rotation
     /// Rotates the image by the specified angle in degrees.
     /// </summary>
     /// <param name="degrees">The angle in degrees to rotate the image.</param>
-    private static void Rotate(double degrees)
+    internal static void Rotate(double degrees)
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
         {
