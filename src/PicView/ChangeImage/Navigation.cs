@@ -125,7 +125,7 @@ internal static class Navigation
         if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
         else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
 
-        // If the horizontal fullscreen gallery is open, deselect current index
+        // Update gallery selections
         if (UC.GetPicGallery is not null)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>

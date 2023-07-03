@@ -1,9 +1,11 @@
 ﻿using PicView.ImageHandling;
+using PicView.Properties;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
+using static PicView.ChangeImage.PreLoader;
 
 namespace PicView.ChangeImage;
 
@@ -143,7 +145,17 @@ internal static class PreLoader
     /// <returns></returns>
     internal static PreLoadValue? Get(int key)
     {
-        return PreLoadList.TryGetValue(key, out var preLoadValue) ? preLoadValue : null;
+        return !Contains(key) ? null : PreLoadList[key];
+    }
+
+    /// <summary>
+    /// Checks if the specified key exists
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    internal static bool Contains(int key)
+    {
+        return !PreLoadList.IsEmpty && PreLoadList.ContainsKey(key);
     }
 
     /// <summary>

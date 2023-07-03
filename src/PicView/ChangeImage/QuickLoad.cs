@@ -97,6 +97,12 @@ internal static class QuickLoad
         if (Settings.Default.IsBottomGalleryShown)
         {
             _ = GalleryLoad.LoadAsync().ConfigureAwait(false);
+            await mainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
         }
 
         // Add recent files, except when browsing archive
