@@ -174,15 +174,15 @@ internal static class WindowSizing
             // Handle if browsing gallery
             if (GalleryFunctions.IsGalleryOpen)
             {
-                GalleryLoad.LoadLayout();
+                GalleryToggle.OpenLayout();
                 GalleryNavigation.ScrollToGalleryCenter();
             }
 
             if (ErrorHandling.CheckOutOfRange() is false)
             {
-                ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
+                IsNavigationShown(Settings.Default.ShowAltInterfaceButtons);
                 if (!Settings.Default.IsBottomGalleryShown)
-                    ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
+                    IsShortcutsShown(Settings.Default.ShowAltInterfaceButtons);
             }
 
             Settings.Default.Fullscreen = true;
@@ -194,15 +194,15 @@ internal static class WindowSizing
 
             if (Settings.Default.ShowInterface)
             {
-                ShowNavigation(false);
-                ShowTopAndBottom(true);
-                ShowShortcuts(false);
+                IsNavigationShown(false);
+                IsTopAndBottomShown(true);
+                IsShortcutsShown(false);
             }
             else
             {
-                ShowNavigation(true);
-                ShowTopAndBottom(false);
-                ShowShortcuts(true);
+                IsNavigationShown(true);
+                IsTopAndBottomShown(false);
+                IsShortcutsShown(true);
             }
 
             // Reset margin from fullscreen
@@ -230,7 +230,7 @@ internal static class WindowSizing
     {
         Settings.Default.ScrollEnabled = false; // Don't scroll in fullscreen
 
-        ShowTopAndBottom(false);
+        IsTopAndBottomShown(false);
         GetMainWindow.Topmost = true;
 
         GetMainWindow.ResizeMode = ResizeMode.CanMinimize;

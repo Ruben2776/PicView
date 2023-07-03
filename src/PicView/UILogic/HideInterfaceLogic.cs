@@ -2,6 +2,7 @@
 using PicView.Properties;
 using PicView.UILogic.Sizing;
 using System.Windows;
+using PicView.PicGallery;
 using static PicView.Animations.FadeControls;
 using Timer = System.Timers.Timer;
 
@@ -52,25 +53,40 @@ internal static class HideInterfaceLogic
     {
         Settings.Default.ShowInterface = true;
 
-        ShowTopAndBottom(true);
-        ShowNavigation(false);
-        ShowShortcuts(false);
+        IsTopAndBottomShown(true);
+        IsNavigationShown(false);
+        IsShortcutsShown(false);
+
+        if (Settings.Default.IsBottomGalleryShown)
+        {
+            GalleryToggle.ShowBottomGallery();
+        }
 
         ActivityTimer?.Stop();
     }
 
     private static void ShowMinimalInterface()
     {
-        ShowTopAndBottom(false);
-        ShowNavigation(Settings.Default.ShowAltInterfaceButtons);
-        ShowShortcuts(Settings.Default.ShowAltInterfaceButtons);
+        IsTopAndBottomShown(false);
+        IsNavigationShown(Settings.Default.ShowAltInterfaceButtons);
+
+        if (!Settings.Default.ShowAltInterfaceBottomGallery && Settings.Default.IsBottomGalleryShown)
+        {
+            GalleryToggle.CloseBottomGallery();
+            ScaleImage.TryFitImage();
+            Settings.Default.IsBottomGalleryShown = true;
+        }
+        else
+        {
+            IsShortcutsShown(Settings.Default.ShowAltInterfaceButtons);
+        }
 
         Settings.Default.ShowInterface = false;
 
         ActivityTimer?.Start();
     }
 
-    internal static void ShowTopAndBottom(bool show)
+    internal static void IsTopAndBottomShown(bool show)
     {
         if (show)
         {
@@ -88,7 +104,7 @@ internal static class HideInterfaceLogic
     /// Toggle alternative layout navigation
     /// </summary>
     /// <param name="show"></param>
-    internal static void ShowNavigation(bool show)
+    internal static void IsNavigationShown(bool show)
     {
         if (UC.GetClickArrowLeft == null || UC.GetClickArrowRight == null
                                          || UC.GetX2 == null || UC.GetMinus == null || UC.GetRestoreButton == null)
@@ -118,7 +134,7 @@ internal static class HideInterfaceLogic
         }
     }
 
-    internal static void ShowShortcuts(bool show)
+    internal static void IsShortcutsShown(bool show)
     {
         if (UC.GetGalleryShortcut == null)
         {

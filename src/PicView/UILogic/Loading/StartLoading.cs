@@ -63,7 +63,7 @@ internal static class StartLoading
 
         if (Settings.Default.IsBottomGalleryShown)
         {
-            GalleryLoad.LoadBottomGallery();
+            GalleryToggle.ShowBottomGallery();
         }
 
         // Load image if possible

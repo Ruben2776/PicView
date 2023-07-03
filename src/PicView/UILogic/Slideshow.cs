@@ -50,8 +50,8 @@ internal static class Slideshow
 
         _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
 
-        HideInterfaceLogic.ShowNavigation(false);
-        HideInterfaceLogic.ShowShortcuts(false);
+        HideInterfaceLogic.IsNavigationShown(false);
+        HideInterfaceLogic.IsShortcutsShown(false);
     }
 
     internal static void StopSlideshow()

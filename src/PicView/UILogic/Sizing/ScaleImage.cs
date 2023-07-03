@@ -115,11 +115,18 @@ internal static class ScaleImage
 
         if (Settings.Default.IsBottomGalleryShown) // Set to if new gallery opened and Settings.Default.FullscreenGallery
         {
-            if (PicGalleryItemSize is 0)
+            if (!Settings.Default.ShowInterface && !Settings.Default.ShowAltInterfaceBottomGallery)
             {
-                SetSize(Settings.Default.BottomGalleryItemSize);
+                margin = 0;
             }
-            margin = PicGalleryItemSize + 22; // Scrollbar
+            else
+            {
+                if (PicGalleryItemSize is 0)
+                {
+                    SetSize(Settings.Default.BottomGalleryItemSize);
+                }
+                margin = PicGalleryItemSize + 22; // Scrollbar
+            }
         }
 
         switch (RotationAngle) // aspect ratio calculation
