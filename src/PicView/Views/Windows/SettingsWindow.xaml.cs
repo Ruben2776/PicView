@@ -90,14 +90,14 @@ public partial class SettingsWindow
 
             // SetExpandedGallerySlider
             SetExpandedGallerySlider.Value = Settings.Default.ExpandedGalleryItemSize;
-            SetExpandedGalleryText.Text = SetExpandedGallerySlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
+            SetExpandedGalleryText.Text = GalleryNavigation.ItemsPerPage.ToString();
             SetExpandedGallerySlider.ValueChanged += (_, e) =>
             {
                 Settings.Default.ExpandedGalleryItemSize = (int)e.NewValue;
 
                 if (GalleryFunctions.IsGalleryOpen)
                 {
-                    GalleryLoad.LoadLayout();
+                    GalleryToggle.OpenLayout();
                 }
                 else
                 {
@@ -109,13 +109,13 @@ public partial class SettingsWindow
 
             // SetBottomGallerySlider
             SetBottomGallerySlider.Value = Settings.Default.BottomGalleryItemSize;
-            SetBottomGalleryText.Text = SetBottomGallerySlider.Value.ToString("0.#", CultureInfo.CurrentCulture);
+            SetBottomGalleryText.Text = GalleryNavigation.HorizontalItems.ToString();
             SetBottomGallerySlider.ValueChanged += (_, e) =>
             {
                 Settings.Default.BottomGalleryItemSize = e.NewValue;
                 if (Settings.Default.IsBottomGalleryShown)
                 {
-                    GalleryLoad.LoadLayout();
+                    GalleryToggle.OpenLayout();
                     ScaleImage.TryFitImage();
                 }
                 else
@@ -218,7 +218,7 @@ public partial class SettingsWindow
             {
                 Settings.Default.ShowBottomNavBar = !Settings.Default.ShowBottomNavBar;
                 if (!Settings.Default.ShowInterface) return;
-                HideInterfaceLogic.ShowTopAndBottom(true);
+                HideInterfaceLogic.IsTopAndBottomShown(true);
                 ScaleImage.TryFitImage();
             };
 

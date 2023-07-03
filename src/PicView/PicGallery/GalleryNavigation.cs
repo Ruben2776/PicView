@@ -6,6 +6,7 @@ using PicView.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -51,7 +52,7 @@ internal static class GalleryNavigation
         {
             if (GetPicGallery == null) { return 0; }
 
-            return HorizontalItems * VerticalItems;
+            return (int)Math.Floor(HorizontalItems * GetPicGallery.Height / PicGalleryItemSize);
         }
     }
 
@@ -170,7 +171,7 @@ internal static class GalleryNavigation
                     nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen ? PicGalleryItemSize : PicGalleryItemSizeS;
                 }
             }
-        });
+        }, DispatcherPriority.Render);
     }
 
     #endregion Select and deselect behaviour

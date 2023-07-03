@@ -92,7 +92,7 @@ internal static class GalleryClick
                 image = null;
                 GalleryFunctions.IsGalleryOpen = false;
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
-                GalleryLoad.LoadBottomGallery();
+                GalleryToggle.ShowBottomGallery();
                 GetPicGallery.Scroller.CanContentScroll = false;
                 GalleryNavigation.ScrollToGalleryCenter();
                 GetPicGallery.Scroller.CanContentScroll = true;
@@ -195,8 +195,8 @@ internal static class GalleryClick
             // Restore interface elements if needed
             if (!Settings.Default.ShowInterface || Settings.Default is { Fullscreen: true, ShowAltInterfaceButtons: true })
             {
-                HideInterfaceLogic.ShowNavigation(true);
-                HideInterfaceLogic.ShowShortcuts(true);
+                HideInterfaceLogic.IsNavigationShown(true);
+                HideInterfaceLogic.IsShortcutsShown(true);
             }
 
             // Select next item

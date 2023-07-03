@@ -1,13 +1,13 @@
-﻿using PicView.Animations;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls.Gallery;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using PicView.Animations;
+using PicView.Properties;
+using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls.Gallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.ConfigureWindows;
@@ -19,6 +19,52 @@ internal static class GalleryToggle
 {
     #region Open
 
+    internal static void OpenLayout()
+    {
+        if (GetPicGallery == null)
+        {
+            GetPicGallery = new Views.UserControls.Gallery.PicGallery
+            {
+                Opacity = 0
+            };
+            Panel.SetZIndex(GetPicGallery, 2);
+            GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
+        }
+
+        if (Settings.Default.IsBottomGalleryShown && IsGalleryOpen == false)
+        {
+            ShowBottomGallery();
+            ScaleImage.TryFitImage();
+        }
+        else
+        {
+            // Make sure booleans are correct
+            IsGalleryOpen = true;
+
+            // Set size
+            GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
+            GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;
+            GetPicGallery.Height = GetMainWindow.ParentContainer.ActualHeight;
+
+            // Set alignment
+            GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
+            GetPicGallery.VerticalAlignment = VerticalAlignment.Stretch;
+
+            // Set scrollbar visibility and orientation
+            GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+            GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            GetPicGallery.Container.Orientation = Orientation.Vertical;
+
+            // Set style
+            GetPicGallery.x2.Visibility = Visibility.Visible;
+            GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
+            GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
+            GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
+        }
+
+        ReCalculateItemSizes();
+    }
+
     internal static async Task OpenHorizontalGalleryAsync()
     {
         switch (Settings.Default.IsBottomGalleryShown)
@@ -28,7 +74,7 @@ internal static class GalleryToggle
                 {
                     if (GetPicGallery is null)
                     {
-                        GalleryLoad.LoadLayout();
+                        OpenLayout();
                     }
                     // Set size
                     GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
@@ -76,7 +122,7 @@ internal static class GalleryToggle
                 break;
 
             case true:
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, GalleryLoad.LoadBottomGallery);
+                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, ShowBottomGallery);
                 ScaleImage.TryFitImage();
                 break;
 
@@ -91,7 +137,7 @@ internal static class GalleryToggle
 
                     await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
                     {
-                        GalleryLoad.LoadLayout();
+                        OpenLayout();
                         GetPicGallery.Visibility = Visibility.Visible;
 
                         var fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
@@ -112,6 +158,38 @@ internal static class GalleryToggle
         }
 
         await LoadAndScrollToAsync().ConfigureAwait(false);
+    }
+
+    internal static void ShowBottomGallery()
+    {
+        GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
+        Panel.SetZIndex(GetPicGallery, 2);
+        GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+        GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;
+        GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
+        GetPicGallery.Visibility = Visibility.Visible;
+        GetPicGallery.Opacity = 1;
+
+        // Set alignment
+        GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
+        GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
+
+        // Set scrollbar visibility and orientation
+        GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+        GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+        GetPicGallery.Container.Orientation = Orientation.Horizontal;
+
+        // Set style
+        GetPicGallery.x2.Visibility = Visibility.Collapsed;
+        GetPicGallery.Container.Margin = new Thickness(0, 1, 0, 0);
+        GetPicGallery.border.BorderThickness = new Thickness(1);
+        GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
+        GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
+
+        if (!GetMainWindow.ParentContainer.Children.Contains(GetPicGallery))
+        {
+            GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
+        }
     }
 
     #endregion Open
@@ -174,7 +252,7 @@ internal static class GalleryToggle
             }
             heightAnimation.Completed += delegate
             {
-                GalleryLoad.LoadBottomGallery();
+                ShowBottomGallery();
                 GalleryNavigation.ScrollToGalleryCenter();
             };
 
@@ -186,8 +264,8 @@ internal static class GalleryToggle
         // Restore interface elements if needed
         if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen)
         {
-            HideInterfaceLogic.ShowNavigation(true);
-            HideInterfaceLogic.ShowShortcuts(true);
+            HideInterfaceLogic.IsNavigationShown(true);
+            HideInterfaceLogic.IsShortcutsShown(true);
         }
 
         var da = new DoubleAnimation

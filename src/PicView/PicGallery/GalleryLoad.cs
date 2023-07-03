@@ -63,7 +63,8 @@ internal static class GalleryLoad
                         }
 
                         var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
-                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
+                        // Setting background priority makes it feel smoother when changing images while it's loading
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
                         {
                             if (i >= UC.GetPicGallery.Container.Children.Count)
                             {
@@ -86,84 +87,6 @@ internal static class GalleryLoad
 
             source.Dispose();
         };
-    }
-
-    internal static void LoadLayout()
-    {
-        if (UC.GetPicGallery == null)
-        {
-            UC.GetPicGallery = new Views.UserControls.Gallery.PicGallery
-            {
-                Opacity = 0
-            };
-            Panel.SetZIndex(UC.GetPicGallery, 2);
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
-        }
-
-        if (Settings.Default.IsBottomGalleryShown && GalleryFunctions.IsGalleryOpen == false)
-        {
-            LoadBottomGallery();
-            ScaleImage.TryFitImage();
-        }
-        else
-        {
-            // Make sure booleans are correct
-            GalleryFunctions.IsGalleryOpen = true;
-
-            // Set size
-            GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
-            UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-            UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-
-            // Set alignment
-            UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Stretch;
-            UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Stretch;
-
-            // Set scrollbar visibility and orientation
-            UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-            UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            UC.GetPicGallery.Container.Orientation = Orientation.Vertical;
-
-            // Set style
-            UC.GetPicGallery.x2.Visibility = Visibility.Visible;
-            UC.GetPicGallery.Container.Margin = new Thickness(0, 60 * WindowSizing.MonitorInfo.DpiScaling, 0, 0);
-            UC.GetPicGallery.border.BorderThickness = new Thickness(1, 0, 0, 0);
-            UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
-        }
-
-        GalleryFunctions.ReCalculateItemSizes();
-    }
-
-    internal static void LoadBottomGallery()
-    {
-        UC.GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
-        Panel.SetZIndex(UC.GetPicGallery, 2);
-        GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
-        UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-        UC.GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
-        UC.GetPicGallery.Visibility = Visibility.Visible;
-        UC.GetPicGallery.Opacity = 1;
-
-        // Set alignment
-        UC.GetPicGallery.HorizontalAlignment = HorizontalAlignment.Center;
-        UC.GetPicGallery.VerticalAlignment = VerticalAlignment.Bottom;
-
-        // Set scrollbar visibility and orientation
-        UC.GetPicGallery.Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-        UC.GetPicGallery.Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-        UC.GetPicGallery.Container.Orientation = Orientation.Horizontal;
-
-        // Set style
-        UC.GetPicGallery.x2.Visibility = Visibility.Collapsed;
-        UC.GetPicGallery.Container.Margin = new Thickness(0, 1, 0, 0);
-        UC.GetPicGallery.border.BorderThickness = new Thickness(1);
-        UC.GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
-        UC.GetPicGallery.border.Background = (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
-
-        if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(UC.GetPicGallery))
-        {
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(UC.GetPicGallery);
-        }
     }
 
     internal static async Task LoadAsync()
@@ -201,10 +124,13 @@ internal static class GalleryLoad
 
         if (count > 4000)
         {
-            start = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
-            start = start < 0 ? 0 : start;
-            count = (start + GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
-            countChanged = true;
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                start = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
+                start = start < 0 ? 0 : start;
+                count = (start + GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
+                countChanged = true;
+            }, DispatcherPriority.Loaded);
         }
 
         await Task.Run(() =>
@@ -219,7 +145,8 @@ internal static class GalleryLoad
                     }
 
                     var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.DataBind, new Action(() =>
+                    // Setting background priority makes it feel smoother when changing images while it's loading
+                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
                     {
                         if (i >= UC.GetPicGallery.Container.Children.Count)
                         {
