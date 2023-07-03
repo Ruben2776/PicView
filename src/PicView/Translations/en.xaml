@@ -124,6 +124,7 @@
     <system:String x:Key="ShowBottomToolbar">Show bottom toolbar</system:String>
     <system:String x:Key="BottomGalleryItems">Bottom Gallery Items</system:String>
     <system:String x:Key="ExpandedGalleryItems">Expanded Gallery Items</system:String>
+    <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Show bottom gallery when UI is hidden</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Colors</system:String>

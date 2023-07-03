@@ -124,6 +124,7 @@
     <system:String x:Key="ShowBottomToolbar">Unterste Symbolleiste anzeigen</system:String>
     <system:String x:Key="BottomGalleryItems">Anzahl der Galerieelemente unten</system:String>
     <system:String x:Key="ExpandedGalleryItems">Erweiterte Galerieelemente</system:String>
+    <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Unteres Galerie anzeigen, wenn die Benutzeroberfläche ausgeblendet ist</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativ Farben</system:String>

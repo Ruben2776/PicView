@@ -124,6 +124,7 @@
     <system:String x:Key="ShowBottomToolbar">Pokaż dolny pasek narzędzi</system:String>
     <system:String x:Key="BottomGalleryItems">Liczba elementów na dole galerii</system:String>
     <system:String x:Key="ExpandedGalleryItems">Rozszerzone elementy galerii</system:String>
+    <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Pokaż dolną galerię, gdy UI jest ukryte</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Przeciwne kolory</system:String>

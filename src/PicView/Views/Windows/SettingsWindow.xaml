@@ -551,6 +551,26 @@
                         </CheckBox.Content>
                     </CheckBox>
 
+                    <CheckBox
+                        x:Name="ShowBottomWhenHiddenRadio"
+                        Margin="7,0,0,0"
+                        HorizontalContentAlignment="Center"
+                        Focusable="False"
+                        IsChecked="False">
+                        <CheckBox.Foreground>
+                            <SolidColorBrush x:Name="ShowBottomWhenHiddenText" Color="{StaticResource MainColor}" />
+                        </CheckBox.Foreground>
+                        <CheckBox.Content>
+                            <TextBlock
+                                Width="279"
+                                Focusable="False"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13"
+                                Text="{StaticResource ShowBottomGalleryWhenUiIsHidden}"
+                                TextWrapping="Wrap" />
+                        </CheckBox.Content>
+                    </CheckBox>
+
                     <Label
                         Margin="0,20,0,5"
                         HorizontalAlignment="Center"

@@ -124,6 +124,7 @@
     <system:String x:Key="ShowBottomToolbar">Показать нижнюю панель инструментов</system:String>
     <system:String x:Key="BottomGalleryItems">Количество элементов нижней галереи</system:String>
     <system:String x:Key="ExpandedGalleryItems">Расширенные элементы галереи</system:String>
+    <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Показывать нижнюю галерею при скрытом интерфейсе</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Обратные цвета</system:String>

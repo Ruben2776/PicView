@@ -222,6 +222,12 @@ public partial class SettingsWindow
                 ScaleImage.TryFitImage();
             };
 
+            ShowBottomWhenHiddenRadio.IsChecked = Settings.Default.ShowAltInterfaceBottomGallery;
+            ShowBottomWhenHiddenRadio.Click += delegate
+            {
+                Settings.Default.ShowAltInterfaceBottomGallery = !Settings.Default.ShowAltInterfaceBottomGallery;
+            };
+
             CtrlZoom.IsChecked = Settings.Default.CtrlZoom;
             ScrollZoom.IsChecked = !Settings.Default.CtrlZoom;
 

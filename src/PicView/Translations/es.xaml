@@ -124,6 +124,7 @@
     <system:String x:Key="ShowBottomToolbar">Mostrar barra de herramientas inferior</system:String>
     <system:String x:Key="BottomGalleryItems">Elementos de la galería inferior</system:String>
     <system:String x:Key="ExpandedGalleryItems">Elementos de la galería expandida</system:String>
+    <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Mostrar galería inferior cuando la interfaz de usuario está oculta</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativo</system:String>
