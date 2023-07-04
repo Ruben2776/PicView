@@ -21,6 +21,10 @@ Additionally, PicView also includes features such as EXIF data display, image co
 </p>
 
 # Downloads
+
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9/PicView.1.9.win-x64.zip)
+[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9/PicView.1.9.NET.7.required.win-arm64.zip)
+
 Latest releases at https://picview.org/download
 
 **Mirrors**
