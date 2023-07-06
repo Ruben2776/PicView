@@ -78,7 +78,12 @@ internal static class EditTitleBar
     }
 
     internal static async Task HandleRename()
-    {
+    {        
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        {
+            Refocus(false);
+        });
+
         if (Pics == null)
         {
             return;
@@ -89,10 +94,6 @@ internal static class EditTitleBar
         {
             Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
         }
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
-        {
-            Refocus(false);
-        });
 
         await ImageInfo.UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
     }

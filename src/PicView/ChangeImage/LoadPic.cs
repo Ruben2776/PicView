@@ -342,17 +342,29 @@ internal static class LoadPic
 
         if (!fileInfo.Exists)
         {
-            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+            fileInfo = new FileInfo(Path.GetInvalidFileNameChars().Aggregate(fileInfo.FullName, (current, c) => current.Replace(c.ToString(), string.Empty)));
+            try
             {
-                // If the file is a directory, create a new FileInfo object using the file path from the image list.
-                fileInfo = new FileInfo(Pics[index]);
+                if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    // If the file is a directory, create a new FileInfo object using the file path from the image list.
+                    fileInfo = new FileInfo(Pics[index]);
+                }
+                else // Fix deleting files outside application
+                {
+                    PreLoader.Clear();
+                    Pics = FileList(fileInfo);
+                    var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
+                    await GoToNextImage(navigateTo).ConfigureAwait(false);
+                    return;
+                }
             }
-            else // Fix deleting files outside application
+            catch (Exception ex)
             {
-                PreLoader.Clear();
-                Pics = FileList(fileInfo);
-                var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
-                await GoToNextImage(navigateTo).ConfigureAwait(false);
+#if DEBUG
+                Trace.WriteLine((nameof(LoadPicAtIndexAsync)) + ex);
+#endif
+                await ReloadAsync().ConfigureAwait(false);
                 return;
             }
         }

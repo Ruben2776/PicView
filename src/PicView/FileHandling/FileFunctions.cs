@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
+using PicView.ImageHandling;
 using PicView.UILogic;
 using System.Configuration;
 using System.Diagnostics;
@@ -54,13 +55,20 @@ internal static partial class FileFunctions
     /// <returns></returns>
     internal static async Task<bool?> RenameFileWithErrorChecking(string newPath)
     {
-        if (!RenameFile(Navigation.Pics[Navigation.FolderIndex], newPath))
+        var extChanged = false;
+        if (Path.GetExtension(newPath) != Path.GetExtension(Navigation.Pics[Navigation.FolderIndex]))
+        {
+            await SaveImages.SaveImageAsync(newPath).ConfigureAwait(false);
+            DeleteFiles.TryDeleteFile(Navigation.Pics[Navigation.FolderIndex], false);
+            extChanged = true;
+        }
+        else if (!RenameFile(Navigation.Pics[Navigation.FolderIndex], newPath))
         {
             return null;
         }
 
         // Check if the file is not in the same folder
-        if (Path.GetDirectoryName(newPath) != Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]))
+        if (!extChanged && Path.GetDirectoryName(newPath) != Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]))
         {
             if (Navigation.Pics.Count < 1)
             {
@@ -78,18 +86,10 @@ internal static partial class FileFunctions
         }
 
         Navigation.Pics[Navigation.FolderIndex] = newPath;
-        PreLoader.Rename(Navigation.FolderIndex);
-        if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
-        {
-            UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
-        }
-
+        PreLoader.Rename(Navigation.FolderIndex);   
         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
-            var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-            var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
-
-            SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
+            SetTitle.SetTitleString();
         });
 
         return true;
