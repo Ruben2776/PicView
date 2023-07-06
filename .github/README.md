@@ -21,6 +21,10 @@ Additionally, PicView also includes features such as EXIF data display, image co
 </p>
 
 # Downloads
+
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9/PicView.1.9.win-x64.zip)
+[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9/PicView.1.9.NET.7.required.win-arm64.zip)
+
 Latest releases at https://picview.org/download
 
 **Mirrors**
@@ -34,9 +38,11 @@ Winget:
 Powershell $> winget install picview
 ```
 
-# Features
-**For a full list of features, check my website at https://picview.org**
-___
+# Features and screenshots
+![UI-Dark-Theme-Magenta](https://github.com/Ruben2776/PicView/assets/4200419/c2bf8c6f-35bc-487c-baef-26df3b35fb82)
+
+_UI overview with bottom gallery_
+
 
 <h3 align="center">
     Scroll Image
@@ -98,15 +104,8 @@ Click the expander button to view GPS coordinates which links to Google or BING 
 ### Press `G` to open or close the image gallery
 
 Navigate the gallery with the `arrow keys` or `W`,`A`,`S`,`D` and load the selected image with `Enter` or the `E` key.
+The bottom gallery can be turned on or off
 
-
-<h3 align="center">
-    Fullscreen Gallery
-</h3>
-
-<h1 align="center">
-    <img src="https://picview.org/assets/screenshots/PicView-Fullscreen-Image-Gallery-dark-theme-900w.webp" />
-</h1>
 
 <h3 align="center">
     Image filters
