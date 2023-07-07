@@ -20,8 +20,5 @@ public partial class App : Application
     private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         MessageBox.Show(e.Exception.ToString());
-#if RELEASE
-            ProcessHandling.ProcessLogic.RestartApp();
-#endif
     }
 }
