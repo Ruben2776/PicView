@@ -5,7 +5,7 @@
     <TextBox
         x:Name="InnerTextBox"
         VerticalAlignment="Center"
-        AcceptsReturn="True"
+        AcceptsReturn="False"
         AcceptsTab="False"
         AutoWordSelection="True"
         Background="{x:Null}"
@@ -14,13 +14,13 @@
         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
         FontSize="12"
         Foreground="{StaticResource MainColorBrush}"
+        IsTabStop="False"
         IsUndoEnabled="True"
         OverridesDefaultStyle="True"
         SelectionBrush="{DynamicResource ChosenColorBrush}"
         SelectionTextBrush="{StaticResource MainColorBrush}"
         Text="{StaticResource Loading}"
         TextAlignment="Center"
-        IsTabStop="False"
         UndoLimit="200">
         <TextBox.Style>
             <Style TargetType="TextBox">
