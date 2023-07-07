@@ -1,11 +1,15 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
+using PicView.SystemIntegration;
 using PicView.Views.UserControls.Gallery;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -75,8 +79,9 @@ internal static class Thumbnails
                 return bitmapThumb;
             }
 
-            var extension = Path.GetExtension(file).ToLowerInvariant();
-            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: true);
+            var fileInfo = new FileInfo(file);
+            var extension = fileInfo.Extension.ToLowerInvariant();
+            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
             switch (extension)
             {
                 case ".jpg":
@@ -100,35 +105,8 @@ internal static class Thumbnails
                     skPic.Freeze();
                     return skPic;
 
-                case ".svg":
-                    var svgImage = new MagickImage
-                    {
-                        Quality = 100,
-                        ColorSpace = ColorSpace.Transparent,
-                        BackgroundColor = MagickColors.Transparent,
-                        Format = MagickFormat.Svg,
-                    };
-
-                    svgImage.Read(fileStream);
-                    svgImage.Settings.BackgroundColor = MagickColors.Transparent;
-                    svgImage.Settings.FillColor = MagickColors.Transparent;
-                    svgImage.Settings.SetDefine("svg:xml-parse-huge", "true");
-                    svgImage.Resize(new MagickGeometry(size, size));
-
-                    var bitmap = svgImage.ToBitmapSource();
-                    bitmap.Freeze();
-                    svgImage.Dispose();
-                    return bitmap;
-
-                case ".b64":
-                    return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
-
                 default:
-                    image?.Read(fileStream);
-                    image?.Thumbnail(new MagickGeometry(size, size));
-                    var bmp = image?.ToBitmapSource();
-                    bmp?.Freeze();
-                    return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+                    return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
             }
         }
         catch (Exception e)

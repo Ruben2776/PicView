@@ -67,12 +67,12 @@ internal static class QuickLoad
 
         if (bitmapSource != null)
         {
-            _ = mainWindow.Dispatcher.InvokeAsync(() =>
+            await mainWindow.Dispatcher.InvokeAsync(() =>
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo), DispatcherPriority.Send);
         }
         else
         {
-            _ = mainWindow.Dispatcher.InvokeAsync(() =>
+            await mainWindow.Dispatcher.InvokeAsync(() =>
                 SetTitleString(0, 0, FolderIndex, fileInfo), DispatcherPriority.Send);
         }
 
@@ -88,21 +88,21 @@ internal static class QuickLoad
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
-            _ = PreLoader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
         }
 
         if (bitmapSource is not null)
-            _ = PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
+            await PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
         if (Settings.Default.IsBottomGalleryShown)
         {
-            _ = GalleryLoad.LoadAsync().ConfigureAwait(false);
-            await mainWindow.Dispatcher.InvokeAsync(() =>
+            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = FolderIndex;
                 GalleryNavigation.ScrollToGalleryCenter();
-            });
+            }, DispatcherPriority.Render);
         }
 
         // Add recent files, except when browsing archive
