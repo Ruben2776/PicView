@@ -186,7 +186,7 @@ internal static class ScaleImage
         }
 
         // Update margin when from fullscreen gallery and when not
-        GetMainWindow.MainImage.Margin = new Thickness(0, 0, 0, margin);
+        GetMainWindow.MainImageBorder.Margin = new Thickness(0, 0, 0, margin);
 
         if (ZoomLogic.IsZoomed)
         {
