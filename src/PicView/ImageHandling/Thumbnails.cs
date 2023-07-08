@@ -1,15 +1,11 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
-using PicView.SystemIntegration;
 using PicView.Views.UserControls.Gallery;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -78,10 +74,20 @@ internal static class Thumbnails
                 bitmapThumb.Freeze();
                 return bitmapThumb;
             }
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
+#endif
+        }
 
+        try
+        {
             var fileInfo = new FileInfo(file);
             var extension = fileInfo.Extension.ToLowerInvariant();
-            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
+            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096,
+                useAsync: fileInfo.Length > 1e+8);
             switch (extension)
             {
                 case ".jpg":
@@ -97,9 +103,12 @@ internal static class Thumbnails
 
                     var sKBitmap = SKBitmap.Decode(fileStream);
                     if (sKBitmap is null)
-                    { return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage(); }
+                    {
+                        return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+                    }
 
-                    var skPic = sKBitmap.Resize(new SKImageInfo(size, size, SKColorType.Rgba8888), SKFilterQuality.High).ToWriteableBitmap();
+                    var skPic = sKBitmap.Resize(new SKImageInfo(size, size, SKColorType.Rgba8888), SKFilterQuality.High)
+                        .ToWriteableBitmap();
                     sKBitmap.Dispose();
                     fileStream.Dispose();
                     skPic.Freeze();
