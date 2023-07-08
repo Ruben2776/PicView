@@ -4,6 +4,7 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -27,7 +28,7 @@ internal static class GalleryLoad
 
         IsLoading = true;
         var source = new CancellationTokenSource();
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             var iterations = Navigation.Pics.Count;
             var index = Navigation.FolderIndex;
@@ -39,6 +40,9 @@ internal static class GalleryLoad
                 {
                     if (iterations != Navigation.Pics.Count)
                     {
+                        GalleryFunctions.Clear();
+                        IsLoading = false;
+                        source.Token.ThrowIfCancellationRequested();
                         throw new TaskCanceledException();
                     }
 
@@ -51,42 +55,65 @@ internal static class GalleryLoad
 #endif
                     GalleryFunctions.Clear();
                     IsLoading = false;
+                    return;
                 }
             }
 
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            if (iterations <= 700)
             {
-                GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-                startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
-                startPosition = startPosition < 0 ? 0 : startPosition;
-            }, DispatcherPriority.Render, source.Token);
-
-            // Iterate forward from the starting position
-            for (int x = startPosition; x < iterations; x++)
-            {
-                var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[x], (int)GalleryNavigation.PicGalleryItemSize);
-                if (iterations != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                Parallel.For(0, iterations, (i, loopState) =>
                 {
-                    IsLoading = false;
-                    return;
-                }
+                    try
+                    {
+                        if (iterations != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                        {
+                            throw new TaskCanceledException();
+                        }
 
-                UpdatePic(x, bitmapSource);
+                        var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
+
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
+                        {
+                            if (i >= UC.GetPicGallery.Container.Children.Count)
+                            {
+                                return;
+                            }
+                            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+                            item.ThumbImage.Source = bitmapSource;
+                        }));
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine(e.Message);
+#endif
+                        IsLoading = false;
+                        loopState.Stop();
+                    }
+                });
             }
-
-            // Iterate up to the beginning of the previous iteration
-            for (int x = 0; x < startPosition; x++)
+            else
             {
-                var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[x], (int)GalleryNavigation.PicGalleryItemSize);
-                if (iterations != Navigation.Pics.Count || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
-                    IsLoading = false;
-                    return;
+                    GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
+                    GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
+                    GalleryNavigation.ScrollToGalleryCenter();
+                    startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
+                    startPosition = startPosition < 0 ? 0 : startPosition;
+                }, DispatcherPriority.Render, source.Token);
+
+                // Iterate forward from the starting position
+                for (int x = startPosition; x < iterations; x++)
+                {
+                    await UpdatePicAsync(x, iterations).ConfigureAwait(false);
                 }
 
-                UpdatePic(x, bitmapSource);
+                // Iterate up to the beginning of the previous iteration
+                for (int x = startPosition - 1; x >= 0; x--)
+                {
+                    await UpdatePicAsync(x, iterations).ConfigureAwait(false);
+                }
             }
         }, source.Token).ConfigureAwait(false);
         IsLoading = false;
@@ -132,6 +159,12 @@ internal static class GalleryLoad
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
             {
+                if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
+                {
+                    GalleryFunctions.Clear();
+                    return;
+                }
+
                 var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
                 item.ThumbImage.Source = pic ?? ImageFunctions.ShowLogo();
             }));
@@ -143,5 +176,25 @@ internal static class GalleryLoad
 #endif
             // Suppress task cancellation
         }
+    }
+
+    internal static async Task UpdatePicAsync(int index, int iterations)
+    {
+        if (iterations != Navigation.Pics.Count || Navigation.Pics?.Count < 1 || index > Navigation.Pics.Count)
+        {
+            return;
+        }
+        var bitmapSource = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize)).ConfigureAwait(false);
+
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        {
+            if (index >= UC.GetPicGallery.Container.Children.Count)
+            {
+                return;
+            }
+
+            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[index];
+            item.ThumbImage.Source = bitmapSource;
+        });
     }
 }
