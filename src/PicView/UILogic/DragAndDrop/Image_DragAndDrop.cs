@@ -127,19 +127,36 @@ internal static class ImageDragAndDrop
 
         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, RemoveDragOverlay);
 
+        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+        {
+            // Don't show drop message any longer
+            CloseToolTipMessage();
+
+            ConfigureWindows.GetMainWindow.Activate();
+        });
+
         // Get files as strings
         if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
         {
-            var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
+            try
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            if (memoryStream is not null)
-            {
-                await LoadUrlAsync(memoryStream).ConfigureAwait(false);
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (memoryStream is not null)
+                {
+                    await LoadUrlAsync(memoryStream).ConfigureAwait(false);
+                }
+                else
+                {
+                    // ReSharper disable once AssignNullToNotNullAttribute
+                    await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat)).ConfigureAwait(false);
+                }
             }
-            else
+            catch (Exception)
             {
-                await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat)).ConfigureAwait(false);
+                //
             }
             return;
         }
@@ -170,14 +187,6 @@ internal static class ImageDragAndDrop
         {
             await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
         }
-
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-        {
-            // Don't show drop message any longer
-            CloseToolTipMessage();
-
-            ConfigureWindows.GetMainWindow.Activate();
-        });
 
         // Open additional windows if multiple files dropped
         foreach (var file in files.Skip(1))
