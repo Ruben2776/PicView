@@ -24,28 +24,40 @@ internal static class MouseOverAnimations
         {
             uIElement.MouseLeftButtonDown += delegate
             {
-                ButtonMouseOverAnim(iconBrush);
-                ButtonMouseOverAnim(backgroundBrush);
-                AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+                if (iconBrush is not null)
+                    ButtonMouseOverAnim(iconBrush);
+                if (backgroundBrush is not null)
+                {
+                    ButtonMouseOverAnim(backgroundBrush);
+                    AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+                }
             };
 
             uIElement.MouseEnter += delegate
             {
-                ButtonMouseOverAnim(iconBrush);
-                AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+                if (iconBrush is not null)
+                    ButtonMouseOverAnim(iconBrush);
+                if (backgroundBrush is not null)
+                    AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
             };
 
             uIElement.MouseLeave += delegate
             {
-                ButtonMouseLeaveAnim(iconBrush);
-                AnimationHelper.MouseLeaveBgTexColor(backgroundBrush);
+                if (iconBrush is not null)
+                    ButtonMouseLeaveAnim(iconBrush);
+                if (backgroundBrush is not null)
+                    AnimationHelper.MouseLeaveBgTexColor(backgroundBrush);
             };
         }
         else
         {
-            uIElement.MouseEnter += (_, _) => ButtonMouseOverAnim(backgroundBrush, true);
-            uIElement.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(backgroundBrush);
-            AnimationHelper.LightThemeMouseEvent(uIElement, iconBrush);
+            if (backgroundBrush is not null)
+            {
+                uIElement.MouseEnter += (_, _) => ButtonMouseOverAnim(backgroundBrush, true);
+                uIElement.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(backgroundBrush);
+            }
+            if (uIElement is not null && iconBrush is not null)
+                AnimationHelper.LightThemeMouseEvent(uIElement, iconBrush);
         }
     }
 

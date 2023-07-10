@@ -25,17 +25,12 @@ public partial class MainWindow
 {
     public MainWindow()
     {
-        var changeStartUpLocation = false;
         // Updates settings from older version to newer version
         if (Settings.Default.CallUpgrade)
         {
             Settings.Default.Upgrade();
             Settings.Default.CallUpgrade = false;
             LoadLanguage.DetermineLanguage(Settings.Default.UserLanguage != "en");
-            if (Settings.Default.Left == 0 && Settings.Default.Top == 0)
-            {
-                changeStartUpLocation = true;
-            }
         }
         else if (Settings.Default.UserLanguage != "en")
         {
@@ -49,7 +44,7 @@ public partial class MainWindow
 
         InitializeComponent();
 
-        if (Settings.Default.AutoFitWindow == false || changeStartUpLocation)
+        if (Settings.Default.AutoFitWindow == false)
         {
             // Need to change startup location after initialize component
             WindowStartupLocation = WindowStartupLocation.Manual;
