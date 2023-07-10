@@ -140,38 +140,35 @@ internal static class GalleryNavigation
     /// <param name="selected">selected or deselected</param>
     internal static void SetSelected(int x, bool selected, bool navigate = false)
     {
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+        if (GetPicGallery is not null && x > GetPicGallery.Container.Children.Count - 1 || x < 0) { return; }
+
+        // Select next item
+        var nextItem = GetPicGallery.Container.Children[x] as PicGalleryItem;
+
+        if (selected)
         {
-            if (GetPicGallery is not null && x > GetPicGallery.Container.Children.Count - 1 || x < 0) { return; }
-
-            // Select next item
-            var nextItem = GetPicGallery.Container.Children[x] as PicGalleryItem;
-
-            if (selected)
+            nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
+            if (GalleryFunctions.IsGalleryOpen && navigate)
             {
-                nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-                if (GalleryFunctions.IsGalleryOpen && navigate)
-                {
-                    AnimationHelper.SizeAnim(nextItem, false, PicGalleryItemSizeS, PicGalleryItemSize);
-                }
-                else
-                {
-                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSize;
-                }
+                AnimationHelper.SizeAnim(nextItem, false, PicGalleryItemSizeS, PicGalleryItemSize);
             }
             else
             {
-                nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-                if (GalleryFunctions.IsGalleryOpen && navigate)
-                {
-                    AnimationHelper.SizeAnim(nextItem, true, PicGalleryItemSize, PicGalleryItemSizeS);
-                }
-                else
-                {
-                    nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen ? PicGalleryItemSize : PicGalleryItemSizeS;
-                }
+                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSize;
             }
-        }, DispatcherPriority.Render);
+        }
+        else
+        {
+            nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
+            if (GalleryFunctions.IsGalleryOpen && navigate)
+            {
+                AnimationHelper.SizeAnim(nextItem, true, PicGalleryItemSize, PicGalleryItemSizeS);
+            }
+            else
+            {
+                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen ? PicGalleryItemSize : PicGalleryItemSizeS;
+            }
+        }
     }
 
     #endregion Select and deselect behaviour

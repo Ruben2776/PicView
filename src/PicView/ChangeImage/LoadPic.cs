@@ -141,7 +141,7 @@ internal static class LoadPic
                 return;
             }
 
-            Pics = FileList(fileInfo);
+            Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
         }
 
         var folderChanged = CheckDirectoryChangeAndPicGallery(fileInfo);
@@ -150,7 +150,7 @@ internal static class LoadPic
         {
             PreLoader.Clear();
 
-            Pics = FileList(fileInfo);
+            Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
                 InitialPath = fileInfo.FullName;
@@ -270,7 +270,7 @@ internal static class LoadPic
             PreLoader.Clear();
         }
 
-        Pics = FileList(fileInfo);
+        Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
 
         if (Pics.Count <= 0) // If no files, reload if possible or unload if not
         {
@@ -353,7 +353,7 @@ internal static class LoadPic
                 else // Fix deleting files outside application
                 {
                     PreLoader.Clear();
-                    Pics = FileList(fileInfo);
+                    Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
                     var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
                     await GoToNextImage(navigateTo).ConfigureAwait(false);
                     return;

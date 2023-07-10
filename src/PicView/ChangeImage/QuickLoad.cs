@@ -62,7 +62,7 @@ internal static class QuickLoad
             await mainWindow.Dispatcher.InvokeAsync(() => mainWindow.MainImage.Source = errorImage);
         }
 
-        Pics = FileList(fileInfo);
+        Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
 
         if (bitmapSource != null)

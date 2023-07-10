@@ -79,7 +79,7 @@ internal static class GalleryFunctions
         }));
 
         Navigation.Pics.Clear(); // Cancel task if running
-        Navigation.Pics = FileLists.FileList(fileInfo);
+        Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
 
         try
         {
@@ -98,7 +98,7 @@ internal static class GalleryFunctions
             GalleryLoad.Add(i, Navigation.FolderIndex);
         }
 
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(GalleryNavigation.ScrollToGalleryCenter);
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
 
         for (int i = 0; i < Navigation.Pics.Count; i++)
         {
