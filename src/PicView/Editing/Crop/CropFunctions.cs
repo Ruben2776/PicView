@@ -101,7 +101,7 @@ internal static class CropFunctions
         else
         {
             filename = Path.GetFileName(Pics[FolderIndex]);
-            directory = Path.GetDirectoryName(filename);
+            directory = Path.GetDirectoryName(Pics[FolderIndex]);
         }
 
         var saveDialog = new SaveFileDialog
@@ -111,7 +111,7 @@ internal static class CropFunctions
             FileName = filename,
         };
 
-        if (directory is not null)
+        if (!string.IsNullOrEmpty(directory))
         {
             saveDialog.InitialDirectory = directory;
         }
