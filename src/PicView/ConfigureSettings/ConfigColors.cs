@@ -103,8 +103,8 @@ internal static class ConfigColors
                             w.FullscreenButton.Background =
                                 w.GalleryButton.Background =
                                     w.RotateButton.Background =
-                                        w.FlipButton.Background = /*Brushes.Transparent;*/
-                                            isFocused ? (SolidColorBrush)Application.Current.Resources["AltInterfaceBrush"]
+                                        w.FlipButton.Background =
+                                            isFocused ? Brushes.White
                                                 : (SolidColorBrush)Application.Current.Resources["BackgroundHoverHighlightBrush"];
 
             w.TitleBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
