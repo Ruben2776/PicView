@@ -95,7 +95,7 @@ internal static class MainKeyboardShortcuts
                     if (e.IsRepeat)
                     {
                         // Disable animations when key is held down
-                        GetPicGallery.Scroller.CanContentScroll = true; 
+                        GetPicGallery.Scroller.CanContentScroll = true;
                     }
                     GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Right);
                     return;
@@ -430,8 +430,7 @@ internal static class MainKeyboardShortcuts
                 case Key.R:
                     if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
-                        BackupPath = Pics[FolderIndex];
-                        await ReloadAsync(true).ConfigureAwait(false);
+                        await ReloadAsync().ConfigureAwait(false);
                     }
                     else
                     {

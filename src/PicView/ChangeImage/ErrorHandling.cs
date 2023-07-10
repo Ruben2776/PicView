@@ -127,16 +127,38 @@ internal static class ErrorHandling
     /// </summary>
     internal static async Task ReloadAsync(bool fromBackup = false)
     {
-        var path = fromBackup ? BackupPath ?? null : GetReloadPath();
-        if (path == null)
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
+        string path;
+        if (Settings.Default.IncludeSubDirectories)
+        {
+            path = GetReloadPath() ?? BackupPath ?? string.Empty;
+        }
+        else
+        {
+            path = (fromBackup ? BackupPath ?? null : GetReloadPath()) ?? string.Empty;
+        }
+
+        if (string.IsNullOrWhiteSpace(path))
         {
             UnexpectedError();
         }
-        if (File.Exists(path))
+        else if (File.Exists(path))
         {
-            var fileInfo = new FileInfo(path);
-            await ResetValues(fileInfo).ConfigureAwait(false);
-            await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+            if (Settings.Default.IncludeSubDirectories)
+            {
+                var fileInfo = new FileInfo(Path.GetDirectoryName(InitialPath));
+                var preloadValue = PreLoader.Get(FolderIndex);
+                var index = FolderIndex;
+                await ResetValues(fileInfo).ConfigureAwait(false);
+                await PreLoader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+                await LoadPic.LoadPicAtIndexAsync(index).ConfigureAwait(false);
+            }
+            else
+            {
+                var fileInfo = new FileInfo(path);
+                await ResetValues(fileInfo).ConfigureAwait(false);
+                await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+            }
         }
         else if (Directory.Exists(path))
         {
@@ -165,16 +187,15 @@ internal static class ErrorHandling
         {
             if (CheckOutOfRange())
             {
-                return ConfigureWindows.GetMainWindow?.Dispatcher.Invoke(() =>
+                return ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
                 {
                     var fileName = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
                     return fileName == (string)Application.Current.Resources["Loading"] ? InitialPath : fileName;
                 });
             }
 
-            if (string.IsNullOrWhiteSpace(InitialPath) == false
-                && Settings.Default.IncludeSubDirectories
-                && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+            if (!string.IsNullOrWhiteSpace(InitialPath) && Settings.Default.IncludeSubDirectories
+                                                        && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
             {
                 return InitialPath;
             }
