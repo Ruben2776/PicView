@@ -1,6 +1,3 @@
-<img align="center" style="box-shadow: 48px 16px 48px rgba(24,37,56,0.12);transform: perspective(1000px) rotateY(5deg) translateY(4%);"
-src="https://picview.org/assets/screenshots/uix3/950/uix3-950w.png" width="950" height="483" />
-</img>
 <h1 align="center">
 <img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
 </h1>
@@ -39,6 +36,10 @@ Powershell $> winget install picview
 ```
 
 # Features and screenshots
+![configure-ui02 - Copy (2)](https://github.com/Ruben2776/PicView/assets/4200419/2459b663-ca42-415c-8d98-b6f45da0134c)
+
+Switch between a dark and a light theme and toggle between hiding the UI
+
 ![UI-Dark-Theme-Magenta](https://github.com/Ruben2776/PicView/assets/4200419/c2bf8c6f-35bc-487c-baef-26df3b35fb82)
 
 _UI overview with bottom gallery_
