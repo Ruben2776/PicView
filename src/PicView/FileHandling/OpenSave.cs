@@ -108,6 +108,7 @@ internal static class OpenSave
                 Close_UserControls();
             });
             await LoadPic.LoadPicFromStringAsync(dlg.FileName).ConfigureAwait(false);
+
             IsDialogOpen = false;
         }
     }
@@ -196,7 +197,7 @@ internal static class OpenSave
         var source = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
         var effectApplied = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
 
-        if (Pics?.Count > FolderIndex)
+        if (Pics.Count > 0 && FolderIndex < Pics.Count)
         {
             success = await SaveImages.SaveImageAsync(RotationAngle, IsFlipped, null, Pics[FolderIndex], fileName, null, effectApplied).ConfigureAwait(false);
         }
@@ -211,9 +212,12 @@ internal static class OpenSave
         }
 
         //Reload if same pic to show changes
-        else if (fileName == Pics[FolderIndex])
+        if (Pics.Count > 0 && FolderIndex < Pics.Count)
         {
-            await ReloadAsync().ConfigureAwait(false);
+            if (fileName == Pics[FolderIndex])
+            {
+                await ReloadAsync().ConfigureAwait(false);
+            }
         }
 
         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(Close_UserControls);
