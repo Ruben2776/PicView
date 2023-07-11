@@ -22,7 +22,7 @@
                 Panel.ZIndex="1" />
             <Anim:SmoothScrollViewer
                 x:Name="Scroller"
-                CanContentScroll="False"
+                CanContentScroll="True"
                 FocusVisualStyle="{x:Null}"
                 Focusable="False"
                 HorizontalScrollBarVisibility="Visible"

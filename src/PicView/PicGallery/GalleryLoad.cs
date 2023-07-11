@@ -4,10 +4,12 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.FileHandling;
 
 namespace PicView.PicGallery;
 
@@ -71,15 +73,10 @@ internal static class GalleryLoad
                         }
 
                         var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
-
+                        var fileInfo = new FileInfo(Navigation.Pics[i]);
                         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
                         {
-                            if (i >= UC.GetPicGallery.Container.Children.Count)
-                            {
-                                return;
-                            }
-                            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                            item.ThumbImage.Source = bitmapSource;
+                            UpdatePic(i, bitmapSource, fileInfo);
                         }));
                     }
                     catch (Exception e)
@@ -104,13 +101,13 @@ internal static class GalleryLoad
                 }, DispatcherPriority.Render, source.Token);
 
                 // Iterate forward from the starting position
-                for (int x = startPosition; x < iterations; x++)
+                for (var x = startPosition; x < iterations; x++)
                 {
                     await UpdatePicAsync(x, iterations).ConfigureAwait(false);
                 }
 
                 // Iterate up to the beginning of the previous iteration
-                for (int x = startPosition - 1; x >= 0; x--)
+                for (var x = startPosition - 1; x >= 0; x--)
                 {
                     await UpdatePicAsync(x, iterations).ConfigureAwait(false);
                 }
@@ -144,7 +141,7 @@ internal static class GalleryLoad
         {
             var selected = i == index;
             var item = new PicGalleryItem(null, i, selected);
-            item.MouseLeftButtonDown += async delegate
+            item.MouseLeftButtonUp += async delegate
             {
                 await GalleryClick.ClickAsync(i).ConfigureAwait(false);
             };
@@ -153,21 +150,30 @@ internal static class GalleryLoad
         });
     }
 
-    internal static void UpdatePic(int i, BitmapSource? pic)
+    internal static void UpdatePic(int i, BitmapSource? pic, FileInfo fileInfo)
     {
         try
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
             {
-                if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 || i >= UC.GetPicGallery.Container.Children.Count)
-                {
-                    GalleryFunctions.Clear();
-                    return;
-                }
+                GalleryFunctions.Clear();
+                return;
+            }
 
-                var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
-                item.ThumbImage.Source = pic ?? ImageFunctions.ShowLogo();
-            }));
+            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
+            item.ThumbImage.Source = pic ?? ImageFunctions.ShowLogo();
+            item.MouseEnter += delegate
+            {
+                item.Popup.IsOpen = true;
+            };
+            item.MouseLeave += delegate
+            {
+                item.Popup.IsOpen = false;
+            };
+            item.ThumbFileLocation.Text = fileInfo.FullName;
+            item.ThumbFileName.Text = Path.GetFileNameWithoutExtension(fileInfo.Name);
+            item.ThumbFileSize.Text = $"{(string)Application.Current.Resources["FileSize"]}: {fileInfo.Length.GetReadableFileSize()}";
+            item.ThumbFileDate.Text = $"{(string)Application.Current.Resources["Modified"]}: {fileInfo.LastWriteTimeUtc.ToString(CultureInfo.CurrentCulture)}";
         }
         catch (Exception e)
         {
@@ -185,16 +191,10 @@ internal static class GalleryLoad
             return;
         }
         var bitmapSource = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize)).ConfigureAwait(false);
-
+        var fileInfo = new FileInfo(Navigation.Pics[index]);
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (index >= UC.GetPicGallery.Container.Children.Count)
-            {
-                return;
-            }
-
-            var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[index];
-            item.ThumbImage.Source = bitmapSource;
-        });
+            UpdatePic(index, bitmapSource, fileInfo);
+        }, DispatcherPriority.Render);
     }
 }

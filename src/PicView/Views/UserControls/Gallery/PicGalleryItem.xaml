@@ -25,12 +25,48 @@
             BorderThickness="2"
             FocusVisualStyle="{x:Null}"
             Focusable="False">
-            <Image
-                x:Name="ThumbImage"
-                FocusVisualStyle="{x:Null}"
-                Focusable="False"
-                RenderOptions.BitmapScalingMode="Linear"
-                Stretch="UniformToFill" />
+            <StackPanel>
+                <Popup
+                    x:Name="Popup"
+                    AllowsTransparency="True"
+                    IsOpen="False"
+                    Placement="Top">
+                    <Border
+                        Padding="9"
+                        Background="{StaticResource WindowBackgroundColorBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                x:Name="ThumbFileName"
+                                Margin="0,0,0,2"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                                FontSize="14" />
+                            <TextBlock
+                                x:Name="ThumbFileLocation"
+                                Margin="0,0,0,2"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13" />
+                            <TextBlock
+                                x:Name="ThumbFileSize"
+                                Margin="0,0,0,2"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13" />
+                            <TextBlock
+                                x:Name="ThumbFileDate"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                FontSize="13" />
+                        </StackPanel>
+                    </Border>
+                </Popup>
+                <Image
+                    x:Name="ThumbImage"
+                    FocusVisualStyle="{x:Null}"
+                    Focusable="False"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Stretch="Uniform" />
+            </StackPanel>
         </Border>
     </Border>
 </UserControl>
