@@ -35,6 +35,7 @@ internal static class UpdateUIValues
 
         var preloadValue = PreLoader.Get(Navigation.FolderIndex);
         var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
+        var isLoading = GalleryLoad.IsLoading;
 
         PreLoader.Clear();
         var sortGallery = false;
@@ -48,7 +49,7 @@ internal static class UpdateUIValues
         {
             try
             {
-                await GalleryFunctions.SortGallery(new FileInfo(Navigation.InitialPath)).ConfigureAwait(false);
+                await GalleryFunctions.SortGallery(new FileInfo(Navigation.InitialPath ?? ErrorHandling.GetReloadPath() ?? throw new InvalidOperationException())).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -59,7 +60,7 @@ internal static class UpdateUIValues
         }
         else
         {
-            Navigation.Pics = FileLists.FileList(new FileInfo(Navigation.InitialPath));
+            Navigation.Pics = await Task.FromResult(FileLists.FileList(new FileInfo(Navigation.InitialPath))).ConfigureAwait(false);
         }
 
         Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
@@ -69,6 +70,11 @@ internal static class UpdateUIValues
         if (Settings.Default.IsBottomGalleryShown)
         {
             await GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
+        }
+
+        if (isLoading)
+        {
+            await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }
     }
 

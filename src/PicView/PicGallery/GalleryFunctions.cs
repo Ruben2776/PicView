@@ -68,10 +68,9 @@ internal static class GalleryFunctions
                     var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
                     thumbs.Add(new TempPics(picGalleryItem?.ThumbImage?.Source as BitmapSource, Navigation.Pics[i]));
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Tooltip.ShowTooltipMessage(e);
-                    Clear();
+                    //
                 }
             }
 
@@ -102,7 +101,10 @@ internal static class GalleryFunctions
 
         for (int i = 0; i < Navigation.Pics.Count; i++)
         {
-            GalleryLoad.UpdatePic(i, thumbs[i].pic);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                GalleryLoad.UpdatePic(i, thumbs[i].pic, new FileInfo(Navigation.Pics[i]));
+            }, DispatcherPriority.Render);
         }
 
         thumbs = null;

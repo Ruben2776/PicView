@@ -182,26 +182,26 @@ internal static class ErrorHandling
         {
             UnexpectedError();
         }
+    }
 
-        string? GetReloadPath()
+    internal static string? GetReloadPath()
+    {
+        if (CheckOutOfRange())
         {
-            if (CheckOutOfRange())
+            return ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                return ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
-                {
-                    var fileName = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                    return fileName == (string)Application.Current.Resources["Loading"] ? InitialPath : fileName;
-                });
-            }
-
-            if (!string.IsNullOrWhiteSpace(InitialPath) && Settings.Default.IncludeSubDirectories
-                                                        && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
-            {
-                return InitialPath;
-            }
-
-            return Pics[FolderIndex];
+                var fileName = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
+                return fileName == (string)Application.Current.Resources["Loading"] ? InitialPath : fileName;
+            });
         }
+
+        if (!string.IsNullOrWhiteSpace(InitialPath) && Settings.Default.IncludeSubDirectories
+                                                    && Path.GetDirectoryName(InitialPath) != Path.GetDirectoryName(Pics[FolderIndex]))
+        {
+            return InitialPath;
+        }
+
+        return Pics[FolderIndex];
     }
 
     private static async Task ResetValues(FileInfo fileInfo)
