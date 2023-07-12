@@ -67,7 +67,7 @@
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Stretch="Fill" />
+                    Stretch="UniformToFill" />
             </Grid>
         </Border>
     </Border>
