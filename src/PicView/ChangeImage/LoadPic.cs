@@ -350,7 +350,7 @@ internal static class LoadPic
                     // If the file is a directory, create a new FileInfo object using the file path from the image list.
                     fileInfo = new FileInfo(Pics[index]);
                 }
-                else // Fix deleting files outside application
+                else if (!fileInfo.Exists) // Fix deleting files outside application
                 {
                     PreLoader.Clear();
                     Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
@@ -377,8 +377,7 @@ internal static class LoadPic
 
             if (preLoadValue is null)
             {
-                var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
-                                   ImageFunctions.ImageErrorMessage();
+                var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preLoadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
             }
             while (preLoadValue.IsLoading)

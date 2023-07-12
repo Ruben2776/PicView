@@ -21,9 +21,9 @@ internal static class ImageDecoder
     /// </summary>
     /// <param name="fileInfo">Cannot be null</param>
     /// <returns></returns>
-    internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo fileInfo)
+    internal static async Task<BitmapSource> ReturnBitmapSourceAsync(FileInfo fileInfo)
     {
-        if (fileInfo is not { Length: > 0 }) { return null; }
+        if (fileInfo is not { Length: > 0 }) { return ImageFunctions.ImageErrorMessage(); }
 
         var extension = fileInfo.Extension.ToLowerInvariant();
         switch (extension)
@@ -44,7 +44,7 @@ internal static class ImageDecoder
                 return await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
             case ".b64":
-                return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false);
+                return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false) ?? ImageFunctions.ImageErrorMessage();
 
             default:
                 return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
@@ -145,7 +145,7 @@ internal static class ImageDecoder
     /// <param name="fileInfo"></param>
     /// <param name="magickFormat"></param>
     /// <returns></returns>
-    private static async Task<BitmapSource?> GetMagickSvg(FileInfo fileInfo, MagickFormat magickFormat)
+    private static async Task<BitmapSource> GetMagickSvg(FileInfo fileInfo, MagickFormat magickFormat)
     {
         try
         {
@@ -188,7 +188,7 @@ internal static class ImageDecoder
 #if DEBUG
             Trace.WriteLine($"{nameof(GetMagickSvg)} {fileInfo.Name} exception, \n {e.Message}");
 #endif
-            return null;
+            return ImageFunctions.ImageErrorMessage();
         }
     }
 
@@ -198,16 +198,16 @@ internal static class ImageDecoder
     /// </summary>
     /// <param name="fileInfo"></param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a <c>WriteableBitmap</c> object if successful; otherwise, it returns null.</returns>
-    private static async Task<WriteableBitmap?> GetWriteAbleBitmapAsync(FileInfo fileInfo)
+    private static async Task<BitmapSource> GetWriteAbleBitmapAsync(FileInfo fileInfo)
     {
         if (fileInfo.Length >= 2147483648)
-            return (WriteableBitmap?)await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
+            return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
 
         try
         {
             await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
             var sKBitmap = SKBitmap.Decode(fileStream);
-            if (sKBitmap is null) { return null; }
+            if (sKBitmap is null) { return ImageFunctions.ImageErrorMessage(); }
 
             var skPic = sKBitmap.ToWriteableBitmap();
             sKBitmap.Dispose();
@@ -220,11 +220,11 @@ internal static class ImageDecoder
 #if DEBUG
             Trace.WriteLine($"{nameof(GetWriteAbleBitmapAsync)} {fileInfo.Name} exception:\n{e.Message}");
 #endif
-            return null;
+            return ImageFunctions.ImageErrorMessage();
         }
     }
 
-    private static BitmapSource? GetDefaultBitmapSource(FileInfo fileInfo)
+    private static BitmapSource GetDefaultBitmapSource(FileInfo fileInfo)
     {
         try
         {
@@ -270,14 +270,14 @@ internal static class ImageDecoder
             var bitmapSource = magickImage?.ToBitmapSource();
             bitmapSource?.Freeze();
             magickImage?.Dispose();
-            return bitmapSource;
+            return bitmapSource ?? ImageFunctions.ImageErrorMessage();
         }
         catch (Exception exception)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception:\n{exception.Message}");
 #endif
-            return null;
+            return ImageFunctions.ImageErrorMessage();
         }
     }
 

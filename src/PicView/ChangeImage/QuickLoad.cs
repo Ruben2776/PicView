@@ -88,7 +88,7 @@ internal static class QuickLoad
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
-            await PreLoader.PreLoadAsync(FolderIndex).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
         }
 
         if (bitmapSource is not null)

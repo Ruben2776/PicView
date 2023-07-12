@@ -95,8 +95,7 @@ internal static class PreLoader
             if (add)
             {
                 fileInfo ??= new FileInfo(Pics[index]);
-                bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
-                                 ImageFunctions.ImageErrorMessage();
+                bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preLoadValue.BitmapSource = bitmapSource;
                 preLoadValue.IsLoading = false;
                 preLoadValue.FileInfo = fileInfo;
@@ -191,83 +190,105 @@ internal static class PreLoader
     /// An asynchronous task that iterates through file names and caches the decoded images to the PreLoad list
     /// </summary>
     /// <param name="currentIndex">The starting point for the iteration.</param>
-    internal static Task PreLoadAsync(int currentIndex) => Task.Run(() =>
+    internal static async Task PreLoadAsync(int currentIndex, int count)
     {
         int nextStartingIndex, prevStartingIndex, deleteIndex;
+        var source = new CancellationTokenSource();
 
-#if DEBUG
-        if (ShowAddRemove)
-            Trace.WriteLine($"\nPreLoading started at {currentIndex}\n");
-#endif
-        if (!Reverse)
+        await Task.Run(() =>
         {
-            nextStartingIndex = currentIndex;
-            prevStartingIndex = currentIndex - 1;
-            deleteIndex = prevStartingIndex - NegativeIterations;
+#if DEBUG
+            if (ShowAddRemove)
+                Trace.WriteLine($"\nPreLoading started at {currentIndex}\n");
+#endif
 
-            Parallel.For(0, PositiveIterations, i =>
+            nextStartingIndex = currentIndex;
+            prevStartingIndex = Reverse ? currentIndex + 1 : currentIndex - 1;
+            deleteIndex = Reverse ? prevStartingIndex + NegativeIterations : prevStartingIndex - NegativeIterations;
+
+            void AddItem(int i)
             {
-                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
+                if (Pics.Count == 0 || count != Pics.Count)
+                {
+                    throw new TaskCanceledException();
+                }
+
                 var index = (nextStartingIndex + i) % Pics.Count;
                 _ = AddAsync(index).ConfigureAwait(false);
-            });
-            Parallel.For(0, NegativeIterations, i =>
-            {
-                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
-                var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
-                _ = AddAsync(index).ConfigureAwait(false);
-            });
-            if (Pics.Count > MaxCount + NegativeIterations)
-            {
-                for (var i = 0; i < NegativeIterations; i++)
-                {
-                    if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
-                    var index = (deleteIndex - i + Pics.Count) % Pics.Count;
-                    Remove(index);
-                }
             }
-        }
-        else
-        {
-            nextStartingIndex = currentIndex;
-            prevStartingIndex = currentIndex + 1;
-            deleteIndex = prevStartingIndex + NegativeIterations;
 
-            Parallel.For(0, PositiveIterations, i =>
+            void RemoveItem(int i)
             {
-                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
-                var index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
-                _ = AddAsync(index).ConfigureAwait(false);
-            });
-            Parallel.For(0, NegativeIterations, i =>
-            {
-                if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
-                var index = (prevStartingIndex + i) % Pics.Count;
-                _ = AddAsync(index).ConfigureAwait(false);
-            });
-            if (Pics.Count > MaxCount + NegativeIterations)
-            {
-                for (var i = 0; i < NegativeIterations; i++)
+                if (Pics.Count == 0 || count != Pics.Count)
                 {
-                    if (Pics.Count is 0) return; // Fix divide by zero exception occasionally occurring when exiting
-                    var index = (deleteIndex + i) % Pics.Count;
-                    Remove(index);
+                    throw new TaskCanceledException();
                 }
-            }
-        }
 
-        while (PreLoadList.Count > MaxCount)
-        {
-            try
-            {
-                Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
+                var index = (deleteIndex + (Reverse ? i : -i)) % Pics.Count;
+                Remove(index);
             }
-            catch (Exception e)
+
+            Parallel.For(0, PositiveIterations, (i, loopState) =>
             {
+                try
+                {
+                    AddItem(i);
+                }
+                catch (Exception e)
+                {
+                    loopState.Stop();
 #if DEBUG
-                Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
+                    Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
 #endif
+                }
+            });
+
+            Parallel.For(0, NegativeIterations, (i, loopState) =>
+            {
+                try
+                {
+                    AddItem(Reverse ? -i : i);
+                }
+                catch (Exception e)
+                {
+                    loopState.Stop();
+#if DEBUG
+                    Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
+#endif
+                }
+            });
+
+            if (Pics.Count > MaxCount)
+            {
+                for (var i = 0; i < NegativeIterations; i++)
+                {
+                    try
+                    {
+                        RemoveItem(i);
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
+#endif
+                    }
+                }
             }
-        }
-    });
+
+            while (PreLoadList.Count > MaxCount)
+            {
+                try
+                {
+                    Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
+#endif
+                }
+            }
+        }, source.Token).ConfigureAwait(false);
+    }
+
 }

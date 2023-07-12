@@ -94,7 +94,7 @@ internal static class UpdateImage
         if (Pics.Count > 1)
         {
             Taskbar.Progress((double)index / Pics.Count);
-            await PreLoadAsync(index).ConfigureAwait(false);
+            await PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
         }
 
         // Add recent files, except when browsing archive
