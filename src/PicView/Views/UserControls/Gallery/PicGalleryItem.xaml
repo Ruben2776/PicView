@@ -25,7 +25,7 @@
             BorderThickness="2"
             FocusVisualStyle="{x:Null}"
             Focusable="False">
-            <StackPanel>
+            <Grid>
                 <Popup
                     x:Name="Popup"
                     AllowsTransparency="True"
@@ -62,11 +62,13 @@
                 </Popup>
                 <Image
                     x:Name="ThumbImage"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     FocusVisualStyle="{x:Null}"
                     Focusable="False"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Stretch="Uniform" />
-            </StackPanel>
+                    Stretch="Fill" />
+            </Grid>
         </Border>
     </Border>
 </UserControl>
