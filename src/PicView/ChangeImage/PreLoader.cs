@@ -73,7 +73,7 @@ internal static class PreLoader
 #if DEBUG
 
     // ReSharper disable once ConvertToConstant.Local
-    private static readonly bool ShowAddRemove = false;
+    private static readonly bool ShowAddRemove = true;
 
 #endif
 
@@ -197,81 +197,79 @@ internal static class PreLoader
 
         await Task.Run(() =>
         {
+            if (Reverse)
+            {
+                nextStartingIndex = currentIndex + NegativeIterations > count ? count : currentIndex + NegativeIterations;
+                prevStartingIndex = currentIndex + 1;
+                deleteIndex = prevStartingIndex + NegativeIterations;
+            }
+            else
+            {
+                nextStartingIndex = currentIndex - NegativeIterations < 0 ? 0 : currentIndex - NegativeIterations;
+                prevStartingIndex = currentIndex - 1;
+                deleteIndex = prevStartingIndex - NegativeIterations;
+            }
+
 #if DEBUG
             if (ShowAddRemove)
-                Trace.WriteLine($"\nPreLoading started at {currentIndex}\n");
+                Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
 #endif
 
-            nextStartingIndex = currentIndex;
-            prevStartingIndex = Reverse ? currentIndex + 1 : currentIndex - 1;
-            deleteIndex = Reverse ? prevStartingIndex + NegativeIterations : prevStartingIndex - NegativeIterations;
-
-            void AddItem(int i)
+            Parallel.For(0, PositiveIterations + NegativeIterations, (i, loopState) =>
             {
-                if (Pics.Count == 0 || count != Pics.Count)
+                try
                 {
-                    throw new TaskCanceledException();
+                    if (Pics.Count == 0 || count != Pics.Count)
+                    {
+                        throw new TaskCanceledException();
+                    }
+                }
+                catch (Exception)
+                {
+                    loopState.Stop();
+                    return;
                 }
 
-                var index = (nextStartingIndex + i) % Pics.Count;
+                int index;
+                if (Reverse)
+                {
+                    index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                }
+                else
+                {
+                    index = (nextStartingIndex + i) % Pics.Count;
+                }
+
                 _ = AddAsync(index).ConfigureAwait(false);
-            }
-
-            void RemoveItem(int i)
-            {
-                if (Pics.Count == 0 || count != Pics.Count)
-                {
-                    throw new TaskCanceledException();
-                }
-
-                var index = (deleteIndex + (Reverse ? i : -i)) % Pics.Count;
-                Remove(index);
-            }
-
-            Parallel.For(0, PositiveIterations, (i, loopState) =>
-            {
-                try
-                {
-                    AddItem(i);
-                }
-                catch (Exception e)
-                {
-                    loopState.Stop();
-#if DEBUG
-                    Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
-#endif
-                }
             });
 
-            Parallel.For(0, NegativeIterations, (i, loopState) =>
-            {
-                try
-                {
-                    AddItem(Reverse ? -i : i);
-                }
-                catch (Exception e)
-                {
-                    loopState.Stop();
-#if DEBUG
-                    Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
-#endif
-                }
-            });
-
-            if (Pics.Count > MaxCount)
+            if (Pics.Count > MaxCount + NegativeIterations)
             {
                 for (var i = 0; i < NegativeIterations; i++)
                 {
                     try
                     {
-                        RemoveItem(i);
+                        if (Pics.Count == 0 || count != Pics.Count)
+                        {
+                            throw new TaskCanceledException();
+                        }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-#if DEBUG
-                        Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
-#endif
+                        break;
                     }
+
+                    int index;
+                    if (Reverse)
+                    {
+                        index = (deleteIndex + i) % Pics.Count;
+                    }
+                    else
+                    {
+                        index = (deleteIndex - i + Pics.Count) % Pics.Count;
+                    }
+
+                    Remove(index);
                 }
             }
 
@@ -290,5 +288,4 @@ internal static class PreLoader
             }
         }, source.Token).ConfigureAwait(false);
     }
-
 }
