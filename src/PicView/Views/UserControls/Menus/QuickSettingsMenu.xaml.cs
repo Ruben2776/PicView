@@ -67,8 +67,8 @@ public partial class QuickSettingsMenu : UserControl
 
         // Search subdirectories
         SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
-        SearchSubDir.Click += (_, _) => UpdateUIValues.ToggleIncludeSubdirectories();
-        SearchSubDirBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.ToggleIncludeSubdirectories();
+        SearchSubDir.Click += (_, _) => UpdateUIValues.ToggleIncludeSubdirectoriesAsync();
+        SearchSubDirBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.ToggleIncludeSubdirectoriesAsync();
         SetButtonIconMouseOverAnimations(SearchSubDirBorder, SearchSubDirBrush, SearchSubDirFill);
     }
 }

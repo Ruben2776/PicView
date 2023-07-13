@@ -158,7 +158,7 @@ internal static class Navigation
         {
             if (Settings.Default.IsBottomGalleryShown)
             {
-                _ = GalleryLoad.ReloadGallery().ConfigureAwait(false);
+                _ = GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
             }
             else
             {

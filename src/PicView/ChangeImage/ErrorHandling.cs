@@ -146,7 +146,7 @@ internal static class ErrorHandling
         {
             if (Settings.Default.IncludeSubDirectories)
             {
-                var fileInfo = new FileInfo(Path.GetDirectoryName(InitialPath));
+                var fileInfo = new FileInfo(Path.GetDirectoryName(path));
                 var preloadValue = PreLoader.Get(FolderIndex);
                 var index = FolderIndex;
                 await ResetValues(fileInfo).ConfigureAwait(false);
