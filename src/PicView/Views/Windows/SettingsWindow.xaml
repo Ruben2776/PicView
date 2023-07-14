@@ -486,398 +486,400 @@
                         TextWrapping="Wrap" />
                 </TabItem.Header>
 
-                <StackPanel Margin="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
 
-                    <Label
-                        Margin="0,5,0,5"
-                        VerticalAlignment="Center"
-                        Content="{StaticResource MiscSettings}"
-                        Foreground="{StaticResource MainColorBrush}" />
-
-                    <CheckBox
-                        x:Name="AltUIRadio"
-                        Margin="7,0,0,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="AltUIText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                Focusable="False"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                FontSize="13"
-                                Text="{StaticResource ShowButtonsInHiddenUI}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
-                    </CheckBox>
-
-                    <CheckBox
-                        x:Name="TaskbarRadio"
-                        Margin="7,0,0,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False"
-                        IsChecked="True">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="TaskbarText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                Focusable="False"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                FontSize="13"
-                                Text="{StaticResource ToggleTaskbarProgress}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
-                    </CheckBox>
-
-                    <CheckBox
-                        x:Name="ShowBottomRadio"
-                        Margin="7,0,0,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False"
-                        IsChecked="True">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="ShowBottomText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                Focusable="False"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                FontSize="13"
-                                Text="{StaticResource ShowBottomToolbar}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
-                    </CheckBox>
-
-                    <CheckBox
-                        x:Name="ShowBottomWhenHiddenRadio"
-                        Margin="7,0,0,0"
-                        HorizontalContentAlignment="Center"
-                        Focusable="False"
-                        IsChecked="False">
-                        <CheckBox.Foreground>
-                            <SolidColorBrush x:Name="ShowBottomWhenHiddenText" Color="{StaticResource MainColor}" />
-                        </CheckBox.Foreground>
-                        <CheckBox.Content>
-                            <TextBlock
-                                Width="279"
-                                Focusable="False"
-                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-                                FontSize="13"
-                                Text="{StaticResource ShowBottomGalleryWhenUiIsHidden}"
-                                TextWrapping="Wrap" />
-                        </CheckBox.Content>
-                    </CheckBox>
-
-                    <Label
-                        Margin="0,20,0,5"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="{StaticResource HighlightColor}" />
-
-                    <WrapPanel
-                        Margin="0,3,0,8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        ItemWidth="151"
-                        Orientation="Horizontal">
-
-                        <RadioButton
-                            x:Name="BlueRadio"
-                            Content="{StaticResource Blue}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="BlueBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="BlueText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="CyanRadio"
-                            Content="{StaticResource Cyan}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="CyanBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="CyanText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="AquaRadio"
-                            Content="{StaticResource Aqua}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="AquaBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="AquaText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="TealRadio"
-                            Content="{StaticResource Teal}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="TealBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="TealText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="LimeRadio"
-                            Content="{StaticResource Lime}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="LimeBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="LimeText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="GreenRadio"
-                            Content="{StaticResource Green}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="GreenText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="GoldenRadio"
-                            Content="{StaticResource Golden}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="GoldenBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="GoldenText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="OrangeRadio"
-                            Content="{StaticResource Orange}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="OrangeBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="OrangeText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="RedRadio"
-                            Content="{StaticResource Red}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="RedBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="RedText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="PinkRadio"
-                            Content="{StaticResource Pink}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="PinkBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="PinkText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="MagentaRadio"
-                            Content="{StaticResource Magenta}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="MagentaBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="MagentaText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-
-                        <RadioButton
-                            x:Name="PurpleRadio"
-                            Content="{StaticResource Purple}"
-                            Style="{StaticResource MetroFlatRadioButton}">
-                            <RadioButton.Background>
-                                <SolidColorBrush x:Name="PurpleBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </RadioButton.Background>
-                            <RadioButton.Foreground>
-                                <SolidColorBrush x:Name="PurpleText" Color="{StaticResource MainColor}" />
-                            </RadioButton.Foreground>
-                        </RadioButton>
-                    </WrapPanel>
-
-                    <Label
-                        Margin="0,10,0,4"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Content="{StaticResource ExpandedGalleryItems}" />
-
-                    <StackPanel
-                        Margin="0,3,0,5"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
-
-                        <Slider
-                            x:Name="SetExpandedGallerySlider"
-                            Width="245"
-                            Height="30"
-                            d:Value="32"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            Maximum="35"
-                            Minimum="10"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight" />
-
-                        <TextBox
-                            x:Name="SetExpandedGalleryText"
-                            Width="50"
-                            Margin="5,3"
-                            Padding="0,4,0,4"
+                        <Label
+                            Margin="0,5,0,5"
                             VerticalAlignment="Center"
-                            d:Text="2"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
-                            FontSize="12"
-                            IsReadOnly="True"
-                            IsTabStop="False"
-                            Text="0"
-                            TextAlignment="Center" />
-                    </StackPanel>
+                            Content="{StaticResource MiscSettings}"
+                            Foreground="{StaticResource MainColorBrush}" />
 
-                    <Label
-                        Margin="0,10,0,4"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Content="{StaticResource BottomGalleryItems}" />
+                        <CheckBox
+                            x:Name="AltUIRadio"
+                            Margin="7,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            Focusable="False">
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="AltUIText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                            <CheckBox.Content>
+                                <TextBlock
+                                    Width="279"
+                                    Focusable="False"
+                                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                    FontSize="13"
+                                    Text="{StaticResource ShowButtonsInHiddenUI}"
+                                    TextWrapping="Wrap" />
+                            </CheckBox.Content>
+                        </CheckBox>
 
-                    <StackPanel
-                        Margin="5,3,0,5"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
+                        <CheckBox
+                            x:Name="TaskbarRadio"
+                            Margin="7,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            Focusable="False"
+                            IsChecked="True">
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="TaskbarText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                            <CheckBox.Content>
+                                <TextBlock
+                                    Width="279"
+                                    Focusable="False"
+                                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                    FontSize="13"
+                                    Text="{StaticResource ToggleTaskbarProgress}"
+                                    TextWrapping="Wrap" />
+                            </CheckBox.Content>
+                        </CheckBox>
 
-                        <Slider
-                            x:Name="SetBottomGallerySlider"
-                            Width="240"
-                            Height="30"
-                            d:Value="32"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            Maximum="65"
-                            Minimum="20"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight" />
+                        <CheckBox
+                            x:Name="ShowBottomRadio"
+                            Margin="7,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            Focusable="False"
+                            IsChecked="True">
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="ShowBottomText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                            <CheckBox.Content>
+                                <TextBlock
+                                    Width="279"
+                                    Focusable="False"
+                                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                    FontSize="13"
+                                    Text="{StaticResource ShowBottomToolbar}"
+                                    TextWrapping="Wrap" />
+                            </CheckBox.Content>
+                        </CheckBox>
 
-                        <TextBox
-                            x:Name="SetBottomGalleryText"
-                            Width="50"
-                            Margin="5,3"
-                            Padding="0,4,0,4"
+                        <CheckBox
+                            x:Name="ShowBottomWhenHiddenRadio"
+                            Margin="7,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            Focusable="False"
+                            IsChecked="False">
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="ShowBottomWhenHiddenText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                            <CheckBox.Content>
+                                <TextBlock
+                                    Width="279"
+                                    Focusable="False"
+                                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                    FontSize="13"
+                                    Text="{StaticResource ShowBottomGalleryWhenUiIsHidden}"
+                                    TextWrapping="Wrap" />
+                            </CheckBox.Content>
+                        </CheckBox>
+
+                        <Label
+                            Margin="0,20,0,5"
+                            HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            d:Text="2"
-                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                            Content="{StaticResource HighlightColor}" />
+
+                        <WrapPanel
+                            Margin="0,3,0,8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            ItemWidth="151"
+                            Orientation="Horizontal">
+
+                            <RadioButton
+                                x:Name="BlueRadio"
+                                Content="{StaticResource Blue}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="BlueBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="BlueText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="CyanRadio"
+                                Content="{StaticResource Cyan}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="CyanBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="CyanText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="AquaRadio"
+                                Content="{StaticResource Aqua}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="AquaBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="AquaText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="TealRadio"
+                                Content="{StaticResource Teal}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="TealBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="TealText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="LimeRadio"
+                                Content="{StaticResource Lime}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="LimeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="LimeText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="GreenRadio"
+                                Content="{StaticResource Green}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="GreenBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="GreenText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="GoldenRadio"
+                                Content="{StaticResource Golden}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="GoldenBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="GoldenText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="OrangeRadio"
+                                Content="{StaticResource Orange}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="OrangeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="OrangeText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="RedRadio"
+                                Content="{StaticResource Red}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="RedBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="RedText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="PinkRadio"
+                                Content="{StaticResource Pink}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="PinkBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="PinkText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="MagentaRadio"
+                                Content="{StaticResource Magenta}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="MagentaBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="MagentaText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+
+                            <RadioButton
+                                x:Name="PurpleRadio"
+                                Content="{StaticResource Purple}"
+                                Style="{StaticResource MetroFlatRadioButton}">
+                                <RadioButton.Background>
+                                    <SolidColorBrush x:Name="PurpleBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </RadioButton.Background>
+                                <RadioButton.Foreground>
+                                    <SolidColorBrush x:Name="PurpleText" Color="{StaticResource MainColor}" />
+                                </RadioButton.Foreground>
+                            </RadioButton>
+                        </WrapPanel>
+
+                        <Label
+                            Margin="0,10,0,4"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource ExpandedGalleryItems}" />
+
+                        <StackPanel
+                            Margin="0,3,0,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Orientation="Horizontal">
+
+                            <Slider
+                                x:Name="SetExpandedGallerySlider"
+                                Width="245"
+                                Height="30"
+                                d:Value="32"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="35"
+                                Minimum="10"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight" />
+
+                            <TextBox
+                                x:Name="SetExpandedGalleryText"
+                                Width="50"
+                                Margin="5,3"
+                                Padding="0,4,0,4"
+                                VerticalAlignment="Center"
+                                d:Text="2"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                                FontSize="12"
+                                IsReadOnly="True"
+                                IsTabStop="False"
+                                Text="0"
+                                TextAlignment="Center" />
+                        </StackPanel>
+
+                        <Label
+                            Margin="0,10,0,4"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource BottomGalleryItems}" />
+
+                        <StackPanel
+                            Margin="5,3,0,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Orientation="Horizontal">
+
+                            <Slider
+                                x:Name="SetBottomGallerySlider"
+                                Width="240"
+                                Height="30"
+                                d:Value="32"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="65"
+                                Minimum="20"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight" />
+
+                            <TextBox
+                                x:Name="SetBottomGalleryText"
+                                Width="50"
+                                Margin="5,3"
+                                Padding="0,4,0,4"
+                                VerticalAlignment="Center"
+                                d:Text="2"
+                                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                                FontSize="12"
+                                IsReadOnly="True"
+                                IsTabStop="False"
+                                Text="0"
+                                TextAlignment="Center" />
+                        </StackPanel>
+
+                        <Label
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{StaticResource Theme}"
+                            Foreground="{StaticResource MainColorBrush}" />
+
+                        <Border
+                            Width="150"
+                            Height="40"
+                            Margin="0,5,0,6"
+                            Background="{StaticResource BackgroundColorBrushAlt}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            Effect="{StaticResource MenuShadowButtonBorder}"
+                            Focusable="False">
+                            <CheckBox
+                                x:Name="DarkThemeRadio"
+                                HorizontalContentAlignment="Center"
+                                d:IsChecked="True"
+                                Content="{StaticResource DarkTheme}"
+                                Style="{StaticResource Checkstyle}">
+                                <CheckBox.Background>
+                                    <SolidColorBrush x:Name="DarkThemeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                </CheckBox.Background>
+                                <CheckBox.Foreground>
+                                    <SolidColorBrush x:Name="DarkThemeText" Color="{StaticResource MainColor}" />
+                                </CheckBox.Foreground>
+                            </CheckBox>
+                        </Border>
+
+                        <Border
+                            Width="150"
+                            Height="40"
+                            Background="{StaticResource BackgroundColorBrushAlt}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            Effect="{StaticResource MenuShadowButtonBorder}"
+                            Focusable="False">
+                            <CheckBox
+                                x:Name="LightThemeRadio"
+                                HorizontalContentAlignment="Center"
+                                Content="{StaticResource LightTheme}"
+                                Style="{StaticResource Checkstyle}">
+                                <CheckBox.Background>
+                                    <SolidColorBrush x:Name="LightThemeBrush" Color="Transparent" />
+                                </CheckBox.Background>
+                                <CheckBox.Foreground>
+                                    <SolidColorBrush x:Name="LightThemeText" Color="{StaticResource MainColor}" />
+                                </CheckBox.Foreground>
+                            </CheckBox>
+                        </Border>
+
+                        <TextBlock
+                            x:Name="ThemeRestart"
+                            Margin="7,11,6,25"
+                            HorizontalAlignment="Center"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
                             FontSize="12"
-                            IsReadOnly="True"
-                            IsTabStop="False"
-                            Text="0"
-                            TextAlignment="Center" />
+                            Text="{StaticResource ChangingThemeRequiresRestart}"
+                            TextWrapping="Wrap"
+                            ToolTip="{StaticResource RestartApp}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush x:Name="ThemeRestartTxt" Color="{StaticResource MainColor}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
                     </StackPanel>
-
-                    <Label
-                        Margin="0,10,0,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Content="{StaticResource Theme}"
-                        Foreground="{StaticResource MainColorBrush}" />
-
-                    <Border
-                        Width="150"
-                        Height="40"
-                        Margin="0,5,0,6"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="2"
-                        Effect="{StaticResource MenuShadowButtonBorder}"
-                        Focusable="False">
-                        <CheckBox
-                            x:Name="DarkThemeRadio"
-                            HorizontalContentAlignment="Center"
-                            d:IsChecked="True"
-                            Content="{StaticResource DarkTheme}"
-                            Style="{StaticResource Checkstyle}">
-                            <CheckBox.Background>
-                                <SolidColorBrush x:Name="DarkThemeBrush" Color="{StaticResource BackgroundColorAlt}" />
-                            </CheckBox.Background>
-                            <CheckBox.Foreground>
-                                <SolidColorBrush x:Name="DarkThemeText" Color="{StaticResource MainColor}" />
-                            </CheckBox.Foreground>
-                        </CheckBox>
-                    </Border>
-
-                    <Border
-                        Width="150"
-                        Height="40"
-                        Background="{StaticResource BackgroundColorBrushAlt}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="2"
-                        Effect="{StaticResource MenuShadowButtonBorder}"
-                        Focusable="False">
-                        <CheckBox
-                            x:Name="LightThemeRadio"
-                            HorizontalContentAlignment="Center"
-                            Content="{StaticResource LightTheme}"
-                            Style="{StaticResource Checkstyle}">
-                            <CheckBox.Background>
-                                <SolidColorBrush x:Name="LightThemeBrush" Color="Transparent" />
-                            </CheckBox.Background>
-                            <CheckBox.Foreground>
-                                <SolidColorBrush x:Name="LightThemeText" Color="{StaticResource MainColor}" />
-                            </CheckBox.Foreground>
-                        </CheckBox>
-                    </Border>
-
-                    <TextBlock
-                        x:Name="ThemeRestart"
-                        Margin="7,11,6,25"
-                        HorizontalAlignment="Center"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Light Italic"
-                        FontSize="12"
-                        Text="{StaticResource ChangingThemeRequiresRestart}"
-                        TextWrapping="Wrap"
-                        ToolTip="{StaticResource RestartApp}">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="ThemeRestartTxt" Color="{StaticResource MainColor}" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </StackPanel>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
     </DockPanel>
