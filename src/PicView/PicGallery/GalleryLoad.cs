@@ -118,21 +118,18 @@ internal static class GalleryLoad
 
     internal static async Task ReloadGalleryAsync()
     {
-        if (Settings.Default.IsBottomGalleryShown)
+        while (IsLoading)
         {
-            while (IsLoading)
+            await Task.Delay(200).ConfigureAwait(false);
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                await Task.Delay(200).ConfigureAwait(false);
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+                if (UC.GetPicGallery.Container.Children.Count is 0)
                 {
-                    if (UC.GetPicGallery.Container.Children.Count is 0)
-                    {
-                        IsLoading = false;
-                    }
-                });
-            }
-            await LoadAsync().ConfigureAwait(false);
+                    IsLoading = false;
+                }
+            });
         }
+        await LoadAsync().ConfigureAwait(false);
     }
 
     internal static void Add(int i, int index)
