@@ -28,12 +28,12 @@ internal static class UpdateImage
     /// </summary>
     /// <param name="index"></param>
     /// <param name="preLoadValue"></param>
-    internal static async Task UpdateImageAsync(int index, PreLoadValue preLoadValue)
+    internal static void UpdateImageValues(int index, PreLoadValue preLoadValue)
     {
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
         var isGif = preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase);
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
             if (isGif) // Loads gif from XamlAnimatedGif if necessary
             {
@@ -48,7 +48,7 @@ internal static class UpdateImage
         var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,
             index, preLoadValue.FileInfo);
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
             if (Rotation.RotationAngle is not 0)
             {
@@ -82,19 +82,19 @@ internal static class UpdateImage
             {
                 GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
-        }, DispatcherPriority.Send);
+        });
 
         if (GetToolTipMessage is { IsVisible: true })
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);
 
         if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
-            await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
+            _ = ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
 
-        await AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
+        _ = AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
         if (Pics.Count > 1)
         {
             Taskbar.Progress((double)index / Pics.Count);
-            await PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+            _ = PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
         }
 
         // Add recent files, except when browsing archive

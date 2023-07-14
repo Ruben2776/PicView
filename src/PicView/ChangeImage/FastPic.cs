@@ -59,7 +59,7 @@ internal static class FastPic
             }
         }
 
-        await UpdateImage.UpdateImageAsync(index, preLoadValue).ConfigureAwait(false);
+        UpdateImage.UpdateImageValues(index, preLoadValue);
 
         _updateSource = false;
         await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
@@ -90,6 +90,6 @@ internal static class FastPic
         {
             await Task.Delay(10).ConfigureAwait(false);
         }
-        await UpdateImage.UpdateImageAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
+        UpdateImage.UpdateImageValues(FolderIndex, preLoadValue);
     }
 }
