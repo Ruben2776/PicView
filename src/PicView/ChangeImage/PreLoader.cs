@@ -73,7 +73,7 @@ internal static class PreLoader
 #if DEBUG
 
     // ReSharper disable once ConvertToConstant.Local
-    private static readonly bool ShowAddRemove = true;
+    private static readonly bool ShowAddRemove = false;
 
 #endif
 

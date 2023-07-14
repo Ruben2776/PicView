@@ -61,7 +61,7 @@ public partial class SettingsWindow
 
             // SubDirRadio
             SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
-            SubDirRadio.Click += (_, _) => UpdateUIValues.ToggleIncludeSubdirectories();
+            SubDirRadio.Click += async (_, _) => await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
 
             // Slideshow
             SlideshowSlider.Value = Settings.Default.SlideTimer / 1000;

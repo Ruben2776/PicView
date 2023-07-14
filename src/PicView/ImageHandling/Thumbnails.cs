@@ -115,7 +115,13 @@ internal static class Thumbnails
                     return skPic;
 
                 default:
-                    return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
+                    var image = new MagickImage();
+                    image?.Read(fileStream);
+                    image?.Thumbnail(new MagickGeometry(size, size));
+                    var bmp = image?.ToBitmapSource();
+                    bmp?.Freeze();
+                    image.Dispose();
+                    return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
             }
         }
         catch (Exception e)

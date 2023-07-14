@@ -175,7 +175,7 @@ internal static class LoadPic
         {
             if (folderChanged)
             {
-                await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+                await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
             }
             else
             {
@@ -186,7 +186,7 @@ internal static class LoadPic
                 });
                 if (checkIfEmpty)
                 {
-                    await GalleryLoad.ReloadGallery().ConfigureAwait(true);
+                    await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(true);
                 }
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
@@ -298,7 +298,7 @@ internal static class LoadPic
         {
             if (folderChanged)
             {
-                await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+                await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
             }
             else
             {
@@ -309,7 +309,7 @@ internal static class LoadPic
                 });
                 if (checkIfEmpty)
                 {
-                    await GalleryLoad.ReloadGallery().ConfigureAwait(false);
+                    await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
                 }
             }
         }

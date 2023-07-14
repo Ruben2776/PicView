@@ -146,7 +146,7 @@ internal static class ErrorHandling
         {
             if (Settings.Default.IncludeSubDirectories)
             {
-                var fileInfo = new FileInfo(Path.GetDirectoryName(InitialPath));
+                var fileInfo = new FileInfo(Path.GetDirectoryName(path));
                 var preloadValue = PreLoader.Get(FolderIndex);
                 var index = FolderIndex;
                 await ResetValues(fileInfo).ConfigureAwait(false);
@@ -207,7 +207,7 @@ internal static class ErrorHandling
     private static async Task ResetValues(FileInfo fileInfo)
     {
         PreLoader.Clear();
-        Pics = FileLists.FileList(fileInfo);
+        Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
 
         bool containerCheck = false;
 
@@ -221,6 +221,7 @@ internal static class ErrorHandling
 
         if (containerCheck)
         {
+            GalleryFunctions.Clear();
             await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }
     }

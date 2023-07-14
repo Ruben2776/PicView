@@ -188,11 +188,12 @@ internal static class UpdateUIValues
         }
     }
 
-    internal static void ToggleIncludeSubdirectories()
+    internal static async Task ToggleIncludeSubdirectoriesAsync()
     {
+        var initialValue = Settings.Default.IncludeSubDirectories;
         Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
 
-        GetMainWindow.Dispatcher.Invoke(() =>
+        await GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             if (GetSettingsWindow is not null)
             {
@@ -217,13 +218,26 @@ internal static class UpdateUIValues
             return;
         }
 
-        Navigation.Pics = FileLists.FileList(preloadValue.FileInfo);
+        Navigation.Pics = await Task.FromResult(FileLists.FileList(preloadValue.FileInfo)).ConfigureAwait(false);
 
-        GetMainWindow.Dispatcher.Invoke(() =>
+        await GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
                 Navigation.FolderIndex, preloadValue.FileInfo);
         });
+
+        if (UC.GetPicGallery?.Container.Children.Count > 0)
+        {
+            if (initialValue)
+            {
+                GalleryFunctions.Clear();
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+            }
+        }
     }
 
     internal static void ChangeFlipButton()

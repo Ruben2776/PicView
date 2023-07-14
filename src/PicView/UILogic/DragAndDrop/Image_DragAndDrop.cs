@@ -67,7 +67,7 @@ internal static class ImageDragAndDrop
         else if (files[0].IsSupported())
         {
             // Check if same file
-            if (files.Length == 1 && Pics.Count > 0)
+            if (files.Length == 1 && Pics.Count > 0 && FolderIndex < Pics.Count)
             {
                 if (files[0] == Pics[FolderIndex])
                 {

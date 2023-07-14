@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using PicView.FileHandling;
-using PicView.UILogic.Sizing;
 
 namespace PicView.PicGallery;
 
@@ -73,8 +72,7 @@ internal static class GalleryLoad
                             throw new TaskCanceledException();
                         }
 
-                        var size = Math.Max(WindowSizing.MonitorInfo.WorkArea.Width / Settings.Default.BottomGalleryItemSize, WindowSizing.MonitorInfo.WorkArea.Width / Settings.Default.ExpandedGalleryItemSize);
-                        var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)size);
+                        var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[i], (int)GalleryNavigation.PicGalleryItemSize);
                         var fileInfo = new FileInfo(Navigation.Pics[i]);
                         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
                         {
@@ -118,23 +116,20 @@ internal static class GalleryLoad
         IsLoading = false;
     }
 
-    internal static async Task ReloadGallery()
+    internal static async Task ReloadGalleryAsync()
     {
-        if (Settings.Default.IsBottomGalleryShown)
+        while (IsLoading)
         {
-            while (IsLoading)
+            await Task.Delay(200).ConfigureAwait(false);
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                await Task.Delay(200).ConfigureAwait(false);
-                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+                if (UC.GetPicGallery.Container.Children.Count is 0)
                 {
-                    if (UC.GetPicGallery.Container.Children.Count is 0)
-                    {
-                        IsLoading = false;
-                    }
-                });
-            }
-            await LoadAsync().ConfigureAwait(false);
+                    IsLoading = false;
+                }
+            });
         }
+        await LoadAsync().ConfigureAwait(false);
     }
 
     internal static void Add(int i, int index)
@@ -188,12 +183,11 @@ internal static class GalleryLoad
 
     internal static async Task UpdatePicAsync(int index, int iterations)
     {
-        if (iterations != Navigation.Pics.Count || Navigation.Pics.Count < 1 || index > Navigation.Pics.Count)
+        if (iterations != Navigation.Pics.Count || Navigation.Pics?.Count < 1 || index > Navigation.Pics.Count)
         {
             return;
         }
-        var size = Math.Max(WindowSizing.MonitorInfo.WorkArea.Width / Settings.Default.BottomGalleryItemSize, WindowSizing.MonitorInfo.WorkArea.Width / Settings.Default.ExpandedGalleryItemSize);
-        var bitmapSource = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)size)).ConfigureAwait(false);
+        var bitmapSource = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize)).ConfigureAwait(false);
         var fileInfo = new FileInfo(Navigation.Pics[index]);
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
