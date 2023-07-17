@@ -42,6 +42,8 @@ internal static class ImageDecoder
 
             case ".svg":
                 return await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
+            case ".svgz":
+                return await GetMagickSvg(fileInfo, MagickFormat.Svgz).ConfigureAwait(false);
 
             case ".b64":
                 return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false) ?? ImageFunctions.ImageErrorMessage();

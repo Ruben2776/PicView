@@ -107,21 +107,28 @@ internal static class StartLoading
         Application.Current.Resources.MergedDictionaries.Add(
             new ResourceDictionary
             {
-                Source = new Uri(@"/PicView;component/Views/ContextMenus/MainContextMenu.xaml", UriKind.Relative)
+                Source = new Uri(@"/PicView;component/Views/Resources/MainContextMenu.xaml", UriKind.Relative)
             }
         );
 
         Application.Current.Resources.MergedDictionaries.Add(
             new ResourceDictionary
             {
-                Source = new Uri(@"/PicView;component/Views/ContextMenus/WindowContextMenu.xaml", UriKind.Relative)
+                Source = new Uri(@"/PicView;component/Views/Resources/WindowContextMenu.xaml", UriKind.Relative)
             }
         );
 
         Application.Current.Resources.MergedDictionaries.Add(
             new ResourceDictionary
             {
-                Source = new Uri(@"/PicView;component/Views/ContextMenus/NavigationContextMenu.xaml", UriKind.Relative)
+                Source = new Uri(@"/PicView;component/Views/Resources/NavigationContextMenu.xaml", UriKind.Relative)
+            }
+        );
+
+        Application.Current.Resources.MergedDictionaries.Add(
+            new ResourceDictionary
+            {
+                Source = new Uri(@"/PicView;component/Views/Resources/Icons.xaml", UriKind.Relative)
             }
         );
     }

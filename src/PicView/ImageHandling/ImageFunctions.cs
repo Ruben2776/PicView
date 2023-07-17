@@ -162,10 +162,11 @@ internal static class ImageFunctions
 
     internal static RenderTargetBitmap ImageErrorMessage()
     {
+        var brokenBitmapImage = (DrawingImage)Application.Current.Resources["BrokenDrawingImage"];
         var brush = Application.Current.TryFindResource("MainColorBrush") as Brush;
 
-        var w = ScaleImage.XWidth != 0 ? ScaleImage.XWidth : 300 * WindowSizing.MonitorInfo.DpiScaling;
-        var h = ScaleImage.XHeight != 0 ? ScaleImage.XHeight : 300 * WindowSizing.MonitorInfo.DpiScaling;
+        var w = 333 * WindowSizing.MonitorInfo.DpiScaling;
+        var h = 333 * WindowSizing.MonitorInfo.DpiScaling;
         var rect = new Rect(new Size(w, h));
         var visual = new DrawingVisual();
 
@@ -173,16 +174,19 @@ internal static class ImageFunctions
         {
             using (var ctx = visual.RenderOpen())
             {
-                var typeface = new Typeface(new FontFamily("Tex Gyre Heros"), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+                var typeface = new Typeface(new FontFamily("/PicView;component/Themes/Resources/fonts/#Roboto Bold"),
+                    FontStyles.Normal, FontWeights.Medium, FontStretches.Normal);
                 var text = new FormattedText((string)Application.Current.Resources["UnableToRender"],
-                    CultureInfo.CurrentUICulture, FlowDirection, typeface, 16, brush, WindowSizing.MonitorInfo.DpiScaling)
+                    CultureInfo.CurrentUICulture, FlowDirection, typeface, 18, brush,
+                    WindowSizing.MonitorInfo.DpiScaling)
                 {
                     TextAlignment = TextAlignment.Center
                 };
-                ctx.DrawText(text, new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2));
+                ctx.DrawImage(brokenBitmapImage, rect);
+                ctx.DrawText(text, new Point(rect.Left + rect.Width / 2, h + 5));
             }
 
-            RenderTargetBitmap rtv = new((int)w, (int)h, 96.0, 96.0, PixelFormats.Default);
+            RenderTargetBitmap rtv = new((int)w, (int)h + 45, 96.0, 96.0, PixelFormats.Default);
             rtv.Render(visual);
             rtv.Freeze();
             return rtv;
@@ -198,7 +202,7 @@ internal static class ImageFunctions
 
     private static FlowDirection FlowDirection => CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 
-    internal static BitmapSource? ShowLogo()
+    internal static BitmapSource ShowLogo()
     {
         var bitmap = new BitmapImage(new Uri(@"pack://application:,,,/"
                                              + Assembly.GetExecutingAssembly().GetName().Name

@@ -37,7 +37,7 @@ public partial class ResizeWindow
 
         InitializeComponent();
 
-        ContentRendered += (sender, e) =>
+        ContentRendered += (_, _) =>
         {
             WindowBlur.EnableBlur(this);
             Owner = null; // Remove owner, so that minimizing main-window will not minimize this
@@ -367,7 +367,7 @@ public partial class ResizeWindow
                     LogTextBox.ScrollToEnd();
                     ProgressBar.Value++;
                 }, DispatcherPriority.DataBind, token);
-            });
+            }).ConfigureAwait(false);
         }
         catch (Exception)
         {

@@ -1,6 +1,6 @@
 ﻿using PicView.ChangeImage;
+using PicView.FileHandling;
 using PicView.ImageHandling;
-using PicView.Properties;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
@@ -9,7 +9,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.FileHandling;
 
 namespace PicView.PicGallery;
 
@@ -183,11 +182,15 @@ internal static class GalleryLoad
 
     internal static async Task UpdatePicAsync(int index, int iterations)
     {
-        if (iterations != Navigation.Pics.Count || Navigation.Pics?.Count < 1 || index > Navigation.Pics.Count)
+        if (iterations != Navigation.Pics.Count || Navigation.Pics.Count < 1 || index > Navigation.Pics.Count)
         {
             return;
         }
         var bitmapSource = await Task.FromResult(Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize)).ConfigureAwait(false);
+        if (Navigation.Pics.Count < 1 || index > Navigation.Pics.Count)
+        {
+            return;
+        }
         var fileInfo = new FileInfo(Navigation.Pics[index]);
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {

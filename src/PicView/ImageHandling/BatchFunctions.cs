@@ -45,6 +45,17 @@ internal static class BatchFunctions
                 {
                     if (ext is not null)
                     {
+                        switch (ext)
+                        {
+                            case ".jpeg":
+                            case ".jpg": magickImage.Format = MagickFormat.Jpeg; break;
+                            case ".png": magickImage.Format = MagickFormat.Png; break;
+                            case ".jxl": magickImage.Format = MagickFormat.Jxl; break;
+                            case ".gif": magickImage.Format = MagickFormat.Gif; break;
+                            case ".webp": magickImage.Format = MagickFormat.WebP; break;
+                            case ".heic": magickImage.Format = MagickFormat.Heic; break;
+                            case ".heif": magickImage.Format = MagickFormat.Heif; break;
+                        }
                         destination = Path.ChangeExtension(sourceFile.FullName, ext);
                         await using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
                         await magickImage.WriteAsync(saveStream).ConfigureAwait(false);
@@ -67,6 +78,17 @@ internal static class BatchFunctions
                 {
                     if (ext is not null)
                     {
+                        switch (ext)
+                        {
+                            case ".jpeg":
+                            case ".jpg": magickImage.Format = MagickFormat.Jpeg; break;
+                            case ".png": magickImage.Format = MagickFormat.Png; break;
+                            case ".jxl": magickImage.Format = MagickFormat.Jxl; break;
+                            case ".gif": magickImage.Format = MagickFormat.Gif; break;
+                            case ".webp": magickImage.Format = MagickFormat.WebP; break;
+                            case ".heic": magickImage.Format = MagickFormat.Heic; break;
+                            case ".heif": magickImage.Format = MagickFormat.Heif; break;
+                        }
                         if (File.Exists(destination))
                         {
                             DeleteFiles.TryDeleteFile(destination, true);

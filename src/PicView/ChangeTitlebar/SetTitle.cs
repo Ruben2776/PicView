@@ -43,7 +43,7 @@ internal static class SetTitle
         if (!fileInfo.Exists)
         {
             fileInfo = new FileInfo(Path.GetInvalidFileNameChars().Aggregate(fileInfo.FullName, (current, c) => current.Replace(c.ToString(), string.Empty)));
-            if(!fileInfo.Exists)
+            if (!fileInfo.Exists)
                 return ReturnError("FileInfo does not exist?");
         }
 

@@ -81,8 +81,7 @@ internal static class FastPic
             if (preLoadValue is null)
             {
                 var fileInfo = new FileInfo(Pics[FolderIndex]);
-                var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false) ??
-                                   ImageFunctions.ImageErrorMessage();
+                var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preLoadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
             }
         }

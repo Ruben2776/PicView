@@ -6,7 +6,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PicView.ImageHandling;
 
@@ -14,7 +13,7 @@ internal static class SaveImages
 {
     internal static async Task<bool> SaveImageAsync(string path)
     {
-        return await SaveImages.SaveImageAsync(0, false, null, Navigation.Pics[Navigation.FolderIndex], path, null, false).ConfigureAwait(false);
+        return await SaveImageAsync(0, false, null, Navigation.Pics[Navigation.FolderIndex], path, null, false).ConfigureAwait(false);
     }
 
     /// <summary>

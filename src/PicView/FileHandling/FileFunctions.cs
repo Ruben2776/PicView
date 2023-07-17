@@ -86,13 +86,42 @@ internal static partial class FileFunctions
         }
 
         Navigation.Pics[Navigation.FolderIndex] = newPath;
-        PreLoader.Rename(Navigation.FolderIndex);   
+        PreLoader.Rename(Navigation.FolderIndex);
         await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
             SetTitle.SetTitleString();
         });
 
         return true;
+    }
+
+    public static void DuplicateFilename(string filePath)
+    {
+        try
+        {
+            var directory = Path.GetDirectoryName(filePath);
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            var extension = Path.GetExtension(filePath);
+
+            var count = 1;
+            var newFilePath = filePath;
+
+            while (File.Exists(newFilePath))
+            {
+                var newFileName = $"{fileName}({count})";
+                newFilePath = Path.Combine(directory, $"{newFileName}{extension}");
+                count++;
+            }
+
+            File.Copy(filePath, newFilePath);
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(DuplicateFilename)} {filePath} exception, \n{exception.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(exception.Message);
+        }
     }
 
     /// <summary>
@@ -105,7 +134,6 @@ internal static partial class FileFunctions
     internal static string GetReadableFileSize(this long fileSize)
     {
         const int kilobyte = 1024;
-        var sign = fileSize < 0 ? "-" : "";
         double value;
         char prefix;
 
@@ -128,11 +156,11 @@ internal static partial class FileFunctions
                 break;
 
             default:
-                return fileSize.ToString(sign + "0 B", CultureInfo.CurrentCulture); // Byte
+                return fileSize.ToString("0 B", CultureInfo.CurrentCulture); // Byte
         }
         value /= kilobyte; // Divide by 1024 to get fractional value
 
-        return sign + value.ToString($"0.## {prefix}B", CultureInfo.CurrentCulture);
+        return value.ToString($"0.## {prefix}B", CultureInfo.CurrentCulture);
     }
 
     /// <summary>
@@ -215,7 +243,7 @@ internal static partial class FileFunctions
         catch (Exception e)
         {
 #if DEBUG
-            Trace.WriteLine(e.Message);
+            Trace.WriteLine($"{nameof(GetURL)} {value} exception, \n {e.Message}");
 #endif
             return string.Empty;
         }

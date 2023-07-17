@@ -251,46 +251,23 @@ internal static class ZoomLogic
         var currentZoom = ScaleTransform.ScaleX;
         var zoomSpeed = Settings.Default.ZoomSpeed;
 
-        if (isZoomIn)
+        switch (currentZoom)
         {
-            switch (currentZoom)
-            {
-                // Increase speed based on the current zoom level
-                case > 14: return;
+            // Increase speed based on the current zoom level
+            case > 14 when isZoomIn:
+                return;
 
-                case > 4:
-                    zoomSpeed += 1.5;
-                    break;
+            case > 4:
+                zoomSpeed += 1.5;
+                break;
 
-                case > 3.2:
-                    zoomSpeed += 1;
-                    break;
+            case > 3.2:
+                zoomSpeed += 1;
+                break;
 
-                case > 1.6:
-                    zoomSpeed += 0.5;
-                    break;
-            }
-        }
-        else
-        {
-            switch (currentZoom)
-            {
-                case > 4:
-                    zoomSpeed += 2;
-                    break;
-
-                case > 3.2:
-                    zoomSpeed += 1;
-                    break;
-
-                case > 1.6:
-                    zoomSpeed += 0.5;
-                    break;
-
-                case >= 1:
-                    zoomSpeed += 0.5;
-                    break;
-            }
+            case > 1.6:
+                zoomSpeed += 0.5;
+                break;
         }
 
         if (!isZoomIn)
