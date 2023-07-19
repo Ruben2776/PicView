@@ -191,10 +191,8 @@ public partial class MainWindow
         }
 
         //Keep position when size has changed
-        Top += ((sizeInfo.PreviousSize.Height / MonitorInfo.DpiScaling) -
-                (sizeInfo.NewSize.Height / MonitorInfo.DpiScaling)) / 2;
-        Left += ((sizeInfo.PreviousSize.Width / MonitorInfo.DpiScaling) -
-                 (sizeInfo.NewSize.Width / MonitorInfo.DpiScaling)) / 2;
+        Top += (sizeInfo.PreviousSize.Height / MonitorInfo.DpiScaling - sizeInfo.NewSize.Height / MonitorInfo.DpiScaling) / 2;
+        Left += (sizeInfo.PreviousSize.Width / MonitorInfo.DpiScaling - sizeInfo.NewSize.Width / MonitorInfo.DpiScaling) / 2;
 
         // Move cursor after resize when the button has been pressed
         if (Navigation.RightButtonClicked)

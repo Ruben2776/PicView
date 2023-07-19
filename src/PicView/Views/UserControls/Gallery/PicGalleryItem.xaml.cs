@@ -1,15 +1,14 @@
-﻿using System.Windows;
-using PicView.Animations;
-using PicView.Properties;
-using System.Windows.Controls;
-using System.Windows.Media;
+﻿using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.PicGallery;
+using PicView.Properties;
+using System.Windows;
+using System.Windows.Media;
 using static PicView.PicGallery.GalleryNavigation;
 
 namespace PicView.Views.UserControls.Gallery;
 
-public partial class PicGalleryItem : UserControl
+public partial class PicGalleryItem
 {
     internal int Id { get; set; }
 
