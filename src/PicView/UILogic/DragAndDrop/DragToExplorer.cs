@@ -53,6 +53,8 @@ internal static class DragToExplorer
             }
         }
 
+        if (!ConfigureWindows.GetMainWindow.IsActive) return;
+
         string? file;
         if (Pics.Count == 0)
         {

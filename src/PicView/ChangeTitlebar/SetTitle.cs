@@ -111,6 +111,7 @@ internal static class SetTitle
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="index"></param>
+    /// <param name="fileInfo"></param>
     /// <returns></returns>
     internal static void SetTitleString(int width, int height, int index, FileInfo? fileInfo)
     {

@@ -1,4 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using Microsoft.Win32;
 using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
@@ -11,11 +15,8 @@ using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Loading;
+using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
@@ -54,9 +55,6 @@ public partial class MainWindow
 
         Loaded += (_, _) =>
         {
-            // Subscribe to Windows resized event || Need to be exactly on load
-            HwndSource.FromHwnd(new WindowInteropHelper(ConfigureWindows.GetMainWindow).Handle)
-                ?.AddHook(NativeMethods.WndProc);
             StartLoading.LoadedEvent();
         };
 
@@ -84,7 +82,7 @@ public partial class MainWindow
             // MainImage
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
             ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
-            ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonDown += DragToExplorer.DragFile;
+            ConfigureWindows.GetMainWindow.MainImage.PreviewMouseLeftButtonDown += DragToExplorer.DragFile;
 
             // ClickArrows
             GetClickArrowLeft.MouseLeftButtonDown += async (_, _) =>
@@ -163,9 +161,28 @@ public partial class MainWindow
 
     protected override void OnRenderSizeChanged(SizeChangedInfo? sizeInfo)
     {
-        if (sizeInfo == null || sizeInfo is { WidthChanged: false, HeightChanged: false } ||
-            Settings.Default.AutoFitWindow == false)
+        if (sizeInfo == null || sizeInfo is { WidthChanged: false, HeightChanged: false } || Settings.Default.AutoFitWindow == false)
         {
+            // Resize Gallery
+            if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen || GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
+            {
+                if (GalleryFunctions.IsGalleryOpen)
+                {
+                    GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                }
+                GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+            }
+
+            var w = ConfigureWindows.GetMainWindow;
+            GetStartUpUC?.ResponsiveSize(w.Width);
+            if (w.WindowState == WindowState.Maximized)
+            {
+                Restore_From_Move();
+            }
+
+            if (w.MainImage.Source is not null)
+                ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
+
             Navigation.RightButtonClicked = false;
             Navigation.LeftButtonClicked = false;
             Navigation.ClickArrowRightClicked = false;

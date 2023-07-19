@@ -60,54 +60,6 @@ internal static partial class NativeMethods
 
     #endregion Disable Screensaver and Power options
 
-    #region windproc
-
-    // https://stackoverflow.com/a/60938929/13646636
-    private const int WM_SIZING = 0x214;
-
-    // Message list = https://wiki.winehq.org/List_Of_Windows_Messages
-
-    /// Supress warnings about unused parameters, because they are required by OS.
-    /// Executes when user manually resized window
-    public static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-    {
-        if (Settings.Default.AutoFitWindow)
-        {
-            return IntPtr.Zero;
-        }
-
-        if (msg != WM_SIZING && msg != 0x0005) return IntPtr.Zero;
-        var w = ConfigureWindows.GetMainWindow;
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (w == null) { return IntPtr.Zero; }
-
-        // Resize gallery
-        if (UC.GetPicGallery != null && GalleryFunctions.IsGalleryOpen || UC.GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
-        {
-            if (!Settings.Default.IsBottomGalleryShown)
-            {
-                UC.GetPicGallery.Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
-            }
-            UC.GetPicGallery.Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-        }
-
-        if (UC.GetStartUpUC is not null)
-        {
-            UC.GetStartUpUC.ResponsiveSize(w.Width);
-        }
-        if (w.WindowState == WindowState.Maximized)
-        {
-            WindowSizing.Restore_From_Move();
-        }
-
-        if (w.MainImage.Source is not null)
-            ScaleImage.FitImage(w.MainImage.Source.Width, w.MainImage.Source.Height);
-        
-        return IntPtr.Zero;
-    }
-
-    #endregion windproc
-
     #region GetPixelColor
 
     [DllImport("user32.dll")]

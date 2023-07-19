@@ -33,7 +33,7 @@ internal static class UpdateImage
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
         var isGif = preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase);
 
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+        ConfigureWindows.GetMainWindow.MainImage.Dispatcher.Invoke(() =>
         {
             if (isGif) // Loads gif from XamlAnimatedGif if necessary
             {
@@ -82,7 +82,7 @@ internal static class UpdateImage
             {
                 GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
-        });
+        }, DispatcherPriority.Send);
 
         if (GetToolTipMessage is { IsVisible: true })
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);

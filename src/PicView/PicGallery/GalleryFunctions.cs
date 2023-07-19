@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static PicView.PicGallery.GalleryLoad;
 using static PicView.UILogic.UC;
 
 namespace PicView.PicGallery;
@@ -88,23 +89,26 @@ internal static class GalleryFunctions
         {
             thumbs = null;
             Clear();
-            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            await LoadAsync().ConfigureAwait(false);
             return;
         }
 
         for (int i = 0; i < Navigation.Pics.Count; i++)
         {
-            GalleryLoad.Add(i, Navigation.FolderIndex);
+            Add(i);
         }
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
 
         for (int i = 0; i < Navigation.Pics.Count; i++)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
+            await GetPicGallery.Dispatcher.InvokeAsync(() =>
             {
-                GalleryLoad.UpdatePic(i, thumbs[i].pic, new FileInfo(Navigation.Pics[i]));
-            }, DispatcherPriority.Render);
+                UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
+                    galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
+                    galleryThumbHolderItem.FileDate);
+            }, DispatcherPriority.Background);
         }
 
         thumbs = null;

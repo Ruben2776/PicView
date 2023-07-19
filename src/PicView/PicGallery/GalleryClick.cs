@@ -185,7 +185,7 @@ internal static class GalleryClick
 
     private static async Task ItemClickAsync(int id)
     {
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        await GetPicGallery.Dispatcher.InvokeAsync(() =>
         {
             GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
             // Deselect current item
@@ -203,7 +203,10 @@ internal static class GalleryClick
             GalleryNavigation.SetSelected(id, true);
             GalleryNavigation.SelectedGalleryItem = id;
         });
-        if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
+        if (!PreLoader.Contains(id))
+        {
+            if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
+        }
         // Change image
         await LoadPic.LoadPicAtIndexAsync(id).ConfigureAwait(false);
     }

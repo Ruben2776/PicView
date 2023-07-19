@@ -40,27 +40,19 @@ internal static class QuickLoad
             return;
         }
         var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-        if (bitmapSource != null)
+        mainWindow.Dispatcher.Invoke(() =>
         {
-            await mainWindow.Dispatcher.InvokeAsync(() =>
+            if (fileInfo.Extension.ToLowerInvariant() == ".gif")
             {
-                if (fileInfo.Extension.ToLowerInvariant() == ".gif")
-                {
-                    AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
-                }
-                else
-                {
-                    ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-                }
+                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
+            }
+            else
+            {
+                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+            }
 
-                FitImage(bitmapSource.Width, bitmapSource.Height);
-            }, DispatcherPriority.Send);
-        }
-        else
-        {
-            var errorImage = ImageFunctions.ImageErrorMessage();
-            await mainWindow.Dispatcher.InvokeAsync(() => mainWindow.MainImage.Source = errorImage);
-        }
+            FitImage(bitmapSource.Width, bitmapSource.Height);
+        }, DispatcherPriority.Send);
 
         Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
         FolderIndex = Pics.IndexOf(fileInfo.FullName);

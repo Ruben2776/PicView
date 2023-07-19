@@ -47,28 +47,20 @@ internal static class ErrorHandling
 
     internal static bool CheckDirectoryChangeAndPicGallery(FileInfo fileInfo)
     {
-        bool folderChanged = false;
-
         // If count not correct or just started, get values
         if (Pics?.Count <= FolderIndex || FolderIndex < 0)
         {
-            folderChanged = true;
+            return true;
         }
         // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-        else if (!string.IsNullOrWhiteSpace(Pics?[FolderIndex]) && fileInfo.Directory.FullName != Path.GetDirectoryName(Pics[FolderIndex]))
+        if (string.IsNullOrWhiteSpace(Pics?[FolderIndex]) || fileInfo.Directory.FullName == Path.GetDirectoryName(Pics[FolderIndex]))
         {
-            // Reset old values and get new
-            ChangeFolder(true);
-            folderChanged = true;
+            return Pics.Contains(fileInfo.FullName) == false;
         }
 
-        if (Pics.Contains(fileInfo.FullName) == false)
-        {
-            folderChanged = true;
-        }
-
-        if (UC.GetPicGallery is null || folderChanged is false) { return folderChanged; }
-        return folderChanged;
+        // Reset old values and get new
+        ChangeFolder(true);
+        return true;
     }
 
     /// <summary>

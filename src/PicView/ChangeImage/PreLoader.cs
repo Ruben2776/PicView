@@ -1,11 +1,9 @@
 ﻿using PicView.ImageHandling;
-using PicView.Properties;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
-using static PicView.ChangeImage.PreLoader;
 
 namespace PicView.ChangeImage;
 

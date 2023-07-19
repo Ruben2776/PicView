@@ -110,10 +110,10 @@ internal static class Navigation
             default: return;
         }
 
-        // If the horizontal fullscreen gallery is open, deselect current index
+        // If the gallery is open, deselect current index
         if (UC.GetPicGallery is not null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
             {
                 UC.GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
                 // Deselect current item
@@ -128,7 +128,7 @@ internal static class Navigation
         // Update gallery selections
         if (UC.GetPicGallery is not null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
             {
                 // Select next item
                 GalleryNavigation.SetSelected(FolderIndex, true);
@@ -156,16 +156,15 @@ internal static class Navigation
         Pics = fileList;
         if (GalleryFunctions.IsGalleryOpen)
         {
-            if (Settings.Default.IsBottomGalleryShown)
-            {
-                _ = GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
-            }
-            else
-            {
-                GalleryToggle.CloseCurrentGallery();
-            }
+            GalleryToggle.CloseCurrentGallery();
         }
         await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+        if (Settings.Default.IsBottomGalleryShown)
+        {
+            _ = GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+            GalleryNavigation.SetSelected(FolderIndex, true);
+            GalleryNavigation.SelectedGalleryItem = FolderIndex;
+        }
     }
 
     /// <summary>
