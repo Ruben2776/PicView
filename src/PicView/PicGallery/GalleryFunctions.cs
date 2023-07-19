@@ -5,8 +5,10 @@ using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.ChangeTitlebar;
 using static PicView.PicGallery.GalleryLoad;
 using static PicView.UILogic.UC;
 
@@ -32,18 +34,6 @@ internal static class GalleryFunctions
         }
     }
 
-    private class TempPics
-    {
-        internal readonly BitmapSource pic;
-        public readonly string name;
-
-        public TempPics(BitmapSource pic, string name)
-        {
-            this.pic = pic;
-            this.name = name;
-        }
-    }
-
     private static IEnumerable<T> OrderBySequence<T, TId>(this IEnumerable<T> source,
         IEnumerable<TId> order, Func<T, TId> idSelector) where TId : notnull
     {
@@ -56,38 +46,40 @@ internal static class GalleryFunctions
 
     internal static async Task SortGallery(FileInfo? fileInfo = null)
     {
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
         fileInfo ??= new FileInfo(Navigation.Pics[0]);
 
-        var thumbs = new List<TempPics>();
+        var thumbs = new List<GalleryThumbHolder>();
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             for (int i = 0; i < Navigation.Pics.Count; i++)
             {
                 try
                 {
                     var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                    thumbs.Add(new TempPics(picGalleryItem?.ThumbImage?.Source as BitmapSource, Navigation.Pics[i]));
+                    thumbs.Add(new GalleryThumbHolder(picGalleryItem.ThumbFileLocation.Text, picGalleryItem.ThumbFileName.Text, picGalleryItem.ThumbFileSize.Text, picGalleryItem.ThumbFileDate.Text, picGalleryItem.ThumbImage?.Source as BitmapSource));
                 }
                 catch (Exception)
                 {
-                    //
+                    thumbs = null;
+                    Clear();
+                    _ = LoadAsync().ConfigureAwait(false);
+                    return;
                 }
             }
+        }, DispatcherPriority.Render);
 
-            Clear();
-        }));
-
+        Clear();
         Navigation.Pics.Clear(); // Cancel task if running
         Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
 
         try
         {
-            thumbs = thumbs.OrderBySequence(Navigation.Pics, pic => pic.name).ToList();
+            thumbs = thumbs.OrderBySequence(Navigation.Pics, x => x.FileLocation).ToList();
         }
         catch (Exception)
         {
-            thumbs = null;
             Clear();
             await LoadAsync().ConfigureAwait(false);
             return;
@@ -95,23 +87,13 @@ internal static class GalleryFunctions
 
         for (int i = 0; i < Navigation.Pics.Count; i++)
         {
-            Add(i);
-        }
-
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
-
-        for (int i = 0; i < Navigation.Pics.Count; i++)
-        {
-            var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
-            await GetPicGallery.Dispatcher.InvokeAsync(() =>
+            var i1 = i;
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
-                    galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
-                    galleryThumbHolderItem.FileDate);
+                Add(i1);
+                UpdatePic(i1, thumbs[i1].BitmapSource, thumbs[i1].FileLocation, thumbs[i1].FileName, thumbs[i1].FileSize, thumbs[i1].FileDate);
             }, DispatcherPriority.Background);
         }
-
-        thumbs = null;
     }
 
     internal static void Clear()

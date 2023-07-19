@@ -6,6 +6,7 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -120,59 +121,69 @@ internal static class ErrorHandling
     internal static async Task ReloadAsync(bool fromBackup = false)
     {
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
-        string path;
-        if (Settings.Default.IncludeSubDirectories)
+        try
         {
-            path = GetReloadPath() ?? BackupPath ?? string.Empty;
-        }
-        else
-        {
-            path = (fromBackup ? BackupPath ?? null : GetReloadPath()) ?? string.Empty;
-        }
-
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            UnexpectedError();
-        }
-        else if (File.Exists(path))
-        {
+            string path;
             if (Settings.Default.IncludeSubDirectories)
             {
-                var fileInfo = new FileInfo(Path.GetDirectoryName(path));
-                var preloadValue = PreLoader.Get(FolderIndex);
-                var index = FolderIndex;
-                await ResetValues(fileInfo).ConfigureAwait(false);
-                await PreLoader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
-                await LoadPic.LoadPicAtIndexAsync(index).ConfigureAwait(false);
+                path = GetReloadPath() ?? BackupPath ?? string.Empty;
             }
             else
             {
+                path = (fromBackup ? BackupPath ?? null : GetReloadPath()) ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                UnexpectedError();
+            }
+            else if (File.Exists(path))
+            {
+                if (Settings.Default.IncludeSubDirectories)
+                {
+                    var fileInfo = new FileInfo(Path.GetDirectoryName(path));
+                    var preloadValue = PreLoader.Get(FolderIndex);
+                    var index = FolderIndex;
+                    await ResetValues(fileInfo).ConfigureAwait(false);
+                    await PreLoader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(index).ConfigureAwait(false);
+                }
+                else
+                {
+                    var fileInfo = new FileInfo(path);
+                    await ResetValues(fileInfo).ConfigureAwait(false);
+                    await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+                }
+            }
+            else if (Directory.Exists(path))
+            {
                 var fileInfo = new FileInfo(path);
                 await ResetValues(fileInfo).ConfigureAwait(false);
-                await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+                await LoadPic.LoadPicFromFolderAsync(fileInfo, FolderIndex).ConfigureAwait(false);
+            }
+            else if (Base64.IsBase64String(path))
+            {
+                await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
+            }
+            else if (Clipboard.ContainsImage())
+            {
+                await UpdateImage.UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage()).ConfigureAwait(false);
+            }
+            else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
+            {
+                await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
+            }
+            else
+            {
+                UnexpectedError();
             }
         }
-        else if (Directory.Exists(path))
+        catch (Exception ex)
         {
-            var fileInfo = new FileInfo(path);
-            await ResetValues(fileInfo).ConfigureAwait(false);
-            await LoadPic.LoadPicFromFolderAsync(fileInfo, FolderIndex).ConfigureAwait(false);
-        }
-        else if (Base64.IsBase64String(path))
-        {
-            await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
-        }
-        else if (Clipboard.ContainsImage())
-        {
-            await UpdateImage.UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage()).ConfigureAwait(false);
-        }
-        else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
-        {
-            await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
-        }
-        else
-        {
-            UnexpectedError();
+#if DEBUG
+            Trace.WriteLine($"{nameof(ReloadAsync)} exception:\n{ex.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(ex.Message, true);
         }
     }
 

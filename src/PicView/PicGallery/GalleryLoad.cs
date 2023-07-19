@@ -15,7 +15,7 @@ namespace PicView.PicGallery;
 
 internal static class GalleryLoad
 {
-    internal static bool IsLoading { get; private set; }
+    internal static bool IsLoading { get; set; }
 
     internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
     {
@@ -64,7 +64,7 @@ internal static class GalleryLoad
 
         await Task.Run(async () =>
         {
-            if (iterations < 3500)
+            if (iterations < 3000)
             {
                 var galleryThumbHolderList = new ConcurrentDictionary<int, GalleryThumbHolder>();
                 async Task UpdateGalleryThumbHolderAsync(int index)
@@ -244,20 +244,6 @@ internal static class GalleryLoad
             };
 
             UC.GetPicGallery.Container.Children.Add(item);
-            if (selected)
-            {
-                // Select next item
-                GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-            }
-            else if (Navigation.FolderIndex > UC.GetPicGallery.Container.Children.Count)
-            {
-                if (!Navigation.Reverse && Navigation.FolderIndex <= GalleryNavigation.HorizontalItems)
-                {
-                    UC.GetPicGallery.Scroller.ScrollToRightEnd();
-                }
-            }
         }, DispatcherPriority.Render);
     }
 
@@ -285,6 +271,16 @@ internal static class GalleryLoad
             item.ThumbFileName.Text = fileName;
             item.ThumbFileSize.Text = fileSize;
             item.ThumbFileDate.Text = fileDate;
+
+            if (i == Navigation.FolderIndex || Navigation.FolderIndex <= UC.GetPicGallery.Container.Children.Count)
+            {
+                return;
+            }
+
+            if (!Navigation.Reverse && Navigation.FolderIndex <= GalleryNavigation.HorizontalItems)
+            {
+                UC.GetPicGallery.Scroller.ScrollToRightEnd();
+            }
         }
         catch (Exception e)
         {

@@ -60,7 +60,7 @@ internal static class UpdateUIValues
         }
         else
         {
-            Navigation.Pics = await Task.FromResult(FileLists.FileList(new FileInfo(Navigation.InitialPath))).ConfigureAwait(false);
+            Navigation.Pics = await Task.FromResult(FileLists.FileList(new FileInfo(Navigation.InitialPath ?? ErrorHandling.GetReloadPath()))).ConfigureAwait(false);
         }
 
         Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
