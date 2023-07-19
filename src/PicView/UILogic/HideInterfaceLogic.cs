@@ -67,9 +67,6 @@ internal static class HideInterfaceLogic
 
     private static void ShowMinimalInterface()
     {
-        IsTopAndBottomShown(false);
-        IsNavigationShown(Settings.Default.ShowAltInterfaceButtons);
-
         if (!Settings.Default.ShowAltInterfaceBottomGallery && Settings.Default.IsBottomGalleryShown)
         {
             GalleryToggle.CloseBottomGallery();
@@ -80,6 +77,9 @@ internal static class HideInterfaceLogic
         {
             IsShortcutsShown(Settings.Default.ShowAltInterfaceButtons);
         }
+
+        IsTopAndBottomShown(false);
+        IsNavigationShown(Settings.Default.ShowAltInterfaceButtons);
 
         Settings.Default.ShowInterface = false;
 
