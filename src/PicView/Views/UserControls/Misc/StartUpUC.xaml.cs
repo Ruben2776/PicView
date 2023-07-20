@@ -87,7 +87,7 @@ public partial class StartUpUC
 
             case > 1265:
                 Logo.Width = double.NaN;
-                buttons.Margin = new Thickness(0, 220, 25, bottomMargin);
+                buttons.Margin = new Thickness(0, 220, 25, bottomMargin - 100);
                 buttons.VerticalAlignment = VerticalAlignment.Center;
                 break;
         }

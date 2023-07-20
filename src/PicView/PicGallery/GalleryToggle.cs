@@ -190,6 +190,8 @@ internal static class GalleryToggle
         {
             GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
         }
+
+        GetStartUpUC?.ResponsiveSize(GetMainWindow.ActualWidth);
     }
 
     #endregion Open
@@ -219,6 +221,7 @@ internal static class GalleryToggle
                             GetRestoreButton.Visibility =
                                 GetGalleryShortcut.Visibility = Visibility.Hidden;
 
+            GetStartUpUC?.ResponsiveSize(GetMainWindow.ActualWidth);
             if (GetMainWindow.MainImage.Source is null) return;
             ScaleImage.FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
         });
