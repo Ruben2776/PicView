@@ -86,23 +86,6 @@ internal static class UpdateImage
 
         if (GetToolTipMessage is { IsVisible: true })
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);
-
-        if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
-            _ = ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
-
-        _ = AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
-        if (Pics.Count > 1)
-        {
-            Taskbar.Progress((double)index / Pics.Count);
-            _ = PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
-        }
-
-        // Add recent files, except when browsing archive
-        if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > index)
-        {
-            GetFileHistory ??= new FileHistory();
-            GetFileHistory.Add(Pics[index]);
-        }
     }
 
     /// <summary>

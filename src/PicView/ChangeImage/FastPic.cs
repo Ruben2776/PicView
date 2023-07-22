@@ -36,7 +36,7 @@ internal static class FastPic
         {
             fileInfo = preLoadValue.FileInfo ?? new FileInfo(Pics[index]);
             var showThumb = true;
-            while (preLoadValue.IsLoading)
+            while (preLoadValue.BitmapSource is null)
             {
                 if (showThumb)
                 {
@@ -82,10 +82,10 @@ internal static class FastPic
             {
                 var fileInfo = new FileInfo(Pics[FolderIndex]);
                 var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
+                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
             }
         }
-        while (preLoadValue.IsLoading)
+        while (preLoadValue.BitmapSource is null)
         {
             await Task.Delay(10).ConfigureAwait(false);
         }

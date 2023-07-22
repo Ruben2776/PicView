@@ -145,7 +145,7 @@ internal static class Navigation
     /// <returns>A Task representing the asynchronous operation.</returns>
     internal static async Task GoToNextFolder(bool next)
     {
-        SetTitle.SetLoadingString();
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
         var fileList = await Task.FromResult(FileLists.NextFileList(next)).ConfigureAwait(false);
         if (fileList is null or { Count: <= 0 })
         {

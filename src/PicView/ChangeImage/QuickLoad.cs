@@ -40,7 +40,7 @@ internal static class QuickLoad
             return;
         }
         var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-        mainWindow.Dispatcher.Invoke(() =>
+        await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
             if (fileInfo.Extension.ToLowerInvariant() == ".gif")
             {
@@ -57,16 +57,8 @@ internal static class QuickLoad
         Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
 
-        if (bitmapSource != null)
-        {
-            await mainWindow.Dispatcher.InvokeAsync(() =>
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo), DispatcherPriority.Send);
-        }
-        else
-        {
-            await mainWindow.Dispatcher.InvokeAsync(() =>
-                SetTitleString(0, 0, FolderIndex, fileInfo), DispatcherPriority.Send);
-        }
+        await mainWindow.Dispatcher.InvokeAsync(() =>
+                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo), DispatcherPriority.Normal);
 
         await mainWindow.Dispatcher.InvokeAsync(() =>
         {
@@ -75,26 +67,19 @@ internal static class QuickLoad
                 UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
             ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
-        });
+        }, DispatcherPriority.Loaded);
 
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
-            await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
+            _ = PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
         }
 
-        if (bitmapSource is not null)
-            await PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
+        _ = PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
         if (Settings.Default.IsBottomGalleryShown)
         {
-            await GalleryLoad.LoadAsync().ConfigureAwait(false);
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-            }, DispatcherPriority.Render);
+            _ = GalleryLoad.LoadAsync().ConfigureAwait(false);
         }
 
         // Add recent files, except when browsing archive

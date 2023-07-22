@@ -219,16 +219,13 @@ internal static class SetTitle
     /// </summary>
     internal static void SetLoadingString()
     {
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+        if (Application.Current.Resources["Loading"] is not string loading ||
+            ConfigureWindows.GetMainWindow.Title == null || ConfigureWindows.GetMainWindow.TitleText == null)
         {
-            if (Application.Current.Resources["Loading"] is not string loading ||
-                ConfigureWindows.GetMainWindow.Title == null || ConfigureWindows.GetMainWindow.TitleText == null)
-            {
-                return;
-            }
-            ConfigureWindows.GetMainWindow.Title = loading;
-            ConfigureWindows.GetMainWindow.TitleText.Text = loading;
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = loading;
-        });
+            return;
+        }
+        ConfigureWindows.GetMainWindow.Title = loading;
+        ConfigureWindows.GetMainWindow.TitleText.Text = loading;
+        ConfigureWindows.GetMainWindow.TitleText.ToolTip = loading;
     }
 }

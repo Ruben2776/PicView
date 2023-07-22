@@ -2,8 +2,11 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Timers;
 using System.Windows.Media.Imaging;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
+using ThreadState = System.Threading.ThreadState;
 
 namespace PicView.ChangeImage;
 
@@ -25,11 +28,6 @@ internal static class PreLoader
         internal BitmapSource? BitmapSource;
 
         /// <summary>
-        /// Whether the image is currently being loaded
-        /// </summary>
-        internal bool IsLoading;
-
-        /// <summary>
         /// FileInfo object of the image file.
         /// </summary>
         internal FileInfo? FileInfo;
@@ -38,12 +36,10 @@ internal static class PreLoader
         /// Constructs a new PreLoadValue object with the specified values
         /// </summary>
         /// <param name="bitmap">The BitmapSource image that is preloaded and cached.</param>
-        /// <param name="loading">Whether the image is currently being loaded</param>
         /// <param name="fileInfo">The file info of the image</param>
-        internal PreLoadValue(BitmapSource? bitmap, bool loading, FileInfo? fileInfo)
+        internal PreLoadValue(BitmapSource? bitmap, FileInfo? fileInfo)
         {
             BitmapSource = bitmap;
-            IsLoading = loading;
             FileInfo = fileInfo;
         }
     }
@@ -88,16 +84,14 @@ internal static class PreLoader
 
         try
         {
-            var preLoadValue = new PreLoadValue(null, true, null);
+            var preLoadValue = new PreLoadValue(null, null);
             var add = PreLoadList.TryAdd(index, preLoadValue);
             if (add)
             {
                 fileInfo ??= new FileInfo(Pics[index]);
                 bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preLoadValue.BitmapSource = bitmapSource;
-                preLoadValue.IsLoading = false;
                 preLoadValue.FileInfo = fileInfo;
-
 #if DEBUG
                 if (ShowAddRemove)
                     Trace.WriteLine($"{fileInfo.Name} added at {index}");
@@ -169,6 +163,8 @@ internal static class PreLoader
 
         try
         {
+            var thread = Thread.CurrentThread;
+            thread.Priority = ThreadPriority.Lowest;
             _ = PreLoadList[key];
             var remove = PreLoadList.TryRemove(key, out _);
 #if DEBUG

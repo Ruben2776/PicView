@@ -88,7 +88,7 @@ internal class FileHistory
         }
 
         UC.GetStartUpUC?.ToggleMenu();
-        SetTitle.SetLoadingString();
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
 
         await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
     }

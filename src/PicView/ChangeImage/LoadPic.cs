@@ -2,11 +2,11 @@
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.SystemIntegration;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
@@ -29,7 +29,7 @@ internal static class LoadPic
     /// <returns></returns>
     internal static async Task LoadPicFromStringAsync(string? path, FileInfo? fileInfo = null)
     {
-        SetLoadingString();
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetLoadingString);
 
         if (fileInfo is not null)
         {
@@ -374,27 +374,59 @@ internal static class LoadPic
 
         // If the preload value for the image is null or the image is still loading,
         // display the loading preview and wait until the image is loaded.
-        if (preLoadValue is null or { IsLoading: true })
+        if (preLoadValue is null or { BitmapSource: null })
         {
-            LoadingPreview(fileInfo);
+            var thumb = Thumbnails.GetThumb(FolderIndex, fileInfo);
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                SetLoadingString();
+                GetSpinWaiter.Visibility = Visibility.Visible;
+
+                ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+            }, DispatcherPriority.Send);
 
             if (preLoadValue is null)
             {
                 var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, false, fileInfo);
+                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
             }
-            while (preLoadValue.IsLoading)
+            while (preLoadValue.BitmapSource is null)
             {
                 await Task.Delay(10).ConfigureAwait(false);
 
-                if (index != FolderIndex) return;
+                if (index != FolderIndex)
+                {
+                    _ = PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                    return; // Skip loading if user went to next value
+                }
             }
         }
 
         if (index != FolderIndex)
+        {
+            _ = PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
             return; // Skip loading if user went to next value
+        }
 
         UpdateImage.UpdateImageValues(index, preLoadValue);
+
+        if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
+            _ = ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
+
+        _ = PreLoader.AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
+        if (Pics.Count > 1)
+        {
+            Taskbar.Progress((double)index / Pics.Count);
+            _ = PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+        }
+
+        // Add recent files, except when browsing archive
+        if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > index)
+        {
+            GetFileHistory ??= new FileHistory();
+            GetFileHistory.Add(Pics[index]);
+        }
     }
 
     #endregion Load Pic at Index

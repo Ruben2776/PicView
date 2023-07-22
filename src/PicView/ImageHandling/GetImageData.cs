@@ -63,14 +63,14 @@ internal static class GetImageData
             if (preloadValue is null)
             {
                 await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-                preloadValue = new PreLoader.PreLoadValue(null, false, fileInfo);
+                preloadValue = new PreLoader.PreLoadValue(null, fileInfo);
                 if (preloadValue is null)
                 {
-                    preloadValue = new PreLoader.PreLoadValue(null, false, fileInfo);
+                    preloadValue = new PreLoader.PreLoadValue(null, fileInfo);
                     await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => preloadValue.BitmapSource = ImageDecoder.GetRenderedBitmapFrame());
                 }
             }
-            while (preloadValue.IsLoading)
+            while (preloadValue.BitmapSource is null)
             {
                 await Task.Delay(50).ConfigureAwait(false);
             }
