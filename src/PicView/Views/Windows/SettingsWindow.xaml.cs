@@ -44,7 +44,7 @@ public partial class SettingsWindow
         ContentRendered += delegate
         {
             WindowBlur.EnableBlur(this);
-            ChangeColor();
+            //ChangeColor();
             Deactivated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
             Activated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
             var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
@@ -299,10 +299,10 @@ public partial class SettingsWindow
         };
     }
 
-    public void ChangeColor()
-    {
-        Logo.ChangeColor();
-    }
+    //public void ChangeColor()
+    //{
+    //    Logo.ChangeColor();
+    //}
 
     #region EventHandlers
 

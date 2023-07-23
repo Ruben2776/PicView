@@ -11,19 +11,4 @@ public partial class Icon
     {
         InitializeComponent();
     }
-
-    public void ChangeColor()
-    {
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
-        {
-            try
-            {
-                BaseBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
-            }
-            catch (Exception)
-            {
-                // Unhandled Exception: System.Reflection.TargetParameterCountException: Parameter count mismatch
-            }
-        });
-    }
 }

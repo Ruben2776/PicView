@@ -42,16 +42,9 @@ public partial class InfoWindow
         MaxWidth = MinWidth = 565 * WindowSizing.MonitorInfo.DpiScaling;
     }
 
-    public void ChangeColor()
-    {
-        Logo.ChangeColor();
-        AccentBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
-    }
-
     private void Window_ContentRendered(object? sender, EventArgs e)
     {
         WindowBlur.EnableBlur(this);
-        ChangeColor();
 
         Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, ExpandBorder, false);
         Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, ExpandBorder, true);

@@ -92,12 +92,4 @@ public partial class StartUpUC
                 break;
         }
     }
-
-    public void ChangeColor()
-    {
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, () =>
-        {
-            AccentBrush.Brush = new SolidColorBrush(ConfigColors.GetSecondaryAccentColor);
-        });
-    }
 }

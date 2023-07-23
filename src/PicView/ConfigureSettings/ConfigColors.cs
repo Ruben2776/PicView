@@ -6,9 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using PicView.ChangeImage;
-using PicView.PicGallery;
 
 namespace PicView.ConfigureSettings;
 
@@ -36,21 +33,16 @@ internal static class ConfigColors
         Application.Current.Resources["ChosenColor"] = getColor;
         Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 
-        ConfigureWindows.GetMainWindow.Logo.ChangeColor();
-        ConfigureWindows.GetSettingsWindow?.Logo.ChangeColor();
-        ConfigureWindows.GetInfoWindow?.ChangeColor();
-        UC.GetStartUpUC?.ChangeColor();
-        if (UC.GetPicGallery is not null)
-        {
-            // Call function to update color
-            GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
-        }
+        var getAccentColor = GetSecondaryAccentColor;
+        var getAccentColorBrush = new SolidColorBrush(getAccentColor);
+        Application.Current.Resources["ChosenAccentColor"] = getAccentColor;
+        Application.Current.Resources["ChosenAccentColorBrush"] = getAccentColorBrush;
 
         Settings.Default.Save();
     }
 
     /// <summary>
-    /// Apply color varaibles from themes
+    /// Apply color variables from themes
     /// </summary>
     internal static void SetColors()
     {
