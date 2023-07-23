@@ -2,23 +2,20 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.Timers;
 using System.Windows.Media.Imaging;
-using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
-using ThreadState = System.Threading.ThreadState;
 
 namespace PicView.ChangeImage;
 
 /// <summary>
 /// The PreLoader class is responsible for loading and caching images.
 /// It contains an internal class named PreLoadValue, which stores information about each image,
-/// including the image's BitmapSource, whether the image is currently being loaded, and the image's FileInfo object.
+/// including the image's BitmapSource and the image's FileInfo object.
 /// </summary>
 internal static class PreLoader
 {
     /// <summary>
-    /// Represents a value that is preloaded and cached, including information about the image file and whether it is currently being loaded.
+    /// Represents a value that is preloaded and cached, including information about the image file.
     /// </summary>
     internal class PreLoadValue
     {
@@ -184,6 +181,7 @@ internal static class PreLoader
     /// An asynchronous task that iterates through file names and caches the decoded images to the PreLoad list
     /// </summary>
     /// <param name="currentIndex">The starting point for the iteration.</param>
+    /// <param name="count">The current count of the iterated list</param>
     internal static async Task PreLoadAsync(int currentIndex, int count)
     {
         int nextStartingIndex, prevStartingIndex, deleteIndex;
@@ -250,7 +248,7 @@ internal static class PreLoader
                     }
                     catch (Exception)
                     {
-                        break;
+                        return;
                     }
 
                     int index;

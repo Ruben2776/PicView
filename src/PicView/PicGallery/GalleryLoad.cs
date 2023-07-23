@@ -72,7 +72,12 @@ internal static class GalleryLoad
                     {
                         throw new TaskCanceledException();
                     }
-                    Add(i);
+
+                    var x = i;
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        Add(x);
+                    }, DispatcherPriority.Render, source.Token);
                 }
                 catch (Exception e)
                 {
@@ -188,16 +193,13 @@ internal static class GalleryLoad
     internal static void Add(int i)
     {
         var selected = i == Navigation.FolderIndex;
-        UC.GetPicGallery.Dispatcher.Invoke(() =>
+        var item = new PicGalleryItem(null, i, selected);
+        item.MouseLeftButtonUp += async delegate
         {
-            var item = new PicGalleryItem(null, i, selected);
-            item.MouseLeftButtonUp += async delegate
-            {
-                await GalleryClick.ClickAsync(i).ConfigureAwait(false);
-            };
+            await GalleryClick.ClickAsync(i).ConfigureAwait(false);
+        };
 
-            UC.GetPicGallery.Container.Children.Add(item);
-        }, DispatcherPriority.Render);
+        UC.GetPicGallery.Container.Children.Add(item);
     }
 
     internal static void UpdatePic(int i, BitmapSource? pic, string fileLocation, string fileName, string fileSize, string fileDate)

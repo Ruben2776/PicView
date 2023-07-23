@@ -397,7 +397,7 @@ internal static class LoadPic
 
                 if (index != FolderIndex)
                 {
-                    _ = PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                    await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
                     return; // Skip loading if user went to next value
                 }
             }
@@ -405,7 +405,7 @@ internal static class LoadPic
 
         if (index != FolderIndex)
         {
-            _ = PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
             return; // Skip loading if user went to next value
         }
 
