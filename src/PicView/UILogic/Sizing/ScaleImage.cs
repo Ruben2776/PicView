@@ -81,7 +81,7 @@ internal static class ScaleImage
         var galleryHeight = 0.0;
         if (UC.GetPicGallery is not null)
         {
-            if (Settings.Default.IsBottomGalleryShown)
+            if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
             {
                 galleryHeight = PicGalleryItemSize + 22;
             }
@@ -125,7 +125,7 @@ internal static class ScaleImage
                 {
                     SetSize(Settings.Default.BottomGalleryItemSize);
                 }
-                margin = PicGalleryItemSize + 22; // Scrollbar
+                margin = UC.GetPicGallery.IsVisible ? PicGalleryItemSize + 22 : 0; // Scrollbar
             }
         }
 

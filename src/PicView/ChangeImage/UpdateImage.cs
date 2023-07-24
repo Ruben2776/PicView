@@ -96,6 +96,14 @@ internal static class UpdateImage
     /// <param name="file"></param>
     internal static async Task UpdateImageAsync(string name, BitmapSource? bitmapSource, bool isGif = false, string? file = null)
     {
+        if (GetPicGallery is not null)
+        {
+            await GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                GetPicGallery.Visibility = Visibility.Collapsed;
+            }, DispatcherPriority.Send);
+        }
+
         Size? imageSize = null;
         if (isGif)
         {

@@ -77,7 +77,7 @@ internal static class GalleryLoad
                     await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
                         Add(x);
-                    }, DispatcherPriority.Render, source.Token);
+                    }, DispatcherPriority.DataBind, source.Token);
                 }
                 catch (Exception e)
                 {

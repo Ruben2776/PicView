@@ -122,8 +122,9 @@ internal static class GalleryToggle
                 break;
 
             case true:
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, ShowBottomGallery);
+                await GetMainWindow.Dispatcher.InvokeAsync(ShowBottomGallery, DispatcherPriority.Render);
                 ScaleImage.TryFitImage();
+                await GetPicGallery.Dispatcher.InvokeAsync(ReCalculateItemSizes, DispatcherPriority.Render);
                 break;
 
             default:

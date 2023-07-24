@@ -188,8 +188,9 @@ internal static class LoadPic
                 {
                     await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(true);
                 }
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                await GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
+                    GetPicGallery.Visibility = Visibility.Visible;
                     GalleryNavigation.SetSelected(FolderIndex, true);
                     GalleryNavigation.SelectedGalleryItem = FolderIndex;
                     GalleryNavigation.ScrollToGalleryCenter();
