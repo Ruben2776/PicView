@@ -79,7 +79,15 @@ internal static class QuickLoad
 
         if (Settings.Default.IsBottomGalleryShown)
         {
-            _ = GalleryLoad.LoadAsync().ConfigureAwait(false);
+            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+            // Update gallery selections
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                // Select current item
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
         }
 
         // Add recent files, except when browsing archive

@@ -306,7 +306,7 @@ internal static class LoadContextMenus
         ///   Delete File       \\\\
         ///////////////////////////
         var Deletecm = (MenuItem)MainContextMenu.Items[17];
-        Deletecm.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)).ConfigureAwait(false);
+        Deletecm.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), FolderIndex).ConfigureAwait(false);
 
         // 18 = seperator
 

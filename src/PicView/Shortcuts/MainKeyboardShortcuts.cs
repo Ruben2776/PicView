@@ -362,7 +362,7 @@ internal static class MainKeyboardShortcuts
                 case Key.Delete:
                     if (!GalleryFunctions.IsGalleryOpen)
                     {
-                        await DeleteFileAsync(!shiftDown).ConfigureAwait(false);
+                        await DeleteFileAsync(!shiftDown, FolderIndex).ConfigureAwait(false);
                     }
                     break;
 

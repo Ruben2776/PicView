@@ -101,8 +101,8 @@ internal static class GalleryLoad
 
             _ = Task.Run(async () =>
             {
-                var thread = Thread.CurrentThread;
-                thread.Priority = ThreadPriority.BelowNormal;
+                //var thread = Thread.CurrentThread;
+                //thread.Priority = ThreadPriority.BelowNormal;
                 for (var x = startPosition; x < iterations; x++)
                 {
                     updates++;
@@ -137,8 +137,8 @@ internal static class GalleryLoad
 
             _ = Task.Run(async () =>
             {
-                var thread = Thread.CurrentThread;
-                thread.Priority = ThreadPriority.BelowNormal;
+                //var thread = Thread.CurrentThread;
+                //thread.Priority = ThreadPriority.BelowNormal;
                 for (var x = startPosition - 1; x >= 0; x--)
                 {
                     updates++;
@@ -226,6 +226,8 @@ internal static class GalleryLoad
             item.ThumbFileName.Text = fileName;
             item.ThumbFileSize.Text = fileSize;
             item.ThumbFileDate.Text = fileDate;
+
+            item.AddContextMenu();
         }
         catch (Exception e)
         {

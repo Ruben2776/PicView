@@ -84,7 +84,7 @@ public partial class ImageInfoWindow
         Delete.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(DeleteBrush);
         Delete.MouseLeave += (_, _) => ButtonMouseLeaveAnim(DeleteFill);
         Delete.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(DeleteBrush);
-        Delete.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift)).ConfigureAwait(false);
+        Delete.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift), FolderIndex).ConfigureAwait(false);
 
         // OpenWith
         OpenWith.MouseEnter += (_, _) => ButtonMouseOverAnim(OpenWithFill);

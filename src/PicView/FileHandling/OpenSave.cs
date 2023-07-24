@@ -52,23 +52,37 @@ internal static class OpenSave
     /// <summary>
     /// Opens image in File Explorer
     /// </summary>
-    internal static void Open_In_Explorer()
+    internal static void Open_In_Explorer(string? file = null)
     {
-        string? directory = null, file = null;
+        string? directory = null;
 
-        if (Pics?.Count <= 0)
+        if (file == null)
         {
-            // Check if from URL and locate it
-            var url = FileFunctions.RetrieveFromURL();
-            if (!string.IsNullOrEmpty(url))
+            switch (string.IsNullOrEmpty(file))
             {
-                file = ArchiveExtraction.TempFilePath;
-                directory = Path.GetDirectoryName(file);
+                case false when Pics?.Count <= 0:
+                    {
+                        // Check if from URL and locate it
+                        var url = FileFunctions.RetrieveFromURL();
+                        if (!string.IsNullOrEmpty(url))
+                        {
+                            file = ArchiveExtraction.TempFilePath;
+                            directory = Path.GetDirectoryName(file);
+                        }
+
+                        break;
+                    }
+                case false when Pics?.Count > FolderIndex:
+                    file = Pics[FolderIndex];
+                    directory = Path.GetDirectoryName(file);
+                    break;
+
+                default:
+                    return;
             }
         }
-        else if (Pics?.Count > FolderIndex)
+        else
         {
-            file = Pics[FolderIndex];
             directory = Path.GetDirectoryName(file);
         }
 
@@ -116,12 +130,17 @@ internal static class OpenSave
     /// <summary>
     /// Start Windows "Open With" function
     /// </summary>
-    internal static void OpenWith()
+    internal static void OpenWith(string? path = null)
     {
-        if (CheckOutOfRange())
+        if (path == null)
         {
-            return;
+            if (CheckOutOfRange())
+            {
+                return;
+            }
+            path = Pics[FolderIndex];
         }
+
         try
         {
             using var process = new Process
@@ -129,7 +148,7 @@ internal static class OpenSave
                 StartInfo =
                 {
                     FileName = "openwith",
-                    Arguments = $"\"{Pics[FolderIndex]}\"",
+                    Arguments = $"\"{path}\"",
                     ErrorDialog = true
                 }
             };

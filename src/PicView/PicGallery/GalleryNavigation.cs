@@ -220,11 +220,17 @@ internal static class GalleryNavigation
         {
             SelectedGalleryItem = 0;
         }
-
-        SetSelected(SelectedGalleryItem, true, true);
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+        {
+            SetSelected(SelectedGalleryItem, true, true);
+        });
+        
         if (backup != SelectedGalleryItem && backup != FolderIndex)
         {
-            SetSelected(backup, false, true); // deselect
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+            {
+                SetSelected(backup, false, true); // deselect
+            });
         }
 
         if (direction is Direction.Up or Direction.Down)

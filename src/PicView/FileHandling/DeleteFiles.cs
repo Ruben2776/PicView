@@ -84,25 +84,26 @@ internal static class DeleteFiles
     /// and display information
     /// </summary>
     /// <param name="recycle"></param>
-    internal static async Task DeleteFileAsync(bool recycle)
+    internal static async Task DeleteFileAsync(bool recycle, int index)
     {
-        if (!TryDeleteFile(Pics[FolderIndex], recycle))
+        var isCurrentIndex = index == FolderIndex;
+        if (!TryDeleteFile(Pics[index], recycle))
         {
             ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]);
             return;
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             // Sync with gallery
-            if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > FolderIndex)
+            if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > index)
             {
-                UC.GetPicGallery.Container.Children.RemoveAt(FolderIndex);
+                UC.GetPicGallery.Container.Children.RemoveAt(index);
             }
         });
 
-        PreLoader.Clear();
-        Pics.Remove(Pics[FolderIndex]);
+        PreLoader.Remove(index);
+        Pics.Remove(Pics[index]);
 
         if (Pics.Count <= 0)
         {
@@ -110,7 +111,10 @@ internal static class DeleteFiles
             return;
         }
 
-        await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+        if (isCurrentIndex)
+        {
+            await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+        }
 
         ShowTooltipMessage(recycle ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
     }

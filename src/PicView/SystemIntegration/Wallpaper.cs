@@ -24,7 +24,7 @@ public static class Wallpaper // Taken from a Microsoft sample...
         Fill
     }
 
-    internal static async Task SetWallpaperAsync(WallpaperStyle style)
+    internal static async Task SetWallpaperAsync(WallpaperStyle style, string? path = null)
     {
         var url = string.Empty;
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -77,7 +77,7 @@ public static class Wallpaper // Taken from a Microsoft sample...
             }
             else
             {
-                imagePath = Navigation.Pics[Navigation.FolderIndex];
+                imagePath = path ?? Navigation.Pics[Navigation.FolderIndex];
             }
 
             await SaveImages.SaveImageAsync(rotationAngle, isFlipped, bitmapSource, imagePath, destinationPath, null, effectApplied).ConfigureAwait(false);

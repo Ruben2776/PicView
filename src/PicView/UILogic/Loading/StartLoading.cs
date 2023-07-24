@@ -131,6 +131,13 @@ internal static class StartLoading
                 Source = new Uri(@"/PicView;component/Views/Resources/Icons.xaml", UriKind.Relative)
             }
         );
+
+        Application.Current.Resources.MergedDictionaries.Add(
+            new ResourceDictionary
+            {
+                Source = new Uri(@"/PicView;component/Views/Resources/GalleryContextMenu.xaml", UriKind.Relative)
+            }
+        );
     }
 
     internal static void AddUiElementsAndUpdateValues()

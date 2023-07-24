@@ -42,7 +42,7 @@ internal static class ConfigColors
     }
 
     /// <summary>
-    /// Apply color variables from themes
+    /// Apply color varaibles from themes
     /// </summary>
     internal static void SetColors()
     {

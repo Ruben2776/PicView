@@ -46,37 +46,66 @@ internal static class CopyPaste
         }
     }
 
-    private static void CopyFile(string path)
+    internal static void CopyFile(string path)
     {
         var paths = new StringCollection { path };
         Clipboard.SetFileDropList(paths);
         ShowTooltipMessage(Application.Current.Resources["FileCopy"], UC.FileMenuOpen);
     }
 
-    internal static void CopyBitmap()
+    internal static void CopyBitmap(int? id = null)
     {
-        BitmapSource? pic;
-        if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
+        if (id is null)
         {
-            if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
+            BitmapSource? pic = null;
+            if (ConfigureWindows.GetMainWindow.MainImage.Source != null)
             {
-                pic = ImageDecoder.GetRenderedBitmapFrame();
-            }
-            else
-            {
-                pic = (BitmapSource)ConfigureWindows.GetMainWindow.MainImage.Source;
-            }
+                if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
+                {
+                    pic = ImageDecoder.GetRenderedBitmapFrame();
+                }
+                else
+                {
+                    pic = (BitmapSource)ConfigureWindows.GetMainWindow.MainImage.Source;
+                }
 
-            if (pic == null)
-            {
-                ShowTooltipMessage(Application.Current.Resources["UnknownError"]);
-                return;
+                if (pic == null)
+                {
+                    ShowTooltipMessage(Application.Current.Resources["UnknownError"]);
+                    return;
+                }
             }
-
             Clipboard.SetImage(pic);
+            ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
         }
-
-        ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+        else
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var preloadValue = PreLoader.Get(id.Value);
+                    BitmapSource bitmap;
+                    if (preloadValue is null)
+                    {
+                        bitmap = await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(Pics[id.Value]));
+                    }
+                    else
+                    {
+                        bitmap = preloadValue.BitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(Pics[id.Value]));
+                    }
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        Clipboard.SetImage(bitmap);
+                        ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+                    });
+                }
+                catch (Exception e)
+                {
+                    ShowTooltipMessage(e.Message);
+                }
+            }).ConfigureAwait(false);
+        }
     }
 
     internal static void Copy()
@@ -143,14 +172,23 @@ internal static class CopyPaste
     /// <summary>
     /// Add file to move/paste clipboard
     /// </summary>
-    internal static void Cut()
+    internal static void Cut(string? path = null)
     {
-        if (Pics.Count <= 0 || FolderIndex >= Pics.Count)
+        string filePath;
+        if (path is null)
         {
-            return;
+            if (Pics.Count <= 0 || FolderIndex >= Pics.Count)
+            {
+                return;
+            }
+
+            filePath = Pics[FolderIndex];
+        }
+        else
+        {
+            filePath = path;
         }
 
-        var filePath = Pics[FolderIndex];
         var fileDropList = new StringCollection { filePath };
 
         var moveEffect = new byte[] { 2, 0, 0, 0 };

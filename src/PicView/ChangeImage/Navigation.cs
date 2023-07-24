@@ -162,8 +162,12 @@ internal static class Navigation
         if (Settings.Default.IsBottomGalleryShown)
         {
             _ = GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
-            GalleryNavigation.SetSelected(FolderIndex, true);
-            GalleryNavigation.SelectedGalleryItem = FolderIndex;
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
         }
     }
 

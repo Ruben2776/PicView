@@ -2,7 +2,11 @@
 using PicView.UILogic;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PicView.ImageHandling;
 
@@ -81,21 +85,48 @@ internal static class Base64
     /// Converts the current rendered bitmap frame to a Base64 string.
     /// </summary>
     /// <returns>A Task representing the asynchronous operation.</returns>
-    private static async Task<string> ConvertToBase64()
+    private static async Task<string> ConvertToBase64(string? path = null)
     {
-        var frame = await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ImageDecoder.GetRenderedBitmapFrame);
-        if (frame == null) return string.Empty;
+        BitmapFrame frame;
+        if (path is null)
+        {
+            frame = await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ImageDecoder.GetRenderedBitmapFrame);
+        }
+        else
+        {
+            var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(path)).ConfigureAwait(false);
+            var sourceSize = new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+            var rectangle = new Rectangle
+            {
+                Fill = new ImageBrush(bitmapSource),
+            };
+            rectangle.Measure(sourceSize);
+            rectangle.Arrange(new Rect(sourceSize));
 
-        byte[]? bytes = null;
-        string b64 = "";
+            var renderedBitmap = new RenderTargetBitmap(bitmapSource.PixelWidth, bitmapSource.PixelHeight, bitmapSource.DpiX, bitmapSource.DpiY, PixelFormats.Default);
+            renderedBitmap.Render(rectangle);
+
+            frame = BitmapFrame.Create(renderedBitmap);
+            frame.Freeze();
+        }
+
+        byte[]? bytes;
+        var b64 = "";
         await Task.Run(() =>
         {
-            using var ms = new MemoryStream();
-            var pngBitmapEncoder = new PngBitmapEncoder();
-            pngBitmapEncoder.Frames.Add(frame);
-            pngBitmapEncoder.Save(ms);
-            bytes = ms.ToArray();
-            b64 = Convert.ToBase64String(bytes);
+            try
+            {
+                using var ms = new MemoryStream();
+                var pngBitmapEncoder = new PngBitmapEncoder();
+                pngBitmapEncoder.Frames.Add(frame);
+                pngBitmapEncoder.Save(ms);
+                bytes = ms.ToArray();
+                b64 = Convert.ToBase64String(bytes);
+            }
+            catch (Exception e)
+            {
+                Tooltip.ShowTooltipMessage(e.Message);
+            }
         }).ConfigureAwait(false);
 
         return b64;
@@ -105,16 +136,20 @@ internal static class Base64
     /// Converts the current rendered bitmap frame to a Base64 string and sets it to the clipboard.
     /// </summary>
     /// <returns>A Task representing the asynchronous operation.</returns>
-    internal static async Task SendToClipboard()
+    internal static async Task SendToClipboard(string? path = null)
     {
-        var base64String = await ConvertToBase64().ConfigureAwait(true); // Need to be true to avoid thread errors
+        var base64String = await ConvertToBase64(path).ConfigureAwait(false); // Need to be true to avoid thread errors
         if (string.IsNullOrWhiteSpace(base64String))
         {
             Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
             return;
         }
 
-        Clipboard.SetText(base64String);
+        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+        {
+            Clipboard.SetText(base64String);
+        }, DispatcherPriority.Background);
+
         Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
     }
 }

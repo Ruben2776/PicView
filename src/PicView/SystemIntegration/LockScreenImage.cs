@@ -16,7 +16,7 @@ namespace PicView.SystemIntegration;
 
 public static class LockScreenHelper
 {
-    public static async Task<bool> SetLockScreenImageAsync()
+    public static async Task<bool> SetLockScreenImageAsync(string? path = null)
     {
         var url = string.Empty;
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -71,7 +71,7 @@ public static class LockScreenHelper
             }
             else
             {
-                imagePath = Navigation.Pics[Navigation.FolderIndex];
+                imagePath = path ?? Navigation.Pics[Navigation.FolderIndex];
             }
 
             await SaveImages.SaveImageAsync(rotationAngle, isFlipped, bitmapSource, imagePath, destinationPath, null, hasEffect).ConfigureAwait(false);
