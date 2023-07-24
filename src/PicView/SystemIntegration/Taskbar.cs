@@ -44,7 +44,7 @@ internal static class Taskbar
         taskbar.Freeze();
         try
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
         }
         catch (Exception e)
         {

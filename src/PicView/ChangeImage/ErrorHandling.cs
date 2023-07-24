@@ -21,7 +21,7 @@ internal static class ErrorHandling
     /// <summary>
     /// Check if index is valid and user is intended to change image
     /// </summary>
-    /// <returns>True if not indended to change image or index is not valid</returns>
+    /// <returns>True if not intended to change image or index is not valid</returns>
     internal static bool CheckOutOfRange()
     {
         bool value = true;
@@ -251,9 +251,14 @@ internal static class ErrorHandling
             WindowSizing.SetWindowBehavior();
 
             UC.ToggleStartUpUC(!showStartup);
-            if (UC.GetSpinWaiter is { IsVisible: true })
+            if (UC.GetSpinWaiter is not null)
             {
                 UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
+            }
+
+            if (UC.GetPicGallery is not null)
+            {
+                UC.GetPicGallery.Visibility = Visibility.Collapsed;
             }
         }));
 
@@ -268,14 +273,6 @@ internal static class ErrorHandling
             DeleteTempFiles();
             ArchiveExtraction.TempFilePath = string.Empty;
         }
-
-        try
-        {
-            Taskbar.NoProgress();
-        }
-        catch
-        {
-            // ignored
-        }
+        Taskbar.NoProgress();
     }
 }
