@@ -70,6 +70,12 @@ internal static class StartLoading
         if (args.Length <= 1)
         {
             ErrorHandling.Unload(true);
+
+            // Make sure to fix loading spinner showing up
+            if (ConfigureWindows.GetMainWindow.MainImage.Source is null)
+            {
+                GetSpinWaiter.Visibility = Visibility.Collapsed;
+            }
         }
         else
         {

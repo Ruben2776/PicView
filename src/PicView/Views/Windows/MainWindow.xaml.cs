@@ -153,7 +153,6 @@ public partial class MainWindow
 
             Logo.MouseLeftButtonDown += (_, _) => ConfigureWindows.WindowContextMenu.IsOpen = true;
             ConfigColors.MainWindowUnfocusOrFocus(true);
-            // Make sure to fix loading spinner showing up
         };
     }
 
