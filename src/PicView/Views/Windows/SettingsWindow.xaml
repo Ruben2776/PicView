@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
     MinWidth="325"
-    MaxWidth="375"
+    MaxWidth="335"
     AllowsTransparency="True"
     BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
@@ -584,6 +584,7 @@
                             Content="{StaticResource HighlightColor}" />
 
                         <WrapPanel
+                            MaxWidth="325"
                             Margin="0,3,0,8"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
