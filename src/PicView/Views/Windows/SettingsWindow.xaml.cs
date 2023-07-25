@@ -162,8 +162,8 @@ public partial class SettingsWindow
                 {
                     LanguageBox.Items.Add(new ComboBoxItem
                     {
-                        Content = new CultureInfo(language.ToString()).DisplayName,
-                        IsSelected = language.ToString() == Settings.Default.UserLanguage,
+                        Content = new CultureInfo(language.ToString().Replace('_', '-')).DisplayName,
+                        IsSelected = language.ToString().Replace('_', '-') == Settings.Default.UserLanguage,
                     });
                 }
                 catch (Exception e)

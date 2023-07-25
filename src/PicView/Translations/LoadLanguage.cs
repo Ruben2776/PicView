@@ -13,23 +13,61 @@ internal static class LoadLanguage
     internal static void DetermineLanguage(bool isFromCulture)
     {
         var isoLanguage = isFromCulture ? CultureInfo.CurrentCulture.TwoLetterISOLanguageName : Settings.Default.UserLanguage;
-        var source = isoLanguage switch
+        Uri? source;
+        switch (isoLanguage)
         {
-            "da" => new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative),
-            "de" => new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative),
-            "es" => new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative),
-            "ko" => new Uri(@"/PicView;component/Translations/ko.xaml", UriKind.Relative),
-            "zh_CN" => new Uri(@"/PicView;component/Translations/zh-CN.xaml", UriKind.Relative),
-            "zh_TW" => new Uri(@"/PicView;component/Translations/zh-TW.xaml", UriKind.Relative),
-            "zh-CN" => new Uri(@"/PicView;component/Translations/zh-CN.xaml", UriKind.Relative),
-            "zh-TW" => new Uri(@"/PicView;component/Translations/zh-TW.xaml", UriKind.Relative),
-            "pl" => new Uri(@"/PicView;component/Translations/pl.xaml", UriKind.Relative),
-            "fr" => new Uri(@"/PicView;component/Translations/fr.xaml", UriKind.Relative),
-            "it" => new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative),
-            "ru" => new Uri(@"/PicView;component/Translations/ru.xaml", UriKind.Relative),
-            "ro" => new Uri(@"/PicView;component/Translations/ro.xaml", UriKind.Relative),
-            _ => new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative)
-        };
+            case "da":
+                source = new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative);
+                break;
+
+            case "de":
+                source = new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative);
+                break;
+
+            case "es":
+                source = new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative);
+                break;
+
+            case "ko":
+                source = new Uri(@"/PicView;component/Translations/ko.xaml", UriKind.Relative);
+                break;
+
+            case "zh":
+            case "zh-CN":
+            case "zh_CN":
+                source = new Uri(@"/PicView;component/Translations/zh-CN.xaml", UriKind.Relative);
+                break;
+
+            case "zh_TW":
+            case "zh-TW":
+                source = new Uri(@"/PicView;component/Translations/zh-TW.xaml", UriKind.Relative);
+                break;
+
+            case "pl":
+                source = new Uri(@"/PicView;component/Translations/pl.xaml", UriKind.Relative);
+                break;
+
+            case "fr":
+                source = new Uri(@"/PicView;component/Translations/fr.xaml", UriKind.Relative);
+                break;
+
+            case "it":
+                source = new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative);
+                break;
+
+            case "ru":
+                source = new Uri(@"/PicView;component/Translations/ru.xaml", UriKind.Relative);
+                break;
+
+            case "ro":
+                source = new Uri(@"/PicView;component/Translations/ro.xaml", UriKind.Relative);
+                break;
+
+            default:
+                source = new Uri(@"/PicView;component/Translations/en.xaml", UriKind.Relative);
+                break;
+        }
+
         TrySetSource(source);
     }
 
@@ -58,7 +96,7 @@ internal static class LoadLanguage
     internal static void ChangeLanguage(int language)
     {
         var choice = (Languages)language;
-        Settings.Default.UserLanguage = choice.ToString();
+        Settings.Default.UserLanguage = choice.ToString().Replace('_', '-');
 
         Settings.Default.Save();
     }
