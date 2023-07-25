@@ -17,14 +17,38 @@ internal static class LoadLanguage
         switch (isoLanguage)
         {
             case "da":
+            case "da-DK":
                 source = new Uri(@"/PicView;component/Translations/da.xaml", UriKind.Relative);
                 break;
 
             case "de":
+            case "de-DE":
+            case "de-CH":
+            case "de-AT":
+            case "de-LU":
+            case "de-LI":
                 source = new Uri(@"/PicView;component/Translations/de.xaml", UriKind.Relative);
                 break;
 
             case "es":
+            case "es-ES":
+            case "es-GT":
+            case "es-CR":
+            case "es-MX":
+            case "es-PA":
+            case "es-DO":
+            case "es-VE":
+            case "es-CO":
+            case "es-PE":
+            case "es-AR":
+            case "es-CL":
+            case "es-EC":
+            case "es-UY":
+            case "es-PY":
+            case "es-BO":
+            case "es-HN":
+            case "es-NI":
+            case "es-PR":
                 source = new Uri(@"/PicView;component/Translations/es.xaml", UriKind.Relative);
                 break;
 
@@ -34,11 +58,9 @@ internal static class LoadLanguage
 
             case "zh":
             case "zh-CN":
-            case "zh_CN":
                 source = new Uri(@"/PicView;component/Translations/zh-CN.xaml", UriKind.Relative);
                 break;
 
-            case "zh_TW":
             case "zh-TW":
                 source = new Uri(@"/PicView;component/Translations/zh-TW.xaml", UriKind.Relative);
                 break;

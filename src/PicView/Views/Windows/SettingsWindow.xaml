@@ -6,7 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
-    Width="325"
+    MinWidth="325"
+    MaxWidth="375"
     AllowsTransparency="True"
     BorderBrush="{StaticResource BorderBrush}"
     BorderThickness="1"
@@ -156,7 +157,7 @@
                         TextWrapping="Wrap" />
                 </TabItem.Header>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="10,10,10,10">
 
                         <Label
@@ -297,6 +298,7 @@
 
                         <RadioButton
                             x:Name="CtrlZoom"
+                            Width="279"
                             Margin="5,0,6,5"
                             d:IsChecked="True"
                             BorderThickness="0"
@@ -306,7 +308,7 @@
                                 <SolidColorBrush x:Name="CtrlZoomText" Color="{StaticResource MainColor}" />
                             </RadioButton.Foreground>
                             <TextBlock
-                                Width="275"
+                                Width="279"
                                 Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource CtrlToZoom}"
@@ -315,6 +317,7 @@
 
                         <RadioButton
                             x:Name="ScrollZoom"
+                            Width="279"
                             Margin="5,0,6,5"
                             Focusable="False"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto">
@@ -322,7 +325,7 @@
                                 <SolidColorBrush x:Name="ScrollZoomText" Color="{StaticResource MainColor}" />
                             </RadioButton.Foreground>
                             <TextBlock
-                                Width="275"
+                                Width="279"
                                 Focusable="False"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                 Text="{StaticResource ScrollToZoom}"
@@ -486,7 +489,7 @@
                         TextWrapping="Wrap" />
                 </TabItem.Header>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="10">
 
                         <Label
