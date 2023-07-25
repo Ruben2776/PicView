@@ -16,7 +16,14 @@ namespace PicView.UILogic
 
         private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
         {
-            ScrollInfo = new ScrollInfoAdapter(ScrollInfo);
+            try
+            {
+                ScrollInfo = new ScrollInfoAdapter(ScrollInfo);
+            }
+            catch (Exception)
+            {
+                //
+            }
         }
     }
 
@@ -77,7 +84,23 @@ namespace PicView.UILogic
 
         public double ViewportHeight => _child.ViewportHeight;
 
-        public double HorizontalOffset => _child.HorizontalOffset;
+        public double HorizontalOffset
+        {
+            get
+            {
+                try
+                {
+                    return _child.HorizontalOffset;
+                }
+                catch (Exception)
+                {
+                    //
+                }
+
+                return 0;
+            }
+        }
+
         public double VerticalOffset => _child.VerticalOffset;
 
         public ScrollViewer ScrollOwner
@@ -232,27 +255,45 @@ namespace PicView.UILogic
 
         public void SetHorizontalOffset(double offset)
         {
-            if (_child.ScrollOwner.CanContentScroll)
+            try
             {
-                _child.SetHorizontalOffset(offset);
+                if (_child is null)
+                    return;
+                if (_child.ScrollOwner.CanContentScroll)
+                {
+                    _child.SetHorizontalOffset(offset);
+                }
+                else
+                {
+                    _computedHorizontalOffset = offset;
+                    Animate(HorizontalScrollOffsetProperty, offset);
+                }
             }
-            else
+            catch (Exception)
             {
-                _computedHorizontalOffset = offset;
-                Animate(HorizontalScrollOffsetProperty, offset);
+                //
             }
         }
 
         public void SetVerticalOffset(double offset)
         {
-            if (_child.ScrollOwner.CanContentScroll)
+            try
             {
-                _child.SetVerticalOffset(offset);
+                if (_child is null)
+                    return;
+                if (_child.ScrollOwner.CanContentScroll)
+                {
+                    _child.SetVerticalOffset(offset);
+                }
+                else
+                {
+                    _computedVerticalOffset = offset;
+                    Animate(VerticalScrollOffsetProperty, offset);
+                }
             }
-            else
+            catch (Exception)
             {
-                _computedVerticalOffset = offset;
-                Animate(VerticalScrollOffsetProperty, offset);
+                //
             }
         }
 
@@ -287,26 +328,40 @@ namespace PicView.UILogic
 
         private void VerticalScroll(double val)
         {
-            if (!(Math.Abs(_computedVerticalOffset - ValidateVerticalOffset(val)) >
-                  0.1)) //prevent restart of animation in case of frequent event fire
+            try
             {
-                return;
-            }
+                if (!(Math.Abs(_computedVerticalOffset - ValidateVerticalOffset(val)) >
+              0.1)) //prevent restart of animation in case of frequent event fire
+                {
+                    return;
+                }
 
-            _computedVerticalOffset = ValidateVerticalOffset(val);
-            Animate(VerticalScrollOffsetProperty, _computedVerticalOffset);
+                _computedVerticalOffset = ValidateVerticalOffset(val);
+                Animate(VerticalScrollOffsetProperty, _computedVerticalOffset);
+            }
+            catch (Exception)
+            {
+                //
+            }
         }
 
         private void HorizontalScroll(double val)
         {
-            if (!(Math.Abs(_computedHorizontalOffset - ValidateHorizontalOffset(val)) >
-                  0.1)) //prevent restart of animation in case of frequent event fire
+            try
             {
-                return;
-            }
+                if (!(Math.Abs(_computedHorizontalOffset - ValidateHorizontalOffset(val)) >
+              0.1)) //prevent restart of animation in case of frequent event fire
+                {
+                    return;
+                }
 
-            _computedHorizontalOffset = ValidateHorizontalOffset(val);
-            Animate(HorizontalScrollOffsetProperty, _computedHorizontalOffset);
+                _computedHorizontalOffset = ValidateHorizontalOffset(val);
+                Animate(HorizontalScrollOffsetProperty, _computedHorizontalOffset);
+            }
+            catch (Exception)
+            {
+                //
+            }
         }
 
         private double ValidateVerticalOffset(double verticalOffset)
@@ -326,12 +381,7 @@ namespace PicView.UILogic
                 return 0;
             }
 
-            if (horizontalOffset > _child.ScrollOwner.ScrollableWidth)
-            {
-                return _child.ScrollOwner.ScrollableWidth;
-            }
-
-            return horizontalOffset;
+            return horizontalOffset > _child.ScrollOwner.ScrollableWidth ? _child.ScrollOwner.ScrollableWidth : horizontalOffset;
         }
 
         #endregion not exposed methods
@@ -356,8 +406,30 @@ namespace PicView.UILogic
 
         internal double HorizontalScrollOffset
         {
-            get => (double)GetValue(HorizontalScrollOffsetProperty);
-            set => SetValue(HorizontalScrollOffsetProperty, value);
+            get
+            {
+                try
+                {
+                    return (double)GetValue(HorizontalScrollOffsetProperty);
+                }
+                catch (Exception)
+                {
+                    //
+                }
+
+                return 0;
+            }
+            set
+            {
+                try
+                {
+                    SetValue(HorizontalScrollOffsetProperty, value);
+                }
+                catch (Exception)
+                {
+                    //
+                }
+            }
         }
 
         internal static readonly DependencyProperty HorizontalScrollOffsetProperty =

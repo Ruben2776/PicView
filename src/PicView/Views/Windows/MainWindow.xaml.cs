@@ -1,8 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
@@ -17,6 +13,9 @@ using PicView.UILogic.DragAndDrop;
 using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 using static PicView.UILogic.Sizing.WindowSizing;
 using static PicView.UILogic.UC;
 
