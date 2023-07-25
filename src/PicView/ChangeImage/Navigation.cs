@@ -1,4 +1,5 @@
-﻿using PicView.ChangeTitlebar;
+﻿using System.Windows;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -162,7 +163,7 @@ internal static class Navigation
         if (Settings.Default.IsBottomGalleryShown)
         {
             _ = GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
-            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
             {
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = FolderIndex;

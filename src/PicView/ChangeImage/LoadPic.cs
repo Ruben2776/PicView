@@ -161,6 +161,7 @@ internal static class LoadPic
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
+                    GetPicGallery.Visibility = Visibility.Visible;
                     // Select next item
                     GalleryNavigation.SetSelected(FolderIndex, false);
                 });
@@ -190,7 +191,6 @@ internal static class LoadPic
                 }
                 await GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
-                    GetPicGallery.Visibility = Visibility.Visible;
                     GalleryNavigation.SetSelected(FolderIndex, true);
                     GalleryNavigation.SelectedGalleryItem = FolderIndex;
                     GalleryNavigation.ScrollToGalleryCenter();
@@ -284,6 +284,14 @@ internal static class LoadPic
                 Unload(true);
             }
             return;
+        }
+
+        if (Settings.Default.IsBottomGalleryShown)
+        {
+            await GetPicGallery?.Dispatcher.InvokeAsync(() =>
+            {
+                GetPicGallery.Visibility = Visibility.Visible;
+            });
         }
 
         if (index >= 0)

@@ -3,6 +3,8 @@ using PicView.PicGallery;
 using PicView.Properties;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
+using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 
@@ -140,6 +142,13 @@ internal static class ArchiveExtraction
         {
             if (SetDirectory())
             {
+                if (Settings.Default.IsBottomGalleryShown)
+                {
+                    await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
+                    {
+                        UC.GetPicGallery.Visibility = Visibility.Visible;
+                    });
+                }
                 await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
 
                 GetFileHistory ??= new FileHistory();
