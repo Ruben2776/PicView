@@ -57,7 +57,7 @@ internal static class HideInterfaceLogic
         IsNavigationShown(false);
         IsShortcutsShown(false);
 
-        if (Settings.Default.IsBottomGalleryShown)
+        if (Settings.Default.IsBottomGalleryShown && ConfigureWindows.GetMainWindow.MainImage.Source is not null)
         {
             GalleryToggle.ShowBottomGallery();
         }
