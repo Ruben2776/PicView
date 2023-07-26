@@ -1,10 +1,11 @@
-﻿using PicView.ChangeImage;
+﻿using Microsoft.Win32;
+using PicView.ChangeImage;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using PicView.UILogic;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 
@@ -13,27 +14,27 @@ namespace PicView.FileHandling;
 internal static class ArchiveExtraction
 {
     /// <summary>
-    /// File path for the extracted folder
+    /// File archivePath for the extracted folder
     /// </summary>
     internal static string? TempFilePath { get; set; }
 
     /// <summary>
-    /// File path for the extracted zip file
+    /// File archivePath for the extracted zip file
     /// </summary>
     internal static string? TempZipFile { get; set; }
 
     /// <summary>
     /// Attempts to extract folder
     /// </summary>
-    /// <param name="path">The path to the archived file</param>
+    /// <param name="archivePath">The archivePath to the archived file</param>
     /// <returns></returns>
-    internal static bool Extract(string path)
+    internal static bool Extract(string archivePath)
     {
         string[] appNames = { "WinRAR.exe", "7z.exe" };
         string[] appPathNames = { "\\WinRAR\\WinRAR.exe", "\\7-Zip\\7z.exe" };
 
         var extractAppPath = GetExtractAppPath(appPathNames, appNames);
-        return extractAppPath != null && Extract(path, extractAppPath, extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
+        return extractAppPath != null && Extract(archivePath, extractAppPath, extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
     }
 
     private static string? GetExtractAppPath(string[] commonPaths, string[] appNames)
@@ -55,20 +56,36 @@ internal static class ArchiveExtraction
             return x64Path;
         }
 
-        foreach (var appName in appNames)
+        const string registryKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+        try
         {
-            var registryPath = FileFunctions.GetPathForExe(appName);
-            if (registryPath == null)
+            using var key = Registry.LocalMachine.OpenSubKey(registryKey);
+            foreach (var subKeyName in key.GetSubKeyNames())
             {
-                return null;
-            }
-            if (File.Exists(registryPath))
-            {
-                return registryPath;
+                using var subKey = key.OpenSubKey(subKeyName);
+                if (subKeyName.Equals("7-Zip") || subKeyName.Equals("WinRAR"))
+                {
+                    var installDir = subKey.GetValue("InstallLocation").ToString();
+
+                    return Path.Combine(installDir, "7z.exe");
+                }
+                if (subKeyName.Equals("WinRAR"))
+                {
+                    var installDir = subKey.GetValue("InstallLocation").ToString();
+
+                    return Path.Combine(installDir, "WinRAR.exe");
+                }
             }
         }
+        catch (Exception e)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(GetExtractAppPath)} exception, \n {e.Message}");
+#endif
+            return null;
+        }
 
-        return null;
+        return appNames.Select(FileFunctions.GetPathForExe).Where(registryPath => registryPath != null).FirstOrDefault(File.Exists);
     }
 
     private static string GetProgramFilePath(Environment.SpecialFolder specialFolder, IEnumerable<string> paths)
@@ -88,12 +105,12 @@ internal static class ArchiveExtraction
     /// <summary>
     /// Attempts to extract folder
     /// </summary>
-    /// <param name="path">The path to the archived file</param>
+    /// <param name="archivePath">The path to the archived file</param>
     /// <param name="exe">Full path of the executable</param>
     /// <param name="isWinrar">If WinRar or 7-Zip</param>
-    private static bool Extract(string path, string exe, bool isWinrar)
+    private static bool Extract(string archivePath, string exe, bool isWinrar)
     {
-        if (!CreateTempDirectory(path))
+        if (!CreateTempDirectory(archivePath))
         {
             return false;
         }
@@ -104,66 +121,78 @@ internal static class ArchiveExtraction
 
         BackupPath = ErrorHandling.CheckOutOfRange() == false ? Pics[FolderIndex] : null;
 
-        var arguments = isWinrar
-            ? $"x -o- \"{path}\" " // WinRAR
-            : $"x \"{path}\" -o"; // 7-Zip
-
-        var supportedFilesFilter = " *" + string.Join(" *", SupportedFiles.FileExtensions) + " ";
-        arguments += TempFilePath + supportedFilesFilter + " -r -aou";
-
-        var process = Process.Start(new ProcessStartInfo
+        try
         {
-            FileName = exe,
-            Arguments = arguments,
-            RedirectStandardOutput = true,
-            CreateNoWindow = false
-        });
+            var arguments = isWinrar
+                ? $"x -o- \"{archivePath}\" " // WinRAR
+                : $"x \"{archivePath}\" -o"; // 7-Zip
 
-        if (process == null) { return false; }
+            var supportedFilesFilter = " *" + string.Join(" *", SupportedFiles.FileExtensions) + " ";
+            arguments += TempFilePath + supportedFilesFilter + " -r -aou";
 
-        var previewed = false;
-
-        process.EnableRaisingEvents = true;
-        process.BeginOutputReadLine();
-        process.OutputDataReceived += (_, _) =>
-        {
-            // Fix it if files are in sub directory
-            while (!process.HasExited)
+            var process = Process.Start(new ProcessStartInfo
             {
-                if (previewed) return;
+                FileName = exe,
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                CreateNoWindow = false,
+                WorkingDirectory = Path.GetDirectoryName(exe)
+            });
 
-                if (!SetDirectory() || Pics.Count < 1) continue;
-                LoadPic.LoadingPreview(new FileInfo(Pics[0]));
-                previewed = true;
-            }
-        };
+            if (process == null) { return false; }
 
-        process.Exited += async (_, _) =>
-        {
-            if (SetDirectory())
+            var previewed = false;
+
+            process.EnableRaisingEvents = true;
+            process.BeginOutputReadLine();
+            process.OutputDataReceived += (_, _) =>
             {
-                if (Settings.Default.IsBottomGalleryShown)
+                // Fix it if files are in sub directory
+                while (!process.HasExited)
                 {
-                    await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
+                    if (previewed) return;
+
+                    if (!SetDirectory() || Pics.Count < 1) continue;
+                    LoadPic.LoadingPreview(new FileInfo(Pics[0]));
+                    previewed = true;
+                }
+            };
+
+            process.Exited += async (_, _) =>
+            {
+                if (SetDirectory())
+                {
+                    if (Settings.Default.IsBottomGalleryShown)
                     {
-                        UC.GetPicGallery.Visibility = Visibility.Visible;
-                    });
+                        await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
+                        {
+                            UC.GetPicGallery.Visibility = Visibility.Visible;
+                        });
+                    }
+                    await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+
+                    GetFileHistory ??= new FileHistory();
+                    GetFileHistory.Add(TempZipFile);
+
+                    if (Settings.Default.IsBottomGalleryShown)
+                    {
+                        await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+                    }
                 }
-                await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
-
-                GetFileHistory ??= new FileHistory();
-                GetFileHistory.Add(TempZipFile);
-
-                if (Settings.Default.IsBottomGalleryShown)
+                else
                 {
-                    await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+                    await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
                 }
-            }
-            else
-            {
-                await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
-            }
-        };
+            };
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(GetExtractAppPath)} exception, \n {e.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(e.Message);
+            return false;
+        }
 
         return true;
     }
@@ -182,7 +211,7 @@ internal static class ArchiveExtraction
         if (string.IsNullOrEmpty(TempFilePath))
         {
 #if DEBUG
-            Trace.WriteLine("SetDirectory empty zip path");
+            Trace.WriteLine("SetDirectory empty zip archivePath");
 #endif
             return false;
         }

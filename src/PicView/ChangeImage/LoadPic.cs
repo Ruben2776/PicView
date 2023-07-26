@@ -226,7 +226,7 @@ internal static class LoadPic
             var extraction = Extract(archive);
             if (!extraction)
             {
-                // insert error message here?
+                _ = ReloadAsync(true).ConfigureAwait(false);
             }
         }).ConfigureAwait(false);
     }
