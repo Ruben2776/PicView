@@ -199,7 +199,7 @@
             Background="{StaticResource MenuBg}"
             CanContentScroll="False"
             Focusable="True"
-            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Hidden">
 
             <StackPanel>

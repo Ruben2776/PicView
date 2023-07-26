@@ -10,7 +10,7 @@ namespace PicView.Animations;
 
 internal static class AnimationHelper
 {
-    private static readonly ColorAnimation ColorAnimation = new() { Duration = TimeSpan.FromSeconds(.35) };
+    internal static readonly ColorAnimation ColorAnimation = new() { Duration = TimeSpan.FromSeconds(.35) };
 
     #region Fade
 

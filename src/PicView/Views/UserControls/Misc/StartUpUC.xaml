@@ -43,7 +43,7 @@
                                                     StartLineCap="Round"
                                                     Thickness="32">
                                                     <Pen.Brush>
-                                                        <SolidColorBrush x:Name="folderBrush1" Color="{StaticResource IconColor}" />
+                                                        <SolidColorBrush x:Name="FolderIconBrush1" Color="{StaticResource IconColor}" />
                                                     </Pen.Brush>
                                                 </Pen>
                                             </GeometryDrawing.Pen>
@@ -57,7 +57,7 @@
                                                     StartLineCap="Round"
                                                     Thickness="32">
                                                     <Pen.Brush>
-                                                        <SolidColorBrush x:Name="folderBrush2" Color="{StaticResource IconColor}" />
+                                                        <SolidColorBrush x:Name="FolderIconBrush2" Color="{StaticResource IconColor}" />
                                                     </Pen.Brush>
                                                 </Pen>
                                             </GeometryDrawing.Pen>
@@ -69,7 +69,7 @@
                     </Image>
                     <Label Padding="8,5,15,5" Content="{StaticResource OpenFileDialog}">
                         <Label.Foreground>
-                            <SolidColorBrush x:Name="selectBrush" Color="{StaticResource IconColor}" />
+                            <SolidColorBrush x:Name="SelectFileBrush" Color="{StaticResource IconColor}" />
                         </Label.Foreground>
                     </Label>
                 </StackPanel>
@@ -90,7 +90,7 @@
                                                     StartLineCap="Flat"
                                                     Thickness="32">
                                                     <Pen.Brush>
-                                                        <SolidColorBrush x:Name="lastBrush1" Color="{StaticResource IconColor}" />
+                                                        <SolidColorBrush x:Name="OpenLastFileIconBrush1" Color="{StaticResource IconColor}" />
                                                     </Pen.Brush>
                                                 </Pen>
                                             </GeometryDrawing.Pen>
@@ -104,7 +104,7 @@
                                                     StartLineCap="Round"
                                                     Thickness="32">
                                                     <Pen.Brush>
-                                                        <SolidColorBrush x:Name="lastBrush2" Color="{StaticResource IconColor}" />
+                                                        <SolidColorBrush x:Name="OpenLastFileIconBrush2" Color="{StaticResource IconColor}" />
                                                     </Pen.Brush>
                                                 </Pen>
                                             </GeometryDrawing.Pen>
@@ -116,7 +116,7 @@
                     </Image>
                     <Label Padding="8,6,15,2" Content="{StaticResource OpenLastFile}">
                         <Label.Foreground>
-                            <SolidColorBrush x:Name="lastBrush" Color="{StaticResource IconColor}" />
+                            <SolidColorBrush x:Name="OpenLastFileBrush" Color="{StaticResource IconColor}" />
                         </Label.Foreground>
                     </Label>
                 </StackPanel>
@@ -129,12 +129,12 @@
                         Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
                         Stretch="Fill">
                         <Path.Fill>
-                            <SolidColorBrush x:Name="pasteBrush" Color="{StaticResource IconColor}" />
+                            <SolidColorBrush x:Name="PasteIconBrush" Color="{StaticResource IconColor}" />
                         </Path.Fill>
                     </Path>
                     <Label Padding="8,6,15,0" Content="{StaticResource FilePaste}">
                         <Label.Foreground>
-                            <SolidColorBrush x:Name="pasteTxt" Color="{StaticResource IconColor}" />
+                            <SolidColorBrush x:Name="PasteBrush" Color="{StaticResource IconColor}" />
                         </Label.Foreground>
                     </Label>
                 </StackPanel>

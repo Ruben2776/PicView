@@ -33,7 +33,7 @@
         </DrawingImage>
     </UserControl.Resources>
 
-    <Canvas Height="30" Background="{StaticResource AltInterfaceWBrush}">
+    <Canvas Height="30">
         <Image
             x:Name="Star"
             Canvas.Left="3"

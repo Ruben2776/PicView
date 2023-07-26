@@ -5,7 +5,9 @@ using PicView.Properties;
 using PicView.UILogic;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using PicView.Animations;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Misc;
@@ -17,56 +19,118 @@ public partial class StartUpUC
     {
         InitializeComponent();
 
-        SelectFile.MouseEnter += delegate
+        if (Settings.Default.DarkTheme)
         {
-            ButtonMouseOverAnim(folderBrush1);
-            ButtonMouseOverAnim(folderBrush2);
-            ButtonMouseOverAnim(selectBrush);
-        };
+            SelectFile.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(FolderIconBrush1);
+                ButtonMouseOverAnim(FolderIconBrush2);
+                ButtonMouseOverAnim(SelectFileBrush);
+            };
 
-        SelectFile.MouseLeave += delegate
+            SelectFile.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(FolderIconBrush1);
+                ButtonMouseLeaveAnim(FolderIconBrush2);
+                ButtonMouseLeaveAnim(SelectFileBrush);
+            };
+
+            OpenLastFileButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(OpenLastFileIconBrush1);
+                ButtonMouseOverAnim(OpenLastFileIconBrush2);
+                ButtonMouseOverAnim(OpenLastFileBrush);
+            };
+
+            OpenLastFileButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(OpenLastFileIconBrush1);
+                ButtonMouseLeaveAnim(OpenLastFileIconBrush2);
+                ButtonMouseLeaveAnim(OpenLastFileBrush);
+            };
+
+            PasteButton.MouseEnter += delegate
+            {
+                ButtonMouseOverAnim(PasteIconBrush);
+                ButtonMouseOverAnim(PasteBrush);
+            };
+
+            PasteButton.MouseLeave += delegate
+            {
+                ButtonMouseLeaveAnim(PasteIconBrush);
+                ButtonMouseLeaveAnim(PasteBrush);
+            };
+        }
+        else
         {
-            ButtonMouseLeaveAnim(folderBrush1);
-            ButtonMouseLeaveAnim(folderBrush2);
-            ButtonMouseLeaveAnim(selectBrush);
-        };
+            SelectFileBrush.Color = Colors.White;
+            OpenLastFileBrush.Color = Colors.White;
+            PasteBrush.Color = Colors.White;
+
+            FolderIconBrush1.Color = Colors.White;
+            FolderIconBrush2.Color = Colors.White;
+            OpenLastFileIconBrush1.Color = Colors.White;
+            OpenLastFileIconBrush2.Color = Colors.White;
+            PasteIconBrush.Color = Colors.White;
+
+            SelectFile.MouseEnter += delegate
+            {
+                AnimationHelper.ColorAnimation.From = Colors.White;
+                AnimationHelper.ColorAnimation.To = AnimationHelper.GetPreferredColor();
+                FolderIconBrush1.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                FolderIconBrush2.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                SelectFileBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+            };
+
+            SelectFile.MouseLeave += delegate
+            {
+                AnimationHelper.ColorAnimation.From = AnimationHelper.GetPreferredColor();
+                AnimationHelper.ColorAnimation.To = Colors.White;
+                FolderIconBrush1.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                FolderIconBrush2.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                SelectFileBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+            };
+
+            OpenLastFileButton.MouseEnter += delegate
+            {
+                AnimationHelper.ColorAnimation.From = Colors.White;
+                AnimationHelper.ColorAnimation.To = AnimationHelper.GetPreferredColor();
+                OpenLastFileIconBrush1.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                OpenLastFileIconBrush2.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                OpenLastFileBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+            };
+
+            OpenLastFileButton.MouseLeave += delegate
+            {
+                AnimationHelper.ColorAnimation.From = AnimationHelper.GetPreferredColor();
+                AnimationHelper.ColorAnimation.To = Colors.White;
+                OpenLastFileIconBrush1.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                OpenLastFileIconBrush2.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                OpenLastFileBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+            };
+
+            PasteButton.MouseEnter += delegate
+            {
+                AnimationHelper.ColorAnimation.From = Colors.White;
+                AnimationHelper.ColorAnimation.To = AnimationHelper.GetPreferredColor();
+                PasteIconBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                PasteBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+            };
+
+            PasteButton.MouseLeave += delegate
+            {
+                AnimationHelper.ColorAnimation.From = AnimationHelper.GetPreferredColor();
+                AnimationHelper.ColorAnimation.To = Colors.White;
+                PasteIconBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+                PasteBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationHelper.ColorAnimation);
+            };
+        }
 
         SelectFile.Click += async (_, _) => await OpenSave.OpenAsync().ConfigureAwait(false);
 
-        OpenLastFileButton.MouseEnter += delegate
-        {
-            ButtonMouseOverAnim(lastBrush1);
-            ButtonMouseOverAnim(lastBrush2);
-            ButtonMouseOverAnim(lastBrush);
-        };
-
-        OpenLastFileButton.MouseLeave += delegate
-        {
-            ButtonMouseLeaveAnim(lastBrush1);
-            ButtonMouseLeaveAnim(lastBrush2);
-            ButtonMouseLeaveAnim(lastBrush);
-        };
-
         OpenLastFileButton.Click += async (_, _) => await Navigation.GetFileHistory.OpenLastFileAsync().ConfigureAwait(false);
 
-        PasteButton.MouseEnter += delegate
-        {
-            ButtonMouseOverAnim(pasteBrush);
-            ButtonMouseOverAnim(pasteTxt);
-        };
-
-        PasteButton.MouseLeave += delegate
-        {
-            ButtonMouseLeaveAnim(pasteBrush);
-            ButtonMouseLeaveAnim(pasteTxt);
-        };
-
         PasteButton.Click += async (_, _) => await CopyPaste.PasteAsync().ConfigureAwait(false);
-
-        if (Settings.Default.DarkTheme == false)
-        {
-            Background = new SolidColorBrush(Color.FromArgb(230, 255, 255, 255));
-        }
     }
 
     public void ToggleMenu()

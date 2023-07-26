@@ -22,7 +22,7 @@
         <ResourceDictionary Source="\Themes\Styles\ComboBox.xaml" />
     </Window.Resources>
 
-    <DockPanel x:Name="TopContainer">
+    <DockPanel>
         <DockPanel
             x:Name="TitleBar"
             Height="30"
@@ -88,7 +88,7 @@
                                     <Border
                                         x:Name="Border"
                                         Grid.Row="1"
-                                        Background="{StaticResource NoisyBg}"
+                                        Background="{StaticResource MenuBg}"
                                         BorderBrush="{StaticResource BorderBrush}"
                                         BorderThickness="0">
                                         <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />

@@ -36,19 +36,13 @@ public partial class SettingsWindow
         }
 
         InitializeComponent();
-        if (Settings.Default.DarkTheme is false)
-        {
-            TopContainer.Background = Brushes.White;
-        }
 
         ContentRendered += delegate
         {
             WindowBlur.EnableBlur(this);
-            //ChangeColor();
             Deactivated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
             Activated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
             var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
-
             AddGenericEvents(colorAnimation);
 
             // AvoidZoomRadio
@@ -309,9 +303,6 @@ public partial class SettingsWindow
     private void AddGenericEvents(ColorAnimation colorAnimation)
     {
         KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(null, e, this);
-
-        MouseLeftButtonDown += (_, e) =>
-            { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
 
         // CloseButton
         CloseButton.TheButton.Click += delegate { Hide(); };

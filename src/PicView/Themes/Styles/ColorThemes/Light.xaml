@@ -84,7 +84,13 @@
         ViewportUnits="Absolute" />
 
     <!--  Menu background  -->
-    <SolidColorBrush x:Key="MenuBg" Color="#fff" />
+    <ImageBrush
+        x:Key="MenuBg"
+        ImageSource="\Themes\Resources\img\noise-texture-100x100 (3).png"
+        Opacity=".8"
+        TileMode="FlipXY"
+        Viewport="0,0,100,100"
+        ViewportUnits="Absolute" />
 
     <!--  Background Color  -->
     <Color
