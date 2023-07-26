@@ -53,6 +53,7 @@ internal static class LoadLanguage
                 break;
 
             case "ko":
+            case "ko-KR":
                 source = new Uri(@"/PicView;component/Translations/ko.xaml", UriKind.Relative);
                 break;
 
@@ -66,22 +67,28 @@ internal static class LoadLanguage
                 break;
 
             case "pl":
+            case "pl-PL":
                 source = new Uri(@"/PicView;component/Translations/pl.xaml", UriKind.Relative);
                 break;
 
             case "fr":
+            case "fr-FR":
                 source = new Uri(@"/PicView;component/Translations/fr.xaml", UriKind.Relative);
                 break;
 
             case "it":
+            case "it-IT":
+            case "it-CH":
                 source = new Uri(@"/PicView;component/Translations/it.xaml", UriKind.Relative);
                 break;
 
             case "ru":
+            case "ru-RU":
                 source = new Uri(@"/PicView;component/Translations/ru.xaml", UriKind.Relative);
                 break;
 
             case "ro":
+            case "ro-RO":
                 source = new Uri(@"/PicView;component/Translations/ro.xaml", UriKind.Relative);
                 break;
 
