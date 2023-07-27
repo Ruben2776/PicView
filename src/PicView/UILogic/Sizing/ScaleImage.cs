@@ -76,9 +76,8 @@ internal static class ScaleImage
         double maxWidth, maxHeight;
         var margin = 0d;
         var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
-        var isFullScreenSize = Settings.Default.Fullscreen;
 
-        var galleryHeight = 0.0;
+        var galleryHeight = 0d;
         if (UC.GetPicGallery is not null)
         {
             if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
@@ -86,7 +85,7 @@ internal static class ScaleImage
                 galleryHeight = PicGalleryItemSize + 22;
             }
         }
-        var borderSpaceHeight = isFullScreenSize ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
+        var borderSpaceHeight = Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
         var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
 
         var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
@@ -125,7 +124,7 @@ internal static class ScaleImage
                 {
                     SetSize(Settings.Default.BottomGalleryItemSize);
                 }
-                margin = UC.GetPicGallery.IsVisible ? PicGalleryItemSize + 22 : 0; // Scrollbar
+                margin = UC.GetPicGallery.IsVisible ? galleryHeight : 0;
             }
         }
 
@@ -171,29 +170,24 @@ internal static class ScaleImage
 
             GetMainWindow.ParentContainer.Width = double.NaN;
             GetMainWindow.ParentContainer.Height = double.NaN;
-
-            if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery is not null)
+        }
+        if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery is not null)
+        {
+            if (Settings.Default.AutoFitWindow)
             {
-                if (Settings.Default.AutoFitWindow)
-                {
-                    UC.GetPicGallery.Width = XWidth;
-                }
-                else if (!double.IsNaN(GetMainWindow.ParentContainer.Width))
-                {
-                    UC.GetPicGallery.Width = GetMainWindow.ParentContainer.Width;
-                }
+                UC.GetPicGallery.Width = Settings.Default.ScrollEnabled ? GetMainWindow.ParentContainer.Width : Math.Max(GetMainWindow.MinWidth, XWidth);
             }
         }
 
         // Update margin when from fullscreen gallery and when not
-        GetMainWindow.MainImageBorder.Margin = new Thickness(0, 0, 0, margin);
+        GetMainWindow.Scroller.Margin = new Thickness(0, 0, 0, margin);
 
         if (ZoomLogic.IsZoomed)
         {
             ZoomLogic.ResetZoom(false);
         }
 
-        if (isFullScreenSize) return;
+        if (Settings.Default.Fullscreen) return;
 
         // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
         var interfaceSize =
