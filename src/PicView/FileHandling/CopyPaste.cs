@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -55,6 +56,16 @@ internal static class CopyPaste
 
     internal static void CopyBitmap(int? id = null)
     {
+        void Set(BitmapSource source)
+        {
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
+            {
+                var bmp = ImageFunctions.BitmapSourceToBitmap(source);
+                ClipboardHelper.SetClipboardImage(bmp, bmp, null);
+                ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+            }));
+        }
+
         if (id is null)
         {
             BitmapSource? pic = null;
@@ -75,7 +86,7 @@ internal static class CopyPaste
                     return;
                 }
             }
-            Clipboard.SetImage(pic);
+            Set(pic);
             ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
         }
         else
@@ -94,11 +105,15 @@ internal static class CopyPaste
                     {
                         bitmap = preloadValue.BitmapSource ?? await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(Pics[id.Value]));
                     }
-                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    try
                     {
-                        Clipboard.SetImage(bitmap);
-                        ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
-                    });
+                        Set(bitmap);
+                    }
+                    catch (Exception e)
+                    {
+                        ShowTooltipMessage(e.Message);
+                    }
+                    ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
                 }
                 catch (Exception e)
                 {

@@ -5,6 +5,8 @@ using PicView.FileHandling;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -12,6 +14,10 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Brush = System.Windows.Media.Brush;
+using FontFamily = System.Windows.Media.FontFamily;
+using Point = System.Windows.Point;
+using Size = System.Windows.Size;
 using TextAlignment = System.Windows.TextAlignment;
 
 namespace PicView.ImageHandling;
@@ -210,5 +216,24 @@ internal static class ImageFunctions
                                              + "Themes/Resources/img/icon.png", UriKind.Absolute));
         bitmap.Freeze();
         return bitmap;
+    }
+
+    internal static Bitmap BitmapSourceToBitmap(BitmapSource source)
+    {
+        var bmp = new Bitmap(
+            source.PixelWidth,
+            source.PixelHeight,
+            System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+        var data = bmp.LockBits(
+            new Rectangle(System.Drawing.Point.Empty, bmp.Size),
+            ImageLockMode.WriteOnly,
+            System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+        source.CopyPixels(
+            Int32Rect.Empty,
+            data.Scan0,
+            data.Height * data.Stride,
+            data.Stride);
+        bmp.UnlockBits(data);
+        return bmp;
     }
 }
