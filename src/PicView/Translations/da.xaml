@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">Gemning af fil mislykkedes</system:String>
     <system:String x:Key="UnexpectedError">Der skete en ukendt fejl</system:String>
     <system:String x:Key="NoImages">Ingen billeder</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">Der skete en fejl ved flytning af fil</system:String>
     <system:String x:Key="UnableToRender">Kan ikke gengive billedet</system:String>
 
     <!--  Drag and drop  -->

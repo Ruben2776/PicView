@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">Datei speichern gescheitert</system:String>
     <system:String x:Key="UnexpectedError">Ein unbekannter Fehler ist aufgetreten</system:String>
     <system:String x:Key="NoImages">Keine Bilder</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">Es ist ein Fehler beim bewegen der Dateien aufgetreten</system:String>
     <system:String x:Key="UnableToRender">Kann Bild nicht rendern</system:String>
 
     <!--  Drag and drop  -->

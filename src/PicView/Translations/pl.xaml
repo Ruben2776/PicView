@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">Zapis pliku nie powiódł się</system:String>
     <system:String x:Key="UnexpectedError">Wystąpił nieznany błąd</system:String>
     <system:String x:Key="NoImages">Brak obrazów</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">Wystąpił błąd podczas przenoszenia pliku</system:String>
     <system:String x:Key="UnableToRender">Nie można wyświetlić obrazu</system:String>
 
     <!--  Drag and drop  -->

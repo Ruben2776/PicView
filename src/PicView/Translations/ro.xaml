@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">Salvarea fișierului a eșuat</system:String>
     <system:String x:Key="UnexpectedError">A apărut o eroare necunoscută</system:String>
     <system:String x:Key="NoImages">Fără imagini</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">A apărut o eroare la mutarea fișierului</system:String>
     <system:String x:Key="UnableToRender">Nu se poate reda imaginea</system:String>
 
     <!--  Drag and drop  -->

@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">La sauvegarde du fichier a échoué</system:String>
     <system:String x:Key="UnexpectedError">Une erreur inconnue est survenue</system:String>
     <system:String x:Key="NoImages">Aucune image</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">Une erreur est survenue lors du déplacement du fichier</system:String>
     <system:String x:Key="UnableToRender">Impossible de rendre l'image</system:String>
 
     <!--  Drag and drop  -->

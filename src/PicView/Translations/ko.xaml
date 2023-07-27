@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">파일 저장 실패</system:String>
     <system:String x:Key="UnexpectedError">알 수 없는 오류 발생</system:String>
     <system:String x:Key="NoImages">이미지 없음</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">파일을 이동하는 중 오류 발생</system:String>
     <system:String x:Key="UnableToRender">이미지를 렌더링할 수 없습니다</system:String>
 
     <!--  Drag and drop  -->

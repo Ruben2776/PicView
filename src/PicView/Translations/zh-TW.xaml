@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">檔案儲存失敗</system:String>
     <system:String x:Key="UnexpectedError">發生未知錯誤</system:String>
     <system:String x:Key="NoImages">無影像</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">移動檔案時發生錯誤</system:String>
     <system:String x:Key="UnableToRender">无法渲染图像</system:String>
 
     <!--  Drag and drop  -->

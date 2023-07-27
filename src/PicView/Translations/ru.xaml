@@ -294,7 +294,6 @@
     <system:String x:Key="SavingFileFailed">Ошибка сохранения файла</system:String>
     <system:String x:Key="UnexpectedError">Произошла неизвестная ошибка</system:String>
     <system:String x:Key="NoImages">Нет изображений</system:String>
-    <system:String x:Key="AnErrorOccuredMovingFile">Произошла ошибка при перемещении файла</system:String>
     <system:String x:Key="UnableToRender">Невозможно отобразить изображение</system:String>
 
     <!--  Drag and drop  -->

@@ -67,15 +67,14 @@ internal static class DeleteFiles
             var toRecycleOption = recycle ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
             FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, toRecycleOption);
         }
-#if DEBUG
         catch (Exception e)
         {
+#if DEBUG
             Trace.WriteLine("Delete exception \n" + e.Message);
+#endif
+            ShowTooltipMessage(e.Message);
             return false;
         }
-#else
-            catch (Exception) {return false; }
-#endif
         return true;
     }
 
@@ -89,7 +88,6 @@ internal static class DeleteFiles
         var isCurrentIndex = index == FolderIndex;
         if (!TryDeleteFile(Pics[index], recycle))
         {
-            ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredWhenDeleting"] + Environment.NewLine + Pics[FolderIndex]);
             return;
         }
 
