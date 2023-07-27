@@ -318,18 +318,20 @@
                     <StackPanel x:Name="GeneratedThumbnailsContainer" />
                 </ScrollViewer>
 
-                <TextBox
-                    x:Name="LogTextBox"
-                    Height="150"
-                    Margin="10,12,10,0"
-                    AcceptsReturn="True"
-                    BorderThickness="1.5"
-                    Effect="{StaticResource MenuShadowButtonBorder}"
-                    MaxLines="9999"
-                    Text="{Binding model.LogText, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    TextWrapping="Wrap"
-                    ToolTip="{x:Null}"
-                    VerticalScrollBarVisibility="Visible" />
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <TextBox
+                        x:Name="LogTextBox"
+                        Height="150"
+                        Margin="10,12,10,0"
+                        AcceptsReturn="True"
+                        BorderThickness="1.5"
+                        Effect="{StaticResource MenuShadowButtonBorder}"
+                        MaxLines="9999"
+                        Text="{Binding model.LogText, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                        TextWrapping="Wrap"
+                        ToolTip="{x:Null}"
+                        VerticalScrollBarVisibility="Visible" />
+                </ScrollViewer>
 
                 <Border
                     Margin="10,11,10,0"
