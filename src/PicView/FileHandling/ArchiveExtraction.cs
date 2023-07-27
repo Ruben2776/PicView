@@ -82,7 +82,7 @@ internal static class ArchiveExtraction
 #if DEBUG
             Trace.WriteLine($"{nameof(GetExtractAppPath)} exception, \n {e.Message}");
 #endif
-            return null;
+            return appNames.Select(FileFunctions.GetPathForExe).Where(registryPath => registryPath != null).FirstOrDefault(File.Exists);
         }
 
         return appNames.Select(FileFunctions.GetPathForExe).Where(registryPath => registryPath != null).FirstOrDefault(File.Exists);
