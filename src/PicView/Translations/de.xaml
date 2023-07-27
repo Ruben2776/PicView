@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Datei kopieren</system:String>
+    <system:String x:Key="DuplicateFile">Datei duplizieren</system:String>
     <system:String x:Key="FileCopy">In der Zwischenablage gespeichert</system:String>
     <system:String x:Key="FileCopyPath">Datei-Pfad kopieren</system:String>
     <system:String x:Key="FileCopyPathMessage">Datei-Pfad in Zwischenablage gespeichert</system:String>

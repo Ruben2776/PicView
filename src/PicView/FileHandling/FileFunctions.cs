@@ -95,35 +95,6 @@ internal static partial class FileFunctions
         return true;
     }
 
-    public static void DuplicateFilename(string filePath)
-    {
-        try
-        {
-            var directory = Path.GetDirectoryName(filePath);
-            var fileName = Path.GetFileNameWithoutExtension(filePath);
-            var extension = Path.GetExtension(filePath);
-
-            var count = 1;
-            var newFilePath = filePath;
-
-            while (File.Exists(newFilePath))
-            {
-                var newFileName = $"{fileName}({count})";
-                newFilePath = Path.Combine(directory, $"{newFileName}{extension}");
-                count++;
-            }
-
-            File.Copy(filePath, newFilePath);
-        }
-        catch (Exception exception)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(DuplicateFilename)} {filePath} exception, \n{exception.Message}");
-#endif
-            Tooltip.ShowTooltipMessage(exception.Message);
-        }
-    }
-
     /// <summary>
     /// Returns the human-readable file size for an arbitrary, 64-bit file size
     /// The default format is "0.## XB", e.g. "4.2 KB" or "1.43 GB"

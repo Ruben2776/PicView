@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">复制文件</system:String>
+    <system:String x:Key="DuplicateFile">复制文件</system:String>
     <system:String x:Key="FileCopy">文件已复制</system:String>
     <system:String x:Key="FileCopyPath">复制文件路径</system:String>
     <system:String x:Key="FileCopyPathMessage">文件路径已复制</system:String>

@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Copia il file</system:String>
+    <system:String x:Key="DuplicateFile">Duplica file</system:String>
     <system:String x:Key="FileCopy">File aggiunto agli appunti</system:String>
     <system:String x:Key="FileCopyPath">Copia il percorso del file</system:String>
     <system:String x:Key="FileCopyPathMessage">Percorso del file aggiunto agli appunti</system:String>

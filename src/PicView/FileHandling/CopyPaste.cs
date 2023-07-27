@@ -3,17 +3,71 @@ using PicView.ImageHandling;
 using PicView.ProcessHandling;
 using PicView.UILogic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
+using static PicView.PicGallery.GalleryLoad;
 
 namespace PicView.FileHandling;
 
 internal static class CopyPaste
 {
+    public static void DuplicateFile()
+    {
+        if (ErrorHandling.CheckOutOfRange())
+        {
+            return;
+        }
+        DuplicateFile(Pics[FolderIndex]);
+    }
+
+    public static void DuplicateFile(string filePath)
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var directory = Path.GetDirectoryName(filePath);
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+                var extension = Path.GetExtension(filePath);
+
+                var count = 1;
+                var newFilePath = filePath;
+
+                while (File.Exists(newFilePath))
+                {
+                    var newFileName = $"{fileName}({count})";
+                    newFilePath = Path.Combine(directory, $"{newFileName}{extension}");
+                    count++;
+                }
+
+                File.Copy(filePath, newFilePath);
+                var fileInfo = PreLoader.Get(FolderIndex).FileInfo ?? new FileInfo(newFilePath);
+
+                if (UC.GetPicGallery is not null)
+                {
+                    await GalleryFunctions.SortGalleryAsync(fileInfo).ConfigureAwait(false);
+                }
+                else
+                {
+                    Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+                }
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(DuplicateFile)} {filePath} exception, \n{exception.Message}");
+#endif
+                ShowTooltipMessage(exception.Message);
+            }
+        }).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// Copy image location to clipboard
     /// </summary>

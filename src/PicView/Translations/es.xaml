@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Copiar archivo</system:String>
+    <system:String x:Key="DuplicateFile">Duplicar archivo</system:String>
     <system:String x:Key="FileCopy">Archivo agregado al portapapeles</system:String>
     <system:String x:Key="FileCopyPath">Copiar carpeta del archivo</system:String>
     <system:String x:Key="FileCopyPathMessage">Carpeta del archivo agregada al portapapeles</system:String>

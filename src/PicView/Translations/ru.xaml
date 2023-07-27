@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Копировать файл</system:String>
+    <system:String x:Key="DuplicateFile">Создать копию файла</system:String>
     <system:String x:Key="FileCopy">Файл добавлен в буфер обмена</system:String>
     <system:String x:Key="FileCopyPath">Копировать путь к файлу</system:String>
     <system:String x:Key="FileCopyPathMessage">Путь к файлу добавлен в буфер обмена</system:String>

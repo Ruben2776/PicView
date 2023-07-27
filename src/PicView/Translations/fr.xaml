@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Copier le fichier</system:String>
+    <system:String x:Key="DuplicateFile">Dupliquer le fichier</system:String>
     <system:String x:Key="FileCopy">Fichier copié dans le presse-papiers</system:String>
     <system:String x:Key="FileCopyPath">Copier le chemin du fichier</system:String>
     <system:String x:Key="FileCopyPathMessage">Chemin du fichier ajouté au presse-papiers</system:String>

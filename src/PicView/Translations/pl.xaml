@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Kopiuj plik</system:String>
+    <system:String x:Key="DuplicateFile">Duplikuj plik</system:String>
     <system:String x:Key="FileCopy">Dodano plik do schowka</system:String>
     <system:String x:Key="FileCopyPath">Kopiuj ścieżkę do pliku</system:String>
     <system:String x:Key="FileCopyPathMessage">Ścieżka do pliku dodana do schowka</system:String>

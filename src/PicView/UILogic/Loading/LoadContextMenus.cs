@@ -287,33 +287,39 @@ internal static class LoadContextMenus
         CopyBase64Cm.Click += async delegate { MainContextMenu.IsOpen = false; await Base64.SendToClipboard().ConfigureAwait(false); };
 
         ///////////////////////////
+        ///   Duplicate File         \\\\
+        ///////////////////////////
+        var Dupcm = (MenuItem)MainContextMenu.Items[14];
+        Dupcm.Click += (_, _) => { MainContextMenu.IsOpen = false; CopyPaste.DuplicateFile(); };
+
+        ///////////////////////////
         ///   Cut File         \\\\
         ///////////////////////////
-        var Cutcm = (MenuItem)MainContextMenu.Items[14];
+        var Cutcm = (MenuItem)MainContextMenu.Items[15];
         Cutcm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + X";
         Cutcm.Click += (_, _) => { MainContextMenu.IsOpen = false; CopyPaste.Cut(); };
 
         ///////////////////////////
         ///   Paste File       \\\\
         ///////////////////////////
-        var pastecm = (MenuItem)MainContextMenu.Items[15];
+        var pastecm = (MenuItem)MainContextMenu.Items[16];
         pastecm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + V";
         pastecm.Click += async delegate { MainContextMenu.IsOpen = false; await CopyPaste.PasteAsync().ConfigureAwait(false); };
 
-        // 16 = seperator
+        // 17 = seperator
 
         ///////////////////////////
         ///   Delete File       \\\\
         ///////////////////////////
-        var Deletecm = (MenuItem)MainContextMenu.Items[17];
+        var Deletecm = (MenuItem)MainContextMenu.Items[18];
         Deletecm.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), FolderIndex).ConfigureAwait(false);
 
-        // 18 = seperator
+        // 19 = seperator
 
         ///////////////////////////
         ///   Close       \\\\
         ///////////////////////////
-        var CloseCm = (MenuItem)MainContextMenu.Items[19];
+        var CloseCm = (MenuItem)MainContextMenu.Items[20];
         CloseCm.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
 
         // Add Window contextmenu

@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">파일 복사</system:String>
+    <system:String x:Key="DuplicateFile">파일 복제</system:String>
     <system:String x:Key="FileCopy">클립보드에 파일 추가</system:String>
     <system:String x:Key="FileCopyPath">파일 경로 복사</system:String>
     <system:String x:Key="FileCopyPathMessage">클립보드에 파일 경로 추가</system:String>

@@ -44,7 +44,7 @@ internal static class GalleryFunctions
         }
     }
 
-    internal static async Task SortGallery(FileInfo? fileInfo = null)
+    internal static async Task SortGalleryAsync(FileInfo? fileInfo = null)
     {
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
         fileInfo ??= new FileInfo(Navigation.Pics[0]);

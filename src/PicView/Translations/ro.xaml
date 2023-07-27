@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Copiere fișier</system:String>
+    <system:String x:Key="DuplicateFile">Duplică fișierul</system:String>
     <system:String x:Key="FileCopy">Fișier adăugat în memoria temporară</system:String>
     <system:String x:Key="FileCopyPath">Copiere cale fișier</system:String>
     <system:String x:Key="FileCopyPathMessage">Calea fișierului a fost adăugată în memoria temporară</system:String>

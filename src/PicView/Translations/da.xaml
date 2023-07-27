@@ -227,6 +227,7 @@
 
     <!--  Copy file  -->
     <system:String x:Key="CopyFile">Kopier fil</system:String>
+    <system:String x:Key="DuplicateFile">Dupliker fil</system:String>
     <system:String x:Key="FileCopy">Fil tilføjet til udklipsholderen</system:String>
     <system:String x:Key="FileCopyPath">Kopier fil sti</system:String>
     <system:String x:Key="FileCopyPathMessage">Fil stien tilføjet til udklipsholderen</system:String>

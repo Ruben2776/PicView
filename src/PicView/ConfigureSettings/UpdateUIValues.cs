@@ -49,7 +49,7 @@ internal static class UpdateUIValues
         {
             try
             {
-                await GalleryFunctions.SortGallery(new FileInfo(Navigation.InitialPath ?? ErrorHandling.GetReloadPath() ?? throw new InvalidOperationException())).ConfigureAwait(false);
+                await GalleryFunctions.SortGalleryAsync(new FileInfo(Navigation.InitialPath ?? ErrorHandling.GetReloadPath() ?? throw new InvalidOperationException())).ConfigureAwait(false);
             }
             catch (Exception e)
             {
