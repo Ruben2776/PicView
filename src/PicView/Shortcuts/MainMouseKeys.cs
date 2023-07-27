@@ -267,6 +267,10 @@ internal static class MainMouseKeys
                     {
                         await GoToNextImage(next).ConfigureAwait(false);
                     }
+                    else
+                    {
+                        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(e.Delta > 0));
+                    }
                 }
                 else
                 {
@@ -275,7 +279,21 @@ internal static class MainMouseKeys
             }
             else
             {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
+                if (Settings.Default.ScrollEnabled)
+                {
+                    if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift || GetMainWindow.Scroller.ScrollableHeight is 0)
+                    {
+                        await GoToNextImage(next).ConfigureAwait(false); 
+                    }
+                    else
+                    {
+                        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(e.Delta > 0));
+                    }
+                }
+                else
+                {
+                    await GoToNextImage(next).ConfigureAwait(false);
+                }
             }
         }
     }
