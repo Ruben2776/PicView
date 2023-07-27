@@ -209,7 +209,7 @@ internal static class LoadPic
     /// <param name="archive"></param>
     internal static async Task LoadPicFromArchiveAsync(string? archive)
     {
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             ToggleStartUpUC(true);
             SetLoadingString();
