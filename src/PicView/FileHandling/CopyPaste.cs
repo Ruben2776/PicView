@@ -1,5 +1,6 @@
 ﻿using PicView.ChangeImage;
 using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.UILogic;
 using System.Collections.Specialized;
@@ -8,10 +9,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
-using static PicView.PicGallery.GalleryLoad;
 
 namespace PicView.FileHandling;
 
@@ -32,22 +31,17 @@ internal static class CopyPaste
         {
             try
             {
-                var directory = Path.GetDirectoryName(filePath);
-                var fileName = Path.GetFileNameWithoutExtension(filePath);
-                var extension = Path.GetExtension(filePath);
+                int i = 1;
+                var filename = filePath;
+                var dir = Path.GetDirectoryName(filename);
+                var file = Path.GetFileNameWithoutExtension(filename) + "{0}";
+                var extension = Path.GetExtension(filename);
 
-                var count = 1;
-                var newFilePath = filePath;
+                while (File.Exists(filename))
+                    filename = Path.Combine(dir, string.Format(file, "(" + i++ + ")") + extension);
 
-                while (File.Exists(newFilePath))
-                {
-                    var newFileName = $"{fileName}({count})";
-                    newFilePath = Path.Combine(directory, $"{newFileName}{extension}");
-                    count++;
-                }
-
-                File.Copy(filePath, newFilePath);
-                var fileInfo = PreLoader.Get(FolderIndex).FileInfo ?? new FileInfo(newFilePath);
+                File.Copy(filePath, filename);
+                var fileInfo = PreLoader.Get(FolderIndex).FileInfo ?? new FileInfo(filePath);
 
                 if (UC.GetPicGallery is not null)
                 {
