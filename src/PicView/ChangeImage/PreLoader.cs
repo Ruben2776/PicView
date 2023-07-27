@@ -152,12 +152,6 @@ internal static class PreLoader
     /// <param name="key"></param>
     internal static void Remove(int key)
     {
-        if (key >= Pics?.Count || key < 0)
-            return;
-
-        if (!PreLoadList.ContainsKey(key))
-            return;
-
         try
         {
             var thread = Thread.CurrentThread;
@@ -267,16 +261,7 @@ internal static class PreLoader
 
             while (PreLoadList.Count > MaxCount)
             {
-                try
-                {
-                    Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{e.Message}");
-#endif
-                }
+                Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
             }
         }, source.Token).ConfigureAwait(false);
     }

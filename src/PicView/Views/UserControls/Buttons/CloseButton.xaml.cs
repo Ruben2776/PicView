@@ -21,7 +21,7 @@ public partial class CloseButton
                 AnimationHelper.LightThemeMouseEvent(this, IconBrush);
             }
 
-            ToolTip = Application.Current.Resources["Close"];
+            ToolTip = Application.Current.TryFindResource("Close");
         };
     }
 }

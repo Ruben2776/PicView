@@ -64,6 +64,7 @@ internal static class GalleryLoad
 
         await Task.Run(async () =>
         {
+            var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
             for (int i = 0; i < iterations; i++)
             {
                 try
@@ -97,12 +98,14 @@ internal static class GalleryLoad
                 GalleryNavigation.ScrollToGalleryCenter();
                 startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
                 startPosition = startPosition < 0 ? 0 : startPosition;
-            }, DispatcherPriority.Render, source.Token);
+            }, priority, source.Token);
 
             _ = Task.Run(async () =>
             {
-                //var thread = Thread.CurrentThread;
-                //thread.Priority = ThreadPriority.BelowNormal;
+                if (iterations > 3000)
+                {
+                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+                }
                 for (var x = startPosition; x < iterations; x++)
                 {
                     updates++;
@@ -137,8 +140,10 @@ internal static class GalleryLoad
 
             _ = Task.Run(async () =>
             {
-                //var thread = Thread.CurrentThread;
-                //thread.Priority = ThreadPriority.BelowNormal;
+                if (iterations > 3000)
+                {
+                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+                }
                 for (var x = startPosition - 1; x >= 0; x--)
                 {
                     updates++;
