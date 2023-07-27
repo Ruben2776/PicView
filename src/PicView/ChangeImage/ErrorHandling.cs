@@ -142,15 +142,8 @@ internal static class ErrorHandling
                 if (Settings.Default.IncludeSubDirectories)
                 {
                     var fileInfo = new FileInfo(Path.GetDirectoryName(path));
-                    var preloadValue = PreLoader.Get(FolderIndex);
                     var index = FolderIndex;
                     await ResetValues(fileInfo).ConfigureAwait(false);
-                    if (preloadValue is null)
-                    {
-                        var bitmap = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                        preloadValue = new PreLoader.PreLoadValue(bitmap, fileInfo);
-                    }
-                    await PreLoader.AddAsync(index, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
                     await LoadPic.LoadPicAtIndexAsync(index).ConfigureAwait(false);
                 }
                 else
