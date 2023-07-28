@@ -318,7 +318,7 @@
                     <StackPanel x:Name="GeneratedThumbnailsContainer" />
                 </ScrollViewer>
 
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <TextBox
                         x:Name="LogTextBox"
                         Height="150"
