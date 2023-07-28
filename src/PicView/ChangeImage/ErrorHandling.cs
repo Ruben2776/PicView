@@ -220,6 +220,11 @@ internal static class ErrorHandling
             }
         });
 
+        if (ConfigureWindows.GetImageInfoWindow is not null)
+        {
+            await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
+        }
+
         if (containerCheck)
         {
             GalleryFunctions.Clear();
