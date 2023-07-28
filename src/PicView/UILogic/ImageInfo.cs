@@ -3,7 +3,6 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.Views.UserControls.Misc;
 using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -12,24 +11,26 @@ namespace PicView.UILogic;
 
 internal static class ImageInfo
 {
-    private static object? rating;
+    private static object? _rating;
 
-    internal static async Task RenameTask(KeyEventArgs e, TextBox textBox, string file)
+    internal static async Task RenameTask(KeyEventArgs e, TextBox textBox, string newFileName)
     {
         if (e.Key != Key.Enter) { return; }
 
         e.Handled = true;
-        var rename = await FileFunctions.RenameFileWithErrorChecking(file).ConfigureAwait(false);
+        var rename = await FileFunctions.RenameFileWithErrorChecking(newFileName).ConfigureAwait(false);
         if (rename.HasValue == false)
         {
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
             return;
         }
         if (rename.Value)
         {
             await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
             {
+                ConfigureWindows.GetImageInfoWindow.FilenameBox.Text = Path.GetFileNameWithoutExtension(newFileName);
                 textBox.CaretIndex = textBox.Text.Length;
+                ConfigureWindows.GetImageInfoWindow.FolderBox.Text = Path.GetDirectoryName(newFileName);
+                ConfigureWindows.GetImageInfoWindow.FullPathBox.Text = newFileName;
             });
         }
     }
@@ -103,7 +104,7 @@ internal static class ImageInfo
 
             ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = data[13];
 
-            rating = data[14];
+            _rating = data[14];
 
             if (data.Length > 15)
             {
@@ -412,7 +413,7 @@ internal static class ImageInfo
 
                                                         ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = string.Empty;
 
-        rating = 0;
+        _rating = 0;
 
         UpdateStars(0);
 
@@ -421,28 +422,28 @@ internal static class ImageInfo
 
     internal static void UpdateStars()
     {
-        if (rating is null)
+        if (_rating is null)
         {
             UpdateStars(0);
             return;
         }
 
-        var castRating = rating.GetType();
+        var castRating = _rating.GetType();
         if (castRating == typeof(int)) // Try and convert to int to avoid exception
         {
-            var intRating = (int)rating;
+            var intRating = (int)_rating;
             intRating = intRating is >= 0 and <= 5 ? intRating : 0;
             UpdateStars((intRating));
             return;
         }
 
-        if ((string)rating == string.Empty || (string)rating == "0")
+        if ((string)_rating == string.Empty || (string)_rating == "0")
         {
             UpdateStars(0);
             return;
         }
 
-        var percent = Convert.ToInt32(rating.ToString());
+        var percent = Convert.ToInt32(_rating.ToString());
         var stars = Math.Ceiling(percent / 20d);
 
         UpdateStars((int)stars);
