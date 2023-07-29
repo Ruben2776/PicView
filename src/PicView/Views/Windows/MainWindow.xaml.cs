@@ -43,6 +43,7 @@ public partial class MainWindow
         }
 
         InitializeComponent();
+        LoadControls.LoadSpinWaiter();
 
         if (Settings.Default.AutoFitWindow == false)
         {

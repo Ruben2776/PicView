@@ -5,6 +5,7 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using System.IO;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -58,16 +59,11 @@ internal static class QuickLoad
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
 
         await mainWindow.Dispatcher.InvokeAsync(() =>
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo), DispatcherPriority.Normal);
-
-        await mainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (UC.GetSpinWaiter is { IsVisible: true })
-            {
-                UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
-            }
+            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
+            UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
             ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
-        }, DispatcherPriority.Loaded);
+        }, DispatcherPriority.Normal);
 
         if (FolderIndex > 0)
         {

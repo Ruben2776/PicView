@@ -79,10 +79,7 @@ internal static class StartLoading
         }
         else
         {
-            Task.Run(() =>
-            {
-                _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
-            });
+            _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
         }
     }
 
@@ -204,7 +201,6 @@ internal static class StartLoading
         LoadQuickSettingsMenu();
         LoadToolsAndEffectsMenu();
         LoadTooltipStyle();
-        LoadSpinWaiter();
 
         // Initialize things!
         InitializeZoom();
