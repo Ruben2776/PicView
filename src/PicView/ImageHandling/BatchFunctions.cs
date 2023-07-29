@@ -150,7 +150,7 @@ internal static class BatchFunctions
         {
             var newSize = new FileInfo(sourceFile.FullName).Length.GetReadableFileSize();
             sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(sourceFile.Length.GetReadableFileSize())
-                .Append(" 🠚 ").Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
+                .AppendLine(Environment.NewLine).Append(" 🠚 ").AppendLine(Environment.NewLine).Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
         }
         catch (Exception e)
         {
