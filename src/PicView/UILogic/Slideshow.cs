@@ -4,6 +4,7 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;
 using System.Windows;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -45,13 +46,17 @@ internal static class Slideshow
 
         if (ConfigureWindows.GetMainWindow.WindowState == WindowState.Normal)
         {
-            WindowSizing.RenderFullscreen();
+            WindowSizing.Fullscreen_Restore(true);
         }
 
         _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_DISPLAY_REQUIRED); // Stop screensaver when running
 
         HideInterfaceLogic.IsNavigationShown(false);
         HideInterfaceLogic.IsShortcutsShown(false);
+        if (Settings.Default.IsBottomGalleryShown)
+        {
+            GalleryToggle.CloseBottomGallery();
+        }
     }
 
     internal static void StopSlideshow()
@@ -61,7 +66,12 @@ internal static class Slideshow
 
         if (!Settings.Default.Fullscreen)
         {
-            WindowSizing.Fullscreen_Restore(false);
+            WindowSizing.Fullscreen_Restore(gotoFullscreen: false);
+        }
+
+        if (Settings.Default.IsBottomGalleryShown)
+        {
+            _ = GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
         }
 
         _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS); // Allow screensaver again
