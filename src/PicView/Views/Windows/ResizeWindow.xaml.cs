@@ -44,15 +44,12 @@ public partial class ResizeWindow
 
             Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
             Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
-
-            if (ErrorHandling.CheckOutOfRange() == false)
+            IsVisibleChanged += (_, _) =>
             {
-                SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
-                OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
-            }
-
-            SetTextBoxDragEvent(SourceFolderInput);
-            SetTextBoxDragEvent(OutputFolderInput);
+                Update();
+                UpdateThumbnails();
+            };
+            Update();
 
             SourceFolderButton.FileMenuButton.Click += (_, _) =>
             {
@@ -74,59 +71,7 @@ public partial class ResizeWindow
                 Focus();
             };
 
-            ThumbnailsComboBox.SelectionChanged += delegate
-            {
-                var selected = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
-                if (!int.TryParse(selected?.Content.ToString(), out var count)) return;
-                GeneratedThumbnailsContainer.Children.Clear();
-
-                if (count <= 0) { return; }
-
-                var size = new string[count + 1];
-                var newSize = new string[size.Length];
-                switch (count)
-                {
-                    case 7:
-                        size[7] = "xxs"; size[6] = "xs"; size[5] = "small"; size[4] = "medium"; size[3] = "large"; size[2] = "xl"; size[1] = "xxl";
-                        newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80";
-                        break;
-
-                    case 6:
-                        size[6] = "xxs"; size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
-                        newSize[6] = "20"; newSize[5] = "30"; newSize[4] = "40"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
-                        break;
-
-                    case 5:
-                        size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
-                        newSize[5] = "20"; newSize[4] = "30"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
-                        break;
-
-                    case 4:
-                        size[4] = "xs"; size[3] = "small"; size[2] = "medium"; size[1] = "large";
-                        newSize[4] = "25"; newSize[3] = "40"; newSize[2] = "50"; newSize[1] = "70";
-                        break;
-
-                    case 3:
-                        size[3] = "small"; size[2] = "medium"; size[1] = "large";
-                        newSize[3] = "25"; newSize[2] = "50"; newSize[1] = "70";
-                        break;
-
-                    case 2:
-                        size[1] = "small"; size[2] = "medium";
-                        newSize[1] = "30"; newSize[2] = "50";
-                        break;
-
-                    default:
-                        size[1] = "small";
-                        newSize[1] = "30";
-                        break;
-                }
-
-                for (int i = 1; i <= count; i++)
-                {
-                    GeneratedThumbnailsContainer.Children.Add(new ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
-                }
-            };
+            ThumbnailsComboBox.SelectionChanged += (_, _) => UpdateThumbnails();
 
             MouseLeftButtonDown += (_, e) =>
                 { if (e.LeftButton == MouseButtonState.Pressed) { DragMove(); } };
@@ -155,6 +100,72 @@ public partial class ResizeWindow
 
             CancelButton.MouseLeftButtonDown += (_, _) => running = false;
         };
+    }
+
+    private void Update()
+    {
+        if (ErrorHandling.CheckOutOfRange() == false)
+        {
+            SourceFolderInput.Text = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
+            OutputFolderInput.Text = SourceFolderInput.Text + @"\Processed Pictures";
+        }
+
+        SetTextBoxDragEvent(SourceFolderInput);
+        SetTextBoxDragEvent(OutputFolderInput);
+    }
+
+    private void UpdateThumbnails()
+    {
+        var selected = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
+        if (!int.TryParse(selected?.Content.ToString(), out var count)) return;
+        GeneratedThumbnailsContainer.Children.Clear();
+
+        if (count <= 0) { return; }
+
+        var size = new string[count + 1];
+        var newSize = new string[size.Length];
+        switch (count)
+        {
+            case 7:
+                size[7] = "xxs"; size[6] = "xs"; size[5] = "small"; size[4] = "medium"; size[3] = "large"; size[2] = "xl"; size[1] = "xxl";
+                newSize[7] = "20"; newSize[6] = "30"; newSize[5] = "40"; newSize[4] = "50"; newSize[3] = "60"; newSize[2] = "70"; newSize[1] = "80";
+                break;
+
+            case 6:
+                size[6] = "xxs"; size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
+                newSize[6] = "20"; newSize[5] = "30"; newSize[4] = "40"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
+                break;
+
+            case 5:
+                size[5] = "xs"; size[4] = "small"; size[3] = "medium"; size[2] = "large"; size[1] = "xl";
+                newSize[5] = "20"; newSize[4] = "30"; newSize[3] = "50"; newSize[2] = "60"; newSize[1] = "70";
+                break;
+
+            case 4:
+                size[4] = "xs"; size[3] = "small"; size[2] = "medium"; size[1] = "large";
+                newSize[4] = "25"; newSize[3] = "40"; newSize[2] = "50"; newSize[1] = "70";
+                break;
+
+            case 3:
+                size[3] = "small"; size[2] = "medium"; size[1] = "large";
+                newSize[3] = "25"; newSize[2] = "50"; newSize[1] = "70";
+                break;
+
+            case 2:
+                size[1] = "small"; size[2] = "medium";
+                newSize[1] = "30"; newSize[2] = "50";
+                break;
+
+            default:
+                size[1] = "small";
+                newSize[1] = "30";
+                break;
+        }
+
+        for (int i = 1; i <= count; i++)
+        {
+            GeneratedThumbnailsContainer.Children.Add(new ThumbnailOutputUC(i, OutputFolderInput.Text, size[i], newSize[i]));
+        }
     }
 
     private async Task Load()
@@ -235,10 +246,6 @@ public partial class ResizeWindow
             else if (jpg.IsSelected)
             {
                 ext = ".jpg";
-            }
-            else
-            {
-                ext = null;
             }
 
             if (toResize)
@@ -324,6 +331,7 @@ public partial class ResizeWindow
                 }
 
                 var fileInfo = new FileInfo(sourceFile);
+                ext ??= fileInfo.Extension;
                 StringBuilder sb = new();
                 sb.Append(await BatchFunctions.RunAsync(fileInfo, width, height, quality, ext, percentage, compress, outputFolder, toResize).ConfigureAwait(false));
 
