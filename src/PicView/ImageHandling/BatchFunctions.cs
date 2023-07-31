@@ -18,7 +18,8 @@ internal static class BatchFunctions
             Directory.CreateDirectory(outputFolder);
         }
 
-        sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(sourceFile.Length.GetReadableFileSize()).Append(" 🠚 ");
+        sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(sourceFile.Length.GetReadableFileSize())
+            .Append("\n 🠚 \n");
 
         if (toResize)
         {
@@ -150,7 +151,9 @@ internal static class BatchFunctions
         {
             var newSize = new FileInfo(sourceFile.FullName).Length.GetReadableFileSize();
             sb.Append(sourceFile.DirectoryName).Append('/').Append(sourceFile.Name).Append(' ').Append(sourceFile.Length.GetReadableFileSize())
-                .AppendLine(Environment.NewLine).Append(" 🠚 ").AppendLine(Environment.NewLine).Append(sourceFile.Name).Append(' ').Append(newSize).AppendLine(Environment.NewLine);
+                .Append("\n 🠚 \n")
+                .Append(sourceFile.Name).Append(' ').Append(newSize)
+                .AppendLine(Environment.NewLine);
         }
         catch (Exception e)
         {
