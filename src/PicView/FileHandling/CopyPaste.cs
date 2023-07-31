@@ -25,37 +25,46 @@ internal static class CopyPaste
         DuplicateFile(Pics[FolderIndex]);
     }
 
-    public static void DuplicateFile(string filePath)
+    private static void DuplicateFile(string currentFile)
     {
         _ = Task.Run(async () =>
         {
             try
             {
                 int i = 1;
-                var filename = filePath;
-                var dir = Path.GetDirectoryName(filename);
-                var file = Path.GetFileNameWithoutExtension(filename) + "{0}";
-                var extension = Path.GetExtension(filename);
+                var newFile = currentFile;
+                var dir = Path.GetDirectoryName(newFile);
+                var file = Path.GetFileNameWithoutExtension(newFile) + "{0}";
+                var extension = Path.GetExtension(newFile);
 
-                while (File.Exists(filename))
-                    filename = Path.Combine(dir, string.Format(file, "(" + i++ + ")") + extension);
+                while (File.Exists(newFile))
+                    newFile = Path.Combine(dir, string.Format(file, "(" + i++ + ")") + extension);
 
-                File.Copy(filePath, filename);
-                var fileInfo = PreLoader.Get(FolderIndex).FileInfo ?? new FileInfo(filePath);
-
-                if (UC.GetPicGallery is not null)
+                File.Copy(currentFile, newFile);
+                if (Pics.Count < 200)
                 {
-                    await GalleryFunctions.SortGalleryAsync(fileInfo).ConfigureAwait(false);
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await LoadPic.LoadPiFromFileAsync(newFile).ConfigureAwait(false);
                 }
                 else
                 {
-                    Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+                    var fileInfo = new FileInfo(newFile);
+                    if (UC.GetPicGallery is not null)
+                    {
+                        await GalleryFunctions.SortGalleryAsync(fileInfo).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+                    }
+                    FolderIndex = Pics.IndexOf(newFile);
+                    await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
                 }
             }
             catch (Exception exception)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(DuplicateFile)} {filePath} exception, \n{exception.Message}");
+                Trace.WriteLine($"{nameof(DuplicateFile)} {currentFile} exception, \n{exception.Message}");
 #endif
                 ShowTooltipMessage(exception.Message);
             }
