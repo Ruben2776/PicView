@@ -19,15 +19,16 @@ Additionally, PicView also includes features such as EXIF data display, image co
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9/PicView.1.9.win-x64.zip)
-[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9/PicView.1.9.win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9.5/PicView.1.9.5.win-x64.zip)
+[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/1.9.5/PicView.1.9.5.win-arm64.zip)
 
 Latest releases at https://picview.org/download
 
 **Mirrors**
 
 [FossHub](https://www.fosshub.com/PicView.html) <br>
-[MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)
+[MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)  <br>
+[SourceForge](https://sourceforge.net/projects/picview/)
 
 
 Winget:
@@ -50,7 +51,7 @@ _UI overview with bottom gallery_
 </h3>
 
 <h1 align="center">
-    <img src="https://picview.org/assets/screenshots/scroll/small/Scroll%202023-04-26%20191101.png" />
+    <img src="https://picview.org/assets/screenshots/scroll/large/PicView%20-%20Scroll%20Dark%20Theme%2001.webp" />
 </h1>
 
 Press `X` to toggle the scroll function. Click the mousewheel for auto scroll.
@@ -60,7 +61,7 @@ Press `X` to toggle the scroll function. Click the mousewheel for auto scroll.
 </h3>
 
 <h1 align="center">
-    <img src="https://picview.org/assets/screenshots/PicView-Crop/Processed%20Pictures/medium/PicView%20Crop%202023-04-25%20191429.png" />
+    <img src="https://picview.org/assets/screenshots/PicView-Crop/PicView%20Crop%20Dark%20Theme.webp" />
 </h1>
 
 
