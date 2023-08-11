@@ -83,10 +83,10 @@ internal static class DeleteFiles
     /// and display information
     /// </summary>
     /// <param name="recycle"></param>
-    internal static async Task DeleteFileAsync(bool recycle, int index)
+    internal static async Task DeleteFileAsync(bool recycle, string fileName)
     {
-        var isCurrentIndex = index == FolderIndex;
-        if (!TryDeleteFile(Pics[index], recycle))
+        var index = Pics.IndexOf(fileName);
+        if (!TryDeleteFile(fileName, recycle))
         {
             return;
         }
@@ -109,9 +109,13 @@ internal static class DeleteFiles
             return;
         }
 
-        if (isCurrentIndex)
+        if (index == FolderIndex)
         {
             await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+        }
+        else
+        {
+            FolderIndex = index;
         }
 
         ShowTooltipMessage(recycle ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);

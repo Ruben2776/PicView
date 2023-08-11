@@ -362,7 +362,7 @@ internal static class MainKeyboardShortcuts
                 case Key.Delete:
                     if (!GalleryFunctions.IsGalleryOpen)
                     {
-                        await DeleteFileAsync(!shiftDown, FolderIndex).ConfigureAwait(false);
+                        await DeleteFileAsync(!shiftDown, Pics[FolderIndex]).ConfigureAwait(false);
                     }
                     break;
 
@@ -538,7 +538,7 @@ internal static class MainKeyboardShortcuts
 
                 // F3
                 case Key.F3:
-                    Open_In_Explorer();
+                    OpenInExplorer(Pics[FolderIndex]);
                     break;
 
                 // F4

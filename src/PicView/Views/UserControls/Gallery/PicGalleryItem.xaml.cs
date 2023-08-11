@@ -106,7 +106,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        showInFolderMenu.Click += (_, _) => OpenSave.Open_In_Explorer(Navigation.Pics[Id]);
+        showInFolderMenu.Click += (_, _) => OpenSave.OpenInExplorer(Navigation.Pics[Id]);
         cm.Items.Add(showInFolderMenu);
 
         cm.Items.Add(new Separator());
@@ -234,7 +234,7 @@ public partial class PicGalleryItem
             }
         };
         deleteFileMenu.Click += async (_, _) =>
-            await DeleteFiles.DeleteFileAsync(true, Id).ConfigureAwait(false);
+            await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Id]).ConfigureAwait(false);
         cm.Items.Add(deleteFileMenu);
 
         ContextMenu = cm;

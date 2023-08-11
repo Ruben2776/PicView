@@ -35,8 +35,8 @@ public partial class FileMenu : UserControl
 
         // FileLocationBorder
         SetButtonIconMouseOverAnimations(FileLocationBorder, FileLocationBrush, (SolidColorBrush)Resources["LocationBorderFill"]);
-        FileLocationBorder.MouseLeftButtonDown += (_, _) => OpenSave.Open_In_Explorer();
-        FileLocationButton.Click += (_, _) => OpenSave.Open_In_Explorer();
+        FileLocationBorder.MouseLeftButtonDown += (_, _) => OpenSave.OpenInExplorer(Navigation.Pics?[Navigation.FolderIndex]);
+        FileLocationButton.Click += (_, _) => OpenSave.OpenInExplorer(Navigation.Pics?[Navigation.FolderIndex]);
 
         // PrintBorder
         SetButtonIconMouseOverAnimations(PrintBorder, PrintButtonBrush, (SolidColorBrush)Resources["PrintBorderFill"]);
@@ -49,7 +49,7 @@ public partial class FileMenu : UserControl
 
         // RecycleButton
         SetButtonIconMouseOverAnimations(RecycleButton, RecycleButtonBrush, (SolidColorBrush)Resources["RecycleButtonIconBrush"]);
-        RecycleButton.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(true, Navigation.FolderIndex).ConfigureAwait(false);
+        RecycleButton.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
 
         // OpenWithBorder
         SetButtonIconMouseOverAnimations(OpenWithBorder, OpenWithBorderBrush, (SolidColorBrush)Resources["OpenWithBorderFill"]);

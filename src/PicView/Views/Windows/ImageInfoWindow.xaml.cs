@@ -84,7 +84,7 @@ public partial class ImageInfoWindow
         Delete.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(DeleteBrush);
         Delete.MouseLeave += (_, _) => ButtonMouseLeaveAnim(DeleteFill);
         Delete.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(DeleteBrush);
-        Delete.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift), FolderIndex).ConfigureAwait(false);
+        Delete.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift), Pics[FolderIndex]).ConfigureAwait(false);
 
         // OpenWith
         OpenWith.MouseEnter += (_, _) => ButtonMouseOverAnim(OpenWithFill);
@@ -98,7 +98,7 @@ public partial class ImageInfoWindow
         ShowInFolder.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ShowInFolderBrush);
         ShowInFolder.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ShowInFolderFill);
         ShowInFolder.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ShowInFolderBrush);
-        ShowInFolder.Click += (_, _) => OpenSave.Open_In_Explorer();
+        ShowInFolder.Click += (_, _) => OpenSave.OpenInExplorer(Pics[FolderIndex]);
 
         // Optimize Image
         OptimizeImageButton.MouseEnter += (_, _) => ButtonMouseOverAnim(OptimizeImageFill);

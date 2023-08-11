@@ -52,16 +52,17 @@ internal static class OpenSave
     /// <summary>
     /// Opens image in File Explorer
     /// </summary>
-    internal static void Open_In_Explorer(string? file = null)
+    internal static void OpenInExplorer(string? file = null)
     {
-        string? directory = null;
-
-        if (file == null)
+        try
         {
-            switch (string.IsNullOrEmpty(file))
+            string? directory = null;
+
+            if (file == null)
             {
-                case false when Pics?.Count <= 0:
-                    {
+                switch (string.IsNullOrEmpty(file))
+                {
+                    case false when Pics?.Count <= 0:
                         // Check if from URL and locate it
                         var url = FileFunctions.RetrieveFromURL();
                         if (!string.IsNullOrEmpty(url))
@@ -71,34 +72,32 @@ internal static class OpenSave
                         }
 
                         break;
-                    }
-                case false when Pics?.Count > FolderIndex:
-                    file = Pics[FolderIndex];
-                    directory = Path.GetDirectoryName(file);
-                    break;
 
-                default:
-                    return;
+                    case false when Pics?.Count > FolderIndex:
+                        file = Pics[FolderIndex];
+                        directory = Path.GetDirectoryName(file);
+                        break;
+
+                    default:
+                        return;
+                }
             }
-        }
-        else
-        {
-            directory = Path.GetDirectoryName(file);
-        }
+            else
+            {
+                directory = Path.GetDirectoryName(file);
+            }
 
-        if (file is null || directory is null)
-        {
-            return;
-        }
+            if (file is null || directory is null)
+            {
+                return;
+            }
 
-        try
-        {
             Close_UserControls();
             FileExplorer.OpenFolderAndSelectFile(directory, file); // https://stackoverflow.com/a/39427395
         }
         catch (Exception e)
         {
-            ShowTooltipMessage("Open_In_Explorer exception \n" + e.Message);
+            ShowTooltipMessage("OpenInExplorer exception \n" + e.Message);
         }
     }
 

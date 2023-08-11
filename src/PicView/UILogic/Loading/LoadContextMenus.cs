@@ -238,7 +238,7 @@ internal static class LoadContextMenus
         ///   ShowInFolder     \\\\
         ///////////////////////////
         var ShowInFolderCm = (MenuItem)MainContextMenu.Items[10];
-        ShowInFolderCm.Click += (_, _) => Open_In_Explorer();
+        ShowInFolderCm.Click += (_, _) => OpenSave.OpenInExplorer(Navigation.Pics?[Navigation.FolderIndex]);
 
         ///////////////////////////
         ///   Image choices    \\\\
@@ -312,7 +312,7 @@ internal static class LoadContextMenus
         ///   Delete File       \\\\
         ///////////////////////////
         var Deletecm = (MenuItem)MainContextMenu.Items[18];
-        Deletecm.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), FolderIndex).ConfigureAwait(false);
+        Deletecm.Click += async (_, _) => await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Pics[FolderIndex]).ConfigureAwait(false);
 
         // 19 = seperator
 
