@@ -194,7 +194,6 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
-    <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
     <PackageReference Include="XamlAnimatedGif" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>

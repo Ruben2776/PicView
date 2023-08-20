@@ -142,9 +142,8 @@ internal static class ErrorHandling
                 if (Settings.Default.IncludeSubDirectories)
                 {
                     var fileInfo = new FileInfo(Path.GetDirectoryName(path));
-                    var index = FolderIndex;
                     await ResetValues(fileInfo).ConfigureAwait(false);
-                    await LoadPic.LoadPicAtIndexAsync(index).ConfigureAwait(false);
+                    await LoadPic.LoadPicAtIndexAsync(Pics.IndexOf(path), fileInfo).ConfigureAwait(false);
                 }
                 else
                 {

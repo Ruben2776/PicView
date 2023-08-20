@@ -1,8 +1,9 @@
 ﻿using PicView.UILogic;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using WpfScreenHelper;
+using Application = System.Windows.Application;
 
 namespace PicView.SystemIntegration;
 
@@ -95,12 +96,18 @@ internal readonly struct MonitorSize : IEquatable<MonitorSize>
             dpiScaling = source is { CompositionTarget: not null } ? source.CompositionTarget.TransformFromDevice.M11 : 1;
         });
 
-        // Get the available work area of the monitor screen
-        Rect? workArea = currentMonitor.WorkingArea;
         var monitorWidth = currentMonitor.Bounds.Width * dpiScaling;
         var monitorHeight = currentMonitor.Bounds.Height * dpiScaling;
 
+        var rect = new Rect
+        {
+            Width = currentMonitor.WorkingArea.Width,
+            Height = currentMonitor.WorkingArea.Height,
+            X = currentMonitor.WorkingArea.X,
+            Y = currentMonitor.WorkingArea.Y,
+        };
+
         // Return a new instance of the MonitorSize struct
-        return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, workArea.Value);
+        return new MonitorSize(monitorWidth, monitorHeight, dpiScaling, rect);
     }
 }
