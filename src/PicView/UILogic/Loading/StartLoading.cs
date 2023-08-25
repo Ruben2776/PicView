@@ -51,7 +51,7 @@ internal static class StartLoading
         // Determine preferred UI for startup
         if (Settings.Default.Fullscreen)
         {
-            if (args.Length <= 1)
+            if (args.Length < 2)
             {
                 Settings.Default.Fullscreen = false;
             }
@@ -67,7 +67,7 @@ internal static class StartLoading
         }
 
         // Load image if possible
-        if (args.Length <= 1)
+        if (args.Length < 2)
         {
             ErrorHandling.Unload(true);
 

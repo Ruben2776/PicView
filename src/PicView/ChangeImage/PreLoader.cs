@@ -152,10 +152,10 @@ internal static class PreLoader
     /// <param name="key"></param>
     internal static void Remove(int key)
     {
+        if (!Contains(key)) { return; }
+
         try
         {
-            var thread = Thread.CurrentThread;
-            thread.Priority = ThreadPriority.Lowest;
             _ = PreLoadList[key];
             var remove = PreLoadList.TryRemove(key, out _);
 #if DEBUG
@@ -229,6 +229,8 @@ internal static class PreLoader
                 _ = AddAsync(index).ConfigureAwait(false);
             });
 
+            var thread = Thread.CurrentThread;
+            thread.Priority = ThreadPriority.Lowest;
             if (Pics.Count > MaxCount + NegativeIterations)
             {
                 for (var i = 0; i < NegativeIterations; i++)

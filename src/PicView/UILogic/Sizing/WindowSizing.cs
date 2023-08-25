@@ -144,7 +144,10 @@ internal static class WindowSizing
     internal static void Restore_From_Move()
     {
         GetMainWindow.WindowState = WindowState.Normal;
-        GetGripButton.Visibility = Visibility.Visible;
+        if (GetGripButton is not null)
+        {
+            GetGripButton.Visibility = Visibility.Visible;
+        }
 
         // Reset margin
         GetMainWindow.TitleBar.Margin = new Thickness(0);
@@ -162,7 +165,7 @@ internal static class WindowSizing
         {
             return; // Fixes weird unintentional hit
         }
-        if (GetMainWindow.MainImage.Source is null)
+        if (GetMainWindow.MainImage.Source is null && !gotoFullscreen)
         {
             Restore_From_Move();
             return;
