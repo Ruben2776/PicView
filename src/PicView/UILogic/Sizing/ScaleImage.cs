@@ -52,13 +52,13 @@ internal static class ScaleImage
                     FitImage(pic.PixelWidth, pic.PixelHeight);
                 }
             }
-            else if (XWidth > 0 && XHeight > 0)
-            {
-                FitImage(XWidth, XHeight);
-            }
             else if (GetMainWindow.MainImage.Source != null)
             {
                 FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
+            }
+            else if (XWidth > 0 && XHeight > 0)
+            {
+                FitImage(XWidth, XHeight);
             }
         });
     }
@@ -76,20 +76,22 @@ internal static class ScaleImage
         double maxWidth, maxHeight;
         var margin = 0d;
         var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
-
+        var scrollbarSize = 22;
         var galleryHeight = 0d;
-        if (UC.GetPicGallery is not null)
-        {
-            if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
-            {
-                galleryHeight = PicGalleryItemSize + 22;
-            }
-        }
+
         var borderSpaceHeight = Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
         var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
 
         var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
         var workAreaHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
+
+        if (UC.GetPicGallery is not null)
+        {
+            if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
+            {
+                galleryHeight = PicGalleryItemSize + scrollbarSize;
+            }
+        }
 
         if (Settings.Default.AutoFitWindow)
         {
@@ -153,11 +155,11 @@ internal static class ScaleImage
         if (Settings.Default.ScrollEnabled)
         {
             GetMainWindow.MainImage.Height = maxWidth * height / width;
-            GetMainWindow.MainImage.Width = maxWidth;
+            GetMainWindow.MainImage.Width = maxWidth - scrollbarSize;
 
             if (Settings.Default.AutoFitWindow)
             {
-                GetMainWindow.ParentContainer.Width = maxWidth;
+                GetMainWindow.ParentContainer.Width = maxWidth - scrollbarSize;
                 GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
             }
         }

@@ -77,7 +77,8 @@ internal static class Navigation
     /// <param name="fastPic">Whether to use fast picture loading.</param>
     internal static async Task GoToNextImage(NavigateTo navigateTo, bool fastPic = false)
     {
-        if (ErrorHandling.CheckOutOfRange()) return;
+        if (ErrorHandling.CheckOutOfRange())
+            return;
 
         int next;
         switch (navigateTo)

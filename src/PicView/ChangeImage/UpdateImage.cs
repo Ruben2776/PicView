@@ -1,8 +1,10 @@
 ﻿using PicView.FileHandling;
 using PicView.ImageHandling;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Input;
@@ -150,8 +152,11 @@ internal static class UpdateImage
         }, DispatcherPriority.Send);
 
         CloseToolTipMessage();
-        Taskbar.NoProgress();
-        FolderIndex = 0;
+        Pics?.Clear();
+
+        PreLoader.Clear();
+        GalleryFunctions.Clear();
+        ScaleImage.XWidth = ScaleImage.XHeight = 0;
 
         DeleteFiles.DeleteTempFiles();
 
