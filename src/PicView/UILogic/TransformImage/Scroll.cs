@@ -47,7 +47,7 @@ internal static class Scroll
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
         {
             ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =
-                scrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                scrolling ? ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
         });
         if (Navigation.Pics == null) return;
         TryFitImage();

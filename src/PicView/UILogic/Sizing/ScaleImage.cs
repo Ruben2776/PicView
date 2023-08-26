@@ -40,10 +40,7 @@ internal static class ScaleImage
                 var preloadValue = PreLoader.Get(FolderIndex);
                 if (preloadValue == null)
                 {
-                    if (XWidth > 0 && XHeight > 0)
-                    {
-                        FitImage(XWidth, XHeight);
-                    }
+                    Fit();
                     return;
                 }
                 var pic = preloadValue.BitmapSource;
@@ -52,7 +49,12 @@ internal static class ScaleImage
                     FitImage(pic.PixelWidth, pic.PixelHeight);
                 }
             }
-            else if (GetMainWindow.MainImage.Source != null)
+            else Fit();
+        });
+
+        void Fit()
+        {
+            if (GetMainWindow.MainImage.Source != null)
             {
                 FitImage(GetMainWindow.MainImage.Source.Width, GetMainWindow.MainImage.Source.Height);
             }
@@ -60,7 +62,7 @@ internal static class ScaleImage
             {
                 FitImage(XWidth, XHeight);
             }
-        });
+        }
     }
 
     /// <summary>
