@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace PicView.ChangeImage;
 
@@ -87,10 +88,42 @@ internal class FileHistory
             return;
         }
 
-        UC.GetStartUpUC?.ToggleMenu();
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
+        if (!File.Exists(_fileHistory.Last()))
+        {
+            return;
+        }
 
-        await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        {
+            if (UC.GetStartUpUC is not null)
+            {
+                UC.GetStartUpUC.ToggleMenu();
+                UC.GetStartUpUC.Logo.Visibility = Visibility.Collapsed;
+            }
+
+            SetTitle.SetLoadingString();
+        }, DispatcherPriority.Normal);
+
+        if (Settings.Default.IncludeSubDirectories)
+        {
+            var currentFolder = Path.GetDirectoryName(_fileHistory.Last());
+            var parentFolder = Path.GetDirectoryName(currentFolder);
+            var fileInfo = new FileInfo(parentFolder);
+            Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+            if (Navigation.Pics.Count > 0)
+            {
+                Navigation.FolderIndex = Navigation.Pics.IndexOf(_fileHistory.Last());
+                await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
+            }
+            else
+            {
+                await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
+            }
+        }
+        else
+        {
+            await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
+        }
     }
 
     internal void Add(string fileName)
