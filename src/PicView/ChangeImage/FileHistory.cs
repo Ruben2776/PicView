@@ -106,6 +106,11 @@ internal class FileHistory
 
         if (Settings.Default.IncludeSubDirectories)
         {
+            if (_fileHistory.Last().IsArchive())
+            {
+                await LoadPic.LoadPicFromArchiveAsync(_fileHistory.Last()).ConfigureAwait(false);
+                return;
+            }
             var currentFolder = Path.GetDirectoryName(_fileHistory.Last());
             var parentFolder = Path.GetDirectoryName(currentFolder);
             var fileInfo = new FileInfo(parentFolder);

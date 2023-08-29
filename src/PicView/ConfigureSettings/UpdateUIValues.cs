@@ -6,16 +6,14 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Loading;
 using PicView.UILogic.Sizing;
+using PicView.UILogic.TransformImage;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
-using PicView.UILogic.TransformImage;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Scroll;
-using PicView.Views.Windows;
 
 namespace PicView.ConfigureSettings;
 
