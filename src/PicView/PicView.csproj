@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -190,7 +190,7 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
-    <PackageReference Include="SkiaSharp" Version="2.88.5">
+    <PackageReference Include="SkiaSharp" Version="2.88.6">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.5" />
