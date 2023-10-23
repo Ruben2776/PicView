@@ -293,6 +293,9 @@ internal static class ZoomLogic
     /// <param name="value">The new zoom value.</param>
     private static void Zoom(double value)
     {
+        if (ConfigureWindows.GetMainWindow.MainImage.Source is null)
+            return;
+
         ZoomValue = value;
 
         BeginZoomAnimation(ZoomValue);
