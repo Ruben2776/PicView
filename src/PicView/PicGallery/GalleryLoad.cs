@@ -3,7 +3,6 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -65,12 +64,13 @@ internal static class GalleryLoad
         await Task.Run(async () =>
         {
             var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
-            for (int i = 0; i < iterations; i++)
+            await Parallel.ForAsync(0, iterations, source.Token, async (i, loopState) =>
             {
                 try
                 {
                     if (!IsLoading || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
                     {
+                        loopState.ThrowIfCancellationRequested();
                         throw new TaskCanceledException();
                     }
 
@@ -86,9 +86,8 @@ internal static class GalleryLoad
                     Trace.WriteLine(e.Message);
 #endif
                     IsLoading = false;
-                    return;
                 }
-            }
+            });
             var startPosition = 0;
             var updates = 0;
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -106,7 +105,8 @@ internal static class GalleryLoad
                 {
                     Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                 }
-                for (var x = startPosition; x < iterations; x++)
+
+                await Parallel.ForAsync(startPosition, iterations, source.Token, async (x, loopState) =>
                 {
                     updates++;
                     try
@@ -115,6 +115,7 @@ internal static class GalleryLoad
 
                         if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
                         {
+                            loopState.ThrowIfCancellationRequested();
                             throw new TaskCanceledException();
                         }
                         var galleryThumbHolderItem = GalleryThumbHolder.GetThumbData(i);
@@ -133,9 +134,8 @@ internal static class GalleryLoad
                         Trace.WriteLine(e.Message);
 #endif
                         IsLoading = false;
-                        return;
                     }
-                }
+                });
             }, source.Token).ConfigureAwait(false);
 
             _ = Task.Run(async () =>

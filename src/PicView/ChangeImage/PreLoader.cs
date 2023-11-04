@@ -180,28 +180,58 @@ internal static class PreLoader
     {
         int nextStartingIndex, prevStartingIndex, deleteIndex;
         var source = new CancellationTokenSource();
-
-        await Task.Run(() =>
+        if (Reverse)
         {
+            nextStartingIndex = currentIndex + NegativeIterations > count ? count : currentIndex + NegativeIterations;
+            prevStartingIndex = currentIndex + 1;
+            deleteIndex = prevStartingIndex + NegativeIterations;
+        }
+        else
+        {
+            nextStartingIndex = currentIndex - NegativeIterations < 0 ? 0 : currentIndex - NegativeIterations;
+            prevStartingIndex = currentIndex - 1;
+            deleteIndex = prevStartingIndex - NegativeIterations;
+        }
+
+#if DEBUG
+        if (ShowAddRemove)
+            Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
+#endif
+
+        await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, (i, loopState) =>
+        {
+            try
+            {
+                if (Pics.Count == 0 || count != Pics.Count)
+                {
+                    loopState.ThrowIfCancellationRequested();
+                }
+            }
+            catch (Exception)
+            {
+                return ValueTask.CompletedTask;
+            }
+
+            int index;
             if (Reverse)
             {
-                nextStartingIndex = currentIndex + NegativeIterations > count ? count : currentIndex + NegativeIterations;
-                prevStartingIndex = currentIndex + 1;
-                deleteIndex = prevStartingIndex + NegativeIterations;
+                index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
             }
             else
             {
-                nextStartingIndex = currentIndex - NegativeIterations < 0 ? 0 : currentIndex - NegativeIterations;
-                prevStartingIndex = currentIndex - 1;
-                deleteIndex = prevStartingIndex - NegativeIterations;
+                index = (nextStartingIndex + i) % Pics.Count;
             }
 
-#if DEBUG
-            if (ShowAddRemove)
-                Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
-#endif
+            _ = AddAsync(index).ConfigureAwait(false);
+            return ValueTask.CompletedTask;
+        });
 
-            Parallel.For(0, PositiveIterations + NegativeIterations, (i, loopState) =>
+        var thread = Thread.CurrentThread;
+        thread.Priority = ThreadPriority.Lowest;
+
+        if (Pics.Count > MaxCount + NegativeIterations)
+        {
+            for (var i = 0; i < NegativeIterations; i++)
             {
                 try
                 {
@@ -212,59 +242,26 @@ internal static class PreLoader
                 }
                 catch (Exception)
                 {
-                    loopState.Stop();
                     return;
                 }
 
                 int index;
                 if (Reverse)
                 {
-                    index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                    index = (deleteIndex + i) % Pics.Count;
                 }
                 else
                 {
-                    index = (nextStartingIndex + i) % Pics.Count;
+                    index = (deleteIndex - i + Pics.Count) % Pics.Count;
                 }
 
-                _ = AddAsync(index).ConfigureAwait(false);
-            });
-
-            var thread = Thread.CurrentThread;
-            thread.Priority = ThreadPriority.Lowest;
-            if (Pics.Count > MaxCount + NegativeIterations)
-            {
-                for (var i = 0; i < NegativeIterations; i++)
-                {
-                    try
-                    {
-                        if (Pics.Count == 0 || count != Pics.Count)
-                        {
-                            throw new TaskCanceledException();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        return;
-                    }
-
-                    int index;
-                    if (Reverse)
-                    {
-                        index = (deleteIndex + i) % Pics.Count;
-                    }
-                    else
-                    {
-                        index = (deleteIndex - i + Pics.Count) % Pics.Count;
-                    }
-
-                    Remove(index);
-                }
+                Remove(index);
             }
+        }
 
-            while (PreLoadList.Count > MaxCount)
-            {
-                Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
-            }
-        }, source.Token).ConfigureAwait(false);
+        while (PreLoadList.Count > MaxCount)
+        {
+            Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
+        }
     }
 }

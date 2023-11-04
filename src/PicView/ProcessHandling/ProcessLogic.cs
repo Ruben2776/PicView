@@ -1,7 +1,9 @@
-﻿using PicView.ChangeImage;
+﻿using System.ComponentModel;
+using PicView.ChangeImage;
 using PicView.Properties;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Principal;
 using System.Windows;
 
 namespace PicView.ProcessHandling;
@@ -108,5 +110,26 @@ internal static class ProcessLogic
             StartInfo = { FileName = pathToExe }
         };
         process.Start();
+    }
+
+    internal static bool RunElevated(string fileName, string args)
+    {
+        var processInfo = new ProcessStartInfo
+        {
+            Verb = "runas",
+            UseShellExecute = true,
+            FileName = fileName,
+            Arguments = args
+        };
+        try
+        {
+            Process.Start(processInfo);
+            return true;
+        }
+        catch (Win32Exception)
+        {
+            // Do nothing. Probably the user canceled the UAC window
+        }
+        return false;
     }
 }

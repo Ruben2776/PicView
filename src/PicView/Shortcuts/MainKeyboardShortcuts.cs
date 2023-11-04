@@ -11,6 +11,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.CopyPaste;
