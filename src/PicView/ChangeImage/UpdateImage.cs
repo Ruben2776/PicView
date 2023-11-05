@@ -6,6 +6,8 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -29,27 +31,19 @@ internal static class UpdateImage
     /// </summary>
     /// <param name="index"></param>
     /// <param name="preLoadValue"></param>
-    internal static void UpdateImageValues(int index, PreLoadValue preLoadValue)
+    internal static async Task UpdateImageValuesAsync(int index, PreLoadValue preLoadValue)
     {
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
-        var isGif = preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase);
 
-        ConfigureWindows.GetMainWindow.MainImage.Dispatcher.Invoke(() =>
+        await ConfigureWindows.GetMainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
-            if (isGif) // Loads gif from XamlAnimatedGif if necessary
-            {
-                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(Pics?[index]));
-            }
-            else
-            {
-                ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
-            }
+            ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
         }, DispatcherPriority.Send);
 
         var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,
             index, preLoadValue.FileInfo);
 
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             if (Rotation.RotationAngle is not 0)
             {
@@ -85,6 +79,15 @@ internal static class UpdateImage
             }
         }, DispatcherPriority.Send);
 
+        if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+        {
+            var uri = new Uri(Pics?[index]);
+            await ConfigureWindows.GetMainWindow.MainImage.Dispatcher.InvokeAsync(() =>
+            {
+                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
+            }, DispatcherPriority.Normal);
+        }
+
         if (GetToolTipMessage is { IsVisible: true })
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => GetToolTipMessage.Visibility = Visibility.Hidden);
     }
@@ -98,6 +101,11 @@ internal static class UpdateImage
     /// <param name="file"></param>
     internal static async Task UpdateImageAsync(string name, BitmapSource? bitmapSource, bool isGif = false, string? file = null)
     {
+        if (bitmapSource is null)
+        {
+            UnexpectedError();
+            return;
+        }
         if (GetPicGallery is not null)
         {
             await GetPicGallery.Dispatcher.InvokeAsync(() =>
@@ -105,6 +113,25 @@ internal static class UpdateImage
                 GetPicGallery.Visibility = Visibility.Collapsed;
             }, DispatcherPriority.Send);
         }
+
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        {
+            ToggleStartUpUC(true);
+
+            if (Settings.Default.ScrollEnabled)
+            {
+                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
+            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, name);
+            FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+
+            if (GetSpinWaiter is { IsVisible: true })
+            {
+                GetSpinWaiter.Visibility = Visibility.Collapsed;
+            }
+        }, DispatcherPriority.Send);
 
         Size? imageSize = null;
         if (isGif)
@@ -117,16 +144,9 @@ internal static class UpdateImage
             imageSize = ImageSizeFunctions.GetImageSize(file);
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        if (isGif)
         {
-            ToggleStartUpUC(true);
-
-            if (Settings.Default.ScrollEnabled)
-            {
-                ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
-            }
-
-            if (isGif)
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (imageSize.HasValue)
                 {
@@ -134,22 +154,8 @@ internal static class UpdateImage
                     SetTitleString((int)imageSize.Value.Width, (int)imageSize.Value.Height, name);
                 }
                 AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(file));
-            }
-            else if (bitmapSource != null)
-            {
-                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, name);
-                FitImage(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-            }
-            else
-            {
-                UnexpectedError();
-            }
-            if (GetSpinWaiter is { IsVisible: true })
-            {
-                GetSpinWaiter.Visibility = Visibility.Collapsed;
-            }
-        }, DispatcherPriority.Send);
+            }, DispatcherPriority.Normal);
+        }
 
         CloseToolTipMessage();
         Pics?.Clear();

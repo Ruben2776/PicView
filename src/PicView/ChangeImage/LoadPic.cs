@@ -418,7 +418,7 @@ internal static class LoadPic
             return; // Skip loading if user went to next value
         }
 
-        UpdateImage.UpdateImageValues(index, preLoadValue);
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
 
         if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
             _ = ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);

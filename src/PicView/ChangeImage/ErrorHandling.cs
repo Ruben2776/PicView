@@ -43,6 +43,11 @@ internal static class ErrorHandling
             ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["UnexpectedError"];
             ConfigureWindows.GetMainWindow.TitleText.ToolTip = (string)Application.Current.Resources["UnexpectedError"];
             ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
+
+            if (UC.GetSpinWaiter is { IsVisible: true })
+            {
+                UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
+            }
         });
     }
 

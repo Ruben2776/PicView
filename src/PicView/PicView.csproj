@@ -181,11 +181,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
-    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.3.0" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="7.1.0">
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.4.0" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="7.2.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.1.0" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.2.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
@@ -196,7 +196,6 @@
     </PackageReference>
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.6" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.0-rc.2.23479.14" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -318,6 +317,9 @@
     <None Remove="Themes\Resources\img\icon__Q6k_icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\XamlAnimatedGif\XamlAnimatedGif.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Themes\Resources\img\icon__Q6k_icon.ico" />
   </ItemGroup>
 	
@@ -336,7 +338,7 @@
     <AssemblyVersion>1.9.6</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Fast Picture Viewer with compact UI that can be hidden. </Description>

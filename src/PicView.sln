@@ -10,6 +10,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView", "PicView\PicView.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Tools", "PicView.Tools\PicView.Tools.csproj", "{47DE1EC3-CD33-43E1-857F-4820C6AD16B6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlAnimatedGif", "XamlAnimatedGif\XamlAnimatedGif.csproj", "{1D4E804D-33E8-46CC-B4FC-AC6A84F5085A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{47DE1EC3-CD33-43E1-857F-4820C6AD16B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47DE1EC3-CD33-43E1-857F-4820C6AD16B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47DE1EC3-CD33-43E1-857F-4820C6AD16B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D4E804D-33E8-46CC-B4FC-AC6A84F5085A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D4E804D-33E8-46CC-B4FC-AC6A84F5085A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D4E804D-33E8-46CC-B4FC-AC6A84F5085A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D4E804D-33E8-46CC-B4FC-AC6A84F5085A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
