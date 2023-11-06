@@ -26,28 +26,28 @@ internal static class OpenSave
     ///  TODO update for and check file support
     /// </summary>
     internal const string FilterFiles =
-        "*|*.bmp;*.jpg;*.png;*.tif;*.tiff;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.pcd;*.wbmd;*.thm;*.pcd;*.pcx;*.flif;*.kdc;"
-        + "|jpg|*.jpg;*.jpeg;"                                                                                                  // JPG
-        + "|PNG|*.png;"                                                                                                         // PNG
-        + "|gif|*.gif;"                                                                                                         // GIF
-        + "|TIFF|*.tif;*.tiff;"                                                                                                 // TIF
-        + "|ico|*.ico;"                                                                                                         // ICO
-        + "|svg|*.svg;"                                                                                                         // SVG
-        + "|webp|*.webp;"                                                                                                       // WEBP
-        + "|tga|*.tga;"                                                                                                         // TGA
-        + "|dds|*.dds;"                                                                                                         // DDS
-        + "|ico|*.ico;"                                                                                                         // ICO
-        + "|HEIC|*.heic;*.heif;"                                                                                                // HEIC
-        + "|HDR|*.hdr;"                                                                                                         // HDR
-        + "|svg|*.svg;"                                                                                                         // SVG
-        + "|Photoshop|*.psd;*.psb;"                                                                                             // PSD
-        + "|GIMP|*.xcf;"                                                                                                        // GIMP
-        + "|QOI|*.qoi;"                                                                                                         // GQOI (Quite OK Image)
-        + "|THM|*.thm;"                                                                                                         // THM (Video Thumbnail File)
-        + "|Base64|*.b64;"                                                                                                      // Base64
-        + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab;"                                                  // Archives
-        + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz;"                                                                               // Comics
-        + "|Camera files|*.orf;*.cr2;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.pcd;*.pcx;*.flif;*.kdc;";    // Camera files
+        "*|*.bmp;*.jpg;*.png;*.tif;*.tiff;*.gif;*.ico;*.jpeg;*.webp;*.qoi;*.psd;*.psb;*.xcf;*.avif;*.jp2;*.hdr;*.heif;*.heif;*.pcd;*.wbmd;*.thm;*.pcd;*.pcx;*.flif;*.kdc;*.cr2;*.cr3;"
+        + "|jpg|*.jpg;*.jpeg;"                                                                                                          // JPG
+        + "|PNG|*.png;"                                                                                                                 // PNG
+        + "|gif|*.gif;"                                                                                                                 // GIF
+        + "|TIFF|*.tif;*.tiff;"                                                                                                         // TIF
+        + "|ico|*.ico;"                                                                                                                 // ICO
+        + "|svg|*.svg;"                                                                                                                 // SVG
+        + "|webp|*.webp;"                                                                                                               // WEBP
+        + "|tga|*.tga;"                                                                                                                 // TGA
+        + "|dds|*.dds;"                                                                                                                 // DDS
+        + "|ico|*.ico;"                                                                                                                 // ICO
+        + "|HEIC|*.heic;*.heif;"                                                                                                        // HEIC
+        + "|HDR|*.hdr;"                                                                                                                 // HDR
+        + "|svg|*.svg;"                                                                                                                 // SVG
+        + "|Photoshop|*.psd;*.psb;"                                                                                                     // PSD
+        + "|GIMP|*.xcf;"                                                                                                                // GIMP
+        + "|QOI|*.qoi;"                                                                                                                 // GQOI (Quite OK Image)
+        + "|THM|*.thm;"                                                                                                                 // THM (Video Thumbnail File)
+        + "|Base64|*.b64;"                                                                                                              // Base64
+        + "|Archives|*.zip;*.7zip;*.7z;*.rar;*.bzip2;*.tar;*.wim;*.iso;*.cab;"                                                          // Archives
+        + "|Comics|*.cbr;*.cb7;*.cbt;*.cbz;*.xz;"                                                                                       // Comics
+        + "|Camera files|*.orf;*.cr2;*.cr3;*.crw;*.dng;*.raf;*.ppm;*.raw;*.mrw;*.nef;*.pef;*.3xf;*.arw;*.pcd;*.pcx;*.flif;*.kdc;";      // Camera files
 
     /// <summary>
     /// Opens image in File Explorer
