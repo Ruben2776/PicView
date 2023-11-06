@@ -1,17 +1,13 @@
 ﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
-using PicView.ConfigureSettings;
 using PicView.ImageHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
-using static PicView.ImageHandling.Thumbnails;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.UC;
 
@@ -44,13 +40,12 @@ internal static class GalleryClick
             Duration = TimeSpan.FromSeconds(.7)
         };
 
-        galleryCloseAnimation.Completed += delegate
+        galleryCloseAnimation.Completed += async delegate
         {
-            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
-            GalleryFunctions.ReCalculateItemSizes();
             GalleryFunctions.IsGalleryOpen = false;
             ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
             GalleryToggle.ShowBottomGallery();
+            await Task.Delay(50); // await needed to calculate before scroll
             GetPicGallery.Scroller.CanContentScroll = false;
             GalleryNavigation.ScrollToGalleryCenter();
             GetPicGallery.Scroller.CanContentScroll = true;
@@ -71,7 +66,8 @@ internal static class GalleryClick
 
             ConfigureWindows.GetMainWindow.MainImage.Width = XWidth;
             ConfigureWindows.GetMainWindow.MainImage.Height = XHeight;
-
+            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+            GalleryFunctions.ReCalculateItemSizes();
             GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, galleryCloseAnimation);
         });
 

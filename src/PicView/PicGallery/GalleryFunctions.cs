@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using PicView.ChangeTitlebar;
 using static PicView.PicGallery.GalleryLoad;
 using static PicView.UILogic.UC;
+using System.Windows.Media;
 
 namespace PicView.PicGallery;
 
@@ -31,6 +32,11 @@ internal static class GalleryFunctions
             var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
             item.InnerBorder.Height = item.InnerBorder.Width = Settings.Default.IsBottomGalleryShown ? GalleryNavigation.PicGalleryItemSize : GalleryNavigation.PicGalleryItemSizeS;
             item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
+            // Make sure it's deselected
+            if (item.Id != Navigation.FolderIndex)
+            {
+                item.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
+            }
         }
     }
 
