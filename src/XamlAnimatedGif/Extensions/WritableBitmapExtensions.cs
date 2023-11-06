@@ -1,29 +1,27 @@
-﻿using System;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 
-namespace XamlAnimatedGif.Extensions
+namespace XamlAnimatedGif.Extensions;
+
+internal static class WritableBitmapExtensions
 {
-    static class WritableBitmapExtensions
+    public static IDisposable LockInScope(this WriteableBitmap bitmap)
     {
-        public static IDisposable LockInScope(this WriteableBitmap bitmap)
+        return new WriteableBitmapLock(bitmap);
+    }
+
+    private class WriteableBitmapLock : IDisposable
+    {
+        private readonly WriteableBitmap _bitmap;
+
+        public WriteableBitmapLock(WriteableBitmap bitmap)
         {
-            return new WriteableBitmapLock(bitmap);
+            _bitmap = bitmap;
+            _bitmap.Lock();
         }
 
-        class WriteableBitmapLock : IDisposable
+        public void Dispose()
         {
-            private readonly WriteableBitmap _bitmap;
-
-            public WriteableBitmapLock(WriteableBitmap bitmap)
-            {
-                _bitmap = bitmap;
-                _bitmap.Lock();
-            }
-
-            public void Dispose()
-            {
-                _bitmap.Unlock();
-            }
+            _bitmap.Unlock();
         }
     }
 }

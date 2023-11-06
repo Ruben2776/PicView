@@ -1,10 +1,9 @@
-﻿namespace XamlAnimatedGif.Decoding
+﻿namespace XamlAnimatedGif.Decoding;
+
+public enum GifFrameDisposalMethod
 {
-    public enum GifFrameDisposalMethod
-    {
-        None = 0,
-        DoNotDispose = 1,
-        RestoreBackground = 2,
-        RestorePrevious = 3
-    }
+    None = 0,
+    DoNotDispose = 1,
+    RestoreBackground = 2,
+    RestorePrevious = 3
 }

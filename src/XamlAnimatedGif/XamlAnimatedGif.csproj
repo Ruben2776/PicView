@@ -30,11 +30,11 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="InternalsVisibleTo.MSBuild" Version="1.0.4" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="MinVer" Version="2.3.1" PrivateAssets="All" />
+    <InternalsVisibleTo Include="XamlAnimatedGif.Demo, PublicKey=0024000004800000940000000602000000240000525341310004000001000100f5fb0928fd3a0e9d56701d22ef2d7f38ed87ba03ef594ddd5eccc269b64029d7b85d775f112a88394a7d0155b54987a5f2614a08ad0ec34c61431b05ab239afe2c6f2be909ac635dad6240af73934792b62bfe88a57b4a03275818dc304678dd6d22654b0b425165ce000eacdd7a0f2b9ac10e6e6db6e40db4e888ae1fbeebc0" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="XamlAnimatedGif.Demo, PublicKey=0024000004800000940000000602000000240000525341310004000001000100f5fb0928fd3a0e9d56701d22ef2d7f38ed87ba03ef594ddd5eccc269b64029d7b85d775f112a88394a7d0155b54987a5f2614a08ad0ec34c61431b05ab239afe2c6f2be909ac635dad6240af73934792b62bfe88a57b4a03275818dc304678dd6d22654b0b425165ce000eacdd7a0f2b9ac10e6e6db6e40db4e888ae1fbeebc0" />
+    <None Update="XamlAnimatedGif LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

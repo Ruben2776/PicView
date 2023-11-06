@@ -1,14 +1,13 @@
 ﻿using System.Windows;
 
-namespace XamlAnimatedGif
-{
-    public delegate void AnimationStartedEventHandler(DependencyObject d, AnimationStartedEventArgs e);
+namespace XamlAnimatedGif;
 
-    public class AnimationStartedEventArgs : RoutedEventArgs
+public delegate void AnimationStartedEventHandler(DependencyObject d, AnimationStartedEventArgs e);
+
+public class AnimationStartedEventArgs : RoutedEventArgs
+{
+    public AnimationStartedEventArgs(object source)
+        : base(AnimationBehavior.AnimationStartedEvent, source)
     {
-        public AnimationStartedEventArgs(object source)
-            : base(AnimationBehavior.AnimationStartedEvent, source)
-        {
-        }
     }
 }

@@ -1,10 +1,9 @@
-namespace XamlAnimatedGif.Decoding
+namespace XamlAnimatedGif.Decoding;
+
+internal enum GifBlockKind
 {
-    internal enum GifBlockKind
-    {
-        Control,
-        GraphicRendering,
-        SpecialPurpose,
-        Other
-    }
+    Control,
+    GraphicRendering,
+    SpecialPurpose,
+    Other
 }

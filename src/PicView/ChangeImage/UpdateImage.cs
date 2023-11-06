@@ -2,12 +2,9 @@
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
-using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
-using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -82,10 +79,7 @@ internal static class UpdateImage
         if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
         {
             var uri = new Uri(Pics?[index]);
-            await ConfigureWindows.GetMainWindow.MainImage.Dispatcher.InvokeAsync(() =>
-            {
-                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
-            }, DispatcherPriority.Normal);
+            AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
         }
 
         if (GetToolTipMessage is { IsVisible: true })

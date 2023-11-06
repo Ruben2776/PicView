@@ -4,10 +4,9 @@ using XamlAnimatedGif.Properties;
 [assembly: XmlnsDefinition(XmlnsInfo.XmlNamespace, "XamlAnimatedGif")]
 [assembly: XmlnsPrefix(XmlnsInfo.XmlNamespace, "gif")]
 
-namespace XamlAnimatedGif.Properties
+namespace XamlAnimatedGif.Properties;
+
+internal static class XmlnsInfo
 {
-    static class XmlnsInfo
-    {
-        public const string XmlNamespace = "https://github.com/XamlAnimatedGif/XamlAnimatedGif";
-    }
+    public const string XmlNamespace = "https://github.com/XamlAnimatedGif/XamlAnimatedGif";
 }
