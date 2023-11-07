@@ -26,6 +26,8 @@ internal static class GalleryNavigation
     internal static double PicGalleryItemSize { get; private set; }
     internal static double PicGalleryItemSizeS { get; private set; }
 
+    internal const int ScrollbarSize = 22;
+
     internal static int HorizontalItems
     {
         get
@@ -224,7 +226,7 @@ internal static class GalleryNavigation
         {
             SetSelected(SelectedGalleryItem, true, true);
         });
-        
+
         if (backup != SelectedGalleryItem && backup != FolderIndex)
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>

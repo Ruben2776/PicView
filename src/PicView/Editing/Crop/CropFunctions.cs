@@ -10,6 +10,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PicView.PicGallery;
+using PicView.Properties;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Sizing.ScaleImage;
 using static PicView.UILogic.TransformImage.Rotation;
@@ -32,6 +34,8 @@ internal static class CropFunctions
 
         GetCroppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
         GetCroppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
+        GetCroppingTool.Margin = new Thickness(0, 0, 0,
+            Settings.Default.IsBottomGalleryShown ? GalleryNavigation.PicGalleryItemSize + GalleryNavigation.ScrollbarSize : 0);
 
         ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
 

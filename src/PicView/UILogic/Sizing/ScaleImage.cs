@@ -2,7 +2,6 @@
 using PicView.Properties;
 using PicView.UILogic.TransformImage;
 using System.Windows;
-using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryNavigation;
 using static PicView.UILogic.ConfigureWindows;
@@ -78,7 +77,6 @@ internal static class ScaleImage
         double maxWidth, maxHeight;
         var margin = 0d;
         var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
-        var scrollbarSize = 22;
         var galleryHeight = 0d;
 
         var borderSpaceHeight = Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
@@ -91,7 +89,7 @@ internal static class ScaleImage
         {
             if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
             {
-                galleryHeight = PicGalleryItemSize + scrollbarSize;
+                galleryHeight = PicGalleryItemSize + ScrollbarSize;
             }
         }
 
@@ -157,11 +155,11 @@ internal static class ScaleImage
         if (Settings.Default.ScrollEnabled)
         {
             GetMainWindow.MainImage.Height = maxWidth * height / width;
-            GetMainWindow.MainImage.Width = maxWidth - scrollbarSize;
+            GetMainWindow.MainImage.Width = maxWidth - ScrollbarSize;
 
             if (Settings.Default.AutoFitWindow)
             {
-                GetMainWindow.ParentContainer.Width = maxWidth - scrollbarSize;
+                GetMainWindow.ParentContainer.Width = maxWidth - ScrollbarSize;
                 GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
             }
         }
