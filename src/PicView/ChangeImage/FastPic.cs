@@ -1,5 +1,7 @@
 ﻿using PicView.ImageHandling;
+using PicView.UILogic;
 using System.IO;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -54,7 +56,10 @@ internal static class FastPic
             preLoadValue = PreLoader.Get(index);
             if (preLoadValue is null)
             {
-                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                if (FolderIndex == index)
+                {
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                }
                 return;
             }
         }

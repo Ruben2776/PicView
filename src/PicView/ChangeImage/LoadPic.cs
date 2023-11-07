@@ -395,6 +395,18 @@ internal static class LoadPic
                 ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
             }, DispatcherPriority.Send);
 
+            // Update gallery selections
+            if (GetPicGallery is not null)
+            {
+                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                {
+                    // Select next item
+                    GalleryNavigation.SetSelected(FolderIndex, true);
+                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                    GalleryNavigation.ScrollToGalleryCenter();
+                });
+            }
+
             if (preLoadValue is null)
             {
                 var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
@@ -410,6 +422,16 @@ internal static class LoadPic
                     return; // Skip loading if user went to next value
                 }
             }
+        }
+        else if (GetPicGallery is not null)
+        {
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                // Select next item
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
         }
 
         if (index != FolderIndex)
