@@ -45,7 +45,7 @@ internal static class GalleryClick
             GalleryFunctions.IsGalleryOpen = false;
             ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
             GalleryToggle.ShowBottomGallery();
-            await Task.Delay(50); // await needed to calculate before scroll
+            await Task.Delay(TimeSpan.FromSeconds(.4)); // await needed to calculate before scroll
             GetPicGallery.Scroller.CanContentScroll = false;
             GalleryNavigation.ScrollToGalleryCenter();
             GetPicGallery.Scroller.CanContentScroll = true;

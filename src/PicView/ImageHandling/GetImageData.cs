@@ -64,15 +64,18 @@ internal static class GetImageData
             {
                 await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
                 preloadValue = new PreLoader.PreLoadValue(null, fileInfo);
-                if (preloadValue is null)
+                if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
                 {
-                    preloadValue = new PreLoader.PreLoadValue(null, fileInfo);
-                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => preloadValue.BitmapSource = ImageDecoder.GetRenderedBitmapFrame());
+                    return null;
                 }
             }
             while (preloadValue.BitmapSource is null)
             {
                 await Task.Delay(50).ConfigureAwait(false);
+                if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
+                {
+                    return null;
+                }
             }
 
             bitmapSource = preloadValue.BitmapSource;
@@ -83,6 +86,11 @@ internal static class GetImageData
             {
                 bitmapSource = ImageDecoder.GetRenderedBitmapFrame();
             });
+        }
+
+        if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
+        {
+            return null;
         }
 
         if (bitmapSource is null) { return null; }

@@ -61,33 +61,29 @@ internal static class GalleryLoad
         var source = new CancellationTokenSource();
         var iterations = Navigation.Pics.Count;
 
+        for (int i = 0; i < iterations; i++)
+        {
+            try
+            {
+                if (iterations != Navigation.Pics.Count)
+                {
+                    await source.CancelAsync();
+                }
+                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                {
+                    Add(i);
+                }, DispatcherPriority.DataBind, source.Token);
+            }
+            catch (Exception)
+            {
+                GalleryFunctions.Clear();
+                return;
+            }
+        }
+
         await Task.Run(async () =>
         {
             var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
-            await Parallel.ForAsync(0, iterations, source.Token, async (i, loopState) =>
-            {
-                try
-                {
-                    if (!IsLoading || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
-                    {
-                        loopState.ThrowIfCancellationRequested();
-                        throw new TaskCanceledException();
-                    }
-
-                    var x = i;
-                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                    {
-                        Add(x);
-                    }, DispatcherPriority.DataBind, source.Token);
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Trace.WriteLine(e.Message);
-#endif
-                    IsLoading = false;
-                }
-            });
             var startPosition = 0;
             var updates = 0;
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
