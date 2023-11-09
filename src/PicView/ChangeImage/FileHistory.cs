@@ -1,7 +1,9 @@
 ﻿using PicView.ChangeTitlebar;
 using PicView.FileHandling;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
+using PicView.UILogic.Sizing;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -119,6 +121,28 @@ internal class FileHistory
             {
                 Navigation.FolderIndex = Navigation.Pics.IndexOf(_fileHistory.Last());
                 await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
+
+                // Fix if Bottom Gallery is enabled
+                if (Settings.Default.IsBottomGalleryShown)
+                {
+                    if (UC.GetPicGallery is { Visibility: Visibility.Collapsed })
+                    {
+                        var shouldLoadGallery = false;
+                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                        {
+                            GalleryToggle.ShowBottomGallery();
+                            ScaleImage.TryFitImage();
+                            if (UC.GetPicGallery.Container.Children.Count <= 0)
+                            {
+                                shouldLoadGallery = true;
+                            }
+                        });
+                        if (shouldLoadGallery)
+                        {
+                            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                        }
+                    }
+                }
             }
             else
             {
