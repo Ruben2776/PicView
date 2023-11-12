@@ -198,7 +198,7 @@ internal static class PreLoader
             Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
 #endif
 
-        await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, (i, loopState) =>
+        await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, async (i, loopState) =>
         {
             try
             {
@@ -209,7 +209,7 @@ internal static class PreLoader
             }
             catch (Exception)
             {
-                return ValueTask.CompletedTask;
+                return;
             }
 
             int index;
@@ -222,8 +222,7 @@ internal static class PreLoader
                 index = (nextStartingIndex + i) % Pics.Count;
             }
 
-            _ = AddAsync(index).ConfigureAwait(false);
-            return ValueTask.CompletedTask;
+            await AddAsync(index).ConfigureAwait(false);
         });
 
         var thread = Thread.CurrentThread;
