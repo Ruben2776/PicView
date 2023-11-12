@@ -78,8 +78,12 @@ internal static class UpdateImage
 
         if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
         {
-            var uri = new Uri(Pics?[index]);
-            AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
+            var frames = ImageFunctions.GetImageFrames(Pics[index]);
+            if (frames > 0)
+            {
+                var uri = new Uri(Pics[index]);
+                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
+            }
         }
 
         if (GetToolTipMessage is { IsVisible: true })
