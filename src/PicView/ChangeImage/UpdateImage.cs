@@ -1,4 +1,5 @@
-﻿using PicView.FileHandling;
+﻿using System.IO;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -78,11 +79,15 @@ internal static class UpdateImage
 
         if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
         {
-            var frames = ImageFunctions.GetImageFrames(Pics[index]);
+            var frames = ImageFunctions.GetImageFrames(preLoadValue.FileInfo.FullName);
             if (frames > 0)
             {
-                var uri = new Uri(Pics[index]);
-                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
+                var uri = new Uri(preLoadValue.FileInfo.FullName);
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    if (index == FolderIndex)
+                        AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
+                }, DispatcherPriority.Normal);
             }
         }
 

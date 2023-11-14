@@ -322,6 +322,9 @@
   <ItemGroup>
     <Resource Include="Themes\Resources\img\icon__Q6k_icon.ico" />
   </ItemGroup>
+	<ItemGroup>
+		<RuntimeHostConfigurationOption Include="Switch.System.Windows.Media.EnableHardwareAccelerationInRdp" Value="true" />
+	</ItemGroup>
 	
   <PropertyGroup>
     <FileVersion>1.9.6</FileVersion>

@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.ChangeImage.LoadPic;
 using static PicView.ChangeImage.Navigation;
+using static PicView.ChangeImage.PreLoader;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
@@ -43,17 +44,23 @@ internal static class QuickLoad
         var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
         await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
-            if (fileInfo.Extension.ToLowerInvariant() == ".gif")
-            {
-                AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, new Uri(fileInfo.FullName));
-            }
-            else
-            {
-                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-            }
+            ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
 
             FitImage(bitmapSource.Width, bitmapSource.Height);
         }, DispatcherPriority.Send);
+
+        if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+        {
+            var frames = ImageFunctions.GetImageFrames(fileInfo.FullName);
+            if (frames > 0)
+            {
+                var uri = new Uri(fileInfo.FullName);
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
+                }, DispatcherPriority.Normal);
+            }
+        }
 
         Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
         FolderIndex = Pics.IndexOf(fileInfo.FullName);

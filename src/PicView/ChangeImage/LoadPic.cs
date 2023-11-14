@@ -8,12 +8,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
 using static PicView.UILogic.UC;
+using PicView.Views.UserControls.Gallery;
+using System.Windows.Media.Imaging;
+using ImageMagick;
 
 namespace PicView.ChangeImage;
 
@@ -31,67 +35,70 @@ internal static class LoadPic
     {
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetLoadingString);
 
-        if (fileInfo is not null)
+        await Task.Run(async () =>
         {
-            if (fileInfo.Exists)
+            if (fileInfo is not null)
             {
-                if (fileInfo.IsSupported())
+                if (fileInfo.Exists)
                 {
-                    await LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+                    if (fileInfo.IsSupported())
+                    {
+                        await LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+                    }
+                    else if (fileInfo.IsArchive())
+                    {
+                        await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
+                    }
                 }
-                else if (fileInfo.IsArchive())
+                else if (path is not null && !string.IsNullOrWhiteSpace(path.GetURL()) ||
+                         !string.IsNullOrWhiteSpace(fileInfo.LinkTarget.GetURL()))
                 {
-                    await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
+                    await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
+                }
+                else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    await LoadPicFromFolderAsync(fileInfo, 0).ConfigureAwait(false);
+                }
+                else
+                {
+                    await ReloadAsync().ConfigureAwait(false);
                 }
             }
-            else if (path is not null && !string.IsNullOrWhiteSpace(path.GetURL()) ||
-                     !string.IsNullOrWhiteSpace(fileInfo.LinkTarget.GetURL()))
+            else if (!string.IsNullOrWhiteSpace(path))
             {
-                await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
-            }
-            else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-            {
-                await LoadPicFromFolderAsync(fileInfo, 0).ConfigureAwait(false);
+                var check = CheckIfLoadableString(path);
+                switch (check)
+                {
+                    default:
+                        await LoadPiFromFileAsync(check).ConfigureAwait(false);
+                        return;
+
+                    case "web":
+                        await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
+                        return;
+
+                    case "base64":
+                        await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
+                        return;
+
+                    case "directory":
+                        await LoadPicFromFolderAsync(path).ConfigureAwait(false);
+                        return;
+
+                    case "zip":
+                        await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
+                        return;
+
+                    case "":
+                        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => Unload(true));
+                        return;
+                }
             }
             else
             {
                 await ReloadAsync().ConfigureAwait(false);
             }
-        }
-        else if (!string.IsNullOrWhiteSpace(path))
-        {
-            var check = CheckIfLoadableString(path);
-            switch (check)
-            {
-                default:
-                    await LoadPiFromFileAsync(check).ConfigureAwait(false);
-                    return;
-
-                case "web":
-                    await HttpFunctions.LoadPicFromUrlAsync(path).ConfigureAwait(false);
-                    return;
-
-                case "base64":
-                    await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
-                    return;
-
-                case "directory":
-                    await LoadPicFromFolderAsync(path).ConfigureAwait(false);
-                    return;
-
-                case "zip":
-                    await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
-                    return;
-
-                case "":
-                    ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () => Unload(true));
-                    return;
-            }
-        }
-        else
-        {
-            await ReloadAsync().ConfigureAwait(false);
-        }
+        });
     }
 
     #endregion Load Pic from String
@@ -385,7 +392,38 @@ internal static class LoadPic
         // display the loading preview and wait until the image is loaded.
         if (preLoadValue is null or { BitmapSource: null })
         {
-            var thumb = Thumbnails.GetThumb(FolderIndex, fileInfo);
+            using var image = new MagickImage();
+            image.Ping(fileInfo);
+            BitmapSource? thumb = null;
+            if (GetPicGallery != null)
+            {
+                var fromGallery = false;
+                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                {
+                    if (GetPicGallery.Container.Children.Count > 0 && index < GetPicGallery.Container.Children.Count)
+                    {
+                        var y = GetPicGallery.Container.Children[index] as PicGalleryItem;
+                        thumb = (BitmapSource)y.ThumbImage.Source;
+                        fromGallery = true;
+                    }
+                });
+                if (!fromGallery)
+                {
+                    var exifThumbnail = image.GetExifProfile()?.CreateThumbnail();
+                    thumb = exifThumbnail?.ToBitmapSource();
+                }
+            }
+            else
+            {
+                var exifThumbnail = image.GetExifProfile()?.CreateThumbnail();
+                thumb = exifThumbnail?.ToBitmapSource();
+            }
+
+            if (index != FolderIndex)
+            {
+                await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                return; // Skip loading if user went to next value
+            }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
@@ -393,10 +431,12 @@ internal static class LoadPic
                 GetSpinWaiter.Visibility = Visibility.Visible;
 
                 ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                if (image is { Height: > 0, Width: > 0 })
+                    ScaleImage.FitImage(image.Width, image.Height);
             }, DispatcherPriority.Send);
 
             // Update gallery selections
-            if (GetPicGallery is not null)
+            if (GetPicGallery is not null && index == FolderIndex)
             {
                 await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {

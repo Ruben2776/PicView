@@ -104,55 +104,59 @@ internal class FileHistory
             }
 
             SetTitle.SetLoadingString();
+            UC.GetSpinWaiter.Visibility = Visibility.Visible;
         }, DispatcherPriority.Normal);
 
-        if (Settings.Default.IncludeSubDirectories)
+        await Task.Run(async () => // Make sure UI responsive
         {
-            if (_fileHistory.Last().IsArchive())
+            if (Settings.Default.IncludeSubDirectories)
             {
-                await LoadPic.LoadPicFromArchiveAsync(_fileHistory.Last()).ConfigureAwait(false);
-                return;
-            }
-            var currentFolder = Path.GetDirectoryName(_fileHistory.Last());
-            var parentFolder = Path.GetDirectoryName(currentFolder);
-            var fileInfo = new FileInfo(parentFolder);
-            Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
-            if (Navigation.Pics.Count > 0)
-            {
-                Navigation.FolderIndex = Navigation.Pics.IndexOf(_fileHistory.Last());
-                await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
-
-                // Fix if Bottom Gallery is enabled
-                if (Settings.Default.IsBottomGalleryShown)
+                if (_fileHistory.Last().IsArchive())
                 {
-                    if (UC.GetPicGallery is { Visibility: Visibility.Collapsed })
+                    await LoadPic.LoadPicFromArchiveAsync(_fileHistory.Last()).ConfigureAwait(false);
+                    return;
+                }
+                var currentFolder = Path.GetDirectoryName(_fileHistory.Last());
+                var parentFolder = Path.GetDirectoryName(currentFolder);
+                var fileInfo = new FileInfo(parentFolder);
+                Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+                if (Navigation.Pics.Count > 0)
+                {
+                    Navigation.FolderIndex = Navigation.Pics.IndexOf(_fileHistory.Last());
+                    await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
+
+                    // Fix if Bottom Gallery is enabled
+                    if (Settings.Default.IsBottomGalleryShown)
                     {
-                        var shouldLoadGallery = false;
-                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                        if (UC.GetPicGallery is { Visibility: Visibility.Collapsed })
                         {
-                            GalleryToggle.ShowBottomGallery();
-                            ScaleImage.TryFitImage();
-                            if (UC.GetPicGallery.Container.Children.Count <= 0)
+                            var shouldLoadGallery = false;
+                            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                             {
-                                shouldLoadGallery = true;
+                                GalleryToggle.ShowBottomGallery();
+                                ScaleImage.TryFitImage();
+                                if (UC.GetPicGallery.Container.Children.Count <= 0)
+                                {
+                                    shouldLoadGallery = true;
+                                }
+                            });
+                            if (shouldLoadGallery)
+                            {
+                                await GalleryLoad.LoadAsync().ConfigureAwait(false);
                             }
-                        });
-                        if (shouldLoadGallery)
-                        {
-                            await GalleryLoad.LoadAsync().ConfigureAwait(false);
                         }
                     }
+                }
+                else
+                {
+                    await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
                 }
             }
             else
             {
                 await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
             }
-        }
-        else
-        {
-            await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
-        }
+        });
     }
 
     internal void Add(string fileName)

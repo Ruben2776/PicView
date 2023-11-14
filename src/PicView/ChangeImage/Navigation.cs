@@ -123,24 +123,17 @@ internal static class Navigation
             });
         }
 
-        if (fastPic)
+        await Task.Run(async () =>
         {
-            await FastPic.Run(next).ConfigureAwait(false);
-            if (UC.GetPicGallery is not null)
+            if (fastPic)
             {
-                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                {
-                    // Select next item
-                    GalleryNavigation.SetSelected(FolderIndex, true);
-                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                    GalleryNavigation.ScrollToGalleryCenter();
-                });
+                await FastPic.Run(next).ConfigureAwait(false);
             }
-        }
-        else
-        {
-            await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
-        }
+            else
+            {
+                await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+            }
+        });
     }
 
     /// <summary>

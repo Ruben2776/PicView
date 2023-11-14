@@ -131,29 +131,6 @@ public static class AnimationBehavior
 
     #endregion AutoStart
 
-    #region AnimateInDesignMode
-
-    public static bool GetAnimateInDesignMode(DependencyObject obj)
-    {
-        return (bool)obj.GetValue(AnimateInDesignModeProperty);
-    }
-
-    public static void SetAnimateInDesignMode(DependencyObject obj, bool value)
-    {
-        obj.SetValue(AnimateInDesignModeProperty, value);
-    }
-
-    public static readonly DependencyProperty AnimateInDesignModeProperty =
-        DependencyProperty.RegisterAttached(
-            "AnimateInDesignMode",
-            typeof(bool),
-            typeof(AnimationBehavior),
-            new PropertyMetadata(
-                false,
-                AnimateInDesignModeChanged));
-
-    #endregion AnimateInDesignMode
-
     #region Animator
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -319,44 +296,6 @@ public static class AnimationBehavior
         GetAnimator(o)?.OnRepeatBehaviorChanged();
     }
 
-    private static async void AnimateInDesignModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is not Image image)
-            return;
-
-        await InitAnimationAsync(image).ConfigureAwait(false);
-    }
-
-    private static bool CheckDesignMode(Image image, Uri sourceUri, Stream sourceStream)
-    {
-        if (IsInDesignMode(image) && !GetAnimateInDesignMode(image))
-        {
-            try
-            {
-                if (sourceStream != null)
-                {
-                    SetStaticImage(image, sourceStream);
-                }
-                else if (sourceUri != null)
-                {
-                    var bmp = new BitmapImage
-                    {
-                        UriSource = sourceUri
-                    };
-                    image.Source = bmp;
-                }
-            }
-            catch
-            {
-                image.Source = null;
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-
     private static async Task InitAnimationAsync(Image image)
     {
         if (IsLoaded(image))
@@ -443,9 +382,6 @@ public static class AnimationBehavior
     private static async Task InitAnimationAsync(Image image, Uri sourceUri, RepeatBehavior repeatBehavior,
         int seqNum, bool cacheFrameDataInMemory)
     {
-        if (!CheckDesignMode(image, sourceUri, null))
-            return;
-
         try
         {
             var animator = await ImageAnimator.CreateAsync(sourceUri, repeatBehavior, null, image,
@@ -475,9 +411,6 @@ public static class AnimationBehavior
     private static async void InitAnimationAsync(Image image, Stream stream, RepeatBehavior repeatBehavior,
         int seqNum, bool cacheFrameDataInMemory)
     {
-        if (!CheckDesignMode(image, null, stream))
-            return;
-
         try
         {
             var animator = await ImageAnimator.CreateAsync(stream, repeatBehavior, image, cacheFrameDataInMemory);
@@ -531,12 +464,6 @@ public static class AnimationBehavior
         animator.Error -= AnimatorError;
         animator.Dispose();
         SetAnimator(image, null);
-    }
-
-    // ReSharper disable once UnusedParameter.Local (used in WPF)
-    private static bool IsInDesignMode(DependencyObject obj)
-    {
-        return DesignerProperties.GetIsInDesignMode(obj);
     }
 
     private static async Task SetStaticImageAsync(Image image, Uri sourceUri)

@@ -18,9 +18,13 @@
     <PackageIcon>assets/xamlanimatedgif.png</PackageIcon>
     <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
     <DefineConstants>$(DefineConstants);LACKS_STREAM_MEMORY_OVERLOADS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <Reference Include="PresentationCore" />
