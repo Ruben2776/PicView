@@ -64,17 +64,7 @@ internal static class FastPic
             }
         }
 
-        _ = UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
-        if (UC.GetPicGallery is not null)
-        {
-            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-            {
-                // Select next item
-                GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-            });
-        }
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
 
         _updateSource = false;
         await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);

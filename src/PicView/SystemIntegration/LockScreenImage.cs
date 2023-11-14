@@ -1,28 +1,21 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
+﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using PicView.ProcessHandling;
-
-//using Windows.Storage;
-//using Windows.System.UserProfile;
+using Windows.Storage;
+using Windows.System.UserProfile;
 using Rotation = PicView.UILogic.TransformImage.Rotation;
 
 namespace PicView.SystemIntegration;
 
 public static class LockScreenHelper
 {
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool Wow64DisableWow64FsRedirection(ref IntPtr ptr); //If on 64 bit, C# will replace "System32" with "SysWOW64". This disables that.
-
     public static async Task<bool> SetLockScreenImageAsync(string? path = null)
     {
         var url = string.Empty;
@@ -33,7 +26,7 @@ public static class LockScreenHelper
             Application.Current.MainWindow!.Cursor = Cursors.Wait;
         });
 
-        string destinationPath;
+        string? folderPath, fileName;
         var hasEffect = ConfigureWindows.GetMainWindow.MainImage.Effect != null;
         var rotationAngle = Rotation.RotationAngle;
         var isFlipped = Rotation.IsFlipped;
@@ -66,7 +59,8 @@ public static class LockScreenHelper
         {
             // Create a temporary directory
             var tempDirectory = Path.GetTempPath();
-            destinationPath = Path.Combine(tempDirectory, Path.GetFileNameWithoutExtension(path) + ".jpg");
+            var tempFileName = Path.GetRandomFileName();
+            var destinationPath = Path.Combine(tempDirectory, tempFileName);
 
             BitmapSource? bitmapSource = null;
             string? imagePath = null;
@@ -81,18 +75,24 @@ public static class LockScreenHelper
             }
 
             await SaveImages.SaveImageAsync(rotationAngle, isFlipped, bitmapSource, imagePath, destinationPath, null, hasEffect).ConfigureAwait(false);
-            path = destinationPath;
+
+            folderPath = Path.GetDirectoryName(destinationPath);
+            fileName = Path.GetFileName(destinationPath);
         }
         else
         {
-            path = Navigation.Pics[Navigation.FolderIndex];
+            folderPath = Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]);
+            fileName = Path.GetFileName(Navigation.Pics[Navigation.FolderIndex]);
         }
 
         try
         {
             Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]);
+            var storageFolder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+            var imageFile = await storageFolder.GetFileAsync(fileName);
 
-            ProcessLogic.RunElevated("PicView.Tools.exe", "lockscreen," + path);
+            using var stream = await imageFile.OpenAsync(FileAccessMode.Read);
+            await LockScreen.SetImageStreamAsync(stream);
         }
         catch (Exception ex)
         {
