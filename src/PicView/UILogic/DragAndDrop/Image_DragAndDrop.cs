@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
@@ -133,74 +134,79 @@ internal static class ImageDragAndDrop
             return;
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, RemoveDragOverlay);
-
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
+            RemoveDragOverlay();
             // Don't show drop message any longer
             CloseToolTipMessage();
 
             ConfigureWindows.GetMainWindow.Activate();
+            SetTitle.SetLoadingString();
+            UC.GetSpinWaiter.Visibility = Visibility.Visible;
+            ConfigureWindows.GetMainWindow.MainImage.Source = null;
         });
 
-        // Get files as strings
-        if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
+        await Task.Run(async () =>
         {
-            try
+            // Get files as strings
+            if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
-
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                if (memoryStream is not null)
-                {
-                    await LoadUrlAsync(memoryStream).ConfigureAwait(false);
-                }
-                else
+                try
                 {
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat)).ConfigureAwait(false);
-                }
-            }
-            catch (Exception)
-            {
-                //
-            }
-            return;
-        }
+                    var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
 
-        // Check if same file
-        if (files.Length == 1 && Pics.Count > 0)
-        {
-            if (files[0] == Pics[FolderIndex])
-            {
-                e.Effects = DragDropEffects.None;
-                e.Handled = true;
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                    if (memoryStream is not null)
+                    {
+                        await LoadUrlAsync(memoryStream).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat)).ConfigureAwait(false);
+                    }
+                }
+                catch (Exception)
+                {
+                    //
+                }
                 return;
             }
-        }
 
-        if (files[0].IsSupported() == false)
-        {
-            if (Directory.Exists(files[0]))
+            // Check if same file
+            if (files.Length == 1 && Pics.Count > 0)
             {
-                await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                if (files[0] == Pics[FolderIndex])
+                {
+                    e.Effects = DragDropEffects.None;
+                    e.Handled = true;
+                    return;
+                }
             }
-            else if (files[0].IsArchive())
-            {
-                await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
-            }
-        }
-        else
-        {
-            await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
-        }
 
-        // Open additional windows if multiple files dropped
-        foreach (var file in files.Skip(1))
-        {
-            ProcessLogic.StartProcessWithFileArgument(file);
-        }
+            if (files[0].IsSupported() == false)
+            {
+                if (Directory.Exists(files[0]))
+                {
+                    await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                }
+                else if (files[0].IsArchive())
+                {
+                    await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
+            }
+
+            // Open additional windows if multiple files dropped
+            foreach (var file in files.Skip(1))
+            {
+                ProcessLogic.StartProcessWithFileArgument(file);
+            }
+        });
     }
 
     private static async Task LoadUrlAsync(MemoryStream memoryStream)

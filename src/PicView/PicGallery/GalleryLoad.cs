@@ -61,19 +61,6 @@ internal static class GalleryLoad
         var source = new CancellationTokenSource();
         var iterations = Navigation.Pics.Count;
 
-        async Task UpdateThumbAsync(int i, int updates)
-        {
-            var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
-            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-            {
-                UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
-                    galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
-                    galleryThumbHolderItem.FileDate);
-            }, DispatcherPriority.Background, source.Token);
-            if (updates == iterations)
-                IsLoading = false;
-        }
-
         await Task.Run(async () =>
         {
             for (int i = 0; i < iterations; i++)
@@ -102,13 +89,22 @@ internal static class GalleryLoad
             var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
             var startPosition = 0;
             var updates = 0;
+
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
+                if (GalleryNavigation.HorizontalItems is 0 || Navigation.Pics.Count is 0)
+                {
+                    return;
+                }
                 GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
                 GalleryNavigation.ScrollToGalleryCenter();
-                startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
-                startPosition = startPosition < 0 ? 0 : startPosition;
+                if (GalleryNavigation.HorizontalItems is not 0 && Navigation.Pics.Count is not 0)
+                {
+                    startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) %
+                                    Navigation.Pics.Count;
+                    startPosition = startPosition < 0 ? 0 : startPosition;
+                }
             }, priority, source.Token);
 
             _ = Task.Run(async () =>
@@ -123,39 +119,12 @@ internal static class GalleryLoad
                     updates++;
                     try
                     {
-                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
+                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 ||
+                            i > Navigation.Pics.Count)
                         {
                             throw new TaskCanceledException();
                         }
-                        await UpdateThumbAsync(i, updates).ConfigureAwait(false);
-                    }
-                    catch (Exception e)
-                    {
-#if DEBUG
-                        Trace.WriteLine(e.Message);
-#endif
-                        IsLoading = false;
-                    }
-                }
-            }, source.Token).ConfigureAwait(false);
 
-            _ = Task.Run(async () =>
-            {
-                if (iterations > 3000)
-                {
-                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-                }
-                for (var x = startPosition - 1; x >= 0; x--)
-                {
-                    updates++;
-                    try
-                    {
-                        var i = x;
-
-                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
-                        {
-                            throw new TaskCanceledException();
-                        }
                         await UpdateThumbAsync(i, updates).ConfigureAwait(false);
                     }
                     catch (Exception e)
@@ -168,7 +137,54 @@ internal static class GalleryLoad
                     }
                 }
             }, source.Token).ConfigureAwait(false);
-        }, source.Token).ConfigureAwait(false);
+
+            _ = Task.Run(async () =>
+            {
+                if (iterations > 3000)
+                {
+                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+                }
+
+                for (var x = startPosition - 1; x >= 0; x--)
+                {
+                    updates++;
+                    try
+                    {
+                        var i = x;
+
+                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 ||
+                            i > Navigation.Pics.Count)
+                        {
+                            throw new TaskCanceledException();
+                        }
+
+                        await UpdateThumbAsync(i, updates).ConfigureAwait(false);
+                    }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Trace.WriteLine(e.Message);
+#endif
+                        IsLoading = false;
+                        return;
+                    }
+                }
+            }, source.Token).ConfigureAwait(false);
+        }, source.Token);
+        return;
+
+        async Task UpdateThumbAsync(int i, int updates)
+        {
+            var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
+                    galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
+                    galleryThumbHolderItem.FileDate);
+            }, DispatcherPriority.Background, source.Token);
+            if (updates == iterations)
+                IsLoading = false;
+        }
     }
 
     internal static async Task ReloadGalleryAsync()

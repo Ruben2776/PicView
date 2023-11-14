@@ -225,9 +225,6 @@ internal static class PreLoader
             await AddAsync(index).ConfigureAwait(false);
         });
 
-        var thread = Thread.CurrentThread;
-        thread.Priority = ThreadPriority.Lowest;
-
         if (Pics.Count > MaxCount + NegativeIterations)
         {
             for (var i = 0; i < NegativeIterations; i++)

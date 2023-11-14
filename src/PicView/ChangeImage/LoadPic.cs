@@ -260,12 +260,6 @@ internal static class LoadPic
     /// <param name="index"></param>
     internal static async Task LoadPicFromFolderAsync(FileInfo fileInfo, int index = -1)
     {
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-        {
-            SetLoadingString();
-            ToggleStartUpUC(true);
-        });
-
         if (CheckOutOfRange() == false)
         {
             BackupPath = Pics[FolderIndex];
