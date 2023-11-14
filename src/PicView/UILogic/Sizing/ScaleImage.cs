@@ -79,12 +79,6 @@ internal static class ScaleImage
         var padding = MonitorInfo.DpiScaling <= 1 ? 20 * MonitorInfo.DpiScaling : 0; // Padding to make it feel more comfortable
         var galleryHeight = 0d;
 
-        var borderSpaceHeight = Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
-        var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
-
-        var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
-        var workAreaHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
-
         if (UC.GetPicGallery is not null)
         {
             if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
@@ -92,6 +86,12 @@ internal static class ScaleImage
                 galleryHeight = PicGalleryItemSize + ScrollbarSize;
             }
         }
+
+        var borderSpaceHeight = Settings.Default.Fullscreen ? 0 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
+        var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
+
+        var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
+        var workAreaHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
         if (Settings.Default.AutoFitWindow)
         {
