@@ -271,11 +271,10 @@ internal static class OpenSave
     {
         IsDialogOpen = true;
 
-        var dialog = new CommonOpenFileDialog
+        var folderDialog = new OpenFolderDialog
         {
-            IsFolderPicker = true,
         };
 
-        return dialog.ShowDialog() == CommonFileDialogResult.Ok ? dialog.FileName : null;
+        return folderDialog.ShowDialog() == true ? folderDialog.FolderName : null;
     }
 }
