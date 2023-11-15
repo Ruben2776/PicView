@@ -153,6 +153,7 @@ internal static partial class QuickResizeShortcuts
             else
             {
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                return false;
             }
         }
         else // handle if it contains percentage
@@ -161,16 +162,19 @@ internal static partial class QuickResizeShortcuts
             if (tryWidth)
             {
                 await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
-                return false;
-            }
-            var tryHeight = await FirePercentageAsync(heightText, fileInfo).ConfigureAwait(false);
-            if (tryHeight)
-            {
-                await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
             }
             else
             {
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                var tryHeight = await FirePercentageAsync(heightText, fileInfo).ConfigureAwait(false);
+                if (tryHeight)
+                {
+                    await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
+                }
+                else
+                {
+                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    return false;
+                }
             }
         }
         return true;
