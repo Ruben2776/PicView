@@ -134,22 +134,20 @@ internal static class ImageDragAndDrop
             return;
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, RemoveDragOverlay);
+
+        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
         {
-            RemoveDragOverlay();
             // Don't show drop message any longer
             CloseToolTipMessage();
 
             ConfigureWindows.GetMainWindow.Activate();
-            SetTitle.SetLoadingString();
-            UC.GetSpinWaiter.Visibility = Visibility.Visible;
-            ConfigureWindows.GetMainWindow.MainImage.Source = null;
         });
 
-        await Task.Run(async () =>
+        // Get files as strings
+        if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
         {
-            // Get files as strings
-            if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
+            await Task.Run(async () =>
             {
                 try
                 {
@@ -171,20 +169,24 @@ internal static class ImageDragAndDrop
                 {
                     //
                 }
+            });
+
+            return;
+        }
+
+        // Check if same file
+        if (files.Length == 1 && Pics.Count > 0)
+        {
+            if (files[0] == Pics[FolderIndex])
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
                 return;
             }
+        }
 
-            // Check if same file
-            if (files.Length == 1 && Pics.Count > 0)
-            {
-                if (files[0] == Pics[FolderIndex])
-                {
-                    e.Effects = DragDropEffects.None;
-                    e.Handled = true;
-                    return;
-                }
-            }
-
+        await Task.Run(async () =>
+        {
             if (files[0].IsSupported() == false)
             {
                 if (Directory.Exists(files[0]))
