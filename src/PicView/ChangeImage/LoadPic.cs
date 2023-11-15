@@ -366,6 +366,11 @@ internal static class LoadPic
                 {
                     PreLoader.Clear();
                     Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
+                    if (Pics.Count is 0)
+                    {
+                        Unload(true);
+                        return;
+                    }
                     var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
                     await GoToNextImage(navigateTo).ConfigureAwait(false);
                     return;
@@ -434,6 +439,8 @@ internal static class LoadPic
             {
                 await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
+                    if (index != FolderIndex)
+                        return;
                     // Select next item
                     GalleryNavigation.SetSelected(FolderIndex, true);
                     GalleryNavigation.SelectedGalleryItem = FolderIndex;
@@ -461,6 +468,8 @@ internal static class LoadPic
         {
             await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
             {
+                if (index != FolderIndex)
+                    return;
                 // Select next item
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = FolderIndex;
