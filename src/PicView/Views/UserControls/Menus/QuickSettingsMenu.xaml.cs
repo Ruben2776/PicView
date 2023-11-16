@@ -1,17 +1,13 @@
 ﻿using PicView.ConfigureSettings;
 using PicView.Properties;
 using PicView.UILogic;
-using System.Windows.Controls;
 using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 
 namespace PicView.Views.UserControls.Menus;
 
-/// <summary>
-/// Interaction logic for QuickSettingsMenu.xaml
-/// </summary>
-public partial class QuickSettingsMenu : UserControl
+public partial class QuickSettingsMenu
 {
     public QuickSettingsMenu()
     {
@@ -67,8 +63,8 @@ public partial class QuickSettingsMenu : UserControl
 
         // Search subdirectories
         SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
-        SearchSubDir.Click += (_, _) => UpdateUIValues.ToggleIncludeSubdirectoriesAsync();
-        SearchSubDirBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.ToggleIncludeSubdirectoriesAsync();
+        SearchSubDir.Click += async (_, _) => await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
+        SearchSubDirBorder.MouseLeftButtonDown += async (_, _) => await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(SearchSubDirBorder, SearchSubDirBrush, SearchSubDirFill);
     }
 }

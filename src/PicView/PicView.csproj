@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -181,20 +181,21 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
-    <PackageReference Include="Magick.NET-Q16-OpenMP-x64" Version="13.2.0" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="7.0.6">
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.4.0" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="7.2.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.0.6" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.2.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="SkiaSharp" Version="2.88.6">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.5" />
-    <PackageReference Include="XamlAnimatedGif" Version="2.2.0" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.6" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0-rc.2.23479.14" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -316,11 +317,17 @@
     <None Remove="Themes\Resources\img\icon__Q6k_icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\XamlAnimatedGif\XamlAnimatedGif.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Themes\Resources\img\icon__Q6k_icon.ico" />
   </ItemGroup>
+	<ItemGroup>
+		<RuntimeHostConfigurationOption Include="Switch.System.Windows.Media.EnableHardwareAccelerationInRdp" Value="true" />
+	</ItemGroup>
 	
   <PropertyGroup>
-    <FileVersion>1.9.6</FileVersion>
+    <FileVersion>2.0</FileVersion>
     <SignAssembly>False</SignAssembly>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
@@ -331,18 +338,18 @@
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon-raster.128b.png</PackageIcon>
-    <AssemblyVersion>1.9.6</AssemblyVersion>
+    <AssemblyVersion>2.0</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Fast Picture Viewer with compact UI that can be hidden. </Description>
     <PackageTags>picture-viewer,desktop-app,</PackageTags>
-    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

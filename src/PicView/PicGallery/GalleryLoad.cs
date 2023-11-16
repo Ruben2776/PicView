@@ -3,7 +3,6 @@ using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -44,8 +43,8 @@ internal static class GalleryLoad
 
         internal static GalleryThumbHolder GetThumbData(int index)
         {
-            var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize);
             var fileInfo = new FileInfo(Navigation.Pics[index]);
+            var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize, fileInfo);
             var fileLocation = fileInfo.FullName;
             var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
             var fileSize = $"{(string)Application.Current.Resources["FileSize"]}: {fileInfo.Length.GetReadableFileSize()}";
@@ -64,40 +63,48 @@ internal static class GalleryLoad
 
         await Task.Run(async () =>
         {
-            var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
             for (int i = 0; i < iterations; i++)
             {
                 try
                 {
-                    if (!IsLoading || Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1)
+                    if (iterations != Navigation.Pics.Count)
                     {
-                        throw new TaskCanceledException();
+                        await source.CancelAsync();
+                        return;
                     }
 
-                    var x = i;
+                    var i1 = i;
                     await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
-                        Add(x);
+                        Add(i1);
                     }, DispatcherPriority.DataBind, source.Token);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-#if DEBUG
-                    Trace.WriteLine(e.Message);
-#endif
-                    IsLoading = false;
+                    GalleryFunctions.Clear();
                     return;
                 }
             }
+
+            var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
             var startPosition = 0;
             var updates = 0;
+
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
+                if (GalleryNavigation.HorizontalItems is 0 || Navigation.Pics.Count is 0)
+                {
+                    return;
+                }
                 GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
                 GalleryNavigation.ScrollToGalleryCenter();
-                startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) % Navigation.Pics.Count;
-                startPosition = startPosition < 0 ? 0 : startPosition;
+                if (GalleryNavigation.HorizontalItems is not 0 && Navigation.Pics.Count is not 0)
+                {
+                    startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) %
+                                    Navigation.Pics.Count;
+                    startPosition = startPosition < 0 ? 0 : startPosition;
+                }
             }, priority, source.Token);
 
             _ = Task.Run(async () =>
@@ -106,26 +113,19 @@ internal static class GalleryLoad
                 {
                     Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                 }
-                for (var x = startPosition; x < iterations; x++)
+
+                for (int i = startPosition; i < iterations; i++)
                 {
                     updates++;
                     try
                     {
-                        var i = x;
-
-                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
+                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 ||
+                            i > Navigation.Pics.Count)
                         {
                             throw new TaskCanceledException();
                         }
-                        var galleryThumbHolderItem = GalleryThumbHolder.GetThumbData(i);
-                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                        {
-                            UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
-                                galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
-                                galleryThumbHolderItem.FileDate);
-                        }, DispatcherPriority.Background, source.Token);
-                        if (updates == iterations)
-                            IsLoading = false;
+
+                        await UpdateThumbAsync(i, updates).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
@@ -144,6 +144,7 @@ internal static class GalleryLoad
                 {
                     Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                 }
+
                 for (var x = startPosition - 1; x >= 0; x--)
                 {
                     updates++;
@@ -151,20 +152,13 @@ internal static class GalleryLoad
                     {
                         var i = x;
 
-                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
+                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 ||
+                            i > Navigation.Pics.Count)
                         {
                             throw new TaskCanceledException();
                         }
 
-                        var galleryThumbHolderItem = GalleryThumbHolder.GetThumbData(i);
-                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                        {
-                            UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
-                                galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
-                                galleryThumbHolderItem.FileDate);
-                        }, DispatcherPriority.Background, source.Token);
-                        if (updates == iterations)
-                            IsLoading = false;
+                        await UpdateThumbAsync(i, updates).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
@@ -176,7 +170,21 @@ internal static class GalleryLoad
                     }
                 }
             }, source.Token).ConfigureAwait(false);
-        }, source.Token).ConfigureAwait(false);
+        }, source.Token);
+        return;
+
+        async Task UpdateThumbAsync(int i, int updates)
+        {
+            var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
+                    galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
+                    galleryThumbHolderItem.FileDate);
+            }, DispatcherPriority.Background, source.Token);
+            if (updates == iterations)
+                IsLoading = false;
+        }
     }
 
     internal static async Task ReloadGalleryAsync()

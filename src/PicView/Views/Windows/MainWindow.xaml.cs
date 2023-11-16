@@ -128,7 +128,7 @@ public partial class MainWindow
             // ParentContainer
             ParentContainer.Drop += async (sender, e) =>
                 await ImageDragAndDrop.Image_Drop(sender, e).ConfigureAwait(false);
-            ParentContainer.DragEnter += ImageDragAndDrop.Image_DragEnter;
+            ParentContainer.DragEnter += async (sender, e) => await ImageDragAndDrop.Image_DragEnter(sender, e).ConfigureAwait(false);
             ParentContainer.DragLeave += ImageDragAndDrop.Image_DragLeave;
             ParentContainer.PreviewMouseWheel += async (sender, e) =>
                 await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);

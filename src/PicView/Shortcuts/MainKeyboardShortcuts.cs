@@ -27,6 +27,8 @@ internal static class MainKeyboardShortcuts
 {
     internal static async Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
     {
+        #region return statements
+
         // Don't allow keys when typing in text
         if (GetMainWindow.TitleText.IsKeyboardFocusWithin) { return; }
 
@@ -46,6 +48,8 @@ internal static class MainKeyboardShortcuts
                 return;
             }
         }
+
+        #endregion return statements
 
         var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
         var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;

@@ -1,4 +1,5 @@
-﻿using PicView.Editing.HlslEffects;
+﻿using PicView.ConfigureSettings;
+using PicView.Editing.HlslEffects;
 using PicView.FileHandling;
 using PicView.Properties;
 using PicView.Shortcuts;
@@ -8,8 +9,6 @@ using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using PicView.ConfigureSettings;
-using WinRT;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.SystemIntegration.Wallpaper;
 
@@ -295,14 +294,13 @@ public partial class EffectsWindow : Window
         ConfigureWindows.GetMainWindow.MainImage.Effect = null;
         IntensitySlider.IsEnabled = false;
 
-        var list = EffectsContainer.Children.OfType<CheckBox>().Where(x => x.IsChecked == true);
-        var borders = EffectsContainer.Children.OfType<Border>();
-        foreach (var item in borders)
+        var list = EffectsContainer.Children.OfType<Border>();
+        foreach (var item in list)
         {
-            var checkbox = item.Child.As<CheckBox>();
-            if (checkbox is not null and { IsChecked: true })
+            var checkBox = (CheckBox)item.Child;
+            if (checkBox is not null and { IsChecked: true })
             {
-                checkbox.IsChecked = false;
+                checkBox.IsChecked = false;
                 value = true;
             }
         }

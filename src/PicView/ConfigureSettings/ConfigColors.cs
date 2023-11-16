@@ -73,19 +73,11 @@ internal static class ConfigColors
             w.BorderBrush = isFocused ? (SolidColorBrush)Application.Current.Resources["BorderBrush"]
                 : (SolidColorBrush)Application.Current.Resources["BorderBrushAlt"];
 
-            w.LeftButtonContainer.Background =
-                w.Logo.Background =
-                    w.CloseButton.Background =
-                        w.MinButton.Background =
-                            w.FullscreenButton.Background =
-                                isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"]
-                                    : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
-
             w.TitleBar.Background =
                 isFocused ? (SolidColorBrush)Application.Current.Resources["SubtleFadeBrush"]
-                    : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
+                    : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
             w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"]
-                : (SolidColorBrush)Application.Current.Resources["BorderBrush"];
+                : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrush"];
         }
         else
         {

@@ -18,6 +18,10 @@ public partial class X2
             }
             else
             {
+                if (UC.GetQuickResize is { IsVisible: true })
+                {
+                    return;
+                }
                 SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
             }
         };

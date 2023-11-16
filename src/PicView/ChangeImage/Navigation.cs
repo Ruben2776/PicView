@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using PicView.ChangeTitlebar;
+﻿using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -124,20 +123,27 @@ internal static class Navigation
             });
         }
 
-        if (fastPic) await FastPic.Run(next).ConfigureAwait(false);
-        else await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
-
-        // Update gallery selections
-        if (UC.GetPicGallery is not null)
+        await Task.Run(async () =>
         {
-            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            if (fastPic)
             {
-                // Select next item
-                GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-            });
-        }
+                await FastPic.Run(next).ConfigureAwait(false);
+                if (UC.GetPicGallery is not null)
+                {
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        // Select next item
+                        GalleryNavigation.SetSelected(FolderIndex, true);
+                        GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                        GalleryNavigation.ScrollToGalleryCenter();
+                    });
+                }
+            }
+            else
+            {
+                await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+            }
+        });
     }
 
     /// <summary>

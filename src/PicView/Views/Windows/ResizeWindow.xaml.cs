@@ -317,7 +317,7 @@ public partial class ResizeWindow
 
                 if (running is false)
                 {
-                    cancelToken.Cancel();
+                    await cancelToken.CancelAsync();
                     if (sourceFileist is not null)
                     {
                         sourceFileist.Clear();
@@ -339,7 +339,7 @@ public partial class ResizeWindow
                 {
                     if (running is false)
                     {
-                        cancelToken.Cancel();
+                        await cancelToken.CancelAsync();
                         if (sourceFileist is not null)
                         {
                             sourceFileist.Clear();

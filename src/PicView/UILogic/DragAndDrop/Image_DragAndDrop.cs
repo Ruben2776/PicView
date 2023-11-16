@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
@@ -27,68 +28,76 @@ internal static class ImageDragAndDrop
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    internal static void Image_DragEnter(object sender, DragEventArgs e)
+    internal static async Task Image_DragEnter(object sender, DragEventArgs e)
     {
         if (GalleryFunctions.IsGalleryOpen) return;
+        AddDragOverlay();
 
         UIElement? element = null;
 
-        if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
+        await Task.Run(async () =>
         {
-            var data = e.Data.GetData(DataFormats.Text);
+            if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
+            {
+                var data = e.Data.GetData(DataFormats.Text);
 
-            if (data != null) // Check if from web)
-            {
-                // Link
-                element = new LinkChain();
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (Directory.Exists(files[0]))
-        {
-            if (Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
-            {
-                // Folder
-                element = new FolderIcon();
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (files[0].IsArchive())
-        {
-            // Archive
-            element = new ZipIcon();
-        }
-        else if (files[0].IsSupported())
-        {
-            // Check if same file
-            if (files.Length == 1 && Pics.Count > 0 && FolderIndex < Pics.Count)
-            {
-                if (files[0] == Pics[FolderIndex])
+                if (data != null) // Check if from web)
                 {
-                    e.Effects = DragDropEffects.None;
-                    e.Handled = true;
-                    return;
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        element = new LinkChain();
+                    });
                 }
             }
-            // File
-            var thumb = Path.GetExtension(files[0]) is ".b64" or ".txt" ? ImageFunctions.ShowLogo() : GetBitmapSourceThumb(files[0],(int) ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth);
-            element = new DragDropOverlayPic(thumb);
-        }
+            else if (Directory.Exists(files[0]))
+            {
+                if (Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        element = new FolderIcon();
+                    });
+                }
+            }
+            else if (files[0].IsArchive())
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    element = new ZipIcon();
+                });
+            }
+            else if (files[0].IsSupported())
+            {
+                // Check if same file
+                if (files.Length == 1 && Pics.Count > 0 && FolderIndex < Pics.Count)
+                {
+                    if (files[0] == Pics[FolderIndex])
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(RemoveDragOverlay);
+                        e.Effects = DragDropEffects.None;
+                        e.Handled = true;
+                        return;
+                    }
+                }
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    var thumb = Path.GetExtension(files[0]) is ".b64" or ".txt" ? ImageFunctions.ShowLogo() : GetBitmapSourceThumb(files[0], (int)ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth);
+                    element = new DragDropOverlayPic(thumb);
+                });
+            }
+        });
 
         // Tell that it's succeeded
         e.Effects = DragDropEffects.Copy;
         e.Handled = true;
 
         if (element == null) return;
-        if (_dropOverlay == null)
+        if (_dropOverlay != null)
         {
-            AddDragOverlay(element);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UpdateDragOverlay(element);
+            });
         }
     }
 
@@ -138,26 +147,30 @@ internal static class ImageDragAndDrop
         // Get files as strings
         if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
         {
-            try
+            await Task.Run(async () =>
             {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
-
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                if (memoryStream is not null)
-                {
-                    await LoadUrlAsync(memoryStream).ConfigureAwait(false);
-                }
-                else
+                try
                 {
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat)).ConfigureAwait(false);
+                    var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                    if (memoryStream is not null)
+                    {
+                        await LoadUrlAsync(memoryStream).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat)).ConfigureAwait(false);
+                    }
                 }
-            }
-            catch (Exception)
-            {
-                //
-            }
+                catch (Exception)
+                {
+                    //
+                }
+            });
+
             return;
         }
 
@@ -172,27 +185,30 @@ internal static class ImageDragAndDrop
             }
         }
 
-        if (files[0].IsSupported() == false)
+        await Task.Run(async () =>
         {
-            if (Directory.Exists(files[0]))
+            if (files[0].IsSupported() == false)
             {
-                await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                if (Directory.Exists(files[0]))
+                {
+                    await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
+                }
+                else if (files[0].IsArchive())
+                {
+                    await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
+                }
             }
-            else if (files[0].IsArchive())
+            else
             {
-                await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
+                await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
             }
-        }
-        else
-        {
-            await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
-        }
 
-        // Open additional windows if multiple files dropped
-        foreach (var file in files.Skip(1))
-        {
-            ProcessLogic.StartProcessWithFileArgument(file);
-        }
+            // Open additional windows if multiple files dropped
+            foreach (var file in files.Skip(1))
+            {
+                ProcessLogic.StartProcessWithFileArgument(file);
+            }
+        });
     }
 
     private static async Task LoadUrlAsync(MemoryStream memoryStream)
@@ -204,14 +220,19 @@ internal static class ImageDragAndDrop
         await memoryStream.DisposeAsync().ConfigureAwait(false);
     }
 
-    private static void AddDragOverlay(UIElement element)
+    private static void AddDragOverlay()
     {
-        _dropOverlay = new DragDropOverlay(element)
+        _dropOverlay = new DragDropOverlay()
         {
             Width = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth,
             Height = ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight
         };
         ConfigureWindows.GetMainWindow.TopLayer.Children.Add(_dropOverlay);
+    }
+
+    private static void UpdateDragOverlay(UIElement element)
+    {
+        _dropOverlay.UpdateContent(element);
     }
 
     private static void RemoveDragOverlay()

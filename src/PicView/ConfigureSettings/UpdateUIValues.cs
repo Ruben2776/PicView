@@ -216,7 +216,13 @@ internal static class UpdateUIValues
             return;
         }
 
-        Navigation.Pics = await Task.FromResult(FileLists.FileList(preloadValue.FileInfo)).ConfigureAwait(false);
+        var fileList = await Task.FromResult(FileLists.FileList(preloadValue.FileInfo)).ConfigureAwait(false);
+        if (fileList is null) return;
+        if (fileList.Count == Navigation.Pics.Count)
+        {
+            return;
+        }
+        Navigation.Pics = fileList;
 
         await GetMainWindow.Dispatcher.InvokeAsync(() =>
         {

@@ -1,5 +1,7 @@
 ﻿using PicView.ImageHandling;
+using PicView.UILogic;
 using System.IO;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -54,12 +56,15 @@ internal static class FastPic
             preLoadValue = PreLoader.Get(index);
             if (preLoadValue is null)
             {
-                await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                if (FolderIndex == index)
+                {
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                }
                 return;
             }
         }
 
-        UpdateImage.UpdateImageValues(index, preLoadValue);
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
 
         _updateSource = false;
         await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
@@ -89,6 +94,6 @@ internal static class FastPic
         {
             await Task.Delay(10).ConfigureAwait(false);
         }
-        UpdateImage.UpdateImageValues(FolderIndex, preLoadValue);
+        await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
     }
 }

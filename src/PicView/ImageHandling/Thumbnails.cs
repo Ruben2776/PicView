@@ -1,8 +1,7 @@
 ﻿using ImageMagick;
 using PicView.ChangeImage;
+using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -22,7 +21,7 @@ internal static class Thumbnails
         BitmapSource? pic;
         try
         {
-            if (GetPicGallery != null && GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
+            if (ConfigureWindows.GetMainWindow.CheckAccess() && GetPicGallery != null && GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
             {
                 var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
                 pic = (BitmapSource)y.ThumbImage.Source;
@@ -61,7 +60,7 @@ internal static class Thumbnails
         return pic;
     }
 
-    internal static BitmapSource GetBitmapSourceThumb(string file, int size)
+    internal static BitmapSource GetBitmapSourceThumb(string file, int size, FileInfo? fileInfo = null)
     {
         try
         {
@@ -74,55 +73,16 @@ internal static class Thumbnails
                 bitmapThumb.Freeze();
                 return bitmapThumb;
             }
-        }
-        catch (Exception e)
-        {
-#if DEBUG
-            Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
-#endif
-        }
 
-        try
-        {
-            var fileInfo = new FileInfo(file);
-            var extension = fileInfo.Extension.ToLowerInvariant();
+            fileInfo ??= new FileInfo(file);
             var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096,
                 useAsync: fileInfo.Length > 1e+8);
-            switch (extension)
-            {
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".gif":
-                case ".jfif":
-                case ".ico":
-                case ".webp":
-                case ".wbmp":
-
-                    var sKBitmap = SKBitmap.Decode(fileStream);
-                    if (sKBitmap is null)
-                    {
-                        return ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
-                    }
-
-                    var skPic = sKBitmap.Resize(new SKImageInfo(size, size, SKColorType.Rgba8888), SKFilterQuality.High)
-                        .ToWriteableBitmap();
-                    sKBitmap.Dispose();
-                    fileStream.Dispose();
-                    skPic.Freeze();
-                    return skPic;
-
-                default:
-                    var image = new MagickImage();
-                    image.Read(fileStream);
-                    image.Thumbnail(new MagickGeometry(size, size));
-                    var bmp = image.ToBitmapSource();
-                    bmp?.Freeze();
-                    image.Dispose();
-                    return bmp ?? ImageFunctions.ShowLogo() ?? ImageFunctions.ImageErrorMessage();
-            }
+            image.Read(fileStream);
+            image.Thumbnail(new MagickGeometry(size, size));
+            var bmp = image.ToBitmapSource();
+            bmp?.Freeze();
+            image.Dispose();
+            return bmp ?? ImageFunctions.ShowLogo();
         }
         catch (Exception e)
         {
