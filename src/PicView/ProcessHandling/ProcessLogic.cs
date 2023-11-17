@@ -119,7 +119,8 @@ internal static class ProcessLogic
             Verb = "runas",
             UseShellExecute = true,
             FileName = fileName,
-            Arguments = args
+            Arguments = args,
+            WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
         };
         try
         {

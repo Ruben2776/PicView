@@ -317,6 +317,7 @@
     <None Remove="Themes\Resources\img\icon__Q6k_icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PicView.Tools\PicView.Tools.csproj" />
     <ProjectReference Include="..\XamlAnimatedGif\XamlAnimatedGif.csproj" />
   </ItemGroup>
   <ItemGroup>
