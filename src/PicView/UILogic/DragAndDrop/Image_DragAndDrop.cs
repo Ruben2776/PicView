@@ -233,6 +233,7 @@ internal static class ImageDragAndDrop
 
     private static void UpdateDragOverlay(UIElement element)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (element is null)
         {
 #if DEBUG
