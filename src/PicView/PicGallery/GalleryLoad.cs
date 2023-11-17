@@ -59,20 +59,13 @@ internal static class GalleryLoad
 
         IsLoading = true;
         var source = new CancellationTokenSource();
-        var iterations = Navigation.Pics.Count;
 
         await Task.Run(async () =>
         {
-            for (int i = 0; i < iterations; i++)
+            for (int i = 0; i < Navigation.Pics.Count; i++)
             {
                 try
                 {
-                    if (iterations != Navigation.Pics.Count)
-                    {
-                        await source.CancelAsync();
-                        return;
-                    }
-
                     var i1 = i;
                     await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
@@ -86,7 +79,7 @@ internal static class GalleryLoad
                 }
             }
 
-            var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
+            var priority = Navigation.Pics.Count > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
             var startPosition = 0;
             var updates = 0;
 
@@ -109,12 +102,12 @@ internal static class GalleryLoad
 
             _ = Task.Run(async () =>
             {
-                if (iterations > 3000)
+                if (Navigation.Pics.Count > 3000)
                 {
                     Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                 }
 
-                for (int i = startPosition; i < iterations; i++)
+                for (int i = startPosition; i < Navigation.Pics.Count; i++)
                 {
                     updates++;
                     try
@@ -140,7 +133,7 @@ internal static class GalleryLoad
 
             _ = Task.Run(async () =>
             {
-                if (iterations > 3000)
+                if (Navigation.Pics.Count > 3000)
                 {
                     Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                 }
@@ -182,7 +175,7 @@ internal static class GalleryLoad
                     galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
                     galleryThumbHolderItem.FileDate);
             }, DispatcherPriority.Background, source.Token);
-            if (updates == iterations)
+            if (updates == Navigation.Pics.Count)
                 IsLoading = false;
         }
     }
