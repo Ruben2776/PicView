@@ -3,27 +3,30 @@ using PicView.Properties;
 using PicView.UILogic.Sizing;
 using System.Windows;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class RestoreButton
+namespace PicView.Views.UserControls.Buttons
 {
-    public RestoreButton()
+    public partial class RestoreButton
     {
-        InitializeComponent();
-
-        TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen); };
-
-        MouseEnter += delegate
+        public RestoreButton()
         {
-            ToolTip =
-                !Settings.Default.Fullscreen ? Application.Current.Resources["Fullscreen"] : Application.Current.Resources["RestoreDown"];
+            InitializeComponent();
 
-            MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
+            TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen); };
 
-        MouseLeave += delegate
-        {
-            MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
+            MouseEnter += delegate
+            {
+                ToolTip =
+                    !Settings.Default.Fullscreen
+                        ? Application.Current.Resources["Fullscreen"]
+                        : Application.Current.Resources["RestoreDown"];
+
+                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+
+            MouseLeave += delegate
+            {
+                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+        }
     }
 }

@@ -5,95 +5,103 @@ using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
-namespace PicView.ChangeImage;
-
-internal static class FastPic
+namespace PicView.ChangeImage
 {
-    private static Timer? _timer;
-    private static bool _updateSource;
-
-    internal static async Task Run(int index)
+    internal static class FastPic
     {
-        if (_timer is null)
+        private static Timer? _timer;
+        private static bool _updateSource;
+
+        internal static async Task Run(int index)
         {
-            _timer = new Timer(TimeSpan.FromSeconds(Properties.Settings.Default.NavSpeed))
+            if (_timer is null)
             {
-                AutoReset = false,
-                Enabled = true
-            };
-        }
-        else if (_timer.Enabled)
-        {
-            return;
-        }
-
-        FolderIndex = index;
-        _timer.Start();
-        FileInfo? fileInfo;
-        _updateSource = true; // Update it when key released
-
-        var preLoadValue = PreLoader.Get(index);
-
-        if (preLoadValue != null)
-        {
-            fileInfo = preLoadValue.FileInfo ?? new FileInfo(Pics[index]);
-            var showThumb = true;
-            while (preLoadValue.BitmapSource is null)
-            {
-                if (showThumb)
+                _timer = new Timer(TimeSpan.FromSeconds(Properties.Settings.Default.NavSpeed))
                 {
-                    LoadPic.LoadingPreview(fileInfo);
-                    showThumb = false;
-                }
-                await Task.Delay(10).ConfigureAwait(false);
+                    AutoReset = false,
+                    Enabled = true
+                };
             }
-        }
-        else
-        {
-            fileInfo = new FileInfo(Pics[index]);
-            LoadPic.LoadingPreview(fileInfo);
-            await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
-            preLoadValue = PreLoader.Get(index);
-            if (preLoadValue is null)
+            else if (_timer.Enabled)
             {
-                if (FolderIndex == index)
-                {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                }
                 return;
             }
+
+            FolderIndex = index;
+            _timer.Start();
+            FileInfo? fileInfo;
+            _updateSource = true; // Update it when key released
+
+            var preLoadValue = PreLoader.Get(index);
+
+            if (preLoadValue != null)
+            {
+                fileInfo = preLoadValue.FileInfo ?? new FileInfo(Pics[index]);
+                var showThumb = true;
+                while (preLoadValue.BitmapSource is null)
+                {
+                    if (showThumb)
+                    {
+                        LoadPic.LoadingPreview(fileInfo);
+                        showThumb = false;
+                    }
+
+                    await Task.Delay(10).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                fileInfo = new FileInfo(Pics[index]);
+                LoadPic.LoadingPreview(fileInfo);
+                await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                preLoadValue = PreLoader.Get(index);
+                if (preLoadValue is null)
+                {
+                    if (FolderIndex == index)
+                    {
+                        await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    }
+
+                    return;
+                }
+            }
+
+            await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
+
+            _updateSource = false;
+            await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
         }
 
-        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
-
-        _updateSource = false;
-        await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
-    }
-
-    internal static async Task FastPicUpdateAsync()
-    {
-        _timer = null;
-
-        if (_updateSource == false) { return; }
-
-        // Update picture in case it didn't load. Won't happen normally
-
-        var preLoadValue = PreLoader.Get(FolderIndex);
-        if (preLoadValue is null)
+        internal static async Task FastPicUpdateAsync()
         {
-            await PreLoader.AddAsync(FolderIndex).ConfigureAwait(false);
-            preLoadValue = PreLoader.Get(FolderIndex);
+            _timer = null;
+
+            if (_updateSource == false)
+            {
+                return;
+            }
+
+            // Update picture in case it didn't load. Won't happen normally
+
+            var preLoadValue = PreLoader.Get(FolderIndex);
             if (preLoadValue is null)
             {
-                var fileInfo = new FileInfo(Pics[FolderIndex]);
-                var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
+                await PreLoader.AddAsync(FolderIndex).ConfigureAwait(false);
+                preLoadValue = PreLoader.Get(FolderIndex);
+                if (preLoadValue is null)
+                {
+                    var fileInfo = new FileInfo(Pics[FolderIndex]);
+                    var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                    preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
+                }
             }
+
+            while (preLoadValue.BitmapSource is null)
+            {
+                await Task.Delay(10).ConfigureAwait(false);
+            }
+
+            await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
         }
-        while (preLoadValue.BitmapSource is null)
-        {
-            await Task.Delay(10).ConfigureAwait(false);
-        }
-        await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
     }
 }

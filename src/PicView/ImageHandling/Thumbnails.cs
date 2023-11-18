@@ -8,88 +8,90 @@ using System.Windows.Media.Imaging;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
-namespace PicView.ImageHandling;
-
-internal static class Thumbnails
+namespace PicView.ImageHandling
 {
-    /// <summary>
-    /// Load thumbnail at provided index
-    /// </summary>
-    /// <returns></returns>
-    internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
+    internal static class Thumbnails
     {
-        BitmapSource? pic;
-        try
+        /// <summary>
+        /// Load thumbnail at provided index
+        /// </summary>
+        /// <returns></returns>
+        internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
         {
-            if (ConfigureWindows.GetMainWindow.CheckAccess() && GetPicGallery != null && GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
+            BitmapSource? pic;
+            try
             {
-                var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
-                pic = (BitmapSource)y.ThumbImage.Source;
-            }
-            else
-            {
-                if (fileInfo is null)
+                if (ConfigureWindows.GetMainWindow.CheckAccess() && GetPicGallery != null &&
+                    GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
                 {
-                    var preLoadValue = PreLoader.Get(x);
-                    if (preLoadValue is null)
+                    var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
+                    pic = (BitmapSource)y.ThumbImage.Source;
+                }
+                else
+                {
+                    if (fileInfo is null)
                     {
-                        fileInfo = new FileInfo(Pics[x]);
+                        var preLoadValue = PreLoader.Get(x);
+                        if (preLoadValue is null)
+                        {
+                            fileInfo = new FileInfo(Pics[x]);
+                        }
+                        else
+                        {
+                            return preLoadValue.BitmapSource;
+                        }
                     }
-                    else
-                    {
-                        return preLoadValue.BitmapSource;
-                    }
+
+                    using var image = new MagickImage();
+                    image.Ping(fileInfo);
+                    var thumb = image.GetExifProfile()?.CreateThumbnail();
+                    pic = thumb?.ToBitmapSource();
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            if (pic is { IsFrozen: false })
+            {
+                pic.Freeze();
+            }
+
+            return pic;
+        }
+
+        internal static BitmapSource GetBitmapSourceThumb(string file, int size, FileInfo? fileInfo = null)
+        {
+            try
+            {
+                using var image = new MagickImage();
+                image.Ping(file);
+                var thumb = image.GetExifProfile()?.CreateThumbnail();
+                var bitmapThumb = thumb?.ToBitmapSource();
+                if (bitmapThumb != null)
+                {
+                    bitmapThumb.Freeze();
+                    return bitmapThumb;
                 }
 
-                using var image = new MagickImage();
-                image.Ping(fileInfo);
-                var thumb = image.GetExifProfile()?.CreateThumbnail();
-                pic = thumb?.ToBitmapSource();
+                fileInfo ??= new FileInfo(file);
+                var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096,
+                    fileInfo.Length > 1e+8);
+                image.Read(fileStream);
+                image.Thumbnail(new MagickGeometry(size, size));
+                var bmp = image.ToBitmapSource();
+                bmp?.Freeze();
+                image.Dispose();
+                return bmp ?? ImageFunctions.ShowLogo();
             }
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-
-        if (pic is { IsFrozen: false })
-        {
-            pic.Freeze();
-        }
-
-        return pic;
-    }
-
-    internal static BitmapSource GetBitmapSourceThumb(string file, int size, FileInfo? fileInfo = null)
-    {
-        try
-        {
-            using var image = new MagickImage();
-            image.Ping(file);
-            var thumb = image.GetExifProfile()?.CreateThumbnail();
-            var bitmapThumb = thumb?.ToBitmapSource();
-            if (bitmapThumb != null)
+            catch (Exception e)
             {
-                bitmapThumb.Freeze();
-                return bitmapThumb;
-            }
-
-            fileInfo ??= new FileInfo(file);
-            var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 4096,
-                useAsync: fileInfo.Length > 1e+8);
-            image.Read(fileStream);
-            image.Thumbnail(new MagickGeometry(size, size));
-            var bmp = image.ToBitmapSource();
-            bmp?.Freeze();
-            image.Dispose();
-            return bmp ?? ImageFunctions.ShowLogo();
-        }
-        catch (Exception e)
-        {
 #if DEBUG
-            Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
+                Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
 #endif
-            return ImageFunctions.ImageErrorMessage();
+                return ImageFunctions.ImageErrorMessage();
+            }
         }
     }
 }

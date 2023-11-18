@@ -1,9 +1,10 @@
-﻿namespace PicView.Views.UserControls.Misc;
-
-public partial class SpinWaiter
+﻿namespace PicView.Views.UserControls.Misc
 {
-    public SpinWaiter()
+    public partial class SpinWaiter
     {
-        InitializeComponent();
+        public SpinWaiter()
+        {
+            InitializeComponent();
+        }
     }
 }

@@ -1,10 +1,10 @@
-﻿namespace PicView.Views.UserControls.Misc;
-
-
-public partial class AutoScrollSign 
+﻿namespace PicView.Views.UserControls.Misc
 {
-    public AutoScrollSign()
+    public partial class AutoScrollSign
     {
-        InitializeComponent();
+        public AutoScrollSign()
+        {
+            InitializeComponent();
+        }
     }
 }

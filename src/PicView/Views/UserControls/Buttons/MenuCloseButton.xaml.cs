@@ -4,30 +4,32 @@ using PicView.UILogic;
 using System.Windows.Input;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class MenuCloseButton
+namespace PicView.Views.UserControls.Buttons
 {
-    public MenuCloseButton()
+    public partial class MenuCloseButton
     {
-        InitializeComponent();
-
-        Loaded += delegate
+        public MenuCloseButton()
         {
-            MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
-            MouseLeave += (s, x) => AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush); ;
+            InitializeComponent();
 
-            if (!Settings.Default.DarkTheme)
+            Loaded += delegate
             {
-                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-            }
+                MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
+                MouseLeave += (s, x) => AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush);
+                ;
 
-            TheButton.Click += delegate
-            {
-                UC.Close_UserControls();
-                Keyboard.ClearFocus();
-                UC.GetImageSettingsMenu?.GoToPic?.GoToPicBox?.Select(0, 0); // Deselect
+                if (!Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+                }
+
+                TheButton.Click += delegate
+                {
+                    UC.Close_UserControls();
+                    Keyboard.ClearFocus();
+                    UC.GetImageSettingsMenu?.GoToPic?.GoToPicBox?.Select(0, 0); // Deselect
+                };
             };
-        };
+        }
     }
 }

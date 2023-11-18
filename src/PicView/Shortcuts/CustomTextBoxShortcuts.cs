@@ -2,20 +2,21 @@
 using PicView.FileHandling;
 using System.Windows.Input;
 
-namespace PicView.Shortcuts;
-
-internal static class CustomTextBoxShortcuts
+namespace PicView.Shortcuts
 {
-    internal static async Task CustomTextBox_KeyDownAsync(KeyEventArgs e)
+    internal static class CustomTextBoxShortcuts
     {
-        if (e.Key == Key.Enter)
+        internal static async Task CustomTextBox_KeyDownAsync(KeyEventArgs e)
         {
-            await EditTitleBar.HandleRename().ConfigureAwait(false);
-        }
-        else if (e.Key == Key.Escape)
-        {
-            EditTitleBar.Refocus();
-            OpenSave.IsDialogOpen = true; // Make escape not fall through
+            if (e.Key == Key.Enter)
+            {
+                await EditTitleBar.HandleRename().ConfigureAwait(false);
+            }
+            else if (e.Key == Key.Escape)
+            {
+                EditTitleBar.Refocus();
+                OpenSave.IsDialogOpen = true; // Make escape not fall through
+            }
         }
     }
 }

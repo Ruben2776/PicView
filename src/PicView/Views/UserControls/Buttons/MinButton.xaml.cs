@@ -3,28 +3,31 @@ using PicView.Properties;
 using System.Windows;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class MinButton
+namespace PicView.Views.UserControls.Buttons
 {
-    public MinButton()
+    public partial class MinButton
     {
-        InitializeComponent();
-
-        Loaded += delegate
+        public MinButton()
         {
-            TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive));
+            InitializeComponent();
 
-            MouseEnter += (s, x) => ButtonMouseOverAnim(MinButtonBrush, true);
-
-            if (!Settings.Default.DarkTheme)
+            Loaded += delegate
             {
-                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-            }
+                TheButton.Click += (_, _) =>
+                    SystemCommands.MinimizeWindow(Application.Current.Windows.OfType<Window>()
+                        .SingleOrDefault(x => x.IsActive));
 
-            MouseLeave += (s, x) => ButtonMouseLeaveAnim(MinButtonBrush, true);
+                MouseEnter += (s, x) => ButtonMouseOverAnim(MinButtonBrush, true);
 
-            ToolTip = Application.Current.Resources["Minimize"];
-        };
+                if (!Settings.Default.DarkTheme)
+                {
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+                }
+
+                MouseLeave += (s, x) => ButtonMouseLeaveAnim(MinButtonBrush, true);
+
+                ToolTip = Application.Current.Resources["Minimize"];
+            };
+        }
     }
 }

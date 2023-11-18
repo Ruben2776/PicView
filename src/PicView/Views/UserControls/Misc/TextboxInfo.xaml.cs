@@ -1,24 +1,22 @@
 ﻿using System.Windows;
 
-namespace PicView.Views.UserControls.Misc;
-
-public partial class TextBoxInfo
+namespace PicView.Views.UserControls.Misc
 {
-    public TextBoxInfo(string valueDesc, string value, bool readOnly)
+    public partial class TextBoxInfo
     {
-        InitializeComponent();
-        SetValues(valueDesc, value, readOnly);
-
-        ValueCopy.TheButton.Click += delegate
+        public TextBoxInfo(string valueDesc, string value, bool readOnly)
         {
-            Clipboard.SetText(ValueBox.Text);
-        };
-    }
+            InitializeComponent();
+            SetValues(valueDesc, value, readOnly);
 
-    public void SetValues(string valueDesc, string value, bool readOnly)
-    {
-        ValueName.Text = string.IsNullOrEmpty(valueDesc) ? "?" : valueDesc;
-        ValueBox.Text = string.IsNullOrEmpty(value) ? "" : value;
-        ValueBox.IsReadOnly = readOnly;
+            ValueCopy.TheButton.Click += delegate { Clipboard.SetText(ValueBox.Text); };
+        }
+
+        public void SetValues(string valueDesc, string value, bool readOnly)
+        {
+            ValueName.Text = string.IsNullOrEmpty(valueDesc) ? "?" : valueDesc;
+            ValueBox.Text = string.IsNullOrEmpty(value) ? "" : value;
+            ValueBox.IsReadOnly = readOnly;
+        }
     }
 }

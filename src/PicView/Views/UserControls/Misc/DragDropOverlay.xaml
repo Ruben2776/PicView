@@ -16,8 +16,7 @@
                 FontSize="16"
                 Foreground="#FFf6f4f4"
                 Text="{StaticResource DragOverString}"
-                TextAlignment="Center">
-            </TextBlock>
+                TextAlignment="Center" />
         </StackPanel>
     </Grid>
 </UserControl>

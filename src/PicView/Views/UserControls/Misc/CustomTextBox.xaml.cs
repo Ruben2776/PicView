@@ -1,17 +1,18 @@
-﻿namespace PicView.Views.UserControls.Misc;
-
-public partial class CustomTextBox
+﻿namespace PicView.Views.UserControls.Misc
 {
-    public CustomTextBox()
+    public partial class CustomTextBox
     {
-        InitializeComponent();
-    }
+        public CustomTextBox()
+        {
+            InitializeComponent();
+        }
 
-    public string Text
-    {
-        get => InnerTextBox.Text;
-        set => InnerTextBox.Text = value;
-    }
+        public string Text
+        {
+            get => InnerTextBox.Text;
+            set => InnerTextBox.Text = value;
+        }
 
-    public new bool IsFocused => InnerTextBox.IsFocused;
+        public new bool IsFocused => InnerTextBox.IsFocused;
+    }
 }

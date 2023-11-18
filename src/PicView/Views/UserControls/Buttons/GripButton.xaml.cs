@@ -1,10 +1,10 @@
-﻿namespace PicView.Views.UserControls.Buttons;
-
-
-public partial class GripButton
+﻿namespace PicView.Views.UserControls.Buttons
 {
-    public GripButton()
+    public partial class GripButton
     {
-        InitializeComponent();
+        public GripButton()
+        {
+            InitializeComponent();
+        }
     }
 }

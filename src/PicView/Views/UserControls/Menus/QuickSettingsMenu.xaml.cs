@@ -5,66 +5,70 @@ using System.Windows.Media;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.UILogic.UC;
 
-namespace PicView.Views.UserControls.Menus;
-
-public partial class QuickSettingsMenu
+namespace PicView.Views.UserControls.Menus
 {
-    public QuickSettingsMenu()
+    public partial class QuickSettingsMenu
     {
-        InitializeComponent();
-
-        // SettingsButton
-        SettingsButton.Click += delegate
+        public QuickSettingsMenu()
         {
-            ConfigureWindows.AllSettingsWindow();
-            Close_UserControls();
-        };
-        SetButtonIconMouseOverAnimations(
-            SettingsButtonBorder, SettingsButtonBrush, (SolidColorBrush)Resources["SettingsIcon"]);
+            InitializeComponent();
 
-        // InfoButton
-        InfoButton.Click += delegate
-        {
-            ConfigureWindows.InfoWindow();
-            Close_UserControls();
-        };
-        SetButtonIconMouseOverAnimations(
-            InfoButton, InfoButtonBrush, (SolidColorBrush)Resources["AboutIcon"]);
+            // SettingsButton
+            SettingsButton.Click += delegate
+            {
+                ConfigureWindows.AllSettingsWindow();
+                Close_UserControls();
+            };
+            SetButtonIconMouseOverAnimations(
+                SettingsButtonBorder, SettingsButtonBrush, (SolidColorBrush)Resources["SettingsIcon"]);
 
-        // Toggle Scroll
-        ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
-        ToggleScroll.Click += (s, x) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
-        ToggleScrollBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
-        SetButtonIconMouseOverAnimations(ToggleScrollBorder, ToggleScrollBrush, ToggleScrollFill);
+            // InfoButton
+            InfoButton.Click += delegate
+            {
+                ConfigureWindows.InfoWindow();
+                Close_UserControls();
+            };
+            SetButtonIconMouseOverAnimations(
+                InfoButton, InfoButtonBrush, (SolidColorBrush)Resources["AboutIcon"]);
 
-        // Toggle Fill
-        ToggleFill.IsChecked = Settings.Default.FillImage;
-        ToggleFill.Click += UpdateUIValues.SetAutoFill;
-        ToggleFillBorder.MouseLeftButtonDown += UpdateUIValues.SetAutoFill;
-        SetButtonIconMouseOverAnimations(ToggleFillBorder, ToggleFillBrush, ToggleFillFill);
+            // Toggle Scroll
+            ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
+            ToggleScroll.Click += (s, x) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
+            ToggleScrollBorder.MouseLeftButtonDown +=
+                (_, _) => UpdateUIValues.SetScrolling(Settings.Default.ScrollEnabled);
+            SetButtonIconMouseOverAnimations(ToggleScrollBorder, ToggleScrollBrush, ToggleScrollFill);
 
-        // Toggle Looping
-        ToggleLooping.IsChecked = Settings.Default.Looping;
-        ToggleLooping.Click += (_, _) => UpdateUIValues.SetLooping();
-        ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetLooping();
-        SetButtonIconMouseOverAnimations(ToggleLoopingBorder, ToggleLoopBrush, ToggleLoopFill);
+            // Toggle Fill
+            ToggleFill.IsChecked = Settings.Default.FillImage;
+            ToggleFill.Click += UpdateUIValues.SetAutoFill;
+            ToggleFillBorder.MouseLeftButtonDown += UpdateUIValues.SetAutoFill;
+            SetButtonIconMouseOverAnimations(ToggleFillBorder, ToggleFillBrush, ToggleFillFill);
 
-        // Set Fit
-        SetFit.IsChecked = Settings.Default.AutoFitWindow;
-        SetFit.Click += UpdateUIValues.SetAutoFit;
-        SetFitBorder.MouseLeftButtonDown += UpdateUIValues.SetAutoFit;
-        SetButtonIconMouseOverAnimations(SetFitBorder, SetFitBrush, SetFitFill);
+            // Toggle Looping
+            ToggleLooping.IsChecked = Settings.Default.Looping;
+            ToggleLooping.Click += (_, _) => UpdateUIValues.SetLooping();
+            ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetLooping();
+            SetButtonIconMouseOverAnimations(ToggleLoopingBorder, ToggleLoopBrush, ToggleLoopFill);
 
-        // Stay on top
-        StayOnTop.IsChecked = Settings.Default.TopMost;
-        StayOnTop.Click += (_, _) => UpdateUIValues.SetTopMost();
-        StayOnTopBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetTopMost();
-        SetButtonIconMouseOverAnimations(StayOnTopBorder, StayOnTopBrush, StayOnTopFill);
+            // Set Fit
+            SetFit.IsChecked = Settings.Default.AutoFitWindow;
+            SetFit.Click += UpdateUIValues.SetAutoFit;
+            SetFitBorder.MouseLeftButtonDown += UpdateUIValues.SetAutoFit;
+            SetButtonIconMouseOverAnimations(SetFitBorder, SetFitBrush, SetFitFill);
 
-        // Search subdirectories
-        SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
-        SearchSubDir.Click += async (_, _) => await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
-        SearchSubDirBorder.MouseLeftButtonDown += async (_, _) => await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
-        SetButtonIconMouseOverAnimations(SearchSubDirBorder, SearchSubDirBrush, SearchSubDirFill);
+            // Stay on top
+            StayOnTop.IsChecked = Settings.Default.TopMost;
+            StayOnTop.Click += (_, _) => UpdateUIValues.SetTopMost();
+            StayOnTopBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetTopMost();
+            SetButtonIconMouseOverAnimations(StayOnTopBorder, StayOnTopBrush, StayOnTopFill);
+
+            // Search subdirectories
+            SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
+            SearchSubDir.Click += async (_, _) =>
+                await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
+            SearchSubDirBorder.MouseLeftButtonDown += async (_, _) =>
+                await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
+            SetButtonIconMouseOverAnimations(SearchSubDirBorder, SearchSubDirBrush, SearchSubDirFill);
+        }
     }
 }

@@ -10,92 +10,98 @@ using System.Windows.Threading;
 using static PicView.SystemIntegration.NativeMethods;
 using Color = System.Drawing.Color;
 
-namespace PicView.Editing;
-
-internal static class ColorPicking
+namespace PicView.Editing
 {
-    internal static bool IsRunning { get; set; }
-
-    internal static void Start()
+    internal static class ColorPicking
     {
-        IsRunning = true;
+        internal static bool IsRunning { get; set; }
 
-        if (UC.GetColorPicker == null || !ConfigureWindows.GetMainWindow.TopLayer.Children.Contains(UC.GetColorPicker))
+        internal static void Start()
         {
-            LoadControls.LoadColorPicker();
-        }
+            IsRunning = true;
 
-        // Set cursor for color picking
-        ConfigureWindows.GetMainWindow.Cursor = Cursors.Pen;
-    }
-
-    internal static void StartRunning()
-    {
-        // Get values
-        var w32Mouse = new Win32Point();
-        GetCursorPos(ref w32Mouse);
-        var c = GetColorAt(w32Mouse.X, w32Mouse.Y);
-
-        // Set color values to usercontrol
-        UC.GetColorPicker.HexCodePresenter.Content =
-            (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ? RGBConverter(c) : HexConverter(c);
-
-        UC.GetColorPicker.RectangleColorPresenter.Fill =
-            UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush
+            if (UC.GetColorPicker == null ||
+                !ConfigureWindows.GetMainWindow.TopLayer.Children.Contains(UC.GetColorPicker))
             {
-                Color = System.Windows.Media.Color.FromRgb(
-                    c.R, c.G, c.B
-                )
-            };
-
-        // Set to follow cursor
-        Scroll.AutoScrollOrigin = Mouse.GetPosition(ConfigureWindows.GetMainWindow);
-        Canvas.SetTop(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.Y);
-        Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
-    }
-
-    internal static void StopRunning(bool addValue)
-    {
-        // Reset cursor from color picking
-        ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
-
-        if (UC.GetColorPicker != null)
-        {
-            if (addValue)
-            {
-                if (UC.GetColorPicker.HexCodePresenter.Content == null)
-                {
-                    IsRunning = false;
-                    return;
-                }
-                var clipboardContent = UC.GetColorPicker.HexCodePresenter.Content.ToString() ?? "";
-                if (clipboardContent.StartsWith("RGB "))
-                {
-                    clipboardContent = clipboardContent.Remove(0, 4);
-                }
-                Clipboard.SetText(clipboardContent);
-                Tooltip.ShowTooltipMessage(clipboardContent + " " + Application.Current.Resources["AddedToClipboard"]);
+                LoadControls.LoadColorPicker();
             }
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
-            {
-                ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(UC.GetColorPicker);
-                ConfigureWindows.GetMainWindow.Focus();
-            });
+
+            // Set cursor for color picking
+            ConfigureWindows.GetMainWindow.Cursor = Cursors.Pen;
         }
 
-        IsRunning = false;
-    }
+        internal static void StartRunning()
+        {
+            // Get values
+            var w32Mouse = new Win32Point();
+            GetCursorPos(ref w32Mouse);
+            var c = GetColorAt(w32Mouse.X, w32Mouse.Y);
 
-    private static string HexConverter(Color c)
-    {
-        return "#" +
-               c.R.ToString("X2", CultureInfo.InvariantCulture) +
-               c.G.ToString("X2", CultureInfo.InvariantCulture) +
-               c.B.ToString("X2", CultureInfo.InvariantCulture);
-    }
+            // Set color values to usercontrol
+            UC.GetColorPicker.HexCodePresenter.Content =
+                (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ? RGBConverter(c) : HexConverter(c);
 
-    private static string RGBConverter(Color c)
-    {
-        return $"RGB {c.R}, {c.G}, {c.B}";
+            UC.GetColorPicker.RectangleColorPresenter.Fill =
+                UC.GetColorPicker.MainColorPresenter.Fill = new SolidColorBrush
+                {
+                    Color = System.Windows.Media.Color.FromRgb(
+                        c.R, c.G, c.B
+                    )
+                };
+
+            // Set to follow cursor
+            Scroll.AutoScrollOrigin = Mouse.GetPosition(ConfigureWindows.GetMainWindow);
+            Canvas.SetTop(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.Y);
+            Canvas.SetLeft(UC.GetColorPicker, Scroll.AutoScrollOrigin.Value.X);
+        }
+
+        internal static void StopRunning(bool addValue)
+        {
+            // Reset cursor from color picking
+            ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
+
+            if (UC.GetColorPicker != null)
+            {
+                if (addValue)
+                {
+                    if (UC.GetColorPicker.HexCodePresenter.Content == null)
+                    {
+                        IsRunning = false;
+                        return;
+                    }
+
+                    var clipboardContent = UC.GetColorPicker.HexCodePresenter.Content.ToString() ?? "";
+                    if (clipboardContent.StartsWith("RGB "))
+                    {
+                        clipboardContent = clipboardContent.Remove(0, 4);
+                    }
+
+                    Clipboard.SetText(clipboardContent);
+                    Tooltip.ShowTooltipMessage(clipboardContent + " " +
+                                               Application.Current.Resources["AddedToClipboard"]);
+                }
+
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+                {
+                    ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(UC.GetColorPicker);
+                    ConfigureWindows.GetMainWindow.Focus();
+                });
+            }
+
+            IsRunning = false;
+        }
+
+        private static string HexConverter(Color c)
+        {
+            return "#" +
+                   c.R.ToString("X2", CultureInfo.InvariantCulture) +
+                   c.G.ToString("X2", CultureInfo.InvariantCulture) +
+                   c.B.ToString("X2", CultureInfo.InvariantCulture);
+        }
+
+        private static string RGBConverter(Color c)
+        {
+            return $"RGB {c.R}, {c.G}, {c.B}";
+        }
     }
 }

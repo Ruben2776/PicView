@@ -3,26 +3,27 @@ using PicView.Properties;
 using System.Windows.Controls;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class CopyButton : UserControl
+namespace PicView.Views.UserControls.Buttons
 {
-    public CopyButton()
+    public partial class CopyButton : UserControl
     {
-        InitializeComponent();
-
-        Loaded += delegate
+        public CopyButton()
         {
-            if (Settings.Default.DarkTheme)
+            InitializeComponent();
+
+            Loaded += delegate
             {
-                SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
-            }
-            else
-            {
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ButtonBrush);
-                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-            }
-        };
+                if (Settings.Default.DarkTheme)
+                {
+                    SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
+                }
+                else
+                {
+                    TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(ButtonBrush, true);
+                    TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(ButtonBrush);
+                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+                }
+            };
+        }
     }
 }

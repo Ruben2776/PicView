@@ -263,7 +263,8 @@
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="2">
-                        <StackPanel HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Orientation="Horizontal">
+                        <StackPanel HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    Orientation="Horizontal">
                             <!--  Text element  -->
                             <TextBlock
                                 Width="{TemplateBinding Width}"

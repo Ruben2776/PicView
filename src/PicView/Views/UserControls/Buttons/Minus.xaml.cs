@@ -2,24 +2,25 @@
 using PicView.UILogic;
 using System.Windows;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class Minus
+namespace PicView.Views.UserControls.Buttons
 {
-    public Minus()
+    public partial class Minus
     {
-        InitializeComponent();
-
-        MouseEnter += delegate
+        public Minus()
         {
-            MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
+            InitializeComponent();
 
-        MouseLeave += delegate
-        {
-            MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
+            MouseEnter += delegate
+            {
+                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
 
-        TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
+            MouseLeave += delegate
+            {
+                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+
+            TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
+        }
     }
 }

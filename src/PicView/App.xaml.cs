@@ -3,22 +3,23 @@ using System.Runtime;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace PicView;
-
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
-public partial class App : Application
+namespace PicView
 {
-    protected override void OnStartup(StartupEventArgs e)
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
     {
-        ProfileOptimization.SetProfileRoot(FileFunctions.GetWritingPath());
-        ProfileOptimization.StartProfile("ProfileOptimization");
-        DispatcherUnhandledException += App_DispatcherUnhandledException;
-    }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            ProfileOptimization.SetProfileRoot(FileFunctions.GetWritingPath());
+            ProfileOptimization.StartProfile("ProfileOptimization");
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+        }
 
-    private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-    {
-        MessageBox.Show(e.Exception.ToString());
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.ToString());
+        }
     }
 }

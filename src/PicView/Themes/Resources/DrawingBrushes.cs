@@ -2,57 +2,58 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace PicView.Themes.Resources;
-
-internal static class DrawingBrushes
+namespace PicView.Themes.Resources
 {
-    public static DrawingBrush CheckerboardDrawingBrush(Color color)
+    internal static class DrawingBrushes
     {
-        return CheckerboardDrawingBrush(color, ConfigColors.BackgroundBorderColor, 30);
-    }
-
-    public static DrawingBrush CheckerboardDrawingBrush(Color color, Color color2, int size)
-    {
-        var draw = new DrawingBrush
+        public static DrawingBrush CheckerboardDrawingBrush(Color color)
         {
-            Viewport = new Rect(0, 0, size, size),
-            TileMode = TileMode.Tile,
-            ViewportUnits = BrushMappingMode.Absolute,
-            Stretch = Stretch.None
-        };
+            return CheckerboardDrawingBrush(color, ConfigColors.BackgroundBorderColor, 30);
+        }
 
-        var drawingroup = new DrawingGroup();
-
-        var geoBlack = new GeometryDrawing
+        public static DrawingBrush CheckerboardDrawingBrush(Color color, Color color2, int size)
         {
-            Brush = new SolidColorBrush(color)
-        };
+            var draw = new DrawingBrush
+            {
+                Viewport = new Rect(0, 0, size, size),
+                TileMode = TileMode.Tile,
+                ViewportUnits = BrushMappingMode.Absolute,
+                Stretch = Stretch.None
+            };
 
-        var geoGroup1 = new GeometryGroup();
-        var rectangleGemetry1 = new RectangleGeometry(new Rect(0, 0, size, size));
-        var rectangleGemetry2 = new RectangleGeometry(new Rect(size, size, size, size));
-        geoGroup1.Children.Add(rectangleGemetry1);
-        geoGroup1.Children.Add(rectangleGemetry2);
+            var drawingroup = new DrawingGroup();
 
-        geoBlack.Geometry = geoGroup1;
+            var geoBlack = new GeometryDrawing
+            {
+                Brush = new SolidColorBrush(color)
+            };
 
-        var geoWhite = new GeometryDrawing
-        {
-            Brush = new SolidColorBrush(color2)
-        };
+            var geoGroup1 = new GeometryGroup();
+            var rectangleGemetry1 = new RectangleGeometry(new Rect(0, 0, size, size));
+            var rectangleGemetry2 = new RectangleGeometry(new Rect(size, size, size, size));
+            geoGroup1.Children.Add(rectangleGemetry1);
+            geoGroup1.Children.Add(rectangleGemetry2);
 
-        var geoGroup2 = new GeometryGroup();
-        var rectangleGemetry3 = new RectangleGeometry(new Rect(5, 0, 5, 5));
-        var rectangleGemetry4 = new RectangleGeometry(new Rect(0, 5, 5, 5));
-        geoGroup1.Children.Add(rectangleGemetry3);
-        geoGroup1.Children.Add(rectangleGemetry4);
+            geoBlack.Geometry = geoGroup1;
 
-        geoWhite.Geometry = geoGroup2;
+            var geoWhite = new GeometryDrawing
+            {
+                Brush = new SolidColorBrush(color2)
+            };
 
-        drawingroup.Children.Add(geoBlack);
-        drawingroup.Children.Add(geoWhite);
-        draw.Drawing = drawingroup;
+            var geoGroup2 = new GeometryGroup();
+            var rectangleGemetry3 = new RectangleGeometry(new Rect(5, 0, 5, 5));
+            var rectangleGemetry4 = new RectangleGeometry(new Rect(0, 5, 5, 5));
+            geoGroup1.Children.Add(rectangleGemetry3);
+            geoGroup1.Children.Add(rectangleGemetry4);
 
-        return draw;
+            geoWhite.Geometry = geoGroup2;
+
+            drawingroup.Children.Add(geoBlack);
+            drawingroup.Children.Add(geoWhite);
+            draw.Drawing = drawingroup;
+
+            return draw;
+        }
     }
 }

@@ -36,16 +36,17 @@
                     <ControlTemplate TargetType="{x:Type ScrollBar}">
                         <Track
                             Name="PART_Track"
-                            Grid.Row="1"
                             IsDirectionReversed="True">
                             <Track.DecreaseRepeatButton>
-                                <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                                <RepeatButton Command="ScrollBar.PageUpCommand"
+                                              Style="{StaticResource ScrollBarPageButtonStyle}" />
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
                                 <Thumb Style="{StaticResource VerticalScrollBarThumbStyle}" />
                             </Track.Thumb>
                             <Track.IncreaseRepeatButton>
-                                <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                                <RepeatButton Command="ScrollBar.PageDownCommand"
+                                              Style="{StaticResource ScrollBarPageButtonStyle}" />
                             </Track.IncreaseRepeatButton>
                         </Track>
                     </ControlTemplate>
@@ -246,7 +247,8 @@
                         <Style TargetType="StackPanel">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=PercentageResize, Path=IsSelected}" Value="True">
+                                <DataTrigger Binding="{Binding ElementName=PercentageResize, Path=IsSelected}"
+                                             Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>

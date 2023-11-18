@@ -8,112 +8,112 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 
-namespace PicView.ChangeTitlebar;
-
-internal static class EditTitleBar
+namespace PicView.ChangeTitlebar
 {
-    private static string? _backupTitle;
-
-    internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    internal static class EditTitleBar
     {
-        if (ConfigureWindows.GetMainWindow.TitleText.IsFocused)
-        {
-            return;
-        }
+        private static string? _backupTitle;
 
-        WindowSizing.Move(sender, e);
-        Refocus();
-        e.Handled = true; // Disable text clicking
-    }
-
-    internal static void Bar_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+        internal static void Bar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (ConfigureWindows.GetMainWindow.TitleText.IsFocused)
+            {
+                return;
+            }
+
+            WindowSizing.Move(sender, e);
+            Refocus();
             e.Handled = true; // Disable text clicking
         }
-    }
 
-    internal static void EditTitleBar_Text()
-    {
-        if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+        internal static void Bar_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            return;
-        }
-        if (!ConfigureWindows.GetMainWindow.TitleText.IsFocused)
-        {
-            ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.Focus();
-            SelectFileName();
-        }
-        else
-        {
-            Refocus();
-        }
-    }
-
-    /// <summary>
-    /// Set the text to the filename
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    internal static void EditTitleBar_Text(object sender, KeyboardFocusChangedEventArgs e)
-    {
-        if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
-        {
-            return;
+            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+            {
+                e.Handled = true; // Disable text clicking
+            }
         }
 
-        e.Handled = true;
-
-        _backupTitle = ConfigureWindows.GetMainWindow.TitleText.Text;
-        ConfigureWindows.GetMainWindow.TitleText.Text = Pics[FolderIndex];
-    }
-
-    internal static void SelectFileName()
-    {
-        var filename = Path.GetFileName(Pics[FolderIndex]);
-        var start = Pics[FolderIndex].Length - filename.Length;
-        var end = Path.GetFileNameWithoutExtension(filename).Length;
-        ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.Select(start, end);
-    }
-
-    internal static async Task HandleRename()
-    {        
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        internal static void EditTitleBar_Text()
         {
-            Refocus(false);
-        });
+            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+            {
+                return;
+            }
 
-        if (Pics == null)
-        {
-            return;
+            if (!ConfigureWindows.GetMainWindow.TitleText.IsFocused)
+            {
+                ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.Focus();
+                SelectFileName();
+            }
+            else
+            {
+                Refocus();
+            }
         }
 
-        var success = await FileFunctions.RenameFileWithErrorChecking(ConfigureWindows.GetMainWindow.TitleText.Text).ConfigureAwait(false);
-        if (success.HasValue == false)
+        /// <summary>
+        /// Set the text to the filename
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal static void EditTitleBar_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            _backupTitle = ConfigureWindows.GetMainWindow.TitleText.Text;
+            ConfigureWindows.GetMainWindow.TitleText.Text = Pics[FolderIndex];
         }
 
-        await ImageInfo.UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    /// Removes focus from titlebar and sets it to the mainwindow
-    /// </summary>
-    internal static void Refocus(bool backup = true)
-    {
-        if (!ConfigureWindows.GetMainWindow.TitleText.IsFocused)
+        internal static void SelectFileName()
         {
-            return;
+            var filename = Path.GetFileName(Pics[FolderIndex]);
+            var start = Pics[FolderIndex].Length - filename.Length;
+            var end = Path.GetFileNameWithoutExtension(filename).Length;
+            ConfigureWindows.GetMainWindow.TitleText.InnerTextBox.Select(start, end);
         }
 
-        FocusManager.SetFocusedElement(FocusManager.GetFocusScope(ConfigureWindows.GetMainWindow.TitleText), null);
-        Keyboard.ClearFocus();
-        ConfigureWindows.GetMainWindow.Focus();
+        internal static async Task HandleRename()
+        {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { Refocus(false); });
 
-        if (!backup || _backupTitle == null) return;
-        ConfigureWindows.GetMainWindow.TitleText.Text = _backupTitle;
-        _backupTitle = string.Empty;
+            if (Pics == null)
+            {
+                return;
+            }
+
+            var success = await FileFunctions.RenameFileWithErrorChecking(ConfigureWindows.GetMainWindow.TitleText.Text)
+                .ConfigureAwait(false);
+            if (success.HasValue == false)
+            {
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+            }
+
+            await ImageInfo.UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Removes focus from titlebar and sets it to the mainwindow
+        /// </summary>
+        internal static void Refocus(bool backup = true)
+        {
+            if (!ConfigureWindows.GetMainWindow.TitleText.IsFocused)
+            {
+                return;
+            }
+
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(ConfigureWindows.GetMainWindow.TitleText), null);
+            Keyboard.ClearFocus();
+            ConfigureWindows.GetMainWindow.Focus();
+
+            if (!backup || _backupTitle == null) return;
+            ConfigureWindows.GetMainWindow.TitleText.Text = _backupTitle;
+            _backupTitle = string.Empty;
+        }
     }
 }

@@ -1,16 +1,17 @@
 ﻿using System.Windows;
 
-namespace PicView.Views.UserControls.Misc;
-
-public partial class DragDropOverlay
+namespace PicView.Views.UserControls.Misc
 {
-    public DragDropOverlay()
+    public partial class DragDropOverlay
     {
-        InitializeComponent();
-    }
+        public DragDropOverlay()
+        {
+            InitializeComponent();
+        }
 
-    public void UpdateContent(UIElement element)
-    {
-        ContentHolder.Content = element;
+        public void UpdateContent(UIElement element)
+        {
+            ContentHolder.Content = element;
+        }
     }
 }

@@ -33,11 +33,13 @@
                                 Padding="5,5,5,5"
                                 BorderBrush="{DynamicResource ChosenColorBrush}"
                                 BorderThickness="1">
-                                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsFocused" Value="True">
-                                    <Setter TargetName="bg" Property="BorderBrush" Value="{StaticResource ResourceKey=ChosenColorBrush}" />
+                                    <Setter TargetName="bg" Property="BorderBrush"
+                                            Value="{StaticResource ResourceKey=ChosenColorBrush}" />
                                     <Setter TargetName="bg" Property="BorderThickness" Value="1" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -45,7 +47,8 @@
                     </Setter.Value>
                 </Setter>
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="false">
+                    <DataTrigger Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}"
+                                 Value="false">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="TextBox">

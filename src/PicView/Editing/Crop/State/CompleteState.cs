@@ -1,23 +1,24 @@
 ﻿using System.Windows;
 
-namespace PicView.Editing.Crop.State;
-
-internal class CompleteState : IToolState
+namespace PicView.Editing.Crop.State
 {
-    public void OnMouseDown(Point point)
+    internal class CompleteState : IToolState
     {
-        // Blank override
-        throw new NotImplementedException();
-    }
+        public void OnMouseDown(Point point)
+        {
+            // Blank override
+            throw new NotImplementedException();
+        }
 
-    public Position? OnMouseMove(Point point)
-    {
-        return null;
-    }
+        public Position? OnMouseMove(Point point)
+        {
+            return null;
+        }
 
-    public void OnMouseUp(Point point)
-    {
-        // Blank override
-        throw new NotImplementedException();
+        public void OnMouseUp(Point point)
+        {
+            // Blank override
+            throw new NotImplementedException();
+        }
     }
 }

@@ -31,13 +31,16 @@
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                <Setter TargetName="Border" Property="BorderBrush"
+                        Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="true">
-                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                <Setter TargetName="Border" Property="BorderBrush"
+                        Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
             </Trigger>
             <Trigger Property="ToggleButton.IsFocused" Value="true">
-                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                <Setter TargetName="Border" Property="BorderBrush"
+                        Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -120,7 +123,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers />
     </Style>
 
     <!--  SimpleStyles: ComboBoxItem  -->
@@ -140,7 +142,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

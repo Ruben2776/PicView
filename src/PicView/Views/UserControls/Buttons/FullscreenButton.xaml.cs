@@ -4,41 +4,36 @@ using PicView.UILogic.Sizing;
 using System.Windows;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class FullscreenButton
+namespace PicView.Views.UserControls.Buttons
 {
-    public FullscreenButton()
+    public partial class FullscreenButton
     {
-        InitializeComponent();
-
-        MouseEnter += delegate
+        public FullscreenButton()
         {
-            if (Settings.Default.Fullscreen)
+            InitializeComponent();
+
+            MouseEnter += delegate
             {
-                ToolTip = Application.Current.Resources["RestoreDown"];
-            }
-            else
+                if (Settings.Default.Fullscreen)
+                {
+                    ToolTip = Application.Current.Resources["RestoreDown"];
+                }
+                else
+                {
+                    ToolTip = Application.Current.Resources["Fullscreen"];
+                }
+
+                ButtonMouseOverAnim(FullscreenButtonBrush, true);
+            };
+
+            MouseLeave += delegate { ButtonMouseLeaveAnim(FullscreenButtonBrush, true); };
+
+            TheButton.Click += delegate { WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen); };
+
+            if (!Settings.Default.DarkTheme)
             {
-                ToolTip = Application.Current.Resources["Fullscreen"];
+                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
             }
-
-            ButtonMouseOverAnim(FullscreenButtonBrush, true);
-        };
-
-        MouseLeave += delegate
-        {
-            ButtonMouseLeaveAnim(FullscreenButtonBrush, true);
-        };
-
-        TheButton.Click += delegate
-        {
-            WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
-        };
-
-        if (!Settings.Default.DarkTheme)
-        {
-            AnimationHelper.LightThemeMouseEvent(this, IconBrush);
         }
     }
 }

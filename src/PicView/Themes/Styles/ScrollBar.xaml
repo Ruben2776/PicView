@@ -199,13 +199,15 @@
                     Grid.Row="1"
                     IsDirectionReversed="True">
                     <Track.DecreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageUpCommand"
+                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.DecreaseRepeatButton>
                     <Track.Thumb>
                         <Thumb Style="{StaticResource VerticalScrollBarThumbStyle}" />
                     </Track.Thumb>
                     <Track.IncreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageDownCommand"
+                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.IncreaseRepeatButton>
                 </Track>
 
@@ -241,13 +243,15 @@
                     MinWidth="160"
                     IsDirectionReversed="False">
                     <Track.DecreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageLeftCommand"
+                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.DecreaseRepeatButton>
                     <Track.Thumb>
                         <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
                     </Track.Thumb>
                     <Track.IncreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageRightCommand"
+                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.IncreaseRepeatButton>
                     <Track.Resources>
                         <!--  Thumb's minimum height is half of this metric  -->

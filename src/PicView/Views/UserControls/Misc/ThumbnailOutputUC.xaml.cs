@@ -2,29 +2,31 @@
 using PicView.UILogic;
 using PicView.Views.Windows;
 
-namespace PicView.Views.UserControls.Misc;
-
-// ReSharper disable once InconsistentNaming
-public partial class ThumbnailOutputUC
+namespace PicView.Views.UserControls.Misc
 {
-    public ThumbnailOutputUC(int i, string folderPath, string filename, string value)
+    // ReSharper disable once InconsistentNaming
+    public partial class ThumbnailOutputUC
     {
-        InitializeComponent();
-
-        OutPutString.Text = $"Thumb {i}";
-        OutPutStringBox.Text = folderPath + @"\" + filename;
-        ValueBox.Text = value;
-
-        OutputFolderButton.FileMenuButton.Click += (_, _) =>
+        public ThumbnailOutputUC(int i, string folderPath, string filename, string value)
         {
-            var newFolder = OpenSave.SelectAndReturnFolder();
-            if (string.IsNullOrWhiteSpace(newFolder) == false)
-            {
-                OutPutStringBox.Text = newFolder;
-            }
-            ConfigureWindows.GetResizeWindow.Focus();
-        };
+            InitializeComponent();
 
-        ResizeWindow.SetTextBoxDragEvent(OutPutStringBox);
+            OutPutString.Text = $"Thumb {i}";
+            OutPutStringBox.Text = folderPath + @"\" + filename;
+            ValueBox.Text = value;
+
+            OutputFolderButton.FileMenuButton.Click += (_, _) =>
+            {
+                var newFolder = OpenSave.SelectAndReturnFolder();
+                if (string.IsNullOrWhiteSpace(newFolder) == false)
+                {
+                    OutPutStringBox.Text = newFolder;
+                }
+
+                ConfigureWindows.GetResizeWindow.Focus();
+            };
+
+            ResizeWindow.SetTextBoxDragEvent(OutPutStringBox);
+        }
     }
 }

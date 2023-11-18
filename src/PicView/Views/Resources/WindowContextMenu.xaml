@@ -11,7 +11,8 @@
                         <DrawingImage>
                             <DrawingImage.Drawing>
                                 <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
-                                    <GeometryDrawing Brush="{StaticResource IconColorBrush}" Geometry="F1 M24,24z M0,0z M4,8L8,8 8,4 20,4 20,16 16,16 16,20 4,20 4,8 M16,8L16,14 18,14 18,6 10,6 10,8 16,8 M6,12L6,18 14,18 14,12 6,12z" />
+                                    <GeometryDrawing Brush="{StaticResource IconColorBrush}"
+                                                     Geometry="F1 M24,24z M0,0z M4,8L8,8 8,4 20,4 20,16 16,16 16,20 4,20 4,8 M16,8L16,14 18,14 18,6 10,6 10,8 16,8 M6,12L6,18 14,18 14,12 6,12z" />
                                 </DrawingGroup>
                             </DrawingImage.Drawing>
                         </DrawingImage>
@@ -24,7 +25,8 @@
         <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Minimize}">
             <MenuItem.Icon>
                 <Viewbox Width="14" Height="14">
-                    <Path Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z" Fill="{StaticResource IconColorBrush}" />
+                    <Path Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z"
+                          Fill="{StaticResource IconColorBrush}" />
                 </Viewbox>
             </MenuItem.Icon>
         </MenuItem>

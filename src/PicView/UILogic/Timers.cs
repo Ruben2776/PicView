@@ -2,21 +2,22 @@
 using static PicView.UILogic.TransformImage.Scroll;
 using Timer = System.Timers.Timer;
 
-namespace PicView.UILogic;
-
-internal static class Timers
+namespace PicView.UILogic
 {
-    // Add timers
-    internal static void AddTimers()
+    internal static class Timers
     {
-        AutoScrollTimer.Elapsed += AutoScrollTimerEvent;
-
-        ActivityTimer = new Timer
+        // Add timers
+        internal static void AddTimers()
         {
-            Interval = 6000,
-            AutoReset = true,
-            Enabled = false
-        };
-        ActivityTimer.Elapsed += (_, _) => Fade(false);
+            AutoScrollTimer.Elapsed += AutoScrollTimerEvent;
+
+            ActivityTimer = new Timer
+            {
+                Interval = 6000,
+                AutoReset = true,
+                Enabled = false
+            };
+            ActivityTimer.Elapsed += (_, _) => Fade(false);
+        }
     }
 }

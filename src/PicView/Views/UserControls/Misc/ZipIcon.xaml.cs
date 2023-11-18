@@ -1,9 +1,10 @@
-﻿namespace PicView.Views.UserControls.Misc;
-
-public partial class ZipIcon
+﻿namespace PicView.Views.UserControls.Misc
 {
-    public ZipIcon()
+    public partial class ZipIcon
     {
-        InitializeComponent();
+        public ZipIcon()
+        {
+            InitializeComponent();
+        }
     }
 }

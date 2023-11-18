@@ -2,16 +2,17 @@
 using System.Windows.Input;
 using PicView.PicGallery;
 
-namespace PicView.Views.UserControls.Gallery;
-
-/// <summary>
-/// Interaction logic for PicGallery.xaml
-/// </summary>
-public partial class PicGallery
+namespace PicView.Views.UserControls.Gallery
 {
-    public PicGallery()
+    /// <summary>
+    /// Interaction logic for PicGallery.xaml
+    /// </summary>
+    public partial class PicGallery
     {
-        InitializeComponent();
-        Loaded += GalleryLoad.PicGallery_Loaded;
+        public PicGallery()
+        {
+            InitializeComponent();
+            Loaded += GalleryLoad.PicGallery_Loaded;
+        }
     }
 }

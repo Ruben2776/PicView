@@ -91,7 +91,8 @@
                                         Background="{StaticResource MenuBg}"
                                         BorderBrush="{StaticResource BorderBrush}"
                                         BorderThickness="0">
-                                        <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
+                                        <ContentPresenter x:Name="PART_SelectedContentHost"
+                                                          ContentSource="SelectedContent" />
                                     </Border>
                                 </Grid>
                             </ControlTemplate>
@@ -130,7 +131,8 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Panel.ZIndex" Value="100" />
-                                        <Setter TargetName="AccentBorder" Property="Fill" Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
+                                        <Setter TargetName="AccentBorder" Property="Fill"
+                                                Value="{DynamicResource ResourceKey=ChosenColorBrush}" />
                                         <Setter Property="Foreground" Value="{DynamicResource ChosenColorBrush}" />
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="False">
@@ -838,7 +840,8 @@
                                 Content="{StaticResource DarkTheme}"
                                 Style="{StaticResource Checkstyle}">
                                 <CheckBox.Background>
-                                    <SolidColorBrush x:Name="DarkThemeBrush" Color="{StaticResource BackgroundColorAlt}" />
+                                    <SolidColorBrush x:Name="DarkThemeBrush"
+                                                     Color="{StaticResource BackgroundColorAlt}" />
                                 </CheckBox.Background>
                                 <CheckBox.Foreground>
                                     <SolidColorBrush x:Name="DarkThemeText" Color="{StaticResource MainColor}" />

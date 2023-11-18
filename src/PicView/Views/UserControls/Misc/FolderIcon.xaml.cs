@@ -1,9 +1,10 @@
-﻿namespace PicView.Views.UserControls.Misc;
-
-public partial class FolderIcon
+﻿namespace PicView.Views.UserControls.Misc
 {
-    public FolderIcon()
+    public partial class FolderIcon
     {
-        InitializeComponent();
+        public FolderIcon()
+        {
+            InitializeComponent();
+        }
     }
 }

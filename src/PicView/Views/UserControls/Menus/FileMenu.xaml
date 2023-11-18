@@ -228,17 +228,20 @@
                                     <DrawingGroup ClipGeometry="M0,0 V472.615 H472.615 V0 H0 Z">
                                         <DrawingGroup>
                                             <DrawingGroup>
-                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}" Geometry="F1 M472.615,472.615z M0,0z M228.106,76.308L228.106,76.308 167.385,17.231 0,17.231 0,137.813 472.615,137.813 472.615,76.308z" />
+                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}"
+                                                                 Geometry="F1 M472.615,472.615z M0,0z M228.106,76.308L228.106,76.308 167.385,17.231 0,17.231 0,137.813 472.615,137.813 472.615,76.308z" />
                                             </DrawingGroup>
                                         </DrawingGroup>
                                         <DrawingGroup>
                                             <DrawingGroup>
-                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}" Geometry="F1 M472.615,472.615z M0,0z M262.086,236.077C249.677,223.673 233.38,217.471 217.081,217.471 200.782,217.471 184.485,223.673 172.076,236.077 147.264,260.889 147.264,301.268 172.076,326.082 196.893,350.899 237.268,350.899 262.086,326.082 286.898,301.269 286.898,260.89 262.086,236.077z" />
+                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}"
+                                                                 Geometry="F1 M472.615,472.615z M0,0z M262.086,236.077C249.677,223.673 233.38,217.471 217.081,217.471 200.782,217.471 184.485,223.673 172.076,236.077 147.264,260.889 147.264,301.268 172.076,326.082 196.893,350.899 237.268,350.899 262.086,326.082 286.898,301.269 286.898,260.89 262.086,236.077z" />
                                             </DrawingGroup>
                                         </DrawingGroup>
                                         <DrawingGroup>
                                             <DrawingGroup>
-                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}" Geometry="F1 M472.615,472.615z M0,0z M0,157.505L0,305.231 0,455.385 236.308,455.385 472.616,455.385 472.616,305.231 472.616,157.505 0,157.505z M327.5,405.423L268.598,346.516C253.538,358.387 235.323,364.374 217.081,364.374 195.739,364.374 174.398,356.249 158.153,340.004 125.663,307.514 125.663,254.644 158.153,222.153 190.643,189.663 243.519,189.663 276.009,222.153 306.139,252.284 308.276,299.916 282.52,332.592L341.422,391.499 327.5,405.423z" />
+                                                <GeometryDrawing Brush="{StaticResource LocationBorderFill}"
+                                                                 Geometry="F1 M472.615,472.615z M0,0z M0,157.505L0,305.231 0,455.385 236.308,455.385 472.616,455.385 472.616,305.231 472.616,157.505 0,157.505z M327.5,405.423L268.598,346.516C253.538,358.387 235.323,364.374 217.081,364.374 195.739,364.374 174.398,356.249 158.153,340.004 125.663,307.514 125.663,254.644 158.153,222.153 190.643,189.663 243.519,189.663 276.009,222.153 306.139,252.284 308.276,299.916 282.52,332.592L341.422,391.499 327.5,405.423z" />
                                             </DrawingGroup>
                                         </DrawingGroup>
                                     </DrawingGroup>
@@ -306,8 +309,6 @@
                         Stretch="Fill" />
                     <Button
                         x:Name="PrintButton"
-                        Canvas.Left="113"
-                        Canvas.Top="1"
                         ToolTip="{StaticResource RenameFile}">
                         <Button.Content>
                             <TextBlock
@@ -337,8 +338,6 @@
                         Stretch="Fill" />
                     <Button
                         x:Name="RenameButton"
-                        Canvas.Left="113"
-                        Canvas.Top="1"
                         ToolTip="{StaticResource RenameFile}">
                         <Button.Content>
                             <TextBlock
@@ -368,8 +367,6 @@
                         Stretch="Fill" />
                     <Button
                         x:Name="RecycleButton"
-                        Canvas.Left="113"
-                        Canvas.Top="1"
                         ToolTip="{StaticResource SendCurrentImageToRecycleBin}">
 
                         <Button.Content>

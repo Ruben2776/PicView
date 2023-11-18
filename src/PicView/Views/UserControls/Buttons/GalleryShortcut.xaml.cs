@@ -1,31 +1,33 @@
 ﻿using PicView.Animations;
 using PicView.PicGallery;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class GalleryShortcut
+namespace PicView.Views.UserControls.Buttons
 {
-    public GalleryShortcut()
+    public partial class GalleryShortcut
     {
-        InitializeComponent();
-
-        Loaded += delegate
+        public GalleryShortcut()
         {
-            MouseLeftButtonDown += async (_, _) => await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
+            InitializeComponent();
 
-            MouseEnter += delegate
+            Loaded += delegate
             {
-                MouseOverAnimations.AltInterfaceMouseOver(ImagePath1Fill, CanvasBGcolor, BorderBrushKey);
-                MouseOverAnimations.AltInterfaceMouseOver(ImagePath2Fill, CanvasBGcolor, BorderBrushKey);
-                MouseOverAnimations.AltInterfaceMouseOver(ImagePath3Fill, CanvasBGcolor, BorderBrushKey);
-            };
+                MouseLeftButtonDown += async (_, _) =>
+                    await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
 
-            MouseLeave += delegate
-            {
-                MouseOverAnimations.AltInterfaceMouseLeave(ImagePath1Fill, CanvasBGcolor, BorderBrushKey);
-                MouseOverAnimations.AltInterfaceMouseLeave(ImagePath2Fill, CanvasBGcolor, BorderBrushKey);
-                MouseOverAnimations.AltInterfaceMouseLeave(ImagePath3Fill, CanvasBGcolor, BorderBrushKey);
+                MouseEnter += delegate
+                {
+                    MouseOverAnimations.AltInterfaceMouseOver(ImagePath1Fill, CanvasBGcolor, BorderBrushKey);
+                    MouseOverAnimations.AltInterfaceMouseOver(ImagePath2Fill, CanvasBGcolor, BorderBrushKey);
+                    MouseOverAnimations.AltInterfaceMouseOver(ImagePath3Fill, CanvasBGcolor, BorderBrushKey);
+                };
+
+                MouseLeave += delegate
+                {
+                    MouseOverAnimations.AltInterfaceMouseLeave(ImagePath1Fill, CanvasBGcolor, BorderBrushKey);
+                    MouseOverAnimations.AltInterfaceMouseLeave(ImagePath2Fill, CanvasBGcolor, BorderBrushKey);
+                    MouseOverAnimations.AltInterfaceMouseLeave(ImagePath3Fill, CanvasBGcolor, BorderBrushKey);
+                };
             };
-        };
+        }
     }
 }

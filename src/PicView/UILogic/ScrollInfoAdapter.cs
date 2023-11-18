@@ -42,11 +42,9 @@ namespace PicView.UILogic
 
         public bool CanVerticallyScroll
         {
-            get
-            {
+            get =>
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                return _child is not null && _child.CanVerticallyScroll;
-            }
+                _child is not null && _child.CanVerticallyScroll;
             set
             {
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -54,17 +52,16 @@ namespace PicView.UILogic
                 {
                     return;
                 }
+
                 _child.CanVerticallyScroll = value;
             }
         }
 
         public bool CanHorizontallyScroll
         {
-            get
-            {
+            get =>
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                return _child is not null && _child.CanHorizontallyScroll;
-            }
+                _child is not null && _child.CanHorizontallyScroll;
             set
             {
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -72,6 +69,7 @@ namespace PicView.UILogic
                 {
                     return;
                 }
+
                 _child.CanHorizontallyScroll = value;
             }
         }
@@ -331,7 +329,7 @@ namespace PicView.UILogic
             try
             {
                 if (!(Math.Abs(_computedVerticalOffset - ValidateVerticalOffset(val)) >
-              0.1)) //prevent restart of animation in case of frequent event fire
+                      0.1)) //prevent restart of animation in case of frequent event fire
                 {
                     return;
                 }
@@ -350,7 +348,7 @@ namespace PicView.UILogic
             try
             {
                 if (!(Math.Abs(_computedHorizontalOffset - ValidateHorizontalOffset(val)) >
-              0.1)) //prevent restart of animation in case of frequent event fire
+                      0.1)) //prevent restart of animation in case of frequent event fire
                 {
                     return;
                 }
@@ -371,7 +369,9 @@ namespace PicView.UILogic
                 return 0;
             }
 
-            return verticalOffset > _child.ScrollOwner.ScrollableHeight ? _child.ScrollOwner.ScrollableHeight : verticalOffset;
+            return verticalOffset > _child.ScrollOwner.ScrollableHeight
+                ? _child.ScrollOwner.ScrollableHeight
+                : verticalOffset;
         }
 
         private double ValidateHorizontalOffset(double horizontalOffset)
@@ -381,7 +381,9 @@ namespace PicView.UILogic
                 return 0;
             }
 
-            return horizontalOffset > _child.ScrollOwner.ScrollableWidth ? _child.ScrollOwner.ScrollableWidth : horizontalOffset;
+            return horizontalOffset > _child.ScrollOwner.ScrollableWidth
+                ? _child.ScrollOwner.ScrollableWidth
+                : horizontalOffset;
         }
 
         #endregion not exposed methods

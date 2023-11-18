@@ -3,158 +3,164 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace PicView.Animations;
-
-internal static class MouseOverAnimations
+namespace PicView.Animations
 {
-    /*
-
-        Adds MouseOver events for the given elements with the AnimationHelper.
-        Changes color depending on the users settings.
-
-    */
-
-    private static readonly Color IconColor = (Color)Application.Current.Resources["IconColor"];
-
-    private static readonly Color BackgroundBorderColor = (Color)Application.Current.Resources["BackgroundColorAlt"];
-
-    internal static void SetButtonIconMouseOverAnimations(UIElement uIElement, Brush backgroundBrush, Brush iconBrush, bool force = false)
+    internal static class MouseOverAnimations
     {
-        if (Settings.Default.DarkTheme || force)
+        /*
+
+            Adds MouseOver events for the given elements with the AnimationHelper.
+            Changes color depending on the users settings.
+
+        */
+
+        private static readonly Color IconColor = (Color)Application.Current.Resources["IconColor"];
+
+        private static readonly Color BackgroundBorderColor =
+            (Color)Application.Current.Resources["BackgroundColorAlt"];
+
+        internal static void SetButtonIconMouseOverAnimations(UIElement uIElement, Brush backgroundBrush,
+            Brush iconBrush, bool force = false)
         {
-            uIElement.MouseLeftButtonDown += delegate
+            if (Settings.Default.DarkTheme || force)
             {
-                if (iconBrush is not null)
-                    ButtonMouseOverAnim(iconBrush);
+                uIElement.MouseLeftButtonDown += delegate
+                {
+                    if (iconBrush is not null)
+                        ButtonMouseOverAnim(iconBrush);
+                    if (backgroundBrush is not null)
+                    {
+                        ButtonMouseOverAnim(backgroundBrush);
+                        AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+                    }
+                };
+
+                uIElement.MouseEnter += delegate
+                {
+                    if (iconBrush is not null)
+                        ButtonMouseOverAnim(iconBrush);
+                    if (backgroundBrush is not null)
+                        AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+                };
+
+                uIElement.MouseLeave += delegate
+                {
+                    if (iconBrush is not null)
+                        ButtonMouseLeaveAnim(iconBrush);
+                    if (backgroundBrush is not null)
+                        AnimationHelper.MouseLeaveBgTexColor(backgroundBrush);
+                };
+            }
+            else
+            {
                 if (backgroundBrush is not null)
                 {
-                    ButtonMouseOverAnim(backgroundBrush);
-                    AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
+                    uIElement.MouseEnter += (_, _) => ButtonMouseOverAnim(backgroundBrush, true);
+                    uIElement.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(backgroundBrush);
                 }
-            };
 
-            uIElement.MouseEnter += delegate
-            {
-                if (iconBrush is not null)
-                    ButtonMouseOverAnim(iconBrush);
-                if (backgroundBrush is not null)
-                    AnimationHelper.MouseEnterBgTexColor(backgroundBrush);
-            };
-
-            uIElement.MouseLeave += delegate
-            {
-                if (iconBrush is not null)
-                    ButtonMouseLeaveAnim(iconBrush);
-                if (backgroundBrush is not null)
-                    AnimationHelper.MouseLeaveBgTexColor(backgroundBrush);
-            };
-        }
-        else
-        {
-            if (backgroundBrush is not null)
-            {
-                uIElement.MouseEnter += (_, _) => ButtonMouseOverAnim(backgroundBrush, true);
-                uIElement.MouseLeave += (_, _) => ButtonMouseLeaveAnimBgColor(backgroundBrush);
+                if (uIElement is not null && iconBrush is not null)
+                    AnimationHelper.LightThemeMouseEvent(uIElement, iconBrush);
             }
-            if (uIElement is not null && iconBrush is not null)
-                AnimationHelper.LightThemeMouseEvent(uIElement, iconBrush);
         }
-    }
 
-    #region ALtInterface hover anims
+        #region ALtInterface hover anims
 
-    private static readonly ColorAnimation CcAnim = new() { Duration = TimeSpan.FromSeconds(.32) };
-    private static readonly ColorAnimation CcAnim2 = new() { Duration = TimeSpan.FromSeconds(.2) };
-    private static readonly SolidColorBrush BorderBrush = (SolidColorBrush)Application.Current.Resources["BorderBrush"];
+        private static readonly ColorAnimation CcAnim = new() { Duration = TimeSpan.FromSeconds(.32) };
+        private static readonly ColorAnimation CcAnim2 = new() { Duration = TimeSpan.FromSeconds(.2) };
 
-    internal static void AltInterfaceMouseOver(Brush foreground, Brush background, Brush border)
-    {
-        CcAnim.From = (Color)Application.Current.Resources["IconColor"];
-        CcAnim.To = AnimationHelper.GetPreferredColor();
+        private static readonly SolidColorBrush BorderBrush =
+            (SolidColorBrush)Application.Current.Resources["BorderBrush"];
 
-        foreground.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim);
-
-        CcAnim2.From = (Color)Application.Current.Resources["AltInterface"];
-        CcAnim2.To = (Color)Application.Current.Resources["AltInterfaceW"];
-
-        background.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim2);
-        AnimationHelper.MouseOverColorEvent(
-            BorderBrush.Color.A,
-            BorderBrush.Color.R,
-            BorderBrush.Color.G,
-            BorderBrush.Color.B,
-            border);
-    }
-
-    internal static void AltInterfaceMouseLeave(Brush foreground, Brush background, Brush border)
-    {
-        CcAnim.From = AnimationHelper.GetPreferredColor();
-        CcAnim.To = (Color)Application.Current.Resources["IconColor"];
-
-        foreground.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim);
-
-        CcAnim2.From = (Color)Application.Current.Resources["AltInterfaceW"];
-        CcAnim2.To = (Color)Application.Current.Resources["AltInterface"];
-
-        background.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim2);
-        AnimationHelper.MouseLeaveColorEvent(
-            BorderBrush.Color.A,
-            BorderBrush.Color.R,
-            BorderBrush.Color.G,
-            BorderBrush.Color.B,
-            border);
-    }
-
-    #endregion ALtInterface hover anims
-
-    #region 1x
-
-    internal static void ButtonMouseOverAnim(Brush brush, bool transparent = false)
-    {
-        if (transparent)
+        internal static void AltInterfaceMouseOver(Brush foreground, Brush background, Brush border)
         {
-            AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, brush);
-        }
-        else
-        {
+            CcAnim.From = (Color)Application.Current.Resources["IconColor"];
+            CcAnim.To = AnimationHelper.GetPreferredColor();
+
+            foreground.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim);
+
+            CcAnim2.From = (Color)Application.Current.Resources["AltInterface"];
+            CcAnim2.To = (Color)Application.Current.Resources["AltInterfaceW"];
+
+            background.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim2);
             AnimationHelper.MouseOverColorEvent(
-                IconColor.A,
-                IconColor.R,
-                IconColor.G,
-                IconColor.B,
-                brush
-            );
+                BorderBrush.Color.A,
+                BorderBrush.Color.R,
+                BorderBrush.Color.G,
+                BorderBrush.Color.B,
+                border);
         }
-    }
 
-    internal static void ButtonMouseLeaveAnim(Brush brush, bool transparent = false)
-    {
-        if (transparent)
+        internal static void AltInterfaceMouseLeave(Brush foreground, Brush background, Brush border)
         {
-            AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush);
+            CcAnim.From = AnimationHelper.GetPreferredColor();
+            CcAnim.To = (Color)Application.Current.Resources["IconColor"];
+
+            foreground.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim);
+
+            CcAnim2.From = (Color)Application.Current.Resources["AltInterfaceW"];
+            CcAnim2.To = (Color)Application.Current.Resources["AltInterface"];
+
+            background.BeginAnimation(SolidColorBrush.ColorProperty, CcAnim2);
+            AnimationHelper.MouseLeaveColorEvent(
+                BorderBrush.Color.A,
+                BorderBrush.Color.R,
+                BorderBrush.Color.G,
+                BorderBrush.Color.B,
+                border);
         }
-        else
+
+        #endregion ALtInterface hover anims
+
+        #region 1x
+
+        internal static void ButtonMouseOverAnim(Brush brush, bool transparent = false)
+        {
+            if (transparent)
+            {
+                AnimationHelper.MouseOverColorEvent(0, 0, 0, 0, brush);
+            }
+            else
+            {
+                AnimationHelper.MouseOverColorEvent(
+                    IconColor.A,
+                    IconColor.R,
+                    IconColor.G,
+                    IconColor.B,
+                    brush
+                );
+            }
+        }
+
+        internal static void ButtonMouseLeaveAnim(Brush brush, bool transparent = false)
+        {
+            if (transparent)
+            {
+                AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, brush);
+            }
+            else
+            {
+                AnimationHelper.MouseLeaveColorEvent(
+                    IconColor.A,
+                    IconColor.R,
+                    IconColor.G,
+                    IconColor.B,
+                    brush
+                );
+            }
+        }
+
+        internal static void ButtonMouseLeaveAnimBgColor(Brush brush)
         {
             AnimationHelper.MouseLeaveColorEvent(
-                IconColor.A,
-                IconColor.R,
-                IconColor.G,
-                IconColor.B,
+                BackgroundBorderColor.A,
+                BackgroundBorderColor.R,
+                BackgroundBorderColor.G,
+                BackgroundBorderColor.B,
                 brush
             );
         }
-    }
 
-    internal static void ButtonMouseLeaveAnimBgColor(Brush brush)
-    {
-        AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
-            brush
-        );
+        #endregion 1x
     }
-
-    #endregion 1x
 }

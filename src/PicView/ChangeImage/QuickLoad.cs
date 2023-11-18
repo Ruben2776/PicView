@@ -18,86 +18,88 @@ using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
 using static PicView.UILogic.Sizing.ScaleImage;
 
-namespace PicView.ChangeImage;
-
-internal static class QuickLoad
+namespace PicView.ChangeImage
 {
-    /// <summary>
-    /// Load Image from blank values and show loading preview
-    /// </summary>
-    /// <param name="file"></param>
-    internal static async Task QuickLoadAsync(string file)
+    internal static class QuickLoad
     {
-        var mainWindow = ConfigureWindows.GetMainWindow;
-        InitialPath = file;
-        var fileInfo = new FileInfo(file);
-        if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
+        /// <summary>
+        /// Load Image from blank values and show loading preview
+        /// </summary>
+        /// <param name="file"></param>
+        internal static async Task QuickLoadAsync(string file)
         {
-            await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
-            return;
-        }
-        if (file.IsArchive()) // Handle if file exist and is archive
-        {
-            await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
-            return;
-        }
-        var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-        await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
-        {
-            ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
-
-            FitImage(bitmapSource.Width, bitmapSource.Height);
-        }, DispatcherPriority.Send);
-
-        if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
-        {
-            var frames = ImageFunctions.GetImageFrames(fileInfo.FullName);
-            if (frames > 0)
+            var mainWindow = ConfigureWindows.GetMainWindow;
+            InitialPath = file;
+            var fileInfo = new FileInfo(file);
+            if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
             {
-                var uri = new Uri(fileInfo.FullName);
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                {
-                    AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
-                }, DispatcherPriority.Normal);
+                await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
+                return;
             }
-        }
 
-        Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
-        FolderIndex = Pics.IndexOf(fileInfo.FullName);
-
-        await mainWindow.Dispatcher.InvokeAsync(() =>
-        {
-            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
-            UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
-            ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
-        }, DispatcherPriority.Normal);
-
-        if (FolderIndex > 0)
-        {
-            Taskbar.Progress((double)FolderIndex / Pics.Count);
-            _ = PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
-        }
-
-        _ = PreLoader.AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
-
-        if (Settings.Default.IsBottomGalleryShown)
-        {
-            await GalleryLoad.LoadAsync().ConfigureAwait(false);
-            // Update gallery selections
-            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            if (file.IsArchive()) // Handle if file exist and is archive
             {
-                // Select current item
-                GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-            });
-        }
+                await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
+                return;
+            }
 
-        // Add recent files, except when browsing archive
-        if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > FolderIndex)
-        {
-            GetFileHistory ??= new FileHistory();
-            GetFileHistory.Add(Pics[FolderIndex]);
+            var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
+            {
+                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+
+                FitImage(bitmapSource.Width, bitmapSource.Height);
+            }, DispatcherPriority.Send);
+
+            if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+            {
+                var frames = ImageFunctions.GetImageFrames(fileInfo.FullName);
+                if (frames > 0)
+                {
+                    var uri = new Uri(fileInfo.FullName);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(
+                        () => { AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri); },
+                        DispatcherPriority.Normal);
+                }
+            }
+
+            Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
+            FolderIndex = Pics.IndexOf(fileInfo.FullName);
+
+            await mainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
+                UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
+                ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
+            }, DispatcherPriority.Normal);
+
+            if (FolderIndex > 0)
+            {
+                Taskbar.Progress((double)FolderIndex / Pics.Count);
+                _ = PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
+            }
+
+            _ = AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
+
+            if (Settings.Default.IsBottomGalleryShown)
+            {
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                // Update gallery selections
+                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                {
+                    // Select current item
+                    GalleryNavigation.SetSelected(FolderIndex, true);
+                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                    GalleryNavigation.ScrollToGalleryCenter();
+                });
+            }
+
+            // Add recent files, except when browsing archive
+            if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > FolderIndex)
+            {
+                GetFileHistory ??= new FileHistory();
+                GetFileHistory.Add(Pics[FolderIndex]);
+            }
         }
     }
 }

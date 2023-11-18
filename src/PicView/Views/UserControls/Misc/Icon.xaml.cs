@@ -1,9 +1,10 @@
-﻿namespace PicView.Views.UserControls.Misc;
-
-public partial class Icon
+﻿namespace PicView.Views.UserControls.Misc
 {
-    public Icon()
+    public partial class Icon
     {
-        InitializeComponent();
+        public Icon()
+        {
+            InitializeComponent();
+        }
     }
 }

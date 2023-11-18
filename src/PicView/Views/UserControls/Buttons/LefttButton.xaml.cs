@@ -2,21 +2,23 @@
 using PicView.ChangeImage;
 using static PicView.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class LeftButton
+namespace PicView.Views.UserControls.Buttons
 {
-    public LeftButton()
+    public partial class LeftButton
     {
-        InitializeComponent();
-
-        Loaded += delegate
+        public LeftButton()
         {
-            TheButton.PreviewMouseLeftButtonDown += async (s, x) => await Navigation.PicButtonAsync(false, false).ConfigureAwait(false);
-            TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(LeftArrowFill);
-            TheButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(LeftButtonBrush);
-            TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(LeftArrowFill);
-            TheButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(LeftButtonBrush);
-        };
+            InitializeComponent();
+
+            Loaded += delegate
+            {
+                TheButton.PreviewMouseLeftButtonDown += async (s, x) =>
+                    await Navigation.PicButtonAsync(false, false).ConfigureAwait(false);
+                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(LeftArrowFill);
+                TheButton.MouseEnter += (s, x) => AnimationHelper.MouseEnterBgTexColor(LeftButtonBrush);
+                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnim(LeftArrowFill);
+                TheButton.MouseLeave += (s, x) => AnimationHelper.MouseLeaveBgTexColor(LeftButtonBrush);
+            };
+        }
     }
 }

@@ -1,9 +1,10 @@
-﻿namespace PicView.Views.UserControls.Misc;
-
-public partial class LinkChain
+﻿namespace PicView.Views.UserControls.Misc
 {
-    public LinkChain()
+    public partial class LinkChain
     {
-        InitializeComponent();
+        public LinkChain()
+        {
+            InitializeComponent();
+        }
     }
 }

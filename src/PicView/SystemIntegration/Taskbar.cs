@@ -2,56 +2,58 @@
 using System.Windows.Shell;
 using System.Windows.Threading;
 
-namespace PicView.SystemIntegration;
-
-internal static class Taskbar
+namespace PicView.SystemIntegration
 {
-    #region Progress
-
-    /// <summary>
-    /// Show progress on taskbar
-    /// </summary>
-    /// <param name="i">index</param>
-    /// <param name="ii">size</param>
-    internal static void Progress(double d)
+    internal static class Taskbar
     {
-        if (!Properties.Settings.Default.IsTaskbarProgressEnabled)
-            return;
+        #region Progress
 
-        TaskbarItemInfo taskbar = new()
+        /// <summary>
+        /// Show progress on taskbar
+        /// </summary>
+        /// <param name="i">index</param>
+        /// <param name="ii">size</param>
+        internal static void Progress(double d)
         {
-            ProgressState = TaskbarItemProgressState.Normal,
-            ProgressValue = d
-        };
-        Set(taskbar);
-    }
+            if (!Properties.Settings.Default.IsTaskbarProgressEnabled)
+                return;
 
-    /// <summary>
-    /// Stop showing taskbar progress, return to default
-    /// </summary>
-    internal static void NoProgress()
-    {
-        TaskbarItemInfo taskbar = new()
-        {
-            ProgressState = TaskbarItemProgressState.Normal,
-            ProgressValue = 0.0
-        };
-        Set(taskbar);
-    }
-
-    private static void Set(TaskbarItemInfo taskbar)
-    {
-        taskbar.Freeze();
-        try
-        {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
+            TaskbarItemInfo taskbar = new()
+            {
+                ProgressState = TaskbarItemProgressState.Normal,
+                ProgressValue = d
+            };
+            Set(taskbar);
         }
-        catch (Exception e)
-        {
-            Tooltip.ShowTooltipMessage(e);
-            // Catch task canceled exception
-        }
-    }
 
-    #endregion Progress
+        /// <summary>
+        /// Stop showing taskbar progress, return to default
+        /// </summary>
+        internal static void NoProgress()
+        {
+            TaskbarItemInfo taskbar = new()
+            {
+                ProgressState = TaskbarItemProgressState.Normal,
+                ProgressValue = 0.0
+            };
+            Set(taskbar);
+        }
+
+        private static void Set(TaskbarItemInfo taskbar)
+        {
+            taskbar.Freeze();
+            try
+            {
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background,
+                    () => ConfigureWindows.GetMainWindow.TaskbarItemInfo = taskbar);
+            }
+            catch (Exception e)
+            {
+                Tooltip.ShowTooltipMessage(e);
+                // Catch task canceled exception
+            }
+        }
+
+        #endregion Progress
+    }
 }

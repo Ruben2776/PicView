@@ -3,37 +3,39 @@ using PicView.PicGallery;
 using PicView.UILogic;
 using System.Windows;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class X2
+namespace PicView.Views.UserControls.Buttons
 {
-    public X2()
+    public partial class X2
     {
-        InitializeComponent();
-        MouseLeftButtonDown += (_, _) =>
+        public X2()
         {
-            if (GalleryFunctions.IsGalleryOpen)
+            InitializeComponent();
+            MouseLeftButtonDown += (_, _) =>
             {
-                GalleryToggle.CloseHorizontalGallery();
-            }
-            else
-            {
-                if (UC.GetQuickResize is { IsVisible: true })
+                if (GalleryFunctions.IsGalleryOpen)
                 {
-                    return;
+                    GalleryToggle.CloseHorizontalGallery();
                 }
-                SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
-            }
-        };
+                else
+                {
+                    if (UC.GetQuickResize is { IsVisible: true })
+                    {
+                        return;
+                    }
 
-        MouseEnter += (_, _) =>
-        {
-            MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
+                    SystemCommands.CloseWindow(ConfigureWindows.GetMainWindow);
+                }
+            };
 
-        MouseLeave += (_, _) =>
-        {
-            MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
+            MouseEnter += (_, _) =>
+            {
+                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+
+            MouseLeave += (_, _) =>
+            {
+                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
+        }
     }
 }

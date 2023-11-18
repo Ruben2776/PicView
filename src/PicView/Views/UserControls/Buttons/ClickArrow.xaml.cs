@@ -3,33 +3,34 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace PicView.Views.UserControls.Buttons;
-
-public partial class ClickArrow : UserControl
+namespace PicView.Views.UserControls.Buttons
 {
-    public ClickArrow(bool right)
+    public partial class ClickArrow : UserControl
     {
-        InitializeComponent();
-
-        if (!right)
+        public ClickArrow(bool right)
         {
-            Arrow.LayoutTransform = new ScaleTransform
+            InitializeComponent();
+
+            if (!right)
             {
-                ScaleX = -1
+                Arrow.LayoutTransform = new ScaleTransform
+                {
+                    ScaleX = -1
+                };
+                border.BorderThickness = new Thickness(0, 1, 1, 1);
+                border.CornerRadius = new CornerRadius(0, 2, 2, 0);
+                Canvas.SetLeft(Arrow, 12);
+            }
+
+            MouseEnter += delegate
+            {
+                MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
             };
-            border.BorderThickness = new Thickness(0, 1, 1, 1);
-            border.CornerRadius = new CornerRadius(0, 2, 2, 0);
-            Canvas.SetLeft(Arrow, 12);
+
+            MouseLeave += delegate
+            {
+                MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
+            };
         }
-
-        MouseEnter += delegate
-        {
-            MouseOverAnimations.AltInterfaceMouseOver(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
-
-        MouseLeave += delegate
-        {
-            MouseOverAnimations.AltInterfaceMouseLeave(PolyFill, CanvasBGcolor, BorderBrushKey);
-        };
     }
 }
