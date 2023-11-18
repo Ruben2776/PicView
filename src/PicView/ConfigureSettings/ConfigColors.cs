@@ -2,6 +2,7 @@
 using PicView.Properties;
 using PicView.Themes.Resources;
 using PicView.UILogic;
+using PicView.UILogic.DragAndDrop;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -59,7 +60,7 @@ internal static class ConfigColors
 
     #region Window LostFocus style change
 
-    internal static void MainWindowUnfocusOrFocus(bool isFocused)
+    internal static async Task MainWindowUnfocusOrFocus(bool isFocused)
     {
         var w = ConfigureWindows.GetMainWindow;
 
@@ -91,6 +92,17 @@ internal static class ConfigColors
 
             w.LowerBar.Background = isFocused ? (SolidColorBrush)Application.Current.Resources["AltInterfaceWBrush"]
                 : (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushAlt"];
+        }
+
+        // Delay to fix inactive window being hit
+        await Task.Delay(20);
+        if (isFocused)
+        {
+            w.MainImage.MouseLeftButtonDown += DragToExplorer.DragFile;
+        }
+        else
+        {
+            w.MainImage.MouseLeftButtonDown -= DragToExplorer.DragFile;
         }
     }
 

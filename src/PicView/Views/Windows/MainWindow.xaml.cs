@@ -82,7 +82,6 @@ public partial class MainWindow
             // MainImage
             ConfigureWindows.GetMainWindow.MainImage.MouseLeftButtonUp += MainMouseKeys.MainImage_MouseLeftButtonUp;
             ConfigureWindows.GetMainWindow.MainImage.MouseMove += MainMouseKeys.MainImage_MouseMove;
-            ConfigureWindows.GetMainWindow.MainImage.PreviewMouseLeftButtonDown += DragToExplorer.DragFile;
 
             // ClickArrows
             GetClickArrowLeft.MouseLeftButtonDown += async (_, _) =>
@@ -138,8 +137,8 @@ public partial class MainWindow
             Closing += (_, _) => Window_Closing();
             StateChanged += (_, _) => MainWindow_StateChanged();
 
-            Deactivated += (_, _) => ConfigColors.MainWindowUnfocusOrFocus(false);
-            Activated += (_, _) => ConfigColors.MainWindowUnfocusOrFocus(true);
+            Deactivated += async (_, _) => await ConfigColors.MainWindowUnfocusOrFocus(false);
+            Activated += async (_, _) => await ConfigColors.MainWindowUnfocusOrFocus(true);
 
             SystemEvents.DisplaySettingsChanged += (_, _) => SystemEvents_DisplaySettingsChanged();
 
