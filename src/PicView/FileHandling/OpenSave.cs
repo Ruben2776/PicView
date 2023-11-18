@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
@@ -11,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
+using static PicView.PicGallery.GalleryLoad;
 using static PicView.UILogic.Tooltip;
 using static PicView.UILogic.TransformImage.Rotation;
 using static PicView.UILogic.UC;
@@ -234,7 +234,18 @@ internal static class OpenSave
         {
             if (fileName == Pics[FolderIndex])
             {
-                await ReloadAsync().ConfigureAwait(false);
+                PreLoader.Remove(FolderIndex);
+                await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
+                if (UC.GetPicGallery is not null)
+                {
+                    var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(FolderIndex)).ConfigureAwait(false);
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        UpdatePic(FolderIndex, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
+                            galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
+                            galleryThumbHolderItem.FileDate);
+                    }, DispatcherPriority.Render);
+                }
             }
         }
 
