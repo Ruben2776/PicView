@@ -1,5 +1,4 @@
-﻿using System.IO;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -32,27 +31,21 @@ internal static class UpdateImage
     internal static async Task UpdateImageValuesAsync(int index, PreLoadValue preLoadValue)
     {
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
+        var source = new CancellationTokenSource();
 
         await ConfigureWindows.GetMainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
+            if (index != FolderIndex)
+            {
+                source.Cancel();
+                return;
+            }
             ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
-        }, DispatcherPriority.Send);
-
-        var titleString = TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,
-            index, preLoadValue.FileInfo);
-
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-        {
             if (Rotation.RotationAngle is not 0)
             {
                 Rotation.Rotate(0);
             }
             FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
-
-            ConfigureWindows.GetMainWindow.Title = titleString[0];
-            ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
-            ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
 
             // Scroll to top if scroll enabled
             if (Settings.Default.ScrollEnabled)
@@ -60,7 +53,6 @@ internal static class UpdateImage
                 ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
             }
 
-            // Reset transforms
             if (ZoomLogic.IsZoomed)
             {
                 ZoomLogic.ResetZoom(false);
@@ -70,24 +62,52 @@ internal static class UpdateImage
             {
                 Rotation.Flip();
             }
+        }, DispatcherPriority.Send, source.Token);
+
+        var titleString = await Task.FromResult(TitleString(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight,
+            index, preLoadValue.FileInfo)).ConfigureAwait(false);
+        if (source.IsCancellationRequested)
+        {
+            return;
+        }
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        {
+            if (index != FolderIndex)
+            {
+                source.Cancel();
+                return;
+            }
+            ConfigureWindows.GetMainWindow.Title = titleString[0];
+            ConfigureWindows.GetMainWindow.TitleText.Text = titleString[1];
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = titleString[2];
+            ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
 
             if (GetSpinWaiter is { IsVisible: true })
             {
                 GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
-        }, DispatcherPriority.Send);
+        }, DispatcherPriority.Send, source.Token);
+
+        if (source.IsCancellationRequested)
+        {
+            return;
+        }
 
         if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
         {
-            var frames = ImageFunctions.GetImageFrames(preLoadValue.FileInfo.FullName);
-            if (frames > 0)
+            var frames = await Task.FromResult(ImageFunctions.GetImageFrames(preLoadValue.FileInfo.FullName)).ConfigureAwait(false);
+            if (frames > 1)
             {
                 var uri = new Uri(preLoadValue.FileInfo.FullName);
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
-                    if (index == FolderIndex)
-                        AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
-                }, DispatcherPriority.Normal);
+                    if (index != FolderIndex)
+                    {
+                        source.Cancel();
+                        return;
+                    }
+                    AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
+                }, DispatcherPriority.Normal, source.Token);
             }
         }
 
