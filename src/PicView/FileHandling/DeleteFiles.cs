@@ -110,16 +110,17 @@ internal static class DeleteFiles
             ErrorHandling.UnexpectedError();
             return;
         }
+        ShowTooltipMessage(recycle ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
 
-        FolderIndex--;
+        FolderIndex = GetNextIndex(NavigateTo.Previous, false);
         if (FolderIndex < 0)
         {
             FolderIndex = 0;
         }
-        PreLoader.Clear(); // Need to be cleared to avoid synchronization error
-        _ = PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
 
-        await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-        ShowTooltipMessage(recycle ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
+        var preloadValue = PreLoader.Get(FolderIndex);
+        PreLoader.Clear(); // Need to be cleared to avoid synchronization error
+        await PreLoader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+        await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
     }
 }
