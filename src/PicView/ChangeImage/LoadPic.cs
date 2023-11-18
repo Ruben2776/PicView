@@ -394,18 +394,27 @@ internal static class LoadPic
             using var image = new MagickImage();
             image.Ping(fileInfo);
             BitmapSource? thumb = null;
+            var source = new CancellationTokenSource();
             if (GetPicGallery != null)
             {
                 var fromGallery = false;
                 await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
-                    if (GetPicGallery.Container.Children.Count > 0 && index < GetPicGallery.Container.Children.Count)
+                    if (index != FolderIndex)
                     {
-                        var y = GetPicGallery.Container.Children[index] as PicGalleryItem;
-                        thumb = (BitmapSource)y.ThumbImage.Source;
-                        fromGallery = true;
+                        source.Cancel();
+                        return;
                     }
-                });
+
+                    if (GetPicGallery.Container.Children.Count <= 0 || index >= GetPicGallery.Container.Children.Count)
+                    {
+                        return;
+                    }
+
+                    var y = GetPicGallery.Container.Children[index] as PicGalleryItem;
+                    thumb = (BitmapSource)y.ThumbImage.Source;
+                    fromGallery = true;
+                }, DispatcherPriority.Normal, source.Token);
                 if (!fromGallery)
                 {
                     var exifThumbnail = image.GetExifProfile()?.CreateThumbnail();
@@ -418,7 +427,7 @@ internal static class LoadPic
                 thumb = exifThumbnail?.ToBitmapSource();
             }
 
-            if (index != FolderIndex)
+            if (index != FolderIndex || source.IsCancellationRequested)
             {
                 await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
                 return; // Skip loading if user went to next value
@@ -426,13 +435,18 @@ internal static class LoadPic
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
+                if (index != FolderIndex)
+                {
+                    source.Cancel();
+                    return;
+                }
                 SetLoadingString();
                 GetSpinWaiter.Visibility = Visibility.Visible;
 
                 ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
                 if (image is { Height: > 0, Width: > 0 })
                     ScaleImage.FitImage(image.Width, image.Height);
-            }, DispatcherPriority.Send);
+            }, DispatcherPriority.Send, source.Token);
 
             // Update gallery selections
             if (GetPicGallery is not null && index == FolderIndex)
@@ -440,12 +454,15 @@ internal static class LoadPic
                 await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
                     if (index != FolderIndex)
+                    {
+                        source.Cancel();
                         return;
+                    }
                     // Select next item
                     GalleryNavigation.SetSelected(FolderIndex, true);
                     GalleryNavigation.SelectedGalleryItem = FolderIndex;
                     GalleryNavigation.ScrollToGalleryCenter();
-                });
+                }, DispatcherPriority.Normal, source.Token);
             }
 
             if (preLoadValue is null)

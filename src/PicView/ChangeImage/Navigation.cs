@@ -93,19 +93,17 @@ internal static class Navigation
                 else
                 {
                     var newIndex = FolderIndex + indexChange;
-                    if (newIndex < 0 || newIndex >= Pics.Count) return;
+                    if (newIndex < 0 || newIndex >= Pics.Count)
+                        return;
                     next = newIndex;
                 }
                 break;
 
             case NavigateTo.First:
-                if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
-                next = 0;
-                break;
-
             case NavigateTo.Last:
-                if (Pics.Count > PreLoader.MaxCount) PreLoader.Clear();
-                next = Pics.Count - 1;
+                if (Pics.Count > PreLoader.MaxCount)
+                    PreLoader.Clear();
+                next = navigateTo == NavigateTo.First ? 0 : Pics.Count - 1;
                 break;
 
             default: return;
@@ -147,6 +145,41 @@ internal static class Navigation
     }
 
     /// <summary>
+    /// Gets the index of the next image based on the specified navigation direction.
+    /// </summary>
+    /// <param name="navigateTo">Specifies whether to navigate to the next or previous image, or to the first or last image.</param>
+    /// <param name="fastPic">Whether to use fast picture loading.</param>
+    /// <returns>
+    /// The index of the next image, or -1 if there is no valid next index based on the specified navigation direction.
+    /// </returns>
+    internal static int GetNextIndex(NavigateTo navigateTo, bool fastPic)
+    {
+        switch (navigateTo)
+        {
+            case NavigateTo.Next:
+            case NavigateTo.Previous:
+                var indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
+
+                if (Settings.Default.Looping || fastPic || Slideshow.SlideTimer != null)
+                {
+                    return (FolderIndex + indexChange + Pics.Count) % Pics.Count;
+                }
+                var newIndex = FolderIndex + indexChange;
+                if (newIndex < 0 || newIndex >= Pics.Count)
+                    return -1;
+                return newIndex;
+
+            case NavigateTo.First:
+                return 0;
+
+            case NavigateTo.Last:
+                return Pics.Count - 1;
+
+            default: return -1;
+        }
+    }
+
+    /// <summary>
     /// Navigates to the next or previous folder based on the current directory.
     /// </summary>
     /// <param name="next">True to navigate to the next folder, false to navigate to the previous folder.</param>
@@ -169,12 +202,11 @@ internal static class Navigation
         await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
         if (Settings.Default.IsBottomGalleryShown)
         {
-            _ = GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+            await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
             await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
             {
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
             });
         }
     }

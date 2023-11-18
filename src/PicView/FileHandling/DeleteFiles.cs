@@ -4,7 +4,7 @@ using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Threading;
+using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 
@@ -85,7 +85,6 @@ internal static class DeleteFiles
     /// <param name="recycle"></param>
     internal static async Task DeleteFileAsync(bool recycle, string fileName)
     {
-        var index = Pics.IndexOf(fileName);
         if (!TryDeleteFile(fileName, recycle))
         {
             return;
@@ -93,6 +92,11 @@ internal static class DeleteFiles
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
+            var index = Pics.IndexOf(fileName);
+            if (index < 0)
+            {
+                return;
+            }
             // Sync with gallery
             if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > index)
             {
@@ -100,24 +104,23 @@ internal static class DeleteFiles
             }
         });
 
-        PreLoader.Remove(index);
-        Pics.Remove(Pics[index]);
-
+        Pics.Remove(fileName);
         if (Pics.Count <= 0)
         {
             ErrorHandling.UnexpectedError();
             return;
         }
-
-        if (index == FolderIndex)
-        {
-            await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-        }
-        else
-        {
-            FolderIndex = index;
-        }
-
         ShowTooltipMessage(recycle ? Application.Current.Resources["SentFileToRecycleBin"] : Application.Current.Resources["Deleted"]);
+
+        FolderIndex = GetNextIndex(NavigateTo.Previous, false);
+        if (FolderIndex < 0)
+        {
+            FolderIndex = 0;
+        }
+
+        var preloadValue = PreLoader.Get(FolderIndex);
+        PreLoader.Clear(); // Need to be cleared to avoid synchronization error
+        await PreLoader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+        await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
     }
 }

@@ -1,4 +1,5 @@
-﻿using PicView.ChangeImage;
+﻿using System.Diagnostics;
+using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.FileHandling;
 using PicView.ImageHandling;
@@ -232,6 +233,14 @@ internal static class ImageDragAndDrop
 
     private static void UpdateDragOverlay(UIElement element)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (element is null)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(UpdateDragOverlay)} element null");
+#endif
+            return;
+        }
         _dropOverlay.UpdateContent(element);
     }
 

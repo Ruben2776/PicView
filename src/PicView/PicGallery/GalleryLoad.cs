@@ -14,25 +14,62 @@ namespace PicView.PicGallery;
 
 internal static class GalleryLoad
 {
-    internal static bool IsLoading { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the gallery is currently loading.
+    /// </summary>
+    internal static bool IsLoading { get; private set; }
 
+    /// <summary>
+    /// Event handler for the PicGallery Loaded event.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     internal static void PicGallery_Loaded(object sender, RoutedEventArgs e)
     {
-        // Add events and set fields, when it's loaded.
+        // Add events and set fields when it's loaded.
         UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
         UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
     }
 
+    /// <summary>
+    /// Represents the data for a gallery thumbnail.
+    /// </summary>
     internal class GalleryThumbHolder
     {
+        /// <summary>
+        /// Gets or sets the file location of the thumbnail.
+        /// </summary>
         internal string FileLocation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file name of the thumbnail.
+        /// </summary>
         internal string FileName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file size of the thumbnail.
+        /// </summary>
         internal string FileSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file date of the thumbnail.
+        /// </summary>
         internal string FileDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bitmap source of the thumbnail.
+        /// </summary>
         internal BitmapSource BitmapSource { get; set; }
 
-        internal GalleryThumbHolder(string fileLocation, string fileName, string fileSize, string fileDate,
-            BitmapSource bitmapSource)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GalleryThumbHolder"/> class.
+        /// </summary>
+        /// <param name="fileLocation">The file location of the thumbnail.</param>
+        /// <param name="fileName">The file name of the thumbnail.</param>
+        /// <param name="fileSize">The file size of the thumbnail.</param>
+        /// <param name="fileDate">The file date of the thumbnail.</param>
+        /// <param name="bitmapSource">The bitmap source of the thumbnail.</param>
+        internal GalleryThumbHolder(string fileLocation, string fileName, string fileSize, string fileDate, BitmapSource bitmapSource)
         {
             FileLocation = fileLocation;
             FileName = fileName;
@@ -41,41 +78,60 @@ internal static class GalleryLoad
             BitmapSource = bitmapSource;
         }
 
+        /// <summary>
+        /// Gets thumbnail data for the specified index.
+        /// </summary>
+        /// <param name="index">The index of the thumbnail.</param>
+        /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
         internal static GalleryThumbHolder GetThumbData(int index)
         {
             var fileInfo = new FileInfo(Navigation.Pics[index]);
             var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize, fileInfo);
             var fileLocation = fileInfo.FullName;
             var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-            var fileSize = $"{(string)Application.Current.Resources["FileSize"]}: {fileInfo.Length.GetReadableFileSize()}";
-            var fileDate = $"{(string)Application.Current.Resources["Modified"]}: {fileInfo.LastWriteTimeUtc.ToString(CultureInfo.CurrentCulture)}";
+            var getFileSizeResource = Application.Current?.TryFindResource("FileSize");
+            var getFileDateResource = Application.Current?.TryFindResource("Modified");
+            var fileSize = "";
+            var fileDate = "";
+            if (getFileSizeResource != null)
+            {
+                fileSize = $"{getFileSizeResource}: {fileInfo.Length.GetReadableFileSize()}";
+            }
+            if (getFileDateResource != null)
+            {
+                fileDate = $"{getFileDateResource}: {fileInfo.LastWriteTimeUtc.ToString(CultureInfo.CurrentCulture)}";
+            }
+
             return new GalleryThumbHolder(fileLocation, fileName, fileSize, fileDate, bitmapSource);
         }
     }
 
+    /// <summary>
+    /// Asynchronously loads the gallery.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
     internal static async Task LoadAsync()
     {
         if (UC.GetPicGallery is null || IsLoading) { return; }
 
         IsLoading = true;
         var source = new CancellationTokenSource();
-        var iterations = Navigation.Pics.Count;
 
         await Task.Run(async () =>
         {
-            for (int i = 0; i < iterations; i++)
+            for (int i = 0; i < Navigation.Pics.Count; i++)
             {
                 try
                 {
-                    if (iterations != Navigation.Pics.Count)
-                    {
-                        await source.CancelAsync();
-                        return;
-                    }
-
                     var i1 = i;
                     await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
+                        if (!IsLoading)
+                        {
+                            source.Cancel();
+                            source.Dispose();
+                            return;
+                        }
                         Add(i1);
                     }, DispatcherPriority.DataBind, source.Token);
                 }
@@ -86,7 +142,11 @@ internal static class GalleryLoad
                 }
             }
 
-            var priority = iterations > 3000 ? DispatcherPriority.Background : DispatcherPriority.Render;
+            if (source.IsCancellationRequested)
+            {
+                return;
+            }
+
             var startPosition = 0;
             var updates = 0;
 
@@ -94,27 +154,28 @@ internal static class GalleryLoad
             {
                 if (GalleryNavigation.HorizontalItems is 0 || Navigation.Pics.Count is 0)
                 {
+                    source.Cancel();
+                    source.Dispose();
                     return;
                 }
                 GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
                 GalleryNavigation.ScrollToGalleryCenter();
-                if (GalleryNavigation.HorizontalItems is not 0 && Navigation.Pics.Count is not 0)
-                {
-                    startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) %
-                                    Navigation.Pics.Count;
-                    startPosition = startPosition < 0 ? 0 : startPosition;
-                }
-            }, priority, source.Token);
+
+                startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) %
+                                Navigation.Pics.Count;
+                startPosition = startPosition < 0 ? 0 : startPosition;
+            }, DispatcherPriority.DataBind, source.Token);
 
             _ = Task.Run(async () =>
             {
-                if (iterations > 3000)
+                ParallelOptions options = new()
                 {
-                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-                }
+                    CancellationToken = source.Token,
+                    MaxDegreeOfParallelism = Environment.ProcessorCount - 1 < 1 ? 1 : Environment.ProcessorCount - 1
+                };
 
-                for (int i = startPosition; i < iterations; i++)
+                await Parallel.ForAsync(startPosition, Navigation.Pics.Count, options, async (i, loopState) =>
                 {
                     updates++;
                     try
@@ -122,10 +183,14 @@ internal static class GalleryLoad
                         if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 ||
                             i > Navigation.Pics.Count)
                         {
+                            loopState.ThrowIfCancellationRequested();
                             throw new TaskCanceledException();
                         }
 
-                        await UpdateThumbAsync(i, updates).ConfigureAwait(false);
+                        if (!source.IsCancellationRequested)
+                        {
+                            await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -133,14 +198,15 @@ internal static class GalleryLoad
                         Trace.WriteLine(e.Message);
 #endif
                         IsLoading = false;
-                        return;
+                        await source.CancelAsync().ConfigureAwait(false);
+                        source.Dispose();
                     }
-                }
+                });
             }, source.Token).ConfigureAwait(false);
 
             _ = Task.Run(async () =>
             {
-                if (iterations > 3000)
+                if (Navigation.Pics.Count > 3000)
                 {
                     Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                 }
@@ -158,7 +224,10 @@ internal static class GalleryLoad
                             throw new TaskCanceledException();
                         }
 
-                        await UpdateThumbAsync(i, updates).ConfigureAwait(false);
+                        if (!source.IsCancellationRequested)
+                        {
+                            await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -166,6 +235,8 @@ internal static class GalleryLoad
                         Trace.WriteLine(e.Message);
 #endif
                         IsLoading = false;
+                        await source.CancelAsync().ConfigureAwait(false);
+                        source.Dispose();
                         return;
                     }
                 }
@@ -173,7 +244,7 @@ internal static class GalleryLoad
         }, source.Token);
         return;
 
-        async Task UpdateThumbAsync(int i, int updates)
+        async Task UpdateThumbAsync(int i, int updates, CancellationToken token)
         {
             var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
             await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
@@ -181,8 +252,8 @@ internal static class GalleryLoad
                 UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
                     galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
                     galleryThumbHolderItem.FileDate);
-            }, DispatcherPriority.Background, source.Token);
-            if (updates == iterations)
+            }, DispatcherPriority.Background, token);
+            if (updates == Navigation.Pics.Count)
                 IsLoading = false;
         }
     }
