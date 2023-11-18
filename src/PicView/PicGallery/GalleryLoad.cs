@@ -47,8 +47,19 @@ internal static class GalleryLoad
             var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index], (int)GalleryNavigation.PicGalleryItemSize, fileInfo);
             var fileLocation = fileInfo.FullName;
             var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-            var fileSize = $"{(string)Application.Current.Resources["FileSize"]}: {fileInfo.Length.GetReadableFileSize()}";
-            var fileDate = $"{(string)Application.Current.Resources["Modified"]}: {fileInfo.LastWriteTimeUtc.ToString(CultureInfo.CurrentCulture)}";
+            var getFileSizeResource = Application.Current?.TryFindResource("FileSize");
+            var getFileDateResource = Application.Current?.TryFindResource("Modified");
+            var fileSize = "";
+            var fileDate = "";
+            if (getFileSizeResource != null)
+            {
+                fileSize = $"{getFileSizeResource}: {fileInfo.Length.GetReadableFileSize()}";
+            }
+            if (getFileDateResource != null)
+            {
+                fileDate = $"{getFileDateResource}: {fileInfo.LastWriteTimeUtc.ToString(CultureInfo.CurrentCulture)}";
+            }
+
             return new GalleryThumbHolder(fileLocation, fileName, fileSize, fileDate, bitmapSource);
         }
     }
