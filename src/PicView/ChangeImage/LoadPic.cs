@@ -472,13 +472,23 @@ internal static class LoadPic
             }
             while (preLoadValue.BitmapSource is null)
             {
-                await Task.Delay(10).ConfigureAwait(false);
-
-                if (index != FolderIndex)
+                try
                 {
-                    await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
-                    return; // Skip loading if user went to next value
+                    await Task.Delay(10, source.Token).ConfigureAwait(false);
+
+                    if (index == FolderIndex)
+                    {
+                        continue;
+                    }
+
+                    await source.CancelAsync();
                 }
+                catch (Exception)
+                {
+                    return;
+                }
+                await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                return; // Skip loading if user went to next value
             }
         }
         else if (GetPicGallery is not null)
