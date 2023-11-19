@@ -162,6 +162,19 @@ namespace PicView.ChangeImage
                         await ResetValues(fileInfo).ConfigureAwait(false);
                         await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
                     }
+
+                    if (Settings.Default.IsBottomGalleryShown)
+                    {
+                        var check = false;
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                        {
+                            check = UC.GetPicGallery?.Container.Children.Count <= 0;
+                        });
+                        if (check)
+                        {
+                            await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+                        }
+                    }
                 }
                 else if (Directory.Exists(path))
                 {
