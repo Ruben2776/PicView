@@ -1,5 +1,4 @@
-﻿using PicView.ChangeImage;
-using PicView.PicGallery;
+﻿using PicView.PicGallery;
 using PicView.Properties;
 using PicView.Views.UserControls.Gallery;
 using System.Windows;

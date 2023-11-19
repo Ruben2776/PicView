@@ -5,7 +5,6 @@ using PicView.UILogic.Sizing;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 
 namespace PicView.ChangeTitlebar

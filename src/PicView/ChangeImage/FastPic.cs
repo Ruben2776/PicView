@@ -1,7 +1,5 @@
 ﻿using PicView.ImageHandling;
-using PicView.UILogic;
 using System.IO;
-using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 

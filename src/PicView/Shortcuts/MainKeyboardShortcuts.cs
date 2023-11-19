@@ -106,7 +106,7 @@ namespace PicView.Shortcuts
                             GetPicGallery.Scroller.CanContentScroll = true;
                         }
 
-                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Right);
+                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Right);
                         return;
                     }
 
@@ -137,7 +137,7 @@ namespace PicView.Shortcuts
                             GetPicGallery.Scroller.CanContentScroll = true;
                         }
 
-                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Left);
+                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Left);
                         return;
                     }
 
@@ -188,7 +188,7 @@ namespace PicView.Shortcuts
                     }
                     else if (GalleryFunctions.IsGalleryOpen && GetPicGallery != null)
                     {
-                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Up);
+                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Up);
                     }
                     else
                     {
@@ -207,7 +207,7 @@ namespace PicView.Shortcuts
                     {
                         if (GalleryFunctions.IsGalleryOpen)
                         {
-                            GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
+                            GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Down);
                         }
                         else
                         {
@@ -238,7 +238,7 @@ namespace PicView.Shortcuts
 
                     if (GalleryFunctions.IsGalleryOpen)
                     {
-                        GalleryNavigation.HorizontalNavigation(GalleryNavigation.Direction.Down);
+                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Down);
                         return;
                     }
 

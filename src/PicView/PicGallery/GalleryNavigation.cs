@@ -4,9 +4,7 @@ using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;
 
@@ -208,7 +206,7 @@ namespace PicView.PicGallery
 
         #endregion Select and deselect behaviour
 
-        #region Horizontal Gallery Navigation
+        #region Gallery Navigation
 
         internal enum Direction
         {
@@ -220,7 +218,7 @@ namespace PicView.PicGallery
 
         internal static int SelectedGalleryItem { get; set; }
 
-        internal static void HorizontalNavigation(Direction direction)
+        internal static void NavigateGallery(Direction direction)
         {
             var backup = SelectedGalleryItem;
 
@@ -278,6 +276,6 @@ namespace PicView.PicGallery
             });
         }
 
-        #endregion Horizontal Gallery Navigation
+        #endregion Gallery Navigation
     }
 }

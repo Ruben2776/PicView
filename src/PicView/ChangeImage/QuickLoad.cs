@@ -5,7 +5,6 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
 using System.IO;
-using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;

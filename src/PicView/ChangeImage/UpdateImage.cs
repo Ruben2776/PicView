@@ -3,7 +3,6 @@ using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic;
-using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Input;

@@ -1,5 +1,4 @@
 ﻿using PicView.ConfigureSettings;
-using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic.Sizing;

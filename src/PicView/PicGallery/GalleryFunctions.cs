@@ -135,6 +135,7 @@ namespace PicView.PicGallery
                     }
                     catch (Exception)
                     {
+                        //
                     }
                 }
             }, DispatcherPriority.Render);

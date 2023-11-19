@@ -4,7 +4,6 @@ using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using PicView.PicGallery;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Tooltip;
 

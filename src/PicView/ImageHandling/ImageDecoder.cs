@@ -3,7 +3,6 @@ using ImageMagick.Formats;
 using PicView.UILogic;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;

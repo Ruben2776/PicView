@@ -1,12 +1,11 @@
-﻿using System.Diagnostics;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
+﻿using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.Views.UserControls.Misc;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
