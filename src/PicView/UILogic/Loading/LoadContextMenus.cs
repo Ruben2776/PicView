@@ -314,10 +314,10 @@ namespace PicView.UILogic.Loading
             ///   Duplicate File         \\\\
             ///////////////////////////
             var Dupcm = (MenuItem)MainContextMenu.Items[14];
-            Dupcm.Click += (_, _) =>
+            Dupcm.Click += async (_, _) =>
             {
                 MainContextMenu.IsOpen = false;
-                CopyPaste.DuplicateFile();
+                await CopyPaste.DuplicateFile().ConfigureAwait(false);
             };
 
             ///////////////////////////

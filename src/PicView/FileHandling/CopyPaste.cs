@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.ProcessHandling;
@@ -16,61 +17,91 @@ namespace PicView.FileHandling
 {
     internal static class CopyPaste
     {
-        public static void DuplicateFile()
+        /// <summary>
+        /// Duplicates the current file and handles naming collisions by appending a number inside parentheses.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public static async Task DuplicateFile()
         {
             if (ErrorHandling.CheckOutOfRange())
             {
                 return;
             }
 
-            DuplicateFile(Pics[FolderIndex]);
+            await DuplicateFile(Pics[FolderIndex]).ConfigureAwait(false);
         }
 
-        private static void DuplicateFile(string currentFile)
+        /// <summary>
+        /// Duplicates the specified file and handles naming collisions by appending a number inside parentheses.
+        /// </summary>
+        /// <param name="currentFile">The path of the file to be duplicated.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private static async Task DuplicateFile(string currentFile)
         {
-            _ = Task.Run(async () =>
+            // Display it's loading to the user
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
+
+            try
             {
-                try
+                string newFile =
+                    await Task.Run(() =>
+                    {
+                        var dir = Path.GetDirectoryName(currentFile);
+                        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(currentFile);
+                        var extension = Path.GetExtension(currentFile);
+
+                        int i = 1;
+
+                        // Check if the original filename already contains parentheses
+                        if (fileNameWithoutExtension.Contains("(") && fileNameWithoutExtension.EndsWith(")"))
+                        {
+                            // Extract the number from the existing parentheses
+                            var lastParenIndex = fileNameWithoutExtension.LastIndexOf("(", StringComparison.Ordinal);
+                            var numberStr = fileNameWithoutExtension.Substring(lastParenIndex + 1,
+                                fileNameWithoutExtension.Length - lastParenIndex - 2);
+
+                            if (int.TryParse(numberStr, out int existingNumber))
+                            {
+                                i = existingNumber + 1;
+                                fileNameWithoutExtension = fileNameWithoutExtension[..lastParenIndex].TrimEnd();
+                            }
+                        }
+
+                        // Generate a new filename with an incremented number inside parentheses
+                        do
+                        {
+                            newFile = Path.Combine(dir, $"{fileNameWithoutExtension}({i++}){extension}");
+                        } while (File.Exists(newFile));
+
+                        // Copy the file to the new location
+                        File.Copy(currentFile, newFile);
+                        return newFile;
+                    });
+
+                // Add the new file to Pics and Gallery, clear Preloader to refresh cache
+                var nextIndex = GetNextIndex(NavigateTo.Next, false);
+                Pics.Insert(nextIndex, newFile);
+                PreLoader.Clear();
+                await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
+
+                // Add and resort the gallery asynchronously
+                if (UC.GetPicGallery is not null)
                 {
-                    var i = 1;
-                    var newFile = currentFile;
-                    var dir = Path.GetDirectoryName(newFile);
-                    var file = Path.GetFileNameWithoutExtension(newFile) + "{0}";
-                    var extension = Path.GetExtension(newFile);
-
-                    while (File.Exists(newFile))
-                        newFile = Path.Combine(dir, string.Format(file, "(" + i++ + ")") + extension);
-
-                    File.Copy(currentFile, newFile);
-                    if (Pics.Count < 200)
-                    {
-                        await ErrorHandling.ReloadAsync().ConfigureAwait(false);
-                        await LoadPic.LoadPiFromFileAsync(newFile).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        var fileInfo = new FileInfo(newFile);
-                        if (UC.GetPicGallery is not null)
-                        {
-                            await GalleryFunctions.SortGalleryAsync(fileInfo).ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
-                        }
-
-                        FolderIndex = Pics.IndexOf(newFile);
-                        await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
-                    }
+                    await GalleryFunctions.AddAndResortGalleryAsync(nextIndex).ConfigureAwait(false);
                 }
-                catch (Exception exception)
-                {
+            }
+            catch (Exception exception)
+            {
 #if DEBUG
-                    Trace.WriteLine($"{nameof(DuplicateFile)} {currentFile} exception, \n{exception.Message}");
+                Trace.WriteLine($"{nameof(DuplicateFile)} {currentFile} exception:\n{exception.Message}");
 #endif
-                    ShowTooltipMessage(exception.Message);
-                }
-            }).ConfigureAwait(false);
+                ShowTooltipMessage(exception.Message);
+            }
+            finally
+            {
+                // Revert to the previous title since it's no longer loading
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetTitleString);
+            }
         }
 
         /// <summary>
@@ -250,12 +281,15 @@ namespace PicView.FileHandling
                     default:
                         await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false);
                         return;
+
                     case "web":
                         await HttpFunctions.LoadPicFromUrlAsync(s).ConfigureAwait(false);
                         return;
+
                     case "base64":
                         await UpdateImage.UpdateImageFromBase64PicAsync(s).ConfigureAwait(false);
                         return;
+
                     case "directory":
                         await LoadPic.LoadPicFromFolderAsync(s).ConfigureAwait(false);
                         return;
