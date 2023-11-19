@@ -18,6 +18,7 @@ using static PicView.UILogic.UC;
 using PicView.Views.UserControls.Gallery;
 using System.Windows.Media.Imaging;
 using ImageMagick;
+using PicView.ChangeTitlebar;
 
 namespace PicView.ChangeImage
 {
@@ -33,7 +34,13 @@ namespace PicView.ChangeImage
         /// <returns></returns>
         internal static async Task LoadPicFromStringAsync(string? path, FileInfo? fileInfo = null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetLoadingString);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ToggleStartUpUC(true);
+                SetLoadingString();
+                GetSpinWaiter.Visibility = Visibility.Visible;
+                ConfigureWindows.GetMainWindow.MainImage.Source = null;
+            });
 
             await Task.Run(async () =>
             {
@@ -113,6 +120,14 @@ namespace PicView.ChangeImage
         /// <param name="fileInfo"></param>
         internal static async Task LoadPiFromFileAsync(string? path, FileInfo? fileInfo = null)
         {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ToggleStartUpUC(true);
+                SetLoadingString();
+                GetSpinWaiter.Visibility = Visibility.Visible;
+                ConfigureWindows.GetMainWindow.MainImage.Source = null;
+            });
+
             fileInfo ??= new FileInfo(path);
             try
             {
@@ -131,10 +146,6 @@ namespace PicView.ChangeImage
 
         private static async Task LoadPiFromFileAsync(FileInfo fileInfo)
         {
-            LoadingPreview(fileInfo);
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => ToggleStartUpUC(true));
-
             if (!fileInfo.Exists) // If file does not exist, try to load it if base64 or URL
             {
                 await LoadPicFromStringAsync(fileInfo.FullName, fileInfo).ConfigureAwait(false);
@@ -223,6 +234,8 @@ namespace PicView.ChangeImage
             {
                 ToggleStartUpUC(true);
                 SetLoadingString();
+                GetSpinWaiter.Visibility = Visibility.Visible;
+                ConfigureWindows.GetMainWindow.MainImage.Source = null;
             });
 
             await Task.Run(() =>
@@ -264,6 +277,14 @@ namespace PicView.ChangeImage
         /// <param name="index"></param>
         internal static async Task LoadPicFromFolderAsync(FileInfo fileInfo, int index = -1)
         {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ToggleStartUpUC(true);
+                SetLoadingString();
+                GetSpinWaiter.Visibility = Visibility.Visible;
+                ConfigureWindows.GetMainWindow.MainImage.Source = null;
+            });
+
             if (CheckOutOfRange() == false)
             {
                 BackupPath = Pics[FolderIndex];
