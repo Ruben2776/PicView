@@ -66,7 +66,12 @@ namespace PicView.PicGallery
         internal static async Task SortGalleryAsync(FileInfo? fileInfo = null)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
+            var cancelToken = new CancellationToken();
+
             fileInfo ??= new FileInfo(Navigation.Pics[0]);
+            Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+
+            IsLoading = false; // Hack to cancel loading to prevent crash if it is running. Maybe find a better solution in future
 
             var thumbs = new List<GalleryThumbHolder>();
 
@@ -89,11 +94,7 @@ namespace PicView.PicGallery
                         return;
                     }
                 }
-            }, DispatcherPriority.Render);
-
-            Clear();
-            Navigation.Pics.Clear(); // Cancel task if running
-            Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+            }, DispatcherPriority.Render, cancelToken);
 
             try
             {
@@ -111,10 +112,9 @@ namespace PicView.PicGallery
                 var i1 = i;
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
-                    Add(i1);
                     UpdatePic(i1, thumbs[i1].BitmapSource, thumbs[i1].FileLocation, thumbs[i1].FileName,
                         thumbs[i1].FileSize, thumbs[i1].FileDate);
-                }, DispatcherPriority.Background);
+                }, DispatcherPriority.Background, cancelToken);
             }
         }
 
