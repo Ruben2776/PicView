@@ -17,7 +17,7 @@ namespace PicView.PicGallery
         /// <summary>
         /// Gets or sets a value indicating whether the gallery is currently loading.
         /// </summary>
-        internal static bool IsLoading { get; private set; }
+        internal static bool IsLoading { get; set; }
 
         /// <summary>
         /// Event handler for the PicGallery Loaded event.
@@ -143,8 +143,11 @@ namespace PicView.PicGallery
                             Add(i1);
                         }, DispatcherPriority.DataBind, source.Token);
                     }
-                    catch (Exception)
+                    catch (Exception exception)
                     {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
                         GalleryFunctions.Clear();
                         return;
                     }
@@ -176,82 +179,84 @@ namespace PicView.PicGallery
                     startPosition = startPosition < 0 ? 0 : startPosition;
                 }, DispatcherPriority.DataBind, source.Token);
 
-                _ = Task.Run(async () =>
+                try
                 {
-                    ParallelOptions options = new()
+                    _ = Task.Run(async () =>
                     {
-                        CancellationToken = source.Token,
-                        MaxDegreeOfParallelism = Environment.ProcessorCount - 1 < 1 ? 1 : Environment.ProcessorCount - 1
-                    };
-
-                    await Parallel.ForAsync(startPosition, Navigation.Pics.Count, options, async (i, loopState) =>
-                    {
-                        updates++;
-                        try
+                        ParallelOptions options = new()
                         {
-                            if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex ||
-                                Navigation.Pics.Count < 1 ||
-                                i > Navigation.Pics.Count)
-                            {
-                                loopState.ThrowIfCancellationRequested();
-                                throw new TaskCanceledException();
-                            }
+                            CancellationToken = source.Token,
+                            MaxDegreeOfParallelism = Environment.ProcessorCount - 1 < 1 ? 1 : Environment.ProcessorCount - 1
+                        };
 
-                            if (!source.IsCancellationRequested)
-                            {
-                                await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
-                            }
-                        }
-                        catch (Exception e)
+                        await Parallel.ForAsync(startPosition, Navigation.Pics.Count, options, async (i, loopState) =>
                         {
+                            updates++;
+                            try
+                            {
+                                if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
+                                {
+                                    IsLoading = false;
+                                    await source.CancelAsync().ConfigureAwait(false);
+                                    source.Dispose();
+                                    loopState.ThrowIfCancellationRequested();
+                                    return;
+                                }
+
+                                if (!source.IsCancellationRequested)
+                                {
+                                    await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
+                                }
+                            }
+                            catch (Exception exception)
+                            {
 #if DEBUG
-                            Trace.WriteLine(e.Message);
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                            IsLoading = false;
-                            await source.CancelAsync().ConfigureAwait(false);
-                            source.Dispose();
-                        }
-                    });
-                }, source.Token).ConfigureAwait(false);
+                                return;
+                            }
+                        });
+                    }, source.Token).ConfigureAwait(false);
 
-                _ = Task.Run(async () =>
+                    _ = Task.Run(async () =>
+                    {
+                        for (var x = startPosition - 1; x >= 0; x--)
+                        {
+                            updates++;
+                            try
+                            {
+                                var i = x;
+
+                                if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
+                                {
+                                    IsLoading = false;
+                                    await source.CancelAsync().ConfigureAwait(false);
+                                    source.Dispose();
+                                    return;
+                                }
+
+                                if (!source.IsCancellationRequested)
+                                {
+                                    await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
+                                }
+                            }
+                            catch (Exception exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                return;
+                            }
+                        }
+                    }, source.Token).ConfigureAwait(false);
+                }
+                catch (Exception exception)
                 {
-                    if (Navigation.Pics.Count > 3000)
-                    {
-                        Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-                    }
-
-                    for (var x = startPosition - 1; x >= 0; x--)
-                    {
-                        updates++;
-                        try
-                        {
-                            var i = x;
-
-                            if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex ||
-                                Navigation.Pics.Count < 1 ||
-                                i > Navigation.Pics.Count)
-                            {
-                                throw new TaskCanceledException();
-                            }
-
-                            if (!source.IsCancellationRequested)
-                            {
-                                await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
-                            }
-                        }
-                        catch (Exception e)
-                        {
 #if DEBUG
-                            Trace.WriteLine(e.Message);
+                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                            IsLoading = false;
-                            await source.CancelAsync().ConfigureAwait(false);
-                            source.Dispose();
-                            return;
-                        }
-                    }
-                }, source.Token).ConfigureAwait(false);
+                    return;
+                }
             }, source.Token);
             return;
 
