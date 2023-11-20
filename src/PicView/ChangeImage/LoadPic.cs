@@ -388,16 +388,7 @@ namespace PicView.ChangeImage
                     }
                     else if (!fileInfo.Exists) // Fix deleting files outside application
                     {
-                        PreLoader.Clear();
-                        Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
-                        if (Pics.Count is 0)
-                        {
-                            Unload(true);
-                            return;
-                        }
-
-                        var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
-                        await GoToNextImage(navigateTo).ConfigureAwait(false);
+                        await FixOutsideDeletion().ConfigureAwait(false);
                         return;
                     }
                 }
@@ -416,6 +407,11 @@ namespace PicView.ChangeImage
             // display the loading preview and wait until the image is loaded.
             if (preLoadValue is null or { BitmapSource: null })
             {
+                if (!File.Exists(fileInfo.FullName))// Fix deleting files outside application
+                {
+                    await FixOutsideDeletion().ConfigureAwait(false);
+                    return;
+                }
                 using var image = new MagickImage();
                 image.Ping(fileInfo);
                 BitmapSource? thumb = null;
@@ -557,6 +553,28 @@ namespace PicView.ChangeImage
             {
                 GetFileHistory ??= new FileHistory();
                 GetFileHistory.Add(Pics[index]);
+            }
+            return;
+
+            async Task FixOutsideDeletion()
+            {
+                PreLoader.Remove(index);
+                Pics.RemoveAt(index);
+                var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
+                var nextIndex = GetNextIndex(navigateTo, false);
+                if (nextIndex < 0)
+                {
+                    await ReloadAsync().ConfigureAwait(false);
+                    return;
+                }
+                if (GetPicGallery is not null)
+                {
+                    await GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        GetPicGallery.Container.Children.RemoveAt(index);
+                    });
+                }
+                await LoadPicAtIndexAsync(nextIndex).ConfigureAwait(false);
             }
         }
 
