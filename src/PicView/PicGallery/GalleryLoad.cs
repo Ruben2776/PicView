@@ -270,7 +270,7 @@ namespace PicView.PicGallery
                         galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
                         galleryThumbHolderItem.FileDate);
                 }, DispatcherPriority.Background, token);
-                if (updates == Navigation.Pics.Count)
+                if (updates >= Navigation.Pics.Count)
                     IsLoading = false;
             }
         }

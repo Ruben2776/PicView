@@ -58,7 +58,7 @@ namespace PicView.FileHandling
         /// </summary>
         /// <param name="fileInfo">The directory to retrieve file paths from.</param>
         /// <returns>A list of file paths sorted according to the specified sort preference.</returns>
-        internal static List<string>? FileList(FileInfo fileInfo)
+        internal static List<string> FileList(FileInfo fileInfo)
         {
             return Settings.Default.SortPreference switch
             {
@@ -79,17 +79,19 @@ namespace PicView.FileHandling
         /// <param name="fileInfo">The file information object.</param>
         /// <param name="sortFilesBy">The sorting method to be used for the file names.</param>
         /// <returns>A list of file names.</returns>
-        private static List<string>? FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
+        private static List<string> FileList(FileInfo fileInfo, SortFilesBy sortFilesBy)
         {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            if (fileInfo == null) return null;
+            if (fileInfo == null)
+                return new List<string>();
 
             // Check if the file is a directory or not
             var isDirectory = fileInfo.Attributes.HasFlag(FileAttributes.Directory);
 
             // Get the directory path based on whether the file is a directory or not
             var directory = isDirectory ? fileInfo.FullName : fileInfo.DirectoryName;
-            if (directory is null) return null;
+            if (directory is null)
+                return new List<string>();
 
             IEnumerable<string> files;
             string[] enumerable;
@@ -115,8 +117,7 @@ namespace PicView.FileHandling
 #if DEBUG
                 Trace.WriteLine($"{nameof(FileList)} {fileInfo.Name} exception:\n{exception.Message}");
 #endif
-                files = Directory.EnumerateFiles(directory, "*.*", SearchOption.TopDirectoryOnly);
-                enumerable = files as string[] ?? files.ToArray();
+                return new List<string>();
             }
 
             // Filter out files with invalid extensions

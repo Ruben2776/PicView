@@ -4,6 +4,8 @@ using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.UILogic;
+using PicView.Views.UserControls.Gallery;
+using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -11,6 +13,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
+using static PicView.PicGallery.GalleryLoad;
 using static PicView.UILogic.Tooltip;
 
 namespace PicView.FileHandling
@@ -81,14 +84,21 @@ namespace PicView.FileHandling
                 // Add the new file to Pics and Gallery, clear Preloader to refresh cache
                 var nextIndex = GetNextIndex(NavigateTo.Next, false);
                 Pics.Insert(nextIndex, newFile);
-                PreLoader.Clear();
-                await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
 
-                // Add and resort the gallery asynchronously
+                // Add next item to gallery if applicable
                 if (UC.GetPicGallery is not null)
                 {
-                    await GalleryFunctions.AddAndResortGalleryAsync(nextIndex).ConfigureAwait(false);
+                    var thumbData = await Task.FromResult(GalleryThumbHolder.GetThumbData(nextIndex)).ConfigureAwait(false);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        var item = new PicGalleryItem(thumbData.BitmapSource, nextIndex, false);
+                        UC.GetPicGallery.Container.Children.Insert(nextIndex, item);
+                    });
                 }
+
+                var preloadValue = PreLoader.Get(FolderIndex);
+                PreLoader.Clear();
+                await PreLoader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -102,6 +112,8 @@ namespace PicView.FileHandling
                 // Revert to the previous title since it's no longer loading
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetTitleString);
             }
+
+            await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
         }
 
         /// <summary>
