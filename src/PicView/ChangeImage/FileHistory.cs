@@ -199,11 +199,28 @@ namespace PicView.ChangeImage
             else
             {
                 index++;
-                if (index >= MaxCount) return;
+                if (index >= MaxCount)
+                    return;
             }
 
-            if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+            if (Navigation.Pics.Contains(_fileHistory[index]))
             {
+                if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+                {
+                    return;
+                }
+                // If the gallery is open, deselect current index
+                if (UC.GetPicGallery is not null)
+                {
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        UC.GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
+                        // Deselect current item
+                        GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+                        GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
+                    });
+                }
+                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(_fileHistory[index])).ConfigureAwait(false);
                 return;
             }
 
@@ -232,8 +249,24 @@ namespace PicView.ChangeImage
                 }
             }
 
-            if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+            if (Navigation.Pics.Contains(_fileHistory[index]))
             {
+                if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+                {
+                    return;
+                }
+                // If the gallery is open, deselect current index
+                if (UC.GetPicGallery is not null)
+                {
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        UC.GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
+                        // Deselect current item
+                        GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+                        GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
+                    });
+                }
+                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(_fileHistory[index])).ConfigureAwait(false);
                 return;
             }
 
