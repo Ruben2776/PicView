@@ -82,7 +82,10 @@ namespace PicView.UILogic.Loading
             }
             else
             {
-                _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                Task.Run(() =>
+                {
+                    _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+                });
             }
         }
 

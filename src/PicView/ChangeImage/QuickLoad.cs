@@ -45,7 +45,7 @@ namespace PicView.ChangeImage
             var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
             {
-                ConfigureWindows.GetMainWindow.MainImage.Source = bitmapSource;
+                mainWindow.MainImage.Source = bitmapSource;
 
                 FitImage(bitmapSource.Width, bitmapSource.Height);
             }, DispatcherPriority.Send);
@@ -53,11 +53,11 @@ namespace PicView.ChangeImage
             if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
             {
                 var frames = ImageFunctions.GetImageFrames(fileInfo.FullName);
-                if (frames > 0)
+                if (frames > 1)
                 {
                     var uri = new Uri(fileInfo.FullName);
-                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(
-                        () => { AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri); },
+                    await mainWindow.Dispatcher.InvokeAsync(
+                        () => { AnimationBehavior.SetSourceUri(mainWindow.MainImage, uri); },
                         DispatcherPriority.Normal);
                 }
             }
@@ -69,7 +69,7 @@ namespace PicView.ChangeImage
             {
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
                 UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
-                ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
+                mainWindow.MainImage.Cursor = Cursors.Arrow;
             }, DispatcherPriority.Normal);
 
             if (FolderIndex > 0)

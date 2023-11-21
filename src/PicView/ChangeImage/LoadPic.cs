@@ -1,24 +1,23 @@
-﻿using PicView.FileHandling;
+﻿using ImageMagick;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
+using PicView.UILogic.Sizing;
+using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
 using static PicView.ChangeTitlebar.SetTitle;
 using static PicView.FileHandling.ArchiveExtraction;
 using static PicView.FileHandling.FileLists;
 using static PicView.UILogic.UC;
-using PicView.Views.UserControls.Gallery;
-using System.Windows.Media.Imaging;
-using ImageMagick;
-using PicView.ChangeTitlebar;
 
 namespace PicView.ChangeImage
 {
