@@ -118,43 +118,6 @@ namespace PicView.PicGallery
             }
         }
 
-        internal static async Task AddAndResortGalleryAsync(int index)
-        {
-            var thumbs = new List<GalleryThumbHolder>();
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                for (var i = 0; i < Navigation.Pics.Count; i++)
-                {
-                    try
-                    {
-                        var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                        thumbs.Add(new GalleryThumbHolder(picGalleryItem.ThumbFileLocation.Text,
-                            picGalleryItem.ThumbFileName.Text, picGalleryItem.ThumbFileSize.Text,
-                            picGalleryItem.ThumbFileDate.Text, picGalleryItem.ThumbImage?.Source as BitmapSource));
-                    }
-                    catch (Exception)
-                    {
-                        //
-                    }
-                }
-            }, DispatcherPriority.Render);
-
-            var addedItem = GalleryThumbHolder.GetThumbData(index);
-            thumbs.Insert(index, addedItem);
-
-            for (var i = 0; i < Navigation.Pics.Count; i++)
-            {
-                var i1 = i;
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                {
-                    Add(i1);
-                    UpdatePic(i1, thumbs[i1].BitmapSource, thumbs[i1].FileLocation, thumbs[i1].FileName,
-                        thumbs[i1].FileSize, thumbs[i1].FileDate);
-                }, DispatcherPriority.Background);
-            }
-        }
-
         internal static void Clear()
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
