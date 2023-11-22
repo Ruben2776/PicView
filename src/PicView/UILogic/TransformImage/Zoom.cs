@@ -13,6 +13,7 @@ namespace PicView.UILogic.TransformImage
     {
         public static ScaleTransform? ScaleTransform;
         public static TranslateTransform? TranslateTransform;
+        public static BitmapScalingMode? ScalingMode;
         private static Point _origin;
         private static Point _start;
 
@@ -121,6 +122,12 @@ namespace PicView.UILogic.TransformImage
             TranslateTransform = (TranslateTransform)((TransformGroup)
                     ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
                 .Children.First(tr => tr is TranslateTransform);
+
+            if (Settings.Default.IsScalingSetToNearestNeighbor)
+            {
+                ScalingMode = BitmapScalingMode.NearestNeighbor;
+                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, ScalingMode);
+            }
         }
 
         /// <summary>
@@ -308,6 +315,10 @@ namespace PicView.UILogic.TransformImage
                 return;
 
             ZoomValue = value;
+
+            // Set aliasing
+            ScalingMode = ZoomValue <= 1 ? BitmapScalingMode.Fant : ScalingMode;
+            ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, ScalingMode);
 
             BeginZoomAnimation(ZoomValue);
 

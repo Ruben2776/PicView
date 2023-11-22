@@ -296,12 +296,22 @@ namespace PicView.Views.Windows
                         break;
                 }
             };
-        }
+            AliasingBoxHighQuality.IsSelected = !Settings.Default.IsScalingSetToNearestNeighbor;
+            AliasingBoxHighQuality.Selected += delegate
+            {
+                UILogic.TransformImage.ZoomLogic.ScalingMode = BitmapScalingMode.HighQuality;
+                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.HighQuality);
+                Settings.Default.IsScalingSetToNearestNeighbor = false;
+            };
 
-        //public void ChangeColor()
-        //{
-        //    Logo.ChangeColor();
-        //}
+            AliasingNearestNeighbor.IsSelected = Settings.Default.IsScalingSetToNearestNeighbor;
+            AliasingNearestNeighbor.Selected += delegate
+            {
+                UILogic.TransformImage.ZoomLogic.ScalingMode = BitmapScalingMode.NearestNeighbor;
+                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.NearestNeighbor);
+                Settings.Default.IsScalingSetToNearestNeighbor = true;
+            };
+        }
 
         #region EventHandlers
 
