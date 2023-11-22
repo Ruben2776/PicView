@@ -7,6 +7,7 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -15,12 +16,12 @@ using System.Windows.Navigation;
 
 namespace PicView.Views.Windows
 {
-    public partial class InfoWindow
+    public partial class AboutWindow
     {
         private readonly double startHeight;
         private readonly double extendedHeight;
 
-        public InfoWindow()
+        public AboutWindow()
         {
             InitializeComponent();
 
@@ -166,10 +167,17 @@ namespace PicView.Views.Windows
 
             UpdateButton.MouseLeftButtonDown += delegate
             {
+                var currentDirectory = new DirectoryInfo(Application.Current.StartupUri.AbsolutePath);
+                if (currentDirectory.Parent != null)
+                {
+                    AutoUpdater.InstallationPath = currentDirectory.Parent.FullName;
+                }
                 AutoUpdater.ShowRemindLaterButton = false;
                 AutoUpdater.ReportErrors = true;
                 AutoUpdater.ShowSkipButton = false;
                 AutoUpdater.SetOwner(this);
+                AutoUpdater.RunUpdateAsAdmin = true;
+                AutoUpdater.ClearAppDirectory = true;
                 AutoUpdater.Start("https://picview.org/update.xml");
             };
         }

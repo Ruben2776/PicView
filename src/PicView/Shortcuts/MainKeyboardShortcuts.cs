@@ -158,10 +158,10 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.PageUp when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
-                {
-                    GalleryNavigation.ScrollGallery(true, ctrlDown, shiftDown, true);
-                    return;
-                }
+                    {
+                        GalleryNavigation.ScrollGallery(true, ctrlDown, shiftDown, true);
+                        return;
+                    }
                 case Key.PageUp:
                     if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
                         Visibility.Visible)
@@ -172,10 +172,10 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.PageDown when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
-                {
-                    GalleryNavigation.ScrollGallery(false, ctrlDown, shiftDown, true);
-                    return;
-                }
+                    {
+                        GalleryNavigation.ScrollGallery(false, ctrlDown, shiftDown, true);
+                        return;
+                    }
                 case Key.PageDown:
                     return;
 
@@ -304,9 +304,9 @@ namespace PicView.Shortcuts
                         {
                             GetImageInfoWindow.Hide();
                         }
-                        else if (GetInfoWindow is { IsVisible: true })
+                        else if (GetAboutWindow is { IsVisible: true })
                         {
-                            GetInfoWindow.Hide();
+                            GetAboutWindow.Hide();
                         }
                         else if (GetSettingsWindow is { IsVisible: true })
                         {

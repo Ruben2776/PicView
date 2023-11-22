@@ -8,7 +8,7 @@ namespace PicView.UILogic
     internal static class ConfigureWindows
     {
         internal static SettingsWindow? GetSettingsWindow { get; private set; }
-        internal static InfoWindow? GetInfoWindow { get; private set; }
+        internal static AboutWindow? GetAboutWindow { get; private set; }
         internal static EffectsWindow? GetEffectsWindow { get; private set; }
         internal static ImageInfoWindow? GetImageInfoWindow { get; private set; }
         internal static ResizeWindow? GetResizeWindow { get; private set; }
@@ -44,31 +44,31 @@ namespace PicView.UILogic
         /// </summary>
         internal static void InfoWindow()
         {
-            if (GetInfoWindow == null)
+            if (GetAboutWindow == null)
             {
-                GetInfoWindow = new InfoWindow { Owner = GetMainWindow };
-                GetInfoWindow.Show();
+                GetAboutWindow = new AboutWindow { Owner = GetMainWindow };
+                GetAboutWindow.Show();
             }
             else
             {
-                if (GetInfoWindow.Visibility == Visibility.Visible)
+                if (GetAboutWindow.Visibility == Visibility.Visible)
                 {
-                    GetInfoWindow.Focus();
+                    GetAboutWindow.Focus();
                 }
                 else
                 {
-                    GetInfoWindow.Show();
+                    GetAboutWindow.Show();
                 }
             }
 
             if (Settings.Default.Fullscreen)
             {
-                GetInfoWindow.Topmost = true;
-                GetInfoWindow.BringIntoView();
+                GetAboutWindow.Topmost = true;
+                GetAboutWindow.BringIntoView();
             }
             else
             {
-                GetInfoWindow.Topmost = false;
+                GetAboutWindow.Topmost = false;
             }
         }
 

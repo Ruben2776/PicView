@@ -189,16 +189,20 @@ namespace PicView.UILogic.Loading
                         GetX2.Opacity =
                             GetMinus.Opacity =
                                 GetRestoreButton.Opacity =
-                                    GetGalleryShortcut.Opacity =
                                         1;
 
                 GetClickArrowLeft.Visibility =
                     GetClickArrowRight.Visibility =
                         GetX2.Visibility =
                             GetMinus.Visibility =
-                                GetGalleryShortcut.Visibility =
                                     GetRestoreButton.Visibility =
                                         Visibility.Visible;
+
+                if (!Settings.Default.IsBottomGalleryShown)
+                {
+                    GetGalleryShortcut.Opacity = 1;
+                    GetGalleryShortcut.Visibility = Visibility.Visible;
+                }
             }
 
             // Add UserControls :)
