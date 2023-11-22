@@ -241,7 +241,14 @@ namespace PicView.UILogic.DragAndDrop
                 return;
             }
 
-            _dropOverlay.UpdateContent(element);
+            try
+            {
+                _dropOverlay.UpdateContent(element);
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         private static void RemoveDragOverlay()
