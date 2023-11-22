@@ -239,10 +239,7 @@ namespace PicView.UILogic.Sizing
 
         internal static void RenderFullscreen()
         {
-            Settings.Default.ScrollEnabled = false; // Don't scroll in fullscreen
-
             IsTopAndBottomShown(false);
-            GetMainWindow.Topmost = true;
 
             GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
             GetMainWindow.SizeToContent = SizeToContent.Manual;
@@ -340,10 +337,10 @@ namespace PicView.UILogic.Sizing
 
             SetWindowSize();
 
-            Navigation.Pics.Clear(); // Make it cancel task
+            Navigation.Pics?.Clear(); // Make it cancel task
 
             // Close Extra windows when closing
-            GetInfoWindow?.Close();
+            GetAboutWindow?.Close();
 
             GetImageInfoWindow?.Close();
 

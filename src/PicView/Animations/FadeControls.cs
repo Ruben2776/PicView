@@ -67,7 +67,10 @@ namespace PicView.Animations
 
                 AnimationHelper.Fade(GetClickArrowLeft, opacity, timespan);
                 AnimationHelper.Fade(GetClickArrowRight, opacity, timespan);
-                AnimationHelper.Fade(GetGalleryShortcut, opacity, timespan);
+                if (!Settings.Default.IsBottomGalleryShown)
+                {
+                    AnimationHelper.Fade(GetGalleryShortcut, opacity, timespan);
+                }
                 AnimationHelper.Fade(GetX2, opacity, timespan);
                 AnimationHelper.Fade(GetMinus, opacity, timespan);
                 AnimationHelper.Fade(GetRestoreButton, opacity, timespan);
