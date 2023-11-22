@@ -11,7 +11,18 @@ namespace PicView.Views.UserControls.Misc
 
         public void UpdateContent(UIElement element)
         {
-            ContentHolder.Content = element;
+            if (element is null)
+            {
+                return;
+            }
+            try
+            {
+                ContentHolder.Content = element;
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
     }
 }
