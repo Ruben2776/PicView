@@ -48,7 +48,11 @@ namespace PicView.UILogic.Loading
                     = Visibility.Collapsed;
             }
 
-            ConfigColors.UpdateColor();
+            Task.Run(() =>
+            {
+                _ = CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
+                ConfigColors.UpdateColor();
+            });
 
             var args = Environment.GetCommandLineArgs();
 
@@ -88,7 +92,6 @@ namespace PicView.UILogic.Loading
                     _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 });
             }
-            _ = CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
         }
 
         internal static void AddDictionaries()

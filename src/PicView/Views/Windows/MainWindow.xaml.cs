@@ -65,7 +65,8 @@ namespace PicView.Views.Windows
                 // keyboard and Mouse_Keys Keys
                 KeyDown += async (sender, e) =>
                     await MainKeyboardShortcuts.MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
-                KeyUp += MainKeyboardShortcuts.MainWindow_KeysUp;
+                KeyUp += async (sender, e) =>
+                    await MainKeyboardShortcuts.MainWindow_KeysUp(sender, e).ConfigureAwait(false);
                 MouseLeftButtonDown += MainMouseKeys.MouseLeftButtonDown;
                 MouseDown += (sender, e) => MainMouseKeys.MouseButtonDownAsync(sender, e).ConfigureAwait(false);
 
@@ -151,7 +152,6 @@ namespace PicView.Views.Windows
                 };
 
                 Logo.MouseLeftButtonDown += (_, _) => ConfigureWindows.WindowContextMenu.IsOpen = true;
-                ConfigColors.MainWindowUnfocusOrFocus(true);
             };
         }
 

@@ -1,5 +1,6 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
+using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
 using PicView.Editing;
 using PicView.FileHandling;
@@ -11,28 +12,24 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PicView.Editing.Crop;
 using static PicView.Shortcuts.MainKeyboardShortcuts;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.UC;
+using PicView.ProcessHandling;
 
 namespace PicView.UILogic
 {
     /// <summary>
     /// Provides helper methods for UI-related tasks.
     /// </summary>
-// ReSharper disable once InconsistentNaming
+    // ReSharper disable once InconsistentNaming
     internal static class UIHelper
     {
-        private static async Task<bool> CheckModifierFunctionAsync()
+        internal static async Task<bool> CheckModifierFunctionAsync()
         {
             if (CtrlDown)
             {
-                if (CurrentKey == Key.S)
-                {
-                    await OpenSave.SaveFilesAsync().ConfigureAwait(false);
-                    return true;
-                }
-
                 if (CurrentKey == Key.C)
                 {
                     if (ShiftDown)
@@ -59,9 +56,52 @@ namespace PicView.UILogic
                     return true;
                 }
 
+                if (CurrentKey == Key.X)
+                {
+                    CopyPaste.Cut();
+                    return true;
+                }
+
                 if (CurrentKey == Key.O)
                 {
                     await OpenSave.OpenAsync().ConfigureAwait(false);
+                    return true;
+                }
+
+                if (CurrentKey == Key.S)
+                {
+                    await OpenSave.SaveFilesAsync().ConfigureAwait(false);
+                    return true;
+                }
+
+                if (CurrentKey == Key.R)
+                {
+                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    return true;
+                }
+
+                if (CurrentKey == Key.P)
+                {
+                    OpenSave.Print(Navigation.Pics[Navigation.FolderIndex]);
+                    return true;
+                }
+                if (CurrentKey == Key.I && !GalleryFunctions.IsGalleryOpen)
+                {
+                    FileProperties.ShowFileProperties();
+                    return true;
+                }
+
+                if (CurrentKey == Key.N)
+                {
+                    ProcessLogic.StartNewProcess();
+                    return true;
+                }
+            }
+            else if (ShiftDown)
+            {
+                if (CurrentKey == Key.Delete)
+                {
+                    await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
                     return true;
                 }
             }
@@ -88,9 +128,9 @@ namespace PicView.UILogic
                 {
                     GalleryToggle.CloseCurrentGallery();
                 }
-                else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+                else if (UILogic.Slideshow.SlideTimer != null && UILogic.Slideshow.SlideTimer.Enabled)
                 {
-                    Slideshow.StopSlideshow();
+                    UILogic.Slideshow.StopSlideshow();
                 }
                 else if (OpenSave.IsDialogOpen)
                 {
@@ -136,7 +176,15 @@ namespace PicView.UILogic
             });
         }
 
-        #region Navigation and scrolling
+        #region Navigation, rotation, zooming and scrolling
+
+        internal static async Task GalleryClick()
+        {
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                await PicGallery.GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
+            }
+        }
 
         internal static async Task Next()
         {
@@ -210,7 +258,11 @@ namespace PicView.UILogic
 
         internal static async Task Up()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -228,14 +280,18 @@ namespace PicView.UILogic
                 }
                 else
                 {
-                    Rotation.Rotate(IsKeyHeldDown, false);
+                    Rotation.Rotate(IsKeyHeldDown, true);
                 }
             });
         }
 
         internal static async Task Down()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -249,7 +305,7 @@ namespace PicView.UILogic
                 }
                 else if (GalleryFunctions.IsGalleryOpen && GetPicGallery != null)
                 {
-                    GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Up);
+                    GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Down);
                 }
                 else
                 {
@@ -258,9 +314,27 @@ namespace PicView.UILogic
             });
         }
 
+        internal static async Task Flip()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(Rotation.Flip);
+        }
+
         internal static async Task ScrollUp()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -284,7 +358,11 @@ namespace PicView.UILogic
 
         internal static async Task ScrollDown()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -306,9 +384,102 @@ namespace PicView.UILogic
             });
         }
 
+        internal static async Task ScrollToToTop()
+        {
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                GetMainWindow.Scroller.ScrollToHome();
+            });
+        }
+
+        internal static async Task ScrollToBottom()
+        {
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                GetMainWindow.Scroller.ScrollToHome();
+            });
+        }
+
+        internal static async Task ZoomIn()
+        {
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ZoomLogic.Zoom(true);
+            });
+        }
+
+        internal static async Task ZoomOut()
+        {
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ZoomLogic.Zoom(false);
+            });
+        }
+
+        internal static async Task ResetZoom()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                ZoomLogic.ResetZoom();
+            });
+        }
+
+        #endregion Navigation, rotation, zooming and scrolling
+
+        #region Toggle UI functions
+
         internal static async Task ToggleScroll()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -316,13 +487,45 @@ namespace PicView.UILogic
             await GetMainWindow.Dispatcher.InvokeAsync(UpdateUIValues.SetScrolling);
         }
 
-        #endregion Navigation and scrolling
+        internal static async Task ToggleLooping()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(UpdateUIValues.SetLooping);
+        }
+
+        internal static async Task ToggleGallery()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GalleryToggle.ToggleGalleryAsync().ConfigureAwait(false);
+        }
+
+        #endregion Toggle UI functions
 
         #region Windows
 
         internal static async Task AboutWindow()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -332,7 +535,11 @@ namespace PicView.UILogic
 
         internal static async Task EffectsWindow()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -342,7 +549,11 @@ namespace PicView.UILogic
 
         internal static async Task ImageInfoWindow()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -352,7 +563,11 @@ namespace PicView.UILogic
 
         internal static async Task ResizeWindow()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -362,7 +577,11 @@ namespace PicView.UILogic
 
         internal static async Task SettingsWindow()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
@@ -372,16 +591,317 @@ namespace PicView.UILogic
 
         #endregion Windows
 
+        #region File Related
+
+        internal static async Task DeleteFile()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await DeleteFiles.DeleteFileAsync(ShiftDown, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+        }
+
+        internal static async Task DuplicateFile()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await CopyPaste.DuplicateFile().ConfigureAwait(false);
+        }
+
+        internal static async Task ShowFileProperties()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            FileProperties.ShowFileProperties();
+        }
+
+        internal static async Task Print()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            OpenSave.Print(Navigation.Pics[Navigation.FolderIndex]);
+        }
+
+        internal static async Task OpenWith()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            OpenSave.OpenWith();
+        }
+
+        internal static async Task OpenInExplorer()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            OpenSave.OpenInExplorer(Navigation.Pics[Navigation.FolderIndex]);
+        }
+
+        #endregion File Related
+
+        #region Image Related
+
+        internal static async Task ResizeImage()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(UpdateUIValues.ToggleQuickResize);
+        }
+
+        internal static async Task Crop()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(CropFunctions.StartCrop);
+        }
+
+        #endregion Image Related
+
+        #region Window Scaling
+
+        internal static async Task AutoFitWindow()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UpdateUIValues.SetScalingBehaviour(true, false);
+            });
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"] ?? "");
+        }
+
+        internal static async Task AutoFitWindowAndStretch()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UpdateUIValues.SetScalingBehaviour(true, true);
+            });
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"] ?? "");
+        }
+
+        internal static async Task NormalWindow()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UpdateUIValues.SetScalingBehaviour(false, false);
+            });
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"] ?? "");
+        }
+
+        internal static async Task NormalWindowAndStretch()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UpdateUIValues.SetScalingBehaviour(false, true);
+            });
+            Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"] ?? "");
+        }
+
+        internal static async Task Fullscreen()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+            });
+        }
+
+        #endregion Window Scaling
+
         #region Misc
 
         internal static async Task ToggleBackground()
         {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
             }
             await GetMainWindow.Dispatcher.InvokeAsync(ConfigColors.ChangeBackground);
+        }
+
+        internal static async Task SetTopMost()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(UpdateUIValues.SetTopMost);
+        }
+
+        internal static async Task Rename()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(EditTitleBar.EditTitleBar_Text);
+        }
+
+        internal static async Task Reload()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+        }
+
+        internal static async Task Center()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                await GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
+            }
+            else
+            {
+                await GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    WindowSizing.CenterWindowOnScreen();
+                });
+            }
+        }
+
+        internal static async Task Slideshow()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            if (!GalleryFunctions.IsGalleryOpen)
+            {
+                await GetMainWindow.Dispatcher.InvokeAsync(UILogic.Slideshow.StartSlideshow);
+            }
         }
 
         #endregion Misc

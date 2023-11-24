@@ -1,5 +1,4 @@
-﻿using PicView.ConfigureSettings;
-using PicView.FileHandling;
+﻿using PicView.FileHandling;
 using PicView.UILogic;
 using System.IO;
 using System.Windows.Input;
@@ -47,30 +46,69 @@ namespace PicView.Shortcuts
         {
             return Task.FromResult<Func<Task>>(functionName switch
             {
-                "Close" => UIHelper.Close,
-
                 // Navigation values
                 "Next" => UIHelper.Next,
                 "Prev" => UIHelper.Prev,
                 "Up" => UIHelper.Up,
                 "Down" => UIHelper.Down,
+
+                // Scroll
                 "ScrollUp" => UIHelper.ScrollUp,
                 "ScrollDown" => UIHelper.ScrollDown,
+                "ScrollToTop" => UIHelper.ScrollToToTop,
+                "ScrollToBottom" => UIHelper.ScrollToBottom,
+
+                // Zoom
+                "ZoomIn" => UIHelper.ZoomIn,
+                "ZoomOut" => UIHelper.ZoomOut,
+                "ResetZoom" => UIHelper.ResetZoom,
 
                 // Toggles
                 "ToggleScroll" => UIHelper.ToggleScroll,
+                "ToggleLooping" => UIHelper.ToggleLooping,
+                "ToggleGallery" => UIHelper.ToggleGallery,
+
+                // Scale Window
+                "AutoFitWindow" => UIHelper.AutoFitWindow,
+                "AutoFitWindowAndStretch" => UIHelper.AutoFitWindowAndStretch,
+                "NormalWindow" => UIHelper.NormalWindow,
+                "NormalWindowAndStretch" => UIHelper.NormalWindowAndStretch,
+
+                // Window functions
+                "Fullscreen" => UIHelper.Fullscreen,
+                "TopMost" => UIHelper.SetTopMost,
+                "Close" => UIHelper.Close,
 
                 // Windows
-                "EffectsWindow" => UIHelper.EffectsWindow,
                 "AboutWindow" => UIHelper.AboutWindow,
+                "EffectsWindow" => UIHelper.EffectsWindow,
+                "ImageInfoWindow" => UIHelper.ImageInfoWindow,
+                "ResizeWindow" => UIHelper.ResizeWindow,
+                "SettingsWindow" => UIHelper.SettingsWindow,
 
-                "ChangeBackground" => delegate
-                {
-                    ConfigColors.ChangeBackground();
-                    return Task.CompletedTask;
-                }
-                ,
+                // Open functions
+                "Open" => OpenSave.OpenAsync,
+                "OpenWith" => UIHelper.OpenWith,
+                "OpenInExplorer" => UIHelper.OpenInExplorer,
                 "Save" => OpenSave.SaveFilesAsync,
+                "Reload" => UIHelper.Reload,
+
+                // File functions
+                "DeleteFile" => UIHelper.DeleteFile,
+                "DuplicateFile" => UIHelper.DuplicateFile,
+                "Rename" => UIHelper.Rename,
+                "ShowFileProperties" => UIHelper.ShowFileProperties,
+
+                // Image functions
+                "ResizeImage" => UIHelper.ResizeImage,
+                "Crop" => UIHelper.Crop,
+                "Flip" => UIHelper.Flip,
+
+                // Misc
+                "ChangeBackground" => UIHelper.ToggleBackground,
+                "GalleryClick" => UIHelper.GalleryClick,
+                "Center" => UIHelper.Center,
+                "Slideshow" => UIHelper.Slideshow,
 
                 _ => null
             });
