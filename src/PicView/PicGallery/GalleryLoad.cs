@@ -208,12 +208,31 @@ namespace PicView.PicGallery
                                     await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
                                 }
                             }
+                            catch (ObjectDisposedException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                                {
+                                    Environment.Exit(0);
+                                }
+                            }
+                            catch (TaskCanceledException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                                {
+                                    Environment.Exit(0);
+                                }
+                            }
                             catch (Exception exception)
                             {
 #if DEBUG
                                 Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                                return;
                             }
                         });
                     }, source.Token).ConfigureAwait(false);
@@ -240,6 +259,27 @@ namespace PicView.PicGallery
                                     await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
                                 }
                             }
+                            catch (ObjectDisposedException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                                {
+                                    Environment.Exit(0);
+                                }
+                                return;
+                            }
+                            catch (TaskCanceledException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                                {
+                                    Environment.Exit(0);
+                                }
+                            }
                             catch (Exception exception)
                             {
 #if DEBUG
@@ -250,12 +290,31 @@ namespace PicView.PicGallery
                         }
                     }, source.Token).ConfigureAwait(false);
                 }
+                catch (ObjectDisposedException exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+                catch (TaskCanceledException exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                    {
+                        Environment.Exit(0);
+                    }
+                }
                 catch (Exception exception)
                 {
 #if DEBUG
                     Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                    return;
                 }
             }, source.Token);
             return;
