@@ -213,19 +213,26 @@ namespace PicView.PicGallery
 #if DEBUG
                                 Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                                if (ConfigureWindows.GetMainWindow is null)
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
                                 {
                                     Environment.Exit(0);
                                 }
-                                return;
+                            }
+                            catch (TaskCanceledException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                                {
+                                    Environment.Exit(0);
+                                }
                             }
                             catch (Exception exception)
                             {
 #if DEBUG
                                 Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                                return;
                             }
                         });
                     }, source.Token).ConfigureAwait(false);
@@ -257,12 +264,21 @@ namespace PicView.PicGallery
 #if DEBUG
                                 Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                                if (ConfigureWindows.GetMainWindow is null)
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
                                 {
                                     Environment.Exit(0);
                                 }
                                 return;
+                            }
+                            catch (TaskCanceledException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                                {
+                                    Environment.Exit(0);
+                                }
                             }
                             catch (Exception exception)
                             {
@@ -279,19 +295,26 @@ namespace PicView.PicGallery
 #if DEBUG
                     Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    if (ConfigureWindows.GetMainWindow is null)
+                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
                     {
                         Environment.Exit(0);
                     }
-                    return;
+                }
+                catch (TaskCanceledException exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                    {
+                        Environment.Exit(0);
+                    }
                 }
                 catch (Exception exception)
                 {
 #if DEBUG
                     Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                    return;
                 }
             }, source.Token);
             return;
