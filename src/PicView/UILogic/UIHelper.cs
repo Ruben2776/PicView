@@ -1,7 +1,16 @@
 ﻿using PicView.Animations;
+using PicView.Editing;
+using PicView.PicGallery;
+using PicView.Properties;
+using PicView.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using static PicView.FileHandling.OpenSave;
+using static PicView.UILogic.ConfigureWindows;
+using static PicView.UILogic.UC;
+using static PicView.Shortcuts.MainKeyboardShortcuts;
 
 namespace PicView.UILogic
 {
@@ -11,6 +20,101 @@ namespace PicView.UILogic
 // ReSharper disable once InconsistentNaming
     internal static class UIHelper
     {
+        #region UI functions
+
+        internal static void Close()
+        {
+            if (UserControls_Open())
+            {
+                Close_UserControls();
+            }
+            else if (GalleryFunctions.IsGalleryOpen)
+            {
+                GalleryToggle.CloseCurrentGallery();
+            }
+            else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+            {
+                Slideshow.StopSlideshow();
+            }
+            else if (IsDialogOpen)
+            {
+                IsDialogOpen = false;
+            }
+            else if (ColorPicking.IsRunning)
+            {
+                ColorPicking.StopRunning(false);
+            }
+            else if (GetEffectsWindow is { IsVisible: true })
+            {
+                GetEffectsWindow.Hide();
+            }
+            else if (GetImageInfoWindow is { IsVisible: true })
+            {
+                GetImageInfoWindow.Hide();
+            }
+            else if (GetAboutWindow is { IsVisible: true })
+            {
+                GetAboutWindow.Hide();
+            }
+            else if (GetSettingsWindow is { IsVisible: true })
+            {
+                GetSettingsWindow.Hide();
+            }
+            else if (Settings.Default.Fullscreen)
+            {
+                WindowSizing.Fullscreen_Restore(false);
+            }
+            else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
+            {
+                GetQuickResize.Hide();
+            }
+            else if (!MainContextMenu.IsVisible)
+            {
+                if (GetCroppingTool is { IsVisible: true })
+                {
+                    return;
+                }
+
+                SystemCommands.CloseWindow(GetMainWindow);
+            }
+        }
+
+        internal static void ScrollUp()
+        {
+            if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
+            {
+                GalleryNavigation.ScrollGallery(true, CtrlDown, ShiftDown, true);
+            }
+            else
+            {
+                if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
+                    Visibility.Visible)
+                {
+                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
+                }
+            }
+        }
+
+        internal static void ScrollDown()
+        {
+            if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
+            {
+                GalleryNavigation.ScrollGallery(false, CtrlDown, ShiftDown, true);
+            }
+            else
+            {
+                if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
+                    Visibility.Visible)
+                {
+                    GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
+                }
+            }
+        }
+
+        #endregion UI functions
+
+        #region Extending Controls
+
         /// <summary>
         /// Expands or collapses a <see cref="ScrollViewer"/> control.
         /// </summary>
@@ -20,7 +124,7 @@ namespace PicView.UILogic
         /// <param name="frameworkElement">The parent control or window <see cref="FrameworkElement"/> control.</param>
         /// <param name="scrollViewer">The <see cref="ScrollViewer"/> control to expand or collapse.</param>
         /// <param name="geometryDrawing">The <see cref="GeometryDrawing"/> object to modify.</param>
-        public static void ExtendOrCollapse(double height, double startHeight, double extendedHeight,
+        internal static void ExtendOrCollapse(double height, double startHeight, double extendedHeight,
             FrameworkElement frameworkElement, ScrollViewer scrollViewer, GeometryDrawing geometryDrawing)
         {
             double from, to;
@@ -75,5 +179,7 @@ namespace PicView.UILogic
             geometryDrawing.Geometry = Geometry.Parse(
                 "F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z");
         }
+
+        #endregion Extending Controls
     }
 }

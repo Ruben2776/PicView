@@ -2,6 +2,7 @@
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.Shortcuts;
 using PicView.UILogic;
 
 namespace PicView.ChangeImage
@@ -270,6 +271,66 @@ namespace PicView.ChangeImage
                         ClickArrowLeftClicked = false;
                     await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
                 }
+            }
+        }
+
+        internal static async Task Next()
+        {
+            // exit if browsing horizontal PicGallery
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                if (MainKeyboardShortcuts.IsKeyHeldDown)
+                {
+                    // Disable animations when key is held down
+                    UC.GetPicGallery.Scroller.CanContentScroll = true;
+                }
+
+                GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Right);
+                return;
+            }
+
+            // Go to first if Ctrl held down
+            if (MainKeyboardShortcuts.CtrlDown && !MainKeyboardShortcuts.IsKeyHeldDown)
+            {
+                await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
+            }
+            else if (MainKeyboardShortcuts.ShiftDown)
+            {
+                await GoToNextFolder(true).ConfigureAwait(false);
+            }
+            else
+            {
+                await GoToNextImage(NavigateTo.Next, MainKeyboardShortcuts.IsKeyHeldDown).ConfigureAwait(false);
+            }
+        }
+
+        internal static async Task Prev()
+        {
+            // exit if browsing horizontal PicGallery
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                if (MainKeyboardShortcuts.IsKeyHeldDown)
+                {
+                    // Disable animations when key is held down
+                    UC.GetPicGallery.Scroller.CanContentScroll = true;
+                }
+
+                GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Left);
+                return;
+            }
+
+            // Go to first if Ctrl held down
+            if (MainKeyboardShortcuts.CtrlDown && !MainKeyboardShortcuts.IsKeyHeldDown)
+            {
+                await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
+            }
+            else if (MainKeyboardShortcuts.ShiftDown)
+            {
+                await GoToNextFolder(false).ConfigureAwait(false);
+            }
+            else
+            {
+                await GoToNextImage(NavigateTo.Previous, MainKeyboardShortcuts.IsKeyHeldDown).ConfigureAwait(false);
             }
         }
 

@@ -5,6 +5,7 @@ using PicView.Properties;
 using PicView.SystemIntegration;
 using System.Windows;
 using System.Windows.Controls;
+using PicView.Shortcuts;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
 using static PicView.UILogic.Loading.LoadControls;
@@ -87,6 +88,7 @@ namespace PicView.UILogic.Loading
                     _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
                 });
             }
+            _ = CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
         }
 
         internal static void AddDictionaries()

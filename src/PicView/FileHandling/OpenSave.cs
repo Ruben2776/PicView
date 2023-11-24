@@ -2,6 +2,7 @@
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
+using PicView.Properties;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
@@ -162,6 +163,11 @@ namespace PicView.FileHandling
 #endif
                 ShowTooltipMessage(e.Message, true);
             }
+        }
+
+        internal static async Task SaveFilesAsync()
+        {
+            await SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
         }
 
         /// <summary>

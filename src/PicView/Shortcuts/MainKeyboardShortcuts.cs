@@ -1,4 +1,5 @@
-﻿using PicView.ChangeImage;
+﻿using System.IO;
+using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
 using PicView.Editing;
@@ -25,6 +26,11 @@ namespace PicView.Shortcuts
 {
     internal static class MainKeyboardShortcuts
     {
+        internal static bool IsKeyHeldDown { get; private set; }
+        internal static bool CtrlDown { get; private set; }
+        internal static bool AltDown { get; private set; }
+        internal static bool ShiftDown { get; private set; }
+
         internal static async Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
         {
             #region return statements
@@ -54,9 +60,9 @@ namespace PicView.Shortcuts
 
             #endregion return statements
 
-            var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-            var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
-            var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+            CtrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+            AltDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+            ShiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
             #region CroppingKeys
 
@@ -75,7 +81,7 @@ namespace PicView.Shortcuts
                         return;
 
                     case Key.C:
-                        if (ctrlDown)
+                        if (CtrlDown)
                         {
                             CropFunctions.CopyCrop();
                         }
@@ -90,95 +96,30 @@ namespace PicView.Shortcuts
 
             #endregion CroppingKeys
 
+            // Capture the pressed key and modifiers
+            var capturedKey = e.Key;
+            var modifiers = Keyboard.Modifiers;
+            IsKeyHeldDown = e.IsRepeat;
+
+            // Check if the captured key and modifiers match any user-defined shortcuts
+            foreach (var shortcut in CustomKeybindings.CustomShortcuts.Where(shortcut => shortcut.Key == capturedKey && Keyboard.Modifiers == modifiers))
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (shortcut.Value is null)
+                {
+                    return;
+                }
+                // Execute the associated action asynchronously
+                await shortcut.Value.Invoke().ConfigureAwait(false);
+                return;
+            }
+
+            return;
+
             #region Keys where it can be held down
 
             switch (e.Key)
             {
-                case Key.BrowserForward:
-                case Key.Right:
-                case Key.D:
-                    // exit if browsing horizontal PicGallery
-                    if (GalleryFunctions.IsGalleryOpen)
-                    {
-                        if (e.IsRepeat)
-                        {
-                            // Disable animations when key is held down
-                            GetPicGallery.Scroller.CanContentScroll = true;
-                        }
-
-                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Right);
-                        return;
-                    }
-
-                    // Go to first if Ctrl held down
-                    if (ctrlDown && !e.IsRepeat)
-                    {
-                        await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
-                    }
-                    else if (shiftDown)
-                    {
-                        await GoToNextFolder(true).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await GoToNextImage(NavigateTo.Next, e.IsRepeat).ConfigureAwait(false);
-                    }
-
-                    return;
-
-                case Key.BrowserBack:
-                case Key.Left:
-                case Key.A:
-                    if (GalleryFunctions.IsGalleryOpen)
-                    {
-                        if (e.IsRepeat)
-                        {
-                            // Disable animations when key is held down
-                            GetPicGallery.Scroller.CanContentScroll = true;
-                        }
-
-                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Left);
-                        return;
-                    }
-
-                    // Go to last if Ctrl held down
-                    if (ctrlDown && !e.IsRepeat)
-                    {
-                        await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
-                    }
-                    else if (shiftDown)
-                    {
-                        await GoToNextFolder(false).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await GoToNextImage(NavigateTo.Previous, e.IsRepeat).ConfigureAwait(false);
-                    }
-
-                    return;
-
-                case Key.PageUp when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
-                    {
-                        GalleryNavigation.ScrollGallery(true, ctrlDown, shiftDown, true);
-                        return;
-                    }
-                case Key.PageUp:
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
-                    }
-
-                    return;
-
-                case Key.PageDown when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
-                    {
-                        GalleryNavigation.ScrollGallery(false, ctrlDown, shiftDown, true);
-                        return;
-                    }
-                case Key.PageDown:
-                    return;
-
                 case Key.Up:
                 case Key.W:
                     if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
@@ -222,9 +163,9 @@ namespace PicView.Shortcuts
                     return;
 
                 case Key.S:
-                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
+                    if (CtrlDown && !GalleryFunctions.IsGalleryOpen)
                     {
-                        if (shiftDown)
+                        if (ShiftDown)
                         {
                             await SaveFilesAsync(false).ConfigureAwait(false);
                         }
@@ -332,18 +273,9 @@ namespace PicView.Shortcuts
 
                         break;
 
-                    // B
-                    case Key.B:
-                        if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            ConfigColors.ChangeBackground();
-                        }
-
-                        break;
-
                     // Ctrl + Q
                     case Key.Q:
-                        if (ctrlDown)
+                        if (CtrlDown)
                         {
                             SystemCommands.CloseWindow(GetMainWindow);
                         }
@@ -359,7 +291,7 @@ namespace PicView.Shortcuts
                     case Key.X:
                         if (GalleryFunctions.IsGalleryOpen is false)
                         {
-                            if (ctrlDown)
+                            if (CtrlDown)
                             {
                                 Cut();
                             }
@@ -392,20 +324,20 @@ namespace PicView.Shortcuts
                     case Key.Delete:
                         if (!GalleryFunctions.IsGalleryOpen)
                         {
-                            await DeleteFileAsync(!shiftDown, Pics[FolderIndex]).ConfigureAwait(false);
+                            await DeleteFileAsync(!ShiftDown, Pics[FolderIndex]).ConfigureAwait(false);
                         }
 
                         break;
 
                     // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
                     case Key.C:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
+                        if (CtrlDown && !GalleryFunctions.IsGalleryOpen)
                         {
-                            if (shiftDown)
+                            if (ShiftDown)
                             {
                                 CopyBitmap();
                             }
-                            else if (altDown)
+                            else if (AltDown)
                             {
                                 CopyFilePath();
                             }
@@ -426,7 +358,7 @@ namespace PicView.Shortcuts
 
                     // Ctrl + V
                     case Key.V:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
+                        if (CtrlDown && !GalleryFunctions.IsGalleryOpen)
                         {
                             await PasteAsync().ConfigureAwait(false);
                         }
@@ -434,9 +366,9 @@ namespace PicView.Shortcuts
                         break;
 
                     case Key.I:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
+                        if (CtrlDown && !GalleryFunctions.IsGalleryOpen)
                         {
-                            if (altDown)
+                            if (AltDown)
                             {
                                 UpdateUIValues.ToggleQuickResize();
                             }
@@ -454,7 +386,7 @@ namespace PicView.Shortcuts
 
                     // Ctrl + P
                     case Key.P:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
+                        if (CtrlDown && !GalleryFunctions.IsGalleryOpen)
                         {
                             Print(Pics[FolderIndex]);
                         }
@@ -463,7 +395,7 @@ namespace PicView.Shortcuts
 
                     //  R
                     case Key.R:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
+                        if (CtrlDown && !GalleryFunctions.IsGalleryOpen)
                         {
                             await ReloadAsync().ConfigureAwait(false);
                         }
@@ -499,7 +431,7 @@ namespace PicView.Shortcuts
 
                     // N
                     case Key.N:
-                        if (ctrlDown)
+                        if (CtrlDown)
                         {
                             ProcessLogic.StartNewProcess();
                         }
@@ -604,11 +536,6 @@ namespace PicView.Shortcuts
                             Slideshow.StartSlideshow();
                         }
 
-                        break;
-
-                    // F6
-                    case Key.F6:
-                        EffectsWindow();
                         break;
 
                     // F7
