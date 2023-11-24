@@ -16,7 +16,7 @@ namespace PicView.Views.UserControls.Menus
             // SettingsButton
             SettingsButton.Click += delegate
             {
-                ConfigureWindows.AllSettingsWindow();
+                ConfigureWindows.SettingsWindow();
                 Close_UserControls();
             };
             SetButtonIconMouseOverAnimations(
@@ -25,7 +25,7 @@ namespace PicView.Views.UserControls.Menus
             // InfoButton
             InfoButton.Click += delegate
             {
-                ConfigureWindows.InfoWindow();
+                ConfigureWindows.AboutWindow();
                 Close_UserControls();
             };
             SetButtonIconMouseOverAnimations(

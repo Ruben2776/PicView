@@ -1,16 +1,19 @@
 ﻿using PicView.Animations;
+using PicView.ChangeImage;
+using PicView.ConfigureSettings;
 using PicView.Editing;
+using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
+using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.FileHandling.OpenSave;
+using static PicView.Shortcuts.MainKeyboardShortcuts;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.UC;
-using static PicView.Shortcuts.MainKeyboardShortcuts;
 
 namespace PicView.UILogic
 {
@@ -20,96 +23,368 @@ namespace PicView.UILogic
 // ReSharper disable once InconsistentNaming
     internal static class UIHelper
     {
-        #region UI functions
-
-        internal static void Close()
+        private static async Task<bool> CheckModifierFunctionAsync()
         {
-            if (UserControls_Open())
+            if (CtrlDown)
             {
-                Close_UserControls();
-            }
-            else if (GalleryFunctions.IsGalleryOpen)
-            {
-                GalleryToggle.CloseCurrentGallery();
-            }
-            else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
-            {
-                Slideshow.StopSlideshow();
-            }
-            else if (IsDialogOpen)
-            {
-                IsDialogOpen = false;
-            }
-            else if (ColorPicking.IsRunning)
-            {
-                ColorPicking.StopRunning(false);
-            }
-            else if (GetEffectsWindow is { IsVisible: true })
-            {
-                GetEffectsWindow.Hide();
-            }
-            else if (GetImageInfoWindow is { IsVisible: true })
-            {
-                GetImageInfoWindow.Hide();
-            }
-            else if (GetAboutWindow is { IsVisible: true })
-            {
-                GetAboutWindow.Hide();
-            }
-            else if (GetSettingsWindow is { IsVisible: true })
-            {
-                GetSettingsWindow.Hide();
-            }
-            else if (Settings.Default.Fullscreen)
-            {
-                WindowSizing.Fullscreen_Restore(false);
-            }
-            else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
-            {
-                GetQuickResize.Hide();
-            }
-            else if (!MainContextMenu.IsVisible)
-            {
-                if (GetCroppingTool is { IsVisible: true })
+                if (CurrentKey == Key.S)
                 {
-                    return;
+                    await OpenSave.SaveFilesAsync().ConfigureAwait(false);
+                    return true;
                 }
 
-                SystemCommands.CloseWindow(GetMainWindow);
+                if (CurrentKey == Key.C)
+                {
+                    if (ShiftDown)
+                    {
+                        CopyPaste.CopyBitmap();
+                    }
+                    else if (AltDown)
+                    {
+                        CopyPaste.CopyFilePath();
+                    }
+                    else
+                    {
+                        if (GetMainWindow.MainImage.Effect != null)
+                            CopyPaste.CopyBitmap();
+                        else
+                            CopyPaste.CopyFile();
+                    }
+                    return true;
+                }
+
+                if (CurrentKey == Key.V)
+                {
+                    await CopyPaste.PasteAsync().ConfigureAwait(false);
+                    return true;
+                }
+
+                if (CurrentKey == Key.O)
+                {
+                    await OpenSave.OpenAsync().ConfigureAwait(false);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        #region UI functions
+
+        internal static async Task Close()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                if (UserControls_Open())
+                {
+                    Close_UserControls();
+                }
+                else if (GalleryFunctions.IsGalleryOpen)
+                {
+                    GalleryToggle.CloseCurrentGallery();
+                }
+                else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
+                {
+                    Slideshow.StopSlideshow();
+                }
+                else if (OpenSave.IsDialogOpen)
+                {
+                    OpenSave.IsDialogOpen = false;
+                }
+                else if (ColorPicking.IsRunning)
+                {
+                    ColorPicking.StopRunning(false);
+                }
+                else if (GetEffectsWindow is { IsVisible: true })
+                {
+                    GetEffectsWindow.Hide();
+                }
+                else if (GetImageInfoWindow is { IsVisible: true })
+                {
+                    GetImageInfoWindow.Hide();
+                }
+                else if (GetAboutWindow is { IsVisible: true })
+                {
+                    GetAboutWindow.Hide();
+                }
+                else if (GetSettingsWindow is { IsVisible: true })
+                {
+                    GetSettingsWindow.Hide();
+                }
+                else if (Settings.Default.Fullscreen)
+                {
+                    WindowSizing.Fullscreen_Restore(false);
+                }
+                else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
+                {
+                    GetQuickResize.Hide();
+                }
+                else if (!MainContextMenu.IsVisible)
+                {
+                    if (GetCroppingTool is { IsVisible: true })
+                    {
+                        return;
+                    }
+
+                    SystemCommands.CloseWindow(GetMainWindow);
+                }
+            });
+        }
+
+        #region Navigation and scrolling
+
+        internal static async Task Next()
+        {
+            // exit if browsing horizontal PicGallery
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                if (IsKeyHeldDown)
+                {
+                    // Disable animations when key is held down
+                    GetPicGallery.Scroller.CanContentScroll = true;
+                }
+
+                GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Right);
+                return;
+            }
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+
+            // Go to first if Ctrl held down
+            if (CtrlDown && !IsKeyHeldDown)
+            {
+                await Navigation.GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
+            }
+            else if (ShiftDown)
+            {
+                await Navigation.GoToNextFolder(true).ConfigureAwait(false);
+            }
+            else
+            {
+                await Navigation.GoToNextImage(NavigateTo.Next, IsKeyHeldDown).ConfigureAwait(false);
             }
         }
 
-        internal static void ScrollUp()
+        internal static async Task Prev()
         {
-            if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
+            // exit if browsing horizontal PicGallery
+            if (GalleryFunctions.IsGalleryOpen)
             {
-                GalleryNavigation.ScrollGallery(true, CtrlDown, ShiftDown, true);
+                if (IsKeyHeldDown)
+                {
+                    // Disable animations when key is held down
+                    GetPicGallery.Scroller.CanContentScroll = true;
+                }
+
+                GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Left);
+                return;
+            }
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+
+            // Go to first if Ctrl held down
+            if (CtrlDown && !IsKeyHeldDown)
+            {
+                await Navigation.GoToNextImage(NavigateTo.First).ConfigureAwait(false);
+            }
+            else if (ShiftDown)
+            {
+                await Navigation.GoToNextFolder(false).ConfigureAwait(false);
             }
             else
+            {
+                await Navigation.GoToNextImage(NavigateTo.Previous, IsKeyHeldDown).ConfigureAwait(false);
+            }
+        }
+
+        internal static async Task Up()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
                     Visibility.Visible)
                 {
                     GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
                 }
-            }
+                else if (GalleryFunctions.IsGalleryOpen && GetPicGallery != null)
+                {
+                    GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Up);
+                }
+                else
+                {
+                    Rotation.Rotate(IsKeyHeldDown, false);
+                }
+            });
         }
 
-        internal static void ScrollDown()
+        internal static async Task Down()
         {
-            if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
             {
-                GalleryNavigation.ScrollGallery(false, CtrlDown, ShiftDown, true);
+                return;
             }
-            else
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
                     Visibility.Visible)
                 {
                     GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
                 }
-            }
+                else if (GalleryFunctions.IsGalleryOpen && GetPicGallery != null)
+                {
+                    GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Up);
+                }
+                else
+                {
+                    Rotation.Rotate(IsKeyHeldDown, false);
+                }
+            });
         }
+
+        internal static async Task ScrollUp()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
+                {
+                    GalleryNavigation.ScrollGallery(true, CtrlDown, ShiftDown, true);
+                }
+                else
+                {
+                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
+                        Visibility.Visible)
+                    {
+                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
+                    }
+                }
+            });
+        }
+
+        internal static async Task ScrollDown()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
+                {
+                    GalleryNavigation.ScrollGallery(false, CtrlDown, ShiftDown, true);
+                }
+                else
+                {
+                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
+                        Visibility.Visible)
+                    {
+                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
+                    }
+                }
+            });
+        }
+
+        internal static async Task ToggleScroll()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(UpdateUIValues.SetScrolling);
+        }
+
+        #endregion Navigation and scrolling
+
+        #region Windows
+
+        internal static async Task AboutWindow()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(ConfigureWindows.AboutWindow);
+        }
+
+        internal static async Task EffectsWindow()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(ConfigureWindows.EffectsWindow);
+        }
+
+        internal static async Task ImageInfoWindow()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(ConfigureWindows.ImageInfoWindow);
+        }
+
+        internal static async Task ResizeWindow()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(ConfigureWindows.ResizeWindow);
+        }
+
+        internal static async Task SettingsWindow()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(ConfigureWindows.SettingsWindow);
+        }
+
+        #endregion Windows
+
+        #region Misc
+
+        internal static async Task ToggleBackground()
+        {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(ConfigColors.ChangeBackground);
+        }
+
+        #endregion Misc
 
         #endregion UI functions
 

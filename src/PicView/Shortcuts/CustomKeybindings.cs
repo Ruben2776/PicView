@@ -47,51 +47,23 @@ namespace PicView.Shortcuts
         {
             return Task.FromResult<Func<Task>>(functionName switch
             {
-                "Close" => delegate
-                {
-                    UIHelper.Close();
-                    return Task.CompletedTask;
-                }
-                ,
+                "Close" => UIHelper.Close,
 
                 // Navigation values
-                "Next" => ChangeImage.Navigation.Next,
-                "Prev" => ChangeImage.Navigation.Prev,
-                "ScrollUp" => delegate
-                {
-                    UIHelper.ScrollUp();
-                    return Task.CompletedTask;
-                }
-                ,
-                "ScrollDown" => delegate
-                {
-                    UIHelper.ScrollDown();
-                    return Task.CompletedTask;
-                }
-                ,
+                "Next" => UIHelper.Next,
+                "Prev" => UIHelper.Prev,
+                "Up" => UIHelper.Up,
+                "Down" => UIHelper.Down,
+                "ScrollUp" => UIHelper.ScrollUp,
+                "ScrollDown" => UIHelper.ScrollDown,
 
                 // Toggles
-                "ToggleScroll" => delegate
-                {
-                    UpdateUIValues.SetScrolling();
-                    return Task.CompletedTask;
-                }
-                ,
+                "ToggleScroll" => UIHelper.ToggleScroll,
 
                 // Windows
-                "EffectsWindow" => delegate
-                {
-                    ConfigureWindows.EffectsWindow();
-                    return Task.CompletedTask;
-                }
-                ,
-                "InfoWindow" => delegate
-                {
-                    ConfigureWindows.InfoWindow();
-                    return Task.CompletedTask;
-                }
+                "EffectsWindow" => UIHelper.EffectsWindow,
+                "AboutWindow" => UIHelper.AboutWindow,
 
-                ,
                 "ChangeBackground" => delegate
                 {
                     ConfigColors.ChangeBackground();

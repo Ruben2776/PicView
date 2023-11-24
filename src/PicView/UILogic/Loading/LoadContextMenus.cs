@@ -229,7 +229,7 @@ namespace PicView.UILogic.Loading
             var SettingsMenu = (MenuItem)settingsCm.Items[8];
             SettingsMenu.Click += (_, _) =>
             {
-                AllSettingsWindow();
+                SettingsWindow();
                 MainContextMenu.IsOpen = false;
             };
 

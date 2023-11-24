@@ -30,6 +30,7 @@ namespace PicView.Shortcuts
         internal static bool CtrlDown { get; private set; }
         internal static bool AltDown { get; private set; }
         internal static bool ShiftDown { get; private set; }
+        internal static Key CurrentKey { get; private set; }
 
         internal static async Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
         {
@@ -97,12 +98,12 @@ namespace PicView.Shortcuts
             #endregion CroppingKeys
 
             // Capture the pressed key and modifiers
-            var capturedKey = e.Key;
+            CurrentKey = e.Key;
             var modifiers = Keyboard.Modifiers;
             IsKeyHeldDown = e.IsRepeat;
 
             // Check if the captured key and modifiers match any user-defined shortcuts
-            foreach (var shortcut in CustomKeybindings.CustomShortcuts.Where(shortcut => shortcut.Key == capturedKey && Keyboard.Modifiers == modifiers))
+            foreach (var shortcut in CustomKeybindings.CustomShortcuts.Where(shortcut => shortcut.Key == CurrentKey && Keyboard.Modifiers == modifiers))
             {
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (shortcut.Value is null)
@@ -120,24 +121,6 @@ namespace PicView.Shortcuts
 
             switch (e.Key)
             {
-                case Key.Up:
-                case Key.W:
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
-                    }
-                    else if (GalleryFunctions.IsGalleryOpen && GetPicGallery != null)
-                    {
-                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Up);
-                    }
-                    else
-                    {
-                        Rotate(e.IsRepeat, false);
-                    }
-
-                    return;
-
                 case Key.Down:
                     if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
                         Visibility.Visible)
@@ -511,7 +494,7 @@ namespace PicView.Shortcuts
 
                     // F1
                     case Key.F1:
-                        InfoWindow();
+                        AboutWindow();
                         break;
 
                     // F2
@@ -526,7 +509,7 @@ namespace PicView.Shortcuts
 
                     // F4
                     case Key.F4:
-                        AllSettingsWindow();
+                        SettingsWindow();
                         break;
 
                     // F5

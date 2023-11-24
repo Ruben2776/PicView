@@ -208,6 +208,18 @@ namespace PicView.PicGallery
                                     await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
                                 }
                             }
+                            catch (ObjectDisposedException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                if (ConfigureWindows.GetMainWindow is null)
+                                {
+                                    Environment.Exit(0);
+                                }
+                                return;
+                            }
                             catch (Exception exception)
                             {
 #if DEBUG
@@ -240,6 +252,18 @@ namespace PicView.PicGallery
                                     await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
                                 }
                             }
+                            catch (ObjectDisposedException exception)
+                            {
+#if DEBUG
+                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                if (ConfigureWindows.GetMainWindow is null)
+                                {
+                                    Environment.Exit(0);
+                                }
+                                return;
+                            }
                             catch (Exception exception)
                             {
 #if DEBUG
@@ -249,6 +273,18 @@ namespace PicView.PicGallery
                             }
                         }
                     }, source.Token).ConfigureAwait(false);
+                }
+                catch (ObjectDisposedException exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    if (ConfigureWindows.GetMainWindow is null)
+                    {
+                        Environment.Exit(0);
+                    }
+                    return;
                 }
                 catch (Exception exception)
                 {
