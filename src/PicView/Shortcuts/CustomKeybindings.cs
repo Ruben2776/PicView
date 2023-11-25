@@ -78,6 +78,7 @@ namespace PicView.Shortcuts
                 "Fullscreen" => UIHelper.Fullscreen,
                 "TopMost" => UIHelper.SetTopMost,
                 "Close" => UIHelper.Close,
+                "ToggleInterface" => UIHelper.ToggleInterface,
 
                 // Windows
                 "AboutWindow" => UIHelper.AboutWindow,
@@ -103,6 +104,14 @@ namespace PicView.Shortcuts
                 "ResizeImage" => UIHelper.ResizeImage,
                 "Crop" => UIHelper.Crop,
                 "Flip" => UIHelper.Flip,
+
+                // Set stars
+                "Set0Star" => UIHelper.Set0Star,
+                "Set1Star" => UIHelper.Set1Star,
+                "Set2Star" => UIHelper.Set2Star,
+                "Set3Star" => UIHelper.Set3Star,
+                "Set4Star" => UIHelper.Set4Star,
+                "Set5Star" => UIHelper.Set5Star,
 
                 // Misc
                 "ChangeBackground" => UIHelper.ToggleBackground,

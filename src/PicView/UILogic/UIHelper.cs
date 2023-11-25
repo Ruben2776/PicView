@@ -1,4 +1,5 @@
-﻿using PicView.Animations;
+﻿using System.IO;
+using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
@@ -13,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using PicView.Editing.Crop;
+using PicView.ImageHandling;
 using static PicView.Shortcuts.MainKeyboardShortcuts;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.UC;
@@ -515,6 +517,20 @@ namespace PicView.UILogic
             await GalleryToggle.ToggleGalleryAsync().ConfigureAwait(false);
         }
 
+        internal static async Task ToggleInterface()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(HideInterfaceLogic.ToggleInterface);
+        }
+
         #endregion Toggle UI functions
 
         #region Windows
@@ -708,6 +724,124 @@ namespace PicView.UILogic
             }
             await GetMainWindow.Dispatcher.InvokeAsync(CropFunctions.StartCrop);
         }
+
+        #region SetStars
+
+        internal static async Task Set0Star()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            await SetAndUpdateRating(0).ConfigureAwait(false);
+        }
+
+        internal static async Task Set1Star()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            await SetAndUpdateRating(1).ConfigureAwait(false);
+        }
+
+        internal static async Task Set2Star()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            await SetAndUpdateRating(2).ConfigureAwait(false);
+        }
+
+        internal static async Task Set3Star()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            await SetAndUpdateRating(3).ConfigureAwait(false);
+        }
+
+        internal static async Task Set4Star()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            await SetAndUpdateRating(4).ConfigureAwait(false);
+        }
+
+        internal static async Task Set5Star()
+        {
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            await SetAndUpdateRating(5).ConfigureAwait(false);
+        }
+
+        private static async Task SetAndUpdateRating(ushort rating)
+        {
+            if (ErrorHandling.CheckOutOfRange())
+            {
+                return;
+            }
+
+            var trySetRating = await ImageFunctions.SetRating(rating).ConfigureAwait(false);
+            if (trySetRating)
+            {
+                if (GetImageInfoWindow is { IsVisible: true })
+                {
+                    var preLoadValue = PreLoader.Get(Navigation.FolderIndex);
+                    if (preLoadValue is null)
+                    {
+                        var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
+                        var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                        preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
+                    }
+                    await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
+                }
+            }
+        }
+
+        #endregion SetStars
 
         #endregion Image Related
 

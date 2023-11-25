@@ -1,24 +1,12 @@
 ﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ConfigureSettings;
-using PicView.Editing;
 using PicView.Editing.Crop;
-using PicView.FileHandling;
 using PicView.PicGallery;
-using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.Windows;
 using System.Windows.Input;
-using static PicView.ChangeImage.ErrorHandling;
 using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.CopyPaste;
-using static PicView.FileHandling.DeleteFiles;
-using static PicView.FileHandling.OpenSave;
 using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.TransformImage.Rotation;
-using static PicView.UILogic.TransformImage.ZoomLogic;
 using static PicView.UILogic.UC;
 
 namespace PicView.Shortcuts
