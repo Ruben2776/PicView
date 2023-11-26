@@ -260,10 +260,6 @@ namespace PicView.UILogic
 
         internal static async Task Up()
         {
-            if (GalleryFunctions.IsGalleryOpen)
-            {
-                return;
-            }
             var check = await CheckModifierFunctionAsync();
             if (check)
             {
@@ -289,10 +285,6 @@ namespace PicView.UILogic
 
         internal static async Task Down()
         {
-            if (GalleryFunctions.IsGalleryOpen)
-            {
-                return;
-            }
             var check = await CheckModifierFunctionAsync();
             if (check)
             {
@@ -725,6 +717,24 @@ namespace PicView.UILogic
             await GetMainWindow.Dispatcher.InvokeAsync(CropFunctions.StartCrop);
         }
 
+        internal static async Task OptimizeImage()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            if (!GalleryFunctions.IsGalleryOpen)
+            {
+                await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
+            }
+        }
+
         #region SetStars
 
         internal static async Task Set0Star()
@@ -1035,6 +1045,24 @@ namespace PicView.UILogic
             if (!GalleryFunctions.IsGalleryOpen)
             {
                 await GetMainWindow.Dispatcher.InvokeAsync(UILogic.Slideshow.StartSlideshow);
+            }
+        }
+
+        internal static async Task ColorPicker()
+        {
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+
+            if (!GalleryFunctions.IsGalleryOpen)
+            {
+                await GetMainWindow.Dispatcher.InvokeAsync(ColorPicking.StartRunning);
             }
         }
 

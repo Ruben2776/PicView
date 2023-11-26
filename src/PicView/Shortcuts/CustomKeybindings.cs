@@ -7,8 +7,14 @@ namespace PicView.Shortcuts
 {
     internal static class CustomKeybindings
     {
+        /// <summary>
+        /// Dictionary to store custom shortcuts with keys and associated functions.
+        /// </summary>
         internal static Dictionary<Key, Func<Task>>? CustomShortcuts;
 
+        /// <summary>
+        /// Asynchronously loads custom keybindings from a file.
+        /// </summary>
         internal static async Task LoadKeybindings()
         {
             try
@@ -33,7 +39,55 @@ namespace PicView.Shortcuts
             }
             catch (FileNotFoundException)
             {
-                // Handle file not found exception, create a default keybindings file, or take appropriate action
+                // Create a default keybindings file
+                var defaultKeybindings = @"
+                    Escape=Close
+                    D=Next
+                    Right=Next
+                    A=Prev
+                    Left=Prev
+                    W=Up
+                    Up=Up
+                    S=Down
+                    Down=Down
+                    PageUp=ScrollUp
+                    PageDown=ScrollDown
+                    Add=ZoomIn
+                    OemPlus=ZoomIn
+                    OemMinus=ZoomOut
+                    Subtract=ZoomOut
+                    Scroll=ToggleScroll
+                    Home=ScrollToTop
+                    End=ScrollToBottom
+                    G=ToggleGallery
+                    F=Flip
+                    J=ResizeImage
+                    C=Crop
+                    E=GalleryClick
+                    Enter=GalleryClick
+                    Delete=DeleteFile
+                    I=ImageInfoWindow
+                    F6=EffectsWindow
+                    F1=AboutWindow
+                    F2=Rename
+                    F3=OpenInExplorer
+                    F5=Slideshow
+                    F11=Fullscreen
+                    F12=Fullscreen
+                    B=ChangeBackground
+                    Space=Center
+                    D0=Set0Star
+                    D1=Set1Star
+                    D2=Set2Star
+                    D3=Set3Star
+                    D4=Set4Star
+                    D5=Set5Star";
+
+                // Save the default keybindings to a new file
+                await File.WriteAllTextAsync("Shortcuts/keybindings.txt", defaultKeybindings);
+
+                // Reload the keybindings from the newly created file
+                await LoadKeybindings().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -42,6 +96,11 @@ namespace PicView.Shortcuts
             }
         }
 
+        /// <summary>
+        /// Gets the function associated with a given function name.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <returns>Task containing the function.</returns>
         private static Task<Func<Task>> GetFunctionByName(string functionName)
         {
             return Task.FromResult<Func<Task>>(functionName switch
@@ -104,6 +163,7 @@ namespace PicView.Shortcuts
                 "ResizeImage" => UIHelper.ResizeImage,
                 "Crop" => UIHelper.Crop,
                 "Flip" => UIHelper.Flip,
+                "OptimizeImage" => UIHelper.OptimizeImage,
 
                 // Set stars
                 "Set0Star" => UIHelper.Set0Star,
@@ -118,6 +178,7 @@ namespace PicView.Shortcuts
                 "GalleryClick" => UIHelper.GalleryClick,
                 "Center" => UIHelper.Center,
                 "Slideshow" => UIHelper.Slideshow,
+                "ColorPicker" => UIHelper.ColorPicker,
 
                 _ => null
             });

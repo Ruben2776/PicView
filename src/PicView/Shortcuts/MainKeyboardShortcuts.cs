@@ -13,12 +13,36 @@ namespace PicView.Shortcuts
 {
     internal static class MainKeyboardShortcuts
     {
+        /// <summary>
+        /// Indicates whether a key is held down.
+        /// </summary>
         internal static bool IsKeyHeldDown { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the Ctrl key is pressed.
+        /// </summary>
         internal static bool CtrlDown { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the Alt key is pressed.
+        /// </summary>
         internal static bool AltDown { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the Shift key is pressed.
+        /// </summary>
         internal static bool ShiftDown { get; private set; }
+
+        /// <summary>
+        /// Gets the currently pressed key.
+        /// </summary>
         internal static Key CurrentKey { get; private set; }
 
+        /// <summary>
+        /// Handles keydown events for the main window.
+        /// </summary>
+        /// <param name="sender">The object that triggered the event.</param>
+        /// <param name="e">Key event arguments.</param>
         internal static async Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
         {
             #region return statements
@@ -29,7 +53,7 @@ namespace PicView.Shortcuts
                 return;
             }
 
-            // Don't execute keys when entering in GoToPicBox || QuickResize
+            // Don't execute keys when typing in GoToPicBox or in QuickResize
             if (GetImageSettingsMenu.GoToPic != null)
             {
                 if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
@@ -99,13 +123,39 @@ namespace PicView.Shortcuts
             }
         }
 
+        /// <summary>
+        /// Handles keyup events for the main window.
+        /// </summary>
+        /// <param name="sender">The object that triggered the event.</param>
+        /// <param name="e">Key event arguments.</param>
         internal static async Task MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
+            #region return statements
+
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin)
             {
                 return;
             }
+
+            // Don't execute keys when typing in GoToPicBox or in QuickResize
+            if (GetImageSettingsMenu.GoToPic != null)
+            {
+                if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+                {
+                    return;
+                }
+            }
+
+            if (GetQuickResize != null)
+            {
+                if (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused)
+                {
+                    return;
+                }
+            }
+
+            #endregion return statements
 
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt)
             {
