@@ -167,7 +167,7 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 * Open file in external application, show it in folder or view file properties
 * Color picker
 
-<img src="https://picview.org/assets/screenshots/rename-titlebar/rename-titlebar-pink-dark.png"/><br>
+<img src="https://picview.org/assets/screenshots/rename-titlebar/rename-titlebar-pink-dark.webp"/><br>
 Rename or move files in the titlebar by pressing `F2` or right clicking it.
 
 **File support** 
