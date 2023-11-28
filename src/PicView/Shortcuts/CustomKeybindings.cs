@@ -19,8 +19,9 @@ namespace PicView.Shortcuts
         {
             try
             {
-                CustomShortcuts = new Dictionary<Key, Func<Task>>();
                 var lines = await File.ReadAllLinesAsync("Shortcuts/keybindings.txt").ConfigureAwait(false);
+                CustomShortcuts = new Dictionary<Key, Func<Task>>();
+
                 foreach (var line in lines)
                 {
                     var parts = line.Split('=');
@@ -84,7 +85,7 @@ namespace PicView.Shortcuts
                     D5=Set5Star";
 
                 // Save the default keybindings to a new file
-                await File.WriteAllTextAsync("Shortcuts/keybindings.txt", defaultKeybindings);
+                await File.WriteAllTextAsync("Shortcuts/keybindings.txt", defaultKeybindings).ConfigureAwait(false);
 
                 // Reload the keybindings from the newly created file
                 await LoadKeybindings().ConfigureAwait(false);

@@ -28,6 +28,7 @@ F6=EffectsWindow
 F1=AboutWindow
 F2=Rename
 F3=OpenInExplorer
+F4=SettingsWindow
 F5=Slideshow
 F11=Fullscreen
 F12=Fullscreen

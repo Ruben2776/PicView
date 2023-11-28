@@ -1,24 +1,24 @@
-﻿using System.IO;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ConfigureSettings;
 using PicView.Editing;
+using PicView.Editing.Crop;
 using PicView.FileHandling;
+using PicView.ImageHandling;
 using PicView.PicGallery;
+using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
 using PicView.UILogic.TransformImage;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using PicView.Editing.Crop;
-using PicView.ImageHandling;
 using static PicView.Shortcuts.MainKeyboardShortcuts;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.UC;
-using PicView.ProcessHandling;
 
 namespace PicView.UILogic
 {
@@ -28,6 +28,12 @@ namespace PicView.UILogic
     // ReSharper disable once InconsistentNaming
     internal static class UIHelper
     {
+        #region UI functions
+
+        /// <summary>
+        /// Execute Modifier functions or hard-coded default keybindings
+        /// </summary>
+        /// <returns></returns>
         internal static async Task<bool> CheckModifierFunctionAsync()
         {
             if (CtrlDown)
@@ -98,90 +104,41 @@ namespace PicView.UILogic
                     ProcessLogic.StartNewProcess();
                     return true;
                 }
+
+                if (CurrentKey == Key.E)
+                {
+                    OpenSave.OpenWith();
+                    return true;
+                }
             }
             else if (ShiftDown)
             {
                 if (CurrentKey == Key.Delete)
                 {
-                    await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                    await DeleteFiles.DeleteFileAsync(false, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
                     return true;
                 }
             }
 
-            return false;
-        }
-
-        #region UI functions
-
-        internal static async Task Close()
-        {
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
-            if (check)
+            if (CurrentKey == Key.Delete)
             {
-                return;
+                await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                return true;
             }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                if (UserControls_Open())
-                {
-                    Close_UserControls();
-                }
-                else if (GalleryFunctions.IsGalleryOpen)
-                {
-                    GalleryToggle.CloseCurrentGallery();
-                }
-                else if (UILogic.Slideshow.SlideTimer != null && UILogic.Slideshow.SlideTimer.Enabled)
-                {
-                    UILogic.Slideshow.StopSlideshow();
-                }
-                else if (OpenSave.IsDialogOpen)
-                {
-                    OpenSave.IsDialogOpen = false;
-                }
-                else if (ColorPicking.IsRunning)
-                {
-                    ColorPicking.StopRunning(false);
-                }
-                else if (GetEffectsWindow is { IsVisible: true })
-                {
-                    GetEffectsWindow.Hide();
-                }
-                else if (GetImageInfoWindow is { IsVisible: true })
-                {
-                    GetImageInfoWindow.Hide();
-                }
-                else if (GetAboutWindow is { IsVisible: true })
-                {
-                    GetAboutWindow.Hide();
-                }
-                else if (GetSettingsWindow is { IsVisible: true })
-                {
-                    GetSettingsWindow.Hide();
-                }
-                else if (Settings.Default.Fullscreen)
-                {
-                    WindowSizing.Fullscreen_Restore(false);
-                }
-                else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
-                {
-                    GetQuickResize.Hide();
-                }
-                else if (!MainContextMenu.IsVisible)
-                {
-                    if (GetCroppingTool is { IsVisible: true })
-                    {
-                        return;
-                    }
 
-                    SystemCommands.CloseWindow(GetMainWindow);
-                }
-            });
+            return false;
         }
 
         #region Navigation, rotation, zooming and scrolling
 
         internal static async Task GalleryClick()
         {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
+
             if (GalleryFunctions.IsGalleryOpen)
             {
                 await PicGallery.GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
@@ -190,6 +147,11 @@ namespace PicView.UILogic
 
         internal static async Task Next()
         {
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
+            {
+                return;
+            }
             // exit if browsing horizontal PicGallery
             if (GalleryFunctions.IsGalleryOpen)
             {
@@ -200,11 +162,6 @@ namespace PicView.UILogic
                 }
 
                 GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Right);
-                return;
-            }
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
-            if (check)
-            {
                 return;
             }
 
@@ -225,6 +182,11 @@ namespace PicView.UILogic
 
         internal static async Task Prev()
         {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
             // exit if browsing horizontal PicGallery
             if (GalleryFunctions.IsGalleryOpen)
             {
@@ -235,11 +197,6 @@ namespace PicView.UILogic
                 }
 
                 GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Left);
-                return;
-            }
-            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
-            if (check)
-            {
                 return;
             }
 
@@ -310,12 +267,12 @@ namespace PicView.UILogic
 
         internal static async Task Flip()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -324,12 +281,12 @@ namespace PicView.UILogic
 
         internal static async Task ScrollUp()
         {
-            if (GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -352,12 +309,12 @@ namespace PicView.UILogic
 
         internal static async Task ScrollDown()
         {
-            if (GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -380,12 +337,12 @@ namespace PicView.UILogic
 
         internal static async Task ScrollToToTop()
         {
-            if (GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -397,12 +354,12 @@ namespace PicView.UILogic
 
         internal static async Task ScrollToBottom()
         {
-            if (GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -414,12 +371,12 @@ namespace PicView.UILogic
 
         internal static async Task ZoomIn()
         {
-            if (GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -431,12 +388,12 @@ namespace PicView.UILogic
 
         internal static async Task ZoomOut()
         {
-            if (GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -448,12 +405,12 @@ namespace PicView.UILogic
 
         internal static async Task ResetZoom()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -469,12 +426,12 @@ namespace PicView.UILogic
 
         internal static async Task ToggleScroll()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -483,12 +440,12 @@ namespace PicView.UILogic
 
         internal static async Task ToggleLooping()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -497,12 +454,12 @@ namespace PicView.UILogic
 
         internal static async Task ToggleGallery()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -511,12 +468,12 @@ namespace PicView.UILogic
 
         internal static async Task ToggleInterface()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -527,14 +484,79 @@ namespace PicView.UILogic
 
         #region Windows
 
-        internal static async Task AboutWindow()
+        internal static async Task Close()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync().ConfigureAwait(false);
+            if (check)
             {
                 return;
             }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                if (UserControls_Open())
+                {
+                    Close_UserControls();
+                }
+                else if (GalleryFunctions.IsGalleryOpen)
+                {
+                    GalleryToggle.CloseCurrentGallery();
+                }
+                else if (UILogic.Slideshow.SlideTimer != null && UILogic.Slideshow.SlideTimer.Enabled)
+                {
+                    UILogic.Slideshow.StopSlideshow();
+                }
+                else if (OpenSave.IsDialogOpen)
+                {
+                    OpenSave.IsDialogOpen = false;
+                }
+                else if (ColorPicking.IsRunning)
+                {
+                    ColorPicking.StopRunning(false);
+                }
+                else if (GetEffectsWindow is { IsVisible: true })
+                {
+                    GetEffectsWindow.Hide();
+                }
+                else if (GetImageInfoWindow is { IsVisible: true })
+                {
+                    GetImageInfoWindow.Hide();
+                }
+                else if (GetAboutWindow is { IsVisible: true })
+                {
+                    GetAboutWindow.Hide();
+                }
+                else if (GetSettingsWindow is { IsVisible: true })
+                {
+                    GetSettingsWindow.Hide();
+                }
+                else if (Settings.Default.Fullscreen)
+                {
+                    WindowSizing.Fullscreen_Restore(false);
+                }
+                else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
+                {
+                    GetQuickResize.Hide();
+                }
+                else if (!MainContextMenu.IsVisible)
+                {
+                    if (GetCroppingTool is { IsVisible: true })
+                    {
+                        return;
+                    }
+
+                    SystemCommands.CloseWindow(GetMainWindow);
+                }
+            });
+        }
+
+        internal static async Task AboutWindow()
+        {
             var check = await CheckModifierFunctionAsync();
             if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -543,12 +565,12 @@ namespace PicView.UILogic
 
         internal static async Task EffectsWindow()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -557,12 +579,12 @@ namespace PicView.UILogic
 
         internal static async Task ImageInfoWindow()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -571,12 +593,12 @@ namespace PicView.UILogic
 
         internal static async Task ResizeWindow()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -585,12 +607,12 @@ namespace PicView.UILogic
 
         internal static async Task SettingsWindow()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -603,12 +625,12 @@ namespace PicView.UILogic
 
         internal static async Task DeleteFile()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -617,12 +639,12 @@ namespace PicView.UILogic
 
         internal static async Task DuplicateFile()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -631,12 +653,12 @@ namespace PicView.UILogic
 
         internal static async Task ShowFileProperties()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -645,12 +667,12 @@ namespace PicView.UILogic
 
         internal static async Task Print()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -659,12 +681,12 @@ namespace PicView.UILogic
 
         internal static async Task OpenWith()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -673,12 +695,12 @@ namespace PicView.UILogic
 
         internal static async Task OpenInExplorer()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -691,12 +713,12 @@ namespace PicView.UILogic
 
         internal static async Task ResizeImage()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -705,12 +727,12 @@ namespace PicView.UILogic
 
         internal static async Task Crop()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -719,16 +741,15 @@ namespace PicView.UILogic
 
         internal static async Task OptimizeImage()
         {
-            if (IsKeyHeldDown)
-            {
-                return;
-            }
             var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
             }
-
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
             if (!GalleryFunctions.IsGalleryOpen)
             {
                 await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
@@ -739,42 +760,40 @@ namespace PicView.UILogic
 
         internal static async Task Set0Star()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
-            {
-                return;
-            }
             var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
             }
-
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
             await SetAndUpdateRating(0).ConfigureAwait(false);
         }
 
         internal static async Task Set1Star()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
-            {
-                return;
-            }
             var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
             }
-
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
             await SetAndUpdateRating(1).ConfigureAwait(false);
         }
 
         internal static async Task Set2Star()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -784,27 +803,26 @@ namespace PicView.UILogic
 
         internal static async Task Set3Star()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
-            {
-                return;
-            }
             var check = await CheckModifierFunctionAsync();
             if (check)
             {
                 return;
             }
-
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
             await SetAndUpdateRating(3).ConfigureAwait(false);
         }
 
         internal static async Task Set4Star()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -814,12 +832,12 @@ namespace PicView.UILogic
 
         internal static async Task Set5Star()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -859,12 +877,12 @@ namespace PicView.UILogic
 
         internal static async Task AutoFitWindow()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -877,12 +895,12 @@ namespace PicView.UILogic
 
         internal static async Task AutoFitWindowAndStretch()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -895,12 +913,12 @@ namespace PicView.UILogic
 
         internal static async Task NormalWindow()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -913,12 +931,12 @@ namespace PicView.UILogic
 
         internal static async Task NormalWindowAndStretch()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -931,12 +949,12 @@ namespace PicView.UILogic
 
         internal static async Task Fullscreen()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -952,12 +970,12 @@ namespace PicView.UILogic
 
         internal static async Task ToggleBackground()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -966,12 +984,12 @@ namespace PicView.UILogic
 
         internal static async Task SetTopMost()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -980,12 +998,12 @@ namespace PicView.UILogic
 
         internal static async Task Rename()
         {
-            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
             {
                 return;
             }
@@ -994,12 +1012,12 @@ namespace PicView.UILogic
 
         internal static async Task Reload()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -1008,12 +1026,12 @@ namespace PicView.UILogic
 
         internal static async Task Center()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -1032,12 +1050,12 @@ namespace PicView.UILogic
 
         internal static async Task Slideshow()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }
@@ -1050,12 +1068,12 @@ namespace PicView.UILogic
 
         internal static async Task ColorPicker()
         {
-            if (IsKeyHeldDown)
+            var check = await CheckModifierFunctionAsync();
+            if (check)
             {
                 return;
             }
-            var check = await CheckModifierFunctionAsync();
-            if (check)
+            if (IsKeyHeldDown)
             {
                 return;
             }

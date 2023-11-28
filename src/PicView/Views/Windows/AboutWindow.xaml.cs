@@ -177,7 +177,6 @@ namespace PicView.Views.Windows
                 AutoUpdater.ShowSkipButton = false;
                 AutoUpdater.SetOwner(this);
                 AutoUpdater.RunUpdateAsAdmin = true;
-                AutoUpdater.ClearAppDirectory = true;
                 AutoUpdater.Start("https://picview.org/update.xml");
             };
         }
