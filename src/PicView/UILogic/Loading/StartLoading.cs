@@ -17,42 +17,42 @@ namespace PicView.UILogic.Loading
 {
     internal static class StartLoading
     {
-        internal static void LoadedEvent()
+        internal static async Task LoadedEvent()
         {
             Pics = new List<string>();
 
             // Load sizing properties
             MonitorInfo = MonitorSize.GetMonitorSize();
 
-            // Set min size to DPI scaling
-            ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
-            ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
-
-            SetWindowBehavior();
-            if (Settings.Default.AutoFitWindow == false)
-                SetLastWindowSize();
-
-            ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled
-                ? ScrollBarVisibility.Auto
-                : ScrollBarVisibility.Disabled;
-
-            if (!Settings.Default.ShowInterface)
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                // Set min size to DPI scaling
+                ConfigureWindows.GetMainWindow.MinWidth *= MonitorInfo.DpiScaling;
+                ConfigureWindows.GetMainWindow.MinHeight *= MonitorInfo.DpiScaling;
+
+                SetWindowBehavior();
+                if (Settings.Default.AutoFitWindow == false)
+                    SetLastWindowSize();
+
+                ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled
+                    ? ScrollBarVisibility.Auto
+                    : ScrollBarVisibility.Disabled;
+
+                if (!Settings.Default.ShowInterface)
+                {
+                    ConfigureWindows.GetMainWindow.TitleBar.Visibility =
+                        ConfigureWindows.GetMainWindow.LowerBar.Visibility
+                            = Visibility.Collapsed;
+                }
+                else if (!Settings.Default.ShowBottomNavBar)
+                {
                     ConfigureWindows.GetMainWindow.LowerBar.Visibility
                         = Visibility.Collapsed;
-            }
-            else if (!Settings.Default.ShowBottomNavBar)
-            {
-                ConfigureWindows.GetMainWindow.LowerBar.Visibility
-                    = Visibility.Collapsed;
-            }
-
-            Task.Run(() =>
-            {
-                _ = CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
-                ConfigColors.UpdateColor();
+                }
             });
+
+            await CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
+            ConfigColors.UpdateColor();
 
             var args = Environment.GetCommandLineArgs();
 
@@ -65,32 +65,34 @@ namespace PicView.UILogic.Loading
                 }
                 else
                 {
-                    Fullscreen_Restore(true);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        Fullscreen_Restore(true);
+                    });
                 }
             }
 
             if (Settings.Default.IsBottomGalleryShown)
             {
-                GalleryToggle.ShowBottomGallery();
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
             }
 
             // Load image if possible
             if (args.Length < 2)
             {
-                ErrorHandling.Unload(true);
-
-                // Make sure to fix loading spinner showing up
-                if (ConfigureWindows.GetMainWindow.MainImage.Source is null)
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
-                    GetSpinWaiter.Visibility = Visibility.Collapsed;
-                }
+                    // Make sure to fix loading spinner showing up
+                    if (ConfigureWindows.GetMainWindow.MainImage.Source is null)
+                    {
+                        GetSpinWaiter.Visibility = Visibility.Collapsed;
+                    }
+                });
+                ErrorHandling.Unload(true);
             }
             else
             {
-                Task.Run(() =>
-                {
-                    _ = QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
-                });
+                await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
             }
         }
 

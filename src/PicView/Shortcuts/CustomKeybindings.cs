@@ -19,7 +19,8 @@ namespace PicView.Shortcuts
         {
             try
             {
-                var lines = await File.ReadAllLinesAsync("Shortcuts/keybindings.txt").ConfigureAwait(false);
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shortcuts/keybindings.txt");
+                var lines = await File.ReadAllLinesAsync(path).ConfigureAwait(false);
                 CustomShortcuts = new Dictionary<Key, Func<Task>>();
 
                 foreach (var line in lines)

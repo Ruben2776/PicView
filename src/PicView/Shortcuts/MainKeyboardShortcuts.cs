@@ -112,6 +112,11 @@ namespace PicView.Shortcuts
             CurrentKey = e.Key;
             IsKeyHeldDown = e.IsRepeat;
 
+            if (CustomKeybindings.CustomShortcuts is null)
+            {
+                return;
+            }
+
             if (CustomKeybindings.CustomShortcuts.TryGetValue(CurrentKey, out var shortcut))
             {
                 // Execute the associated action
@@ -159,26 +164,43 @@ namespace PicView.Shortcuts
 
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt)
             {
+                // ReSharper disable once ConvertIfStatementToSwitchStatement
                 if (e.SystemKey == Key.Z && !GalleryFunctions.IsGalleryOpen)
                 {
-                    HideInterfaceLogic.ToggleInterface();
+                    await GetMainWindow.Dispatcher.InvokeAsync(HideInterfaceLogic.ToggleInterface);
                 }
                 else if (e.SystemKey == Key.Enter)
                 {
-                    WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+                    await GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+                    });
                 }
 
+                AltDown = false;
                 return;
             }
 
+            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (e.Key)
             {
                 case Key.A:
                 case Key.Right:
                 case Key.Left:
                 case Key.D:
-                    if (FolderIndex < 0 || FolderIndex >= Pics.Count) return;
+                    if (FolderIndex < 0 || FolderIndex >= Pics.Count)
+                        return;
                     await FastPic.FastPicUpdateAsync().ConfigureAwait(false);
+                    return;
+
+                case Key.LeftShift:
+                case Key.RightShift:
+                    ShiftDown = false;
+                    return;
+
+                case Key.LeftCtrl:
+                case Key.RightCtrl:
+                    CtrlDown = false;
                     return;
             }
         }

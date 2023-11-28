@@ -538,13 +538,13 @@ namespace PicView.ChangeImage
             await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
 
             if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
-                _ = ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
+                await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
 
-            _ = PreLoader.AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
+            await PreLoader.AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
             if (Pics.Count > 1)
             {
                 Taskbar.Progress((double)index / Pics.Count);
-                _ = PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
             }
 
             // Add recent files, except when browsing archive

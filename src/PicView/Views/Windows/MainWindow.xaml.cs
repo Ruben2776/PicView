@@ -53,7 +53,7 @@ namespace PicView.Views.Windows
 
             Topmost = Settings.Default.TopMost;
 
-            Loaded += (_, _) => { StartLoading.LoadedEvent(); };
+            Loaded += async (_, _) => await StartLoading.LoadedEvent().ConfigureAwait(false);
 
             ContentRendered += delegate
             {
