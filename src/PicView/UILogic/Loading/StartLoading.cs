@@ -72,11 +72,6 @@ namespace PicView.UILogic.Loading
                 }
             }
 
-            if (Settings.Default.IsBottomGalleryShown)
-            {
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
-            }
-
             // Load image if possible
             if (args.Length < 2)
             {

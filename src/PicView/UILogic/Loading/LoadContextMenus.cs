@@ -51,6 +51,7 @@ namespace PicView.UILogic.Loading
             //     Open With        \\\
             ///////////////////////////
             var openWcm = (MenuItem)MainContextMenu.Items[3];
+            openWcm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + E";
             openWcm.Click += (_, _) => OpenWith();
 
             // 4 == separator
