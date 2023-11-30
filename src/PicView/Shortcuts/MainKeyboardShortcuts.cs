@@ -72,14 +72,18 @@ namespace PicView.Shortcuts
 
             #endregion return statements
 
-            CtrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-            AltDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
-            ShiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                CtrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+                AltDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+                ShiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+            });
 
             #region CroppingKeys
 
             if (GetCroppingTool is { IsVisible: true })
             {
+                // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
                 switch (e.Key)
                 {
                     case Key.Escape:
@@ -119,6 +123,14 @@ namespace PicView.Shortcuts
 
             if (CustomKeybindings.CustomShortcuts.TryGetValue(CurrentKey, out var shortcut))
             {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (shortcut is null)
+                {
+                    await CustomKeybindings.CreateNewDefaultKeybindingFile().ConfigureAwait(false);
+                    // ReSharper disable once TailRecursiveCall
+                    await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
+                    return;
+                }
                 // Execute the associated action
                 await shortcut.Invoke().ConfigureAwait(false);
             }

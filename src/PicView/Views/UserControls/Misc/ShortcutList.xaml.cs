@@ -1,28 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.IO;
+using PicView.Shortcuts;
+using System.Text.Json;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using PicView.UILogic;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.Views.UserControls.Misc;
+
+public partial class ShortcutList
 {
-    /// <summary>
-    /// Interaction logic for ShortcutList.xaml
-    /// </summary>
-    public partial class ShortcutList : UserControl
+    public ShortcutList()
     {
-        public ShortcutList()
+        InitializeComponent();
+
+        // Subscribe to the PreviewKeyDown event for both textboxes
+        NextBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Next", false);
+        NextBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Next", true);
+
+        AutoFitWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindow", false);
+        AutoFitWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindow", true);
+    }
+
+    private async Task AssociateKey(object sender, KeyEventArgs e, string functionName, bool alt)
+    {
+        e.Handled = true;
+
+        // Update the text box content
+        var textBox = (TextBox)sender;
+        textBox.Text = e.Key.ToString();
+        await Dispatcher.InvokeAsync(Keyboard.ClearFocus);
+
+        var function = CustomKeybindings.GetFunctionByName(functionName);
+
+        // Handle whether it's an alternative key or not
+        if (alt)
         {
-            InitializeComponent();
+            // Check if the main key is already in the dictionary
+            if (CustomKeybindings.CustomShortcuts.ContainsKey(e.Key))
+            {
+                if (CustomKeybindings.CustomShortcuts.ContainsValue(function.Result))
+                {
+                    var prevKey = CustomKeybindings.CustomShortcuts.FirstOrDefault(x => x.Value == function.Result).Key;
+                    CustomKeybindings.CustomShortcuts.Remove(prevKey);
+                }
+                // Add the alternative key to the dictionary
+                CustomKeybindings.CustomShortcuts[e.Key] = await function.ConfigureAwait(false);
+            }
+            else if (CustomKeybindings.CustomShortcuts.ContainsValue(function.Result))
+            {
+                // If the main key is not present, add a new entry with the alternative key
+                var altKey = (Key)Enum.Parse(typeof(Key), textBox.Text);
+                CustomKeybindings.CustomShortcuts[altKey] = await function.ConfigureAwait(false);
+            }
+            else
+            {
+                // Update the key and function name in the CustomShortcuts dictionary
+                CustomKeybindings.CustomShortcuts[e.Key] = await function.ConfigureAwait(false);
+            }
         }
+        else
+        {
+            // Update the key and function name in the CustomShortcuts dictionary
+            CustomKeybindings.CustomShortcuts[e.Key] = await function.ConfigureAwait(false);
+        }
+
+        // Update the keybindings.json file
+        await CustomKeybindings.UpdateKeyBindingsFile().ConfigureAwait(false);
     }
 }

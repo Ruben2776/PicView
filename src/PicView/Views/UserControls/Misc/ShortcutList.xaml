@@ -11,7 +11,6 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
-            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
         </Style>
     </UserControl.Resources>
     <StackPanel>
@@ -35,11 +34,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource NextImage}" />
             <TextBox
+                x:Name="NextBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="Right" />
             <TextBox
+                x:Name="NextBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -54,12 +55,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + Right" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + D" />
         </StackPanel>
 
@@ -72,12 +71,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Shift + Right" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Shift + D" />
         </StackPanel>
 
@@ -91,13 +88,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="Left" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="A" />
         </StackPanel>
@@ -110,12 +105,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + Left" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + A" />
         </StackPanel>
 
@@ -128,12 +121,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Shift + Left" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Shift + A" />
         </StackPanel>
 
@@ -152,13 +143,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="Up" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="W" />
         </StackPanel>
@@ -171,12 +160,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Up" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="W" />
         </StackPanel>
 
@@ -189,13 +176,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="PageUp" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -209,13 +194,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="Home" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -230,13 +213,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="Down" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="S" />
         </StackPanel>
@@ -249,12 +230,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Down" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="S" />
         </StackPanel>
 
@@ -267,13 +246,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="PageDown" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -287,13 +264,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="End" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -307,13 +282,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="Scroll" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -332,13 +305,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="OemPlus" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="{StaticResource MouseWheel}" />
         </StackPanel>
 
@@ -351,13 +322,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="OemMinus" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="{StaticResource MouseWheel}" />
         </StackPanel>
 
@@ -370,12 +339,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="{StaticResource MouseDrag}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="" />
         </StackPanel>
 
@@ -388,13 +355,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="R" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="{StaticResource DoubleClick}" />
         </StackPanel>
 
@@ -412,13 +377,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="F" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -432,13 +395,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="C" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -452,13 +413,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="B" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -472,13 +431,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -497,13 +454,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Alt + Z" />
         </StackPanel>
 
@@ -516,13 +471,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="F11" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Shift + double click" />
         </StackPanel>
 
@@ -535,13 +488,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="F5" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -555,13 +506,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="G" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -580,13 +529,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + O" />
         </StackPanel>
 
@@ -599,13 +546,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + S" />
         </StackPanel>
 
@@ -618,13 +563,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + P" />
         </StackPanel>
 
@@ -637,12 +580,10 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Delete" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Shift + Delete" />
         </StackPanel>
 
@@ -655,13 +596,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -675,13 +614,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="F2" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -695,13 +632,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="F3" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -715,13 +650,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + I" />
         </StackPanel>
 
@@ -739,13 +672,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + C" />
         </StackPanel>
 
@@ -758,13 +689,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + Alt + C" />
         </StackPanel>
 
@@ -777,14 +706,34 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + Shift + C" />
+        </StackPanel>
+
+        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
+                <TextBlock>
+                    <Run Text="{StaticResource Copy}" />
+                    <Run Text=" base64" />
+                </TextBlock>
+            </TextBlock>
+            <TextBox
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="" />
+            <TextBox
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -796,13 +745,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -816,13 +763,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + X" />
         </StackPanel>
 
@@ -840,13 +785,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="F1" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -860,13 +803,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="F1" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -880,13 +821,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="I" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -900,13 +839,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="N" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -920,13 +857,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="Esc" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 Text="Ctrl + Q" />
         </StackPanel>
 
@@ -939,13 +874,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="Space" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -959,13 +892,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="T" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -982,15 +913,15 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=AutoFitWindow}" />
             <TextBox
+                x:Name="AutoFitWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
+                x:Name="AutoFitWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -1004,13 +935,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -1024,13 +953,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -1044,13 +971,11 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
@@ -1069,7 +994,6 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
@@ -1087,7 +1011,6 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
@@ -1105,7 +1028,6 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                FontSize="12"
                 IsReadOnly="False"
                 Text="G" />
             <TextBox
