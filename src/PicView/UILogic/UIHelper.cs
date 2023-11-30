@@ -365,7 +365,7 @@ namespace PicView.UILogic
             }
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                GetMainWindow.Scroller.ScrollToHome();
+                GetMainWindow.Scroller.ScrollToBottom();
             });
         }
 
@@ -708,6 +708,83 @@ namespace PicView.UILogic
         }
 
         #endregion File Related
+
+        #region Copy
+
+        internal static async Task CopyFile()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            if (GetMainWindow.MainImage.Effect != null)
+                CopyPaste.CopyBitmap();
+            else
+                CopyPaste.CopyFile();
+        }
+
+        internal static async Task CopyFilePath()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            CopyPaste.CopyFilePath();
+        }
+
+        internal static async Task CopyImage()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            CopyPaste.CopyBitmap();
+        }
+
+        internal static async Task CopyBase64()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            await Base64.SendToClipboard().ConfigureAwait(false);
+        }
+
+        internal static async Task CutFile()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            CopyPaste.Cut();
+        }
+
+        #endregion Copy
 
         #region Image Related
 

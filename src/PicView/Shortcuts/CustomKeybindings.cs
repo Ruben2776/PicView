@@ -182,6 +182,13 @@ internal static class CustomKeybindings
             "Save" => OpenSave.SaveFilesAsync,
             "Reload" => UIHelper.Reload,
 
+            // Copy functions
+            "CopyFile" => UIHelper.CopyFile,
+            "CopyFilePath" => UIHelper.CopyFilePath,
+            "CopyImage" => UIHelper.CopyImage,
+            "CopyBase64" => UIHelper.CopyBase64,
+            "CutFile" => UIHelper.CutFile,
+
             // File functions
             "DeleteFile" => UIHelper.DeleteFile,
             "DuplicateFile" => UIHelper.DuplicateFile,
@@ -220,6 +227,9 @@ internal static class CustomKeybindings
     /// <returns>The function name.</returns>
     internal static string? GetFunctionNameByFunction(Func<Task> function)
     {
-        return CustomShortcuts.FirstOrDefault(x => x.Value == function).Value.Method.Name;
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (function == null)
+            return "";
+        return CustomShortcuts.FirstOrDefault(x => x.Value == function).Value.Method.Name ?? "";
     }
 }

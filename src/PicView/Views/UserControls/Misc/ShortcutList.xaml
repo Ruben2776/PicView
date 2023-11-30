@@ -37,8 +37,7 @@
                 x:Name="NextBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Right" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="NextBox2"
                 Width="150"
@@ -86,11 +85,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource PrevImage}" />
             <TextBox
+                x:Name="PrevBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="Left" />
             <TextBox
+                x:Name="PrevBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -141,11 +142,12 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource RotateRight}" />
             <TextBox
+                x:Name="UpBox1"
                 Width="150"
-                Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="Up" />
             <TextBox
+                x:Name="UpBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -165,42 +167,6 @@
                 Width="150"
                 Margin="0,0,5,0"
                 Text="W" />
-        </StackPanel>
-
-        <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
-            <TextBlock
-                Width="160"
-                Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Scroll up" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="PageUp" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
-        </StackPanel>
-
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
-            <TextBlock
-                Width="160"
-                Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Scroll to top" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Home" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
         </StackPanel>
 
         <!--  Rotate Left  -->
@@ -211,11 +177,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource RotateLeft}" />
             <TextBox
+                x:Name="DownBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="Down" />
             <TextBox
+                x:Name="DownBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -237,18 +205,60 @@
                 Text="S" />
         </StackPanel>
 
-        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+        <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="Scroll up" />
+            <TextBox
+                x:Name="PgUpBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="PageUp" />
+            <TextBox
+                x:Name="PgUpBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="Scroll to top" />
+            <TextBox
+                x:Name="ScrlTopBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="Home" />
+            <TextBox
+                x:Name="ScrlTopBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="Scroll down" />
             <TextBox
+                x:Name="PgDownBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="PageDown" />
             <TextBox
+                x:Name="PgDownBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -262,11 +272,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="Scroll to bottom" />
             <TextBox
+                x:Name="ScrlBottomBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="End" />
             <TextBox
+                x:Name="ScrlBottomBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -280,11 +292,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ToggleScroll}" />
             <TextBox
+                x:Name="ToggleScrlBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="Scroll" />
             <TextBox
+                x:Name="ToggleScrlBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -303,17 +317,19 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ZoomIn}" />
             <TextBox
+                x:Name="ZoomInBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="OemPlus" />
             <TextBox
+                x:Name="ZoomOutBox"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="{StaticResource MouseWheel}" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
@@ -353,10 +369,11 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResetZoom}" />
             <TextBox
+                x:Name="ResetZoomBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                Text="R" />
+                Text="" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -375,11 +392,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource Flip}" />
             <TextBox
+                x:Name="FlipBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="F" />
             <TextBox
+                x:Name="FlipBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -393,11 +412,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource Crop}" />
             <TextBox
+                x:Name="CropBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="C" />
             <TextBox
+                x:Name="CropBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -411,11 +432,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ChangeBackground}" />
             <TextBox
+                x:Name="ChangeBgBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="B" />
             <TextBox
+                x:Name="ChangeBgBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -429,11 +452,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ColorPickerTool}" />
             <TextBox
+                x:Name="ColorPickBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
+                x:Name="ColorPickBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -452,6 +477,7 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=ShowHideUI}" />
             <TextBox
+                x:Name="ToggleUIBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -469,6 +495,7 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=ToggleFullscreen}" />
             <TextBox
+                x:Name="ToggleFullscreenBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -486,11 +513,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=Slideshow}" />
             <TextBox
+                x:Name="SlideshowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="F5" />
             <TextBox
+                x:Name="SlideshowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -504,11 +533,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=ShowImageGallery}" />
             <TextBox
+                x:Name="ShowImageGalleryBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="G" />
             <TextBox
+                x:Name="ShowImageGalleryBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -527,6 +558,7 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=Open}" />
             <TextBox
+                x:Name="OpenBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -542,8 +574,45 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource ResourceKey=OpenWith}" />
+            <TextBox
+                x:Name="OpenWithBox"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="" />
+            <TextBox
+                Width="150"
+                Margin="0,0,5,0"
+                Text="Ctrl + E" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource ResourceKey=Reload}" />
+            <TextBox
+                x:Name="ReloadBox"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                Text="" />
+            <TextBox
+                Width="150"
+                Margin="0,0,5,0"
+                Text="Ctrl + R" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=Save}" />
             <TextBox
+                x:Name="SaveBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -561,6 +630,7 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=Print}" />
             <TextBox
+                x:Name="PrintBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -594,11 +664,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=DeleteFile}" />
             <TextBox
+                x:Name="DeleteBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
+                x:Name="DeleteBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -612,11 +684,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=RenameFile}" />
             <TextBox
+                x:Name="RenameBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="F2" />
             <TextBox
+                x:Name="RenameBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -630,11 +704,13 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=ShowInFolder}" />
             <TextBox
+                x:Name="ShowInFolderBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="F3" />
             <TextBox
+                x:Name="ShowInFolderBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -648,6 +724,7 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=FileProperties}" />
             <TextBox
+                x:Name="FilePropertiesBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -670,6 +747,7 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=CopyFile}" />
             <TextBox
+                x:Name="CopyFileBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -680,13 +758,14 @@
                 Text="Ctrl + C" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=FileCopyPath}" />
             <TextBox
+                x:Name="CopyFilePathBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -697,13 +776,14 @@
                 Text="Ctrl + Alt + C" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=CopyImage}" />
             <TextBox
+                x:Name="CopyImageBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -714,7 +794,7 @@
                 Text="Ctrl + Shift + C" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
@@ -725,42 +805,47 @@
                 </TextBlock>
             </TextBlock>
             <TextBox
+                x:Name="CopyBase64Box1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
+                x:Name="CopyBase64Box2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=DuplicateFile}" />
             <TextBox
+                x:Name="DuplicateBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
+                x:Name="DuplicateBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=FileCut}" />
             <TextBox
+                x:Name="CutBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -776,85 +861,94 @@
             HorizontalAlignment="Center"
             Content="{StaticResource ResourceKey=WindowManagement}" />
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=About}" />
             <TextBox
+                x:Name="AboutBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="F1" />
             <TextBox
+                x:Name="AboutBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=Settings}" />
             <TextBox
+                x:Name="SettingsBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                Text="F1" />
+                Text="F4" />
             <TextBox
+                x:Name="SettingsBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=ImageInfo}" />
             <TextBox
+                x:Name="ImageInfoBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="I" />
             <TextBox
+                x:Name="ImageInfoBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=ShowResizeWindow}" />
             <TextBox
+                x:Name="ResizeWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="N" />
             <TextBox
+                x:Name="ResizeWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=Close}" />
             <TextBox
+                x:Name="CloseBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -865,36 +959,40 @@
                 Text="Ctrl + Q" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=CenterWindow}" />
             <TextBox
+                x:Name="CenterWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="Space" />
             <TextBox
+                x:Name="CenterWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=StayTopMost}" />
             <TextBox
+                x:Name="TopMostBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="T" />
             <TextBox
+                x:Name="TopMostBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -926,111 +1024,60 @@
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=FillHeight}" />
             <TextBox
+                x:Name="AutoFitFillWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
+                x:Name="AutoFitFillWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=NormalWindow}" />
             <TextBox
+                x:Name="NormalWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
+                x:Name="NormalWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
         </StackPanel>
 
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=FillHeight}" />
             <TextBox
+                x:Name="NormalWindowFillBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
                 Text="" />
             <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
-        </StackPanel>
-
-        <Label
-            Margin="5,10,0,15"
-            HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=AdditionalFunctions}" />
-
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
-            <TextBlock
-                Width="160"
-                Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=OpenWith}" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                Text="Ctrl + E" />
-        </StackPanel>
-
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
-            <TextBlock
-                Width="160"
-                Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Reload}" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                Text="Ctrl + R" />
-        </StackPanel>
-
-        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
-            <TextBlock
-                Width="160"
-                Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ShowImageGallery}" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="G" />
-            <TextBox
+                x:Name="NormalWindowFillBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
