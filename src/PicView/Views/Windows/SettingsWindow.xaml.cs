@@ -9,6 +9,7 @@ using PicView.SystemIntegration;
 using PicView.Translations;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using PicView.UILogic.TransformImage;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -299,17 +300,15 @@ namespace PicView.Views.Windows
             AliasingBoxHighQuality.IsSelected = !Settings.Default.IsScalingSetToNearestNeighbor;
             AliasingBoxHighQuality.Selected += delegate
             {
-                UILogic.TransformImage.ZoomLogic.ScalingMode = BitmapScalingMode.HighQuality;
-                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.HighQuality);
                 Settings.Default.IsScalingSetToNearestNeighbor = false;
+                ZoomLogic.TriggerScalingModeUpdate();
             };
 
             AliasingNearestNeighbor.IsSelected = Settings.Default.IsScalingSetToNearestNeighbor;
             AliasingNearestNeighbor.Selected += delegate
             {
-                UILogic.TransformImage.ZoomLogic.ScalingMode = BitmapScalingMode.NearestNeighbor;
-                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.NearestNeighbor);
                 Settings.Default.IsScalingSetToNearestNeighbor = true;
+                ZoomLogic.TriggerScalingModeUpdate();
             };
         }
 
