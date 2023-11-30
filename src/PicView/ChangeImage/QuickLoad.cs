@@ -4,6 +4,7 @@ using PicView.PicGallery;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using PicView.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -47,6 +48,11 @@ namespace PicView.ChangeImage
             {
                 mainWindow.MainImage.Source = bitmapSource;
 
+                if (Settings.Default.IsBottomGalleryShown)
+                {
+                    GalleryToggle.ShowBottomGallery();
+                }
+
                 FitImage(bitmapSource.Width, bitmapSource.Height);
             }, DispatcherPriority.Send);
 
@@ -82,15 +88,32 @@ namespace PicView.ChangeImage
 
             if (Settings.Default.IsBottomGalleryShown)
             {
-                await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                // Update gallery selections
-                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                try
                 {
-                    // Select current item
-                    GalleryNavigation.SetSelected(FolderIndex, true);
-                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                    GalleryNavigation.ScrollToGalleryCenter();
-                });
+                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                    // Update gallery selections
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        // Select current item
+                        GalleryNavigation.SetSelected(FolderIndex, true);
+                        GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                        GalleryNavigation.ScrollToGalleryCenter();
+                    });
+                }
+                catch (TaskCanceledException exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(QuickLoadAsync)}  exception:\n{exception.Message}");
+#endif
+                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+                catch (Exception)
+                {
+                    //
+                }
             }
 
             // Add recent files, except when browsing archive

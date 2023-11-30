@@ -129,7 +129,17 @@ namespace PicView.ChangeImage
                         // Fix if Bottom Gallery is enabled
                         if (Settings.Default.IsBottomGalleryShown)
                         {
-                            if (UC.GetPicGallery is { Visibility: Visibility.Collapsed })
+                            if (UC.GetPicGallery is null)
+                            {
+                                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
+                                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                                {
+                                    GalleryToggle.ShowBottomGallery();
+                                    ScaleImage.TryFitImage();
+                                });
+                                await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                            }
+                            else if (UC.GetPicGallery is { Visibility: Visibility.Collapsed })
                             {
                                 var shouldLoadGallery = false;
                                 await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
