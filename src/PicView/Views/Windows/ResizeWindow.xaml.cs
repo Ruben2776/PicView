@@ -224,7 +224,7 @@ namespace PicView.Views.Windows
         private async Task Load()
         {
             running = true;
-            var source = new CancellationTokenSource();
+            using var source = new CancellationTokenSource();
             var task = Task.Run(() => LoopAsync(source.Token), source.Token);
             try
             {
@@ -238,10 +238,6 @@ namespace PicView.Views.Windows
                     LogTextBox.Text = string.Empty;
                     ProgressBar.Value = 0;
                 });
-            }
-            finally
-            {
-                source.Dispose();
             }
         }
 
