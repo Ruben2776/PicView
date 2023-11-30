@@ -1,11 +1,9 @@
 ﻿using PicView.ChangeImage;
 using PicView.ChangeTitlebar;
 using PicView.ImageHandling;
-using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
-using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -121,8 +119,18 @@ namespace PicView.FileHandling
         /// </summary>
         internal static void CopyFilePath()
         {
-            Clipboard.SetText(Pics[FolderIndex]);
-            ShowTooltipMessage(Application.Current.Resources["FileCopyPathMessage"] as string);
+            try
+            {
+                Clipboard.SetText(Pics[FolderIndex]);
+                ShowTooltipMessage(Application.Current.Resources["FileCopyPathMessage"] as string);
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(CopyFilePath)} exception:\n{exception.Message}");
+#endif
+                ShowTooltipMessage(exception.Message);
+            }
         }
 
         /// <summary>
