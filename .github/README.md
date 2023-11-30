@@ -19,7 +19,7 @@ Additionally, PicView also includes features such as EXIF data display, image co
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.0/PicView.2.0.win-x64.zip)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.0/PicView.2.0.win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.0/PicView.2.0.win-arm64.zip)
 
 Latest releases at https://picview.org/download
 
@@ -167,7 +167,7 @@ If you have 7-Zip or WinRAR installed, you can view images inside archives, such
 * Open file in external application, show it in folder or view file properties
 * Color picker
 
-<img src="https://picview.org/assets/screenshots/rename-titlebar/rename-titlebar-pink-dark.png"/><br>
+<img src="https://picview.org/assets/screenshots/rename-titlebar/rename-titlebar-pink-dark.webp"/><br>
 Rename or move files in the titlebar by pressing `F2` or right clicking it.
 
 **File support** 
