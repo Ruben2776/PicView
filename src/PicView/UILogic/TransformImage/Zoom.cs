@@ -13,15 +13,34 @@ namespace PicView.UILogic.TransformImage
     {
         public static ScaleTransform? ScaleTransform;
         public static TranslateTransform? TranslateTransform;
-        public static BitmapScalingMode? ScalingMode;
+        
+        public static BitmapScalingMode DefaultScalingMode = (BitmapScalingMode) ConfigureWindows.GetMainWindow.MainImage.GetValue(RenderOptions.BitmapScalingModeProperty);
         private static Point _origin;
         private static Point _start;
+
+        internal static double _zoomValue = 1;
 
         /// <summary>
         /// Used to determine final point when zooming,
         /// since DoubleAnimation changes value of TranslateTransform continuously.
         /// </summary>
-        internal static double ZoomValue { get; private set; } = 1;
+        internal static double ZoomValue {
+            get {
+                return _zoomValue;
+            }
+            private set {
+                _zoomValue = value;
+                
+                TriggerScalingModeUpdate();
+            }
+        }
+
+        public static void TriggerScalingModeUpdate()
+        {
+            var scalingMode = _zoomValue >= 1 && Settings.Default.IsScalingSetToNearestNeighbor ? BitmapScalingMode.NearestNeighbor : DefaultScalingMode;
+
+            ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, scalingMode);
+        }
 
         /// <summary>
         /// Returns zoom percentage. if 100%, return empty string
@@ -122,12 +141,6 @@ namespace PicView.UILogic.TransformImage
             TranslateTransform = (TranslateTransform)((TransformGroup)
                     ConfigureWindows.GetMainWindow.MainImageBorder.RenderTransform)
                 .Children.First(tr => tr is TranslateTransform);
-
-            if (Settings.Default.IsScalingSetToNearestNeighbor)
-            {
-                ScalingMode = BitmapScalingMode.NearestNeighbor;
-                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, ScalingMode);
-            }
         }
 
         /// <summary>
@@ -315,10 +328,6 @@ namespace PicView.UILogic.TransformImage
                 return;
 
             ZoomValue = value;
-
-            // Set aliasing
-            ScalingMode = ZoomValue <= 1 ? BitmapScalingMode.Fant : ScalingMode;
-            ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, ScalingMode);
 
             BeginZoomAnimation(ZoomValue);
 

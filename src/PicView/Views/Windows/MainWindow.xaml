@@ -475,8 +475,7 @@
                         x:Name="MainImageBorder"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Focusable="False"
-                        RenderOptions.BitmapScalingMode="Fant">
+                        Focusable="False">
                         <Image
                             x:Name="MainImage"
                             AllowDrop="True"
