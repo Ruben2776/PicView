@@ -455,6 +455,10 @@ namespace PicView.Views.Windows
             ShowBottomRadio.MouseEnter += delegate { ButtonMouseOverAnim(ShowBottomText); };
             ShowBottomRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(ShowBottomText); };
 
+            // ShowBottomWhenHiddenRadio
+            ShowBottomWhenHiddenRadio.MouseEnter += delegate { ButtonMouseOverAnim(ShowBottomWhenHiddenText); };
+            ShowBottomWhenHiddenRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(ShowBottomWhenHiddenText); };
+
             // ScrollZoom
             ScrollZoom.MouseEnter += delegate
             {
