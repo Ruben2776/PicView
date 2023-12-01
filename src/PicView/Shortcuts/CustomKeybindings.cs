@@ -21,7 +21,7 @@ internal static class CustomKeybindings
     {
         try
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shortcuts/keybindings.json");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
             var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
             await UpdateKeybindings(text).ConfigureAwait(false);
         }
@@ -126,7 +126,7 @@ internal static class CustomKeybindings
         }";
 
         // Save the default keybindings to a new file
-        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shortcuts/keybindings.json");
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
         try
         {
             await File.WriteAllTextAsync(path, defaultKeybindings).ConfigureAwait(false);
