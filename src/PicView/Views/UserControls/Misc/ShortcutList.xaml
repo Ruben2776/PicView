@@ -42,8 +42,7 @@
                 x:Name="NextBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="D" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -52,13 +51,13 @@
                 Margin="10,3,0,3"
                 Text="{StaticResource LastImage}" />
             <TextBox
+                x:Name="LastImageBox1"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Ctrl + Right" />
+                Margin="0,0,5,0" />
             <TextBox
+                x:Name="LastImageBox2"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Ctrl + D" />
+                Margin="0,0,5,0" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -68,13 +67,13 @@
                 Margin="10,3,0,3"
                 Text="{StaticResource NextFolder}" />
             <TextBox
+                x:Name="NextFolderBox1"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Shift + Right" />
+                Margin="0,0,5,0" />
             <TextBox
+                x:Name="NextFolderBox2"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Shift + D" />
+                Margin="0,0,5,0" />
         </StackPanel>
 
         <!--  Prev  -->
@@ -88,14 +87,12 @@
                 x:Name="PrevBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Left" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="PrevBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="A" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -104,13 +101,13 @@
                 Margin="10,3,0,3"
                 Text="{StaticResource FirstImage}" />
             <TextBox
+                x:Name="FirstImageBox1"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Ctrl + Left" />
+                Margin="0,0,5,0" />
             <TextBox
+                x:Name="FirstImageBox2"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Ctrl + A" />
+                Margin="0,0,5,0" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -120,13 +117,13 @@
                 Margin="10,3,0,3"
                 Text="{StaticResource PrevFolder}" />
             <TextBox
+                x:Name="PrevFolderBox1"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Shift + Left" />
+                Margin="0,0,5,0" />
             <TextBox
+                x:Name="PrevFolderBox2"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Shift + A" />
+                Margin="0,0,5,0" />
         </StackPanel>
 
         <Label
@@ -144,14 +141,13 @@
             <TextBox
                 x:Name="UpBox1"
                 Width="150"
-                IsReadOnly="False"
-                Text="Up" />
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
             <TextBox
                 x:Name="UpBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="W" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -160,13 +156,13 @@
                 Margin="10,3,0,3"
                 Text="Scroll up" />
             <TextBox
+                x:Name="ScrollUpBox1"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Up" />
+                Margin="0,0,5,0" />
             <TextBox
+                x:Name="ScrollUpBox2"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="W" />
+                Margin="0,0,5,0" />
         </StackPanel>
 
         <!--  Rotate Left  -->
@@ -196,10 +192,11 @@
                 Margin="10,3,0,3"
                 Text="Scroll down" />
             <TextBox
+                x:Name="ScrollDownBox1"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="Down" />
+                Margin="0,0,5,0" />
             <TextBox
+                x:Name="ScrollDownBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="S" />
@@ -323,7 +320,6 @@
                 IsReadOnly="False"
                 Text="OemPlus" />
             <TextBox
-                x:Name="ZoomOutBox"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="{StaticResource MouseWheel}" />
@@ -336,6 +332,7 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ZoomOut}" />
             <TextBox
+                x:Name="ZoomOutBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
@@ -687,8 +684,7 @@
                 x:Name="RenameBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="F2" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="RenameBox2"
                 Width="150"
@@ -707,8 +703,7 @@
                 x:Name="ShowInFolderBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="F3" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ShowInFolderBox2"
                 Width="150"
@@ -931,8 +926,7 @@
                 x:Name="ResizeWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="N" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ResizeWindowBox2"
                 Width="150"

@@ -1,4 +1,5 @@
-﻿using PicView.Shortcuts;
+﻿using System.Windows;
+using PicView.Shortcuts;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -230,11 +231,11 @@ public partial class ShortcutList
         ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ImageInfoWindow", true);
 
         // Resize Window
-        ResizeWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ImageInfoWindow", false);
-        ResizeWindowBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ImageInfoWindow", false);
+        ResizeWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ResizeWindow", false);
+        ResizeWindowBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ResizeWindow", false);
 
-        ImageInfoBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ImageInfoWindow", false);
-        ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ImageInfoWindow", true);
+        ImageInfoBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", false);
+        ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", true);
 
         // Close
         CloseBox.Loaded += (s, _) => UpdateTextBoxes(s, "Close", false);
@@ -307,23 +308,82 @@ public partial class ShortcutList
 
         // Find the key associated with the specified function
         var keys = CustomKeybindings.CustomShortcuts.Where(x => x.Value == function).Select(x => x.Key).ToList();
-
+        var key = string.Empty;
         if (keys.Count > 0)
         {
             if (keys.Count == 1)
             {
-                // Update the TextBox based on alt
-                textBox.Text = alt ? string.Empty : keys.FirstOrDefault().ToString();
+                key = alt ? string.Empty : keys.FirstOrDefault().ToString();
             }
             else
             {
-                textBox.Text = alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString();
+                key = alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString();
             }
         }
-        else
+        textBox.Text = key;
+
+        UpdateModifierTextBoxes(functionName, key, alt);
+    }
+
+    /// <summary>
+    /// Updates modifier TextBoxes based on the function, key, and alternative key flag.
+    /// </summary>
+    /// <param name="functionName">The name of the function.</param>
+    /// <param name="key">The key associated with the function.</param>
+    /// <param name="alt">A flag indicating whether it's an alternative key.</param>
+    private void UpdateModifierTextBoxes(string functionName, string key, bool alt)
+    {
+        switch (functionName)
         {
-            // Handle the case where the function is not found in the CustomShortcuts dictionary
-            textBox.Text = string.Empty;
+            case "Next":
+                if (!alt)
+                {
+                    LastImageBox1.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
+                    NextFolderBox1.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                }
+                else
+                {
+                    LastImageBox2.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
+                    NextFolderBox2.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                }
+
+                break;
+
+            case "Prev":
+                if (!alt)
+                {
+                    FirstImageBox1.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
+                    PrevFolderBox1.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                }
+                else
+                {
+                    FirstImageBox2.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
+                    PrevFolderBox2.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                }
+                break;
+
+            case "Up":
+                if (!alt)
+                {
+                    ScrollUpBox1.Text = key;
+                }
+                else
+                {
+                    ScrollUpBox2.Text = key;
+                }
+                break;
+
+            case "Down":
+                if (!alt)
+                {
+                    ScrollDownBox1.Text = key;
+                }
+                else
+                {
+                    ScrollDownBox2.Text = key;
+                }
+
+                break;
         }
     }
 
@@ -341,7 +401,9 @@ public partial class ShortcutList
 
         // Update the text box content
         var textBox = (TextBox)sender;
-        textBox.Text = e.Key.ToString();
+        var key = e.Key.ToString();
+        textBox.Text = key;
+        UpdateModifierTextBoxes(functionName, key, alt);
         await Dispatcher.InvokeAsync(Keyboard.ClearFocus);
 
         var function = await CustomKeybindings.GetFunctionByName(functionName).ConfigureAwait(false);

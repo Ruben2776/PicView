@@ -65,7 +65,7 @@ internal static class CustomKeybindings
                     });
 
             // Write the JSON to the keybindings.json file
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shortcuts/keybindings.json");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
             await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
         }
         catch (Exception exception)
