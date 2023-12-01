@@ -149,6 +149,7 @@ internal static class CustomKeybindings
     /// <returns>Task containing the function.</returns>
     internal static Task<Func<Task>> GetFunctionByName(string functionName)
     {
+        // Remember to have exact matching names or it will be null
         return Task.FromResult<Func<Task>>(functionName switch
         {
             // Navigation values
@@ -158,9 +159,7 @@ internal static class CustomKeybindings
             "Down" => UIHelper.Down,
 
             // Scroll
-            "ScrollUp" => UIHelper.ScrollUp,
-            "ScrollDown" => UIHelper.ScrollDown,
-            "ScrollToTop" => UIHelper.ScrollToToTop,
+            "ScrollToTop" => UIHelper.ScrollToTop,
             "ScrollToBottom" => UIHelper.ScrollToBottom,
 
             // Zoom
@@ -181,9 +180,10 @@ internal static class CustomKeybindings
 
             // Window functions
             "Fullscreen" => UIHelper.Fullscreen,
-            "TopMost" => UIHelper.SetTopMost,
+            "SetTopMost" => UIHelper.SetTopMost,
             "Close" => UIHelper.Close,
             "ToggleInterface" => UIHelper.ToggleInterface,
+            "NewWindow" => UIHelper.NewWindow,
 
             // Windows
             "AboutWindow" => UIHelper.AboutWindow,
@@ -193,7 +193,7 @@ internal static class CustomKeybindings
             "SettingsWindow" => UIHelper.SettingsWindow,
 
             // Open functions
-            "Open" => OpenSave.OpenAsync,
+            "Open" => UIHelper.Open,
             "OpenWith" => UIHelper.OpenWith,
             "OpenInExplorer" => UIHelper.OpenInExplorer,
             "Save" => OpenSave.SaveFilesAsync,
@@ -227,8 +227,8 @@ internal static class CustomKeybindings
             "Set5Star" => UIHelper.Set5Star,
 
             // Misc
-            "ChangeBackground" => UIHelper.ToggleBackground,
-            "GalleryClick" => UIHelper.GalleryClick,
+            "ChangeBackground" => UIHelper.ChangeBackground,
+            "GalleryClick" => UIHelper.GalleryClick, // TODO Add to window
             "Center" => UIHelper.Center,
             "Slideshow" => UIHelper.Slideshow,
             "ColorPicker" => UIHelper.ColorPicker,

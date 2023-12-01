@@ -47,6 +47,18 @@ namespace PicView.Views.Windows
         {
             WindowBlur.EnableBlur(this);
 
+            var shortcuts = new UserControls.Misc.ShortcutList
+            {
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            Container.Children.Add(shortcuts);
+
+            var credits = new UserControls.Misc.Credits
+            {
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            Container.Children.Add(credits);
+
             Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, ExpandBorder, false);
             Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, ExpandBorder, true);
 
@@ -82,33 +94,6 @@ namespace PicView.Views.Windows
 
             var color = Settings.Default.DarkTheme ? Colors.White : (Color)Application.Current.Resources["MainColor"];
 
-            Iconic.MouseEnter += delegate
-            {
-                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, IconicBrush);
-            };
-            Iconic.MouseLeave += delegate
-            {
-                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, IconicBrush);
-            };
-
-            Ionic.MouseEnter += delegate
-            {
-                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, IonicBrush);
-            };
-            Ionic.MouseLeave += delegate
-            {
-                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, IonicBrush);
-            };
-
-            FontAwesome.MouseEnter += delegate
-            {
-                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, FontAwesomeBrush);
-            };
-            FontAwesome.MouseLeave += delegate
-            {
-                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, FontAwesomeBrush);
-            };
-
             GitHub.MouseEnter += delegate
             {
                 AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, GitHubBrush);
@@ -125,24 +110,6 @@ namespace PicView.Views.Windows
             License.MouseLeave += delegate
             {
                 AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, LicenseBrush);
-            };
-
-            zondicons.MouseEnter += delegate
-            {
-                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, zondiconsBrush);
-            };
-            zondicons.MouseLeave += delegate
-            {
-                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, zondiconsBrush);
-            };
-
-            freepik.MouseEnter += delegate
-            {
-                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, FreepikBrush);
-            };
-            freepik.MouseLeave += delegate
-            {
-                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, FreepikBrush);
             };
 
             PicViewSite.MouseEnter += delegate

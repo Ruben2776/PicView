@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using PicView.Shortcuts;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace PicView.Views.UserControls.Misc;
 
@@ -12,287 +14,322 @@ public partial class ShortcutList
         InitializeComponent();
 
         // NextBox
-        NextBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Next", false);
-        NextBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Next", true);
+        NextBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Next", false).ConfigureAwait(false);
+        NextBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Next", true).ConfigureAwait(false);
 
-        NextBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Next", false);
-        NextBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Next", true);
+        NextBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Next", false).ConfigureAwait(false);
+        NextBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Next", true).ConfigureAwait(false);
 
         // PrevBox
-        PrevBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Prev", false);
-        PrevBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Prev", true);
+        PrevBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Prev", false).ConfigureAwait(false);
+        PrevBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Prev", true).ConfigureAwait(false);
 
-        PrevBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Prev", false);
-        PrevBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Prev", true);
+        PrevBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Prev", false).ConfigureAwait(false);
+        PrevBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Prev", true).ConfigureAwait(false);
 
         // UpBox || Rotate right
-        UpBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Up", false);
-        UpBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Up", true);
+        UpBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Up", false).ConfigureAwait(false);
+        UpBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Up", true).ConfigureAwait(false);
 
-        UpBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Up", false);
-        UpBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Up", true);
+        UpBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Up", false).ConfigureAwait(false);
+        UpBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Up", true).ConfigureAwait(false);
 
         // DownBox || Rotate left
-        DownBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Down", false);
-        DownBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Down", true);
+        DownBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Down", false).ConfigureAwait(false);
+        DownBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Down", true).ConfigureAwait(false);
 
-        DownBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Down", false);
-        DownBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Down", true);
+        DownBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Down", false).ConfigureAwait(false);
+        DownBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Down", true).ConfigureAwait(false);
 
-        // PgUpBox
-        PgUpBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollUp", false);
-        PgUpBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollUp", true);
+        // ScrollToTopBox
+        ScrollToTopBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ScrollToTop", false).ConfigureAwait(false);
+        ScrollToTopBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ScrollToTop", true).ConfigureAwait(false);
 
-        PgUpBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollUp", false);
-        PgUpBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollUp", true);
-
-        // ScrlTopBox
-        ScrlTopBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollToTop", false);
-        ScrlTopBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollToTop", true);
-
-        ScrlTopBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToTop", false);
-        ScrlTopBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToTop", true);
-
-        // PgDownBox
-        PgDownBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollDown", false);
-        PgDownBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollDown", true);
-
-        PgUpBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollDown", false);
-        PgUpBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollDown", true);
+        ScrollToTopBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToTop", false).ConfigureAwait(false);
+        ScrollToTopBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToTop", true).ConfigureAwait(false);
 
         // ScrlBottomBox
-        ScrlBottomBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollToBottom", false);
-        ScrlBottomBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ScrollToBottom", true);
+        ScrlBottomBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ScrollToBottom", false).ConfigureAwait(false);
+        ScrlBottomBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ScrollToBottom", true).ConfigureAwait(false);
 
-        ScrlBottomBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToBottom", false);
-        ScrlBottomBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToBottom", true);
+        ScrlBottomBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToBottom", false).ConfigureAwait(false);
+        ScrlBottomBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ScrollToBottom", true).ConfigureAwait(false);
 
         // Toggle Scroll
-        ToggleScrlBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ToggleScroll", false);
-        ToggleScrlBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ToggleScroll", true);
+        ToggleScrlBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleScroll", false).ConfigureAwait(false);
+        ToggleScrlBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleScroll", true).ConfigureAwait(false);
 
-        ToggleScrlBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleScroll", false);
-        ToggleScrlBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleScroll", true);
+        ToggleScrlBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleScroll", false).ConfigureAwait(false);
+        ToggleScrlBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleScroll", true).ConfigureAwait(false);
 
         // Zoom In
-        ZoomInBox.Loaded += (s, _) => UpdateTextBoxes(s, "ZoomIn", false);
+        ZoomInBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ZoomIn", false).ConfigureAwait(false);
 
-        ZoomInBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomIn", false);
+        ZoomInBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomIn", false).ConfigureAwait(false);
 
         // Zoom Out
-        ZoomOutBox.Loaded += (s, _) => UpdateTextBoxes(s, "ZoomOut", false);
+        ZoomOutBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ZoomOut", false).ConfigureAwait(false);
 
-        ZoomOutBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomOut", false);
+        ZoomOutBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomOut", false).ConfigureAwait(false);
 
         // Reset zoom
-        ResetZoomBox.Loaded += (s, _) => UpdateTextBoxes(s, "ResetZoom", false);
+        ResetZoomBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResetZoom", false).ConfigureAwait(false);
 
-        ResetZoomBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResetZoom", false);
+        ResetZoomBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResetZoom", false).ConfigureAwait(false);
 
         // Flip
-        FlipBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Flip", false);
-        FlipBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Flip", true);
+        FlipBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Flip", false).ConfigureAwait(false);
+        FlipBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Flip", true).ConfigureAwait(false);
 
-        FlipBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Flip", false);
-        FlipBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Flip", true);
+        FlipBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Flip", false).ConfigureAwait(false);
+        FlipBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Flip", true).ConfigureAwait(false);
 
         // Crop
-        CropBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Crop", false);
-        CropBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Crop", true);
+        CropBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Crop", false).ConfigureAwait(false);
+        CropBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Crop", true).ConfigureAwait(false);
 
-        CropBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Crop", false);
-        CropBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Crop", true);
+        CropBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Crop", false).ConfigureAwait(false);
+        CropBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Crop", true).ConfigureAwait(false);
 
         // Change Background
-        CropBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ToggleBackground", false);
-        CropBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ToggleBackground", true);
+        ChangeBgBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ChangeBackground", false).ConfigureAwait(false);
+        ChangeBgBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ChangeBackground", true).ConfigureAwait(false);
 
-        CropBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleBackground", false);
-        CropBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleBackground", true);
+        ChangeBgBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ChangeBackground", false).ConfigureAwait(false);
+        ChangeBgBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ChangeBackground", true).ConfigureAwait(false);
 
         // Color Picker
-        ColorPickBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ColorPicker", false);
-        ColorPickBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ColorPicker", true);
+        ColorPickBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ColorPicker", false).ConfigureAwait(false);
+        ColorPickBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ColorPicker", true).ConfigureAwait(false);
 
-        ColorPickBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ColorPicker", false);
-        ColorPickBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ColorPicker", true);
+        ColorPickBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ColorPicker", false).ConfigureAwait(false);
+        ColorPickBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ColorPicker", true).ConfigureAwait(false);
 
         // Toggle UI
-        ToggleUIBox.Loaded += (s, _) => UpdateTextBoxes(s, "ToggleInterface", false);
+        ToggleUIBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleInterface", false).ConfigureAwait(false);
 
-        ToggleUIBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleInterface", false);
+        ToggleUIBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleInterface", false).ConfigureAwait(false);
 
         // Toggle Fullscreen
-        SlideshowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Fullscreen", false);
+        SlideshowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Fullscreen", false).ConfigureAwait(false);
 
-        ToggleFullscreenBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Fullscreen", false);
+        ToggleFullscreenBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Fullscreen", false).ConfigureAwait(false);
 
         // Slideshow
-        SlideshowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Slideshow", false);
-        SlideshowBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Slideshow", true);
+        SlideshowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Slideshow", false).ConfigureAwait(false);
+        SlideshowBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Slideshow", true).ConfigureAwait(false);
 
-        SlideshowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Slideshow", false);
-        SlideshowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Slideshow", true);
+        SlideshowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Slideshow", false).ConfigureAwait(false);
+        SlideshowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Slideshow", true).ConfigureAwait(false);
 
         // Show Image Gallery
-        ShowImageGalleryBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ToggleGallery", false);
-        ShowImageGalleryBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ToggleGallery", true);
+        ShowImageGalleryBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleGallery", false).ConfigureAwait(false);
+        ShowImageGalleryBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleGallery", true).ConfigureAwait(false);
 
-        ShowImageGalleryBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleGallery", false);
-        ShowImageGalleryBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleGallery", true);
+        ShowImageGalleryBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleGallery", false).ConfigureAwait(false);
+        ShowImageGalleryBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleGallery", true).ConfigureAwait(false);
 
         // Open
-        OpenBox.Loaded += (s, _) => UpdateTextBoxes(s, "Open", false);
+        OpenBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "Open", false).ConfigureAwait(false);
 
-        OpenBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Open", false);
+        OpenBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Open", false).ConfigureAwait(false);
 
         // Save
-        SaveBox.Loaded += (s, _) => UpdateTextBoxes(s, "Save", false);
+        SaveBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "Save", false).ConfigureAwait(false);
 
-        SaveBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Save", false);
+        SaveBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Save", false).ConfigureAwait(false);
 
         // Print
-        PrintBox.Loaded += (s, _) => UpdateTextBoxes(s, "Print", false);
+        PrintBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "Print", false).ConfigureAwait(false);
 
-        PrintBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Print", false);
+        PrintBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Print", false).ConfigureAwait(false);
 
         // Delete File
-        DeleteBox1.Loaded += (s, _) => UpdateTextBoxes(s, "DeleteFile", false);
-        DeleteBox2.Loaded += (s, _) => UpdateTextBoxes(s, "DeleteFile", true);
+        DeleteBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "DeleteFile", false).ConfigureAwait(false);
+        DeleteBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "DeleteFile", true).ConfigureAwait(false);
 
-        DeleteBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "DeleteFile", false);
-        DeleteBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "DeleteFile", true);
+        DeleteBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "DeleteFile", false).ConfigureAwait(false);
+        DeleteBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "DeleteFile", true).ConfigureAwait(false);
 
         // Rename File
-        RenameBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Rename", false);
-        RenameBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Rename", true);
+        RenameBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Rename", false).ConfigureAwait(false);
+        RenameBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Rename", true).ConfigureAwait(false);
 
-        RenameBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Rename", false);
-        RenameBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Rename", true);
+        RenameBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Rename", false).ConfigureAwait(false);
+        RenameBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Rename", true).ConfigureAwait(false);
 
         // Show in folder
-        ShowInFolderBox1.Loaded += (s, _) => UpdateTextBoxes(s, "OpenInExplorer", false);
-        ShowInFolderBox2.Loaded += (s, _) => UpdateTextBoxes(s, "OpenInExplorer", true);
+        ShowInFolderBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "OpenInExplorer", false).ConfigureAwait(false);
+        ShowInFolderBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "OpenInExplorer", true).ConfigureAwait(false);
 
-        ShowInFolderBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenInExplorer", false);
-        ShowInFolderBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenInExplorer", true);
+        ShowInFolderBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenInExplorer", false).ConfigureAwait(false);
+        ShowInFolderBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenInExplorer", true).ConfigureAwait(false);
 
         // File properties
-        FilePropertiesBox.Loaded += (s, _) => UpdateTextBoxes(s, "ShowFileProperties", false);
+        FilePropertiesBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ShowFileProperties", false).ConfigureAwait(false);
 
-        FilePropertiesBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ShowFileProperties", false);
+        FilePropertiesBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ShowFileProperties", false).ConfigureAwait(false);
 
         // Copy file
-        CopyFileBox.Loaded += (s, _) => UpdateTextBoxes(s, "CopyFile", false);
+        CopyFileBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyFile", false).ConfigureAwait(false);
 
-        CopyFileBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyFile", false);
+        CopyFileBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyFile", false).ConfigureAwait(false);
 
         // Copy file path
-        CopyFilePathBox.Loaded += (s, _) => UpdateTextBoxes(s, "CopyFilePath", false);
+        CopyFilePathBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyFilePath", false).ConfigureAwait(false);
 
-        CopyFilePathBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyFilePath", false);
+        CopyFilePathBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyFilePath", false).ConfigureAwait(false);
 
         // Copy image
-        CopyImageBox.Loaded += (s, _) => UpdateTextBoxes(s, "CopyImage", false);
+        CopyImageBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyImage", false).ConfigureAwait(false);
 
-        CopyImageBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyImage", false);
+        CopyImageBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyImage", false).ConfigureAwait(false);
 
         // Copy base64
-        CopyBase64Box1.Loaded += (s, _) => UpdateTextBoxes(s, "CopyBase64", false);
-        CopyBase64Box2.Loaded += (s, _) => UpdateTextBoxes(s, "CopyBase64", true);
+        CopyBase64Box1.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyBase64", false).ConfigureAwait(false);
+        CopyBase64Box2.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyBase64", true).ConfigureAwait(false);
 
-        CopyBase64Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyBase64", false);
-        CopyBase64Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyBase64", true);
+        CopyBase64Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyBase64", false).ConfigureAwait(false);
+        CopyBase64Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyBase64", true).ConfigureAwait(false);
 
         // Cut file
-        CopyImageBox.Loaded += (s, _) => UpdateTextBoxes(s, "CutFile", false);
+        CopyImageBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CutFile", false).ConfigureAwait(false);
 
-        CopyImageBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CutFile", false);
+        CopyImageBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CutFile", false).ConfigureAwait(false);
 
         // About window
-        AboutBox1.Loaded += (s, _) => UpdateTextBoxes(s, "AboutWindow", false);
-        AboutBox2.Loaded += (s, _) => UpdateTextBoxes(s, "AboutWindow", false);
+        AboutBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "AboutWindow", false).ConfigureAwait(false);
+        AboutBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "AboutWindow", true).ConfigureAwait(false);
 
-        AboutBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AboutWindow", false);
-        AboutBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AboutWindow", true);
+        AboutBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AboutWindow", false).ConfigureAwait(false);
+        AboutBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AboutWindow", true).ConfigureAwait(false);
 
         // Settings window
-        SettingsBox1.Loaded += (s, _) => UpdateTextBoxes(s, "SettingsWindow", false);
-        SettingsBox2.Loaded += (s, _) => UpdateTextBoxes(s, "SettingsWindow", false);
+        SettingsBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "SettingsWindow", false).ConfigureAwait(false);
+        SettingsBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "SettingsWindow", true).ConfigureAwait(false);
 
-        SettingsBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "SettingsWindow", false);
-        SettingsBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "SettingsWindow", true);
+        SettingsBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "SettingsWindow", false).ConfigureAwait(false);
+        SettingsBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "SettingsWindow", true).ConfigureAwait(false);
 
         // Image info window
-        ImageInfoBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ImageInfoWindow", false);
-        ImageInfoBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ImageInfoWindow", false);
+        ImageInfoBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ImageInfoWindow", false).ConfigureAwait(false);
+        ImageInfoBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ImageInfoWindow", true).ConfigureAwait(false);
 
-        ImageInfoBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ImageInfoWindow", false);
-        ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ImageInfoWindow", true);
+        ImageInfoBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ImageInfoWindow", false).ConfigureAwait(false);
+        ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ImageInfoWindow", true).ConfigureAwait(false);
 
         // Resize Window
-        ResizeWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "ResizeWindow", false);
-        ResizeWindowBox2.Loaded += (s, _) => UpdateTextBoxes(s, "ResizeWindow", false);
+        ResizeWindowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResizeWindow", false).ConfigureAwait(false);
+        ResizeWindowBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResizeWindow", true).ConfigureAwait(false);
 
-        ImageInfoBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", false);
-        ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", true);
+        ImageInfoBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", false).ConfigureAwait(false);
+        ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", true).ConfigureAwait(false);
 
         // Close
-        CloseBox.Loaded += (s, _) => UpdateTextBoxes(s, "Close", false);
+        CloseBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Close", false).ConfigureAwait(false);
+        CloseBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Close", true).ConfigureAwait(false);
 
-        CloseBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Close", false);
+        CloseBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Close", false).ConfigureAwait(false);
+        CloseBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Close", true).ConfigureAwait(false);
+
+        // New window
+        NewWindowBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "OpenWith", false).ConfigureAwait(false);
+
+        NewWindowBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenWith", false).ConfigureAwait(false);
 
         // Center window
-        CenterWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "Center", false);
-        CenterWindowBox2.Loaded += (s, _) => UpdateTextBoxes(s, "Center", true);
+        CenterWindowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Center", false).ConfigureAwait(false);
+        CenterWindowBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Center", true).ConfigureAwait(false);
 
-        CenterWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Center", false);
-        CenterWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Center", true);
+        CenterWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Center", false).ConfigureAwait(false);
+        CenterWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Center", true).ConfigureAwait(false);
 
         // Topmost
-        TopMostBox1.Loaded += (s, _) => UpdateTextBoxes(s, "TopMost", false);
-        TopMostBox2.Loaded += (s, _) => UpdateTextBoxes(s, "TopMost", true);
+        TopMostBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "SetTopMost", false).ConfigureAwait(false);
+        TopMostBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "SetTopMost", true).ConfigureAwait(false);
 
-        TopMostBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "TopMost", false);
-        TopMostBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "TopMost", true);
+        TopMostBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "SetTopMost", false).ConfigureAwait(false);
+        TopMostBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "SetTopMost", true).ConfigureAwait(false);
 
         // Auto Fit Window
-        AutoFitWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindow", false);
-        AutoFitWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindow", true);
+        AutoFitWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindow", false).ConfigureAwait(false);
+        AutoFitWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindow", true).ConfigureAwait(false);
 
-        AutoFitWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "AutoFitWindow", false);
-        AutoFitWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "AutoFitWindow", true);
+        AutoFitWindowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "AutoFitWindow", false).ConfigureAwait(false);
+        AutoFitWindowBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "AutoFitWindow", true).ConfigureAwait(false);
 
         // Auto Fit Window fill
-        AutoFitFillWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindowAndStretch", false);
-        AutoFitFillWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindowAndStretch", true);
+        AutoFitFillWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindowAndStretch", false).ConfigureAwait(false);
+        AutoFitFillWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "AutoFitWindowAndStretch", true).ConfigureAwait(false);
 
-        AutoFitFillWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "AutoFitWindowAndStretch", false);
-        AutoFitFillWindowBox2.Loaded += (s, _) => UpdateTextBoxes(s, "AutoFitWindowAndStretch", true);
+        AutoFitFillWindowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "AutoFitWindowAndStretch", false).ConfigureAwait(false);
+        AutoFitFillWindowBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "AutoFitWindowAndStretch", true).ConfigureAwait(false);
 
         // Normal window
-        NormalWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindow", false);
-        NormalWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindow", true);
+        NormalWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindow", false).ConfigureAwait(false);
+        NormalWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindow", true).ConfigureAwait(false);
 
-        NormalWindowBox1.Loaded += (s, _) => UpdateTextBoxes(s, "NormalWindow", false);
-        NormalWindowBox2.Loaded += (s, _) => UpdateTextBoxes(s, "NormalWindow", true);
+        NormalWindowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "NormalWindow", false).ConfigureAwait(false);
+        NormalWindowBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "NormalWindow", true).ConfigureAwait(false);
 
         // Normal window fill
-        NormalWindowFillBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindowAndStretch", false);
-        NormalWindowFillBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindowAndStretch", true);
+        NormalWindowFillBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindowAndStretch", false).ConfigureAwait(false);
+        NormalWindowFillBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "NormalWindowAndStretch", true).ConfigureAwait(false);
 
-        NormalWindowFillBox1.Loaded += (s, _) => UpdateTextBoxes(s, "NormalWindowAndStretch", false);
-        NormalWindowFillBox2.Loaded += (s, _) => UpdateTextBoxes(s, "NormalWindowAndStretch", true);
+        NormalWindowFillBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "NormalWindowAndStretch", false).ConfigureAwait(false);
+        NormalWindowFillBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "NormalWindowAndStretch", true).ConfigureAwait(false);
 
         // Open with...
-        OpenWithBox.Loaded += (s, _) => UpdateTextBoxes(s, "OpenWith", false);
+        OpenWithBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "OpenWith", false).ConfigureAwait(false);
 
-        OpenWithBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenWith", false);
+        OpenWithBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenWith", false).ConfigureAwait(false);
 
         // Reload
-        OpenWithBox.Loaded += (s, _) => UpdateTextBoxes(s, "OpenWith", false);
+        OpenWithBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "OpenWith", false).ConfigureAwait(false);
 
-        OpenWithBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenWith", false);
+        OpenWithBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OpenWith", false).ConfigureAwait(false);
+
+        // Set 1 star
+        SetStar1Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set1Star", false).ConfigureAwait(false);
+        SetStar1Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set1Star", true).ConfigureAwait(false);
+
+        SetStar1Box1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set1Star", false).ConfigureAwait(false);
+        SetStar1Box2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set1Star", true).ConfigureAwait(false);
+
+        // Set 2 star
+        SetStar2Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set2Star", false).ConfigureAwait(false);
+        SetStar2Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set2Star", true).ConfigureAwait(false);
+
+        SetStar2Box1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set2Star", false).ConfigureAwait(false);
+        SetStar2Box2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set2Star", true).ConfigureAwait(false);
+
+        // Set 3 star
+        SetStar3Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set3Star", false).ConfigureAwait(false);
+        SetStar3Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set3Star", true).ConfigureAwait(false);
+
+        SetStar3Box1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set3Star", false).ConfigureAwait(false);
+        SetStar3Box2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set3Star", true).ConfigureAwait(false);
+
+        // Set 4 star
+        SetStar4Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set4Star", false).ConfigureAwait(false);
+        SetStar4Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set4Star", true).ConfigureAwait(false);
+
+        SetStar4Box1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set4Star", false).ConfigureAwait(false);
+        SetStar4Box2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set4Star", true).ConfigureAwait(false);
+
+        // Set 5 star
+        SetStar5Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set5Star", false).ConfigureAwait(false);
+        SetStar5Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set5Star", true).ConfigureAwait(false);
+
+        SetStar5Box1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set5Star", false).ConfigureAwait(false);
+        SetStar5Box2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set5Star", true).ConfigureAwait(false);
+
+        // Reset stars
+        ResetStarsBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set0Star", false).ConfigureAwait(false);
+        ResetStarsBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Set0Star", true).ConfigureAwait(false);
+
+        ResetStarsBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set0Star", false).ConfigureAwait(false);
+        ResetStarsBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set0Star", true).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -301,28 +338,29 @@ public partial class ShortcutList
     /// <param name="sender">The sender object.</param>
     /// <param name="functionName">The name of the function.</param>
     /// <param name="alt">A flag indicating whether it's an alternative key.</param>
-    private void UpdateTextBoxes(object sender, string functionName, bool alt)
+    private async Task UpdateTextBoxes(object sender, string functionName, bool alt)
     {
-        var textBox = (TextBox)sender;
-        var function = CustomKeybindings.GetFunctionByName(functionName).Result;
+        var key = await Task.Run(() =>
+         {
+             var function = CustomKeybindings.GetFunctionByName(functionName).Result;
 
-        // Find the key associated with the specified function
-        var keys = CustomKeybindings.CustomShortcuts.Where(x => x.Value == function).Select(x => x.Key).ToList();
-        var key = string.Empty;
-        if (keys.Count > 0)
+             // Find the key associated with the specified function
+             var keys = CustomKeybindings.CustomShortcuts.Where(x => x.Value == function).Select(x => x.Key).ToList();
+
+             return keys.Count switch
+             {
+                 <= 0 => string.Empty,
+                 1 => alt ? string.Empty : keys.FirstOrDefault().ToString(),
+                 _ => alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString()
+             };
+         }).ConfigureAwait(false);
+
+        await Dispatcher.InvokeAsync(() =>
         {
-            if (keys.Count == 1)
-            {
-                key = alt ? string.Empty : keys.FirstOrDefault().ToString();
-            }
-            else
-            {
-                key = alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString();
-            }
-        }
-        textBox.Text = key;
-
-        UpdateModifierTextBoxes(functionName, key, alt);
+            var textBox = (TextBox)sender;
+            textBox.Text = key;
+            UpdateModifierTextBoxes(functionName, key, alt);
+        }, DispatcherPriority.Normal);
     }
 
     /// <summary>
@@ -399,6 +437,11 @@ public partial class ShortcutList
     {
         e.Handled = true;
 
+        if (e.Key == Key.Escape)
+        {
+            // TODO unbind with escape key
+        }
+
         // Update the text box content
         var textBox = (TextBox)sender;
         var key = e.Key.ToString();
@@ -439,8 +482,5 @@ public partial class ShortcutList
             // Update the key and function name in the CustomShortcuts dictionary
             CustomKeybindings.CustomShortcuts[e.Key] = function;
         }
-
-        // Update the keybindings.json file
-        await CustomKeybindings.UpdateKeyBindingsFile().ConfigureAwait(false);
     }
 }

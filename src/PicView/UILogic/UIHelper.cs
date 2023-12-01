@@ -36,10 +36,14 @@ namespace PicView.UILogic
         /// <returns></returns>
         internal static async Task<bool> CheckModifierFunctionAsync()
         {
-            if (CtrlDown)
+            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+            switch (CurrentKey)
             {
-                if (CurrentKey == Key.C)
-                {
+                case Key.Escape:
+                    await DoClose();
+                    return true;
+
+                case Key.C when CtrlDown:
                     if (ShiftDown)
                     {
                         CopyPaste.CopyBitmap();
@@ -56,74 +60,50 @@ namespace PicView.UILogic
                             CopyPaste.CopyFile();
                     }
                     return true;
-                }
 
-                if (CurrentKey == Key.V)
-                {
+                case Key.V when CtrlDown:
                     await CopyPaste.PasteAsync().ConfigureAwait(false);
                     return true;
-                }
 
-                if (CurrentKey == Key.X)
-                {
+                case Key.X when CtrlDown:
                     CopyPaste.Cut();
                     return true;
-                }
 
-                if (CurrentKey == Key.O)
-                {
+                case Key.O when CtrlDown:
                     await OpenSave.OpenAsync().ConfigureAwait(false);
                     return true;
-                }
 
-                if (CurrentKey == Key.S)
-                {
+                case Key.S when CtrlDown:
                     await OpenSave.SaveFilesAsync().ConfigureAwait(false);
                     return true;
-                }
 
-                if (CurrentKey == Key.R)
-                {
+                case Key.R when CtrlDown:
                     await ErrorHandling.ReloadAsync().ConfigureAwait(false);
                     return true;
-                }
 
-                if (CurrentKey == Key.P)
-                {
+                case Key.P when CtrlDown:
                     OpenSave.Print(Navigation.Pics[Navigation.FolderIndex]);
                     return true;
-                }
-                if (CurrentKey == Key.I && !GalleryFunctions.IsGalleryOpen)
-                {
+
+                case Key.I when CtrlDown && !GalleryFunctions.IsGalleryOpen:
                     FileProperties.ShowFileProperties();
                     return true;
-                }
 
-                if (CurrentKey == Key.N)
-                {
+                case Key.N when CtrlDown:
                     ProcessLogic.StartNewProcess();
                     return true;
-                }
 
-                if (CurrentKey == Key.E)
-                {
+                case Key.E when CtrlDown:
                     OpenSave.OpenWith();
                     return true;
-                }
-            }
-            else if (ShiftDown)
-            {
-                if (CurrentKey == Key.Delete)
-                {
+
+                case Key.Delete when ShiftDown:
                     await DeleteFiles.DeleteFileAsync(false, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
                     return true;
-                }
-            }
 
-            if (CurrentKey == Key.Delete)
-            {
-                await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
-                return true;
+                case Key.Delete:
+                    await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                    return true;
             }
 
             return false;
@@ -279,63 +259,7 @@ namespace PicView.UILogic
             await GetMainWindow.Dispatcher.InvokeAsync(Rotation.Flip);
         }
 
-        internal static async Task ScrollUp()
-        {
-            var check = await CheckModifierFunctionAsync();
-            if (check)
-            {
-                return;
-            }
-            if (GalleryFunctions.IsGalleryOpen)
-            {
-                return;
-            }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
-                {
-                    GalleryNavigation.ScrollGallery(true, CtrlDown, ShiftDown, true);
-                }
-                else
-                {
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
-                    }
-                }
-            });
-        }
-
-        internal static async Task ScrollDown()
-        {
-            var check = await CheckModifierFunctionAsync();
-            if (check)
-            {
-                return;
-            }
-            if (GalleryFunctions.IsGalleryOpen)
-            {
-                return;
-            }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen)
-                {
-                    GalleryNavigation.ScrollGallery(false, CtrlDown, ShiftDown, true);
-                }
-                else
-                {
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
-                    }
-                }
-            });
-        }
-
-        internal static async Task ScrollToToTop()
+        internal static async Task ScrollToTop()
         {
             var check = await CheckModifierFunctionAsync();
             if (check)
@@ -491,6 +415,12 @@ namespace PicView.UILogic
             {
                 return;
             }
+
+            await DoClose();
+        }
+
+        private static async Task DoClose()
+        {
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (UserControls_Open())
@@ -619,6 +549,20 @@ namespace PicView.UILogic
             await GetMainWindow.Dispatcher.InvokeAsync(ConfigureWindows.SettingsWindow);
         }
 
+        internal static async Task NewWindow()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown)
+            {
+                return;
+            }
+            ProcessLogic.StartNewProcess();
+        }
+
         #endregion Windows
 
         #region File Related
@@ -677,6 +621,20 @@ namespace PicView.UILogic
                 return;
             }
             OpenSave.Print(Navigation.Pics[Navigation.FolderIndex]);
+        }
+
+        internal static async Task Open()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            await OpenSave.OpenAsync().ConfigureAwait(false);
         }
 
         internal static async Task OpenWith()
@@ -1045,7 +1003,7 @@ namespace PicView.UILogic
 
         #region Misc
 
-        internal static async Task ToggleBackground()
+        internal static async Task ChangeBackground()
         {
             var check = await CheckModifierFunctionAsync();
             if (check)

@@ -176,14 +176,12 @@
                 x:Name="DownBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Down" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="DownBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="S" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -198,28 +196,7 @@
             <TextBox
                 x:Name="ScrollDownBox2"
                 Width="150"
-                Margin="0,0,5,0"
-                Text="S" />
-        </StackPanel>
-
-        <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
-            <TextBlock
-                Width="160"
-                Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Scroll up" />
-            <TextBox
-                x:Name="PgUpBox1"
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="PageUp" />
-            <TextBox
-                x:Name="PgUpBox2"
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                Margin="0,0,5,0" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -227,39 +204,17 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Scroll to top" />
+                Text="Scroll to top (replace)" />
             <TextBox
-                x:Name="ScrlTopBox1"
+                x:Name="ScrollToTopBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Home" />
+                IsReadOnly="False" />
             <TextBox
-                x:Name="ScrlTopBox2"
+                x:Name="ScrollToTopBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
-        </StackPanel>
-
-        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
-            <TextBlock
-                Width="160"
-                Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Scroll down" />
-            <TextBox
-                x:Name="PgDownBox1"
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="PageDown" />
-            <TextBox
-                x:Name="PgDownBox2"
-                Width="150"
-                Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -272,14 +227,12 @@
                 x:Name="ScrlBottomBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="End" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ScrlBottomBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -292,14 +245,12 @@
                 x:Name="ToggleScrlBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Scroll" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ToggleScrlBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <Label
@@ -317,8 +268,7 @@
                 x:Name="ZoomInBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="OemPlus" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -335,8 +285,7 @@
                 x:Name="ZoomOutBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="OemMinus" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -353,10 +302,7 @@
                 Width="150"
                 Margin="0,0,5,0"
                 Text="{StaticResource MouseDrag}" />
-            <TextBox
-                Width="150"
-                Margin="0,0,5,0"
-                Text="" />
+            <TextBox Width="150" Margin="0,0,5,0" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -369,8 +315,7 @@
                 x:Name="ResetZoomBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -392,14 +337,12 @@
                 x:Name="FlipBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="F" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="FlipBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -412,14 +355,12 @@
                 x:Name="CropBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="C" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="CropBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -432,14 +373,12 @@
                 x:Name="ChangeBgBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="B" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ChangeBgBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -452,14 +391,12 @@
                 x:Name="ColorPickBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ColorPickBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <Label
@@ -477,8 +414,7 @@
                 x:Name="ToggleUIBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -495,8 +431,7 @@
                 x:Name="ToggleFullscreenBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="F11" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -513,14 +448,12 @@
                 x:Name="SlideshowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="F5" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="SlideshowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -533,14 +466,12 @@
                 x:Name="ShowImageGalleryBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="G" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ShowImageGalleryBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <Label
@@ -558,8 +489,7 @@
                 x:Name="OpenBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -576,8 +506,7 @@
                 x:Name="OpenWithBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -594,8 +523,7 @@
                 x:Name="ReloadBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -612,8 +540,7 @@
                 x:Name="SaveBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -630,8 +557,7 @@
                 x:Name="PrintBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -664,14 +590,12 @@
                 x:Name="DeleteBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="DeleteBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -689,8 +613,7 @@
                 x:Name="RenameBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -708,8 +631,7 @@
                 x:Name="ShowInFolderBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -722,8 +644,7 @@
                 x:Name="FilePropertiesBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -745,8 +666,7 @@
                 x:Name="CopyFileBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -763,8 +683,7 @@
                 x:Name="CopyFilePathBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -781,8 +700,7 @@
                 x:Name="CopyImageBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -803,14 +721,12 @@
                 x:Name="CopyBase64Box1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="CopyBase64Box2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -823,14 +739,12 @@
                 x:Name="DuplicateBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="DuplicateBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -843,8 +757,7 @@
                 x:Name="CutBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -866,14 +779,12 @@
                 x:Name="AboutBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="F1" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="AboutBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -886,14 +797,12 @@
                 x:Name="SettingsBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="F4" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="SettingsBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -906,14 +815,12 @@
                 x:Name="ImageInfoBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="I" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="ImageInfoBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -931,8 +838,7 @@
                 x:Name="ResizeWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -942,15 +848,48 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=Close}" />
             <TextBox
-                x:Name="CloseBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Esc" />
+                Text="{StaticResource Esc}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + Q" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource ResourceKey=Close}" />
+            <TextBox
+                x:Name="CloseBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="CloseBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource ResourceKey=NewWindow}" />
+            <TextBox
+                x:Name="NewWindowBox"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                Width="150"
+                Margin="0,0,5,0"
+                Text="Ctrl + N" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -963,14 +902,12 @@
                 x:Name="CenterWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="Space" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="CenterWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -983,14 +920,12 @@
                 x:Name="TopMostBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="T" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="TopMostBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <Label
@@ -1008,14 +943,12 @@
                 x:Name="AutoFitWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="AutoFitWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1028,14 +961,12 @@
                 x:Name="AutoFitFillWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="AutoFitFillWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1048,14 +979,12 @@
                 x:Name="NormalWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="NormalWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1068,14 +997,125 @@
                 x:Name="NormalWindowFillBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
             <TextBox
                 x:Name="NormalWindowFillBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False"
-                Text="" />
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <Label
+            Margin="5,10,0,15"
+            HorizontalAlignment="Center"
+            Content="Set stars (replace by translation}" />
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="1 Star (replace)" />
+            <TextBox
+                x:Name="SetStar1Box1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="SetStar1Box2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="2 Star (replace)" />
+            <TextBox
+                x:Name="SetStar2Box1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="SetStar2Box2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="3 Star (replace)" />
+            <TextBox
+                x:Name="SetStar3Box1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="SetStar3Box2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="4 Star (replace)" />
+            <TextBox
+                x:Name="SetStar4Box1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="SetStar4Box2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="5 Star (replace)" />
+            <TextBox
+                x:Name="SetStar5Box1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="SetStar5Box2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="Reset Stars (replace)" />
+            <TextBox
+                x:Name="ResetStarsBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="ResetStarsBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
         </StackPanel>
     </StackPanel>
 </UserControl>
