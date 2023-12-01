@@ -1115,7 +1115,7 @@ namespace PicView.UILogic
 
             if (!GalleryFunctions.IsGalleryOpen)
             {
-                await GetMainWindow.Dispatcher.InvokeAsync(ColorPicking.StartRunning);
+                await GetMainWindow.Dispatcher.InvokeAsync(ColorPicking.Start);
             }
         }
 

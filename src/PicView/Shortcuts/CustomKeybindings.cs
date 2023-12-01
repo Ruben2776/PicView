@@ -228,7 +228,7 @@ internal static class CustomKeybindings
 
             // Misc
             "ChangeBackground" => UIHelper.ChangeBackground,
-            "GalleryClick" => UIHelper.GalleryClick, // TODO Add to window
+            "GalleryClick" => UIHelper.GalleryClick,
             "Center" => UIHelper.Center,
             "Slideshow" => UIHelper.Slideshow,
             "ColorPicker" => UIHelper.ColorPicker,

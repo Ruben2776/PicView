@@ -126,6 +126,42 @@
                 Margin="0,0,5,0" />
         </StackPanel>
 
+        <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource ToggleLooping}" />
+            <TextBox
+                x:Name="ToggleLoopingBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="ToggleLoopingBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="Select gallery thumbnail (replace)" />
+            <TextBox
+                x:Name="GalleryBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="GalleryBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
         <Label
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
@@ -428,14 +464,31 @@
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ResourceKey=ToggleFullscreen}" />
             <TextBox
-                x:Name="ToggleFullscreenBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                Text="Alt + Enter" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Shift + double click" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource ResourceKey=ToggleFullscreen}" />
+            <TextBox
+                x:Name="ToggleFullscreenBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="ToggleFullscreenBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">

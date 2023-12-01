@@ -4,6 +4,7 @@ using PicView.Shortcuts;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace PicView.Views.UserControls.Misc;
 
@@ -26,6 +27,20 @@ public partial class ShortcutList
 
         PrevBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Prev", false).ConfigureAwait(false);
         PrevBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Prev", true).ConfigureAwait(false);
+
+        // ToggleLoopingBox
+        ToggleLoopingBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleLooping", false).ConfigureAwait(false);
+        ToggleLoopingBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleLooping", true).ConfigureAwait(false);
+
+        ToggleLoopingBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleLooping", false).ConfigureAwait(false);
+        ToggleLoopingBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleLooping", true).ConfigureAwait(false);
+
+        // GalleryBox
+        GalleryBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "GalleryClick", false).ConfigureAwait(false);
+        GalleryBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "GalleryClick", true).ConfigureAwait(false);
+
+        GalleryBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "GalleryClick", false).ConfigureAwait(false);
+        GalleryBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "GalleryClick", true).ConfigureAwait(false);
 
         // UpBox || Rotate right
         UpBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Up", false).ConfigureAwait(false);
@@ -111,9 +126,11 @@ public partial class ShortcutList
         ToggleUIBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleInterface", false).ConfigureAwait(false);
 
         // Toggle Fullscreen
-        SlideshowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Fullscreen", false).ConfigureAwait(false);
+        ToggleFullscreenBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Fullscreen", false).ConfigureAwait(false);
+        ToggleFullscreenBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Fullscreen", true).ConfigureAwait(false);
 
-        ToggleFullscreenBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Fullscreen", false).ConfigureAwait(false);
+        ToggleFullscreenBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Fullscreen", false).ConfigureAwait(false);
+        ToggleFullscreenBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Fullscreen", true).ConfigureAwait(false);
 
         // Slideshow
         SlideshowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Slideshow", false).ConfigureAwait(false);
@@ -222,8 +239,8 @@ public partial class ShortcutList
         ResizeWindowBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResizeWindow", false).ConfigureAwait(false);
         ResizeWindowBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResizeWindow", true).ConfigureAwait(false);
 
-        ImageInfoBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", false).ConfigureAwait(false);
-        ImageInfoBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", true).ConfigureAwait(false);
+        ResizeWindowBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", false).ConfigureAwait(false);
+        ResizeWindowBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeWindow", true).ConfigureAwait(false);
 
         // Close
         CloseBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Close", false).ConfigureAwait(false);
@@ -437,11 +454,6 @@ public partial class ShortcutList
     {
         e.Handled = true;
 
-        if (e.Key == Key.Escape)
-        {
-            // TODO unbind with escape key
-        }
-
         // Update the text box content
         var textBox = (TextBox)sender;
         var key = e.Key.ToString();
@@ -451,6 +463,17 @@ public partial class ShortcutList
 
         var function = await CustomKeybindings.GetFunctionByName(functionName).ConfigureAwait(false);
 
+        if (e.Key == Key.Escape)
+        {
+            Remove();
+            await Dispatcher.InvokeAsync(() =>
+            {
+                textBox.Text = string.Empty;
+            });
+
+            return;
+        }
+
         // Handle whether it's an alternative key or not
         if (alt)
         {
@@ -459,8 +482,7 @@ public partial class ShortcutList
             {
                 if (CustomKeybindings.CustomShortcuts.ContainsValue(function))
                 {
-                    var prevKey = CustomKeybindings.CustomShortcuts.FirstOrDefault(x => x.Value == function).Key;
-                    CustomKeybindings.CustomShortcuts.Remove(prevKey);
+                    Remove();
                 }
                 // Add the alternative key to the dictionary
                 CustomKeybindings.CustomShortcuts[e.Key] = function;
@@ -481,6 +503,13 @@ public partial class ShortcutList
         {
             // Update the key and function name in the CustomShortcuts dictionary
             CustomKeybindings.CustomShortcuts[e.Key] = function;
+        }
+        return;
+
+        void Remove()
+        {
+            var prevKey = CustomKeybindings.CustomShortcuts.FirstOrDefault(x => x.Value == function).Key;
+            CustomKeybindings.CustomShortcuts.Remove(prevKey);
         }
     }
 }
