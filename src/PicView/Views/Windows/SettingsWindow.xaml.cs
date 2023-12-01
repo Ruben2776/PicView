@@ -245,6 +245,20 @@ namespace PicView.Views.Windows
                 CenterRadio.Unchecked += (_, _) => Settings.Default.KeepCentered = false;
                 CenterRadio.IsChecked = Settings.Default.KeepCentered;
 
+                AliasingBoxHighQuality.IsSelected = !Settings.Default.IsScalingSetToNearestNeighbor;
+                AliasingBoxHighQuality.Selected += delegate
+                {
+                    Settings.Default.IsScalingSetToNearestNeighbor = false;
+                    ZoomLogic.TriggerScalingModeUpdate();
+                };
+
+                AliasingNearestNeighbor.IsSelected = Settings.Default.IsScalingSetToNearestNeighbor;
+                AliasingNearestNeighbor.Selected += delegate
+                {
+                    Settings.Default.IsScalingSetToNearestNeighbor = true;
+                    ZoomLogic.TriggerScalingModeUpdate();
+                };
+
                 switch (Settings.Default.ColorTheme)
                 {
                     case 1:
@@ -296,19 +310,6 @@ namespace PicView.Views.Windows
                         LimeRadio.IsChecked = true;
                         break;
                 }
-            };
-            AliasingBoxHighQuality.IsSelected = !Settings.Default.IsScalingSetToNearestNeighbor;
-            AliasingBoxHighQuality.Selected += delegate
-            {
-                Settings.Default.IsScalingSetToNearestNeighbor = false;
-                ZoomLogic.TriggerScalingModeUpdate();
-            };
-
-            AliasingNearestNeighbor.IsSelected = Settings.Default.IsScalingSetToNearestNeighbor;
-            AliasingNearestNeighbor.Selected += delegate
-            {
-                Settings.Default.IsScalingSetToNearestNeighbor = true;
-                ZoomLogic.TriggerScalingModeUpdate();
             };
         }
 
