@@ -1,5 +1,6 @@
 ﻿using PicView.FileHandling;
 using PicView.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
@@ -56,16 +57,23 @@ internal static class CustomKeybindings
         try
         {
             // Serialize the CustomShortcuts dictionary to JSON
-            var json = JsonSerializer.Serialize(CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(), kvp => GetFunctionNameByFunction(kvp.Value)));
+            var json =
+                JsonSerializer.Serialize(CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(),
+                    kvp => GetFunctionNameByFunction(kvp.Value)), new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
 
             // Write the JSON to the keybindings.json file
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shortcuts/keybindings.json");
             await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            // Handle exceptions as needed
-            Tooltip.ShowTooltipMessage($"Error updating keybindings file: {ex.Message}");
+#if DEBUG
+            Trace.WriteLine($"{nameof(UpdateKeyBindingsFile)} exception:\n{exception.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(exception.Message);
         }
     }
 
@@ -117,9 +125,18 @@ internal static class CustomKeybindings
           ""D5"": ""Set5Star""
         }";
 
-        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shortcuts/keybindings.json");
         // Save the default keybindings to a new file
-        await File.WriteAllTextAsync(path, defaultKeybindings).ConfigureAwait(false);
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shortcuts/keybindings.json");
+        try
+        {
+            await File.WriteAllTextAsync(path, defaultKeybindings).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(CreateNewDefaultKeybindingFile)} {path} exception:\n{exception.Message}");
+#endif
+        }
 
         // Reload the keybindings from the newly created file
         await LoadKeybindings().ConfigureAwait(false);
