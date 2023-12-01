@@ -5,7 +5,6 @@ using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Windows.Input;
-using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.ConfigureWindows;
 using static PicView.UILogic.UC;
 
@@ -126,9 +125,23 @@ namespace PicView.Shortcuts
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (shortcut is null)
                 {
-                    await CustomKeybindings.CreateNewDefaultKeybindingFile().ConfigureAwait(false);
-                    // ReSharper disable once TailRecursiveCall
-                    await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
+                    var backup = false;
+                    try
+                    {
+                        if (ErrorHandling.CheckOutOfRange())
+                        {
+                            Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
+                            backup = true;
+                        }
+
+                        await CustomKeybindings.CreateNewDefaultKeybindingFile().ConfigureAwait(false);
+                        // ReSharper disable once TailRecursiveCall
+                        await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        await ErrorHandling.ReloadAsync(fromBackup: backup).ConfigureAwait(false);
+                    }
                     return;
                 }
                 // Execute the associated action
@@ -200,7 +213,7 @@ namespace PicView.Shortcuts
                 case Key.Right:
                 case Key.Left:
                 case Key.D:
-                    if (FolderIndex < 0 || FolderIndex >= Pics.Count)
+                    if (Navigation.FolderIndex < 0 || Navigation.FolderIndex >= Navigation.Pics.Count)
                         return;
                     await FastPic.FastPicUpdateAsync().ConfigureAwait(false);
                     return;
