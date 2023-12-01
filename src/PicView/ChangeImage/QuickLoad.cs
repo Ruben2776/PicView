@@ -48,11 +48,6 @@ namespace PicView.ChangeImage
             {
                 mainWindow.MainImage.Source = bitmapSource;
 
-                if (Settings.Default.IsBottomGalleryShown)
-                {
-                    GalleryToggle.ShowBottomGallery();
-                }
-
                 FitImage(bitmapSource.Width, bitmapSource.Height);
             }, DispatcherPriority.Send);
 
@@ -76,6 +71,11 @@ namespace PicView.ChangeImage
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
                 UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
                 mainWindow.MainImage.Cursor = Cursors.Arrow;
+                if (Settings.Default.IsBottomGalleryShown)
+                {
+                    GalleryToggle.ShowBottomGallery();
+                    FitImage(bitmapSource.Width, bitmapSource.Height);
+                }
             }, DispatcherPriority.Normal);
 
             if (FolderIndex > 0)

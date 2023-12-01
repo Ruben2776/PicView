@@ -2,6 +2,7 @@
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using PicView.Views.UserControls.Buttons;
 using System.Windows;
@@ -331,7 +332,7 @@ namespace PicView.UILogic.Sizing
         /// <summary>
         /// Save settings when closing
         /// </summary>
-        internal static void Window_Closing()
+        internal static async void Window_Closing()
         {
             GetMainWindow.Hide(); // Make it feel faster
 
@@ -351,6 +352,8 @@ namespace PicView.UILogic.Sizing
             Settings.Default.Save();
             DeleteFiles.DeleteTempFiles();
             Navigation.GetFileHistory.WriteToFile();
+            // Update the keybindings.json file
+            await CustomKeybindings.UpdateKeyBindingsFile();
             Application.Current.Shutdown();
         }
     }
