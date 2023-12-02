@@ -25,7 +25,6 @@
     <system:String x:Key="About">關於</system:String>
     <system:String x:Key="InfoWindowTitle">資訊</system:String>
     <system:String x:Key="ApplicationShortcuts">應用程式快捷鍵</system:String>
-    <system:String x:Key="SavedOnNextStartUp">（儲存至下次啟動）</system:String>
     <system:String x:Key="ImageControl">圖片調整</system:String>
     <system:String x:Key="FileManagement">檔案管理</system:String>
     <system:String x:Key="DragFileTo">將檔案拖曳至 Windows 檔案總管或者其他應用程式/瀏覽器</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Github</system:String>
     <system:String x:Key="ViewLicenseFile">檢視開源協議</system:String>
     <system:String x:Key="Version">版本：</system:String>
+    <system:String x:Key="ChangeKeybindingText">點擊文本框以更改按鍵綁定。按 Esc 鍵取消綁定。</system:String>
+    <system:String x:Key="ResetButtonText">重置為預設值</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">視窗縮放</system:String>

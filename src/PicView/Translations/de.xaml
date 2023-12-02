@@ -25,7 +25,6 @@
     <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">Informationen, Hilfe &amp; Tastenkürzel</system:String>
     <system:String x:Key="ApplicationShortcuts">Anwendungs-Tastenkürzel</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Wird beim nächsten Starten gespeichert)</system:String>
     <system:String x:Key="ImageControl">Bild Steuerung</system:String>
     <system:String x:Key="FileManagement">Datei-Management</system:String>
     <system:String x:Key="DragFileTo">Ziehe das Bild in den Windows Explorer oder eine andere Anwendung bzw. einen Browser</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Github repository</system:String>
     <system:String x:Key="ViewLicenseFile">Lizens-Datei anschauen</system:String>
     <system:String x:Key="Version">Version:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Klicken Sie auf ein Textfeld, um die Tastenkombination zu ändern. Drücken Sie Esc, um die Tastenkombination zu lösen.</system:String>
+    <system:String x:Key="ResetButtonText">Auf Standard zurücksetzen</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Fenster Skalieren</system:String>

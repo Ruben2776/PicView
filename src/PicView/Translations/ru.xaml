@@ -25,7 +25,6 @@
     <system:String x:Key="About">О программе</system:String>
     <system:String x:Key="InfoWindowTitle">Информация и сочетания клавиш</system:String>
     <system:String x:Key="ApplicationShortcuts">Сочетания клавиш приложения</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Сохраняется при следующем запуске)</system:String>
     <system:String x:Key="ImageControl">Управление изображением</system:String>
     <system:String x:Key="FileManagement">Управление файлами</system:String>
     <system:String x:Key="DragFileTo">Перетащите файл в проводник Windows или другое приложение/браузер</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Репозиторий Github</system:String>
     <system:String x:Key="ViewLicenseFile">Просмотреть файл лицензии</system:String>
     <system:String x:Key="Version">Версия:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Нажмите на текстовом поле, чтобы изменить сочетание клавиш. Нажатие Esc снимает привязку клавиши.</system:String>
+    <system:String x:Key="ResetButtonText">Сбросить настройки по умолчанию</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Масштабирование окна</system:String>

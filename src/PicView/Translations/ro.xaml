@@ -25,7 +25,6 @@
     <system:String x:Key="About">Despre</system:String>
     <system:String x:Key="InfoWindowTitle">Informații și comenzi rapide</system:String>
     <system:String x:Key="ApplicationShortcuts">Comenzi rapide ale aplicației</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Salvată pentru următoarea pornire)</system:String>
     <system:String x:Key="ImageControl">Controlul imaginii</system:String>
     <system:String x:Key="FileManagement">Gestionarea fișierelor</system:String>
     <system:String x:Key="DragFileTo">Glisează fișierul către Windows Explorer sau altă aplicație/navigator</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Depozit GitHub</system:String>
     <system:String x:Key="ViewLicenseFile">Vizualizare fișier de licență</system:String>
     <system:String x:Key="Version">Versiune:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Faceți clic pe o casetă de text pentru a schimba combinația de taste. Apăsarea tastei Esc anulează combinația de taste.</system:String>
+    <system:String x:Key="ResetButtonText">Resetare la implicit</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Scalare fereastră</system:String>

@@ -25,7 +25,6 @@
     <system:String x:Key="About">정보</system:String>
     <system:String x:Key="InfoWindowTitle">정보 및 한국어 번역: 비너스걸</system:String>
     <system:String x:Key="ApplicationShortcuts">응용 프로그램 바로가기</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(다음 시작 시 저장됨)</system:String>
     <system:String x:Key="ImageControl">이미지 제어</system:String>
     <system:String x:Key="FileManagement">파일 관리</system:String>
     <system:String x:Key="DragFileTo">파일을 Windows 탐색기 또는 다른 응용 프로그램/브라우저로 끌어다 놓기</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Github 저장소</system:String>
     <system:String x:Key="ViewLicenseFile">라이선스 파일 보기</system:String>
     <system:String x:Key="Version">버전:</system:String>
+    <system:String x:Key="ChangeKeybindingText">단추를 클릭하여 단축키를 변경하십시오. Esc를 누르면 키 바인딩이 해제됩니다.</system:String>
+    <system:String x:Key="ResetButtonText">기본값으로 재설정</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">창 비율</system:String>

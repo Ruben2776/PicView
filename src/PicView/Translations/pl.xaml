@@ -25,7 +25,6 @@
     <system:String x:Key="About">Informacje</system:String>
     <system:String x:Key="InfoWindowTitle">Informacje i skróty</system:String>
     <system:String x:Key="ApplicationShortcuts">Skróty aplikacji</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Zapisano do następnego uruchomienia)</system:String>
     <system:String x:Key="ImageControl">Kontrola obrazu</system:String>
     <system:String x:Key="FileManagement">Zarządzanie plikami</system:String>
     <system:String x:Key="DragFileTo">Przeciągnij plik do Eksploratora lub innej aplikacji/przeglądarki</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Repozytorium na Github</system:String>
     <system:String x:Key="ViewLicenseFile">Pokaż licencję</system:String>
     <system:String x:Key="Version">Wersja:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Kliknij na polu tekstowym, aby zmienić przypisanie klawiszy. Naciśnięcie klawisza Esc odwiązuje klawisz.</system:String>
+    <system:String x:Key="ResetButtonText">Przywróć domyślne</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Skalowanie okna</system:String>

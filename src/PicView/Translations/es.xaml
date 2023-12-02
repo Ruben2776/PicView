@@ -25,7 +25,6 @@
     <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">Información y atajos</system:String>
     <system:String x:Key="ApplicationShortcuts">Atajos de la aplicación</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Guardados en el próximo inicio)</system:String>
     <system:String x:Key="ImageControl">Control de Imagen</system:String>
     <system:String x:Key="FileManagement">Gestión de archivos</system:String>
     <system:String x:Key="DragFileTo">Arrastra el archivo al Explorador de Windows o a otra aplicación/navegador</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Repositorio de Github</system:String>
     <system:String x:Key="ViewLicenseFile">Ver archivo de licencia</system:String>
     <system:String x:Key="Version">Versión:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Haz clic en un cuadro de texto para cambiar la asignación de teclas. Presiona Esc para desvincular la tecla.</system:String>
+    <system:String x:Key="ResetButtonText">Restablecer a predeterminado</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Escalado de ventana</system:String>

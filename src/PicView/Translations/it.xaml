@@ -25,7 +25,6 @@
     <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">Informazioni e scorciatoie</system:String>
     <system:String x:Key="ApplicationShortcuts">Scorciatoie per le applicazioni</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Salvato al prossimo avvio)</system:String>
     <system:String x:Key="ImageControl">Controllo dell'immagine</system:String>
     <system:String x:Key="FileManagement">Gestione dei file</system:String>
     <system:String x:Key="DragFileTo">Trascina il file nel Esploratore di Windows o in un'altra applicazione/browser</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Repository Github</system:String>
     <system:String x:Key="ViewLicenseFile">Visualizza file di licenza</system:String>
     <system:String x:Key="Version">Versione:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Clicca su una casella di testo per cambiare la combinazione di tasti. Premere Esc per annullare la combinazione di tasti.</system:String>
+    <system:String x:Key="ResetButtonText">Reimposta alle impostazioni predefinite</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Ridimensionamento della finestra</system:String>

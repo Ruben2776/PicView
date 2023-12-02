@@ -25,7 +25,6 @@
     <system:String x:Key="About">À propos</system:String>
     <system:String x:Key="InfoWindowTitle">Infos et raccourcis</system:String>
     <system:String x:Key="ApplicationShortcuts">Raccourcis d'application</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Enregistré au prochain démarrage)</system:String>
     <system:String x:Key="ImageControl">Contrôle des images</system:String>
     <system:String x:Key="FileManagement">Gestion des fichiers</system:String>
     <system:String x:Key="DragFileTo">Faites glisser le fichier vers l'explorateur Windows ou une autre application/navigateur</system:String>
@@ -37,6 +36,8 @@
     <system:String x:Key="GithubRepo">Référentiel GitHub</system:String>
     <system:String x:Key="ViewLicenseFile">Voir le fichier de licence</system:String>
     <system:String x:Key="Version">Version :</system:String>
+    <system:String x:Key="ChangeKeybindingText">Cliquez sur une zone de texte pour changer le raccourci clavier. Appuyez sur Échap pour désactiver le raccourci clavier.</system:String>
+    <system:String x:Key="ResetButtonText">Réinitialiser par défaut</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Mise à l'échelle de la fenêtre</system:String>
