@@ -742,6 +742,20 @@ namespace PicView.UILogic
             CopyPaste.Cut();
         }
 
+        internal static async Task Paste()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            await CopyPaste.PasteAsync().ConfigureAwait(false);
+        }
+
         #endregion Copy
 
         #region Image Related

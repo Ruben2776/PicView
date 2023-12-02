@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using PicView.Animations;
+using PicView.Properties;
 using PicView.Shortcuts;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace PicView.Views.UserControls.Misc;
 
@@ -13,6 +14,18 @@ public partial class ShortcutList
     public ShortcutList()
     {
         InitializeComponent();
+
+        var color = Settings.Default.DarkTheme ? Colors.White : (Color)Application.Current.Resources["MainColor"];
+        SetDefaultButton.MouseEnter += delegate
+        {
+            AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, SetToDefaultText);
+        };
+        SetDefaultButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(SetToDefaultBrush); };
+        SetDefaultButton.MouseLeave += delegate
+        {
+            AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, SetToDefaultText);
+        };
+        SetDefaultButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetToDefaultBrush); };
 
         // NextBox
         NextBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Next", false).ConfigureAwait(false);
@@ -208,6 +221,18 @@ public partial class ShortcutList
 
         CopyBase64Box1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyBase64", false).ConfigureAwait(false);
         CopyBase64Box2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyBase64", true).ConfigureAwait(false);
+
+        // Paste
+        PasteBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "Paste", false).ConfigureAwait(false);
+
+        PasteBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Paste", false).ConfigureAwait(false);
+
+        // Duplicate
+        DuplicateBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "DuplicateFile", false).ConfigureAwait(false);
+        DuplicateBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "DuplicateFile", true).ConfigureAwait(false);
+
+        DuplicateBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "DuplicateFile", false).ConfigureAwait(false);
+        DuplicateBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "DuplicateFile", true).ConfigureAwait(false);
 
         // Cut file
         CopyImageBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CutFile", false).ConfigureAwait(false);

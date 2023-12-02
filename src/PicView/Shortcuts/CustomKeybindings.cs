@@ -204,11 +204,12 @@ internal static class CustomKeybindings
             "CopyFilePath" => UIHelper.CopyFilePath,
             "CopyImage" => UIHelper.CopyImage,
             "CopyBase64" => UIHelper.CopyBase64,
+            "DuplicateFile" => UIHelper.DuplicateFile,
             "CutFile" => UIHelper.CutFile,
+            "Paste" => UIHelper.Paste,
 
             // File functions
             "DeleteFile" => UIHelper.DeleteFile,
-            "DuplicateFile" => UIHelper.DuplicateFile,
             "Rename" => UIHelper.Rename,
             "ShowFileProperties" => UIHelper.ShowFileProperties,
 
