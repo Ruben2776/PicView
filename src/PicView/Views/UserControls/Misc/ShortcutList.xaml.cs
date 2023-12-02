@@ -1,6 +1,7 @@
 ﻿using PicView.Animations;
 using PicView.Properties;
 using PicView.Shortcuts;
+using PicView.UILogic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,6 +27,22 @@ public partial class ShortcutList
             AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, SetToDefaultText);
         };
         SetDefaultButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetToDefaultBrush); };
+        SetDefaultButton.MouseLeftButtonDown += async delegate
+        {
+            await CustomKeybindings.ResetToDefault().ConfigureAwait(false);
+            await Dispatcher.InvokeAsync(() =>
+            {
+                ConfigureWindows.GetAboutWindow.Container.Children.Remove(this);
+                ConfigureWindows.GetAboutWindow.Container.Children.RemoveAt(ConfigureWindows.GetAboutWindow.Container.Children.Count - 1);
+                var shortcutList = new ShortcutList { HorizontalAlignment = HorizontalAlignment.Center };
+                ConfigureWindows.GetAboutWindow.Container.Children.Add(shortcutList);
+                var credits = new Credits
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                ConfigureWindows.GetAboutWindow.Container.Children.Add(credits);
+            });
+        };
 
         // NextBox
         NextBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Next", false).ConfigureAwait(false);
@@ -382,20 +399,29 @@ public partial class ShortcutList
     /// <param name="alt">A flag indicating whether it's an alternative key.</param>
     private async Task UpdateTextBoxes(object sender, string functionName, bool alt)
     {
+        if (CustomKeybindings.CustomShortcuts is null)
+        {
+            return;
+        }
+
+        if (CustomKeybindings.CustomShortcuts.Count <= 0)
+        {
+            return;
+        }
         var key = await Task.Run(() =>
-         {
-             var function = CustomKeybindings.GetFunctionByName(functionName).Result;
+        {
+            var function = CustomKeybindings.GetFunctionByName(functionName).Result;
 
-             // Find the key associated with the specified function
-             var keys = CustomKeybindings.CustomShortcuts.Where(x => x.Value == function).Select(x => x.Key).ToList();
+            // Find the key associated with the specified function
+            var keys = CustomKeybindings.CustomShortcuts.Where(x => x.Value == function).Select(x => x.Key).ToList();
 
-             return keys.Count switch
-             {
-                 <= 0 => string.Empty,
-                 1 => alt ? string.Empty : keys.FirstOrDefault().ToString(),
-                 _ => alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString()
-             };
-         }).ConfigureAwait(false);
+            return keys.Count switch
+            {
+                <= 0 => string.Empty,
+                1 => alt ? string.Empty : keys.FirstOrDefault().ToString(),
+                _ => alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString()
+            };
+        }).ConfigureAwait(false);
 
         await Dispatcher.InvokeAsync(() =>
         {

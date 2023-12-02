@@ -28,6 +28,7 @@ internal static class CustomKeybindings
         catch (FileNotFoundException)
         {
             await CreateNewDefaultKeybindingFile().ConfigureAwait(false);
+            await LoadKeybindings().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -36,12 +37,23 @@ internal static class CustomKeybindings
         }
     }
 
+    /// <summary>
+    /// Updates the custom keybindings from the provided JSON string.
+    /// </summary>
+    /// <param name="json">The JSON string containing key-value pairs of shortcuts and functions.</param>
     internal static async Task UpdateKeybindings(string json)
     {
         // Deserialize JSON into a dictionary of string keys and string values
         var keyValues = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 
-        CustomShortcuts = new Dictionary<Key, Func<Task>>();
+        if (CustomShortcuts is null)
+        {
+            CustomShortcuts = new Dictionary<Key, Func<Task>>();
+        }
+        else if (CustomShortcuts.Count > 0)
+        {
+            CustomShortcuts.Clear();
+        }
 
         foreach (var kvp in keyValues)
         {
@@ -52,6 +64,9 @@ internal static class CustomKeybindings
         }
     }
 
+    /// <summary>
+    /// Updates the keybindings.json file with the current custom shortcuts.
+    /// </summary>
     internal static async Task UpdateKeyBindingsFile()
     {
         try
@@ -77,53 +92,66 @@ internal static class CustomKeybindings
         }
     }
 
+    /// <summary>
+    /// Resets the keybindings to the default settings.
+    /// </summary>
+    internal static async Task ResetToDefault()
+    {
+        await CreateNewDefaultKeybindingFile().ConfigureAwait(false);
+        CustomShortcuts?.Clear();
+        await LoadKeybindings().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Creates a new default keybindings file
+    /// </summary>
     internal static async Task CreateNewDefaultKeybindingFile()
     {
         // Create a default keybindings file
         var defaultKeybindings = @"
-          ""Escape"": ""Close"",
-          ""D"": ""Next"",
-          ""Right"": ""Next"",
-          ""A"": ""Prev"",
-          ""Left"": ""Prev"",
-          ""W"": ""Up"",
-          ""Up"": ""Up"",
-          ""S"": ""Down"",
-          ""Down"": ""Down"",
-          ""PageUp"": ""ScrollUp"",
-          ""PageDown"": ""ScrollDown"",
-          ""Add"": ""ZoomIn"",
-          ""OemPlus"": ""ZoomIn"",
-          ""OemMinus"": ""ZoomOut"",
-          ""Subtract"": ""ZoomOut"",
-          ""Scroll"": ""ToggleScroll"",
-          ""Home"": ""ScrollToTop"",
-          ""End"": ""ScrollToBottom"",
-          ""G"": ""ToggleGallery"",
-          ""F"": ""Flip"",
-          ""J"": ""ResizeImage"",
-          ""C"": ""Crop"",
-          ""E"": ""GalleryClick"",
-          ""Enter"": ""GalleryClick"",
-          ""Delete"": ""DeleteFile"",
-          ""I"": ""ImageInfoWindow"",
-          ""F6"": ""EffectsWindow"",
-          ""F1"": ""AboutWindow"",
-          ""F2"": ""Rename"",
-          ""F3"": ""OpenInExplorer"",
-          ""F4"": ""SettingsWindow"",
-          ""F5"": ""Slideshow"",
-          ""F11"": ""Fullscreen"",
-          ""F12"": ""Fullscreen"",
-          ""B"": ""ChangeBackground"",
-          ""Space"": ""Center"",
-          ""D0"": ""Set0Star"",
-          ""D1"": ""Set1Star"",
-          ""D2"": ""Set2Star"",
-          ""D3"": ""Set3Star"",
-          ""D4"": ""Set4Star"",
-          ""D5"": ""Set5Star""
-        }";
+{
+  ""D"": ""Next"",
+  ""A"": ""Prev"",
+  ""Right"": ""Next"",
+  ""Left"": ""Prev"",
+  ""W"": ""Up"",
+  ""S"": ""Down"",
+  ""Up"": ""Up"",
+  ""Down"": ""Down"",
+  ""F1"": ""AboutWindow"",
+  ""Add"": ""ZoomIn"",
+  ""Subtract"": ""ZoomOut"",
+  ""F"": ""Flip"",
+  ""C"": ""Crop"",
+  ""B"": ""ChangeBackground"",
+  ""Scroll"": ""ToggleScroll"",
+  ""D1"": ""Set1Star"",
+  ""D2"": ""Set2Star"",
+  ""D3"": ""Set3Star"",
+  ""D4"": ""Set4Star"",
+  ""D5"": ""Set5Star"",
+  ""D0"": ""Set0Star"",
+  ""Home"": ""ScrollToTop"",
+  ""End"": ""ScrollToBottom"",
+  ""F4"": ""SettingsWindow"",
+  ""T"": ""SetTopMost"",
+  ""NumPad1"": ""AutoFitWindow"",
+  ""NumPad2"": ""AutoFitWindowAndStretch"",
+  ""NumPad3"": ""NormalWindow"",
+  ""NumPad4"": ""NormalWindowAndStretch"",
+  ""Space"": ""Center"",
+  ""L"": ""ToggleLooping"",
+  ""I"": ""ImageInfoWindow"",
+  ""G"": ""ToggleGallery"",
+  ""E"": ""GalleryClick"",
+  ""Return"": ""GalleryClick"",
+  ""F3"": ""OpenInExplorer"",
+  ""J"": ""ResizeWindow"",
+  ""Tab"": ""ToggleInterface"",
+  ""F5"": ""Slideshow"",
+  ""O"": ""Open"",
+  ""X"": ""ToggleScroll""
+}";
 
         // Save the default keybindings to a new file
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
@@ -137,9 +165,6 @@ internal static class CustomKeybindings
             Trace.WriteLine($"{nameof(CreateNewDefaultKeybindingFile)} {path} exception:\n{exception.Message}");
 #endif
         }
-
-        // Reload the keybindings from the newly created file
-        await LoadKeybindings().ConfigureAwait(false);
     }
 
     /// <summary>
