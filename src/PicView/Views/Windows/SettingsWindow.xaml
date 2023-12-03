@@ -731,25 +731,25 @@
                         </WrapPanel>
 
                         <Label
-                            Margin="0,7,0,4"
+                            Margin="0,5,0,5"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Content="Image aliasing" />
+                            Content="{StaticResource ImageAliasing}" />
 
                         <ComboBox
                             x:Name="AliasingBox"
-                            Margin="7,0,0,0"
+                            Margin="10,0,0,0"
                             HorizontalAlignment="Left"
                             IsTabStop="False">
                             <ComboBoxItem
                                 x:Name="AliasingBoxHighQuality"
-                                Content="High Quality"
+                                Content="{StaticResource HighQuality}"
                                 IsSelected="True" />
-                            <ComboBoxItem x:Name="AliasingNearestNeighbor" Content="Nearest Neighbor" />
+                            <ComboBoxItem x:Name="AliasingNearestNeighbor" Content="{StaticResource NearestNeighbor}" />
                         </ComboBox>
 
                         <Label
-                            Margin="0,10,0,4"
+                            Margin="0,15,0,5"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Content="{StaticResource ExpandedGalleryItems}" />

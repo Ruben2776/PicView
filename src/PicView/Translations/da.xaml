@@ -141,6 +141,9 @@
     <system:String x:Key="BottomGalleryItems">Galleri billeder i bunden</system:String>
     <system:String x:Key="ExpandedGalleryItems">Udviede galleri billeder</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Vis nederste galleri, når brugergrænsefladen er skjult</system:String>
+    <system:String x:Key="ImageAliasing">Billedantialiasering</system:String>
+    <system:String x:Key="HighQuality">Høj kvalitet</system:String>
+    <system:String x:Key="NearestNeighbor">Nærmeste nabo</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Farver</system:String>

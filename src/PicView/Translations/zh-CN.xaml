@@ -46,7 +46,7 @@
     <system:String x:Key="ScrollToTop">滑动到顶部</system:String>
     <system:String x:Key="ScrollToBottom">滑动到底部</system:String>
     <!--  Stars  -->
-    <system:String x:Key="SetStarRating">设置星级评分"</system:String>
+    <system:String x:Key="SetStarRating">设置星级评分</system:String>
     <system:String x:Key="1Star">1星评分</system:String>
     <system:String x:Key="2Star">2星评分</system:String>
     <system:String x:Key="3Star">3星评分</system:String>
@@ -141,6 +141,9 @@
     <system:String x:Key="BottomGalleryItems">底部图库项目</system:String>
     <system:String x:Key="ExpandedGalleryItems">展开的图库项目</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">当用户界面隐藏时显示底部图库</system:String>
+    <system:String x:Key="ImageAliasing">图像混淆</system:String>
+    <system:String x:Key="HighQuality">高质量</system:String>
+    <system:String x:Key="NearestNeighbor">最近邻</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">反色</system:String>

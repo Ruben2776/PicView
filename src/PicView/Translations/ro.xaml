@@ -141,6 +141,9 @@
     <system:String x:Key="BottomGalleryItems">Elemente galerie inferioară</system:String>
     <system:String x:Key="ExpandedGalleryItems">Elemente galerie extinse</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Afișează galeria de jos când interfața utilizatorului este ascunsă</system:String>
+    <system:String x:Key="ImageAliasing">Aliasare imagine</system:String>
+    <system:String x:Key="HighQuality">Calitate înaltă</system:String>
+    <system:String x:Key="NearestNeighbor">Cel mai apropiat vecin</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Culori negative</system:String>

@@ -141,6 +141,9 @@
     <system:String x:Key="BottomGalleryItems">Bottom Gallery Items</system:String>
     <system:String x:Key="ExpandedGalleryItems">Expanded Gallery Items</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Show bottom gallery when UI is hidden</system:String>
+    <system:String x:Key="ImageAliasing">Image aliasing</system:String>
+    <system:String x:Key="HighQuality">High quality</system:String>
+    <system:String x:Key="NearestNeighbor">Nearest neighbor</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Colors</system:String>

@@ -141,6 +141,9 @@
     <system:String x:Key="BottomGalleryItems">Éléments de la galerie inférieure</system:String>
     <system:String x:Key="ExpandedGalleryItems">Éléments de la galerie étendue</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Afficher la galerie inférieure lorsque l'interface utilisateur est masquée</system:String>
+    <system:String x:Key="ImageAliasing">Anticrénelage d'image</system:String>
+    <system:String x:Key="HighQuality">Haute qualité</system:String>
+    <system:String x:Key="NearestNeighbor">Voisin le plus proche</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Couleurs négatives</system:String>
