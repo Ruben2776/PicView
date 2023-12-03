@@ -62,6 +62,24 @@ public partial class Credits
             {
                 AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, FreepikBrush);
             };
+
+            XamlAnimatedGif.MouseEnter += delegate
+            {
+                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, XamlAnimatedGifBrush);
+            };
+            XamlAnimatedGif.MouseLeave += delegate
+            {
+                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, XamlAnimatedGifBrush);
+            };
+
+            ImageMagick.MouseEnter += delegate
+            {
+                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, ImageMagickBrush);
+            };
+            ImageMagick.MouseLeave += delegate
+            {
+                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, ImageMagickBrush);
+            };
         };
     }
 

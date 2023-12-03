@@ -10,6 +10,40 @@
             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
             FontSize="16" />
 
+        <TextBlock
+            Margin="0,5,0,5"
+            FontSize="14"
+            TextAlignment="Center"
+            ToolTip="https://github.com/dlemstra/Magick.NET">
+            <Hyperlink
+                x:Name="ImageMagick"
+                Focusable="False"
+                NavigateUri="https://github.com/dlemstra/Magick.NET"
+                RequestNavigate="Hyperlink_RequestNavigate">
+                ImageMagick
+                <Hyperlink.Foreground>
+                    <SolidColorBrush x:Name="ImageMagickBrush" Color="{StaticResource MainColor}" />
+                </Hyperlink.Foreground>
+            </Hyperlink>
+        </TextBlock>
+
+        <TextBlock
+            Margin="0,5,0,5"
+            FontSize="14"
+            TextAlignment="Center"
+            ToolTip="https://github.com/XamlAnimatedGif/XamlAnimatedGif">
+            <Hyperlink
+                x:Name="XamlAnimatedGif"
+                Focusable="False"
+                NavigateUri="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
+                RequestNavigate="Hyperlink_RequestNavigate">
+                XamlAnimatedGif
+                <Hyperlink.Foreground>
+                    <SolidColorBrush x:Name="XamlAnimatedGifBrush" Color="{StaticResource MainColor}" />
+                </Hyperlink.Foreground>
+            </Hyperlink>
+        </TextBlock>
+
         <Label
             Margin="0,0,0,3"
             HorizontalAlignment="Center"
