@@ -38,6 +38,20 @@
     <system:String x:Key="Version">Versiune:</system:String>
     <system:String x:Key="ChangeKeybindingText">Faceți clic pe o casetă de text pentru a schimba combinația de taste. Apăsarea tastei Esc anulează combinația de taste.</system:String>
     <system:String x:Key="ResetButtonText">Resetare la implicit</system:String>
+    <system:String x:Key="SelectGalleryThumb">Selectați miniatura galeriei</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">Derulează în sus</system:String>
+    <system:String x:Key="ScrollDown">Derulează în jos</system:String>
+    <system:String x:Key="ScrollToTop">Derulează în partea de sus</system:String>
+    <system:String x:Key="ScrollToBottom">Derulează în partea de jos</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Setare evaluare cu stele</system:String>
+    <system:String x:Key="1Star">Evaluare cu 1 stea</system:String>
+    <system:String x:Key="2Star">Evaluare cu 2 stele</system:String>
+    <system:String x:Key="3Star">Evaluare cu 3 stele</system:String>
+    <system:String x:Key="4Star">Evaluare cu 4 stele</system:String>
+    <system:String x:Key="5Star">Evaluare cu 5 stele</system:String>
+    <system:String x:Key="RemoveStarRating">Eliminare evaluare</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Scalare fereastră</system:String>

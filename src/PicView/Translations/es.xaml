@@ -38,6 +38,20 @@
     <system:String x:Key="Version">Versión:</system:String>
     <system:String x:Key="ChangeKeybindingText">Haz clic en un cuadro de texto para cambiar la asignación de teclas. Presiona Esc para desvincular la tecla.</system:String>
     <system:String x:Key="ResetButtonText">Restablecer a predeterminado</system:String>
+    <system:String x:Key="SelectGalleryThumb">Seleccionar miniatura de la galería</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">Desplazar hacia arriba</system:String>
+    <system:String x:Key="ScrollDown">Desplazar hacia abajo</system:String>
+    <system:String x:Key="ScrollToTop">Desplazar hacia arriba al tope</system:String>
+    <system:String x:Key="ScrollToBottom">Desplazar hacia abajo al fondo</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Establecer clasificación con estrellas</system:String>
+    <system:String x:Key="1Star">Clasificación de 1 estrella</system:String>
+    <system:String x:Key="2Star">Clasificación de 2 estrella</system:String>
+    <system:String x:Key="3Star">Clasificación de 3 estrella</system:String>
+    <system:String x:Key="4Star">Clasificación de 4 estrella</system:String>
+    <system:String x:Key="5Star">Clasificación de 5 estrella</system:String>
+    <system:String x:Key="RemoveStarRating">Eliminar clasificación</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Escalado de ventana</system:String>

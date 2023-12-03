@@ -38,6 +38,20 @@
     <system:String x:Key="Version">Version :</system:String>
     <system:String x:Key="ChangeKeybindingText">Cliquez sur une zone de texte pour changer le raccourci clavier. Appuyez sur Échap pour désactiver le raccourci clavier.</system:String>
     <system:String x:Key="ResetButtonText">Réinitialiser par défaut</system:String>
+    <system:String x:Key="SelectGalleryThumb">Sélectionner la vignette de la galerie</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">Faire défiler vers le haut</system:String>
+    <system:String x:Key="ScrollDown">Faire défiler vers le bas</system:String>
+    <system:String x:Key="ScrollToTop">Faire défiler vers le haut</system:String>
+    <system:String x:Key="ScrollToBottom">Faire défiler vers le bas</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Définir une note avec des étoiles</system:String>
+    <system:String x:Key="1Star">Note de 1 étoile</system:String>
+    <system:String x:Key="2Star">Note de 2 étoiles</system:String>
+    <system:String x:Key="3Star">Note de 3 étoiles</system:String>
+    <system:String x:Key="4Star">Note de 4 étoiles</system:String>
+    <system:String x:Key="5Star">Note de 5 étoiles</system:String>
+    <system:String x:Key="RemoveStarRating">Supprimer la note</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Mise à l'échelle de la fenêtre</system:String>

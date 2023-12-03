@@ -38,6 +38,20 @@
     <system:String x:Key="Version">Version:</system:String>
     <system:String x:Key="ChangeKeybindingText">Click on a textbox to change keybinding. Pressing Esc unbinds key.</system:String>
     <system:String x:Key="ResetButtonText">Reset to default</system:String>
+    <system:String x:Key="SelectGalleryThumb">Select gallery thumbnail</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">Scroll up</system:String>
+    <system:String x:Key="ScrollDown">Scroll down</system:String>
+    <system:String x:Key="ScrollToTop">Scroll to top</system:String>
+    <system:String x:Key="ScrollToBottom">Scroll to bottom</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Set star rating</system:String>
+    <system:String x:Key="1Star">1 star rating</system:String>
+    <system:String x:Key="2Star">2 star rating</system:String>
+    <system:String x:Key="3Star">3 star rating</system:String>
+    <system:String x:Key="4Star">4 star rating</system:String>
+    <system:String x:Key="5Star">5 star rating</system:String>
+    <system:String x:Key="RemoveStarRating">Remove rating</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Window scaling</system:String>

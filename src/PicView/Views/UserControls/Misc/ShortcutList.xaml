@@ -177,7 +177,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Select gallery thumbnail (replace)" />
+                Text="{StaticResource SelectGalleryThumb}" />
             <TextBox
                 x:Name="GalleryBox1"
                 Width="150"
@@ -218,7 +218,7 @@
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
-                Text="Scroll up" />
+                Text="{StaticResource ScrollUp}" />
             <TextBox
                 x:Name="ScrollUpBox1"
                 Width="150"
@@ -252,7 +252,7 @@
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
-                Text="Scroll down" />
+                Text="{StaticResource ScrollDown}" />
             <TextBox
                 x:Name="ScrollDownBox1"
                 Width="150"
@@ -268,7 +268,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Scroll to top (replace)" />
+                Text="{StaticResource ScrollToTop}" />
             <TextBox
                 x:Name="ScrollToTopBox1"
                 Width="150"
@@ -286,7 +286,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Scroll to bottom" />
+                Text="{StaticResource ScrollToBottom}" />
             <TextBox
                 x:Name="ScrlBottomBox1"
                 Width="150"
@@ -1106,14 +1106,14 @@
         <Label
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="Set stars (replace by translation}" />
+            Content="{StaticResource SetStarRating}" />
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="1 Star (replace)" />
+                Text="{StaticResource 1Star}" />
             <TextBox
                 x:Name="SetStar1Box1"
                 Width="150"
@@ -1131,7 +1131,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="2 Star (replace)" />
+                Text="{StaticResource 2Star}" />
             <TextBox
                 x:Name="SetStar2Box1"
                 Width="150"
@@ -1149,7 +1149,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="3 Star (replace)" />
+                Text="{StaticResource 3Star}" />
             <TextBox
                 x:Name="SetStar3Box1"
                 Width="150"
@@ -1167,7 +1167,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="4 Star (replace)" />
+                Text="{StaticResource 4Star}" />
             <TextBox
                 x:Name="SetStar4Box1"
                 Width="150"
@@ -1185,7 +1185,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="5 Star (replace)" />
+                Text="{StaticResource 5Star}" />
             <TextBox
                 x:Name="SetStar5Box1"
                 Width="150"
@@ -1203,7 +1203,7 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="Reset Stars (replace)" />
+                Text="{StaticResource RemoveStarRating}" />
             <TextBox
                 x:Name="ResetStarsBox1"
                 Width="150"

@@ -38,6 +38,20 @@
     <system:String x:Key="Version">버전:</system:String>
     <system:String x:Key="ChangeKeybindingText">단추를 클릭하여 단축키를 변경하십시오. Esc를 누르면 키 바인딩이 해제됩니다.</system:String>
     <system:String x:Key="ResetButtonText">기본값으로 재설정</system:String>
+    <system:String x:Key="SelectGalleryThumb">갤러리 섬네일 선택</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">위로 스크롤</system:String>
+    <system:String x:Key="ScrollDown">아래로 스크롤</system:String>
+    <system:String x:Key="ScrollToTop">맨 위로 스크롤</system:String>
+    <system:String x:Key="ScrollToBottom">맨 아래로 스크롤</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">별점 설정</system:String>
+    <system:String x:Key="1Star">1별</system:String>
+    <system:String x:Key="2Star">2별</system:String>
+    <system:String x:Key="3Star">3별</system:String>
+    <system:String x:Key="4Star">4별</system:String>
+    <system:String x:Key="5Star">5별</system:String>
+    <system:String x:Key="RemoveStarRating">평가 제거</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">창 비율</system:String>

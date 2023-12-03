@@ -38,6 +38,20 @@
     <system:String x:Key="Version">版本：</system:String>
     <system:String x:Key="ChangeKeybindingText">點擊文本框以更改按鍵綁定。按 Esc 鍵取消綁定。</system:String>
     <system:String x:Key="ResetButtonText">重置為預設值</system:String>
+    <system:String x:Key="SelectGalleryThumb">選擇畫廊縮略圖</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">捲動到上方</system:String>
+    <system:String x:Key="ScrollDown">捲動到下方</system:String>
+    <system:String x:Key="ScrollToTop">捲動到頂部</system:String>
+    <system:String x:Key="ScrollToBottom">捲動到底部</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">設定星級評分"</system:String>
+    <system:String x:Key="1Star">1星評分</system:String>
+    <system:String x:Key="2Star">2星評分</system:String>
+    <system:String x:Key="3Star">3星評分</system:String>
+    <system:String x:Key="4Star">4星評分</system:String>
+    <system:String x:Key="5Star">5星評分"</system:String>
+    <system:String x:Key="RemoveStarRating">移除評分</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">視窗縮放</system:String>

@@ -38,6 +38,20 @@
     <system:String x:Key="Version">Wersja:</system:String>
     <system:String x:Key="ChangeKeybindingText">Kliknij na polu tekstowym, aby zmienić przypisanie klawiszy. Naciśnięcie klawisza Esc odwiązuje klawisz.</system:String>
     <system:String x:Key="ResetButtonText">Przywróć domyślne</system:String>
+    <system:String x:Key="SelectGalleryThumb">Wybierz miniaturę galerii</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">Przewiń w górę</system:String>
+    <system:String x:Key="ScrollDown">Przewiń w dół</system:String>
+    <system:String x:Key="ScrollToTop">Przewiń do góry</system:String>
+    <system:String x:Key="ScrollToBottom">Przewiń na dół</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Ustawianie oceny gwiazdkowej</system:String>
+    <system:String x:Key="1Star">Ocena 1 gwiazdki</system:String>
+    <system:String x:Key="2Star">Ocena 2 gwiazdek</system:String>
+    <system:String x:Key="3Star">Ocena 3 gwiazdek</system:String>
+    <system:String x:Key="4Star">Ocena 4 gwiazdek</system:String>
+    <system:String x:Key="5Star">Ocena 5 gwiazdek</system:String>
+    <system:String x:Key="RemoveStarRating">Usuń ocenę</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Skalowanie okna</system:String>

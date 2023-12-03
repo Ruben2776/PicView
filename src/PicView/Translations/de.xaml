@@ -38,6 +38,18 @@
     <system:String x:Key="Version">Version:</system:String>
     <system:String x:Key="ChangeKeybindingText">Klicken Sie auf ein Textfeld, um die Tastenkombination zu ändern. Drücken Sie Esc, um die Tastenkombination zu lösen.</system:String>
     <system:String x:Key="ResetButtonText">Auf Standard zurücksetzen</system:String>
+    <system:String x:Key="SelectGalleryThumb">Miniaturbild auswählen</system:String>
+    <system:String x:Key="ScrollUp">Nach oben scrollen</system:String>
+    <system:String x:Key="ScrollDown">Nach unten scrollen</system:String>
+    <system:String x:Key="ScrollToTop">Zum Anfang scrollen</system:String>
+    <system:String x:Key="ScrollToBottom">Zum Ende scrollen</system:String>
+    <system:String x:Key="SetStarRating">Sternebewertung festlegen</system:String>
+    <system:String x:Key="1Star">1 Stern</system:String>
+    <system:String x:Key="2Star">2 Sterne</system:String>
+    <system:String x:Key="3Star">3 Sterne</system:String>
+    <system:String x:Key="4Star">4 Sterne</system:String>
+    <system:String x:Key="5Star">5 Sterne</system:String>
+    <system:String x:Key="RemoveStarRating">Bewertung entfernen</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Fenster Skalieren</system:String>

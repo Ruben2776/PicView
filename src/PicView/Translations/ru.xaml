@@ -38,6 +38,20 @@
     <system:String x:Key="Version">Версия:</system:String>
     <system:String x:Key="ChangeKeybindingText">Нажмите на текстовом поле, чтобы изменить сочетание клавиш. Нажатие Esc снимает привязку клавиши.</system:String>
     <system:String x:Key="ResetButtonText">Сбросить настройки по умолчанию</system:String>
+    <system:String x:Key="SelectGalleryThumb">Выбрать миниатюру галереи</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">Прокрутить вверх</system:String>
+    <system:String x:Key="ScrollDown">Прокрутить вниз</system:String>
+    <system:String x:Key="ScrollToTop">Прокрутить вверх</system:String>
+    <system:String x:Key="ScrollToBottom">Прокрутить вниз</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Установить рейтинг звезд</system:String>
+    <system:String x:Key="1Star">1 звезда</system:String>
+    <system:String x:Key="2Star">2звезды</system:String>
+    <system:String x:Key="3Star">3звезды</system:String>
+    <system:String x:Key="4Star">4звезды</system:String>
+    <system:String x:Key="5Star">5звезды</system:String>
+    <system:String x:Key="RemoveStarRating">Убрать рейтинг</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Масштабирование окна</system:String>

@@ -38,6 +38,20 @@
     <system:String x:Key="Version">Version:</system:String>
     <system:String x:Key="ChangeKeybindingText">Klik på en tekstboks for at ændre genvejen. Tryk på Esc for at frakoble den.</system:String>
     <system:String x:Key="ResetButtonText">Nulstil til standard</system:String>
+    <system:String x:Key="SelectGalleryThumb">Vælg galleri billede</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollUp">Scroll op</system:String>
+    <system:String x:Key="ScrollDown">Scroll ned</system:String>
+    <system:String x:Key="ScrollToTop">Scroll til toppen</system:String>
+    <system:String x:Key="ScrollToBottom">Scroll til bunden</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Angiv stjernevurdering</system:String>
+    <system:String x:Key="1Star">1 stjerne</system:String>
+    <system:String x:Key="2Star">2 stjerner</system:String>
+    <system:String x:Key="3Star">3 stjerner</system:String>
+    <system:String x:Key="4Star">4 stjerner</system:String>
+    <system:String x:Key="5Star">5 stjerner</system:String>
+    <system:String x:Key="RemoveStarRating">Fjern vurdering</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Skalering af vindue</system:String>
