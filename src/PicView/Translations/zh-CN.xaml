@@ -36,21 +36,22 @@
     <system:String x:Key="GithubRepo">Github 仓库</system:String>
     <system:String x:Key="ViewLicenseFile">查看开源协议</system:String>
     <system:String x:Key="Version">版本：</system:String>
-    <system:String x:Key="ChangeKeybindingText">单击文本框以更改按键绑定。按 Esc 键取消绑定。</system:String>
-    <system:String x:Key="ResetButtonText">重置为默认</system:String>
+    <system:String x:Key="ChangeKeybindingText">点击文本框以更改按键绑定。按 Esc 键取消绑定。</system:String>
+    <system:String x:Key="ResetButtonText">重置为默认设置</system:String>
     <system:String x:Key="SelectGalleryThumb">选择画廊缩略图</system:String>
     <!--  Scroll  -->
-    <system:String x:Key="ScrollUp">向上滚动</system:String>
-    <system:String x:Key="ScrollDown">向下滚动</system:String>
-    <system:String x:Key="ScrollToTop">滚动到顶部</system:String>
-    <system:String x:Key="ScrollToBottom">滚动到底部</system:String>
+    <system:String x:Key="ScrollAndRotate">滚动和旋转</system:String>
+    <system:String x:Key="ScrollUp">向上滑动</system:String>
+    <system:String x:Key="ScrollDown">向下滑动</system:String>
+    <system:String x:Key="ScrollToTop">滑动到顶部</system:String>
+    <system:String x:Key="ScrollToBottom">滑动到底部</system:String>
     <!--  Stars  -->
     <system:String x:Key="SetStarRating">设置星级评分"</system:String>
     <system:String x:Key="1Star">1星评分</system:String>
     <system:String x:Key="2Star">2星评分</system:String>
     <system:String x:Key="3Star">3星评分</system:String>
     <system:String x:Key="4Star">4星评分</system:String>
-    <system:String x:Key="5Star">5星评分"</system:String>
+    <system:String x:Key="5Star">5星评分</system:String>
     <system:String x:Key="RemoveStarRating">移除评分</system:String>
 
     <!--  Info window, window scaling  -->

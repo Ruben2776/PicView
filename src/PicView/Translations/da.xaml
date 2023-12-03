@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Nulstil til standard</system:String>
     <system:String x:Key="SelectGalleryThumb">Vælg galleri billede</system:String>
     <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Scroll og roter</system:String>
     <system:String x:Key="ScrollUp">Scroll op</system:String>
     <system:String x:Key="ScrollDown">Scroll ned</system:String>
     <system:String x:Key="ScrollToTop">Scroll til toppen</system:String>

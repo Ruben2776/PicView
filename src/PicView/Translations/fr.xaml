@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Réinitialiser par défaut</system:String>
     <system:String x:Key="SelectGalleryThumb">Sélectionner la vignette de la galerie</system:String>
     <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Faire défiler et tourner</system:String>
     <system:String x:Key="ScrollUp">Faire défiler vers le haut</system:String>
     <system:String x:Key="ScrollDown">Faire défiler vers le bas</system:String>
     <system:String x:Key="ScrollToTop">Faire défiler vers le haut</system:String>

@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Przywróć domyślne</system:String>
     <system:String x:Key="SelectGalleryThumb">Wybierz miniaturę galerii</system:String>
     <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Przewijaj i obracaj</system:String>
     <system:String x:Key="ScrollUp">Przewiń w górę</system:String>
     <system:String x:Key="ScrollDown">Przewiń w dół</system:String>
     <system:String x:Key="ScrollToTop">Przewiń do góry</system:String>

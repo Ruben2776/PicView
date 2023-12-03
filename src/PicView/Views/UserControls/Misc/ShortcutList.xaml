@@ -193,7 +193,7 @@
         <Label
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="Scroll and rotate" />
+            Content="{StaticResource ScrollAndRotate}" />
 
         <!--  Rotate Right  -->
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">

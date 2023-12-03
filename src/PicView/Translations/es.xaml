@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Restablecer a predeterminado</system:String>
     <system:String x:Key="SelectGalleryThumb">Seleccionar miniatura de la galería</system:String>
     <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Desplazar y rotar</system:String>
     <system:String x:Key="ScrollUp">Desplazar hacia arriba</system:String>
     <system:String x:Key="ScrollDown">Desplazar hacia abajo</system:String>
     <system:String x:Key="ScrollToTop">Desplazar hacia arriba al tope</system:String>

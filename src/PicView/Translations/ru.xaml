@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Сбросить настройки по умолчанию</system:String>
     <system:String x:Key="SelectGalleryThumb">Выбрать миниатюру галереи</system:String>
     <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Прокрутка и вращение</system:String>
     <system:String x:Key="ScrollUp">Прокрутить вверх</system:String>
     <system:String x:Key="ScrollDown">Прокрутить вниз</system:String>
     <system:String x:Key="ScrollToTop">Прокрутить вверх</system:String>

@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">기본값으로 재설정</system:String>
     <system:String x:Key="SelectGalleryThumb">갤러리 섬네일 선택</system:String>
     <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">스크롤 및 회전</system:String>
     <system:String x:Key="ScrollUp">위로 스크롤</system:String>
     <system:String x:Key="ScrollDown">아래로 스크롤</system:String>
     <system:String x:Key="ScrollToTop">맨 위로 스크롤</system:String>
