@@ -122,6 +122,13 @@ public partial class ShortcutList
 
         ResetZoomBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResetZoom", false).ConfigureAwait(false);
 
+        // Stretch
+        StretchBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Stretch", false).ConfigureAwait(false);
+        StretchBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Stretch", true).ConfigureAwait(false);
+
+        StretchBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Stretch", false).ConfigureAwait(false);
+        StretchBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "Stretch", true).ConfigureAwait(false);
+
         // Flip
         FlipBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Flip", false).ConfigureAwait(false);
         FlipBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Flip", true).ConfigureAwait(false);

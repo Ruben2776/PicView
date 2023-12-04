@@ -396,6 +396,24 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource StretchImage}" />
+            <TextBox
+                x:Name="StretchBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="StretchBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource Flip}" />
             <TextBox
                 x:Name="FlipBox1"

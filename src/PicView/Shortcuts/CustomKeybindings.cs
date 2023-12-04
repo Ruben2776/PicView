@@ -243,6 +243,7 @@ internal static class CustomKeybindings
             "Crop" => UIHelper.Crop,
             "Flip" => UIHelper.Flip,
             "OptimizeImage" => UIHelper.OptimizeImage,
+            "Stretch" => UIHelper.Stretch,
 
             // Set stars
             "Set0Star" => UIHelper.Set0Star,

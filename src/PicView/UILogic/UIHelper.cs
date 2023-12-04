@@ -760,6 +760,23 @@ namespace PicView.UILogic
 
         #region Image Related
 
+        internal static async Task Stretch()
+        {
+            var check = await CheckModifierFunctionAsync();
+            if (check)
+            {
+                return;
+            }
+            if (IsKeyHeldDown || GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                UpdateUIValues.SetAutoFill(null!, null!);
+            });
+        }
+
         internal static async Task ResizeImage()
         {
             var check = await CheckModifierFunctionAsync();
