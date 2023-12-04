@@ -14,35 +14,27 @@ namespace PicView.UILogic.TransformImage
         public static ScaleTransform? ScaleTransform;
         public static TranslateTransform? TranslateTransform;
 
-        public static BitmapScalingMode DefaultScalingMode = (BitmapScalingMode)ConfigureWindows.GetMainWindow.MainImage.GetValue(RenderOptions.BitmapScalingModeProperty);
         private static Point _origin;
         private static Point _start;
-
-        internal static double _zoomValue = 1;
 
         /// <summary>
         /// Used to determine final point when zooming,
         /// since DoubleAnimation changes value of TranslateTransform continuously.
         /// </summary>
-        internal static double ZoomValue
-        {
-            get
-            {
-                return _zoomValue;
-            }
-            private set
-            {
-                _zoomValue = value;
-
-                TriggerScalingModeUpdate();
-            }
-        }
+        internal static double ZoomValue { get; private set; }
 
         public static void TriggerScalingModeUpdate()
         {
-            var scalingMode = _zoomValue >= 1 && Settings.Default.IsScalingSetToNearestNeighbor ? BitmapScalingMode.NearestNeighbor : DefaultScalingMode;
+            var scalingMode = ZoomValue >= 1 && Settings.Default.IsScalingSetToNearestNeighbor ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
 
-            ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, scalingMode);
+            try
+            {
+                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, scalingMode);
+            }
+            catch (Exception)
+            {
+                //
+            }
         }
 
         /// <summary>
@@ -343,6 +335,7 @@ namespace PicView.UILogic.TransformImage
                 return;
 
             ZoomValue = value;
+            TriggerScalingModeUpdate();
 
             BeginZoomAnimation(ZoomValue);
 
