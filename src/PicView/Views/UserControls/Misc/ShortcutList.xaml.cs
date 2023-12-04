@@ -7,9 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using PicView.ConfigureSettings;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using String = System.String;
 
 namespace PicView.Views.UserControls.Misc;
 
