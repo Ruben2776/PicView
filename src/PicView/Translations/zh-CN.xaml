@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">点击文本框以更改按键绑定。按 Esc 键取消绑定。</system:String>
     <system:String x:Key="ResetButtonText">重置为默认设置</system:String>
     <system:String x:Key="SelectGalleryThumb">选择画廊缩略图</system:String>
+    <system:String x:Key="PressKey">按键...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">滚动和旋转</system:String>
     <system:String x:Key="ScrollUp">向上滑动</system:String>

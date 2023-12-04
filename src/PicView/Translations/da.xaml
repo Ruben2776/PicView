@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Klik på en tekstboks for at ændre genvejen. Tryk på Esc for at frakoble den.</system:String>
     <system:String x:Key="ResetButtonText">Nulstil til standard</system:String>
     <system:String x:Key="SelectGalleryThumb">Vælg galleri billede</system:String>
+    <system:String x:Key="PressKey">Tryk på tasten...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Scroll og roter</system:String>
     <system:String x:Key="ScrollUp">Scroll op</system:String>

@@ -450,6 +450,24 @@
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource ResizeImage}" />
+            <TextBox
+                x:Name="QuickResizeBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+            <TextBox
+                x:Name="QuickResizeBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                 Text="{StaticResource ColorPickerTool}" />
             <TextBox
                 x:Name="ColorPickBox1"

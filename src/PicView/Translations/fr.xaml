@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Cliquez sur une zone de texte pour changer le raccourci clavier. Appuyez sur Échap pour désactiver le raccourci clavier.</system:String>
     <system:String x:Key="ResetButtonText">Réinitialiser par défaut</system:String>
     <system:String x:Key="SelectGalleryThumb">Sélectionner la vignette de la galerie</system:String>
+    <system:String x:Key="PressKey">Appuyez sur la touche...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Faire défiler et tourner</system:String>
     <system:String x:Key="ScrollUp">Faire défiler vers le haut</system:String>

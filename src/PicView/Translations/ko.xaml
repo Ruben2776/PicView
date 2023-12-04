@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">단추를 클릭하여 단축키를 변경하십시오. Esc를 누르면 키 바인딩이 해제됩니다.</system:String>
     <system:String x:Key="ResetButtonText">기본값으로 재설정</system:String>
     <system:String x:Key="SelectGalleryThumb">갤러리 섬네일 선택</system:String>
+    <system:String x:Key="PressKey">키를 누르세요...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">스크롤 및 회전</system:String>
     <system:String x:Key="ScrollUp">위로 스크롤</system:String>

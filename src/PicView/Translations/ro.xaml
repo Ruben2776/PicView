@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Faceți clic pe o casetă de text pentru a schimba combinația de taste. Apăsarea tastei Esc anulează combinația de taste.</system:String>
     <system:String x:Key="ResetButtonText">Resetare la implicit</system:String>
     <system:String x:Key="SelectGalleryThumb">Selectați miniatura galeriei</system:String>
+    <system:String x:Key="PressKey">Apasă tasta...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Derulați și rotiți</system:String>
     <system:String x:Key="ScrollUp">Derulează în sus</system:String>

@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Kliknij na polu tekstowym, aby zmienić przypisanie klawiszy. Naciśnięcie klawisza Esc odwiązuje klawisz.</system:String>
     <system:String x:Key="ResetButtonText">Przywróć domyślne</system:String>
     <system:String x:Key="SelectGalleryThumb">Wybierz miniaturę galerii</system:String>
+    <system:String x:Key="PressKey">Naciśnij klawisz...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Przewijaj i obracaj</system:String>
     <system:String x:Key="ScrollUp">Przewiń w górę</system:String>

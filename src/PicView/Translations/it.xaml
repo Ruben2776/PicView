@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Clicca su una casella di testo per cambiare la combinazione di tasti. Premere Esc per annullare la combinazione di tasti.</system:String>
     <system:String x:Key="ResetButtonText">Reimposta alle impostazioni predefinite</system:String>
     <system:String x:Key="SelectGalleryThumb">Seleziona la miniatura della galleria</system:String>
+    <system:String x:Key="PressKey">Premi il tasto...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Scorrere e ruotare</system:String>
     <system:String x:Key="ScrollUp">Scorri verso l'alto</system:String>

@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Haz clic en un cuadro de texto para cambiar la asignación de teclas. Presiona Esc para desvincular la tecla.</system:String>
     <system:String x:Key="ResetButtonText">Restablecer a predeterminado</system:String>
     <system:String x:Key="SelectGalleryThumb">Seleccionar miniatura de la galería</system:String>
+    <system:String x:Key="PressKey">Presiona tecla...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Desplazar y rotar</system:String>
     <system:String x:Key="ScrollUp">Desplazar hacia arriba</system:String>

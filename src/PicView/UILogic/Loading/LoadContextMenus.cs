@@ -258,6 +258,9 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var ShowInFolderCm = (MenuItem)MainContextMenu.Items[10];
             ShowInFolderCm.Click += (_, _) => OpenInExplorer(Pics?[FolderIndex]);
+            ShowInFolderCm.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts
+                .FirstOrDefault(kv => kv.Value.Method.Name == "OpenInExplorer")
+                .Key.ToString();
 
             ///////////////////////////
             ///   Image choices    \\\\
@@ -266,6 +269,9 @@ namespace PicView.UILogic.Loading
 
             var ImageInfoCm = (MenuItem)ImageChoices.Items[0];
             ImageInfoCm.Click += (_, _) => ImageInfoWindow();
+            ImageInfoCm.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts
+                .FirstOrDefault(kv => kv.Value.Method.Name == "ImageInfoWindow")
+                .Key.ToString();
 
             var FileProps = (MenuItem)ImageChoices.Items[1];
             FileProps.Click += (_, _) => FileProperties.ShowFileProperties();
@@ -275,9 +281,15 @@ namespace PicView.UILogic.Loading
 
             var ImageSize = (MenuItem)ImageChoices.Items[3];
             ImageSize.Click += (_, _) => UpdateUIValues.ToggleQuickResize();
+            ImageSize.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts
+                .FirstOrDefault(kv => kv.Value.Method.Name == "ResizeImage")
+                .Key.ToString();
 
             var BatchSize = (MenuItem)ImageChoices.Items[4];
             BatchSize.Click += (_, _) => ResizeWindow();
+            BatchSize.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts
+                .FirstOrDefault(kv => kv.Value.Method.Name == "ResizeWindow")
+                .Key.ToString();
 
             // 12 = seperator
 

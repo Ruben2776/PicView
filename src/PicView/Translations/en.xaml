@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Click on a textbox to change keybinding. Pressing Esc unbinds key.</system:String>
     <system:String x:Key="ResetButtonText">Reset to default</system:String>
     <system:String x:Key="SelectGalleryThumb">Select gallery thumbnail</system:String>
+    <system:String x:Key="PressKey">Press key...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Scroll and rotate</system:String>
     <system:String x:Key="ScrollUp">Scroll up</system:String>

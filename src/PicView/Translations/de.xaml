@@ -39,6 +39,7 @@
     <system:String x:Key="ChangeKeybindingText">Klicken Sie auf ein Textfeld, um die Tastenkombination zu ändern. Drücken Sie Esc, um die Tastenkombination zu lösen.</system:String>
     <system:String x:Key="ResetButtonText">Auf Standard zurücksetzen</system:String>
     <system:String x:Key="SelectGalleryThumb">Miniaturbild auswählen</system:String>
+    <system:String x:Key="PressKey">Taste drücken...</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Scrollen und drehen</system:String>
     <system:String x:Key="ScrollUp">Nach oben scrollen</system:String>

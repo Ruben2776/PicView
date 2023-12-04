@@ -7,6 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.ConfigureSettings;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using String = System.String;
 
 namespace PicView.Views.UserControls.Misc;
 
@@ -142,6 +145,13 @@ public partial class ShortcutList
 
         ChangeBgBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ChangeBackground", false).ConfigureAwait(false);
         ChangeBgBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ChangeBackground", true).ConfigureAwait(false);
+
+        // Change Background
+        QuickResizeBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResizeImage", false).ConfigureAwait(false);
+        QuickResizeBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResizeImage", true).ConfigureAwait(false);
+
+        QuickResizeBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeImage", false).ConfigureAwait(false);
+        QuickResizeBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResizeImage", true).ConfigureAwait(false);
 
         // Color Picker
         ColorPickBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ColorPicker", false).ConfigureAwait(false);
@@ -408,7 +418,44 @@ public partial class ShortcutList
         {
             return;
         }
-        var key = await Task.Run(() =>
+        var key = await Task.FromResult(GetFunctionKey()).ConfigureAwait(false);
+
+        await Dispatcher.InvokeAsync(() =>
+        {
+            var textBox = (TextBox)sender;
+            textBox.Text = key;
+            textBox.GotKeyboardFocus += delegate
+            {
+                try
+                {
+                    textBox.Foreground = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
+                    textBox.Text = Application.Current.Resources["PressKey"].ToString();
+                }
+                catch (Exception)
+                {
+                    textBox.Text = string.Empty;
+                }
+            };
+            textBox.LostKeyboardFocus += delegate
+            {
+                try
+                {
+                    if (textBox.Text.Equals(Application.Current.Resources["PressKey"].ToString()))
+                    {
+                        textBox.Text = GetFunctionKey();
+                    }
+                    textBox.Foreground = (SolidColorBrush)Application.Current.Resources["MainColorBrush"];
+                }
+                catch (Exception)
+                {
+                    textBox.Text = string.Empty;
+                }
+            };
+            UpdateModifierTextBoxes(functionName, key, alt);
+        }, DispatcherPriority.Normal);
+        return;
+
+        string GetFunctionKey()
         {
             var function = CustomKeybindings.GetFunctionByName(functionName).Result;
 
@@ -421,14 +468,7 @@ public partial class ShortcutList
                 1 => alt ? string.Empty : keys.FirstOrDefault().ToString(),
                 _ => alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString()
             };
-        }).ConfigureAwait(false);
-
-        await Dispatcher.InvokeAsync(() =>
-        {
-            var textBox = (TextBox)sender;
-            textBox.Text = key;
-            UpdateModifierTextBoxes(functionName, key, alt);
-        }, DispatcherPriority.Normal);
+        }
     }
 
     /// <summary>
@@ -514,9 +554,11 @@ public partial class ShortcutList
 
         var function = await CustomKeybindings.GetFunctionByName(functionName).ConfigureAwait(false);
 
+        // Don't have same key for more than one function
+        CustomKeybindings.CustomShortcuts.Remove(e.Key);
+
         if (e.Key == Key.Escape)
         {
-            Remove();
             await Dispatcher.InvokeAsync(() =>
             {
                 textBox.Text = string.Empty;
@@ -528,17 +570,7 @@ public partial class ShortcutList
         // Handle whether it's an alternative key or not
         if (alt)
         {
-            // Check if the main key is already in the dictionary
-            if (CustomKeybindings.CustomShortcuts.ContainsKey(e.Key))
-            {
-                if (CustomKeybindings.CustomShortcuts.ContainsValue(function))
-                {
-                    Remove();
-                }
-                // Add the alternative key to the dictionary
-                CustomKeybindings.CustomShortcuts[e.Key] = function;
-            }
-            else if (CustomKeybindings.CustomShortcuts.ContainsValue(function))
+            if (CustomKeybindings.CustomShortcuts.ContainsValue(function))
             {
                 // If the main key is not present, add a new entry with the alternative key
                 var altKey = (Key)Enum.Parse(typeof(Key), textBox.Text);
@@ -552,7 +584,11 @@ public partial class ShortcutList
         }
         else
         {
-            // Update the key and function name in the CustomShortcuts dictionary
+            // Remove if it already contains
+            if (CustomKeybindings.CustomShortcuts.ContainsValue(function))
+            {
+                Remove();
+            }
             CustomKeybindings.CustomShortcuts[e.Key] = function;
         }
         return;
