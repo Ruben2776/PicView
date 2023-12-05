@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Nulstil til standard</system:String>
     <system:String x:Key="SelectGalleryThumb">Vælg galleri billede</system:String>
     <system:String x:Key="PressKey">Tryk på tasten...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Klik for at ændre tastaturbinding</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Scroll og roter</system:String>
     <system:String x:Key="ScrollUp">Scroll op</system:String>

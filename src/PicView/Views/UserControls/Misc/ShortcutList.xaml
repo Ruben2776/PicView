@@ -65,12 +65,14 @@
                 x:Name="NextBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="NextBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -81,11 +83,13 @@
             <TextBox
                 x:Name="LastImageBox1"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
             <TextBox
                 x:Name="LastImageBox2"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -97,11 +101,13 @@
             <TextBox
                 x:Name="NextFolderBox1"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
             <TextBox
                 x:Name="NextFolderBox2"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <!--  Prev  -->
@@ -115,12 +121,14 @@
                 x:Name="PrevBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="PrevBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -131,11 +139,13 @@
             <TextBox
                 x:Name="FirstImageBox1"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
             <TextBox
                 x:Name="FirstImageBox2"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -147,11 +157,13 @@
             <TextBox
                 x:Name="PrevFolderBox1"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
             <TextBox
                 x:Name="PrevFolderBox2"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
@@ -164,12 +176,14 @@
                 x:Name="ToggleLoopingBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ToggleLoopingBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
@@ -182,12 +196,14 @@
                 x:Name="GalleryBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="GalleryBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <Label
@@ -206,12 +222,14 @@
                 x:Name="UpBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="UpBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -222,11 +240,13 @@
             <TextBox
                 x:Name="ScrollUpBox1"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
             <TextBox
                 x:Name="ScrollUpBox2"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <!--  Rotate Left  -->
@@ -240,12 +260,14 @@
                 x:Name="DownBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="DownBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -256,11 +278,13 @@
             <TextBox
                 x:Name="ScrollDownBox1"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
             <TextBox
                 x:Name="ScrollDownBox2"
                 Width="150"
-                Margin="0,0,5,0" />
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -273,12 +297,14 @@
                 x:Name="ScrollToTopBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ScrollToTopBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -291,12 +317,14 @@
                 x:Name="ScrlBottomBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ScrlBottomBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -309,12 +337,14 @@
                 x:Name="ToggleScrlBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ToggleScrlBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <Label
@@ -332,11 +362,13 @@
                 x:Name="ZoomInBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource MouseWheel}" />
+                Text="{StaticResource MouseWheel}"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -349,11 +381,13 @@
                 x:Name="ZoomOutBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource MouseWheel}" />
+                Text="{StaticResource MouseWheel}"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -365,8 +399,12 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource MouseDrag}" />
-            <TextBox Width="150" Margin="0,0,5,0" />
+                Text="{StaticResource MouseDrag}"
+                ToolTip="{x:Null}" />
+            <TextBox
+                Width="150"
+                Margin="0,0,5,0"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -379,11 +417,13 @@
                 x:Name="ResetZoomBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource DoubleClick}" />
+                Text="{StaticResource DoubleClick}"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <Label
@@ -401,12 +441,14 @@
                 x:Name="StretchBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="StretchBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
@@ -419,12 +461,14 @@
                 x:Name="FlipBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="FlipBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -437,12 +481,14 @@
                 x:Name="CropBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="CropBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -455,12 +501,14 @@
                 x:Name="ChangeBgBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ChangeBgBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -473,12 +521,14 @@
                 x:Name="QuickResizeBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="QuickResizeBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -491,12 +541,34 @@
                 x:Name="ColorPickBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ColorPickBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+        </StackPanel>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+            <TextBlock
+                Width="160"
+                Margin="10,3,0,3"
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                Text="{StaticResource OptimizeImage}" />
+            <TextBox
+                x:Name="OptimizeBox1"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+            <TextBox
+                x:Name="OptimizeBox2"
+                Width="150"
+                Margin="0,0,5,0"
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <Label
@@ -514,11 +586,13 @@
                 x:Name="ToggleUIBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Alt + Z" />
+                Text="Alt + Z"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -530,11 +604,13 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Alt + Enter" />
+                Text="Alt + Enter"
+                ToolTip="{x:Null}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Shift + double click" />
+                Text="Shift + double click"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -547,12 +623,14 @@
                 x:Name="ToggleFullscreenBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ToggleFullscreenBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -565,12 +643,14 @@
                 x:Name="SlideshowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="SlideshowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -583,12 +663,14 @@
                 x:Name="ShowImageGalleryBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ShowImageGalleryBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <Label
@@ -606,11 +688,13 @@
                 x:Name="OpenBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + O" />
+                Text="Ctrl + O"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -623,11 +707,13 @@
                 x:Name="OpenWithBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + E" />
+                Text="Ctrl + E"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -640,11 +726,13 @@
                 x:Name="ReloadBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + R" />
+                Text="Ctrl + R"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -657,11 +745,13 @@
                 x:Name="SaveBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + S" />
+                Text="Ctrl + S"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -674,11 +764,13 @@
                 x:Name="PrintBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + P" />
+                Text="Ctrl + P"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -690,11 +782,13 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Delete" />
+                Text="Delete"
+                ToolTip="{x:Null}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Shift + Delete" />
+                Text="Shift + Delete"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -707,12 +801,14 @@
                 x:Name="DeleteBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="DeleteBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -725,12 +821,14 @@
                 x:Name="RenameBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="RenameBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -743,12 +841,14 @@
                 x:Name="ShowInFolderBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ShowInFolderBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -761,11 +861,13 @@
                 x:Name="FilePropertiesBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + I" />
+                Text="Ctrl + I"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <Label
@@ -783,11 +885,13 @@
                 x:Name="CopyFileBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + C" />
+                Text="Ctrl + C"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -800,11 +904,13 @@
                 x:Name="CopyFilePathBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + Alt + C" />
+                Text="Ctrl + Alt + C"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -817,11 +923,13 @@
                 x:Name="CopyImageBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + Shift + C" />
+                Text="Ctrl + Shift + C"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -838,12 +946,14 @@
                 x:Name="CopyBase64Box1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="CopyBase64Box2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -856,11 +966,13 @@
                 x:Name="PasteBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + V" />
+                Text="Ctrl + V"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -873,12 +985,14 @@
                 x:Name="DuplicateBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="DuplicateBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -891,11 +1005,13 @@
                 x:Name="CutBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + X" />
+                Text="Ctrl + X"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <Label
@@ -913,12 +1029,14 @@
                 x:Name="AboutBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="AboutBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -931,12 +1049,14 @@
                 x:Name="SettingsBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="SettingsBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -949,12 +1069,14 @@
                 x:Name="ImageInfoBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ImageInfoBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -967,12 +1089,14 @@
                 x:Name="ResizeWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ResizeWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -984,11 +1108,13 @@
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource Esc}" />
+                Text="{StaticResource Esc}"
+                ToolTip="{x:Null}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + Q" />
+                Text="Ctrl + Q"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1001,12 +1127,14 @@
                 x:Name="CloseBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="CloseBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1019,11 +1147,13 @@
                 x:Name="NewWindowBox"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
-                Text="Ctrl + N" />
+                Text="Ctrl + N"
+                ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1036,12 +1166,14 @@
                 x:Name="CenterWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="CenterWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1054,12 +1186,14 @@
                 x:Name="TopMostBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="TopMostBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <Label
@@ -1077,12 +1211,14 @@
                 x:Name="AutoFitWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="AutoFitWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1095,12 +1231,14 @@
                 x:Name="AutoFitFillWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="AutoFitFillWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1113,12 +1251,14 @@
                 x:Name="NormalWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="NormalWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1131,12 +1271,14 @@
                 x:Name="NormalWindowFillBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="NormalWindowFillBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <Label
@@ -1154,12 +1296,14 @@
                 x:Name="SetStar1Box1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="SetStar1Box2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1172,12 +1316,14 @@
                 x:Name="SetStar2Box1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="SetStar2Box2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1190,12 +1336,14 @@
                 x:Name="SetStar3Box1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="SetStar3Box2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1208,12 +1356,14 @@
                 x:Name="SetStar4Box1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="SetStar4Box2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1226,12 +1376,14 @@
                 x:Name="SetStar5Box1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="SetStar5Box2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
@@ -1244,12 +1396,14 @@
                 x:Name="ResetStarsBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
             <TextBox
                 x:Name="ResetStarsBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                IsReadOnly="False" />
+                IsReadOnly="False"
+                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

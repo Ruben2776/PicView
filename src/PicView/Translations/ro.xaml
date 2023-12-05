@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Resetare la implicit</system:String>
     <system:String x:Key="SelectGalleryThumb">Selectați miniatura galeriei</system:String>
     <system:String x:Key="PressKey">Apasă tasta...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Click pentru a schimba atribuirea tastei</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Derulați și rotiți</system:String>
     <system:String x:Key="ScrollUp">Derulează în sus</system:String>

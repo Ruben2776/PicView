@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Auf Standard zurücksetzen</system:String>
     <system:String x:Key="SelectGalleryThumb">Miniaturbild auswählen</system:String>
     <system:String x:Key="PressKey">Taste drücken...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Klicken, um die Tastenbelegung zu ändern</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Scrollen und drehen</system:String>
     <system:String x:Key="ScrollUp">Nach oben scrollen</system:String>

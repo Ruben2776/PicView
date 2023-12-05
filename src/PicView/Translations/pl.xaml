@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Przywróć domyślne</system:String>
     <system:String x:Key="SelectGalleryThumb">Wybierz miniaturę galerii</system:String>
     <system:String x:Key="PressKey">Naciśnij klawisz...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Kliknij, aby zmienić przypisanie klawisza</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Przewijaj i obracaj</system:String>
     <system:String x:Key="ScrollUp">Przewiń w górę</system:String>

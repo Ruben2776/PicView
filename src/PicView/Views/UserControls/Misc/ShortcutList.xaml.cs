@@ -164,6 +164,13 @@ public partial class ShortcutList
         ColorPickBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ColorPicker", false).ConfigureAwait(false);
         ColorPickBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ColorPicker", true).ConfigureAwait(false);
 
+        // Optimize image
+        OptimizeBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "OptimizeImage", false).ConfigureAwait(false);
+        OptimizeBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "OptimizeImage", true).ConfigureAwait(false);
+
+        OptimizeBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OptimizeImage", false).ConfigureAwait(false);
+        OptimizeBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "OptimizeImage", true).ConfigureAwait(false);
+
         // Toggle UI
         ToggleUIBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ToggleInterface", false).ConfigureAwait(false);
 

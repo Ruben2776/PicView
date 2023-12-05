@@ -40,6 +40,7 @@
     <system:String x:Key="ResetButtonText">Reimposta alle impostazioni predefinite</system:String>
     <system:String x:Key="SelectGalleryThumb">Seleziona la miniatura della galleria</system:String>
     <system:String x:Key="PressKey">Premi il tasto...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Clicca per cambiare l'assegnazione del tasto</system:String>
     <!--  Scroll  -->
     <system:String x:Key="ScrollAndRotate">Scorrere e ruotare</system:String>
     <system:String x:Key="ScrollUp">Scorri verso l'alto</system:String>
