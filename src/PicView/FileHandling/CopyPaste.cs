@@ -89,7 +89,8 @@ namespace PicView.FileHandling
                     var thumbData = await Task.FromResult(GalleryThumbHolder.GetThumbData(nextIndex)).ConfigureAwait(false);
                     await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                     {
-                        var item = new PicGalleryItem(thumbData.BitmapSource, nextIndex, false);
+                        var item = new PicGalleryItem(thumbData.BitmapSource, newFile, false);
+                        item.FileName = newFile;
                         UC.GetPicGallery.Container.Children.Insert(nextIndex, item);
                     });
                 }

@@ -375,8 +375,8 @@ namespace PicView.UILogic.Loading
             var Deletecm = (MenuItem)MainContextMenu.Items[18];
             Deletecm.Click += async (_, _) =>
                 await DeleteFiles
-                    .DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift),
-                        Pics[FolderIndex]).ConfigureAwait(false);
+                    .DeleteCurrentFileAsync(
+                        Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)).ConfigureAwait(false);
 
             // 19 = seperator
 

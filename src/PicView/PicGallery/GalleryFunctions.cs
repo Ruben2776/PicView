@@ -6,12 +6,12 @@ using PicView.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.ChangeTitlebar;
+using System.Xml.Linq;
 using static PicView.PicGallery.GalleryLoad;
 using static PicView.UILogic.UC;
-using System.Windows.Media;
 
 namespace PicView.PicGallery
 {
@@ -46,7 +46,7 @@ namespace PicView.PicGallery
                     : GalleryNavigation.PicGalleryItemSizeS;
                 item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
                 // Make sure it's deselected
-                if (item.Id != Navigation.FolderIndex)
+                if (Navigation.Pics.IndexOf(item.Name) == Navigation.FolderIndex)
                 {
                     item.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
                 }
@@ -65,7 +65,6 @@ namespace PicView.PicGallery
 
         internal static async Task SortGalleryAsync(FileInfo? fileInfo = null)
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
             var cancelToken = new CancellationToken();
 
             fileInfo ??= new FileInfo(Navigation.Pics[0]);

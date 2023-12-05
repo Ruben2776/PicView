@@ -89,7 +89,7 @@ namespace PicView.Views.Windows
             Delete.MouseLeave += (_, _) => ButtonMouseLeaveAnim(DeleteFill);
             Delete.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(DeleteBrush);
             Delete.Click += async (_, _) =>
-                await DeleteFiles.DeleteFileAsync(Keyboard.IsKeyDown(Key.LeftShift), Pics[FolderIndex])
+                await DeleteFiles.DeleteCurrentFileAsync(Keyboard.IsKeyDown(Key.LeftShift))
                     .ConfigureAwait(false);
 
             // OpenWith

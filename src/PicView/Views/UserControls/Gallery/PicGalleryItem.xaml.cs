@@ -15,9 +15,9 @@ namespace PicView.Views.UserControls.Gallery
 {
     public partial class PicGalleryItem
     {
-        internal int Id { get; set; }
+        internal string FileName { get; set; }
 
-        public PicGalleryItem(ImageSource? pic, int id, bool selected)
+        public PicGalleryItem(ImageSource? pic, string fileName, bool selected)
         {
             InitializeComponent();
 
@@ -26,7 +26,7 @@ namespace PicView.Views.UserControls.Gallery
                 ThumbImage.Source = pic;
             }
 
-            Id = id;
+            FileName = fileName;
 
             OuterBorder.Width = OuterBorder.Height = PicGalleryItemSize;
             InnerBorder.Width = InnerBorder.Height =
@@ -39,10 +39,11 @@ namespace PicView.Views.UserControls.Gallery
 
             ThumbImage.MouseLeave += delegate
             {
-                if (id == Navigation.FolderIndex) return;
+                if (Navigation.Pics.IndexOf(FileName) == Navigation.FolderIndex)
+                    return;
                 if (GalleryFunctions.IsGalleryOpen)
                 {
-                    if (InnerBorder.Width == PicGalleryItemSize && InnerBorder.Height == PicGalleryItemSize)
+                    if (Math.Abs(InnerBorder.Width - PicGalleryItemSize) < 0.5 && Math.Abs(InnerBorder.Height - PicGalleryItemSize) < 0.5)
                     {
                         return;
                     }
@@ -74,7 +75,7 @@ namespace PicView.Views.UserControls.Gallery
                     Stretch = Stretch.Fill
                 }
             };
-            printMenu.Click += (_, _) => OpenSave.Print(Navigation.Pics[Id]);
+            printMenu.Click += (_, _) => OpenSave.Print(FileName);
             cm.Items.Add(printMenu);
 
             // Open With
@@ -91,7 +92,7 @@ namespace PicView.Views.UserControls.Gallery
                     Stretch = Stretch.Fill
                 }
             };
-            openWithMenu.Click += (_, _) => OpenSave.OpenWith(Navigation.Pics[Id]);
+            openWithMenu.Click += (_, _) => OpenSave.OpenWith(FileName);
             cm.Items.Add(openWithMenu);
 
             // Show in folder
@@ -108,7 +109,7 @@ namespace PicView.Views.UserControls.Gallery
                     Stretch = Stretch.Fill
                 }
             };
-            showInFolderMenu.Click += (_, _) => OpenSave.OpenInExplorer(Navigation.Pics[Id]);
+            showInFolderMenu.Click += (_, _) => OpenSave.OpenInExplorer(FileName);
             cm.Items.Add(showInFolderMenu);
 
             cm.Items.Add(new Separator());
@@ -128,7 +129,7 @@ namespace PicView.Views.UserControls.Gallery
                 }
             };
             setAsWallpaperMenu.Click += async (_, _) =>
-                await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill, Navigation.Pics[Id])
+                await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill, FileName)
                     .ConfigureAwait(false);
             cm.Items.Add(setAsWallpaperMenu);
 
@@ -166,7 +167,7 @@ namespace PicView.Views.UserControls.Gallery
                     Stretch = Stretch.Fill
                 }
             };
-            copyFileMenu.Click += (_, _) => CopyPaste.CopyFile(Navigation.Pics[Id]);
+            copyFileMenu.Click += (_, _) => CopyPaste.CopyFile(FileName);
             cm.Items.Add(copyFileMenu);
 
             // Copy Image
@@ -183,7 +184,7 @@ namespace PicView.Views.UserControls.Gallery
                     Stretch = Stretch.Fill
                 }
             };
-            copyImageMenu.Click += (_, _) => CopyPaste.CopyBitmap(Id);
+            copyImageMenu.Click += (_, _) => CopyPaste.CopyBitmap(Navigation.Pics.IndexOf(FileName));
             cm.Items.Add(copyImageMenu);
 
             // Copy Image
@@ -201,7 +202,7 @@ namespace PicView.Views.UserControls.Gallery
                 }
             };
             copyBase64Menu.Click += async (_, _) =>
-                await Base64.SendToClipboard(Navigation.Pics[Id]).ConfigureAwait(false);
+                await Base64.SendToClipboard(FileName).ConfigureAwait(false);
             cm.Items.Add(copyBase64Menu);
 
             cm.Items.Add(new Separator());
@@ -220,7 +221,7 @@ namespace PicView.Views.UserControls.Gallery
                     Stretch = Stretch.Fill
                 }
             };
-            fileCutMenu.Click += (_, _) => CopyPaste.Cut(Navigation.Pics[Id]);
+            fileCutMenu.Click += (_, _) => CopyPaste.Cut(FileName);
             cm.Items.Add(fileCutMenu);
 
             // Delete file
@@ -238,7 +239,7 @@ namespace PicView.Views.UserControls.Gallery
                 }
             };
             deleteFileMenu.Click += async (_, _) =>
-                await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Id]).ConfigureAwait(false);
+                await DeleteFiles.DeleteFileAsync(true, Navigation.Pics.IndexOf(FileName)).ConfigureAwait(false);
             cm.Items.Add(deleteFileMenu);
 
             ContextMenu = cm;

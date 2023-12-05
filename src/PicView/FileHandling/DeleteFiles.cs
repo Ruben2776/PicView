@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using PicView.ChangeImage;
+using PicView.PicGallery;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
@@ -83,21 +84,26 @@ namespace PicView.FileHandling
         /// and display information
         /// </summary>
         /// <param name="recycle"></param>
-        internal static async Task DeleteFileAsync(bool recycle, string fileName)
+        internal static async Task DeleteCurrentFileAsync(bool recycle)
         {
+            if (ErrorHandling.CheckOutOfRange())
+            {
+                return;
+            }
+
+            var fileName = Pics[FolderIndex];
             if (!TryDeleteFile(fileName, recycle))
+            {
+                return;
+            }
+            var index = Pics.IndexOf(fileName);
+            if (index < 0)
             {
                 return;
             }
 
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                var index = Pics.IndexOf(fileName);
-                if (index < 0)
-                {
-                    return;
-                }
-
                 // Sync with gallery
                 if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > index)
                 {
@@ -124,9 +130,60 @@ namespace PicView.FileHandling
 
             var preloadValue = PreLoader.Get(FolderIndex);
             PreLoader.Clear(); // Need to be cleared to avoid synchronization error
-            await PreLoader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource)
+            await PreLoader.AddAsync(FolderIndex, preloadValue?.FileInfo, preloadValue?.BitmapSource)
                 .ConfigureAwait(false);
             await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
+        }
+
+        /// Delete file or move it to recycle bin, navigate to next pic
+        /// and display information
+        /// </summary>
+        /// <param name="recycle"></param>
+        internal static async Task DeleteFileAsync(bool recycle, int index)
+        {
+            if (index == FolderIndex)
+            {
+                await DeleteCurrentFileAsync(recycle).ConfigureAwait(false);
+                return;
+            }
+
+            var currentFile = Pics.IndexOf(Pics[FolderIndex]);
+            var fileName = Pics[index];
+            if (index < 0)
+            {
+                return;
+            }
+            if (!TryDeleteFile(fileName, recycle))
+            {
+                return;
+            }
+
+            Pics.RemoveAt(index);
+            if (Pics.Count <= 0)
+            {
+                ErrorHandling.UnexpectedError();
+                return;
+            }
+            FolderIndex = Pics.IndexOf(Pics[currentFile]);
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                // Sync with gallery
+                if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > index)
+                {
+                    UC.GetPicGallery.Container.Children.RemoveAt(index);
+                }
+            });
+
+            try
+            {
+                PreLoader.Clear();
+            }
+            catch (Exception)
+            {
+                //
+            }
+            await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
         }
     }
 }

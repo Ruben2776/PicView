@@ -98,11 +98,11 @@ namespace PicView.UILogic
                     return true;
 
                 case Key.Delete when ShiftDown:
-                    await DeleteFiles.DeleteFileAsync(false, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                    await DeleteFiles.DeleteCurrentFileAsync(false).ConfigureAwait(false);
                     return true;
 
                 case Key.Delete:
-                    await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                    await DeleteFiles.DeleteCurrentFileAsync(true).ConfigureAwait(false);
                     return true;
             }
 
@@ -578,7 +578,7 @@ namespace PicView.UILogic
             {
                 return;
             }
-            await DeleteFiles.DeleteFileAsync(ShiftDown, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+            await DeleteFiles.DeleteCurrentFileAsync(ShiftDown).ConfigureAwait(false);
         }
 
         internal static async Task DuplicateFile()

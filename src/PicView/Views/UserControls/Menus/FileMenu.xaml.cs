@@ -56,7 +56,7 @@ namespace PicView.Views.UserControls.Menus
             SetButtonIconMouseOverAnimations(RecycleButton, RecycleButtonBrush,
                 (SolidColorBrush)Resources["RecycleButtonIconBrush"]);
             RecycleButton.Click += async (_, _) =>
-                await DeleteFiles.DeleteFileAsync(true, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+                await DeleteFiles.DeleteCurrentFileAsync(true).ConfigureAwait(false);
 
             // OpenWithBorder
             SetButtonIconMouseOverAnimations(OpenWithBorder, OpenWithBorderBrush,

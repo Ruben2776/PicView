@@ -354,7 +354,7 @@ namespace PicView.PicGallery
         internal static void Add(int i)
         {
             var selected = i == Navigation.FolderIndex;
-            var item = new PicGalleryItem(null, i, selected);
+            var item = new PicGalleryItem(null, Navigation.Pics[i], selected);
             item.MouseLeftButtonUp += async delegate { await GalleryClick.ClickAsync(i).ConfigureAwait(false); };
 
             UC.GetPicGallery.Container.Children.Add(item);
@@ -376,7 +376,7 @@ namespace PicView.PicGallery
                 item.ThumbImage.Source = pic;
                 item.MouseEnter += delegate { item.Popup.IsOpen = true; };
                 item.MouseLeave += delegate { item.Popup.IsOpen = false; };
-                item.ThumbFileLocation.Text = fileLocation;
+                item.ThumbFileLocation.Text = item.FileName = fileLocation;
                 item.ThumbFileName.Text = fileName;
                 item.ThumbFileSize.Text = fileSize;
                 item.ThumbFileDate.Text = fileDate;
