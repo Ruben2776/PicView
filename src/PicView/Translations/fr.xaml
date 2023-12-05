@@ -25,7 +25,6 @@
     <system:String x:Key="About">À propos</system:String>
     <system:String x:Key="InfoWindowTitle">Infos et raccourcis</system:String>
     <system:String x:Key="ApplicationShortcuts">Raccourcis d'application</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Enregistré au prochain démarrage)</system:String>
     <system:String x:Key="ImageControl">Contrôle des images</system:String>
     <system:String x:Key="FileManagement">Gestion des fichiers</system:String>
     <system:String x:Key="DragFileTo">Faites glisser le fichier vers l'explorateur Windows ou une autre application/navigateur</system:String>
@@ -37,6 +36,25 @@
     <system:String x:Key="GithubRepo">Référentiel GitHub</system:String>
     <system:String x:Key="ViewLicenseFile">Voir le fichier de licence</system:String>
     <system:String x:Key="Version">Version :</system:String>
+    <system:String x:Key="ChangeKeybindingText">Cliquez sur une zone de texte pour changer le raccourci clavier. Appuyez sur Échap pour désactiver le raccourci clavier.</system:String>
+    <system:String x:Key="ResetButtonText">Réinitialiser par défaut</system:String>
+    <system:String x:Key="SelectGalleryThumb">Sélectionner la vignette de la galerie</system:String>
+    <system:String x:Key="PressKey">Appuyez sur la touche...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Cliquez pour changer la liaison de touche</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Faire défiler et tourner</system:String>
+    <system:String x:Key="ScrollUp">Faire défiler vers le haut</system:String>
+    <system:String x:Key="ScrollDown">Faire défiler vers le bas</system:String>
+    <system:String x:Key="ScrollToTop">Faire défiler vers le haut</system:String>
+    <system:String x:Key="ScrollToBottom">Faire défiler vers le bas</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Définir une note avec des étoiles</system:String>
+    <system:String x:Key="1Star">Note de 1 étoile</system:String>
+    <system:String x:Key="2Star">Note de 2 étoiles</system:String>
+    <system:String x:Key="3Star">Note de 3 étoiles</system:String>
+    <system:String x:Key="4Star">Note de 4 étoiles</system:String>
+    <system:String x:Key="5Star">Note de 5 étoiles</system:String>
+    <system:String x:Key="RemoveStarRating">Supprimer la note</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Mise à l'échelle de la fenêtre</system:String>
@@ -125,6 +143,9 @@
     <system:String x:Key="BottomGalleryItems">Éléments de la galerie inférieure</system:String>
     <system:String x:Key="ExpandedGalleryItems">Éléments de la galerie étendue</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Afficher la galerie inférieure lorsque l'interface utilisateur est masquée</system:String>
+    <system:String x:Key="ImageAliasing">Anticrénelage d'image</system:String>
+    <system:String x:Key="HighQuality">Haute qualité</system:String>
+    <system:String x:Key="NearestNeighbor">Voisin le plus proche</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Couleurs négatives</system:String>

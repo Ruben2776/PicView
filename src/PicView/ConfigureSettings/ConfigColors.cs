@@ -1,4 +1,5 @@
 ﻿using PicView.Animations;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.Themes.Resources;
 using PicView.UILogic;
@@ -160,6 +161,11 @@ namespace PicView.ConfigureSettings
         /// </summary>
         internal static void ChangeBackground()
         {
+            if (GalleryFunctions.IsGalleryOpen)
+            {
+                return;
+            }
+
             // Get the main window and check if it has a valid image border and source
             var mainWindow = ConfigureWindows.GetMainWindow;
             if (mainWindow.MainImageBorder is null || mainWindow.MainImage.Source is null) return;

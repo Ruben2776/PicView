@@ -1,30 +1,47 @@
 ﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ConfigureSettings;
-using PicView.Editing;
 using PicView.Editing.Crop;
-using PicView.FileHandling;
 using PicView.PicGallery;
-using PicView.ProcessHandling;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
-using System.Windows;
 using System.Windows.Input;
-using static PicView.ChangeImage.ErrorHandling;
-using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.CopyPaste;
-using static PicView.FileHandling.DeleteFiles;
-using static PicView.FileHandling.OpenSave;
 using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.TransformImage.Rotation;
-using static PicView.UILogic.TransformImage.ZoomLogic;
 using static PicView.UILogic.UC;
 
 namespace PicView.Shortcuts
 {
     internal static class MainKeyboardShortcuts
     {
+        /// <summary>
+        /// Indicates whether a key is held down.
+        /// </summary>
+        internal static bool IsKeyHeldDown { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the Ctrl key is pressed.
+        /// </summary>
+        internal static bool CtrlDown { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the Alt key is pressed.
+        /// </summary>
+        internal static bool AltDown { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the Shift key is pressed.
+        /// </summary>
+        internal static bool ShiftDown { get; private set; }
+
+        /// <summary>
+        /// Gets the currently pressed key.
+        /// </summary>
+        internal static Key CurrentKey { get; private set; }
+
+        /// <summary>
+        /// Handles keydown events for the main window.
+        /// </summary>
+        /// <param name="sender">The object that triggered the event.</param>
+        /// <param name="e">Key event arguments.</param>
         internal static async Task MainWindow_KeysDownAsync(object sender, KeyEventArgs e)
         {
             #region return statements
@@ -35,7 +52,7 @@ namespace PicView.Shortcuts
                 return;
             }
 
-            // Don't execute keys when entering in GoToPicBox || QuickResize
+            // Don't execute keys when typing in GoToPicBox or in QuickResize
             if (GetImageSettingsMenu.GoToPic != null)
             {
                 if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
@@ -54,14 +71,18 @@ namespace PicView.Shortcuts
 
             #endregion return statements
 
-            var ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-            var altDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
-            var shiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                CtrlDown = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+                AltDown = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+                ShiftDown = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+            });
 
             #region CroppingKeys
 
             if (GetCroppingTool is { IsVisible: true })
             {
+                // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
                 switch (e.Key)
                 {
                     case Key.Escape:
@@ -75,7 +96,7 @@ namespace PicView.Shortcuts
                         return;
 
                     case Key.C:
-                        if (ctrlDown)
+                        if (CtrlDown)
                         {
                             CropFunctions.CopyCrop();
                         }
@@ -90,601 +111,121 @@ namespace PicView.Shortcuts
 
             #endregion CroppingKeys
 
-            #region Keys where it can be held down
+            // Capture the pressed key and modifiers
+            CurrentKey = e.Key;
+            IsKeyHeldDown = e.IsRepeat;
 
-            switch (e.Key)
+            if (CustomKeybindings.CustomShortcuts is null)
             {
-                case Key.BrowserForward:
-                case Key.Right:
-                case Key.D:
-                    // exit if browsing horizontal PicGallery
-                    if (GalleryFunctions.IsGalleryOpen)
-                    {
-                        if (e.IsRepeat)
-                        {
-                            // Disable animations when key is held down
-                            GetPicGallery.Scroller.CanContentScroll = true;
-                        }
-
-                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Right);
-                        return;
-                    }
-
-                    // Go to first if Ctrl held down
-                    if (ctrlDown && !e.IsRepeat)
-                    {
-                        await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
-                    }
-                    else if (shiftDown)
-                    {
-                        await GoToNextFolder(true).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await GoToNextImage(NavigateTo.Next, e.IsRepeat).ConfigureAwait(false);
-                    }
-
-                    return;
-
-                case Key.BrowserBack:
-                case Key.Left:
-                case Key.A:
-                    if (GalleryFunctions.IsGalleryOpen)
-                    {
-                        if (e.IsRepeat)
-                        {
-                            // Disable animations when key is held down
-                            GetPicGallery.Scroller.CanContentScroll = true;
-                        }
-
-                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Left);
-                        return;
-                    }
-
-                    // Go to last if Ctrl held down
-                    if (ctrlDown && !e.IsRepeat)
-                    {
-                        await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
-                    }
-                    else if (shiftDown)
-                    {
-                        await GoToNextFolder(false).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await GoToNextImage(NavigateTo.Previous, e.IsRepeat).ConfigureAwait(false);
-                    }
-
-                    return;
-
-                case Key.PageUp when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
-                    {
-                        GalleryNavigation.ScrollGallery(true, ctrlDown, shiftDown, true);
-                        return;
-                    }
-                case Key.PageUp:
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
-                    }
-
-                    return;
-
-                case Key.PageDown when GetPicGallery != null && GalleryFunctions.IsGalleryOpen:
-                    {
-                        GalleryNavigation.ScrollGallery(false, ctrlDown, shiftDown, true);
-                        return;
-                    }
-                case Key.PageDown:
-                    return;
-
-                case Key.Up:
-                case Key.W:
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
-                    }
-                    else if (GalleryFunctions.IsGalleryOpen && GetPicGallery != null)
-                    {
-                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Up);
-                    }
-                    else
-                    {
-                        Rotate(e.IsRepeat, false);
-                    }
-
-                    return;
-
-                case Key.Down:
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
-                    }
-                    else if (GetPicGallery != null)
-                    {
-                        if (GalleryFunctions.IsGalleryOpen)
-                        {
-                            GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Down);
-                        }
-                        else
-                        {
-                            Rotate(e.IsRepeat, true);
-                        }
-                    }
-                    else
-                    {
-                        Rotate(e.IsRepeat, true);
-                    }
-
-                    return;
-
-                case Key.S:
-                    if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
-                    {
-                        if (shiftDown)
-                        {
-                            await SaveFilesAsync(false).ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
-                        }
-
-                        return; // Fix saving file
-                    }
-
-                    if (GalleryFunctions.IsGalleryOpen)
-                    {
-                        GalleryNavigation.NavigateGallery(GalleryNavigation.Direction.Down);
-                        return;
-                    }
-
-                    if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
-                        Visibility.Visible)
-                    {
-                        GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
-                    }
-                    else
-                    {
-                        Rotate(e.IsRepeat, false);
-                    }
-
-                    return;
-
-                // Zoom
-                case Key.Add:
-                case Key.OemPlus:
-                    Zoom(true);
-                    return;
-
-                case Key.Subtract:
-                case Key.OemMinus:
-                    Zoom(false);
-                    return;
+                return;
             }
 
-            #endregion Keys where it can be held down
-
-            #region Key is not held down
-
-            if (!e.IsRepeat)
+            if (CustomKeybindings.CustomShortcuts.TryGetValue(CurrentKey, out var shortcut))
             {
-                switch (e.Key)
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (shortcut is null)
                 {
-                    // Esc
-                    case Key.Escape:
-                        if (UserControls_Open())
+                    var backup = false;
+                    try
+                    {
+                        if (ErrorHandling.CheckOutOfRange())
                         {
-                            Close_UserControls();
-                        }
-                        else if (GalleryFunctions.IsGalleryOpen)
-                        {
-                            GalleryToggle.CloseCurrentGallery();
-                        }
-                        else if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
-                        {
-                            Slideshow.StopSlideshow();
-                        }
-                        else if (IsDialogOpen)
-                        {
-                            IsDialogOpen = false;
-                        }
-                        else if (ColorPicking.IsRunning)
-                        {
-                            ColorPicking.StopRunning(false);
-                        }
-                        else if (GetEffectsWindow is { IsVisible: true })
-                        {
-                            GetEffectsWindow.Hide();
-                        }
-                        else if (GetImageInfoWindow is { IsVisible: true })
-                        {
-                            GetImageInfoWindow.Hide();
-                        }
-                        else if (GetAboutWindow is { IsVisible: true })
-                        {
-                            GetAboutWindow.Hide();
-                        }
-                        else if (GetSettingsWindow is { IsVisible: true })
-                        {
-                            GetSettingsWindow.Hide();
-                        }
-                        else if (Settings.Default.Fullscreen)
-                        {
-                            WindowSizing.Fullscreen_Restore(false);
-                        }
-                        else if (GetQuickResize is not null && GetQuickResize.Opacity > 0)
-                        {
-                            GetQuickResize.Hide();
-                        }
-                        else if (!MainContextMenu.IsVisible)
-                        {
-                            if (GetCroppingTool is { IsVisible: true })
-                            {
-                                return;
-                            }
-
-                            SystemCommands.CloseWindow(GetMainWindow);
+                            Navigation.BackupPath = Navigation.Pics[Navigation.FolderIndex];
+                            backup = true;
                         }
 
-                        break;
-
-                    // B
-                    case Key.B:
-                        if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            ConfigColors.ChangeBackground();
-                        }
-
-                        break;
-
-                    // Ctrl + Q
-                    case Key.Q:
-                        if (ctrlDown)
-                        {
-                            SystemCommands.CloseWindow(GetMainWindow);
-                        }
-
-                        break;
-
-                    // O, Ctrl + O
-                    case Key.O:
-                        await OpenAsync().ConfigureAwait(false);
-                        break;
-
-                    // X, Ctrl + X
-                    case Key.X:
-                        if (GalleryFunctions.IsGalleryOpen is false)
-                        {
-                            if (ctrlDown)
-                            {
-                                Cut();
-                            }
-                            else
-                            {
-                                UpdateUIValues.SetScrolling();
-                            }
-                        }
-
-                        break;
-                    // F
-                    case Key.F:
-                        if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            Flip();
-                        }
-
-                        break;
-
-                    // J
-                    case Key.J:
-                        if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            UpdateUIValues.ToggleQuickResize();
-                        }
-
-                        break;
-
-                    // Delete, Shift + Delete
-                    case Key.Delete:
-                        if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            await DeleteFileAsync(!shiftDown, Pics[FolderIndex]).ConfigureAwait(false);
-                        }
-
-                        break;
-
-                    // Ctrl + C, Ctrl + Shift + C, Ctrl + Alt + C
-                    case Key.C:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
-                        {
-                            if (shiftDown)
-                            {
-                                CopyBitmap();
-                            }
-                            else if (altDown)
-                            {
-                                CopyFilePath();
-                            }
-                            else
-                            {
-                                if (GetMainWindow.MainImage.Effect != null)
-                                    CopyBitmap();
-                                else
-                                    CopyFile();
-                            }
-                        }
-                        else if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            CropFunctions.StartCrop();
-                        }
-
-                        break;
-
-                    // Ctrl + V
-                    case Key.V:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
-                        {
-                            await PasteAsync().ConfigureAwait(false);
-                        }
-
-                        break;
-
-                    case Key.I:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
-                        {
-                            if (altDown)
-                            {
-                                UpdateUIValues.ToggleQuickResize();
-                            }
-                            else
-                            {
-                                FileProperties.ShowFileProperties();
-                            }
-                        }
-                        else
-                        {
-                            ImageInfoWindow();
-                        }
-
-                        break;
-
-                    // Ctrl + P
-                    case Key.P:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
-                        {
-                            Print(Pics[FolderIndex]);
-                        }
-
-                        break;
-
-                    //  R
-                    case Key.R:
-                        if (ctrlDown && !GalleryFunctions.IsGalleryOpen)
-                        {
-                            await ReloadAsync().ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            ResetZoom();
-                        }
-
-                        break;
-
-                    // L
-                    case Key.L:
-                        UpdateUIValues.SetLooping();
-                        break;
-
-                    // E
-                    case Key.E:
-                        if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            OpenWith();
-                        }
-                        else
-                        {
-                            await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
-                        }
-
-                        break;
-
-                    // T
-                    case Key.T:
-                        UpdateUIValues.SetTopMost();
-                        break;
-
-                    // N
-                    case Key.N:
-                        if (ctrlDown)
-                        {
-                            ProcessLogic.StartNewProcess();
-                        }
-                        else
-                        {
-                            ResizeWindow();
-                        }
-
-                        break;
-
-                    // G
-                    case Key.G:
-                        await GalleryToggle.ToggleGalleryAsync().ConfigureAwait(false);
-                        break;
-
-                    // Space
-                    case Key.Space:
-                        if (GetPicGallery != null)
-                        {
-                            if (GalleryFunctions.IsGalleryOpen)
-                            {
-                                GalleryNavigation.ScrollToGalleryCenter();
-                                return;
-                            }
-                        }
-
-                        WindowSizing.CenterWindowOnScreen();
-                        break;
-
-                    // 1
-                    case Key.D1:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
-                                                  || Settings.Default.Fullscreen)
-                        {
-                            break;
-                        }
-
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"]);
-                        UpdateUIValues.SetScalingBehaviour(true, false);
-                        break;
-
-                    // 2
-                    case Key.D2:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
-                                                  || Settings.Default.Fullscreen)
-                        {
-                            break;
-                        }
-
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"]);
-                        UpdateUIValues.SetScalingBehaviour(true, true);
-                        break;
-
-                    // 3
-                    case Key.D3:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
-                                                  || Settings.Default.Fullscreen)
-                        {
-                            break;
-                        }
-
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"]);
-                        UpdateUIValues.SetScalingBehaviour(false, false);
-                        break;
-
-                    // 4
-                    case Key.D4:
-                        if (QuickSettingsMenuOpen || GalleryFunctions.IsGalleryOpen
-                                                  || Settings.Default.Fullscreen)
-                        {
-                            break;
-                        }
-
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"]);
-                        UpdateUIValues.SetScalingBehaviour(false, true);
-                        break;
-
-                    // F1
-                    case Key.F1:
-                        InfoWindow();
-                        break;
-
-                    // F2
-                    case Key.F2:
-                        EditTitleBar.EditTitleBar_Text();
-                        break;
-
-                    // F3
-                    case Key.F3:
-                        OpenInExplorer(Pics[FolderIndex]);
-                        break;
-
-                    // F4
-                    case Key.F4:
-                        AllSettingsWindow();
-                        break;
-
-                    // F5
-                    case Key.F5:
-                        if (!GalleryFunctions.IsGalleryOpen)
-                        {
-                            Slideshow.StartSlideshow();
-                        }
-
-                        break;
-
-                    // F6
-                    case Key.F6:
-                        EffectsWindow();
-                        break;
-
-                    // F7
-                    case Key.F7:
-                        ResetZoom();
-                        break;
-
-                    // F9
-                    case Key.F9:
-                        ResizeWindow();
-                        break;
-
-                    // F11
-                    case Key.F11:
-                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
-                        break;
-
-                    // F12
-                    case Key.F12:
-                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
-                        break;
-
-                    // Home
-                    case Key.Home:
-                        GetMainWindow.Scroller.ScrollToHome();
-                        break;
-
-                    // End
-                    case Key.End:
-                        GetMainWindow.Scroller.ScrollToEnd();
-                        break;
-
-                    // Enter
-                    case Key.Enter:
-                        if (GalleryFunctions.IsGalleryOpen)
-                        {
-                            await GalleryClick.ClickAsync(GalleryNavigation.SelectedGalleryItem).ConfigureAwait(false);
-                        }
-
-                        break;
+                        await CustomKeybindings.CreateNewDefaultKeybindingFile().ConfigureAwait(false);
+                        // ReSharper disable once TailRecursiveCall
+                        await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        await ErrorHandling.ReloadAsync(fromBackup: backup).ConfigureAwait(false);
+                    }
+                    return;
                 }
+                // Execute the associated action
+                await shortcut.Invoke().ConfigureAwait(false);
             }
-
-            #endregion Key is not held down
+            else
+            {
+                await UIHelper.CheckModifierFunctionAsync().ConfigureAwait(false);
+            }
         }
 
-        internal static void MainWindow_KeysUp(object sender, KeyEventArgs e)
+        /// <summary>
+        /// Handles keyup events for the main window.
+        /// </summary>
+        /// <param name="sender">The object that triggered the event.</param>
+        /// <param name="e">Key event arguments.</param>
+        internal static async Task MainWindow_KeysUp(object sender, KeyEventArgs e)
         {
+            #region return statements
+
             // Don't allow keys when typing in text
             if (GetMainWindow.TitleText.IsKeyboardFocusWithin)
             {
                 return;
             }
 
+            // Don't execute keys when typing in GoToPicBox or in QuickResize
+            if (GetImageSettingsMenu.GoToPic != null)
+            {
+                if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+                {
+                    return;
+                }
+            }
+
+            if (GetQuickResize != null)
+            {
+                if (GetQuickResize.WidthBox.IsKeyboardFocused || GetQuickResize.HeightBox.IsKeyboardFocused)
+                {
+                    return;
+                }
+            }
+
+            #endregion return statements
+
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt)
             {
+                // ReSharper disable once ConvertIfStatementToSwitchStatement
                 if (e.SystemKey == Key.Z && !GalleryFunctions.IsGalleryOpen)
                 {
-                    HideInterfaceLogic.ToggleInterface();
+                    await GetMainWindow.Dispatcher.InvokeAsync(HideInterfaceLogic.ToggleInterface);
                 }
                 else if (e.SystemKey == Key.Enter)
                 {
-                    WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+                    await GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+                    });
                 }
 
+                AltDown = false;
                 return;
             }
 
+            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (e.Key)
             {
                 case Key.A:
                 case Key.Right:
                 case Key.Left:
                 case Key.D:
-                    if (FolderIndex < 0 || FolderIndex >= Pics.Count) return;
-                    _ = FastPic.FastPicUpdateAsync().ConfigureAwait(false);
+                    if (Navigation.FolderIndex < 0 || Navigation.FolderIndex >= Navigation.Pics.Count)
+                        return;
+                    await FastPic.FastPicUpdateAsync().ConfigureAwait(false);
+                    return;
+
+                case Key.LeftShift:
+                case Key.RightShift:
+                    ShiftDown = false;
+                    return;
+
+                case Key.LeftCtrl:
+                case Key.RightCtrl:
+                    CtrlDown = false;
                     return;
             }
         }

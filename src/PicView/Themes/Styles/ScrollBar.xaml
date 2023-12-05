@@ -12,7 +12,7 @@
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Rectangle
                         Name="ellipse"
-                        Width="13"
+                        Width="16"
                         Fill="{StaticResource BackgroundColorBrushFadeSubtle}"
                         Stroke="{StaticResource BorderBrush}" />
                     <ControlTemplate.Triggers>
@@ -112,11 +112,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <Grid Width="15" Height="21">
+                    <Grid Width="21" Height="21">
                         <Path
                             Name="Path"
-                            Width="13"
-                            Height="13"
+                            Width="16"
+                            Height="16"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Data="F1 M512,512z M0,0z M414,321.94L274.22,158.82A24,24,0,0,0,237.78,158.82L98,321.94C84.66,337.51,95.72,361.56,116.22,361.56L395.82,361.56C416.32,361.56,427.38,337.51,414,321.94z"
@@ -140,15 +140,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <Grid Width="15" Height="21">
+                    <Grid Width="21" Height="21">
                         <Path
                             Name="Path"
-                            Width="13"
-                            Height="13"
+                            Width="16"
+                            Height="16"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Data="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z"
-                            Fill="#fff"
+                            Fill="{StaticResource IconColorBrush}"
                             Stretch="Fill" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -178,7 +178,7 @@
 
     <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
         <Border
-            Width="24"
+            Width="30"
             Background="{StaticResource AltInterfaceBrush}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1,0,0,0">
@@ -199,15 +199,13 @@
                     Grid.Row="1"
                     IsDirectionReversed="True">
                     <Track.DecreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageUpCommand"
-                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.DecreaseRepeatButton>
                     <Track.Thumb>
                         <Thumb Style="{StaticResource VerticalScrollBarThumbStyle}" />
                     </Track.Thumb>
                     <Track.IncreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageDownCommand"
-                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.IncreaseRepeatButton>
                 </Track>
 
@@ -243,15 +241,13 @@
                     MinWidth="160"
                     IsDirectionReversed="False">
                     <Track.DecreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageLeftCommand"
-                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.DecreaseRepeatButton>
                     <Track.Thumb>
                         <Thumb Style="{StaticResource HorizontalScrollBarThumbStyle}" />
                     </Track.Thumb>
                     <Track.IncreaseRepeatButton>
-                        <RepeatButton Command="ScrollBar.PageRightCommand"
-                                      Style="{StaticResource ScrollBarPageButtonStyle}" />
+                        <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
                     </Track.IncreaseRepeatButton>
                     <Track.Resources>
                         <!--  Thumb's minimum height is half of this metric  -->

@@ -133,12 +133,15 @@ namespace PicView.UILogic.Sizing
                 }
                 else
                 {
-                    if (PicGalleryItemSize is 0)
+                    if (UC.GetPicGallery is not null)
                     {
-                        SetSize(Settings.Default.BottomGalleryItemSize);
-                    }
+                        if (PicGalleryItemSize is 0)
+                        {
+                            SetSize(Settings.Default.BottomGalleryItemSize);
+                        }
 
-                    margin = UC.GetPicGallery.IsVisible ? galleryHeight : 0;
+                        margin = UC.GetPicGallery.IsVisible ? galleryHeight : 0;
+                    }
                 }
             }
 

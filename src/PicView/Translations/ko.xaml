@@ -25,7 +25,6 @@
     <system:String x:Key="About">정보</system:String>
     <system:String x:Key="InfoWindowTitle">정보 및 한국어 번역: 비너스걸</system:String>
     <system:String x:Key="ApplicationShortcuts">응용 프로그램 바로가기</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(다음 시작 시 저장됨)</system:String>
     <system:String x:Key="ImageControl">이미지 제어</system:String>
     <system:String x:Key="FileManagement">파일 관리</system:String>
     <system:String x:Key="DragFileTo">파일을 Windows 탐색기 또는 다른 응용 프로그램/브라우저로 끌어다 놓기</system:String>
@@ -37,6 +36,25 @@
     <system:String x:Key="GithubRepo">Github 저장소</system:String>
     <system:String x:Key="ViewLicenseFile">라이선스 파일 보기</system:String>
     <system:String x:Key="Version">버전:</system:String>
+    <system:String x:Key="ChangeKeybindingText">단추를 클릭하여 단축키를 변경하십시오. Esc를 누르면 키 바인딩이 해제됩니다.</system:String>
+    <system:String x:Key="ResetButtonText">기본값으로 재설정</system:String>
+    <system:String x:Key="SelectGalleryThumb">갤러리 섬네일 선택</system:String>
+    <system:String x:Key="PressKey">키를 누르세요...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">키 바인딩 변경을 위해 클릭하세요</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">스크롤 및 회전</system:String>
+    <system:String x:Key="ScrollUp">위로 스크롤</system:String>
+    <system:String x:Key="ScrollDown">아래로 스크롤</system:String>
+    <system:String x:Key="ScrollToTop">맨 위로 스크롤</system:String>
+    <system:String x:Key="ScrollToBottom">맨 아래로 스크롤</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">별점 설정</system:String>
+    <system:String x:Key="1Star">1별</system:String>
+    <system:String x:Key="2Star">2별</system:String>
+    <system:String x:Key="3Star">3별</system:String>
+    <system:String x:Key="4Star">4별</system:String>
+    <system:String x:Key="5Star">5별</system:String>
+    <system:String x:Key="RemoveStarRating">평가 제거</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">창 비율</system:String>
@@ -125,6 +143,9 @@
     <system:String x:Key="BottomGalleryItems">하단 갤러리 항목</system:String>
     <system:String x:Key="ExpandedGalleryItems">확장된 갤러리 항목</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">UI가 숨겨진 경우 하단 갤러리 표시</system:String>
+    <system:String x:Key="ImageAliasing">이미지 앨리어싱</system:String>
+    <system:String x:Key="HighQuality">고품질</system:String>
+    <system:String x:Key="NearestNeighbor">가장 가까운 이웃</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">네거티브 컬러</system:String>

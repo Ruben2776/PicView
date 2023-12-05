@@ -23,42 +23,40 @@
     </Window.Resources>
 
     <DockPanel>
-        <DockPanel
-            x:Name="TitleBar"
-            Height="30"
-            Background="{StaticResource WindowBackgroundColorBrush}"
+        <Border
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="0,0,0,1"
             DockPanel.Dock="Top">
-
-            <misc:Icon x:Name="Logo" />
-
-            <buttons:CloseButton
-                x:Name="CloseButton"
-                Width="30"
+            <DockPanel
+                x:Name="TitleBar"
                 Height="30"
-                DockPanel.Dock="Right" />
+                Background="{StaticResource WindowBackgroundColorBrush}">
 
-            <buttons:MinButton
-                x:Name="MinButton"
-                Width="30"
-                Height="30"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1,0,1,0"
-                DockPanel.Dock="Right" />
+                <misc:Icon x:Name="Logo" />
 
-            <TextBlock
-                x:Name="TitleText"
-                VerticalAlignment="Center"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
-                FontSize="14"
-                Text="{StaticResource Settings}"
-                TextAlignment="Center" />
-        </DockPanel>
+                <buttons:CloseButton
+                    x:Name="CloseButton"
+                    Width="30"
+                    Height="30"
+                    DockPanel.Dock="Right" />
 
-        <Rectangle
-            Width="325"
-            Height="1"
-            DockPanel.Dock="Top"
-            Fill="{StaticResource BorderBrushAlt}" />
+                <buttons:MinButton
+                    x:Name="MinButton"
+                    Width="30"
+                    Height="30"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1,0,1,0"
+                    DockPanel.Dock="Right" />
+
+                <TextBlock
+                    x:Name="TitleText"
+                    VerticalAlignment="Center"
+                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                    FontSize="14"
+                    Text="{StaticResource Settings}"
+                    TextAlignment="Center" />
+            </DockPanel>
+        </Border>
 
         <TabControl
             Padding="0"
@@ -168,7 +166,7 @@
 
                         <CheckBox
                             x:Name="SubDirRadio"
-                            Padding="5,0,0,0"
+                            Margin="10,0,0,0"
                             Focusable="False">
                             <CheckBox.Foreground>
                                 <SolidColorBrush x:Name="SubDirText" Color="{StaticResource MainColor}" />
@@ -186,8 +184,7 @@
 
                         <CheckBox
                             x:Name="TopmostRadio"
-                            Margin="0,1,0,0"
-                            Padding="5,0,0,0"
+                            Margin="10,0,0,0"
                             Focusable="False">
                             <CheckBox.Foreground>
                                 <SolidColorBrush x:Name="TopMostDirText" Color="{StaticResource MainColor}" />
@@ -205,8 +202,7 @@
 
                         <CheckBox
                             x:Name="CenterRadio"
-                            Margin="0,1,0,0"
-                            Padding="5,0,0,0"
+                            Margin="10,0,0,0"
                             d:IsChecked="True"
                             Focusable="False">
                             <CheckBox.Foreground>
@@ -224,8 +220,7 @@
 
                         <CheckBox
                             x:Name="AvoidZoomRadio"
-                            Margin="0,1,0,0"
-                            Padding="5,0,0,0"
+                            Margin="10,0,0,0"
                             d:IsChecked="True"
                             Focusable="False">
                             <CheckBox.Foreground>
@@ -244,8 +239,7 @@
 
                         <CheckBox
                             x:Name="SaveDialogRadio"
-                            Margin="0,1,0,0"
-                            Padding="5,0,0,0"
+                            Margin="10,0,0,0"
                             HorizontalContentAlignment="Center"
                             Focusable="False"
                             IsChecked="True">
@@ -299,7 +293,7 @@
                         <RadioButton
                             x:Name="CtrlZoom"
                             Width="279"
-                            Margin="5,0,6,5"
+                            Margin="0,0,15,0"
                             d:IsChecked="True"
                             BorderThickness="0"
                             Focusable="False"
@@ -318,7 +312,7 @@
                         <RadioButton
                             x:Name="ScrollZoom"
                             Width="279"
-                            Margin="5,0,6,5"
+                            Margin="0,3,15,0"
                             Focusable="False"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto">
                             <RadioButton.Foreground>
@@ -500,7 +494,7 @@
 
                         <CheckBox
                             x:Name="AltUIRadio"
-                            Margin="7,0,0,0"
+                            Margin="10,0,0,0"
                             HorizontalContentAlignment="Center"
                             Focusable="False">
                             <CheckBox.Foreground>
@@ -519,7 +513,7 @@
 
                         <CheckBox
                             x:Name="TaskbarRadio"
-                            Margin="7,0,0,0"
+                            Margin="10,0,0,0"
                             HorizontalContentAlignment="Center"
                             Focusable="False"
                             IsChecked="True">
@@ -539,7 +533,7 @@
 
                         <CheckBox
                             x:Name="ShowBottomRadio"
-                            Margin="7,0,0,0"
+                            Margin="10,0,0,0"
                             HorizontalContentAlignment="Center"
                             Focusable="False"
                             IsChecked="True">
@@ -559,7 +553,7 @@
 
                         <CheckBox
                             x:Name="ShowBottomWhenHiddenRadio"
-                            Margin="7,0,0,0"
+                            Margin="10,0,0,0"
                             HorizontalContentAlignment="Center"
                             Focusable="False"
                             IsChecked="False">
@@ -737,38 +731,38 @@
                         </WrapPanel>
 
                         <Label
-                            Margin="0,7,0,4"
+                            Margin="0,5,0,5"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Content="Image aliasing" />
+                            Content="{StaticResource ImageAliasing}" />
 
                         <ComboBox
                             x:Name="AliasingBox"
-                            Margin="7,0,0,0"
+                            Margin="10,0,0,0"
                             HorizontalAlignment="Left"
                             IsTabStop="False">
                             <ComboBoxItem
                                 x:Name="AliasingBoxHighQuality"
-                                Content="High Quality"
+                                Content="{StaticResource HighQuality}"
                                 IsSelected="True" />
-                            <ComboBoxItem x:Name="AliasingNearestNeighbor" Content="Nearest Neighbor" />
+                            <ComboBoxItem x:Name="AliasingNearestNeighbor" Content="{StaticResource NearestNeighbor}" />
                         </ComboBox>
 
                         <Label
-                            Margin="0,10,0,4"
+                            Margin="0,15,0,5"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Content="{StaticResource ExpandedGalleryItems}" />
 
                         <StackPanel
-                            Margin="0,3,0,5"
+                            Margin="5,3,0,5"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Orientation="Horizontal">
 
                             <Slider
                                 x:Name="SetExpandedGallerySlider"
-                                Width="245"
+                                Width="240"
                                 Height="30"
                                 d:Value="32"
                                 IsMoveToPointEnabled="True"

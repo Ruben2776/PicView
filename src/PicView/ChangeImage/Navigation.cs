@@ -2,6 +2,7 @@
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.Shortcuts;
 using PicView.UILogic;
 
 namespace PicView.ChangeImage

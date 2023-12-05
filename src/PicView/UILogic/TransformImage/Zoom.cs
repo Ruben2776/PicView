@@ -13,33 +13,28 @@ namespace PicView.UILogic.TransformImage
     {
         public static ScaleTransform? ScaleTransform;
         public static TranslateTransform? TranslateTransform;
-        
-        public static BitmapScalingMode DefaultScalingMode = (BitmapScalingMode) ConfigureWindows.GetMainWindow.MainImage.GetValue(RenderOptions.BitmapScalingModeProperty);
+
         private static Point _origin;
         private static Point _start;
-
-        internal static double _zoomValue = 1;
 
         /// <summary>
         /// Used to determine final point when zooming,
         /// since DoubleAnimation changes value of TranslateTransform continuously.
         /// </summary>
-        internal static double ZoomValue {
-            get {
-                return _zoomValue;
-            }
-            private set {
-                _zoomValue = value;
-                
-                TriggerScalingModeUpdate();
-            }
-        }
+        internal static double ZoomValue { get; private set; }
 
         public static void TriggerScalingModeUpdate()
         {
-            var scalingMode = _zoomValue >= 1 && Settings.Default.IsScalingSetToNearestNeighbor ? BitmapScalingMode.NearestNeighbor : DefaultScalingMode;
+            var scalingMode = ZoomValue >= 1 && Settings.Default.IsScalingSetToNearestNeighbor ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
 
-            ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, scalingMode);
+            try
+            {
+                ConfigureWindows.GetMainWindow.MainImage.SetValue(RenderOptions.BitmapScalingModeProperty, scalingMode);
+            }
+            catch (Exception)
+            {
+                //
+            }
         }
 
         /// <summary>
@@ -60,6 +55,12 @@ namespace PicView.UILogic.TransformImage
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the image is currently zoomed.
+        /// </summary>
+        /// <remarks>
+        /// Returns <c>true</c> if the image is zoomed; otherwise, <c>false</c>.
+        /// </remarks>
         internal static bool IsZoomed
         {
             get
@@ -74,20 +75,26 @@ namespace PicView.UILogic.TransformImage
         }
 
         /// <summary>
-        /// Returns aspect ratio as a formatted string
+        /// Generates a string representation of the aspect ratio based on the provided width and height.
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
+        /// <param name="width">The width of the image.</param>
+        /// <param name="height">The height of the image.</param>
+        /// <returns>
+        /// A string representation of the aspect ratio if within specified limits; otherwise, an empty string.
+        /// </returns>
         internal static string StringAspect(int width, int height)
         {
             if (width is 0 || height is 0)
+            {
                 return ") ";
+            }
 
+            // Calculate the greatest common divisor
             var gcd = GCD(width, height);
             var x = width / gcd;
             var y = height / gcd;
 
+            // Check if aspect ratio is within specified limits
             if (x > 48 || y > 18)
             {
                 return ") ";
@@ -97,11 +104,11 @@ namespace PicView.UILogic.TransformImage
         }
 
         /// <summary>
-        /// Greatest Common Divisor
+        /// Calculates the Greatest Common Divisor (GCD) of two integers.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">The first integer.</param>
+        /// <param name="y">The second integer.</param>
+        /// <returns>The GCD of the two integers.</returns>
         // ReSharper disable once InconsistentNaming
         internal static int GCD(int x, int y)
         {
@@ -328,6 +335,7 @@ namespace PicView.UILogic.TransformImage
                 return;
 
             ZoomValue = value;
+            TriggerScalingModeUpdate();
 
             BeginZoomAnimation(ZoomValue);
 

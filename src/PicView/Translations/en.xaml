@@ -25,7 +25,6 @@
     <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">Info and shortcuts</system:String>
     <system:String x:Key="ApplicationShortcuts">Application Shortcuts</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Saved on next startup)</system:String>
     <system:String x:Key="ImageControl">Image control</system:String>
     <system:String x:Key="FileManagement">File management</system:String>
     <system:String x:Key="DragFileTo">Drag file to Windows Explorer or another application/browser</system:String>
@@ -37,6 +36,25 @@
     <system:String x:Key="GithubRepo">Github repository</system:String>
     <system:String x:Key="ViewLicenseFile">View license file</system:String>
     <system:String x:Key="Version">Version:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Click on a textbox to change keybinding. Pressing Esc unbinds key.</system:String>
+    <system:String x:Key="ResetButtonText">Reset to default</system:String>
+    <system:String x:Key="SelectGalleryThumb">Select gallery thumbnail</system:String>
+    <system:String x:Key="PressKey">Press key...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Click to change keybinding</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Scroll and rotate</system:String>
+    <system:String x:Key="ScrollUp">Scroll up</system:String>
+    <system:String x:Key="ScrollDown">Scroll down</system:String>
+    <system:String x:Key="ScrollToTop">Scroll to top</system:String>
+    <system:String x:Key="ScrollToBottom">Scroll to bottom</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Set star rating</system:String>
+    <system:String x:Key="1Star">1 star rating</system:String>
+    <system:String x:Key="2Star">2 star rating</system:String>
+    <system:String x:Key="3Star">3 star rating</system:String>
+    <system:String x:Key="4Star">4 star rating</system:String>
+    <system:String x:Key="5Star">5 star rating</system:String>
+    <system:String x:Key="RemoveStarRating">Remove rating</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Window scaling</system:String>
@@ -125,6 +143,9 @@
     <system:String x:Key="BottomGalleryItems">Bottom Gallery Items</system:String>
     <system:String x:Key="ExpandedGalleryItems">Expanded Gallery Items</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Show bottom gallery when UI is hidden</system:String>
+    <system:String x:Key="ImageAliasing">Image aliasing</system:String>
+    <system:String x:Key="HighQuality">High quality</system:String>
+    <system:String x:Key="NearestNeighbor">Nearest neighbor</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negative Colors</system:String>

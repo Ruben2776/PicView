@@ -25,7 +25,6 @@
     <system:String x:Key="About">关于</system:String>
     <system:String x:Key="InfoWindowTitle">信息与快捷键</system:String>
     <system:String x:Key="ApplicationShortcuts">应用程序快捷键</system:String>
-    <system:String x:Key="SavedOnNextStartUp">（保存至下次启动）</system:String>
     <system:String x:Key="ImageControl">图片调整</system:String>
     <system:String x:Key="FileManagement">文件管理</system:String>
     <system:String x:Key="DragFileTo">将文件拖拽至 Windows 资源管理器或者其他应用程序/浏览器</system:String>
@@ -37,6 +36,25 @@
     <system:String x:Key="GithubRepo">Github 仓库</system:String>
     <system:String x:Key="ViewLicenseFile">查看开源协议</system:String>
     <system:String x:Key="Version">版本：</system:String>
+    <system:String x:Key="ChangeKeybindingText">点击文本框以更改按键绑定。按 Esc 键取消绑定。</system:String>
+    <system:String x:Key="ResetButtonText">重置为默认设置</system:String>
+    <system:String x:Key="SelectGalleryThumb">选择画廊缩略图</system:String>
+    <system:String x:Key="PressKey">按键...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">点击更改键绑定</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">滚动和旋转</system:String>
+    <system:String x:Key="ScrollUp">向上滑动</system:String>
+    <system:String x:Key="ScrollDown">向下滑动</system:String>
+    <system:String x:Key="ScrollToTop">滑动到顶部</system:String>
+    <system:String x:Key="ScrollToBottom">滑动到底部</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">设置星级评分</system:String>
+    <system:String x:Key="1Star">1星评分</system:String>
+    <system:String x:Key="2Star">2星评分</system:String>
+    <system:String x:Key="3Star">3星评分</system:String>
+    <system:String x:Key="4Star">4星评分</system:String>
+    <system:String x:Key="5Star">5星评分</system:String>
+    <system:String x:Key="RemoveStarRating">移除评分</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">窗口缩放</system:String>
@@ -125,6 +143,9 @@
     <system:String x:Key="BottomGalleryItems">底部图库项目</system:String>
     <system:String x:Key="ExpandedGalleryItems">展开的图库项目</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">当用户界面隐藏时显示底部图库</system:String>
+    <system:String x:Key="ImageAliasing">图像混淆</system:String>
+    <system:String x:Key="HighQuality">高质量</system:String>
+    <system:String x:Key="NearestNeighbor">最近邻</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">反色</system:String>

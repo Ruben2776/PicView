@@ -42,7 +42,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Show Help window in a dialog
         /// </summary>
-        internal static void InfoWindow()
+        internal static void AboutWindow()
         {
             if (GetAboutWindow == null)
             {
@@ -75,7 +75,7 @@ namespace PicView.UILogic
         /// <summary>
         /// Show All Settings window
         /// </summary>
-        internal static void AllSettingsWindow()
+        internal static void SettingsWindow()
         {
             if (GetSettingsWindow == null)
             {

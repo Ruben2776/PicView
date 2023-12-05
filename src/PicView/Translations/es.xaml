@@ -25,7 +25,6 @@
     <system:String x:Key="About">About</system:String>
     <system:String x:Key="InfoWindowTitle">Información y atajos</system:String>
     <system:String x:Key="ApplicationShortcuts">Atajos de la aplicación</system:String>
-    <system:String x:Key="SavedOnNextStartUp">(Guardados en el próximo inicio)</system:String>
     <system:String x:Key="ImageControl">Control de Imagen</system:String>
     <system:String x:Key="FileManagement">Gestión de archivos</system:String>
     <system:String x:Key="DragFileTo">Arrastra el archivo al Explorador de Windows o a otra aplicación/navegador</system:String>
@@ -37,6 +36,25 @@
     <system:String x:Key="GithubRepo">Repositorio de Github</system:String>
     <system:String x:Key="ViewLicenseFile">Ver archivo de licencia</system:String>
     <system:String x:Key="Version">Versión:</system:String>
+    <system:String x:Key="ChangeKeybindingText">Haz clic en un cuadro de texto para cambiar la asignación de teclas. Presiona Esc para desvincular la tecla.</system:String>
+    <system:String x:Key="ResetButtonText">Restablecer a predeterminado</system:String>
+    <system:String x:Key="SelectGalleryThumb">Seleccionar miniatura de la galería</system:String>
+    <system:String x:Key="PressKey">Presiona tecla...</system:String>
+    <system:String x:Key="ChangeKeybindingTooltip">Haz clic para cambiar la asignación de teclas</system:String>
+    <!--  Scroll  -->
+    <system:String x:Key="ScrollAndRotate">Desplazar y rotar</system:String>
+    <system:String x:Key="ScrollUp">Desplazar hacia arriba</system:String>
+    <system:String x:Key="ScrollDown">Desplazar hacia abajo</system:String>
+    <system:String x:Key="ScrollToTop">Desplazar hacia arriba al tope</system:String>
+    <system:String x:Key="ScrollToBottom">Desplazar hacia abajo al fondo</system:String>
+    <!--  Stars  -->
+    <system:String x:Key="SetStarRating">Establecer clasificación con estrellas</system:String>
+    <system:String x:Key="1Star">Clasificación de 1 estrella</system:String>
+    <system:String x:Key="2Star">Clasificación de 2 estrella</system:String>
+    <system:String x:Key="3Star">Clasificación de 3 estrella</system:String>
+    <system:String x:Key="4Star">Clasificación de 4 estrella</system:String>
+    <system:String x:Key="5Star">Clasificación de 5 estrella</system:String>
+    <system:String x:Key="RemoveStarRating">Eliminar clasificación</system:String>
 
     <!--  Info window, window scaling  -->
     <system:String x:Key="WindowScaling">Escalado de ventana</system:String>
@@ -125,6 +143,9 @@
     <system:String x:Key="BottomGalleryItems">Elementos de la galería inferior</system:String>
     <system:String x:Key="ExpandedGalleryItems">Elementos de la galería expandida</system:String>
     <system:String x:Key="ShowBottomGalleryWhenUiIsHidden">Mostrar galería inferior cuando la interfaz de usuario está oculta</system:String>
+    <system:String x:Key="ImageAliasing">Alias de imagen</system:String>
+    <system:String x:Key="HighQuality">Alta calidad</system:String>
+    <system:String x:Key="NearestNeighbor">Vecino más cercano</system:String>
 
     <!--  Effects Window  -->
     <system:String x:Key="NegativeColors">Negativo</system:String>

@@ -140,8 +140,7 @@ namespace PicView.ImageHandling
         /// <returns>A Task representing the asynchronous operation.</returns>
         internal static async Task SendToClipboard(string? path = null)
         {
-            var base64String =
-                await ConvertToBase64(path).ConfigureAwait(false); // Need to be true to avoid thread errors
+            var base64String = await ConvertToBase64(path).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(base64String))
             {
                 Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
