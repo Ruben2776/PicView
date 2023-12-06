@@ -28,16 +28,15 @@ namespace PicView.PicGallery
             }
 
             var imageSize = await Task.FromResult(ImageSizeFunctions.GetImageSize(Pics[id])).ConfigureAwait(false);
-            if (!imageSize.HasValue) return;
 
             var galleryCloseAnimation = new DoubleAnimation
             {
                 FillBehavior = FillBehavior.Stop,
-                AccelerationRatio = 0.5,
-                DecelerationRatio = 0.5,
+                AccelerationRatio = Settings.Default.IsBottomGalleryShown ? .6 : 0.5,
+                DecelerationRatio = Settings.Default.IsBottomGalleryShown ? .4 : 0.5,
                 From = GetPicGallery.ActualHeight,
                 To = GalleryNavigation.PicGalleryItemSize + 22,
-                Duration = TimeSpan.FromSeconds(.7)
+                Duration = Settings.Default.IsBottomGalleryShown ? TimeSpan.FromSeconds(.6) : TimeSpan.FromSeconds(.7)
             };
 
             galleryCloseAnimation.Completed += async delegate
@@ -45,7 +44,7 @@ namespace PicView.PicGallery
                 GalleryFunctions.IsGalleryOpen = false;
                 ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
                 GalleryToggle.ShowBottomGallery();
-                await Task.Delay(TimeSpan.FromSeconds(.4)); // await needed to calculate before scroll
+                await Task.Delay(TimeSpan.FromSeconds(.3)); // await needed to calculate before scroll
                 GetPicGallery.Scroller.CanContentScroll = false;
                 GalleryNavigation.ScrollToGalleryCenter();
                 GetPicGallery.Scroller.CanContentScroll = true;
@@ -57,7 +56,11 @@ namespace PicView.PicGallery
                 ConfigureWindows.GetMainWindow.MainImage.Source = galleryItem.ThumbImage.Source;
 
                 SetTitle.SetLoadingString();
-                FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                if (imageSize.HasValue)
+                {
+                    FitImage(imageSize.Value.Width, imageSize.Value.Height);
+                }
+
                 // Show closing animation from bottom gallery
                 if (!Settings.Default.IsBottomGalleryShown)
                 {
@@ -155,14 +158,13 @@ namespace PicView.PicGallery
         {
             await GetPicGallery.Dispatcher.InvokeAsync(() =>
             {
-                GetPicGallery.Scroller.CanContentScroll = false; // Enable animations
                 // Deselect current item
                 GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
                 GalleryNavigation.SetSelected(FolderIndex, false);
 
                 // Restore interface elements if needed
                 if (!Settings.Default.ShowInterface || Settings.Default is
-                        { Fullscreen: true, ShowAltInterfaceButtons: true })
+                    { Fullscreen: true, ShowAltInterfaceButtons: true })
                 {
                     HideInterfaceLogic.IsNavigationShown(true);
                     HideInterfaceLogic.IsShortcutsShown(true);

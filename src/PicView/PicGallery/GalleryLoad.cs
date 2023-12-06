@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static System.Windows.Forms.Design.AxImporter;
 
 namespace PicView.PicGallery
 {
@@ -123,172 +124,71 @@ namespace PicView.PicGallery
 
             IsLoading = true;
             var source = new CancellationTokenSource();
+            var updates = 0;
 
-            await Task.Run(async () =>
+            for (var i = 0; i < Navigation.Pics.Count; i++)
             {
-                for (var i = 0; i < Navigation.Pics.Count; i++)
+                try
                 {
-                    try
+                    var i1 = i;
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
-                        var i1 = i;
-                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                        if (!IsLoading)
                         {
-                            if (!IsLoading)
-                            {
-                                source.Cancel();
-                                source.Dispose();
-                                return;
-                            }
+                            source.Cancel();
+                            source.Dispose();
+                            return;
+                        }
 
-                            Add(i1);
-                        }, DispatcherPriority.DataBind, source.Token);
-                    }
-                    catch (Exception exception)
-                    {
-#if DEBUG
-                        Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                        GalleryFunctions.Clear();
-                        return;
-                    }
+                        Add(i1);
+                    }, DispatcherPriority.DataBind, source.Token);
                 }
-
-                if (source.IsCancellationRequested)
+                catch (Exception exception)
                 {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                    GalleryFunctions.Clear();
+                    return;
+                }
+            }
+
+            if (source.IsCancellationRequested)
+            {
+                return;
+            }
+
+            var index = 0;
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                if (GalleryNavigation.HorizontalItems is 0 || Navigation.Pics.Count is 0)
+                {
+                    source.Cancel();
+                    source.Dispose();
                     return;
                 }
 
-                var startPosition = 0;
-                var updates = 0;
+                GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
 
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                {
-                    if (GalleryNavigation.HorizontalItems is 0 || Navigation.Pics.Count is 0)
-                    {
-                        source.Cancel();
-                        source.Dispose();
-                        return;
-                    }
+                index = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) %
+                        Navigation.Pics.Count;
+                index = index < 0 ? 0 : index;
+            }, DispatcherPriority.DataBind, source.Token);
 
-                    GalleryNavigation.SetSelected(Navigation.FolderIndex, true);
-                    GalleryNavigation.SelectedGalleryItem = Navigation.FolderIndex;
-                    GalleryNavigation.ScrollToGalleryCenter();
-
-                    startPosition = (Navigation.FolderIndex - GalleryNavigation.HorizontalItems) %
-                                    Navigation.Pics.Count;
-                    startPosition = startPosition < 0 ? 0 : startPosition;
-                }, DispatcherPriority.DataBind, source.Token);
-
+            await Task.Run(async () =>
+            {
                 try
                 {
-                    _ = Task.Run(async () =>
+                    ParallelOptions options = new()
                     {
-                        ParallelOptions options = new()
-                        {
-                            CancellationToken = source.Token,
-                            MaxDegreeOfParallelism = Environment.ProcessorCount - 1 < 1 ? 1 : Environment.ProcessorCount - 1
-                        };
-
-                        await Parallel.ForAsync(startPosition, Navigation.Pics.Count, options, async (i, loopState) =>
-                        {
-                            updates++;
-                            try
-                            {
-                                if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
-                                {
-                                    IsLoading = false;
-                                    await source.CancelAsync().ConfigureAwait(false);
-                                    source.Dispose();
-                                    loopState.ThrowIfCancellationRequested();
-                                    return;
-                                }
-
-                                if (!source.IsCancellationRequested)
-                                {
-                                    await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
-                                }
-                            }
-                            catch (ObjectDisposedException exception)
-                            {
-#if DEBUG
-                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                                {
-                                    Environment.Exit(0);
-                                }
-                            }
-                            catch (TaskCanceledException exception)
-                            {
-#if DEBUG
-                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                                {
-                                    Environment.Exit(0);
-                                }
-                            }
-                            catch (Exception exception)
-                            {
-#if DEBUG
-                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                            }
-                        });
-                    }, source.Token).ConfigureAwait(false);
-
-                    _ = Task.Run(async () =>
-                    {
-                        for (var x = startPosition - 1; x >= 0; x--)
-                        {
-                            updates++;
-                            try
-                            {
-                                var i = x;
-
-                                if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
-                                {
-                                    IsLoading = false;
-                                    await source.CancelAsync().ConfigureAwait(false);
-                                    source.Dispose();
-                                    return;
-                                }
-
-                                if (!source.IsCancellationRequested)
-                                {
-                                    await UpdateThumbAsync(i, updates, source.Token).ConfigureAwait(false);
-                                }
-                            }
-                            catch (ObjectDisposedException exception)
-                            {
-#if DEBUG
-                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                                {
-                                    Environment.Exit(0);
-                                }
-                                return;
-                            }
-                            catch (TaskCanceledException exception)
-                            {
-#if DEBUG
-                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                                {
-                                    Environment.Exit(0);
-                                }
-                            }
-                            catch (Exception exception)
-                            {
-#if DEBUG
-                                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                                return;
-                            }
-                        }
-                    }, source.Token).ConfigureAwait(false);
+                        CancellationToken = source.Token,
+                        MaxDegreeOfParallelism = Environment.ProcessorCount - 1 < 1 ? 1 : Environment.ProcessorCount - 1
+                    };
+                    await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
+                    await Loop(0, index, options).ConfigureAwait(false);
                 }
                 catch (ObjectDisposedException exception)
                 {
@@ -319,7 +219,57 @@ namespace PicView.PicGallery
             }, source.Token);
             return;
 
-            async Task UpdateThumbAsync(int i, int updates, CancellationToken token)
+            async Task Loop(int startPosition, int end, ParallelOptions options)
+            {
+                await Parallel.ForAsync(startPosition, end, options, async (i, loopState) =>
+                {
+                    updates++;
+                    try
+                    {
+                        if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
+                        {
+                            IsLoading = false;
+                            await source.CancelAsync().ConfigureAwait(false);
+                            source.Dispose();
+                            loopState.ThrowIfCancellationRequested();
+                            return;
+                        }
+
+                        if (!source.IsCancellationRequested)
+                        {
+                            await UpdateThumbAsync(i, source.Token).ConfigureAwait(false);
+                        }
+                    }
+                    catch (ObjectDisposedException exception)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                        if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                        {
+                            Environment.Exit(0);
+                        }
+                    }
+                    catch (TaskCanceledException exception)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                        if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                        {
+                            Environment.Exit(0);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+                    }
+                });
+            }
+
+            async Task UpdateThumbAsync(int i, CancellationToken token)
             {
                 var galleryThumbHolderItem =
                     await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
