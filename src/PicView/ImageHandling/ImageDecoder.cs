@@ -28,6 +28,7 @@ namespace PicView.ImageHandling
             }
 
             var extension = fileInfo.Extension.ToLowerInvariant();
+
             switch (extension)
             {
                 case ".jpg":
@@ -53,7 +54,7 @@ namespace PicView.ImageHandling
                            ImageFunctions.ImageErrorMessage();
 
                 default:
-                    return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
+                    return await GetDefaultBitmapSource(fileInfo, extension).ConfigureAwait(false);
             }
         }
 
@@ -204,15 +205,11 @@ namespace PicView.ImageHandling
 
         /// <summary>
         /// Asynchronously gets a WriteableBitmap from the given file.
-        /// If the file size is equal to or greater than 2 GB, it returns the default bitmap source.
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a <c>WriteableBitmap</c> object if successful; otherwise, it returns null.</returns>
         private static async Task<BitmapSource> GetWriteAbleBitmapAsync(FileInfo fileInfo)
         {
-            if (fileInfo.Length >= 2147483648)
-                return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
-
             try
             {
                 await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
@@ -238,49 +235,69 @@ namespace PicView.ImageHandling
             }
         }
 
-        private static BitmapSource GetDefaultBitmapSource(FileInfo fileInfo)
+        private static async Task<BitmapSource> GetDefaultBitmapSource(FileInfo fileInfo, string extension)
         {
             try
             {
-                var magickImage = new MagickImage();
-                magickImage.Read(fileInfo);
+                using var magickImage = new MagickImage();
+                MagickFormat format;
 
-                var extension = fileInfo.Extension;
-                var settings = new MagickReadSettings
+                switch (extension)
                 {
-                    SyncImageWithExifProfile = true,
-                    SyncImageWithTiffProperties = true,
-                };
-
-                if (extension.Equals(".HEIC", StringComparison.OrdinalIgnoreCase) ||
-                    extension.Equals(".HEIF", StringComparison.OrdinalIgnoreCase))
-                {
-                    settings.SetDefines(new HeicReadDefines
-                    {
-                        PreserveOrientation = true,
-                        DepthImage = true,
-                    });
-                }
-                else if (extension.Equals(".JP2", StringComparison.OrdinalIgnoreCase))
-                {
-                    settings.SetDefines(new Jp2ReadDefines
-                    {
-                        QualityLayers = 100,
-                    });
-                }
-                else if (extension.Equals(".TIF", StringComparison.OrdinalIgnoreCase) ||
-                         extension.Equals(".TIFF", StringComparison.OrdinalIgnoreCase))
-                {
-                    settings.SetDefines(new TiffReadDefines
-                    {
-                        IgnoreTags = new[]
+                    case ".heic":
+                    case ".heif":
+                        magickImage.Settings.SetDefines(new HeicReadDefines
                         {
-                            "34022", // ColorTable
-                            "34025", // ImageColorValue
-                            "34026", // BackgroundColorValue
-                            "32928",
-                        },
-                    });
+                            PreserveOrientation = true,
+                            DepthImage = true,
+                        });
+                        format = extension is ".heic" ? MagickFormat.Heic : MagickFormat.Heif;
+                        break;
+
+                    case ".jp2":
+                        magickImage.Settings.SetDefines(new Jp2ReadDefines
+                        {
+                            QualityLayers = 100,
+                        });
+                        format = MagickFormat.Jp2;
+                        break;
+
+                    case ".tif":
+                    case ".tiff":
+                        magickImage.Settings.SetDefines(new TiffReadDefines
+                        {
+                            IgnoreTags = new[]
+                            {
+                                "34022", // ColorTable
+                                "34025", // ImageColorValue
+                                "34026", // BackgroundColorValue
+                                "32928",
+                            },
+                        });
+                        format = MagickFormat.Tif;
+                        break;
+
+                    case ".psd":
+                        format = MagickFormat.Psd;
+                        break;
+
+                    default:
+                        format = MagickFormat.Unknown;
+                        break;
+                }
+
+                if (fileInfo.Length >= 2147483648)
+                {
+                    await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
+                        FileShare.ReadWrite, 4096, true);
+
+                    // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+                    // ReSharper disable once MethodHasAsyncOverload
+                    magickImage.Read(fileStream, format);
+                }
+                else
+                {
+                    await magickImage.ReadAsync(fileInfo, format).ConfigureAwait(false);
                 }
 
                 magickImage?.AutoOrient();
