@@ -2,6 +2,8 @@
 using PicView.ChangeImage;
 using PicView.UILogic;
 using PicView.Views.UserControls.Gallery;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -61,7 +63,7 @@ namespace PicView.ImageHandling
             return pic;
         }
 
-        internal static BitmapSource GetBitmapSourceThumb(string file, int size, FileInfo? fileInfo = null)
+        internal static async Task<BitmapSource> GetBitmapSourceThumbAsync(string file, int size, FileInfo? fileInfo = null)
         {
             try
             {
@@ -76,9 +78,38 @@ namespace PicView.ImageHandling
                 }
 
                 fileInfo ??= new FileInfo(file);
-                var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096,
+                await using var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096,
                     fileInfo.Length > 1e+8);
-                image.Read(fileStream);
+
+                switch (fileInfo.Extension.ToLowerInvariant())
+                {
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".jpe":
+                    case ".png":
+                    case ".bmp":
+                    case ".gif":
+                    case ".jfif":
+                    case ".ico":
+                    case ".webp":
+                    case ".wbmp":
+                        var skImage = SKBitmap.Decode(fileStream);
+                        var resized = skImage.Resize(new SKImageInfo(size, size), SKFilterQuality.Medium);
+                        var writeableBitmap = resized.ToWriteableBitmap();
+                        writeableBitmap.Freeze();
+                        return writeableBitmap;
+                }
+
+                if (fileInfo.Length >= 2147483648)
+                {
+                    // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+                    // ReSharper disable once MethodHasAsyncOverload
+                    image.Read(fileStream);
+                }
+                else
+                {
+                    await image.ReadAsync(fileStream).ConfigureAwait(false);
+                }
                 image.Thumbnail(new MagickGeometry(size, size));
                 var bmp = image.ToBitmapSource();
                 bmp?.Freeze();
@@ -88,7 +119,7 @@ namespace PicView.ImageHandling
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine(nameof(GetBitmapSourceThumb) + " " + e.Message);
+                Trace.WriteLine(nameof(GetBitmapSourceThumbAsync) + " " + e.Message);
 #endif
                 return ImageFunctions.ImageErrorMessage();
             }

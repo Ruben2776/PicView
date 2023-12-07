@@ -30,63 +30,64 @@ namespace PicView.UILogic.DragAndDrop
         /// <param name="e"></param>
         internal static async Task Image_DragEnter(object sender, DragEventArgs e)
         {
-            if (GalleryFunctions.IsGalleryOpen) return;
+            if (GalleryFunctions.IsGalleryOpen)
+                return;
+
             AddDragOverlay();
 
             UIElement? element = null;
 
-            await Task.Run(async () =>
+            if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
             {
-                if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
-                {
-                    var data = e.Data.GetData(DataFormats.Text);
+                var data = e.Data.GetData(DataFormats.Text);
 
-                    if (data != null) // Check if from web)
-                    {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                        {
-                            element = new LinkChain();
-                        });
-                    }
-                }
-                else if (Directory.Exists(files[0]))
+                if (data != null) // Check if from web)
                 {
-                    if (Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
-                    {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                        {
-                            element = new FolderIcon();
-                        });
-                    }
-                }
-                else if (files[0].IsArchive())
-                {
-                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { element = new ZipIcon(); });
-                }
-                else if (files[0].IsSupported())
-                {
-                    // Check if same file
-                    if (files.Length == 1 && Pics.Count > 0 && FolderIndex < Pics.Count)
-                    {
-                        if (files[0] == Pics[FolderIndex])
-                        {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(RemoveDragOverlay);
-                            e.Effects = DragDropEffects.None;
-                            e.Handled = true;
-                            return;
-                        }
-                    }
-
                     await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                     {
-                        var thumb = Path.GetExtension(files[0]) is ".b64" or ".txt"
-                            ? ImageFunctions.ShowLogo()
-                            : GetBitmapSourceThumb(files[0],
-                                (int)ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth);
-                        element = new DragDropOverlayPic(thumb);
+                        element = new LinkChain();
                     });
                 }
-            });
+            }
+            else if (Directory.Exists(files[0]))
+            {
+                if (Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        element = new FolderIcon();
+                    });
+                }
+            }
+            else if (files[0].IsArchive())
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { element = new ZipIcon(); });
+            }
+            else if (files[0].IsSupported())
+            {
+                // Check if same file
+                if (files.Length == 1 && Pics.Count > 0 && FolderIndex < Pics.Count)
+                {
+                    if (files[0] == Pics[FolderIndex])
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(RemoveDragOverlay);
+                        e.Effects = DragDropEffects.None;
+                        e.Handled = true;
+                        return;
+                    }
+                }
+
+                var actualWidth = 0;
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    actualWidth = (int)ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                });
+                var thumb = await GetBitmapSourceThumbAsync(files[0], actualWidth).ConfigureAwait(false);
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    element = new DragDropOverlayPic(thumb);
+                });
+            }
 
             // Tell that it's succeeded
             e.Effects = DragDropEffects.Copy;

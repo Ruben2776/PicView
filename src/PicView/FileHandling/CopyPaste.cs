@@ -86,11 +86,13 @@ namespace PicView.FileHandling
                 // Add next item to gallery if applicable
                 if (UC.GetPicGallery is not null)
                 {
-                    var thumbData = await Task.FromResult(GalleryThumbHolder.GetThumbData(nextIndex)).ConfigureAwait(false);
+                    var thumbData = await GalleryThumbHolder.GetThumbDataAsync(nextIndex).ConfigureAwait(false);
                     await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                     {
-                        var item = new PicGalleryItem(thumbData.BitmapSource, newFile, false);
-                        item.FileName = newFile;
+                        var item = new PicGalleryItem(thumbData.BitmapSource, newFile, false)
+                        {
+                            FileName = newFile
+                        };
                         UC.GetPicGallery.Container.Children.Insert(nextIndex, item);
                     });
                 }

@@ -250,7 +250,7 @@ namespace PicView.FileHandling
                     await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
                     if (GetPicGallery is not null)
                     {
-                        var galleryThumbHolderItem = await Task.FromResult(GalleryThumbHolder.GetThumbData(FolderIndex))
+                        var galleryThumbHolderItem = await GalleryThumbHolder.GetThumbDataAsync(FolderIndex)
                             .ConfigureAwait(false);
                         await GetPicGallery.Dispatcher.InvokeAsync(() =>
                         {

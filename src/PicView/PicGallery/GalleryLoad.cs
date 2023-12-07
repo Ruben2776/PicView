@@ -85,11 +85,11 @@ namespace PicView.PicGallery
             /// </summary>
             /// <param name="index">The index of the thumbnail.</param>
             /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
-            internal static GalleryThumbHolder GetThumbData(int index)
+            internal static async Task<GalleryThumbHolder> GetThumbDataAsync(int index)
             {
                 var fileInfo = new FileInfo(Navigation.Pics[index]);
-                var bitmapSource = Thumbnails.GetBitmapSourceThumb(Navigation.Pics[index],
-                    (int)GalleryNavigation.PicGalleryItemSize, fileInfo);
+                var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[index],
+                    (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
                 var fileLocation = fileInfo.FullName;
                 var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
                 var getFileSizeResource = Application.Current?.TryFindResource("FileSize");
@@ -272,7 +272,7 @@ namespace PicView.PicGallery
             async Task UpdateThumbAsync(int i, CancellationToken token)
             {
                 var galleryThumbHolderItem =
-                    await Task.FromResult(GalleryThumbHolder.GetThumbData(i)).ConfigureAwait(false);
+                    await GalleryThumbHolder.GetThumbDataAsync(i).ConfigureAwait(false);
                 await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
                     UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
