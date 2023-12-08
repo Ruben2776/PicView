@@ -73,60 +73,62 @@ namespace PicView.ImageHandling
                 return;
             }
 
-            var toCenter = false;
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                () => { toCenter = UC.UserControls_Open(); });
-
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
-
-            var success = await Task.FromResult(OptimizeImage(Navigation.Pics[Navigation.FolderIndex]))
-                .ConfigureAwait(false);
-
-            if (success)
+            await Task.Run(async () =>
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+                var toCenter = false;
+
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { toCenter = UC.UserControls_Open(); });
+
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
+
+                var success = OptimizeImage(Navigation.Pics[Navigation.FolderIndex]);
+
+                // Update title to show new file size
+                if (success)
                 {
-                    var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-                    var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
-
-                    SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
-                    Tooltip.CloseToolTipMessage();
-                });
-            }
-            else
-            {
-                Tooltip.ShowTooltipMessage("0%", toCenter);
-                return;
-            }
-
-            var preloadValue = PreLoader.Get(Navigation.FolderIndex);
-            if (preloadValue == null)
-            {
-                await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-            }
-
-            var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            var readablePrevSize = preloadValue.FileInfo.Length.GetReadableFileSize();
-            var readableNewSize = fileInfo.Length.GetReadableFileSize();
-
-            var originalValue = preloadValue.FileInfo.Length;
-            var decreasedValue = fileInfo.Length;
-            if (originalValue != decreasedValue)
-            {
-                var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render,
-                    () =>
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                     {
-                        Tooltip.ShowTooltipMessage(
-                            $"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%",
-                            toCenter, TimeSpan.FromSeconds(3.5));
+                        var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+                        var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+
+                        SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
+                        Tooltip.CloseToolTipMessage();
                     });
-            }
-            else
-            {
-                Tooltip.ShowTooltipMessage("0%", toCenter);
-            }
+                }
+                else
+                {
+                    Tooltip.ShowTooltipMessage("0%", toCenter);
+                    return;
+                }
+
+                var preloadValue = PreLoader.Get(Navigation.FolderIndex);
+                if (preloadValue == null)
+                {
+                    await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
+                }
+
+                var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
+                var readablePrevSize = preloadValue.FileInfo.Length.GetReadableFileSize();
+                var readableNewSize = fileInfo.Length.GetReadableFileSize();
+
+                var originalValue = preloadValue.FileInfo.Length;
+                var decreasedValue = fileInfo.Length;
+                if (originalValue != decreasedValue)
+                {
+                    var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
+                    await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render,
+                        () =>
+                        {
+                            Tooltip.ShowTooltipMessage(
+                                $"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%",
+                                toCenter, TimeSpan.FromSeconds(3.5));
+                        });
+                }
+                else
+                {
+                    Tooltip.ShowTooltipMessage("0%", toCenter);
+                }
+            });
         }
 
         /// <summary>
