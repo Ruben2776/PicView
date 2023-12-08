@@ -361,7 +361,7 @@ namespace PicView.ChangeImage
         /// </summary>
         /// <param name="index">The index of the image to load.</param>
         /// <param name="fileInfo">The file information for the image. If not specified, the file information will be obtained from the image list using the specified index.</param>
-        internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
+        internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null) => await Task.Run(async () =>
         {
             if (index < 0 || index >= Pics.Count)
             {
@@ -575,7 +575,7 @@ namespace PicView.ChangeImage
                 }
                 await LoadPicAtIndexAsync(nextIndex).ConfigureAwait(false);
             }
-        }
+        });
 
         #endregion Load Pic at Index
 

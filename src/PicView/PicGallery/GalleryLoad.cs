@@ -223,6 +223,7 @@ namespace PicView.PicGallery
             {
                 await Parallel.ForAsync(startPosition, end, options, async (i, loopState) =>
                 {
+                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                     updates++;
                     try
                     {
