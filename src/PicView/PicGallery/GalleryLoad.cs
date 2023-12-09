@@ -86,11 +86,14 @@ namespace PicView.PicGallery
             /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
             internal static async Task<GalleryThumbHolder> GetThumbDataAsync(int index)
             {
+                var fileNameLength = 60;
                 var fileInfo = new FileInfo(Navigation.Pics[index]);
                 var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[index],
                     (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
                 var fileLocation = fileInfo.FullName;
+                fileLocation = fileLocation.Length > fileNameLength ? fileLocation.Shorten(fileNameLength) : fileLocation;
                 var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+                fileName = fileName.Length > fileNameLength ? fileName.Shorten(fileNameLength) : fileName;
                 var getFileSizeResource = Application.Current?.TryFindResource("FileSize");
                 var getFileDateResource = Application.Current?.TryFindResource("Modified");
                 var fileSize = "";
@@ -184,7 +187,7 @@ namespace PicView.PicGallery
                     ParallelOptions options = new()
                     {
                         CancellationToken = source.Token,
-                        MaxDegreeOfParallelism = Environment.ProcessorCount - 1 < 1 ? 1 : Environment.ProcessorCount - 1
+                        MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
                     };
                     await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
                     await Loop(0, index, options).ConfigureAwait(false);
@@ -222,7 +225,6 @@ namespace PicView.PicGallery
             {
                 await Parallel.ForAsync(startPosition, end, options, async (i, loopState) =>
                 {
-                    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                     updates++;
                     try
                     {

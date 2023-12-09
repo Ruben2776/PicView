@@ -139,18 +139,12 @@ namespace PicView.FileHandling
 
         /// <summary>
         /// Shortens the given string `name` to the given `amount` and appends "..." to it.
-        /// If the length of `name` is less than 25, returns `name` as it is.
         /// </summary>
         /// <param name="name">The string to shorten</param>
         /// <param name="amount">The length to shorten the string to</param>
         /// <returns>The shortened string</returns>
         internal static string Shorten(this string name, int amount)
         {
-            if (name.Length < 25)
-            {
-                return name;
-            }
-
             name = name[..amount];
             name += "...";
             return name;
