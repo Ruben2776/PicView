@@ -1,13 +1,13 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.Properties;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using PicView.Views.UserControls.Gallery;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using static PicView.ChangeImage.Navigation;
 using static PicView.PicGallery.GalleryFunctions;
 using static PicView.UILogic.ConfigureWindows;
@@ -131,34 +131,34 @@ namespace PicView.PicGallery
                     break;
 
                 default:
-                {
-                    if (Pics?.Count < 1)
                     {
-                        return;
-                    }
-
-                    IsGalleryOpen = true;
-
-                    await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
-                    {
-                        OpenLayout();
-                        GetPicGallery.Visibility = Visibility.Visible;
-
-                        var fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
-                        if (fade == false)
+                        if (Pics?.Count < 1)
                         {
-                            GetPicGallery.Opacity = 1;
+                            return;
                         }
 
-                        GetClickArrowLeft.Visibility =
-                            GetClickArrowRight.Visibility =
-                                GetX2.Visibility =
-                                    GetMinus.Visibility =
-                                        GetRestoreButton.Visibility =
-                                            GetGalleryShortcut.Visibility = Visibility.Hidden;
-                    });
-                    break;
-                }
+                        IsGalleryOpen = true;
+
+                        await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+                        {
+                            OpenLayout();
+                            GetPicGallery.Visibility = Visibility.Visible;
+
+                            var fade = AnimationHelper.Fade(GetPicGallery, TimeSpan.FromSeconds(.3), TimeSpan.Zero, 0, 1);
+                            if (fade == false)
+                            {
+                                GetPicGallery.Opacity = 1;
+                            }
+
+                            GetClickArrowLeft.Visibility =
+                                GetClickArrowRight.Visibility =
+                                    GetX2.Visibility =
+                                        GetMinus.Visibility =
+                                            GetRestoreButton.Visibility =
+                                                GetGalleryShortcut.Visibility = Visibility.Hidden;
+                        });
+                        break;
+                    }
             }
 
             await LoadAndScrollToAsync().ConfigureAwait(false);

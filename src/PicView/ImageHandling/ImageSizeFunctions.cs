@@ -115,21 +115,27 @@ namespace PicView.ImageHandling
                             case ".jpg":
                                 magick.Format = MagickFormat.Jpeg;
                                 break;
+
                             case ".png":
                                 magick.Format = MagickFormat.Png;
                                 break;
+
                             case ".jxl":
                                 magick.Format = MagickFormat.Jxl;
                                 break;
+
                             case ".gif":
                                 magick.Format = MagickFormat.Gif;
                                 break;
+
                             case ".webp":
                                 magick.Format = MagickFormat.WebP;
                                 break;
+
                             case ".heic":
                                 magick.Format = MagickFormat.Heic;
                                 break;
+
                             case ".heif":
                                 magick.Format = MagickFormat.Heif;
                                 break;

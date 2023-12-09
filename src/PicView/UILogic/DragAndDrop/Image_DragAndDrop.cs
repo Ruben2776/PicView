@@ -1,6 +1,5 @@
 ﻿using PicView.ChangeImage;
 using PicView.FileHandling;
-using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.ProcessHandling;
 using PicView.Properties;

@@ -1,8 +1,8 @@
 ﻿using PicView.ChangeImage;
+using PicView.PicGallery;
 using PicView.Properties;
 using PicView.UILogic.Sizing;
 using System.Windows;
-using PicView.PicGallery;
 using static PicView.Animations.FadeControls;
 using Timer = System.Timers.Timer;
 

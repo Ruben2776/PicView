@@ -352,10 +352,6 @@
                         </Image>
                     </Button>
                 </Border>
-
-                
-
-                
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

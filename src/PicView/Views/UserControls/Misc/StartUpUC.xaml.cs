@@ -1,13 +1,9 @@
-﻿using PicView.ChangeImage;
-using PicView.ConfigureSettings;
+﻿using PicView.Animations;
+using PicView.ChangeImage;
 using PicView.FileHandling;
 using PicView.Properties;
-using PicView.UILogic;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
-using PicView.Animations;
 using static PicView.Animations.MouseOverAnimations;
 
 namespace PicView.Views.UserControls.Misc

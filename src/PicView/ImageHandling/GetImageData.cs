@@ -374,23 +374,23 @@ namespace PicView.ImageHandling
                         break;
 
                     case >= 2:
-                    {
-                        var sb = new StringBuilder();
-                        for (var i = 0; i < authorsArray.Length; i++)
                         {
-                            if (i == 0)
+                            var sb = new StringBuilder();
+                            for (var i = 0; i < authorsArray.Length; i++)
                             {
-                                sb.Append(authorsArray[0]);
+                                if (i == 0)
+                                {
+                                    sb.Append(authorsArray[0]);
+                                }
+                                else
+                                {
+                                    sb.Append(", " + authorsArray[i]);
+                                }
                             }
-                            else
-                            {
-                                sb.Append(", " + authorsArray[i]);
-                            }
-                        }
 
-                        authorsValue = sb.ToString();
-                        break;
-                    }
+                            authorsValue = sb.ToString();
+                            break;
+                        }
                 }
             }
 

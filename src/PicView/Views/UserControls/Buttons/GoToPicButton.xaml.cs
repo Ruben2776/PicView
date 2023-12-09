@@ -1,11 +1,11 @@
 ﻿using PicView.ChangeImage;
 using PicView.ConfigureSettings;
+using PicView.PicGallery;
 using PicView.UILogic;
 using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using PicView.PicGallery;
 using static PicView.Animations.MouseOverAnimations;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.UC;

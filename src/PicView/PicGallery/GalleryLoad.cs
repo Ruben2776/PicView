@@ -9,7 +9,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static System.Windows.Forms.Design.AxImporter;
 
 namespace PicView.PicGallery
 {

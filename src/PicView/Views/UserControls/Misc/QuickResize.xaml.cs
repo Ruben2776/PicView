@@ -1,14 +1,14 @@
-﻿using System.Globalization;
-using PicView.Animations;
+﻿using PicView.Animations;
+using PicView.Properties;
 using PicView.Shortcuts;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using PicView.Properties;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Views.UserControls.Misc

@@ -12,9 +12,7 @@
         Height="265"
         ClipToBounds="True">
         <Canvas.Resources>
-            <PathGeometry
-                x:Key="Mask1"
-                Figures="M0 0L265 0L265 265L0 265L0 0Z">
+            <PathGeometry x:Key="Mask1" Figures="M0 0L265 0L265 265L0 265L0 0Z">
                 <PathGeometry.Transform>
                     <TranslateTransform X="-30.75894" Y="0" />
                 </PathGeometry.Transform>

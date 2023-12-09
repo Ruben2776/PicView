@@ -1,6 +1,6 @@
-﻿using System.Windows.Media;
-using PicView.UILogic;
+﻿using PicView.UILogic;
 using PicView.UILogic.Sizing;
+using System.Windows.Media;
 
 namespace PicView.Views.UserControls.Misc
 {

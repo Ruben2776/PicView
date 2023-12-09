@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using PicView.ChangeImage;
-using PicView.PicGallery;
 using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;

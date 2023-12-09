@@ -1,11 +1,10 @@
 ﻿using PicView.ChangeImage;
 using PicView.ConfigureSettings;
-using PicView.PicGallery;
 using PicView.Properties;
+using PicView.Shortcuts;
 using PicView.SystemIntegration;
 using System.Windows;
 using System.Windows.Controls;
-using PicView.Shortcuts;
 using static PicView.ChangeImage.Navigation;
 using static PicView.UILogic.Loading.LoadContextMenus;
 using static PicView.UILogic.Loading.LoadControls;

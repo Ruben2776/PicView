@@ -69,11 +69,9 @@
                             <DrawingImage>
                                 <DrawingImage.Drawing>
                                     <DrawingGroup>
-                                        <GeometryDrawing
-                                            Geometry="F1 M22 16L22 4C22 2.9 21.1 2 20 2L8 2C6.9 2 6 2.9 6 4L6 16C6 17.1 6.9 18 8 18L20 18C21.1 18 22 17.1 22 16ZM11 12L13.03 14.71L16 11L20 16L8 16L11 12ZM2 6L2 20C2 21.1 2.9 22 4 22L18 22L18 20L4 20L4 6L2 6Z">
+                                        <GeometryDrawing Geometry="F1 M22 16L22 4C22 2.9 21.1 2 20 2L8 2C6.9 2 6 2.9 6 4L6 16C6 17.1 6.9 18 8 18L20 18C21.1 18 22 17.1 22 16ZM11 12L13.03 14.71L16 11L20 16L8 16L11 12ZM2 6L2 20C2 21.1 2.9 22 4 22L18 22L18 20L4 20L4 6L2 6Z">
                                             <GeometryDrawing.Brush>
-                                                <SolidColorBrush x:Name="GalleryBrush"
-                                                                 Color="{StaticResource IconColor}" />
+                                                <SolidColorBrush x:Name="GalleryBrush" Color="{StaticResource IconColor}" />
                                             </GeometryDrawing.Brush>
                                         </GeometryDrawing>
                                     </DrawingGroup>
@@ -346,8 +344,7 @@
                             <DrawingImage>
                                 <DrawingImage.Drawing>
                                     <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <DrawingGroup
-                                            Transform="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,-129.23,312">
+                                        <DrawingGroup Transform="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,-129.23,312">
                                             <GeometryDrawing>
                                                 <GeometryDrawing.Pen>
                                                     <Pen
@@ -365,8 +362,7 @@
                                                 </GeometryDrawing.Geometry>
                                             </GeometryDrawing>
                                         </DrawingGroup>
-                                        <DrawingGroup
-                                            Transform="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,-87.81,212">
+                                        <DrawingGroup Transform="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,-87.81,212">
                                             <GeometryDrawing Brush="{StaticResource MagicBrush}">
                                                 <GeometryDrawing.Geometry>
                                                     <RectangleGeometry

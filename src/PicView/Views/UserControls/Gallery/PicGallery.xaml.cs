@@ -1,6 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using PicView.PicGallery;
+﻿using PicView.PicGallery;
 
 namespace PicView.Views.UserControls.Gallery
 {

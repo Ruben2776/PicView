@@ -21,8 +21,7 @@
                         <DrawingImage>
                             <DrawingImage.Drawing>
                                 <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                    <GeometryDrawing
-                                        Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
+                                    <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
                                         <GeometryDrawing.Pen>
                                             <Pen
                                                 Brush="{StaticResource PlayIconBrush}"

@@ -1,15 +1,15 @@
 ﻿using PicView.Animations;
 using PicView.ChangeImage;
 using PicView.FileHandling;
+using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
+using PicView.SystemIntegration;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using PicView.ImageHandling;
 using static PicView.PicGallery.GalleryNavigation;
-using PicView.SystemIntegration;
 
 namespace PicView.Views.UserControls.Gallery
 {

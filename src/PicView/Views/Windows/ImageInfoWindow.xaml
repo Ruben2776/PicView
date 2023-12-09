@@ -22,99 +22,99 @@
 
     <Window.Resources>
         <StackPanel
-        x:Key="GPS"
-        Height="20"
-        Margin="0,15,0,10"
-        Orientation="Horizontal">
+            x:Key="GPS"
+            Height="20"
+            Margin="0,15,0,10"
+            Orientation="Horizontal">
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="0,0,7,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="0,0,7,0"
+                Fill="{StaticResource BorderBrush}" />
             <Path
-            Data="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"
-            Fill="{StaticResource IconColorBrush}"
-            Stretch="Uniform" />
+                Data="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"
+                Fill="{StaticResource IconColorBrush}"
+                Stretch="Uniform" />
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="7,0,0,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="7,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
         </StackPanel>
 
         <StackPanel
-        x:Key="Origin"
-        Height="20"
-        Margin="0,15,0,10"
-        Orientation="Horizontal">
+            x:Key="Origin"
+            Height="20"
+            Margin="0,15,0,10"
+            Orientation="Horizontal">
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="0,0,7,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="0,0,7,0"
+                Fill="{StaticResource BorderBrush}" />
             <Path
-            Data="M256 8C118.941 8 8 118.919 8 256c0 137.059 110.919 248 248 248 48.154 0 95.342-14.14 135.408-40.223 12.005-7.815 14.625-24.288 5.552-35.372l-10.177-12.433c-7.671-9.371-21.179-11.667-31.373-5.129C325.92 429.757 291.314 440 256 440c-101.458 0-184-82.542-184-184S154.542 72 256 72c100.139 0 184 57.619 184 160 0 38.786-21.093 79.742-58.17 83.693-17.349-.454-16.91-12.857-13.476-30.024l23.433-121.11C394.653 149.75 383.308 136 368.225 136h-44.981a13.518 13.518 0 0 0-13.432 11.993l-.01.092c-14.697-17.901-40.448-21.775-59.971-21.775-74.58 0-137.831 62.234-137.831 151.46 0 65.303 36.785 105.87 96 105.87 26.984 0 57.369-15.637 74.991-38.333 9.522 34.104 40.613 34.103 70.71 34.103C462.609 379.41 504 307.798 504 232 504 95.653 394.023 8 256 8zm-21.68 304.43c-22.249 0-36.07-15.623-36.07-40.771 0-44.993 30.779-72.729 58.63-72.729 22.292 0 35.601 15.241 35.601 40.77 0 45.061-33.875 72.73-58.161 72.73z"
-            Fill="{StaticResource IconColorBrush}"
-            Stretch="Uniform" />
+                Data="M256 8C118.941 8 8 118.919 8 256c0 137.059 110.919 248 248 248 48.154 0 95.342-14.14 135.408-40.223 12.005-7.815 14.625-24.288 5.552-35.372l-10.177-12.433c-7.671-9.371-21.179-11.667-31.373-5.129C325.92 429.757 291.314 440 256 440c-101.458 0-184-82.542-184-184S154.542 72 256 72c100.139 0 184 57.619 184 160 0 38.786-21.093 79.742-58.17 83.693-17.349-.454-16.91-12.857-13.476-30.024l23.433-121.11C394.653 149.75 383.308 136 368.225 136h-44.981a13.518 13.518 0 0 0-13.432 11.993l-.01.092c-14.697-17.901-40.448-21.775-59.971-21.775-74.58 0-137.831 62.234-137.831 151.46 0 65.303 36.785 105.87 96 105.87 26.984 0 57.369-15.637 74.991-38.333 9.522 34.104 40.613 34.103 70.71 34.103C462.609 379.41 504 307.798 504 232 504 95.653 394.023 8 256 8zm-21.68 304.43c-22.249 0-36.07-15.623-36.07-40.771 0-44.993 30.779-72.729 58.63-72.729 22.292 0 35.601 15.241 35.601 40.77 0 45.061-33.875 72.73-58.161 72.73z"
+                Fill="{StaticResource IconColorBrush}"
+                Stretch="Uniform" />
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="7,0,0,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="7,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
         </StackPanel>
 
         <StackPanel
-        x:Key="Image"
-        Height="20"
-        Margin="0,15,0,10"
-        Orientation="Horizontal">
+            x:Key="Image"
+            Height="20"
+            Margin="0,15,0,10"
+            Orientation="Horizontal">
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="0,0,7,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="0,0,7,0"
+                Fill="{StaticResource BorderBrush}" />
             <Path
-            Data="M384 121.941V128H256V0h6.059a24 24 0 0 1 16.97 7.029l97.941 97.941a24.002 24.002 0 0 1 7.03 16.971zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zm-135.455 16c26.51 0 48 21.49 48 48s-21.49 48-48 48-48-21.49-48-48 21.491-48 48-48zm208 240h-256l.485-48.485L104.545 328c4.686-4.686 11.799-4.201 16.485.485L160.545 368 264.06 264.485c4.686-4.686 12.284-4.686 16.971 0L320.545 304v112z"
-            Fill="{StaticResource IconColorBrush}"
-            Stretch="Uniform" />
+                Data="M384 121.941V128H256V0h6.059a24 24 0 0 1 16.97 7.029l97.941 97.941a24.002 24.002 0 0 1 7.03 16.971zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zm-135.455 16c26.51 0 48 21.49 48 48s-21.49 48-48 48-48-21.49-48-48 21.491-48 48-48zm208 240h-256l.485-48.485L104.545 328c4.686-4.686 11.799-4.201 16.485.485L160.545 368 264.06 264.485c4.686-4.686 12.284-4.686 16.971 0L320.545 304v112z"
+                Fill="{StaticResource IconColorBrush}"
+                Stretch="Uniform" />
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="7,0,0,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="7,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
         </StackPanel>
 
         <StackPanel
-        x:Key="Film"
-        Height="20"
-        Margin="0,15,0,10"
-        Orientation="Horizontal">
+            x:Key="Film"
+            Height="20"
+            Margin="0,15,0,10"
+            Orientation="Horizontal">
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="0,0,7,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="0,0,7,0"
+                Fill="{StaticResource BorderBrush}" />
             <Path
-            Data="M488 64h-8v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12V64H96v20c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12V64h-8C10.7 64 0 74.7 0 88v336c0 13.3 10.7 24 24 24h8v-20c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v20h320v-20c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v20h8c13.3 0 24-10.7 24-24V88c0-13.3-10.7-24-24-24zM96 372c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm272 208c0 6.6-5.4 12-12 12H156c-6.6 0-12-5.4-12-12v-96c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v96zm0-168c0 6.6-5.4 12-12 12H156c-6.6 0-12-5.4-12-12v-96c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v96zm112 152c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40z"
-            Fill="{StaticResource IconColorBrush}"
-            Stretch="Uniform" />
+                Data="M488 64h-8v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12V64H96v20c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12V64h-8C10.7 64 0 74.7 0 88v336c0 13.3 10.7 24 24 24h8v-20c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v20h320v-20c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v20h8c13.3 0 24-10.7 24-24V88c0-13.3-10.7-24-24-24zM96 372c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12H44c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm272 208c0 6.6-5.4 12-12 12H156c-6.6 0-12-5.4-12-12v-96c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v96zm0-168c0 6.6-5.4 12-12 12H156c-6.6 0-12-5.4-12-12v-96c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v96zm112 152c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40zm0-96c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40z"
+                Fill="{StaticResource IconColorBrush}"
+                Stretch="Uniform" />
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="7,0,0,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="7,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
         </StackPanel>
 
         <StackPanel
-        x:Key="Camera"
-        Height="20"
-        Margin="0,15,0,10"
-        Orientation="Horizontal">
+            x:Key="Camera"
+            Height="20"
+            Margin="0,15,0,10"
+            Orientation="Horizontal">
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="0,0,7,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="0,0,7,0"
+                Fill="{StaticResource BorderBrush}" />
             <Image>
                 <Image.Source>
                     <DrawingImage>
@@ -127,10 +127,10 @@
                 </Image.Source>
             </Image>
             <Rectangle
-            Width="372"
-            Height="1"
-            Margin="7,0,0,0"
-            Fill="{StaticResource BorderBrush}" />
+                Width="372"
+                Height="1"
+                Margin="7,0,0,0"
+                Fill="{StaticResource BorderBrush}" />
         </StackPanel>
 
         <Style x:Key="bgRoundedConer" TargetType="Border">
@@ -593,11 +593,9 @@
                                         <DrawingImage>
                                             <DrawingImage.Drawing>
                                                 <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                                    <GeometryDrawing x:Name="xGeo"
-                                                                     Geometry="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z">
+                                                    <GeometryDrawing x:Name="xGeo" Geometry="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z">
                                                         <GeometryDrawing.Brush>
-                                                            <SolidColorBrush x:Name="chevronDownBrush"
-                                                                             Color="{StaticResource IconColor}" />
+                                                            <SolidColorBrush x:Name="chevronDownBrush" Color="{StaticResource IconColor}" />
                                                         </GeometryDrawing.Brush>
                                                     </GeometryDrawing>
                                                 </DrawingGroup>
