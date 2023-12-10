@@ -130,6 +130,7 @@ internal static class CustomKeybindings
   ""G"": ""ToggleGallery"",
   ""F"": ""Flip"",
   ""J"": ""ResizeImage"",
+  ""L"": ""ToggleLooping"",
   ""C"": ""Crop"",
   ""E"": ""GalleryClick"",
   ""Enter"": ""GalleryClick"",
