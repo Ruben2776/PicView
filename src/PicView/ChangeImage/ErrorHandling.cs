@@ -38,7 +38,7 @@ namespace PicView.ChangeImage
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
                 Unload(true);
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"], true, TimeSpan.FromSeconds(5));
                 ConfigureWindows.GetMainWindow.Title =
                     (string)Application.Current.Resources["UnexpectedError"] + " - PicView";
                 ConfigureWindows.GetMainWindow.TitleText.Text =
@@ -206,7 +206,7 @@ namespace PicView.ChangeImage
 #if DEBUG
                 Trace.WriteLine($"{nameof(ReloadAsync)} exception:\n{ex.Message}");
 #endif
-                Tooltip.ShowTooltipMessage(ex.Message, true);
+                Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
             }
         }
 

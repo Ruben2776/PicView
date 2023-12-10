@@ -138,7 +138,7 @@ namespace PicView.ChangeImage
                 Trace.WriteLine("OpenWith exception \n" + e.Message);
 
 #endif
-                Tooltip.ShowTooltipMessage(e);
+                Tooltip.ShowTooltipMessage(e, true, TimeSpan.FromSeconds(5));
                 await ReloadAsync(true).ConfigureAwait(false);
             }
         }
@@ -396,7 +396,7 @@ namespace PicView.ChangeImage
 #if DEBUG
                     Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} {fileInfo.Name} exception:\n{ex.Message}");
 #endif
-                    Tooltip.ShowTooltipMessage(ex.Message, true);
+                    Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
                     await ReloadAsync().ConfigureAwait(false);
                     return;
                 }

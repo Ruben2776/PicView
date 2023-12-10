@@ -33,7 +33,7 @@ internal static class CustomKeybindings
         catch (Exception ex)
         {
             // Handle other exceptions as needed
-            Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}");
+            Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
         }
     }
 
@@ -88,7 +88,7 @@ internal static class CustomKeybindings
 #if DEBUG
             Trace.WriteLine($"{nameof(UpdateKeyBindingsFile)} exception:\n{exception.Message}");
 #endif
-            Tooltip.ShowTooltipMessage(exception.Message);
+            Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
         }
     }
 

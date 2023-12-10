@@ -198,7 +198,7 @@ namespace PicView.FileHandling
 #if DEBUG
                 Trace.WriteLine($"{nameof(GetExtractAppPath)} exception, \n {e.Message}");
 #endif
-                Tooltip.ShowTooltipMessage(e.Message);
+                Tooltip.ShowTooltipMessage(e.Message, true, TimeSpan.FromSeconds(5));
                 return false;
             }
 

@@ -61,7 +61,7 @@ namespace PicView.ImageHandling
                 Trace.WriteLine(
                     $"{nameof(ImageFunctions)}::{nameof(SetRating)} caught exception:\n{exception.Message}");
 #endif
-                Tooltip.ShowTooltipMessage(exception.Message);
+                Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
                 return false;
             }
         });
@@ -149,7 +149,7 @@ namespace PicView.ImageHandling
             if (imageOptimizer.IsSupported(file) == false)
             {
                 // Show a tooltip message indicating that the file is unsupported
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnsupportedFile"]);
+                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnsupportedFile"], true, TimeSpan.FromSeconds(5));
 
                 // Return false to indicate that the optimization was not successful
                 return false;
@@ -168,7 +168,7 @@ namespace PicView.ImageHandling
                     $"{nameof(ImageFunctions)}::{nameof(SetRating)} caught exception:\n{exception.Message}");
 #endif
                 // Show a tooltip message indicating that an error occurred during compression
-                Tooltip.ShowTooltipMessage(exception.Message);
+                Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
 
                 // Return false to indicate that the optimization was not successful
                 return false;

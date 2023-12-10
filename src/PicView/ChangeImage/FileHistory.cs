@@ -60,7 +60,7 @@ namespace PicView.ChangeImage
             }
             catch (Exception e)
             {
-                Tooltip.ShowTooltipMessage(e.Message);
+                Tooltip.ShowTooltipMessage(e.Message, true, TimeSpan.FromSeconds(5));
             }
         }
 
@@ -79,7 +79,7 @@ namespace PicView.ChangeImage
             }
             catch (Exception e)
             {
-                Tooltip.ShowTooltipMessage(e.Message);
+                Tooltip.ShowTooltipMessage(e.Message, true, TimeSpan.FromSeconds(5));
             }
         }
 

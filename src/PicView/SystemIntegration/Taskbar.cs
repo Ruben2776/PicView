@@ -49,7 +49,7 @@ namespace PicView.SystemIntegration
             }
             catch (Exception e)
             {
-                Tooltip.ShowTooltipMessage(e);
+                Tooltip.ShowTooltipMessage(e, true, TimeSpan.FromSeconds(5));
                 // Catch task canceled exception
             }
         }
