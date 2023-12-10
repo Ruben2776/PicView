@@ -312,11 +312,6 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            if (Settings.Default.IsBottomGalleryShown)
-            {
-                await GetPicGallery?.Dispatcher.InvokeAsync(() => { GetPicGallery.Visibility = Visibility.Visible; });
-            }
-
             if (index >= 0)
             {
                 await LoadPicAtIndexAsync(index, fileInfo).ConfigureAwait(false);
@@ -328,6 +323,23 @@ namespace PicView.ChangeImage
 
             if (Settings.Default.IsBottomGalleryShown)
             {
+                if (GetPicGallery is null)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        GalleryToggle.ShowBottomGallery();
+                        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    });
+                }
+                else
+                {
+                    await GetPicGallery?.Dispatcher.InvokeAsync(() =>
+                    {
+                        GetPicGallery.Visibility = Visibility.Visible;
+                        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    });
+                }
+
                 if (folderChanged)
                 {
                     await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);

@@ -293,9 +293,16 @@ namespace PicView.PicGallery
                 await Task.Delay(200).ConfigureAwait(false);
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
                 {
-                    if (UC.GetPicGallery.Container.Children.Count is 0)
+                    try
                     {
-                        IsLoading = false;
+                        if (UC.GetPicGallery.Container.Children.Count is 0)
+                        {
+                            IsLoading = false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //
                     }
                 });
             }

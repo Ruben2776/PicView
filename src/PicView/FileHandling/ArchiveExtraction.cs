@@ -6,6 +6,7 @@ using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;
 
@@ -169,15 +170,29 @@ namespace PicView.FileHandling
                 {
                     if (SetDirectory())
                     {
+                        await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+
                         if (Settings.Default.IsBottomGalleryShown)
                         {
-                            await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
+                            if (UC.GetPicGallery is null)
                             {
-                                UC.GetPicGallery.Visibility = Visibility.Visible;
-                            });
-                        }
+                                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                                {
+                                    GalleryToggle.ShowBottomGallery();
+                                    ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                                });
 
-                        await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+                                await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
+                                {
+                                    UC.GetPicGallery.Visibility = Visibility.Visible;
+                                    ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                                });
+                            }
+                        }
 
                         GetFileHistory ??= new FileHistory();
                         GetFileHistory.Add(TempZipFile);
