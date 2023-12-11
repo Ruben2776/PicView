@@ -22,6 +22,7 @@
   "L": "ToggleLooping",
   "C": "Crop",
   "E": "GalleryClick",
+  "T": "SetTopMost",
   "Enter": "GalleryClick",
   "Delete": "DeleteFile",
   "I": "ImageInfoWindow",
