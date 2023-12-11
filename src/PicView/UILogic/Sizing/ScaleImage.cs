@@ -51,7 +51,7 @@ namespace PicView.UILogic.Sizing
                 }
                 else Fit();
             });
-
+            return;
             void Fit()
             {
                 if (GetMainWindow.MainImage.Source != null)
@@ -124,8 +124,7 @@ namespace PicView.UILogic.Sizing
                 }
             }
 
-            if (Settings.Default
-                .IsBottomGalleryShown) // Set to if new gallery opened and Settings.Default.FullscreenGallery
+            if (Settings.Default.IsBottomGalleryShown)
             {
                 if (!Settings.Default.ShowInterface && !Settings.Default.ShowAltInterfaceBottomGallery)
                 {

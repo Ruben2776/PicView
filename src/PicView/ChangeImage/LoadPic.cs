@@ -482,24 +482,6 @@ namespace PicView.ChangeImage
                         ScaleImage.FitImage(image.Width, image.Height);
                 }, DispatcherPriority.Send, source.Token);
 
-                // Update gallery selections
-                if (GetPicGallery is not null && index == FolderIndex)
-                {
-                    await GetPicGallery.Dispatcher.InvokeAsync(() =>
-                    {
-                        if (index != FolderIndex)
-                        {
-                            source.Cancel();
-                            return;
-                        }
-
-                        // Select next item
-                        GalleryNavigation.SetSelected(FolderIndex, true);
-                        GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                        GalleryNavigation.ScrollToGalleryCenter();
-                    }, DispatcherPriority.Normal, source.Token);
-                }
-
                 if (preLoadValue is null)
                 {
                     var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
@@ -528,7 +510,16 @@ namespace PicView.ChangeImage
                     return; // Skip loading if user went to next value
                 }
             }
-            else if (GetPicGallery is not null)
+
+            if (index != FolderIndex)
+            {
+                await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                return; // Skip loading if user went to next value
+            }
+
+            await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
+
+            if (GetPicGallery is not null)
             {
                 await GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
@@ -540,14 +531,6 @@ namespace PicView.ChangeImage
                     GalleryNavigation.ScrollToGalleryCenter();
                 });
             }
-
-            if (index != FolderIndex)
-            {
-                await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
-                return; // Skip loading if user went to next value
-            }
-
-            await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
 
             if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
                 await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);

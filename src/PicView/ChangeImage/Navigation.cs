@@ -122,27 +122,24 @@ namespace PicView.ChangeImage
                 });
             }
 
-            await Task.Run(async () =>
+            if (fastPic)
             {
-                if (fastPic)
+                await FastPic.Run(next).ConfigureAwait(false);
+                if (UC.GetPicGallery is not null)
                 {
-                    await FastPic.Run(next).ConfigureAwait(false);
-                    if (UC.GetPicGallery is not null)
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
-                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                        {
-                            // Select next item
-                            GalleryNavigation.SetSelected(FolderIndex, true);
-                            GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                            GalleryNavigation.ScrollToGalleryCenter();
-                        });
-                    }
+                        // Select next item
+                        GalleryNavigation.SetSelected(FolderIndex, true);
+                        GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                        GalleryNavigation.ScrollToGalleryCenter();
+                    });
                 }
-                else
-                {
-                    await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
-                }
-            });
+            }
+            else
+            {
+                await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
