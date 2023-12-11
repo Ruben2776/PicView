@@ -20,7 +20,7 @@ namespace PicView.ChangeImage
         private const short MaxCount = 15;
         private readonly string _path;
 
-        public FileHistory()
+        internal FileHistory()
         {
             _fileHistory ??= new List<string>();
             try
