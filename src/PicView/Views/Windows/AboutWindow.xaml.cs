@@ -1,5 +1,4 @@
-﻿using AutoUpdaterDotNET;
-using PicView.Animations;
+﻿using PicView.Animations;
 using PicView.ConfigureSettings;
 using PicView.Properties;
 using PicView.Shortcuts;
@@ -7,7 +6,6 @@ using PicView.SystemIntegration;
 using PicView.UILogic;
 using PicView.UILogic.Sizing;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -134,17 +132,7 @@ namespace PicView.Views.Windows
 
             UpdateButton.MouseLeftButtonDown += delegate
             {
-                var currentDirectory = new DirectoryInfo(Application.Current.StartupUri.AbsolutePath);
-                if (currentDirectory.Parent != null)
-                {
-                    AutoUpdater.InstallationPath = currentDirectory.Parent.FullName;
-                }
-                AutoUpdater.ShowRemindLaterButton = false;
-                AutoUpdater.ReportErrors = true;
-                AutoUpdater.ShowSkipButton = false;
-                AutoUpdater.SetOwner(this);
-                AutoUpdater.RunUpdateAsAdmin = true;
-                AutoUpdater.Start("https://picview.org/update.xml");
+                Update.UpdateHelper.Update(this);
             };
         }
 
