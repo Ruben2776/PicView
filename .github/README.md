@@ -27,7 +27,7 @@ Latest releases at https://picview.org/download
 
 [FossHub](https://www.fosshub.com/PicView.html) <br>
 [MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)  <br>
-[SourceForge](https://sourceforge.net/projects/picview/)
+[SourceForge](https://sourceforge.net/projects/picview/) <br>
 [uptodown](https://picview.en.uptodown.com/windows)
 
 
