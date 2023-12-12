@@ -19,7 +19,7 @@ Additionally, PicView also includes features such as EXIF data display, image co
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.0/PicView.2.0.win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.0/PicView.2.0.win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.1/PicView.2.1.x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.1/PicView.2.1.arm64.zip)
 
 Latest releases at https://picview.org/download
 
@@ -28,6 +28,7 @@ Latest releases at https://picview.org/download
 [FossHub](https://www.fosshub.com/PicView.html) <br>
 [MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)  <br>
 [SourceForge](https://sourceforge.net/projects/picview/)
+[uptodown](https://picview.en.uptodown.com/windows)
 
 
 Winget:
