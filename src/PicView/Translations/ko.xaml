@@ -24,7 +24,7 @@
     <!--  About window  -->
     <system:String x:Key="About">정보</system:String>
     <system:String x:Key="InfoWindowTitle">정보 및 한국어 번역: 비너스걸</system:String>
-    <system:String x:Key="ApplicationShortcuts">응용 프로그램 바로가기</system:String>
+    <system:String x:Key="ApplicationShortcuts">응용 프로그램 단축키</system:String>
     <system:String x:Key="ImageControl">이미지 제어</system:String>
     <system:String x:Key="FileManagement">파일 관리</system:String>
     <system:String x:Key="DragFileTo">파일을 Windows 탐색기 또는 다른 응용 프로그램/브라우저로 끌어다 놓기</system:String>
@@ -36,9 +36,9 @@
     <system:String x:Key="GithubRepo">Github 저장소</system:String>
     <system:String x:Key="ViewLicenseFile">라이선스 파일 보기</system:String>
     <system:String x:Key="Version">버전:</system:String>
-    <system:String x:Key="ChangeKeybindingText">단추를 클릭하여 단축키를 변경하십시오. Esc를 누르면 키 바인딩이 해제됩니다.</system:String>
+    <system:String x:Key="ChangeKeybindingText">버튼을 클릭하여 단축키를 변경하십시오. Esc를 누르면 키 바인딩이 해제됩니다.</system:String>
     <system:String x:Key="ResetButtonText">기본값으로 재설정</system:String>
-    <system:String x:Key="SelectGalleryThumb">갤러리 섬네일 선택</system:String>
+    <system:String x:Key="SelectGalleryThumb">갤러리 썸네일 선택</system:String>
     <system:String x:Key="PressKey">키를 누르세요...</system:String>
     <system:String x:Key="ChangeKeybindingTooltip">키 바인딩 변경을 위해 클릭하세요</system:String>
     <!--  Scroll  -->
@@ -101,7 +101,7 @@
     <system:String x:Key="ChangingThemeRequiresRestart">* 테마 변경 시 재시작 필요</system:String>
 
     <!--  Settings window, wallpaper  -->
-    <system:String x:Key="SetCurrentImageAsWallpaper">현재 이미지를 배경화면으로 설정:</system:String>
+    <system:String x:Key="SetCurrentImageAsWallpaper">현재 이미지를 배경 화면으로 설정:</system:String>
 
     <system:String x:Key="Fill">채우기</system:String>
     <system:String x:Key="Center">가운데</system:String>
@@ -195,7 +195,7 @@
     <system:String x:Key="PrevFolder">이전 폴더로 이동</system:String>
 
     <!--  Zoom related  -->
-    <system:String x:Key="Zoom">줌</system:String>
+    <system:String x:Key="Zoom">확대/축소</system:String>
     <system:String x:Key="ZoomIn">확대</system:String>
     <system:String x:Key="ZoomOut">축소</system:String>
     <system:String x:Key="Pan">팬</system:String>
@@ -323,7 +323,7 @@
 
     <!--  Wallpaper  -->
     <system:String x:Key="SetAs">다음으로 설정...</system:String>
-    <system:String x:Key="SetAsWallpaper">배경화면으로 설정</system:String>
+    <system:String x:Key="SetAsWallpaper">배경 화면으로 설정</system:String>
     <system:String x:Key="SetAsLockScreenImage">잠금 화면 이미지로 설정</system:String>
 
     <!--  Edit  -->
