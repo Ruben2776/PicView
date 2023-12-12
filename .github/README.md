@@ -178,7 +178,8 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
    
    _* RAW camera formats may be slower to load_
 
-## Shortcuts
+## Default Shortcuts
+_* Shortcuts can be changed by opening the `About` window, and scrolling down_
 | Shortcut             | Explanation                                                                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Esc                  | Close window or current open menu                                                                                |
@@ -255,7 +256,7 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 
 _* Scrollwheel behavior can be changed in settings_
 
-You can also view shortcuts by opening the about window `F1`
+You can also view and change shortcuts by opening the `About` window `F1`
 
 
 # Contributions
