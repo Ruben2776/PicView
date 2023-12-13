@@ -37,7 +37,7 @@ namespace PicView.ImageHandling
                 if (hlsl)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        () => { magickImage = ImageDecoder.GetRenderedMagickImage(); });
+                        () => { magickImage = Image2BitmapSource.GetRenderedMagickImage(); });
                 }
                 else if (bitmapSource is not null)
                 {

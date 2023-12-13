@@ -86,7 +86,7 @@ namespace PicView.ChangeImage
                 if (add)
                 {
                     fileInfo ??= new FileInfo(Pics[index]);
-                    bitmapSource ??= await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                    bitmapSource ??= await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                     preLoadValue.BitmapSource = bitmapSource;
                     preLoadValue.FileInfo = fileInfo;
 #if DEBUG

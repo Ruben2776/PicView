@@ -186,7 +186,7 @@ namespace PicView.FileHandling
                 {
                     if (ConfigureWindows.GetMainWindow.MainImage.Effect != null)
                     {
-                        pic = ImageDecoder.GetRenderedBitmapFrame();
+                        pic = Image2BitmapSource.GetRenderedBitmapFrame();
                     }
                     else
                     {
@@ -213,12 +213,12 @@ namespace PicView.FileHandling
                         BitmapSource bitmap;
                         if (preloadValue is null)
                         {
-                            bitmap = await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(Pics[id.Value]));
+                            bitmap = await Image2BitmapSource.ReturnBitmapSourceAsync(new FileInfo(Pics[id.Value]));
                         }
                         else
                         {
                             bitmap = preloadValue.BitmapSource ??
-                                     await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(Pics[id.Value]));
+                                     await Image2BitmapSource.ReturnBitmapSourceAsync(new FileInfo(Pics[id.Value]));
                         }
 
                         try

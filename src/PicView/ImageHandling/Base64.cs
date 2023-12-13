@@ -90,12 +90,12 @@ namespace PicView.ImageHandling
             BitmapFrame frame;
             if (path is null)
             {
-                frame = await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ImageDecoder
+                frame = await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(Image2BitmapSource
                     .GetRenderedBitmapFrame);
             }
             else
             {
-                var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(path)).ConfigureAwait(false);
+                var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(new FileInfo(path)).ConfigureAwait(false);
                 var sourceSize = new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
                 var rectangle = new Rectangle
                 {

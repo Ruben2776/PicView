@@ -47,7 +47,7 @@ namespace PicView.FileHandling
             switch (check)
             {
                 default:
-                    var pic = await ImageDecoder.ReturnBitmapSourceAsync(new FileInfo(check)).ConfigureAwait(false);
+                    var pic = await Image2BitmapSource.ReturnBitmapSourceAsync(new FileInfo(check)).ConfigureAwait(false);
                     await UpdateImage.UpdateImageAsync(url, pic,
                             Path.GetExtension(url).Contains(".gif", StringComparison.OrdinalIgnoreCase), destination)
                         .ConfigureAwait(false);

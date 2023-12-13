@@ -158,7 +158,7 @@ namespace PicView.Editing.Crop
 
             if (effectApplied)
             {
-                var frame = ImageDecoder.GetRenderedBitmapFrame();
+                var frame = Image2BitmapSource.GetRenderedBitmapFrame();
                 var croppedFrame = new CroppedBitmap(frame, crop);
                 Clipboard.SetImage(croppedFrame);
             }

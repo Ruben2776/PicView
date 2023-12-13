@@ -43,7 +43,7 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
             {
                 mainWindow.MainImage.Source = bitmapSource;

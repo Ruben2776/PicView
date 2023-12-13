@@ -927,7 +927,7 @@ namespace PicView.UILogic
                     if (preLoadValue is null)
                     {
                         var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-                        var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                        var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                         preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
                     }
                     await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);

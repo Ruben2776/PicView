@@ -84,7 +84,7 @@ namespace PicView.ImageHandling
             else
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    () => { bitmapSource = ImageDecoder.GetRenderedBitmapFrame(); });
+                    () => { bitmapSource = Image2BitmapSource.GetRenderedBitmapFrame(); });
             }
 
             if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)

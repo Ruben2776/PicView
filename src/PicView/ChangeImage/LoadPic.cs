@@ -484,7 +484,7 @@ namespace PicView.ChangeImage
 
                 if (preLoadValue is null)
                 {
-                    var bitmapSource = await ImageDecoder.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                    var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                     preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
                 }
 
