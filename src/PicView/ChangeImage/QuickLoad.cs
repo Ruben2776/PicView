@@ -1,24 +1,24 @@
-﻿using PicView.Core.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.Core.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic;
 using XamlAnimatedGif;
-using static PicView.ChangeImage.LoadPic;
-using static PicView.ChangeImage.Navigation;
-using static PicView.ChangeImage.PreLoader;
-using static PicView.ChangeTitlebar.SetTitle;
-using static PicView.FileHandling.ArchiveExtraction;
-using static PicView.FileHandling.FileLists;
-using static PicView.UILogic.Sizing.ScaleImage;
+using static PicView.WPF.ChangeImage.LoadPic;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.ChangeImage.PreLoader;
+using static PicView.WPF.ChangeTitlebar.SetTitle;
+using static PicView.WPF.FileHandling.ArchiveExtraction;
+using static PicView.WPF.FileHandling.FileLists;
+using static PicView.WPF.UILogic.Sizing.ScaleImage;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     internal static class QuickLoad
     {

@@ -1,10 +1,10 @@
-﻿using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
+﻿using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     internal enum NavigateTo
     {

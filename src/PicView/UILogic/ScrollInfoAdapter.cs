@@ -5,7 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     public class SmoothScrollViewer : ScrollViewer
     {

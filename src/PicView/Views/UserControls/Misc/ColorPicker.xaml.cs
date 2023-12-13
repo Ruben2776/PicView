@@ -1,4 +1,4 @@
-﻿namespace PicView.Views.UserControls.Misc
+﻿namespace PicView.WPF.Views.UserControls.Misc
 {
     public partial class ColorPicker
     {

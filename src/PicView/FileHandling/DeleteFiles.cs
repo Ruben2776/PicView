@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using PicView.ChangeImage;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Tooltip;
+using Microsoft.VisualBasic.FileIO;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.UILogic;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.Tooltip;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     internal static class DeleteFiles
     {

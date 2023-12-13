@@ -1,8 +1,9 @@
-﻿using PicView.UILogic;
-using System.Windows.Shell;
+﻿using System.Windows.Shell;
 using System.Windows.Threading;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
 
-namespace PicView.SystemIntegration
+namespace PicView.WPF.SystemIntegration
 {
     internal static class Taskbar
     {
@@ -15,7 +16,7 @@ namespace PicView.SystemIntegration
         /// <param name="ii">size</param>
         internal static void Progress(double d)
         {
-            if (!Properties.Settings.Default.IsTaskbarProgressEnabled)
+            if (!Settings.Default.IsTaskbarProgressEnabled)
                 return;
 
             TaskbarItemInfo taskbar = new()

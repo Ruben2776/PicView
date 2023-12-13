@@ -1,21 +1,21 @@
-﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Loading;
-using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
+﻿using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Loading;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.UILogic.TransformImage;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.Tooltip;
-using static PicView.UILogic.TransformImage.Scroll;
+using static PicView.WPF.UILogic.ConfigureWindows;
+using static PicView.WPF.UILogic.Tooltip;
+using static PicView.WPF.UILogic.TransformImage.Scroll;
 
-namespace PicView.ConfigureSettings
+namespace PicView.WPF.ConfigureSettings
 {
     // ReSharper disable once InconsistentNaming
     internal static class UpdateUIValues

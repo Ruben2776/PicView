@@ -1,15 +1,15 @@
-﻿using PicView.ChangeImage;
-using PicView.Core.FileHandling;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
-using static PicView.ChangeImage.ErrorHandling;
-using static PicView.UILogic.Tooltip;
+using PicView.Core.FileHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.UILogic;
+using static PicView.WPF.ChangeImage.ErrorHandling;
+using static PicView.WPF.UILogic.Tooltip;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     public abstract class HttpFunctions
     {

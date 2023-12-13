@@ -1,9 +1,9 @@
-﻿using PicView.Animations;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.WPF.Animations;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class ClickArrow : UserControl
     {

@@ -1,16 +1,16 @@
-﻿using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.PicGallery;
-using PicView.UILogic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Animations.MouseOverAnimations;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.UC;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.PicGallery;
+using PicView.WPF.UILogic;
+using static PicView.WPF.Animations.MouseOverAnimations;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class GoToPicButton : UserControl
     {

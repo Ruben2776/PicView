@@ -1,9 +1,9 @@
-﻿using PicView.Animations;
-using PicView.Properties;
-using System.Windows.Controls;
-using static PicView.Animations.MouseOverAnimations;
+﻿using System.Windows.Controls;
+using PicView.WPF.Animations;
+using PicView.WPF.Properties;
+using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class CopyButton : UserControl
     {

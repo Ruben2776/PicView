@@ -1,8 +1,8 @@
-﻿using PicView.Properties;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
+using PicView.WPF.Properties;
 
-namespace PicView.Translations
+namespace PicView.WPF.Translations
 {
     internal static class LoadLanguage
     {

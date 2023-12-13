@@ -1,13 +1,13 @@
-﻿using PicView.FileHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.ChangeImage.Navigation;
+using PicView.WPF.FileHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.ChangeImage.Navigation;
 
-namespace PicView.ChangeTitlebar
+namespace PicView.WPF.ChangeTitlebar
 {
     internal static class EditTitleBar
     {

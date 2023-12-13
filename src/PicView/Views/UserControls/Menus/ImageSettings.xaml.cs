@@ -1,15 +1,15 @@
-﻿using PicView.ConfigureSettings;
-using PicView.Editing.Crop;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.TransformImage;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
-using static PicView.Animations.MouseOverAnimations;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.Editing.Crop;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Menus
+namespace PicView.WPF.Views.UserControls.Menus
 {
     /// <summary>
     /// Interaction logic for ImageSettings.xaml

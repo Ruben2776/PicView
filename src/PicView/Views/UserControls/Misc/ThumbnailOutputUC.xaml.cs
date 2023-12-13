@@ -1,8 +1,8 @@
-﻿using PicView.FileHandling;
-using PicView.UILogic;
-using PicView.Views.Windows;
+﻿using PicView.WPF.FileHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.Windows;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.WPF.Views.UserControls.Misc
 {
     // ReSharper disable once InconsistentNaming
     public partial class ThumbnailOutputUC

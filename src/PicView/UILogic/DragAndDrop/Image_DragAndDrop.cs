@@ -1,20 +1,20 @@
-﻿using PicView.ChangeImage;
-using PicView.Core.FileHandling;
-using PicView.FileHandling;
-using PicView.PicGallery;
-using PicView.ProcessHandling;
-using PicView.Properties;
-using PicView.Views.UserControls.Misc;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Navigation;
-using static PicView.ImageHandling.Thumbnails;
-using static PicView.UILogic.Tooltip;
+using PicView.Core.FileHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.ProcessHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.Views.UserControls.Misc;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.ImageHandling.Thumbnails;
+using static PicView.WPF.UILogic.Tooltip;
 
-namespace PicView.UILogic.DragAndDrop
+namespace PicView.WPF.UILogic.DragAndDrop
 {
     internal static class ImageDragAndDrop
     {

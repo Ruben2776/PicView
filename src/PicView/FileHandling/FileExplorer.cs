@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     public static class Shell32Wrapper
     {

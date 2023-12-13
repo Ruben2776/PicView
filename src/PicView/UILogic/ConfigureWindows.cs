@@ -1,9 +1,9 @@
-﻿using PicView.Properties;
-using PicView.Views.Windows;
+﻿using PicView.WPF.Properties;
+using PicView.WPF.Views.Windows;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     internal static class ConfigureWindows
     {

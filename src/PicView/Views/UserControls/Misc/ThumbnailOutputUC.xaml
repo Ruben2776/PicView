@@ -1,8 +1,8 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Misc.ThumbnailOutputUC"
+    x:Class="PicView.WPF.Views.UserControls.Misc.ThumbnailOutputUC"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons">
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons">
 
     <UserControl.Resources>
         <Style TargetType="TextBlock">

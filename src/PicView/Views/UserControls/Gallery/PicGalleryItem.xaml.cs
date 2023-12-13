@@ -1,17 +1,17 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using static PicView.PicGallery.GalleryNavigation;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.SystemIntegration;
+using static PicView.WPF.PicGallery.GalleryNavigation;
 
-namespace PicView.Views.UserControls.Gallery
+namespace PicView.WPF.Views.UserControls.Gallery
 {
     public partial class PicGalleryItem
     {

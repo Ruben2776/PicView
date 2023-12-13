@@ -1,18 +1,19 @@
-﻿using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic.Sizing;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.OpenSave;
-using static PicView.UILogic.ConfigureWindows;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.FileHandling.OpenSave;
+using static PicView.WPF.UILogic.ConfigureWindows;
 
-namespace PicView.UILogic.Loading
+namespace PicView.WPF.UILogic.Loading
 {
     internal static class LoadContextMenus
     {
@@ -202,7 +203,7 @@ namespace PicView.UILogic.Loading
             // Change bg
             var ChangeBackgroundMenu = (MenuItem)settingsCm.Items[3];
             ChangeBackgroundMenu.Click += (_, _) => ConfigColors.ChangeBackground();
-            ChangeBackgroundMenu.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            ChangeBackgroundMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "ChangeBackground")
                 .Key.ToString() ?? string.Empty;
 
@@ -212,7 +213,7 @@ namespace PicView.UILogic.Loading
             TopmostHeader.IsChecked = Settings.Default.TopMost;
             TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
             TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
-            TopmostMenu.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            TopmostMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "SetTopMost")
                 .Key.ToString() ?? string.Empty;
 
@@ -222,7 +223,7 @@ namespace PicView.UILogic.Loading
             imageHeightHeader.IsChecked = Settings.Default.FillImage;
             imageHeightHeader.Click += UpdateUIValues.SetAutoFill;
             imageHeightMenu.Click += UpdateUIValues.SetAutoFill;
-            imageHeightMenu.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            imageHeightMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "Stretch")
                 .Key.ToString() ?? string.Empty;
 
@@ -267,7 +268,7 @@ namespace PicView.UILogic.Loading
             ///////////////////////////
             var ShowInFolderCm = (MenuItem)MainContextMenu.Items[10];
             ShowInFolderCm.Click += (_, _) => OpenInExplorer(Pics?[FolderIndex]);
-            ShowInFolderCm.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            ShowInFolderCm.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "OpenInExplorer")
                 .Key.ToString() ?? string.Empty;
 
@@ -278,7 +279,7 @@ namespace PicView.UILogic.Loading
 
             var ImageInfoCm = (MenuItem)ImageChoices.Items[0];
             ImageInfoCm.Click += (_, _) => ImageInfoWindow();
-            ImageInfoCm.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            ImageInfoCm.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method.Name == "ImageInfoWindow")
                 .Key.ToString() ?? string.Empty;
 
@@ -290,13 +291,13 @@ namespace PicView.UILogic.Loading
 
             var ImageSize = (MenuItem)ImageChoices.Items[3];
             ImageSize.Click += (_, _) => UpdateUIValues.ToggleQuickResize();
-            ImageSize.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            ImageSize.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method.Name == "ResizeImage")
                 .Key.ToString() ?? string.Empty;
 
             var BatchSize = (MenuItem)ImageChoices.Items[4];
             BatchSize.Click += (_, _) => ResizeWindow();
-            BatchSize.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            BatchSize.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method.Name == "ResizeWindow")
                 .Key.ToString() ?? string.Empty;
 
@@ -341,7 +342,7 @@ namespace PicView.UILogic.Loading
                 MainContextMenu.IsOpen = false;
                 await CopyPaste.DuplicateFile().ConfigureAwait(false);
             };
-            Dupcm.InputGestureText = Shortcuts.CustomKeybindings.CustomShortcuts?
+            Dupcm.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "DuplicateFile")
                 .Key.ToString() ?? string.Empty;
 
@@ -410,14 +411,14 @@ namespace PicView.UILogic.Loading
 
             var nextCm = (MenuItem)NavigationContextMenu.Items[0];
             nextCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
-            var nextKey = Shortcuts.CustomKeybindings.CustomShortcuts?
+            var nextKey = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "Next")
                 .Key;
             nextCm.InputGestureText = nextKey?.ToString();
 
             var prevCm = (MenuItem)NavigationContextMenu.Items[1];
             prevCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-            var prevKey = Shortcuts.CustomKeybindings.CustomShortcuts?
+            var prevKey = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "Prev")
                 .Key;
             nextCm.InputGestureText = prevKey?.ToString();

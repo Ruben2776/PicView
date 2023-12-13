@@ -1,11 +1,11 @@
-﻿using PicView.ChangeImage;
-using PicView.Properties;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.Properties;
 
-namespace PicView.ProcessHandling
+namespace PicView.WPF.ProcessHandling
 {
     /// <summary>
     /// Contains the logic related to processing.

@@ -1,15 +1,15 @@
-﻿using PicView.Animations;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.Themes.Resources;
-using PicView.UILogic;
-using PicView.UILogic.DragAndDrop;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PicView.WPF.Animations;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.Themes.Resources;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.DragAndDrop;
 
-namespace PicView.ConfigureSettings
+namespace PicView.WPF.ConfigureSettings
 {
     /// <summary>
     /// Used for color and theming related coding

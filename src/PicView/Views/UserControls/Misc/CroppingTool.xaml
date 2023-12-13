@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Misc.CroppingTool"
+    x:Class="PicView.WPF.Views.UserControls.Misc.CroppingTool"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     HorizontalAlignment="Center"

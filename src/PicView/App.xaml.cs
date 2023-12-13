@@ -1,9 +1,9 @@
-﻿using PicView.FileHandling;
-using System.Runtime;
+﻿using System.Runtime;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.WPF.FileHandling;
 
-namespace PicView
+namespace PicView.WPF
 {
     /// <summary>
     /// Interaction logic for App.xaml

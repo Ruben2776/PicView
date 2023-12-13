@@ -1,14 +1,14 @@
-﻿using PicView.ChangeImage;
-using PicView.Properties;
-using PicView.UILogic.TransformImage;
-using System.Windows;
-using static PicView.ChangeImage.Navigation;
-using static PicView.PicGallery.GalleryNavigation;
-using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.Sizing.WindowSizing;
-using static PicView.UILogic.TransformImage.Rotation;
+﻿using System.Windows;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.PicGallery.GalleryNavigation;
+using static PicView.WPF.UILogic.ConfigureWindows;
+using static PicView.WPF.UILogic.Sizing.WindowSizing;
+using static PicView.WPF.UILogic.TransformImage.Rotation;
 
-namespace PicView.UILogic.Sizing
+namespace PicView.WPF.UILogic.Sizing
 {
     internal static class ScaleImage
     {

@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Misc.Credits"
+    x:Class="PicView.WPF.Views.UserControls.Misc.Credits"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Margin="0,10,0,15">

@@ -1,9 +1,9 @@
-﻿using ImageMagick;
-using PicView.FileHandling;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using ImageMagick;
+using PicView.WPF.FileHandling;
 
-namespace PicView.ImageHandling
+namespace PicView.WPF.ImageHandling
 {
     internal static class BatchFunctions
     {

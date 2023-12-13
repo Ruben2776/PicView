@@ -1,9 +1,9 @@
-﻿using AutoUpdaterDotNET;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using AutoUpdaterDotNET;
 
-namespace PicView.Update
+namespace PicView.WPF.Update
 {
     /// <summary>
     /// Helper class for managing application updates using AutoUpdaterDotNET library.

@@ -1,6 +1,6 @@
-﻿using PicView.PicGallery;
+﻿using PicView.WPF.PicGallery;
 
-namespace PicView.Views.UserControls.Gallery
+namespace PicView.WPF.Views.UserControls.Gallery
 {
     /// <summary>
     /// Interaction logic for PicGallery.xaml

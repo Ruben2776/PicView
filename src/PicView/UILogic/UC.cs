@@ -1,15 +1,15 @@
-﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.Views.UserControls.Buttons;
-using PicView.Views.UserControls.Menus;
-using PicView.Views.UserControls.Misc;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Media.Animation;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.Views.UserControls.Buttons;
+using PicView.WPF.Views.UserControls.Menus;
+using PicView.WPF.Views.UserControls.Misc;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     // ReSharper disable once InconsistentNaming
     internal static class UC

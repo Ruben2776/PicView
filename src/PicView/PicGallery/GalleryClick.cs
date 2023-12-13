@@ -1,17 +1,17 @@
-﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.Views.UserControls.Gallery;
+﻿using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.UC;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.Sizing.ScaleImage;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.PicGallery
+namespace PicView.WPF.PicGallery
 {
     /// <summary>
     /// Logic for what happens when user clicks on

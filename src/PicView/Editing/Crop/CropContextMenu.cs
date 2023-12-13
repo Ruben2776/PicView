@@ -1,10 +1,10 @@
-﻿using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PicView.WPF.UILogic;
 
-namespace PicView.Editing.Crop
+namespace PicView.WPF.Editing.Crop
 {
     internal class CropContextMenu
     {

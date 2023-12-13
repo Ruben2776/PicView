@@ -1,19 +1,19 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using static PicView.Animations.MouseOverAnimations;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.ImageInfo;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic;
+using static PicView.WPF.Animations.MouseOverAnimations;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.ImageInfo;
 
-namespace PicView.Views.Windows
+namespace PicView.WPF.Views.Windows
 {
     public partial class ImageInfoWindow
     {

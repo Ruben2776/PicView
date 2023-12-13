@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Interop;
 
-namespace PicView.SystemIntegration
+namespace PicView.WPF.SystemIntegration
 {
     internal static partial class WindowBlur
     {

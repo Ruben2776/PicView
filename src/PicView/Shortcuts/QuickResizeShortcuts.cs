@@ -1,15 +1,15 @@
-﻿using ImageMagick;
-using PicView.ChangeImage;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using ImageMagick;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.UILogic;
 
-namespace PicView.Shortcuts
+namespace PicView.WPF.Shortcuts
 {
     internal static partial class QuickResizeShortcuts
     {

@@ -1,25 +1,25 @@
-﻿using Microsoft.Win32;
-using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ConfigureSettings;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.Translations;
-using PicView.UILogic;
-using PicView.UILogic.DragAndDrop;
-using PicView.UILogic.Loading;
-using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.UILogic.Sizing.WindowSizing;
-using static PicView.UILogic.UC;
+using Microsoft.Win32;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.Translations;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.DragAndDrop;
+using PicView.WPF.UILogic.Loading;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.UILogic.Sizing.WindowSizing;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.Views.Windows
+namespace PicView.WPF.Views.Windows
 {
     public partial class MainWindow
     {

@@ -1,8 +1,8 @@
-﻿using PicView.Animations;
-using System.Windows.Controls;
-using static PicView.UILogic.UC;
+﻿using System.Windows.Controls;
+using PicView.WPF.Animations;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class FolderButton : UserControl
     {

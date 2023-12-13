@@ -1,16 +1,16 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Threading;
+using Microsoft.Win32;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.UILogic;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     internal static partial class FileFunctions
     {

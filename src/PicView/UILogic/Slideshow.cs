@@ -1,14 +1,14 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic.Sizing;
-using System.Windows;
-using static PicView.ChangeImage.Navigation;
+﻿using System.Windows;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     internal static class Slideshow
     {

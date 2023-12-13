@@ -1,14 +1,14 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.TransformImage.ZoomLogic;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.UILogic;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
 
-namespace PicView.ChangeTitlebar
+namespace PicView.WPF.ChangeTitlebar
 {
     internal static class SetTitle
     {

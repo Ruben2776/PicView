@@ -1,21 +1,21 @@
-﻿using PicView.ChangeTitlebar;
-using PicView.Core.FileHandling;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.DeleteFiles;
+using PicView.Core.FileHandling;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.FileHandling.DeleteFiles;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     internal static class ErrorHandling
     {

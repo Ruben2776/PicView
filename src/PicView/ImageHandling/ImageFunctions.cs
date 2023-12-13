@@ -1,10 +1,4 @@
-﻿using ImageMagick;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -14,13 +8,19 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ImageMagick;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
 using Brush = System.Windows.Media.Brush;
 using FontFamily = System.Windows.Media.FontFamily;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 using TextAlignment = System.Windows.TextAlignment;
 
-namespace PicView.ImageHandling
+namespace PicView.WPF.ImageHandling
 {
     internal static class ImageFunctions
     {

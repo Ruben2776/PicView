@@ -1,18 +1,18 @@
-﻿using PicView.Animations;
-using PicView.ConfigureSettings;
-using PicView.Properties;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using PicView.WPF.Animations;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
 
-namespace PicView.Views.Windows
+namespace PicView.WPF.Views.Windows
 {
     public partial class AboutWindow
     {

@@ -1,19 +1,19 @@
-﻿using PicView.ChangeTitlebar;
-using PicView.Core.FileHandling;
-using PicView.FileHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.Core.FileHandling;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     internal class FileHistory
     {

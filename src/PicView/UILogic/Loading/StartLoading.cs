@@ -1,18 +1,18 @@
-﻿using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.Properties;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Loading.LoadContextMenus;
-using static PicView.UILogic.Loading.LoadControls;
-using static PicView.UILogic.Sizing.WindowSizing;
-using static PicView.UILogic.TransformImage.ZoomLogic;
-using static PicView.UILogic.UC;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.Loading.LoadContextMenus;
+using static PicView.WPF.UILogic.Loading.LoadControls;
+using static PicView.WPF.UILogic.Sizing.WindowSizing;
+using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.UILogic.Loading
+namespace PicView.WPF.UILogic.Loading
 {
     internal static class StartLoading
     {

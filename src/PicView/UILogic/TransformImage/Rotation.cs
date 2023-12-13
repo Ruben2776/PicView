@@ -1,11 +1,11 @@
-﻿using PicView.ConfigureSettings;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic.Sizing;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.Properties;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic.Sizing;
 
-namespace PicView.UILogic.TransformImage
+namespace PicView.WPF.UILogic.TransformImage
 {
     /// <summary>
     /// Contains static methods to manipulate the rotation and flipping of the displayed image.

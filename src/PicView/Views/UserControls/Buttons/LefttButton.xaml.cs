@@ -1,8 +1,8 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using static PicView.Animations.MouseOverAnimations;
+﻿using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class LeftButton
     {

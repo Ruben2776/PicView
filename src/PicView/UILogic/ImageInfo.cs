@@ -1,13 +1,13 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.Views.UserControls.Misc;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Views.UserControls.Misc;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     internal static class ImageInfo
     {

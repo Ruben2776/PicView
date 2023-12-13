@@ -1,11 +1,11 @@
-﻿using PicView.ConfigureSettings;
-using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.UILogic.TransformImage;
 
-namespace PicView.Editing.Crop.Tools
+namespace PicView.WPF.Editing.Crop.Tools
 {
     internal class TextTool
     {

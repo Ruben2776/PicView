@@ -1,19 +1,19 @@
-﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.Editing;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic.Sizing;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.TransformImage.Scroll;
-using static PicView.UILogic.TransformImage.ZoomLogic;
-using static PicView.UILogic.UC;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.Editing;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.ConfigureWindows;
+using static PicView.WPF.UILogic.TransformImage.Scroll;
+using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.Shortcuts
+namespace PicView.WPF.Shortcuts
 {
     internal static class MainMouseKeys
     {

@@ -4,7 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PicView.Editing.Crop.Tools
+namespace PicView.WPF.Editing.Crop.Tools
 {
     internal class ThumbCrop : Thumb
     {

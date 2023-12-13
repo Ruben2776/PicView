@@ -1,16 +1,16 @@
-﻿using ImageMagick;
-using PicView.ChangeImage;
-using PicView.UILogic;
-using PicView.Views.UserControls.Gallery;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.UC;
+using ImageMagick;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.ImageHandling
+namespace PicView.WPF.ImageHandling
 {
     internal static class Thumbnails
     {

@@ -1,26 +1,26 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ConfigureSettings;
-using PicView.Editing;
-using PicView.Editing.Crop;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.ProcessHandling;
-using PicView.Properties;
-using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static PicView.Shortcuts.MainKeyboardShortcuts;
-using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.UC;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.Editing;
+using PicView.WPF.Editing.Crop;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.ProcessHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.Shortcuts.MainKeyboardShortcuts;
+using static PicView.WPF.UILogic.ConfigureWindows;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     /// <summary>
     /// Provides helper methods for UI-related tasks.

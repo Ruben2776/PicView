@@ -1,14 +1,14 @@
-﻿using PicView.ChangeImage;
-using PicView.Editing.Crop;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Windows.Input;
-using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.UC;
+﻿using System.Windows.Input;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.Editing.Crop;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.UILogic.ConfigureWindows;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.Shortcuts
+namespace PicView.WPF.Shortcuts
 {
     internal static class MainKeyboardShortcuts
     {

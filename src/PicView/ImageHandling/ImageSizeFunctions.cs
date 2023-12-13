@@ -1,9 +1,9 @@
-﻿using ImageMagick;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using ImageMagick;
 
-namespace PicView.ImageHandling
+namespace PicView.WPF.ImageHandling
 {
     internal static class ImageSizeFunctions
     {

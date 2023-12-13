@@ -1,18 +1,18 @@
-﻿using PicView.ConfigureSettings;
-using PicView.Editing.HlslEffects;
-using PicView.FileHandling;
-using PicView.Properties;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static PicView.Animations.MouseOverAnimations;
-using static PicView.SystemIntegration.Wallpaper;
+using PicView.Editing.HlslEffects;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.FileHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.Animations.MouseOverAnimations;
+using static PicView.WPF.SystemIntegration.Wallpaper;
 
-namespace PicView.Views.Windows
+namespace PicView.WPF.Views.Windows
 {
     public partial class EffectsWindow : Window
     {

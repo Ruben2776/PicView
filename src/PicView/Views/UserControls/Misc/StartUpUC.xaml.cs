@@ -1,12 +1,12 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.Properties;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
-using static PicView.Animations.MouseOverAnimations;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.Properties;
+using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.WPF.Views.UserControls.Misc
 {
     // ReSharper disable once InconsistentNaming
     public partial class StartUpUC

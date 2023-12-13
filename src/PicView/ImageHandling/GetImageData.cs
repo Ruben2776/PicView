@@ -1,17 +1,17 @@
-﻿using ImageMagick;
-using Microsoft.WindowsAPICodePack.Shell;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using PicView.ChangeImage;
-using PicView.UILogic;
-using PicView.UILogic.TransformImage;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ImageMagick;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.TransformImage;
 
-namespace PicView.ImageHandling
+namespace PicView.WPF.ImageHandling
 {
     internal static class GetImageData
     {

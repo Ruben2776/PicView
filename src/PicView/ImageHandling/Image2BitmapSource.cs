@@ -1,16 +1,16 @@
-﻿using ImageMagick;
-using PicView.Core.ImageDecoding;
-using PicView.UILogic;
-using SkiaSharp.Views.WPF;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Rotation = PicView.UILogic.TransformImage.Rotation;
+using ImageMagick;
+using PicView.Core.ImageDecoding;
+using PicView.WPF.UILogic;
+using SkiaSharp.Views.WPF;
+using Rotation = PicView.WPF.UILogic.TransformImage.Rotation;
 
-namespace PicView.ImageHandling
+namespace PicView.WPF.ImageHandling
 {
     /// <summary>
     /// Provides methods for converting images to WPF's BitmapSource.

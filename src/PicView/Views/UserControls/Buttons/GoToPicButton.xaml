@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Buttons.GoToPicButton"
+    x:Class="PicView.WPF.Views.UserControls.Buttons.GoToPicButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     ToolTip="{StaticResource GoToImageAtSpecifiedIndex}">

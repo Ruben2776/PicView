@@ -1,17 +1,17 @@
-﻿using PicView.ChangeImage;
-using PicView.Properties;
-using PicView.UILogic.Loading;
-using System.Timers;
+﻿using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.Tooltip;
-using static PicView.UILogic.UC;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic.Loading;
+using static PicView.WPF.UILogic.Sizing.ScaleImage;
+using static PicView.WPF.UILogic.Tooltip;
+using static PicView.WPF.UILogic.UC;
 using Timer = System.Timers.Timer;
 
-namespace PicView.UILogic.TransformImage
+namespace PicView.WPF.UILogic.TransformImage
 {
     internal static class Scroll
     {

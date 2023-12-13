@@ -1,11 +1,11 @@
-﻿using PicView.ConfigureSettings;
-using PicView.Properties;
-using PicView.UILogic;
-using System.Windows.Media;
-using static PicView.Animations.MouseOverAnimations;
-using static PicView.UILogic.UC;
+﻿using System.Windows.Media;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using static PicView.WPF.Animations.MouseOverAnimations;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.Views.UserControls.Menus
+namespace PicView.WPF.Views.UserControls.Menus
 {
     public partial class QuickSettingsMenu
     {

@@ -1,13 +1,13 @@
-﻿using PicView.ChangeTitlebar;
-using PicView.Properties;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Navigation;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.Properties;
+using static PicView.WPF.ChangeImage.Navigation;
 
-namespace PicView.UILogic.TransformImage
+namespace PicView.WPF.UILogic.TransformImage
 {
     internal static class ZoomLogic
     {

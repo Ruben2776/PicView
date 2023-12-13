@@ -1,13 +1,13 @@
-﻿using PicView.ChangeImage;
-using PicView.Core.FileHandling;
-using PicView.Properties;
-using PicView.SystemIntegration;
+﻿using PicView.Core.FileHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.Properties;
+using PicView.WPF.SystemIntegration;
 using System.Diagnostics;
 using System.IO;
-using static PicView.FileHandling.ArchiveExtraction;
+using static PicView.WPF.FileHandling.ArchiveExtraction;
 using SearchOption = System.IO.SearchOption;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     internal static class FileLists
     {

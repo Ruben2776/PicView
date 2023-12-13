@@ -1,10 +1,10 @@
-﻿using PicView.Animations;
-using PicView.Properties;
-using PicView.UILogic.Sizing;
-using System.Windows;
-using static PicView.Animations.MouseOverAnimations;
+﻿using System.Windows;
+using PicView.WPF.Animations;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class FullscreenButton
     {

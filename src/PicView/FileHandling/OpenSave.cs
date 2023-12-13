@@ -1,22 +1,22 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.ChangeImage.ErrorHandling;
-using static PicView.ChangeImage.Navigation;
-using static PicView.PicGallery.GalleryLoad;
-using static PicView.UILogic.Tooltip;
-using static PicView.UILogic.TransformImage.Rotation;
-using static PicView.UILogic.UC;
+using Microsoft.Win32;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using static PicView.WPF.ChangeImage.ErrorHandling;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.PicGallery.GalleryLoad;
+using static PicView.WPF.UILogic.Tooltip;
+using static PicView.WPF.UILogic.TransformImage.Rotation;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     internal static class OpenSave
     {

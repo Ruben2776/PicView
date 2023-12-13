@@ -1,16 +1,16 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.UILogic;
-using PicView.Views.UserControls.Gallery;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
 
-namespace PicView.PicGallery
+namespace PicView.WPF.PicGallery
 {
     internal static class GalleryLoad
     {

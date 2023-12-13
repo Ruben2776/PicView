@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace PicView.SystemIntegration
+namespace PicView.WPF.SystemIntegration
 {
     //https://msdn.microsoft.com/en-us/library/ms182161.aspx
     internal static partial class NativeMethods

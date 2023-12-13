@@ -1,8 +1,8 @@
-﻿using PicView.Editing.Crop.Tools;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using PicView.WPF.Editing.Crop.Tools;
 
-namespace PicView.Editing.Crop.State
+namespace PicView.WPF.Editing.Crop.State
 {
     internal class CreateState : IToolState
     {

@@ -1,23 +1,23 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Loading;
-using PicView.UILogic.TransformImage;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.TransformImage.Rotation;
-using static PicView.UILogic.UC;
+using Microsoft.Win32;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Loading;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.Sizing.ScaleImage;
+using static PicView.WPF.UILogic.TransformImage.Rotation;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.Editing.Crop
+namespace PicView.WPF.Editing.Crop
 {
     internal static class CropFunctions
     {

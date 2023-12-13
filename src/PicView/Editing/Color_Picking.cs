@@ -1,16 +1,16 @@
-﻿using PicView.UILogic;
-using PicView.UILogic.Loading;
-using PicView.UILogic.TransformImage;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using static PicView.SystemIntegration.NativeMethods;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Loading;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.SystemIntegration.NativeMethods;
 using Color = System.Drawing.Color;
 
-namespace PicView.Editing
+namespace PicView.WPF.Editing
 {
     internal static class ColorPicking
     {

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace PicView.Editing.Crop
+namespace PicView.WPF.Editing.Crop
 {
     internal class CropAdorner : Adorner
     {

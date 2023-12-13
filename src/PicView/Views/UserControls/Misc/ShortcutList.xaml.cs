@@ -1,14 +1,14 @@
-﻿using PicView.Animations;
-using PicView.Properties;
-using PicView.Shortcuts;
-using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.WPF.Animations;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.UILogic;
 
-namespace PicView.Views.UserControls.Misc;
+namespace PicView.WPF.Views.UserControls.Misc;
 
 public partial class ShortcutList
 {

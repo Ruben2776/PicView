@@ -1,8 +1,8 @@
-﻿using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using System.Windows.Media;
+﻿using System.Windows.Media;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.WPF.Views.UserControls.Misc
 {
     public partial class DragDropOverlayPic
     {

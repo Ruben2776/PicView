@@ -1,13 +1,13 @@
-﻿using ImageMagick;
-using PicView.ChangeImage;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ImageMagick;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.UILogic;
 
-namespace PicView.ImageHandling
+namespace PicView.WPF.ImageHandling
 {
     internal static class SaveImages
     {

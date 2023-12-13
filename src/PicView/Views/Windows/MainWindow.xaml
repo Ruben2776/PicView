@@ -1,9 +1,9 @@
 ﻿<Window
-    x:Class="PicView.Views.Windows.MainWindow"
+    x:Class="PicView.WPF.Views.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
-    xmlns:misc="clr-namespace:PicView.Views.UserControls.Misc"
+    xmlns:misc="clr-namespace:PicView.WPF.Views.UserControls.Misc"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     Title="{StaticResource Loading}"
     Width="462"
     Height="400"

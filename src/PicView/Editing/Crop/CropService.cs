@@ -1,15 +1,15 @@
-﻿using PicView.Editing.Crop.State;
-using PicView.Editing.Crop.Tools;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PicView.WPF.Editing.Crop.State;
+using PicView.WPF.Editing.Crop.Tools;
+using PicView.WPF.UILogic;
 
-namespace PicView.Editing.Crop
+namespace PicView.WPF.Editing.Crop
 {
     public class CropArea
     {

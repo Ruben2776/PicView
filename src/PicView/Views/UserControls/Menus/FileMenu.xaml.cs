@@ -1,13 +1,13 @@
-﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.Animations.MouseOverAnimations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Menus
+namespace PicView.WPF.Views.UserControls.Menus
 {
     public partial class FileMenu : UserControl
     {

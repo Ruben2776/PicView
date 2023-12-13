@@ -1,25 +1,25 @@
 ﻿using System.IO;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.TransformImage;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.TransformImage;
 using XamlAnimatedGif;
-using static PicView.ChangeImage.ErrorHandling;
-using static PicView.ChangeImage.Navigation;
-using static PicView.ChangeImage.PreLoader;
-using static PicView.ChangeTitlebar.SetTitle;
-using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.Tooltip;
-using static PicView.UILogic.UC;
-using Rotation = PicView.UILogic.TransformImage.Rotation;
+using static PicView.WPF.ChangeImage.ErrorHandling;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.ChangeImage.PreLoader;
+using static PicView.WPF.ChangeTitlebar.SetTitle;
+using static PicView.WPF.UILogic.Sizing.ScaleImage;
+using static PicView.WPF.UILogic.Tooltip;
+using static PicView.WPF.UILogic.UC;
+using Rotation = PicView.WPF.UILogic.TransformImage.Rotation;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     internal static class UpdateImage
     {

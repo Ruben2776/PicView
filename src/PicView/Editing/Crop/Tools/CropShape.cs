@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Shapes;
 
-namespace PicView.Editing.Crop.Tools
+namespace PicView.WPF.Editing.Crop.Tools
 {
     internal class CropShape
     {

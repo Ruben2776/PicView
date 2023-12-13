@@ -1,11 +1,11 @@
-﻿using PicView.PicGallery;
-using PicView.Properties;
-using PicView.Views.UserControls.Gallery;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.Views.UserControls.Gallery;
 
-namespace PicView.Animations
+namespace PicView.WPF.Animations
 {
     internal static class AnimationHelper
     {

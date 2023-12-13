@@ -1,11 +1,11 @@
-﻿using PicView.FileHandling;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
+using PicView.WPF.FileHandling;
+using PicView.WPF.UILogic;
 
-namespace PicView.Shortcuts;
+namespace PicView.WPF.Shortcuts;
 
 internal static class CustomKeybindings
 {

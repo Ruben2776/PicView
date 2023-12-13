@@ -1,8 +1,8 @@
-﻿using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
 
-namespace PicView.Shortcuts
+namespace PicView.WPF.Shortcuts
 {
     internal static class CustomTextBoxShortcuts
     {

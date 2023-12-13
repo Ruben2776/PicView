@@ -1,11 +1,11 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Gallery.PicGallery"
+    x:Class="PicView.WPF.Views.UserControls.Gallery.PicGallery"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Anim="clr-namespace:PicView.UILogic"
-    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
+    xmlns:uiLogic="clr-namespace:PicView.WPF.UILogic"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
@@ -20,7 +20,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Panel.ZIndex="1" />
-            <Anim:SmoothScrollViewer
+            <uiLogic:SmoothScrollViewer
                 x:Name="Scroller"
                 CanContentScroll="True"
                 FocusVisualStyle="{x:Null}"
@@ -28,7 +28,7 @@
                 HorizontalScrollBarVisibility="Visible"
                 IsDeferredScrollingEnabled="False"
                 VerticalScrollBarVisibility="Disabled">
-                <Anim:SmoothScrollViewer.Style>
+                <uiLogic:SmoothScrollViewer.Style>
                     <Style TargetType="{x:Type ScrollViewer}">
                         <Setter Property="OverridesDefaultStyle" Value="True" />
                         <Setter Property="Template">
@@ -66,7 +66,7 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
-                </Anim:SmoothScrollViewer.Style>
+                </uiLogic:SmoothScrollViewer.Style>
                 <WrapPanel
                     x:Name="Container"
                     Background="Transparent"
@@ -74,7 +74,7 @@
                     Focusable="False"
                     Orientation="Vertical"
                     VirtualizingPanel.VirtualizationMode="Recycling" />
-            </Anim:SmoothScrollViewer>
+            </uiLogic:SmoothScrollViewer>
         </Grid>
     </Border>
 </UserControl>

@@ -1,13 +1,13 @@
-﻿using PicView.ConfigureSettings;
-using PicView.Editing;
-using PicView.ImageHandling;
-using PicView.Properties;
-using PicView.UILogic;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
-using static PicView.Animations.MouseOverAnimations;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.Editing;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.Views.UserControls.Menus
+namespace PicView.WPF.Views.UserControls.Menus
 {
     /// <summary>
     /// Menu to open functions

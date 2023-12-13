@@ -1,7 +1,7 @@
-﻿using PicView.Animations;
-using PicView.PicGallery;
+﻿using PicView.WPF.Animations;
+using PicView.WPF.PicGallery;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class GalleryShortcut
     {

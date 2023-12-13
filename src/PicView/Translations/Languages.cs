@@ -1,4 +1,4 @@
-﻿namespace PicView.Translations
+﻿namespace PicView.WPF.Translations
 {
     internal enum Languages
     {

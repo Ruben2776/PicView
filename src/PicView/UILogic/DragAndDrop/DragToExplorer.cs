@@ -1,19 +1,19 @@
-﻿using PicView.ChangeTitlebar;
-using PicView.Editing;
-using PicView.FileHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using static PicView.ChangeImage.Navigation;
-using static PicView.SystemIntegration.NativeMethods;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.Editing;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.SystemIntegration.NativeMethods;
 
-namespace PicView.UILogic.DragAndDrop
+namespace PicView.WPF.UILogic.DragAndDrop
 {
     internal static class DragToExplorer
     {

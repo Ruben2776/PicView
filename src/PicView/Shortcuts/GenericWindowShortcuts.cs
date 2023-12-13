@@ -1,9 +1,9 @@
-﻿using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using PicView.WPF.UILogic;
 
-namespace PicView.Shortcuts
+namespace PicView.WPF.Shortcuts
 {
     internal static class GenericWindowShortcuts
     {

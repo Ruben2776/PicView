@@ -1,17 +1,17 @@
-﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.ProcessHandling;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using Rotation = PicView.UILogic.TransformImage.Rotation;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.ProcessHandling;
+using PicView.WPF.UILogic;
+using Rotation = PicView.WPF.UILogic.TransformImage.Rotation;
 
-namespace PicView.SystemIntegration
+namespace PicView.WPF.SystemIntegration
 {
     public static class LockScreenHelper
     {

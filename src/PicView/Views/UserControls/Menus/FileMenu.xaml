@@ -1,8 +1,8 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Menus.FileMenu"
+    x:Class="PicView.WPF.Views.UserControls.Menus.FileMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:buttons="clr-namespace:PicView.Views.UserControls.Buttons"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     Canvas.ZIndex="3"
     Foreground="{StaticResource MainColorBrush}">
     <UserControl.Resources>

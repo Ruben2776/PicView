@@ -1,12 +1,12 @@
-﻿using PicView.ChangeImage;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic.Sizing;
-using System.Windows;
-using static PicView.Animations.FadeControls;
+﻿using System.Windows;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.Animations.FadeControls;
 using Timer = System.Timers.Timer;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     internal static class HideInterfaceLogic
     {

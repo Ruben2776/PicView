@@ -1,11 +1,11 @@
-﻿using PicView.Animations;
-using PicView.Properties;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using PicView.WPF.Animations;
+using PicView.WPF.Properties;
 
-namespace PicView.Views.UserControls.Misc;
+namespace PicView.WPF.Views.UserControls.Misc;
 
 public partial class Credits
 {

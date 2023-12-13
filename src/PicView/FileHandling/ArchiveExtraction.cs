@@ -1,17 +1,17 @@
-﻿using Microsoft.Win32;
-using PicView.ChangeImage;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using Microsoft.Win32;
 using PicView.Core.FileHandling;
-using PicView.UILogic.Sizing;
-using static PicView.ChangeImage.Navigation;
-using static PicView.FileHandling.FileLists;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.FileHandling.FileLists;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     internal static class ArchiveExtraction
     {

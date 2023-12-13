@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="PicView.Views.UserControls.Misc.AutoScrollSign"
+    x:Class="PicView.WPF.Views.UserControls.Misc.AutoScrollSign"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border Background="{StaticResource BackgroundColorBrushAlt}" CornerRadius="3">

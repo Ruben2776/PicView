@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace PicView.Editing.Crop.State
+namespace PicView.WPF.Editing.Crop.State
 {
     internal readonly struct Position : IEquatable<Position>
     {

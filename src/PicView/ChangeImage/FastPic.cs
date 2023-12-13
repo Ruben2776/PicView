@@ -1,9 +1,10 @@
-﻿using PicView.ImageHandling;
-using System.IO;
-using static PicView.ChangeImage.Navigation;
+﻿using System.IO;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Properties;
+using static PicView.WPF.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     internal static class FastPic
     {
@@ -14,7 +15,7 @@ namespace PicView.ChangeImage
         {
             if (_timer is null)
             {
-                _timer = new Timer(TimeSpan.FromSeconds(Properties.Settings.Default.NavSpeed))
+                _timer = new Timer(TimeSpan.FromSeconds(Settings.Default.NavSpeed))
                 {
                     AutoReset = false,
                     Enabled = true

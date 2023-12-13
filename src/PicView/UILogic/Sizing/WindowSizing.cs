@@ -1,18 +1,18 @@
-﻿using PicView.ChangeImage;
-using PicView.FileHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.Views.UserControls.Buttons;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using static PicView.UILogic.ConfigureWindows;
-using static PicView.UILogic.HideInterfaceLogic;
-using static PicView.UILogic.Sizing.ScaleImage;
-using static PicView.UILogic.UC;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.Views.UserControls.Buttons;
+using static PicView.WPF.UILogic.ConfigureWindows;
+using static PicView.WPF.UILogic.HideInterfaceLogic;
+using static PicView.WPF.UILogic.Sizing.ScaleImage;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.UILogic.Sizing
+namespace PicView.WPF.UILogic.Sizing
 {
     internal static class WindowSizing
     {

@@ -1,8 +1,8 @@
-﻿using static PicView.Animations.FadeControls;
-using static PicView.UILogic.TransformImage.Scroll;
+﻿using static PicView.WPF.Animations.FadeControls;
+using static PicView.WPF.UILogic.TransformImage.Scroll;
 using Timer = System.Timers.Timer;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     internal static class Timers
     {

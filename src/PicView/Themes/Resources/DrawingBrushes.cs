@@ -1,8 +1,8 @@
-﻿using PicView.ConfigureSettings;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
+using PicView.WPF.ConfigureSettings;
 
-namespace PicView.Themes.Resources
+namespace PicView.WPF.Themes.Resources
 {
     internal static class DrawingBrushes
     {

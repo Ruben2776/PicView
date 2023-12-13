@@ -1,20 +1,20 @@
-﻿using PicView.ChangeImage;
-using PicView.ChangeTitlebar;
-using PicView.ImageHandling;
-using PicView.ProcessHandling;
-using PicView.UILogic;
-using PicView.Views.UserControls.Gallery;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static PicView.ChangeImage.Navigation;
-using static PicView.PicGallery.GalleryLoad;
-using static PicView.UILogic.Tooltip;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.ProcessHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.PicGallery.GalleryLoad;
+using static PicView.WPF.UILogic.Tooltip;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     internal static class CopyPaste
     {

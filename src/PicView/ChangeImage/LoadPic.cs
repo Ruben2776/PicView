@@ -1,26 +1,26 @@
-﻿using ImageMagick;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.PicGallery;
-using PicView.Properties;
-using PicView.SystemIntegration;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls.Gallery;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ImageMagick;
 using PicView.Core.FileHandling;
-using static PicView.ChangeImage.ErrorHandling;
-using static PicView.ChangeImage.Navigation;
-using static PicView.ChangeTitlebar.SetTitle;
-using static PicView.FileHandling.ArchiveExtraction;
-using static PicView.FileHandling.FileLists;
-using static PicView.UILogic.UC;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.Views.UserControls.Gallery;
+using static PicView.WPF.ChangeImage.ErrorHandling;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.ChangeTitlebar.SetTitle;
+using static PicView.WPF.FileHandling.ArchiveExtraction;
+using static PicView.WPF.FileHandling.FileLists;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     internal static class LoadPic
     {

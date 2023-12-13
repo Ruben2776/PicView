@@ -1,6 +1,6 @@
-﻿using PicView.Editing.Crop;
+﻿using PicView.WPF.Editing.Crop;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.WPF.Views.UserControls.Misc
 {
     public partial class CroppingTool
     {

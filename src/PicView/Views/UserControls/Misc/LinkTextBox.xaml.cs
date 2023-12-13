@@ -1,6 +1,6 @@
-﻿using PicView.ProcessHandling;
+﻿using PicView.WPF.ProcessHandling;
 
-namespace PicView.Views.UserControls.Misc
+namespace PicView.WPF.Views.UserControls.Misc
 {
     public partial class LinkTextBox
     {

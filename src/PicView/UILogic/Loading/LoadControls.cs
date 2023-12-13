@@ -1,12 +1,12 @@
-﻿using PicView.Properties;
-using PicView.Views.UserControls.Buttons;
-using PicView.Views.UserControls.Menus;
-using PicView.Views.UserControls.Misc;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
-using static PicView.UILogic.UC;
+using PicView.WPF.Properties;
+using PicView.WPF.Views.UserControls.Buttons;
+using PicView.WPF.Views.UserControls.Menus;
+using PicView.WPF.Views.UserControls.Misc;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.UILogic.Loading
+namespace PicView.WPF.UILogic.Loading
 {
     internal static class LoadControls
     {

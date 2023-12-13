@@ -1,14 +1,14 @@
-﻿using PicView.Animations;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.Views.UserControls.Gallery;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
-using static PicView.ChangeImage.Navigation;
-using static PicView.UILogic.UC;
+using PicView.WPF.Animations;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.Views.UserControls.Gallery;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.PicGallery
+namespace PicView.WPF.PicGallery
 {
     internal static class GalleryNavigation
     {

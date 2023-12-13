@@ -1,26 +1,26 @@
-﻿using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.PicGallery;
-using PicView.ProcessHandling;
-using PicView.Properties;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.Translations;
-using PicView.UILogic;
-using PicView.UILogic.Sizing;
-using PicView.UILogic.TransformImage;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using static PicView.Animations.MouseOverAnimations;
-using static PicView.ConfigureSettings.ConfigColors;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.PicGallery;
+using PicView.WPF.ProcessHandling;
+using PicView.WPF.Properties;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.Translations;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.Animations.MouseOverAnimations;
+using static PicView.WPF.ConfigureSettings.ConfigColors;
 
-namespace PicView.Views.Windows
+namespace PicView.WPF.Views.Windows
 {
     public partial class SettingsWindow
     {

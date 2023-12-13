@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PicView.Editing.Crop.State
+namespace PicView.WPF.Editing.Crop.State
 {
     internal class CompleteState : IToolState
     {

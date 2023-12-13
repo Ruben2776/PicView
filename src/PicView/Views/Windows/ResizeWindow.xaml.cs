@@ -1,22 +1,22 @@
-﻿using ImageMagick;
-using PicView.Animations;
-using PicView.ChangeImage;
-using PicView.ConfigureSettings;
-using PicView.FileHandling;
-using PicView.ImageHandling;
-using PicView.Shortcuts;
-using PicView.SystemIntegration;
-using PicView.Views.UserControls.Misc;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using static PicView.UILogic.Sizing.WindowSizing;
+using ImageMagick;
+using PicView.WPF.Animations;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ConfigureSettings;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.Shortcuts;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.Views.UserControls.Misc;
+using static PicView.WPF.UILogic.Sizing.WindowSizing;
 
-namespace PicView.Views.Windows
+namespace PicView.WPF.Views.Windows
 {
     public partial class ResizeWindow
     {

@@ -1,13 +1,13 @@
-﻿using PicView.PicGallery;
-using PicView.Properties;
-using PicView.UILogic;
-using PicView.UILogic.TransformImage;
-using System.Windows.Controls.Primitives;
+﻿using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
-using static PicView.UILogic.UC;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.TransformImage;
+using static PicView.WPF.UILogic.UC;
 using Timer = System.Timers.Timer;
 
-namespace PicView.Animations
+namespace PicView.WPF.Animations
 {
     internal static class FadeControls
     {

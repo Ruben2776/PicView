@@ -1,9 +1,9 @@
-﻿using PicView.Animations;
-using PicView.PicGallery;
-using PicView.UILogic;
-using System.Windows;
+﻿using System.Windows;
+using PicView.WPF.Animations;
+using PicView.WPF.PicGallery;
+using PicView.WPF.UILogic;
 
-namespace PicView.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons
 {
     public partial class X2
     {

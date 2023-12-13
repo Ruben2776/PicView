@@ -1,7 +1,7 @@
-﻿using PicView.ChangeImage;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using PicView.WPF.ChangeImage;
 
-namespace PicView.FileHandling
+namespace PicView.WPF.FileHandling
 {
     internal class FileProperties
     {

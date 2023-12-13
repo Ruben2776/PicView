@@ -1,11 +1,11 @@
-﻿using PicView.ImageHandling;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
-using static PicView.ChangeImage.Navigation;
+using PicView.WPF.ImageHandling;
+using static PicView.WPF.ChangeImage.Navigation;
 
-namespace PicView.ChangeImage
+namespace PicView.WPF.ChangeImage
 {
     /// <summary>
     /// The PreLoader class is responsible for loading and caching images.

@@ -1,9 +1,9 @@
-﻿using PicView.Animations;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media.Animation;
-using static PicView.UILogic.UC;
+using PicView.WPF.Animations;
+using static PicView.WPF.UILogic.UC;
 
-namespace PicView.UILogic
+namespace PicView.WPF.UILogic
 {
     internal static class Tooltip
     {
