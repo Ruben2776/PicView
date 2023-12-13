@@ -186,7 +186,7 @@ namespace PicView.PicGallery
             // Set style
             GetPicGallery.x2.Visibility = Visibility.Collapsed;
             GetPicGallery.Container.Margin = new Thickness(0, 1, 0, 0);
-            GetPicGallery.border.BorderThickness = new Thickness(1);
+            GetPicGallery.border.BorderThickness = new Thickness(1, 1, 1, 0);
             GetPicGallery.Container.MinHeight = GalleryNavigation.PicGalleryItemSize;
             GetPicGallery.border.Background =
                 (SolidColorBrush)Application.Current.Resources["BackgroundColorBrushFade"];
