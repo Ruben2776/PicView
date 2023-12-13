@@ -1,0 +1,1 @@
+Project for containing shared code, that is not specific to any platform
