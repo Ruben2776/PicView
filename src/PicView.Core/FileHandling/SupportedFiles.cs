@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace PicView.Core.FileHandling
+﻿namespace PicView.Core.FileHandling
 {
     /// <summary>
     /// Class that contains information about supported file extensions.
