@@ -15,30 +15,34 @@ namespace PicView.UILogic
         /// <param name="time">How long until it fades away</param>
         internal static void ShowTooltipMessage(object message, bool center, TimeSpan time)
         {
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            if (GetToolTipMessage == null || message == null)
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
-                return;
-            }
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (GetToolTipMessage == null || message == null)
+                {
+                    return;
+                }
 
-            GetToolTipMessage.Visibility = Visibility.Visible;
+                GetToolTipMessage.Visibility = Visibility.Visible;
 
-            if (center)
-            {
-                GetToolTipMessage.Margin = new Thickness(0, 0, 0, 0);
-                GetToolTipMessage.VerticalAlignment = VerticalAlignment.Center;
-            }
-            else
-            {
-                GetToolTipMessage.Margin = new Thickness(0, 0, 0, 15);
-                GetToolTipMessage.VerticalAlignment = VerticalAlignment.Bottom;
-            }
+                if (center)
+                {
+                    GetToolTipMessage.Margin = new Thickness(0, 0, 0, 0);
+                    GetToolTipMessage.VerticalAlignment = VerticalAlignment.Center;
+                }
+                else
+                {
+                    GetToolTipMessage.Margin = new Thickness(0, 0, 0, 15);
+                    GetToolTipMessage.VerticalAlignment = VerticalAlignment.Bottom;
+                }
 
-            GetToolTipMessage.ToolTipUIText.Text = message.ToString();
-            var anim = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
-            anim.Completed += (s, _) => AnimationHelper.Fade(GetToolTipMessage, TimeSpan.FromSeconds(1.5), time, 1, 0);
+                GetToolTipMessage.ToolTipUIText.Text = message.ToString();
+                var anim = new DoubleAnimation(1, TimeSpan.FromSeconds(.5));
+                anim.Completed += (s, _) =>
+                    AnimationHelper.Fade(GetToolTipMessage, TimeSpan.FromSeconds(1.5), time, 1, 0);
 
-            GetToolTipMessage.BeginAnimation(UIElement.OpacityProperty, anim);
+                GetToolTipMessage.BeginAnimation(UIElement.OpacityProperty, anim);
+            });
         }
 
         /// <summary>
@@ -48,10 +52,7 @@ namespace PicView.UILogic
         /// <param name="center"></param>
         internal static void ShowTooltipMessage(object message, bool center = false)
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
-            {
-                ShowTooltipMessage(message, center, TimeSpan.FromSeconds(1));
-            });
+            ShowTooltipMessage(message, center, TimeSpan.FromSeconds(1));
         }
 
         /// <summary>

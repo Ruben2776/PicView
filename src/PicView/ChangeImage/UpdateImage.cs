@@ -1,4 +1,5 @@
-﻿using PicView.FileHandling;
+﻿using System.IO;
+using PicView.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;
@@ -207,6 +208,15 @@ namespace PicView.ChangeImage
         /// <summary>
         /// Load a picture from a base64
         /// </summary>
+        internal static async Task UpdateImageFromBase64PicAsync(FileInfo fileInfo)
+        {
+            var bitmapSource = await Image2BitmapSource.GetMagickBase64(fileInfo).ConfigureAwait(false);
+            await UpdateImageFromBase64PicAsync(bitmapSource);
+        }
+
+        /// <summary>
+        /// Load a picture from a base64
+        /// </summary>
         internal static async Task UpdateImageFromBase64PicAsync(string base64String)
         {
             if (string.IsNullOrEmpty(base64String))
@@ -214,18 +224,19 @@ namespace PicView.ChangeImage
                 return;
             }
 
-            var pic = await Base64.Base64StringToBitmapAsync(base64String).ConfigureAwait(false);
-            if (pic == null)
-            {
-                return;
-            }
+            var bitmapSource = await Image2BitmapSource.GetMagickBase64(base64String).ConfigureAwait(false);
+            await UpdateImageFromBase64PicAsync(bitmapSource);
+        }
 
+        private static async Task UpdateImageFromBase64PicAsync(BitmapSource bitmapSource)
+        {
+            // Add a string to explain to the user that it is a base64 image
             if (Application.Current.Resources["Base64Image"] is not string b64)
             {
                 return;
             }
 
-            await UpdateImageAsync(b64, pic).ConfigureAwait(false);
+            await UpdateImageAsync(b64, bitmapSource).ConfigureAwait(false);
         }
     }
 }

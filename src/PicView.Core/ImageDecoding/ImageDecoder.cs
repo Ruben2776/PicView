@@ -14,14 +14,15 @@ namespace PicView.Core.ImageDecoding
         /// Asynchronously reads and returns a MagickImage from the specified FileInfo.
         /// </summary>
         /// <param name="fileInfo">The FileInfo representing the image file.</param>
+        /// <param name="extension">The file extension</param>
         /// <returns>A Task containing the MagickImage if successful, otherwise null.</returns>
-        public static async Task<MagickImage?> GetMagickImageAsync(FileInfo fileInfo)
+        public static async Task<MagickImage?> GetMagickImageAsync(FileInfo fileInfo, string extension)
         {
             try
             {
                 var magickImage = new MagickImage();
                 MagickFormat format;
-                var extension = fileInfo.Extension.ToLower();
+
                 switch (extension)
                 {
                     case ".heic":
@@ -142,6 +143,41 @@ namespace PicView.Core.ImageDecoding
 #endif
                 return null;
             }
+        }
+
+        public static async Task<MagickImage?> Base64ToMagickImage(string base64)
+        {
+            try
+            {
+                var base64Data = Convert.FromBase64String(base64);
+                var magickImage = new MagickImage
+                {
+                    Quality = 100,
+                    ColorSpace = ColorSpace.Transparent
+                };
+
+                var readSettings = new MagickReadSettings
+                {
+                    Density = new Density(300, 300),
+                    BackgroundColor = MagickColors.Transparent
+                };
+
+                await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings).ConfigureAwait(false);
+                return magickImage;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(Base64ToMagickImage)} exception:\n{e.Message}");
+#endif
+                return null;
+            }
+        }
+
+        public static async Task<MagickImage?> Base64ToMagickImage(FileInfo fileInfo)
+        {
+            var base64String = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
+            return await Base64ToMagickImage(base64String).ConfigureAwait(false);
         }
 
         /// <summary>

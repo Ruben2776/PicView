@@ -184,7 +184,7 @@ namespace PicView.ChangeImage
                 }
                 else if (Base64.IsBase64String(path))
                 {
-                    await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
+                    await UpdateImage.UpdateImageFromBase64PicAsync(new FileInfo(path)).ConfigureAwait(false);
                 }
                 else if (Clipboard.ContainsImage())
                 {

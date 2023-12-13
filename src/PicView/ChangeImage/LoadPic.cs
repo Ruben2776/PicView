@@ -84,7 +84,7 @@ namespace PicView.ChangeImage
                             return;
 
                         case "base64":
-                            await UpdateImage.UpdateImageFromBase64PicAsync(path).ConfigureAwait(false);
+                            await UpdateImage.UpdateImageFromBase64PicAsync(new FileInfo(path)).ConfigureAwait(false);
                             return;
 
                         case "directory":
@@ -135,7 +135,7 @@ namespace PicView.ChangeImage
             catch (Exception e)
             {
 #if DEBUG
-                Trace.WriteLine("OpenWith exception \n" + e.Message);
+                Trace.WriteLine($"{nameof(LoadPiFromFileAsync)} exception:\n{e.Message}");
 
 #endif
                 Tooltip.ShowTooltipMessage(e, true, TimeSpan.FromSeconds(5));
@@ -424,7 +424,16 @@ namespace PicView.ChangeImage
                     return;
                 }
                 using var image = new MagickImage();
-                image.Ping(fileInfo);
+                try
+                {
+                    image.Ping(fileInfo);
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} exception:\n{e.Message}");
+#endif
+                }
                 BitmapSource? thumb = null;
                 var source = new CancellationTokenSource();
                 if (GetPicGallery != null)
@@ -450,13 +459,13 @@ namespace PicView.ChangeImage
                     }, DispatcherPriority.Normal, source.Token);
                     if (!fromGallery)
                     {
-                        var exifThumbnail = image.GetExifProfile()?.CreateThumbnail();
+                        var exifThumbnail = image?.GetExifProfile()?.CreateThumbnail();
                         thumb = exifThumbnail?.ToBitmapSource();
                     }
                 }
                 else
                 {
-                    var exifThumbnail = image.GetExifProfile()?.CreateThumbnail();
+                    var exifThumbnail = image?.GetExifProfile()?.CreateThumbnail();
                     thumb = exifThumbnail?.ToBitmapSource();
                 }
 

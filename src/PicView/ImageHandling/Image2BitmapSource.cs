@@ -52,11 +52,10 @@ namespace PicView.ImageHandling
                     return await GetMagickSvg(fileInfo, MagickFormat.Svgz).ConfigureAwait(false);
 
                 case ".b64":
-                    return await Base64.Base64StringToBitmapAsync(fileInfo).ConfigureAwait(false) ??
-                           ImageFunctions.ImageErrorMessage();
+                    return await GetMagickBase64(fileInfo).ConfigureAwait(false);
 
                 default:
-                    return await GetDefaultBitmapSource(fileInfo).ConfigureAwait(false);
+                    return await GetDefaultBitmapSource(fileInfo, extension).ConfigureAwait(false);
             }
         }
 
@@ -148,8 +147,6 @@ namespace PicView.ImageHandling
 
         #endregion Render Image From Source
 
-        #region Private functions
-
         /// <summary>
         /// Asynchronously returns a BitmapSource for SVG images using MagickImage.
         /// </summary>
@@ -159,6 +156,37 @@ namespace PicView.ImageHandling
         private static async Task<BitmapSource> GetMagickSvg(FileInfo fileInfo, MagickFormat magickFormat)
         {
             var magickImage = await ImageDecoder.GetMagickSvgAsync(fileInfo, magickFormat).ConfigureAwait(false);
+            if (magickImage is null)
+            {
+                return ImageFunctions.ImageErrorMessage();
+            }
+            var bitmap = magickImage.ToBitmapSource();
+            bitmap.Freeze();
+            magickImage.Dispose();
+            return bitmap;
+        }
+
+        /// <summary>
+        /// Asynchronously returns a BitmapSource for Base64 images using MagickImage.
+        /// </summary>
+        /// <param name="fileInfo">The FileInfo representing the Base64 file.</param>
+        /// <returns>A Task containing the BitmapSource for Base64 if successful, otherwise an error image.</returns>
+        internal static async Task<BitmapSource> GetMagickBase64(FileInfo fileInfo)
+        {
+            var magickImage = await ImageDecoder.Base64ToMagickImage(fileInfo).ConfigureAwait(false);
+            if (magickImage is null)
+            {
+                return ImageFunctions.ImageErrorMessage();
+            }
+            var bitmap = magickImage.ToBitmapSource();
+            bitmap.Freeze();
+            magickImage.Dispose();
+            return bitmap;
+        }
+
+        internal static async Task<BitmapSource> GetMagickBase64(string base64)
+        {
+            var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
             if (magickImage is null)
             {
                 return ImageFunctions.ImageErrorMessage();
@@ -193,10 +221,11 @@ namespace PicView.ImageHandling
         /// Asynchronously returns a default BitmapSource using MagickImage.
         /// </summary>
         /// <param name="fileInfo">The FileInfo representing the image file.</param>
+        /// <param name="extension">The file extension</param>
         /// <returns>A Task containing the BitmapSource if successful, otherwise an error image.</returns>
-        private static async Task<BitmapSource> GetDefaultBitmapSource(FileInfo fileInfo)
+        private static async Task<BitmapSource> GetDefaultBitmapSource(FileInfo fileInfo, string extension)
         {
-            var magickImage = await ImageDecoder.GetMagickImageAsync(fileInfo).ConfigureAwait(false);
+            var magickImage = await ImageDecoder.GetMagickImageAsync(fileInfo, extension).ConfigureAwait(false);
             if (magickImage is null)
             {
                 return ImageFunctions.ImageErrorMessage();
@@ -206,7 +235,5 @@ namespace PicView.ImageHandling
             bitmap.Freeze();
             return bitmap;
         }
-
-        #endregion Private functions
     }
 }

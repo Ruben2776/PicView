@@ -54,11 +54,11 @@ namespace PicView.FileHandling
                     break;
 
                 case "base64":
-                    await UpdateImage.UpdateImageFromBase64PicAsync(check).ConfigureAwait(false);
+                    await UpdateImage.UpdateImageFromBase64PicAsync(destination).ConfigureAwait(false);
                     break;
 
                 case "zip":
-                    await LoadPic.LoadPicFromArchiveAsync(check).ConfigureAwait(!false);
+                    await LoadPic.LoadPicFromArchiveAsync(check).ConfigureAwait(false);
                     break;
 
                 case "directory":
