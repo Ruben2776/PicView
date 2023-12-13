@@ -1,4 +1,4 @@
-﻿using PicView.FileHandling;
+﻿using PicView.Core.FileHandling;
 using PicView.ImageHandling;
 using PicView.PicGallery;
 using PicView.Properties;

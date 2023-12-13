@@ -6,6 +6,7 @@ using PicView.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using PicView.Core.FileHandling;
 using PicView.UILogic.Sizing;
 using static PicView.ChangeImage.Navigation;
 using static PicView.FileHandling.FileLists;

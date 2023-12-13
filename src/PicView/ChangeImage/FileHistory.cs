@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeTitlebar;
+using PicView.Core.FileHandling;
 using PicView.FileHandling;
 using PicView.PicGallery;
 using PicView.Properties;

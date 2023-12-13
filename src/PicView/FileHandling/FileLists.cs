@@ -1,4 +1,5 @@
 ﻿using PicView.ChangeImage;
+using PicView.Core.FileHandling;
 using PicView.Properties;
 using PicView.SystemIntegration;
 using System.Diagnostics;

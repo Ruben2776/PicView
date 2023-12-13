@@ -1,16 +1,16 @@
 ﻿using System.IO;
 
-namespace PicView.FileHandling
+namespace PicView.Core.FileHandling
 {
     /// <summary>
     /// Class that contains information about supported file extensions.
     /// </summary>
-    internal static class SupportedFiles
+    public static class SupportedFiles
     {
         /// <summary>
         /// List of supported file extensions.
         /// </summary>
-        internal static readonly string[] FileExtensions =
+        public static readonly string[] FileExtensions =
         {
             ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".gif", ".jfif", ".ico", ".webp", ".wbmp", ".avif",
             ".psd", ".psb",
@@ -25,7 +25,7 @@ namespace PicView.FileHandling
         /// <summary>
         /// List of supported archive file extensions.
         /// </summary>
-        internal static readonly string[] FileExtensionsArchives =
+        public static readonly string[] FileExtensionsArchives =
         {
             ".zip", ".7zip", ".7z", ".rar", ".cbr", ".cb7", ".cbt", ".cbz", ".xz", ".bzip2",
             ".gzip", ".tar", ".wim", ".iso", ".cab"
