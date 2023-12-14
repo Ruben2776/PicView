@@ -1,9 +1,4 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using PicView.WPF.Animations;
+﻿using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ConfigureSettings;
@@ -12,10 +7,14 @@ using PicView.WPF.Editing.Crop;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.ProcessHandling;
 using PicView.WPF.Properties;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using static PicView.WPF.Shortcuts.MainKeyboardShortcuts;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.UC;
@@ -90,7 +89,7 @@ namespace PicView.WPF.UILogic
                     return true;
 
                 case Key.N when CtrlDown:
-                    ProcessLogic.StartNewProcess();
+                    Core.ProcessHandling.ProcessHelper.StartNewProcess();
                     return true;
 
                 case Key.E when CtrlDown:
@@ -560,7 +559,7 @@ namespace PicView.WPF.UILogic
             {
                 return;
             }
-            ProcessLogic.StartNewProcess();
+            Core.ProcessHandling.ProcessHelper.StartNewProcess();
         }
 
         #endregion Windows

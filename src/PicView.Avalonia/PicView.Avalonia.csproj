@@ -49,4 +49,11 @@
     <Resource Include="Assets\icon.png" />
     <Resource Include="Assets\icon.ico" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="Views\MacMainWindow.axaml.cs">
+      <DependentUpon>MacMainWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

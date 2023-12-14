@@ -1,14 +1,14 @@
-﻿using System.Diagnostics;
+﻿using PicView.Core.FileHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.ProcessHandling;
+using PicView.WPF.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.FileHandling;
-using PicView.WPF.ImageHandling;
-using PicView.WPF.ProcessHandling;
-using PicView.WPF.UILogic;
 using Rotation = PicView.WPF.UILogic.TransformImage.Rotation;
 
 namespace PicView.WPF.SystemIntegration

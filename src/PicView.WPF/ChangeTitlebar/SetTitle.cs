@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Windows;
+using PicView.Core.FileHandling;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
 using PicView.WPF.UILogic;

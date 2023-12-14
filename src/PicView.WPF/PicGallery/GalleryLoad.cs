@@ -1,14 +1,14 @@
-﻿using System.Diagnostics;
+﻿using PicView.Core.FileHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.FileHandling;
-using PicView.WPF.ImageHandling;
-using PicView.WPF.UILogic;
-using PicView.WPF.Views.UserControls.Gallery;
 
 namespace PicView.WPF.PicGallery
 {

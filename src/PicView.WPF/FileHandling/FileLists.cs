@@ -102,16 +102,24 @@ namespace PicView.WPF.FileHandling
             try
             {
                 // Get the list of files in the directory
-                files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
-                {
-                    IgnoreInaccessible = true,
-                    RecurseSubdirectories = recurseSubdirectories,
-                });
-                enumerable = files as string[] ?? files.ToArray();
                 if (recurseSubdirectories)
                 {
-                    enumerable.AsParallel();
+                    files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
+                    {
+                        IgnoreInaccessible = true,
+                        RecurseSubdirectories = true
+                    }).AsParallel();
                 }
+                else
+                {
+                    files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
+                    {
+                        IgnoreInaccessible = true,
+                        RecurseSubdirectories = false
+                    });
+                }
+
+                enumerable = files as string[] ?? files.ToArray();
             }
             catch (Exception exception)
             {
@@ -129,7 +137,7 @@ namespace PicView.WPF.FileHandling
                 return extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase);
             }
 
-            files = enumerable.Where((Func<string, bool>)IsExtensionValid);
+            files = enumerable.Where(IsExtensionValid);
 
             // Sort the file names based on the specified sorting method
             switch (sortFilesBy)

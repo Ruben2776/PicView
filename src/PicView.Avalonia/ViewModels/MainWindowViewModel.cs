@@ -1,7 +1,6 @@
-﻿namespace PicView.Avalonia.ViewModels
+﻿namespace PicView.Avalonia.ViewModels;
+
+public class MainWindowViewModel : ViewModelBase
 {
-    public class MainWindowViewModel : ViewModelBase
-    {
-        public string Greeting => "Welcome to Avalonia!";
-    }
+    public string Greeting => "Welcome to Avalonia!";
 }

@@ -1,8 +1,7 @@
 ﻿using ReactiveUI;
 
-namespace PicView.Avalonia.ViewModels
+namespace PicView.Avalonia.ViewModels;
+
+public class ViewModelBase : ReactiveObject
 {
-    public class ViewModelBase : ReactiveObject
-    {
-    }
 }

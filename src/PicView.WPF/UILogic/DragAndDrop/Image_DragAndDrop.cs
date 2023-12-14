@@ -1,15 +1,14 @@
-﻿using System.Diagnostics;
+﻿using PicView.Core.FileHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Properties;
+using PicView.WPF.Views.UserControls.Misc;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
-using PicView.Core.FileHandling;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.FileHandling;
-using PicView.WPF.PicGallery;
-using PicView.WPF.ProcessHandling;
-using PicView.WPF.Properties;
-using PicView.WPF.Views.UserControls.Misc;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ImageHandling.Thumbnails;
 using static PicView.WPF.UILogic.Tooltip;
@@ -207,7 +206,7 @@ namespace PicView.WPF.UILogic.DragAndDrop
                 // Open additional windows if multiple files dropped
                 foreach (var file in files.Skip(1))
                 {
-                    ProcessLogic.StartProcessWithFileArgument(file);
+                    Core.ProcessHandling.ProcessHelper.StartProcessWithFileArgument(file);
                 }
             });
         }

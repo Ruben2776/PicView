@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using ImageMagick;
+using PicView.Core.FileHandling;
 using PicView.WPF.FileHandling;
 
 namespace PicView.WPF.ImageHandling

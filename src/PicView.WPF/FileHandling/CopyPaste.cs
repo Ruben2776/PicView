@@ -1,15 +1,14 @@
-﻿using System.Collections.Specialized;
+﻿using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.ImageHandling;
-using PicView.WPF.ProcessHandling;
-using PicView.WPF.UILogic;
-using PicView.WPF.Views.UserControls.Gallery;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.Tooltip;
@@ -279,7 +278,7 @@ namespace PicView.WPF.FileHandling
 
                 for (var i = 1; i < files.Length; i++) // If Clipboard has more files
                 {
-                    ProcessLogic.StartProcessWithFileArgument(files[i]);
+                    Core.ProcessHandling.ProcessHelper.StartProcessWithFileArgument(files[i]);
                 }
             }
             else if (Clipboard.ContainsImage()) // Clipboard Image

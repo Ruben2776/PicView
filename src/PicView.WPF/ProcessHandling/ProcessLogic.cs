@@ -1,138 +1,60 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using PicView.WPF.ChangeImage;
+﻿using PicView.WPF.ChangeImage;
 using PicView.WPF.Properties;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows;
 
-namespace PicView.WPF.ProcessHandling
+namespace PicView.WPF.ProcessHandling;
+
+/// <summary>
+/// Contains the logic related to processing.
+/// </summary>
+internal static class ProcessLogic
 {
     /// <summary>
-    /// Contains the logic related to processing.
+    /// Restarts the current application.
     /// </summary>
-    internal static class ProcessLogic
+    internal static void RestartApp()
     {
-        /// <summary>
-        /// Launches the URL provided in a web browser.
-        /// </summary>
-        /// <param name="url">The URL to be launched in a web browser.</param>
-        internal static void Hyperlink_RequestNavigate(string url)
+        Settings.Default.Save();
+
+        string args;
+        if (Navigation.Pics?.Count > Navigation.FolderIndex)
         {
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                return;
-            }
+            args = Navigation.Pics[Navigation.FolderIndex];
 
-            var ps = new ProcessStartInfo(url)
-            {
-                UseShellExecute = true,
-                Verb = "open"
-            };
-            Process.Start(ps);
-        }
-
-        /// <summary>
-        /// Gets the path to the current process.
-        /// </summary>
-        /// <returns>The path to the current process.</returns>
-        internal static string? GetPathToProcess()
-        {
-            var GetAppPath = Environment.ProcessPath;
-
-            if (GetAppPath is not null && Path.GetExtension(GetAppPath) == ".dll")
-            {
-                GetAppPath = GetAppPath.Replace(".dll", ".exe", StringComparison.InvariantCultureIgnoreCase);
-            }
-
-            return GetAppPath;
-        }
-
-        /// <summary>
-        /// Restarts the current application.
-        /// </summary>
-        internal static void RestartApp()
-        {
-            Settings.Default.Save();
-
-            var GetAppPath = GetPathToProcess();
-
-            string args;
-            if (Navigation.Pics?.Count > Navigation.FolderIndex)
-            {
-                args = Navigation.Pics[Navigation.FolderIndex];
-
-                // Add double qoutations to support file paths with spaces
-                args = args.Insert(0, @"""");
-                args = args.Insert(args.Length - 1, @"""");
-            }
-            else
-            {
-                args = string.Empty;
-            }
-
-            Process.Start(new ProcessStartInfo(GetAppPath, args));
-            Application.Current.Shutdown();
-        }
-
-        /// <summary>
-        /// Starts a new instance of the current process with the provided file argument.
-        /// </summary>
-        /// <param name="argument">The file argument to be passed to the new instance of the current process.</param>
-        internal static void StartProcessWithFileArgument(string argument)
-        {
-            var pathToExe = GetPathToProcess();
-
-            // Sanitize file name
-            var args = argument.Replace(@"\\", @"\");
+            // Add double qoutations to support file paths with spaces
             args = args.Insert(0, @"""");
             args = args.Insert(args.Length - 1, @"""");
-
-            Process process = new()
-            {
-                StartInfo =
-                {
-                    FileName = pathToExe,
-                    Arguments = args
-                }
-            };
-            process.Start();
         }
-
-        /// <summary>
-        /// Starts a new instance of the current process.
-        /// </summary>
-        internal static void StartNewProcess()
+        else
         {
-            var pathToExe = GetPathToProcess();
-
-            Process process = new()
-            {
-                StartInfo = { FileName = pathToExe }
-            };
-            process.Start();
+            args = string.Empty;
         }
+        Core.ProcessHandling.ProcessHelper.RestartApp(args);
+        Application.Current.Shutdown();
+    }
 
-        internal static bool RunElevated(string fileName, string args)
+    internal static bool RunElevated(string fileName, string args)
+    {
+        var processInfo = new ProcessStartInfo
         {
-            var processInfo = new ProcessStartInfo
-            {
-                Verb = "runas",
-                UseShellExecute = true,
-                FileName = fileName,
-                Arguments = args,
-                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
-            };
-            try
-            {
-                Process.Start(processInfo);
-                return true;
-            }
-            catch (Win32Exception)
-            {
-                // Do nothing. Probably the user canceled the UAC window
-            }
-
-            return false;
+            Verb = "runas",
+            UseShellExecute = true,
+            FileName = fileName,
+            Arguments = args,
+            WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
+        };
+        try
+        {
+            Process.Start(processInfo);
+            return true;
         }
+        catch (Win32Exception)
+        {
+            // Do nothing. Probably the user canceled the UAC window
+        }
+
+        return false;
     }
 }

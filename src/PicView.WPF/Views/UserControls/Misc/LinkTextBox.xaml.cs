@@ -1,4 +1,4 @@
-﻿using PicView.WPF.ProcessHandling;
+﻿using static PicView.Core.ProcessHandling.ProcessHelper;
 
 namespace PicView.WPF.Views.UserControls.Misc
 {
@@ -7,14 +7,14 @@ namespace PicView.WPF.Views.UserControls.Misc
         public LinkTextBox()
         {
             InitializeComponent();
-            linkButton.TheButton.Click += (_, _) => ProcessLogic.Hyperlink_RequestNavigate(ValueBox.Text);
+            linkButton.TheButton.Click += (_, _) => Hyperlink_RequestNavigate(ValueBox.Text);
         }
 
         public LinkTextBox(string url, string name)
         {
             InitializeComponent();
             SetURL(url, name);
-            linkButton.TheButton.Click += (_, _) => ProcessLogic.Hyperlink_RequestNavigate(ValueBox.Text);
+            linkButton.TheButton.Click += (_, _) => Hyperlink_RequestNavigate(ValueBox.Text);
         }
 
         // ReSharper disable once InconsistentNaming
