@@ -1,17 +1,17 @@
-﻿using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using PicView.WPF.ChangeTitlebar;
+﻿using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.Editing;
-using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.Properties;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
+using System.Collections.Specialized;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.SystemIntegration.NativeMethods;
+using ArchiveExtraction = PicView.Core.FileHandling.ArchiveExtraction;
 
 namespace PicView.WPF.UILogic.DragAndDrop
 {
@@ -61,7 +61,7 @@ namespace PicView.WPF.UILogic.DragAndDrop
                 try
                 {
                     // Check if from URL and locate it
-                    var url = FileFunctions.RetrieveFromURL();
+                    var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                     if (!string.IsNullOrEmpty(url))
                     {
                         file = ArchiveExtraction.TempFilePath;

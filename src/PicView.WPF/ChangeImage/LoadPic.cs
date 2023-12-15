@@ -19,6 +19,7 @@ using static PicView.WPF.ChangeTitlebar.SetTitle;
 using static PicView.WPF.FileHandling.ArchiveExtraction;
 using static PicView.WPF.FileHandling.FileLists;
 using static PicView.WPF.UILogic.UC;
+using ArchiveExtraction = PicView.Core.FileHandling.ArchiveExtraction;
 
 namespace PicView.WPF.ChangeImage
 {
@@ -553,7 +554,7 @@ namespace PicView.WPF.ChangeImage
             }
 
             // Add recent files, except when browsing archive
-            if (string.IsNullOrWhiteSpace(TempZipFile) && Pics.Count > index)
+            if (string.IsNullOrWhiteSpace(ArchiveExtraction.TempZipFile) && Pics.Count > index)
             {
                 GetFileHistory ??= new FileHistory();
                 GetFileHistory.Add(Pics[index]);

@@ -4,7 +4,7 @@ public interface ISettingsManager
 {
     AppSettings? AppSettings { get; set; }
 
-    void LoadSettings();
+    Task LoadSettingsAsync();
 
-    void SaveSettings();
+    Task SaveSettingsAsync();
 }

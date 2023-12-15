@@ -49,7 +49,6 @@ namespace PicView.WPF.UILogic.Loading
                         = Visibility.Collapsed;
                 }
             });
-
             await CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
             ConfigColors.UpdateColor();
 

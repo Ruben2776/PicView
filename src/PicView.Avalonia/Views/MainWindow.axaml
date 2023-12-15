@@ -10,7 +10,7 @@
     MinHeight="400"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    x:DataType="vm:MainWindowViewModel"
+    x:DataType="vm:MainViewModel"
     Background="Transparent"
     ExtendClientAreaChromeHints="PreferSystemChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
@@ -19,17 +19,9 @@
     TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-
-    <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
-        <vm:MainWindowViewModel />
-    </Design.DataContext>
-
-    <TextBlock
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Text="{Binding Greeting}" />
+    <Border>
+        <DockPanel>
+            <TextBox Width="200" Height="30" />
+        </DockPanel>
+    </Border>
 </Window>

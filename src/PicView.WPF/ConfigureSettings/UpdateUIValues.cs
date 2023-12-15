@@ -11,6 +11,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.Core.FileHandling;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.TransformImage.Scroll;
@@ -22,7 +23,7 @@ namespace PicView.WPF.ConfigureSettings
     {
         // Todo Rewrite to use MVVM.. One day.
 
-        internal static async Task ChangeSortingAsync(FileLists.SortFilesBy sortFilesBy, bool changeOrder = false)
+        internal static async Task ChangeSortingAsync(FileListHelper.SortFilesBy sortFilesBy, bool changeOrder = false)
         {
             if (changeOrder == false)
             {

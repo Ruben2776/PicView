@@ -294,10 +294,10 @@ namespace PicView.WPF.ChangeImage
             GalleryFunctions.Clear();
             ScaleImage.XWidth = ScaleImage.XHeight = 0;
 
-            if (!string.IsNullOrWhiteSpace(ArchiveExtraction.TempFilePath))
+            if (!string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveExtraction.TempFilePath))
             {
                 DeleteTempFiles();
-                ArchiveExtraction.TempFilePath = string.Empty;
+                Core.FileHandling.ArchiveExtraction.TempFilePath = string.Empty;
             }
 
             Taskbar.NoProgress();

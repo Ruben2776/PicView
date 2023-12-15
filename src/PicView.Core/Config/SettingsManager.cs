@@ -8,7 +8,7 @@ public class SettingsManager : ISettingsManager
     public AppSettings? AppSettings { get; set; }
     private JsonSerializerOptions? _jsonSerializerOptions;
 
-    public void LoadSettings()
+    public async Task LoadSettingsAsync()
     {
         try
         {
@@ -16,7 +16,7 @@ public class SettingsManager : ISettingsManager
             if (File.Exists(path))
             {
                 // Read JSON File
-                var jsonString = File.ReadAllText(path);
+                var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
                 AppSettings = JsonSerializer.Deserialize<AppSettings>(jsonString);
             }
             else
@@ -26,23 +26,22 @@ public class SettingsManager : ISettingsManager
         }
         catch (Exception ex)
         {
-            // Handle exceptions appropriately (logging, notifying the user, etc.)
-            Trace.WriteLine($"{nameof(LoadSettings)} error loading settings:\n {ex.Message}");
+            Trace.WriteLine($"{nameof(LoadSettingsAsync)} error loading settings:\n {ex.Message}");
         }
     }
 
-    public void SaveSettings()
+    public async Task SaveSettingsAsync()
     {
         try
         {
             _jsonSerializerOptions ??= new JsonSerializerOptions { WriteIndented = true };
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/AppSettings.json");
             var updatedJson = JsonSerializer.Serialize(AppSettings, _jsonSerializerOptions);
-            File.WriteAllText(path, updatedJson);
+            await File.WriteAllTextAsync(path, updatedJson).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            Trace.WriteLine($"{nameof(SaveSettings)} error saving settings:\n {ex.Message}");
+            Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
         }
     }
 }

@@ -16,27 +16,17 @@ namespace PicView.WPF.FileHandling
     internal static class ArchiveExtraction
     {
         /// <summary>
-        /// File archivePath for the extracted folder
-        /// </summary>
-        internal static string? TempFilePath { get; set; }
-
-        /// <summary>
-        /// File archivePath for the extracted zip file
-        /// </summary>
-        internal static string? TempZipFile { get; set; }
-
-        /// <summary>
         /// Attempts to extract folder
         /// </summary>
-        /// <param name="archivePath">The archivePath to the archived file</param>
+        /// <param name="pathToArchiveFile">The archivePath to the archived file</param>
         /// <returns></returns>
-        internal static bool Extract(string archivePath)
+        internal static bool Extract(string pathToArchiveFile)
         {
             string[] appNames = { "WinRAR.exe", "7z.exe" };
             string[] appPathNames = { "\\WinRAR\\WinRAR.exe", "\\7-Zip\\7z.exe" };
 
             var extractAppPath = GetExtractAppPath(appPathNames, appNames);
-            return extractAppPath != null && Extract(archivePath, extractAppPath,
+            return extractAppPath != null && Extract(pathToArchiveFile, extractAppPath,
                 extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
         }
 
@@ -116,13 +106,13 @@ namespace PicView.WPF.FileHandling
         /// <param name="isWinrar">If WinRar or 7-Zip</param>
         private static bool Extract(string archivePath, string exe, bool isWinrar)
         {
-            if (!CreateTempDirectory(archivePath))
+            if (!Core.FileHandling.ArchiveExtraction.CreateTempDirectory(archivePath))
             {
                 return false;
             }
 
 #if DEBUG
-            Trace.WriteLine("Created temp dir: " + TempFilePath);
+            Trace.WriteLine("Created temp dir: " + Core.FileHandling.ArchiveExtraction.TempFilePath);
 #endif
 
             BackupPath = ErrorHandling.CheckOutOfRange() == false ? Pics[FolderIndex] : null;
@@ -134,7 +124,7 @@ namespace PicView.WPF.FileHandling
                     : $"x \"{archivePath}\" -o"; // 7-Zip
 
                 var supportedFilesFilter = " *" + string.Join(" *", SupportedFiles.FileExtensions) + " ";
-                arguments += TempFilePath + supportedFilesFilter + " -r -aou";
+                arguments += Core.FileHandling.ArchiveExtraction.TempFilePath + supportedFilesFilter + " -r -aou";
 
                 var process = Process.Start(new ProcessStartInfo
                 {
@@ -196,7 +186,7 @@ namespace PicView.WPF.FileHandling
                         }
 
                         GetFileHistory ??= new FileHistory();
-                        GetFileHistory.Add(TempZipFile);
+                        GetFileHistory.Add(Core.FileHandling.ArchiveExtraction.TempZipFile);
 
                         if (Settings.Default.IsBottomGalleryShown)
                         {
@@ -221,18 +211,9 @@ namespace PicView.WPF.FileHandling
             return true;
         }
 
-        internal static bool CreateTempDirectory(string path)
-        {
-            TempZipFile = path;
-            TempFilePath = Path.GetTempPath() + Path.GetRandomFileName();
-            Directory.CreateDirectory(TempFilePath);
-
-            return Directory.Exists(TempFilePath);
-        }
-
         private static bool SetDirectory()
         {
-            if (string.IsNullOrEmpty(TempFilePath))
+            if (string.IsNullOrEmpty(Core.FileHandling.ArchiveExtraction.TempFilePath))
             {
 #if DEBUG
                 Trace.WriteLine("SetDirectory empty zip archivePath");
@@ -241,18 +222,18 @@ namespace PicView.WPF.FileHandling
             }
 
             // Set extracted files to Pics
-            if (!Directory.Exists(TempFilePath))
+            if (!Directory.Exists(Core.FileHandling.ArchiveExtraction.TempFilePath))
             {
                 return false;
             }
 
-            var directory = Directory.GetDirectories(TempFilePath);
+            var directory = Directory.GetDirectories(Core.FileHandling.ArchiveExtraction.TempFilePath);
             if (directory.Length > 0)
             {
-                TempFilePath = directory[0];
+                Core.FileHandling.ArchiveExtraction.TempFilePath = directory[0];
             }
 
-            var extractedFiles = FileList(new FileInfo(TempFilePath));
+            var extractedFiles = FileList(new FileInfo(Core.FileHandling.ArchiveExtraction.TempFilePath));
             if (extractedFiles.Count > 0)
             {
                 Pics = extractedFiles;

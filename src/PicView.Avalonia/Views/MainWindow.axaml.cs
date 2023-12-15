@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views
 {
@@ -7,6 +8,7 @@ namespace PicView.Avalonia.Views
         public MainWindow()
         {
             InitializeComponent();
+            Models.LoadSettings.StartLoading();
         }
     }
 }

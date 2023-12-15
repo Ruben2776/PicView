@@ -89,7 +89,7 @@ namespace PicView.WPF.FileHandling
             // Create temp directory
             var tempPath = Path.GetTempPath();
             var fileName = Path.GetFileName(url);
-            ArchiveExtraction.CreateTempDirectory(tempPath);
+            Core.FileHandling.ArchiveExtraction.CreateTempDirectory(tempPath);
 
             // Remove past "?" to not get file exceptions
             var index = fileName.IndexOf("?", StringComparison.InvariantCulture);
@@ -98,9 +98,9 @@ namespace PicView.WPF.FileHandling
                 fileName = fileName[..index];
             }
 
-            ArchiveExtraction.TempFilePath = tempPath + fileName;
+            Core.FileHandling.ArchiveExtraction.TempFilePath = tempPath + fileName;
 
-            using (var client = new HttpHelper.HttpClientDownloadWithProgress(url, ArchiveExtraction.TempFilePath))
+            using (var client = new HttpHelper.HttpClientDownloadWithProgress(url, Core.FileHandling.ArchiveExtraction.TempFilePath))
             {
                 if (displayProgress) // Set up progress display
                 {
@@ -110,7 +110,7 @@ namespace PicView.WPF.FileHandling
                 await client.StartDownloadAsync().ConfigureAwait(false);
             }
 
-            return ArchiveExtraction.TempFilePath;
+            return Core.FileHandling.ArchiveExtraction.TempFilePath;
         }
 
         /// <summary>

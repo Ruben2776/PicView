@@ -65,10 +65,10 @@ namespace PicView.WPF.FileHandling
                     {
                         case false when Pics?.Count <= 0:
                             // Check if from URL and locate it
-                            var url = FileFunctions.RetrieveFromURL();
+                            var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                             if (!string.IsNullOrEmpty(url))
                             {
-                                file = ArchiveExtraction.TempFilePath;
+                                file = Core.FileHandling.ArchiveExtraction.TempFilePath;
                                 directory = Path.GetDirectoryName(file);
                             }
 

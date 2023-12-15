@@ -119,5 +119,18 @@ namespace PicView.Core.FileHandling
                 return string.Empty;
             }
         }
+
+        /// <summary>
+        /// Returns the URL path if it exists or an empty string if not.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        public static string RetrieveFromURL(string value)
+        {
+            // Check if from URL and download it
+            var url = GetURL(value);
+            if (string.IsNullOrEmpty(url))
+                return string.Empty;
+            return File.Exists(ArchiveExtraction.TempFilePath) ? ArchiveExtraction.TempFilePath : string.Empty;
+        }
     }
 }

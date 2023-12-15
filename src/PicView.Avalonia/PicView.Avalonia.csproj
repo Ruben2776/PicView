@@ -7,10 +7,18 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Copyright>Ruben Hyldgaard Negendahl</Copyright>
+    <PackageProjectUrl>picview.org</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Ruben2776/PicView/</RepositoryUrl>
+    <PublishAot>False</PublishAot>
+    <PublishTrimmed>False</PublishTrimmed>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
@@ -30,13 +38,13 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.2" />
+    <PackageReference Include="Avalonia" Version="11.0.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.2" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.2" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.2" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6" />
   </ItemGroup>
 
 
@@ -55,5 +63,11 @@
     <Compile Update="Views\MacMainWindow.axaml.cs">
       <DependentUpon>MacMainWindow.axaml</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Using Include="ReactiveUI" />
+    <Using Include="System.Diagnostics" />
   </ItemGroup>
 </Project>

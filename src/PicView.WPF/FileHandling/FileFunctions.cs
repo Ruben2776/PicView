@@ -107,17 +107,5 @@ namespace PicView.WPF.FileHandling
         {
             return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
         }
-
-        /// <summary>
-        /// Returns the URL path if it exists or an empty string if not.
-        /// </summary>
-        // ReSharper disable once InconsistentNaming
-        internal static string RetrieveFromURL()
-        {
-            // Check if from URL and download it
-            var url = FileHelper.GetURL(ConfigureWindows.GetMainWindow.TitleText.Text);
-            if (string.IsNullOrEmpty(url)) return string.Empty;
-            return File.Exists(ArchiveExtraction.TempFilePath) ? ArchiveExtraction.TempFilePath : string.Empty;
-        }
     }
 }

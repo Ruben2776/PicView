@@ -16,14 +16,14 @@ namespace PicView.WPF.FileHandling
         /// </summary>
         internal static void DeleteTempFiles()
         {
-            if (!Directory.Exists(ArchiveExtraction.TempFilePath))
+            if (!Directory.Exists(Core.FileHandling.ArchiveExtraction.TempFilePath))
             {
                 return;
             }
 
             try
             {
-                Array.ForEach(Directory.GetFiles(ArchiveExtraction.TempFilePath), File.Delete);
+                Array.ForEach(Directory.GetFiles(Core.FileHandling.ArchiveExtraction.TempFilePath), File.Delete);
 #if DEBUG
                 Trace.WriteLine("Temp zip files deleted");
 #endif
@@ -35,9 +35,9 @@ namespace PicView.WPF.FileHandling
 
             try
             {
-                Directory.Delete(ArchiveExtraction.TempFilePath);
+                Directory.Delete(Core.FileHandling.ArchiveExtraction.TempFilePath);
 #if DEBUG
-                Trace.WriteLine("Temp zip folder " + ArchiveExtraction.TempFilePath + " deleted");
+                Trace.WriteLine("Temp zip folder " + Core.FileHandling.ArchiveExtraction.TempFilePath + " deleted");
 #endif
             }
             catch (Exception)
@@ -45,7 +45,7 @@ namespace PicView.WPF.FileHandling
                 return;
             }
 
-            ArchiveExtraction.TempZipFile = ArchiveExtraction.TempFilePath = null;
+            Core.FileHandling.ArchiveExtraction.TempZipFile = Core.FileHandling.ArchiveExtraction.TempFilePath = null;
         }
 
         /// <summary>

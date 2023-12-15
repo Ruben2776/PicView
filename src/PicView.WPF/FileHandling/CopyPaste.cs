@@ -143,10 +143,10 @@ namespace PicView.WPF.FileHandling
             if (Pics?.Count <= 0)
             {
                 // Check if from URL and download it
-                var url = FileFunctions.RetrieveFromURL();
+                var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                 if (!string.IsNullOrEmpty(url))
                 {
-                    CopyFile(ArchiveExtraction.TempFilePath);
+                    CopyFile(Core.FileHandling.ArchiveExtraction.TempFilePath);
                 }
                 else
                 {
