@@ -1,20 +1,19 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
-using PicView.Core.FileHandling;
+﻿using PicView.Core.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.Properties;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.LoadPic;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ChangeImage.PreLoader;
 using static PicView.WPF.ChangeTitlebar.SetTitle;
-using static PicView.WPF.FileHandling.ArchiveExtraction;
 using static PicView.WPF.FileHandling.FileLists;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
 
@@ -26,10 +25,10 @@ namespace PicView.WPF.ChangeImage
         /// Load Image from blank values and show loading preview
         /// </summary>
         /// <param name="file"></param>
-        internal static async Task QuickLoadAsync(string file)
+        internal static async Task QuickLoadAsync(string file) => await Task.Run(async () =>
         {
             var mainWindow = ConfigureWindows.GetMainWindow;
-            InitialPath = file;
+
             var fileInfo = new FileInfo(file);
             if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
             {
@@ -122,6 +121,6 @@ namespace PicView.WPF.ChangeImage
                 GetFileHistory ??= new FileHistory();
                 GetFileHistory.Add(Pics[FolderIndex]);
             }
-        }
+        });
     }
 }

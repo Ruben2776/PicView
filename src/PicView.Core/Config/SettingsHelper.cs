@@ -3,12 +3,12 @@ using System.Text.Json;
 
 namespace PicView.Core.Config;
 
-public class SettingsManager : ISettingsManager
+public static class SettingsHelper
 {
-    public AppSettings? AppSettings { get; set; }
-    private JsonSerializerOptions? _jsonSerializerOptions;
+    public static AppSettings? AppSettings { get; set; }
+    private static JsonSerializerOptions? _jsonSerializerOptions;
 
-    public async Task LoadSettingsAsync()
+    public static async Task LoadSettingsAsync()
     {
         try
         {
@@ -30,7 +30,7 @@ public class SettingsManager : ISettingsManager
         }
     }
 
-    public async Task SaveSettingsAsync()
+    public static async Task SaveSettingsAsync()
     {
         try
         {

@@ -85,6 +85,7 @@ namespace PicView.WPF.UILogic.Loading
             }
             else
             {
+                InitialPath = args[1];
                 await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
             }
         }

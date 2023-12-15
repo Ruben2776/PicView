@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using System.Runtime;
@@ -11,13 +10,10 @@ namespace PicView.Avalonia;
 
 public partial class App : Application
 {
-    private ISettingsManager settingsManager;
-
     public override void Initialize()
     {
         ProfileOptimization.SetProfileRoot(AppDomain.CurrentDomain.BaseDirectory);
         ProfileOptimization.StartProfile("ProfileOptimization");
-        settingsManager = new SettingsManager();
         AvaloniaXamlLoader.Load(this);
     }
 
@@ -28,17 +24,11 @@ public partial class App : Application
             // Run MacOS specific style
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                desktop.MainWindow = new MacMainWindow
-                {
-                    DataContext = new MainViewModel(settingsManager),
-                };
+                desktop.MainWindow = new MacMainWindow();
             }
             else
             {
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = new MainViewModel(settingsManager),
-                };
+                desktop.MainWindow = new MainWindow();
             }
         }
 

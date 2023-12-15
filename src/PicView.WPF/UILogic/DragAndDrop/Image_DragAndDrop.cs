@@ -187,21 +187,8 @@ namespace PicView.WPF.UILogic.DragAndDrop
 
             await Task.Run(async () =>
             {
-                if (files[0].IsSupported() == false)
-                {
-                    if (Directory.Exists(files[0]))
-                    {
-                        await LoadPic.LoadPicFromFolderAsync(files[0]).ConfigureAwait(false);
-                    }
-                    else if (files[0].IsArchive())
-                    {
-                        await LoadPic.LoadPicFromArchiveAsync(files[0]).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
-                }
+                InitialPath = files[0];
+                await QuickLoad.QuickLoadAsync(files[0]).ConfigureAwait(false);
 
                 // Open additional windows if multiple files dropped
                 foreach (var file in files.Skip(1))
