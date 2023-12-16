@@ -24,7 +24,7 @@ namespace PicView.WPF.Views.Windows
             Width *= WindowSizing.MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
             {
-                WindowSizing.MonitorInfo = MonitorSize.GetMonitorSize();
+                WindowSizing.MonitorInfo = MonitorSize.GetMonitorSize(this);
                 MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
                 Width *= WindowSizing.MonitorInfo.DpiScaling;
             }

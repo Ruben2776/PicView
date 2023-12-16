@@ -25,6 +25,10 @@ namespace PicView.WPF.ChangeImage
         /// <returns>True if not intended to change image or index is not valid</returns>
         internal static bool CheckOutOfRange()
         {
+            if (Pics is null)
+            {
+                return true;
+            }
             var value = true;
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {

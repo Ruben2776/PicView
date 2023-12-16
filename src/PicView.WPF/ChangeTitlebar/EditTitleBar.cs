@@ -20,7 +20,14 @@ namespace PicView.WPF.ChangeTitlebar
                 return;
             }
 
-            WindowSizing.Move(sender, e);
+            try
+            {
+                WindowSizing.Move(sender, e);
+            }
+            catch (Exception)
+            {
+                //
+            }
             Refocus();
             e.Handled = true; // Disable text clicking
         }

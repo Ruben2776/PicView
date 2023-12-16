@@ -43,7 +43,6 @@ namespace PicView.WPF.Views.Windows
             }
 
             InitializeComponent();
-            LoadControls.LoadSpinWaiter();
 
             if (Settings.Default.AutoFitWindow == false)
             {
@@ -52,8 +51,6 @@ namespace PicView.WPF.Views.Windows
             }
 
             Topmost = Settings.Default.TopMost;
-
-            Loaded += async (_, _) => await StartLoading.LoadedEvent().ConfigureAwait(false);
 
             ContentRendered += delegate
             {
@@ -175,6 +172,10 @@ namespace PicView.WPF.Views.Windows
                 }
 
                 var w = ConfigureWindows.GetMainWindow;
+                if (w is null)
+                {
+                    return;
+                }
                 GetStartUpUC?.ResponsiveSize(w.Width);
                 if (w.WindowState == WindowState.Maximized)
                 {

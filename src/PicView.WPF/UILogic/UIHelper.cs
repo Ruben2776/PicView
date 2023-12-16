@@ -1108,7 +1108,7 @@ namespace PicView.WPF.UILogic
             {
                 await GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
-                    WindowSizing.CenterWindowOnScreen();
+                    WindowSizing.CenterWindowOnScreen(GetMainWindow);
                 });
             }
         }

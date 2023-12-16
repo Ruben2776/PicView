@@ -80,25 +80,32 @@ namespace PicView.WPF.SystemIntegration
         /// Gets the size and DPI scaling of the current monitor screen.
         /// </summary>
         /// <returns>A new instance of the <see cref="MonitorSize"/> struct representing the current monitor screen.</returns>
-        internal static MonitorSize GetMonitorSize()
+        internal static MonitorSize GetMonitorSize(Window? window)
         {
-            if (Application.Current is null) // Fixes bug when closing window
+            if (Application.Current is null || window is null) // Fixes bug when closing window
                 return new MonitorSize(SystemParameters.WorkArea.Width, SystemParameters.WorkArea.Height, 1,
                     SystemParameters.WorkArea);
 
             Screen? currentMonitor = null;
             PresentationSource? source;
             double dpiScaling = 0;
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () => // Avoid threading errors
+            window?.Dispatcher.Invoke(DispatcherPriority.Send, () => // Avoid threading errors
             {
                 // Get the current monitor screen information
-                currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow!).Handle);
+                currentMonitor = Screen.FromHandle(new WindowInteropHelper(Application.Current.MainWindow ?? window).Handle);
 
                 // Find out if the app is being scaled by the monitor
-                source = PresentationSource.FromVisual(Application.Current.MainWindow!);
-                dpiScaling = source is { CompositionTarget: not null }
-                    ? source.CompositionTarget.TransformFromDevice.M11
-                    : 1;
+                try
+                {
+                    source = PresentationSource.FromVisual(window);
+                    dpiScaling = source is { CompositionTarget: not null }
+                        ? source.CompositionTarget.TransformFromDevice.M11
+                        : 1;
+                }
+                catch (Exception)
+                {
+                    //
+                }
             });
 
             var monitorWidth = currentMonitor.Bounds.Width * dpiScaling;

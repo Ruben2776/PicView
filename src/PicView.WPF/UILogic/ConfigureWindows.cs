@@ -16,7 +16,7 @@ namespace PicView.WPF.UILogic
         /// <summary>
         /// The Main Window?
         /// </summary>
-        internal static readonly MainWindow GetMainWindow = (MainWindow)Application.Current.MainWindow;
+        internal static MainWindow GetMainWindow { get; set; }
 
         /// <summary>
         /// Primary ContextMenu

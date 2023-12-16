@@ -188,7 +188,17 @@ namespace PicView.WPF.UILogic.DragAndDrop
             await Task.Run(async () =>
             {
                 InitialPath = files[0];
-                await QuickLoad.QuickLoadAsync(files[0]).ConfigureAwait(false);
+                var fileInfo = new FileInfo(files[0]);
+
+                //detect whether its a directory or file
+                if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    await LoadPic.LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
+                }
+                else
+                {
+                    await QuickLoad.QuickLoadAsync(files[0], fileInfo).ConfigureAwait(false);
+                }
 
                 // Open additional windows if multiple files dropped
                 foreach (var file in files.Skip(1))
@@ -230,7 +240,7 @@ namespace PicView.WPF.UILogic.DragAndDrop
 
             try
             {
-                _dropOverlay.UpdateContent(element);
+                _dropOverlay?.UpdateContent(element);
             }
             catch (Exception)
             {

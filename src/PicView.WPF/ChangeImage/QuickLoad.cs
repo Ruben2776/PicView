@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.LoadPic;
@@ -25,29 +26,29 @@ namespace PicView.WPF.ChangeImage
         /// Load Image from blank values and show loading preview
         /// </summary>
         /// <param name="file"></param>
-        internal static async Task QuickLoadAsync(string file) => await Task.Run(async () =>
+        internal static async Task QuickLoadAsync(string file, FileInfo? fileInfo = null, BitmapSource? preparedSource = null) => await Task.Run(async () =>
         {
             var mainWindow = ConfigureWindows.GetMainWindow;
-
-            var fileInfo = new FileInfo(file);
-            if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
+            fileInfo ??= new FileInfo(file);
+            if (preparedSource is not null)
             {
-                await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
-                return;
+                if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
+                {
+                    await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
+                    return;
+                }
+
+                if (file.IsArchive()) // Handle if file exist and is archive
+                {
+                    await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
+                    return;
+                }
             }
 
-            if (file.IsArchive()) // Handle if file exist and is archive
-            {
-                await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
-                return;
-            }
-
-            var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            var bitmapSource = preparedSource ?? await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
             {
                 mainWindow.MainImage.Source = bitmapSource;
-
-                FitImage(bitmapSource.Width, bitmapSource.Height);
             }, DispatcherPriority.Send);
 
             if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
@@ -73,6 +74,10 @@ namespace PicView.WPF.ChangeImage
                 if (Settings.Default.IsBottomGalleryShown)
                 {
                     GalleryToggle.ShowBottomGallery();
+                }
+
+                if (preparedSource is not null)
+                {
                     FitImage(bitmapSource.Width, bitmapSource.Height);
                 }
             }, DispatcherPriority.Normal);
@@ -87,32 +92,35 @@ namespace PicView.WPF.ChangeImage
 
             if (Settings.Default.IsBottomGalleryShown)
             {
-                try
+                _ = Task.Run(async () =>
                 {
-                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                    // Update gallery selections
-                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    try
                     {
-                        // Select current item
-                        GalleryNavigation.SetSelected(FolderIndex, true);
-                        GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                        GalleryNavigation.ScrollToGalleryCenter();
-                    });
-                }
-                catch (TaskCanceledException exception)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(QuickLoadAsync)}  exception:\n{exception.Message}");
-#endif
-                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                    {
-                        Environment.Exit(0);
+                        await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                        // Update gallery selections
+                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                        {
+                            // Select current item
+                            GalleryNavigation.SetSelected(FolderIndex, true);
+                            GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                            GalleryNavigation.ScrollToGalleryCenter();
+                        });
                     }
-                }
-                catch (Exception)
-                {
-                    //
-                }
+                    catch (TaskCanceledException exception)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(QuickLoadAsync)}  exception:\n{exception.Message}");
+#endif
+                        if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                        {
+                            Environment.Exit(0);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //
+                    }
+                });
             }
 
             // Add recent files, except when browsing archive

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
@@ -114,13 +115,22 @@ namespace PicView.WPF.UILogic.Sizing
             }
             else
             {
-                if (e.LeftButton != MouseButtonState.Pressed) return;
-                GetMainWindow.DragMove();
-                // Update info for possible new screen, needs more engineering
-                // Seems to work
-                MonitorInfo = MonitorSize.GetMonitorSize();
+                if (e.LeftButton != MouseButtonState.Pressed)
+                    return;
+                try
+                {
+                    GetMainWindow.DragMove();
+                    // Update info for possible new screen, needs more engineering
+                    // Seems to work
+                    MonitorInfo = MonitorSize.GetMonitorSize(GetMainWindow);
 
-                SetWindowSize();
+                    SetWindowSize(GetMainWindow);
+                }
+                catch (Exception exception)
+                {
+                    Trace.WriteLine(exception);
+                    throw;
+                }
             }
         }
 
@@ -134,11 +144,19 @@ namespace PicView.WPF.UILogic.Sizing
                 return;
             }
 
-            if (e.LeftButton != MouseButtonState.Pressed) return;
-            GetMainWindow.DragMove();
-            MonitorInfo = MonitorSize.GetMonitorSize();
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+            try
+            {
+                GetMainWindow.DragMove();
+                MonitorInfo = MonitorSize.GetMonitorSize(GetMainWindow);
 
-            SetWindowSize();
+                SetWindowSize(GetMainWindow);
+            }
+            catch (Exception exception)
+            {
+                Trace.WriteLine(exception);
+            }
         }
 
         /// <summary>
@@ -156,7 +174,7 @@ namespace PicView.WPF.UILogic.Sizing
             GetMainWindow.TitleBar.Margin = new Thickness(0);
             GetMainWindow.LowerBar.Margin = new Thickness(0);
 
-            SetWindowSize();
+            SetWindowSize(ConfigureWindows.GetMainWindow);
         }
 
         /// <summary>
@@ -175,8 +193,8 @@ namespace PicView.WPF.UILogic.Sizing
                 return;
             }
 
-            SetWindowSize(); // Fixes popping up on wrong monitor?
-            MonitorInfo = MonitorSize.GetMonitorSize();
+            SetWindowSize(ConfigureWindows.GetMainWindow); // Fixes popping up on wrong monitor?
+            MonitorInfo = MonitorSize.GetMonitorSize(GetMainWindow);
 
             if (GetMainWindow.WindowState == WindowState.Maximized || gotoFullscreen)
             {
@@ -226,7 +244,7 @@ namespace PicView.WPF.UILogic.Sizing
 
                 if (Settings.Default.AutoFitWindow == false)
                 {
-                    SetLastWindowSize();
+                    SetLastWindowSize(GetMainWindow);
                 }
 
                 if (Slideshow.SlideTimer != null && Slideshow.SlideTimer.Enabled)
@@ -249,50 +267,50 @@ namespace PicView.WPF.UILogic.Sizing
 
             TryFitImage();
 
-            CenterWindowOnScreen();
+            CenterWindowOnScreen(GetMainWindow);
         }
 
         /// <summary>
         /// Centers on the current monitor
         /// </summary>
-        internal static void CenterWindowOnScreen(bool horizontal = true)
+        internal static void CenterWindowOnScreen(Window window, bool horizontal = true)
         {
-            GetMainWindow.Top =
-                ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - GetMainWindow.ActualHeight) / 2 +
+            window.Top =
+                ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - window.ActualHeight) / 2 +
                 MonitorInfo.WorkArea.Top;
             if (horizontal)
-                GetMainWindow.Left =
-                    ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - GetMainWindow.ActualWidth) / 2 +
+                window.Left =
+                    ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - window.ActualWidth) / 2 +
                     MonitorInfo.WorkArea.Left;
         }
 
-        internal static void SetLastWindowSize()
+        internal static void SetLastWindowSize(Window window)
         {
-            GetMainWindow.Dispatcher.Invoke(() =>
+            window.Dispatcher.Invoke(() =>
             {
-                GetMainWindow.Top = Settings.Default.Top;
-                GetMainWindow.Left = Settings.Default.Left;
-                GetMainWindow.Width = double.IsNaN(Settings.Default.Width) ? GetMainWindow.Width :
-                    double.IsNaN(Settings.Default.Width) ? GetMainWindow.ActualWidth : Settings.Default.Width;
-                GetMainWindow.Height = double.IsNaN(Settings.Default.Height) ? GetMainWindow.Height :
-                    double.IsNaN(Settings.Default.Height) ? GetMainWindow.ActualHeight : Settings.Default.Height;
+                window.Top = Settings.Default.Top;
+                window.Left = Settings.Default.Left;
+                window.Width = double.IsNaN(Settings.Default.Width) ? window.Width :
+                    double.IsNaN(Settings.Default.Width) ? window.ActualWidth : Settings.Default.Width;
+                window.Height = double.IsNaN(Settings.Default.Height) ? window.Height :
+                    double.IsNaN(Settings.Default.Height) ? window.ActualHeight : Settings.Default.Height;
             });
         }
 
-        internal static void SetWindowSize()
+        internal static void SetWindowSize(Window window)
         {
             if (Settings.Default.AutoFitWindow && Settings.Default.Fullscreen)
                 return;
 
-            GetMainWindow.Dispatcher.Invoke(() =>
+            window?.Dispatcher.Invoke(() =>
             {
-                if (GetMainWindow.WindowState == WindowState.Maximized || Settings.Default.Fullscreen)
+                if (window.WindowState == WindowState.Maximized || Settings.Default.Fullscreen)
                     return;
 
-                Settings.Default.Top = GetMainWindow.Top;
-                Settings.Default.Left = GetMainWindow.Left;
-                Settings.Default.Height = GetMainWindow.ActualHeight;
-                Settings.Default.Width = GetMainWindow.ActualWidth;
+                Settings.Default.Top = window.Top;
+                Settings.Default.Left = window.Left;
+                Settings.Default.Height = window.ActualHeight;
+                Settings.Default.Width = window.ActualWidth;
 
                 Settings.Default.Save();
             });
@@ -323,7 +341,7 @@ namespace PicView.WPF.UILogic.Sizing
         internal static void SystemEvents_DisplaySettingsChanged()
         {
             // Update size when screen resolution changes
-            MonitorInfo = MonitorSize.GetMonitorSize();
+            MonitorInfo = MonitorSize.GetMonitorSize(GetMainWindow);
             TryFitImage();
         }
 
@@ -336,7 +354,7 @@ namespace PicView.WPF.UILogic.Sizing
         {
             GetMainWindow.Hide(); // Make it feel faster
 
-            SetWindowSize();
+            SetWindowSize(ConfigureWindows.GetMainWindow);
 
             Navigation.Pics?.Clear(); // Make it cancel task
 

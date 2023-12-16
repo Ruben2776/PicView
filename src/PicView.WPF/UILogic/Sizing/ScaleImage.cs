@@ -220,8 +220,8 @@ namespace PicView.WPF.UILogic.Sizing
 
             if (Settings.Default.AutoFitWindow)
             {
-                CenterWindowOnScreen(Settings.Default
-                    .KeepCentered); // Vertically center or vertically and horizontally center
+                // Vertically center or vertically and horizontally center
+                CenterWindowOnScreen(GetMainWindow, Settings.Default.KeepCentered);
 
                 var titleBarMaxWidth = RotationAngle is 0 or 180
                     ? Math.Max(XWidth, GetMainWindow.MinWidth)
@@ -241,7 +241,7 @@ namespace PicView.WPF.UILogic.Sizing
             else
             {
                 // Fix title width to window size
-                GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize;
+                GetMainWindow.TitleText.MaxWidth = GetMainWindow.ActualWidth - interfaceSize <= 0 ? 0 : GetMainWindow.ActualWidth - interfaceSize;
             }
         }
 

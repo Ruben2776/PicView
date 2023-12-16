@@ -2,7 +2,7 @@
     x:Class="PicView.WPF.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    StartupUri="/Views/Windows/MainWindow.xaml">
+    StartupUri="/Views/Windows/Startup-Window.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

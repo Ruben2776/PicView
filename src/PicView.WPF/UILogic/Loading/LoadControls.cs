@@ -305,11 +305,5 @@ namespace PicView.WPF.UILogic.Loading
             Trace.WriteLine(nameof(GetQuickResize) + " loaded ");
 #endif
         }
-
-        internal static void LoadSpinWaiter()
-        {
-            GetSpinWaiter = new SpinWaiter();
-            ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetSpinWaiter);
-        }
     }
 }
