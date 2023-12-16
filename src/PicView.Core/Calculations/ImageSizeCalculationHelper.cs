@@ -20,15 +20,18 @@ public static class ImageSizeCalculationHelper
         /// </summary>
         public double Height { get; private set; }
 
+        public double AspectRatio { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageSize"/> struct with the specified width and height.
         /// </summary>
         /// <param name="width">The width of the image.</param>
         /// <param name="height">The height of the image.</param>
-        public ImageSize(double width, double height)
+        public ImageSize(double width, double height, double aspectRatio)
         {
             Width = width;
             Height = height;
+            AspectRatio = aspectRatio;
         }
     }
 
@@ -72,7 +75,7 @@ public static class ImageSizeCalculationHelper
         if (width <= 0 || height <= 0 || rotationAngle > 360 || rotationAngle < 0)
         {
             // Invalid input, return zero-sized image
-            return new ImageSize(0, 0);
+            return new ImageSize(0, 0, 0);
         }
 
         double aspectRatio;
@@ -127,6 +130,6 @@ public static class ImageSizeCalculationHelper
                 break;
         }
 
-        return new ImageSize(width * aspectRatio, height * aspectRatio);
+        return new ImageSize(width * aspectRatio, height * aspectRatio, aspectRatio);
     }
 }
