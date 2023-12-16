@@ -232,13 +232,16 @@ namespace PicView.WPF.ConfigureSettings
 
             Navigation.Pics = fileList;
 
+            var checkIfGalleryHasChildren = false;
+
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 SetTitle.SetTitleString(preloadValue.BitmapSource.PixelWidth, preloadValue.BitmapSource.PixelHeight,
                     Navigation.FolderIndex, preloadValue.FileInfo);
+                checkIfGalleryHasChildren = UC.GetPicGallery?.Container.Children.Count > 0;
             });
 
-            if (UC.GetPicGallery?.Container.Children.Count > 0)
+            if (checkIfGalleryHasChildren)
             {
                 if (initialValue)
                 {
