@@ -191,6 +191,7 @@ namespace PicView.WPF.PicGallery
                     };
                     await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
                     await Loop(0, index, options).ConfigureAwait(false);
+                    IsLoading = false;
                 }
                 catch (ObjectDisposedException exception)
                 {

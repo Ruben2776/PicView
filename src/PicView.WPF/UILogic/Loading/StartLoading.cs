@@ -1,10 +1,4 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using ImageMagick;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.Windows.Threading;
+﻿using ImageMagick;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.ImageHandling;
@@ -14,6 +8,11 @@ using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Misc;
 using PicView.WPF.Views.Windows;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Loading.LoadContextMenus;
 using static PicView.WPF.UILogic.Loading.LoadControls;
@@ -66,27 +65,28 @@ namespace PicView.WPF.UILogic.Loading
                     if (Settings.Default.AutoFitWindow)
                     {
                         var size = Core.Calculations.ImageSizeCalculationHelper.GetImageSize(
-                            bitmapSource.PixelWidth,
-                            bitmapSource.PixelHeight,
-                            MonitorInfo.WorkArea.Width,
-                            MonitorInfo.WorkArea.Height,
-                            0,
-                            Settings.Default.FillImage,
-                            20 * MonitorInfo.DpiScaling,
-                            MonitorInfo.DpiScaling,
-                            Settings.Default.Fullscreen,
-                            30 * MonitorInfo.DpiScaling,
-                            25 * MonitorInfo.DpiScaling,
-                            Settings.Default.IsBottomGalleryShown ? Settings.Default.BottomGalleryItemSize : 0,
-                            true,
-                            ConfigureWindows.GetMainWindow.ParentContainer.Width,
-                            ConfigureWindows.GetMainWindow.ParentContainer.Height,
+                            width: bitmapSource.PixelWidth * MonitorInfo.DpiScaling,
+                            height: bitmapSource.PixelHeight * MonitorInfo.DpiScaling,
+                            monitorWidth: MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling,
+                            monitorHeight: MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling,
+                            rotationAngle: 0,
+                            stretch: Settings.Default.FillImage,
+                            padding: 20 * MonitorInfo.DpiScaling,
+                            dpiScaling: MonitorInfo.DpiScaling,
+                            fullscreen: Settings.Default.Fullscreen,
+                            uiTopSize: ConfigureWindows.GetMainWindow.TitleBar.Height * MonitorInfo.DpiScaling,
+                            uiBottomSize: ConfigureWindows.GetMainWindow.LowerBar.Height * MonitorInfo.DpiScaling,
+                            galleryHeight: Settings.Default.IsBottomGalleryShown ? Settings.Default.BottomGalleryItemSize : 0,
+                            autoFit: true,
+                            containerWidth: ConfigureWindows.GetMainWindow.ParentContainer.Width * MonitorInfo.DpiScaling,
+                            containerHeight: ConfigureWindows.GetMainWindow.ParentContainer.Height * MonitorInfo.DpiScaling,
                             Settings.Default.ScrollEnabled
                             );
                         image.Stretch = Stretch.Fill;
                         image.Width = startupWindow.Width = size.Width;
                         image.Height = startupWindow.Height = size.Height;
                         CenterWindowOnScreen(startupWindow);
+                        ScaleImage.AspectRatio = size.AspectRatio;
                     }
                     image.Source = bitmapSource;
                 });
@@ -97,7 +97,7 @@ namespace PicView.WPF.UILogic.Loading
                 startupWindow.TheGrid.Children.Remove(spinner);
                 var mainWindow = new MainWindow();
                 ConfigureWindows.GetMainWindow = mainWindow;
-                // Determine preferred UI for startup
+
                 if (Settings.Default.AutoFitWindow == false)
                 {
                     SetLastWindowSize(mainWindow);

@@ -1,8 +1,8 @@
-﻿using System.Windows;
-using PicView.WPF.ChangeImage;
+﻿using PicView.WPF.ChangeImage;
 using PicView.WPF.PicGallery;
 using PicView.WPF.Properties;
 using PicView.WPF.UILogic.Sizing;
+using System.Windows;
 using static PicView.WPF.Animations.FadeControls;
 using Timer = System.Timers.Timer;
 
@@ -44,7 +44,34 @@ namespace PicView.WPF.UILogic
                 AutoReset = false,
                 Enabled = true,
             };
-            timer.Elapsed += (_, _) => ScaleImage.TryFitImage();
+            timer.Elapsed += async delegate
+            {
+                ScaleImage.TryFitImage();
+                // Show gallery if needed
+                var shouldLoadBottomGallery = Settings.Default.IsBottomGalleryShown;
+                if (Settings.Default.ShowInterface == false)
+                {
+                    shouldLoadBottomGallery = Settings.Default.ShowAltInterfaceBottomGallery;
+                }
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    if (shouldLoadBottomGallery && UC.GetPicGallery is null)
+                    {
+                        shouldLoadBottomGallery = true;
+                        GalleryToggle.ShowBottomGallery();
+                        return;
+                    }
+
+                    if (UC.GetPicGallery?.Container.Children.Count > 0)
+                    {
+                        shouldLoadBottomGallery = false;
+                    }
+                });
+                if (shouldLoadBottomGallery)
+                {
+                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                }
+            };
 
             Settings.Default.Save();
         }

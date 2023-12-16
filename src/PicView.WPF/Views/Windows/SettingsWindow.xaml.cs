@@ -227,10 +227,28 @@ namespace PicView.WPF.Views.Windows
                 };
 
                 ShowBottomWhenHiddenRadio.IsChecked = Settings.Default.ShowAltInterfaceBottomGallery;
-                ShowBottomWhenHiddenRadio.Click += delegate
+                ShowBottomWhenHiddenRadio.Click += async delegate
                 {
                     Settings.Default.ShowAltInterfaceBottomGallery =
                         !Settings.Default.ShowAltInterfaceBottomGallery;
+                    if (Settings.Default.ShowInterface == false && Settings.Default.IsBottomGalleryShown)
+                    {
+                        if (Settings.Default.ShowAltInterfaceBottomGallery)
+                        {
+                            GalleryToggle.ShowBottomGallery();
+                            await Task.Delay(TimeSpan.FromSeconds(.5)); // Need to delay to cause calculation to be correct
+                            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ScaleImage.TryFitImage);
+
+                            if (GalleryLoad.IsLoading == false)
+                            {
+                                await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                            }
+                        }
+                        else
+                        {
+                            GalleryToggle.CloseBottomGallery();
+                        }
+                    }
                 };
 
                 CtrlZoom.IsChecked = Settings.Default.CtrlZoom;

@@ -65,13 +65,18 @@ namespace PicView.WPF.ChangeImage
 
             Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
             FolderIndex = Pics.IndexOf(fileInfo.FullName);
+            var shouldLoadBottomGallery = Settings.Default.IsBottomGalleryShown;
+            if (Settings.Default.ShowInterface == false)
+            {
+                shouldLoadBottomGallery = Settings.Default.ShowAltInterfaceBottomGallery;
+            }
 
             await mainWindow.Dispatcher.InvokeAsync(() =>
             {
                 SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
                 UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
                 mainWindow.MainImage.Cursor = Cursors.Arrow;
-                if (Settings.Default.IsBottomGalleryShown)
+                if (shouldLoadBottomGallery)
                 {
                     GalleryToggle.ShowBottomGallery();
                 }
@@ -90,7 +95,7 @@ namespace PicView.WPF.ChangeImage
 
             _ = AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
-            if (Settings.Default.IsBottomGalleryShown)
+            if (shouldLoadBottomGallery)
             {
                 _ = Task.Run(async () =>
                 {
