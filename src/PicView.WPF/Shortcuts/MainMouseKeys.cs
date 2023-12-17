@@ -106,11 +106,11 @@ namespace PicView.WPF.Shortcuts
                     break;
 
                 case MouseButton.XButton1:
-                    await GetFileHistory.PrevAsync().ConfigureAwait(false);
+                    await FileHistoryNavigation.PrevAsync().ConfigureAwait(false);
                     break;
 
                 case MouseButton.XButton2:
-                    await GetFileHistory.NextAsync().ConfigureAwait(false);
+                    await FileHistoryNavigation.NextAsync().ConfigureAwait(false);
                     break;
             }
         }

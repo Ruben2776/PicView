@@ -185,8 +185,7 @@ namespace PicView.WPF.FileHandling
                             }
                         }
 
-                        GetFileHistory ??= new FileHistory();
-                        GetFileHistory.Add(Core.FileHandling.ArchiveExtraction.TempZipFile);
+                        FileHistoryNavigation.Add(Core.FileHandling.ArchiveExtraction.TempZipFile);
 
                         if (Settings.Default.IsBottomGalleryShown)
                         {

@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PicView.Core.Navigation;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Loading.LoadContextMenus;
 using static PicView.WPF.UILogic.Loading.LoadControls;
@@ -293,7 +294,6 @@ namespace PicView.WPF.UILogic.Loading
 
             // Initialize things!
             InitializeZoom();
-            GetFileHistory ??= new FileHistory();
 
             // Add things!
             Timers.AddTimers();

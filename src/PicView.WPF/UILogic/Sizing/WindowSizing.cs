@@ -369,7 +369,7 @@ namespace PicView.WPF.UILogic.Sizing
 
             Settings.Default.Save();
             DeleteFiles.DeleteTempFiles();
-            Navigation.GetFileHistory.WriteToFile();
+            FileHistoryNavigation.WriteToFile();
             // Update the keybindings.json file
             await CustomKeybindings.UpdateKeyBindingsFile();
             Application.Current.Shutdown();

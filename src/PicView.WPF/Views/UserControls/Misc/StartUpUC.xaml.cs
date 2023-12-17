@@ -129,7 +129,7 @@ namespace PicView.WPF.Views.UserControls.Misc
             SelectFile.Click += async (_, _) => await OpenSave.OpenAsync().ConfigureAwait(false);
 
             OpenLastFileButton.Click += async (_, _) =>
-                await Navigation.GetFileHistory.OpenLastFileAsync().ConfigureAwait(false);
+                await FileHistoryNavigation.OpenLastFileAsync().ConfigureAwait(false);
 
             PasteButton.Click += async (_, _) => await CopyPaste.PasteAsync().ConfigureAwait(false);
         }

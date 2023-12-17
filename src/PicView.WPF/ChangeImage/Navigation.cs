@@ -1,4 +1,5 @@
-﻿using PicView.WPF.ChangeTitlebar;
+﻿using PicView.Core.Navigation;
+using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.Properties;
@@ -62,8 +63,6 @@ namespace PicView.WPF.ChangeImage
         /// Used to move cursor when clicked
         /// </summary>
         internal static bool ClickArrowLeftClicked { get; set; }
-
-        internal static FileHistory? GetFileHistory;
 
         #endregion Static fields
 

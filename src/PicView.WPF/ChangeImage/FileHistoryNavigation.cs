@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
@@ -15,87 +16,18 @@ using PicView.WPF.UILogic.Sizing;
 
 namespace PicView.WPF.ChangeImage
 {
-    internal class FileHistory
+    internal static class FileHistoryNavigation
     {
-        private readonly List<string> _fileHistory;
-        private const short MaxCount = 15;
-        private readonly string _path;
+        private static FileHistory? _fileHistory;
 
-        internal FileHistory()
+        internal static void Add(string file)
         {
-            _fileHistory ??= new List<string>();
-            try
-            {
-                _path = FileFunctions.GetWritingPath() + "\\Recent.txt";
-
-                if (!File.Exists(_path))
-                {
-                    using var fs = File.Create(_path);
-                    fs.Seek(0, SeekOrigin.Begin);
-                }
-            }
-            catch (Exception e)
-            {
-                _path = "";
-            }
-
-            ReadFromFile();
+            _fileHistory ??= new FileHistory();
+            _fileHistory.Add(file);
         }
 
-        private void ReadFromFile()
+        internal static async Task OpenLastFileAsync()
         {
-            _fileHistory.Clear();
-
-            if (!File.Exists(_path))
-            {
-                return;
-            }
-
-            try
-            {
-                using var reader = new StreamReader(_path);
-                while (reader.Peek() >= 0)
-                {
-                    _fileHistory.Add(reader.ReadLine());
-                }
-            }
-            catch (Exception e)
-            {
-                Tooltip.ShowTooltipMessage(e.Message, true, TimeSpan.FromSeconds(5));
-            }
-        }
-
-        /// <summary>
-        /// Write all entries to the Recent.txt file
-        /// </summary>
-        internal void WriteToFile()
-        {
-            try
-            {
-                using var writer = new StreamWriter(_path);
-                foreach (var item in _fileHistory)
-                {
-                    writer.WriteLine(item);
-                }
-            }
-            catch (Exception e)
-            {
-                Tooltip.ShowTooltipMessage(e.Message, true, TimeSpan.FromSeconds(5));
-            }
-        }
-
-        internal async Task OpenLastFileAsync()
-        {
-            if (_fileHistory.Count <= 0)
-            {
-                return;
-            }
-
-            if (!File.Exists(_fileHistory.Last()))
-            {
-                return;
-            }
-
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (UC.GetStartUpUC is not null)
@@ -108,93 +40,79 @@ namespace PicView.WPF.ChangeImage
                 UC.GetSpinWaiter.Visibility = Visibility.Visible;
             }, DispatcherPriority.Normal);
 
+            _fileHistory ??= new FileHistory();
+            var fileEntry = await Task.FromResult(_fileHistory.GetLastFile()).ConfigureAwait(false);
+            if (fileEntry is null)
+            {
+                return;
+            }
             await Task.Run(async () => // Make sure UI responsive
             {
                 if (Settings.Default.IncludeSubDirectories)
                 {
-                    if (_fileHistory.Last().IsArchive())
+                    if (fileEntry.FilePath.IsArchive())
                     {
-                        await LoadPic.LoadPicFromArchiveAsync(_fileHistory.Last()).ConfigureAwait(false);
+                        await LoadPic.LoadPicFromArchiveAsync(fileEntry.FilePath).ConfigureAwait(false);
                         return;
                     }
 
-                    var currentFolder = Path.GetDirectoryName(_fileHistory.Last());
-                    var parentFolder = Path.GetDirectoryName(currentFolder);
-                    var fileInfo = new FileInfo(parentFolder);
+                    var fileInfo = new FileInfo(fileEntry.TopLevelDirectory);
                     Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
                     if (Navigation.Pics.Count > 0)
                     {
-                        Navigation.FolderIndex = Navigation.Pics.IndexOf(_fileHistory.Last());
+                        Navigation.FolderIndex = Navigation.Pics.IndexOf(fileEntry.FilePath);
                         await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
 
                         // Fix if Bottom Gallery is enabled
                         if (Settings.Default.IsBottomGalleryShown)
                         {
-                            if (UC.GetPicGallery is null)
+                            switch (UC.GetPicGallery)
                             {
-                                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
-                                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                                {
-                                    GalleryToggle.ShowBottomGallery();
-                                    ScaleImage.TryFitImage();
-                                });
-                                await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                            }
-                            else if (UC.GetPicGallery is { Visibility: Visibility.Collapsed })
-                            {
-                                var shouldLoadGallery = false;
-                                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                                {
-                                    GalleryToggle.ShowBottomGallery();
-                                    ScaleImage.TryFitImage();
-                                    if (UC.GetPicGallery.Container.Children.Count <= 0)
+                                case null:
+                                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
+                                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                                     {
-                                        shouldLoadGallery = true;
-                                    }
-                                });
-                                if (shouldLoadGallery)
-                                {
+                                        GalleryToggle.ShowBottomGallery();
+                                        ScaleImage.TryFitImage();
+                                    });
                                     await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                                }
+                                    break;
+
+                                case { Visibility: Visibility.Collapsed }:
+                                    {
+                                        var shouldLoadGallery = false;
+                                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                                        {
+                                            GalleryToggle.ShowBottomGallery();
+                                            ScaleImage.TryFitImage();
+                                            if (UC.GetPicGallery.Container.Children.Count <= 0)
+                                            {
+                                                shouldLoadGallery = true;
+                                            }
+                                        });
+                                        if (shouldLoadGallery)
+                                        {
+                                            await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                                        }
+
+                                        break;
+                                    }
                             }
                         }
                     }
                     else
                     {
-                        await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
+                        await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await LoadPic.LoadPicFromStringAsync(_fileHistory.Last()).ConfigureAwait(false);
+                    await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
                 }
             });
         }
 
-        internal void Add(string fileName)
-        {
-            if (string.IsNullOrWhiteSpace(fileName))
-            {
-                return;
-            }
-
-            lock (_fileHistory) // index out of range exception when multiple threads accessing it
-            {
-                if (_fileHistory.Exists(e => e.EndsWith(fileName)))
-                {
-                    return;
-                }
-
-                if (_fileHistory.Count >= MaxCount)
-                {
-                    _fileHistory.Remove(_fileHistory[0]);
-                }
-
-                _fileHistory.Add(fileName);
-            }
-        }
-
-        internal async Task NextAsync()
+        internal static async Task NextAsync()
         {
             if (Navigation.Pics.Count <= 0)
             {
@@ -202,21 +120,12 @@ namespace PicView.WPF.ChangeImage
                 return;
             }
 
-            var index = _fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
-            if (Settings.Default.Looping)
-            {
-                index = (index + 1 + _fileHistory.Count) % _fileHistory.Count;
-            }
-            else
-            {
-                index++;
-                if (index >= MaxCount)
-                    return;
-            }
+            _fileHistory ??= new FileHistory();
+            var fileEntry = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
 
-            if (Navigation.Pics.Contains(_fileHistory[index]))
+            if (Navigation.Pics.Contains(fileEntry.FilePath))
             {
-                if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+                if (fileEntry.FilePath == Navigation.Pics[Navigation.FolderIndex])
                 {
                     return;
                 }
@@ -231,14 +140,14 @@ namespace PicView.WPF.ChangeImage
                         GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
                     });
                 }
-                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(_fileHistory[index])).ConfigureAwait(false);
+                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(fileEntry.FilePath)).ConfigureAwait(false);
                 return;
             }
 
-            await LoadPic.LoadPicFromStringAsync(_fileHistory[index]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
         }
 
-        internal async Task PrevAsync()
+        internal static async Task PrevAsync()
         {
             if (Navigation.Pics.Count <= 0)
             {
@@ -246,23 +155,12 @@ namespace PicView.WPF.ChangeImage
                 return;
             }
 
-            var index = _fileHistory.IndexOf(Navigation.Pics[Navigation.FolderIndex]);
-            if (Settings.Default.Looping)
-            {
-                index = (index - 1 + _fileHistory.Count) % _fileHistory.Count;
-            }
-            else
-            {
-                index--;
-                if (index < 0)
-                {
-                    return;
-                }
-            }
+            _fileHistory ??= new FileHistory();
+            var fileEntry = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
 
-            if (Navigation.Pics.Contains(_fileHistory[index]))
+            if (Navigation.Pics.Contains(fileEntry.FilePath))
             {
-                if (_fileHistory[index] == Navigation.Pics[Navigation.FolderIndex])
+                if (fileEntry.FilePath == Navigation.Pics[Navigation.FolderIndex])
                 {
                     return;
                 }
@@ -277,11 +175,11 @@ namespace PicView.WPF.ChangeImage
                         GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
                     });
                 }
-                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(_fileHistory[index])).ConfigureAwait(false);
+                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(fileEntry.FilePath)).ConfigureAwait(false);
                 return;
             }
 
-            await LoadPic.LoadPicFromStringAsync(_fileHistory[index]).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
         }
 
         private static MenuItem MenuItem(string filePath, int i)
@@ -332,20 +230,20 @@ namespace PicView.WPF.ChangeImage
             return menuItem;
         }
 
-        internal void RefreshRecentItemsMenu()
+        internal static void RefreshRecentItemsMenu()
         {
             try
             {
                 var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
 
-                for (var i = 0; i < MaxCount; i++)
+                for (var i = 0; i < FileHistory.MaxCount; i++)
                 {
-                    if (_fileHistory.Count == i)
+                    if (_fileHistory.GetCount() == i)
                     {
                         return;
                     }
 
-                    var item = MenuItem(_fileHistory[i], i);
+                    var item = MenuItem(_fileHistory.GetEntryAt(i).FilePath, i);
                     if (cm.Items.Count <= i)
                     {
                         cm.Items.Add(item);
@@ -362,6 +260,12 @@ namespace PicView.WPF.ChangeImage
                 Trace.WriteLine(e);
 #endif
             }
+        }
+
+        internal static void WriteToFile()
+        {
+            _fileHistory ??= new FileHistory();
+            _fileHistory.WriteToFile();
         }
     }
 }

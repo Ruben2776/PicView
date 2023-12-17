@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.FileHandling;
@@ -20,12 +21,10 @@ namespace PicView.WPF.UILogic.Loading
     {
         internal static void AddContextMenus()
         {
-            GetFileHistory ??= new FileHistory();
-
             // Add main contextmenu
             MainContextMenu = (ContextMenu)Application.Current.Resources["mainCM"];
             GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
-            MainContextMenu.Opened += (_, _) => GetFileHistory.RefreshRecentItemsMenu();
+            MainContextMenu.Opened += (_, _) => FileHistoryNavigation.RefreshRecentItemsMenu();
 
             ///////////////////////////
             //     Open              \\
