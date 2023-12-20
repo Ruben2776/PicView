@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PicView.WPF.Shortcuts;
 using static PicView.WPF.Shortcuts.MainKeyboardShortcuts;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.UC;
@@ -27,6 +28,116 @@ namespace PicView.WPF.UILogic
     // ReSharper disable once InconsistentNaming
     internal static class UIHelper
     {
+        /// <summary>
+        /// Gets the function associated with a given function name.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <returns>Task containing the function.</returns>
+        internal static Task<Func<Task>> GetFunctionByName(string functionName)
+        {
+            // Remember to have exact matching names or it will be null
+            return Task.FromResult<Func<Task>>(functionName switch
+            {
+                // Navigation values
+                "Next" => Next,
+                "Prev" => Prev,
+                "Up" => Up,
+                "Down" => Down,
+
+                // Scroll
+                "ScrollToTop" => ScrollToTop,
+                "ScrollToBottom" => ScrollToBottom,
+
+                // Zoom
+                "ZoomIn" => ZoomIn,
+                "ZoomOut" => ZoomOut,
+                "ResetZoom" => ResetZoom,
+
+                // Toggles
+                "ToggleScroll" => ToggleScroll,
+                "ToggleLooping" => ToggleLooping,
+                "ToggleGallery" => ToggleGallery,
+
+                // Scale Window
+                "AutoFitWindow" => AutoFitWindow,
+                "AutoFitWindowAndStretch" => AutoFitWindowAndStretch,
+                "NormalWindow" => NormalWindow,
+                "NormalWindowAndStretch" => NormalWindowAndStretch,
+
+                // Window functions
+                "Fullscreen" => Fullscreen,
+                "SetTopMost" => SetTopMost,
+                "Close" => Close,
+                "ToggleInterface" => ToggleInterface,
+                "NewWindow" => NewWindow,
+
+                // Windows
+                "AboutWindow" => AboutWindow,
+                "EffectsWindow" => EffectsWindow,
+                "ImageInfoWindow" => ImageInfoWindow,
+                "ResizeWindow" => ResizeWindow,
+                "SettingsWindow" => SettingsWindow,
+
+                // Open functions
+                "Open" => Open,
+                "OpenWith" => OpenWith,
+                "OpenInExplorer" => OpenInExplorer,
+                "Save" => OpenSave.SaveFilesAsync,
+                "Reload" => Reload,
+
+                // Copy functions
+                "CopyFile" => CopyFile,
+                "CopyFilePath" => CopyFilePath,
+                "CopyImage" => CopyImage,
+                "CopyBase64" => CopyBase64,
+                "DuplicateFile" => DuplicateFile,
+                "CutFile" => CutFile,
+                "Paste" => Paste,
+
+                // File functions
+                "DeleteFile" => DeleteFile,
+                "Rename" => Rename,
+                "ShowFileProperties" => ShowFileProperties,
+
+                // Image functions
+                "ResizeImage" => ResizeImage,
+                "Crop" => Crop,
+                "Flip" => Flip,
+                "OptimizeImage" => OptimizeImage,
+                "Stretch" => Stretch,
+
+                // Set stars
+                "Set0Star" => Set0Star,
+                "Set1Star" => Set1Star,
+                "Set2Star" => Set2Star,
+                "Set3Star" => Set3Star,
+                "Set4Star" => Set4Star,
+                "Set5Star" => Set5Star,
+
+                // Misc
+                "ChangeBackground" => ChangeBackground,
+                "GalleryClick" => GalleryClick,
+                "Center" => Center,
+                "Slideshow" => Slideshow,
+                "ColorPicker" => ColorPicker,
+
+                _ => null
+            });
+        }
+
+        /// <summary>
+        /// Gets the function name associated with a given function.
+        /// </summary>
+        /// <param name="function">The function.</param>
+        /// <returns>The function name.</returns>
+        internal static string? GetFunctionNameByFunction(Func<Task> function)
+        {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (function == null)
+                return "";
+            return CustomKeybindings.CustomShortcuts.FirstOrDefault(x => x.Value == function).Value.Method.Name ?? "";
+        }
+
         #region UI functions
 
         /// <summary>

@@ -468,7 +468,7 @@ public partial class ShortcutList
 
         string GetFunctionKey()
         {
-            var function = CustomKeybindings.GetFunctionByName(functionName).Result;
+            var function = UIHelper.GetFunctionByName(functionName).Result;
 
             // Find the key associated with the specified function
             var keys = CustomKeybindings.CustomShortcuts.Where(x => x.Value == function).Select(x => x.Key).ToList();
@@ -563,7 +563,7 @@ public partial class ShortcutList
         UpdateModifierTextBoxes(functionName, key, alt);
         await Dispatcher.InvokeAsync(Keyboard.ClearFocus);
 
-        var function = await CustomKeybindings.GetFunctionByName(functionName).ConfigureAwait(false);
+        var function = await UIHelper.GetFunctionByName(functionName).ConfigureAwait(false);
 
         // Don't have same key for more than one function
         CustomKeybindings.CustomShortcuts.Remove(e.Key);
