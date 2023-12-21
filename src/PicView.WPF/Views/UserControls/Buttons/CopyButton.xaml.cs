@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using PicView.WPF.Animations;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
 namespace PicView.WPF.Views.UserControls.Buttons
@@ -13,7 +13,7 @@ namespace PicView.WPF.Views.UserControls.Buttons
 
             Loaded += delegate
             {
-                if (Settings.Default.DarkTheme)
+                if (SettingsHelper.Settings.Theme.Dark)
                 {
                     SetButtonIconMouseOverAnimations(TheButton, ButtonBrush, IconBrush);
                 }

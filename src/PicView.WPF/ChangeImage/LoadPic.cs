@@ -1,18 +1,18 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using ImageMagick;
+﻿using ImageMagick;
 using PicView.Core.FileHandling;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Gallery;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using PicView.Core.Config;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ChangeTitlebar.SetTitle;
@@ -193,7 +193,7 @@ namespace PicView.WPF.ChangeImage
 
             FolderIndex = Pics.IndexOf(fileInfo.FullName);
             await LoadPicAtIndexAsync(FolderIndex, fileInfo).ConfigureAwait(false);
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 if (folderChanged)
                 {
@@ -323,7 +323,7 @@ namespace PicView.WPF.ChangeImage
                 await LoadPicAtIndexAsync(0, fileInfo).ConfigureAwait(false);
             }
 
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 if (GetPicGallery is null)
                 {

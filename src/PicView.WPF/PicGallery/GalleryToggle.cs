@@ -1,5 +1,5 @@
-﻿using PicView.WPF.Animations;
-using PicView.WPF.Properties;
+﻿using PicView.Core.Config;
+using PicView.WPF.Animations;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Gallery;
@@ -31,7 +31,7 @@ namespace PicView.WPF.PicGallery
                 GetMainWindow.ParentContainer.Children.Add(GetPicGallery);
             }
 
-            if (Settings.Default.IsBottomGalleryShown && IsGalleryOpen == false)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && IsGalleryOpen == false)
             {
                 ShowBottomGallery();
                 ScaleImage.TryFitImage();
@@ -42,7 +42,7 @@ namespace PicView.WPF.PicGallery
                 IsGalleryOpen = true;
 
                 // Set size
-                GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
+                GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize);
                 GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;
                 GetPicGallery.Height = GetMainWindow.ParentContainer.ActualHeight;
 
@@ -68,7 +68,7 @@ namespace PicView.WPF.PicGallery
 
         internal static async Task OpenHorizontalGalleryAsync()
         {
-            switch (Settings.Default.IsBottomGalleryShown)
+            switch (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 case true when IsGalleryOpen:
                     await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
@@ -79,7 +79,7 @@ namespace PicView.WPF.PicGallery
                         }
 
                         // Set size
-                        GalleryNavigation.SetSize(Settings.Default.ExpandedGalleryItemSize);
+                        GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize);
                         GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;
 
                         // Set alignment
@@ -168,7 +168,7 @@ namespace PicView.WPF.PicGallery
         {
             GetPicGallery ??= new Views.UserControls.Gallery.PicGallery();
             Panel.SetZIndex(GetPicGallery, 2);
-            GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+            GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.BottomGalleryItemSize);
             GetPicGallery.Width = GetMainWindow.ParentContainer.ActualWidth;
             GetPicGallery.Height = GalleryNavigation.PicGalleryItemSize + 22;
             GetPicGallery.Visibility = Visibility.Visible;
@@ -235,7 +235,7 @@ namespace PicView.WPF.PicGallery
             });
 
             IsGalleryOpen = false;
-            Settings.Default.IsBottomGalleryShown = false;
+            SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
         }
 
         internal static void CloseHorizontalGallery()
@@ -246,7 +246,7 @@ namespace PicView.WPF.PicGallery
                 return;
             }
 
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 var heightAnimation = new DoubleAnimation
                 {
@@ -257,7 +257,7 @@ namespace PicView.WPF.PicGallery
                     To = GalleryNavigation.PicGalleryItemSize + 22,
                     Duration = TimeSpan.FromSeconds(.5)
                 };
-                GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+                GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.BottomGalleryItemSize);
                 for (var i = 0; i < GetPicGallery.Container.Children.Count; i++)
                 {
                     var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
@@ -277,7 +277,7 @@ namespace PicView.WPF.PicGallery
             }
 
             // Restore interface elements if needed
-            if (!Settings.Default.ShowInterface || Settings.Default.Fullscreen)
+            if (!SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 HideInterfaceLogic.IsNavigationShown(true);
                 HideInterfaceLogic.IsShortcutsShown(true);
@@ -305,7 +305,7 @@ namespace PicView.WPF.PicGallery
             {
                 CloseHorizontalGallery();
             }
-            else if (Settings.Default.IsBottomGalleryShown)
+            else if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 IsGalleryOpen = true; // Force open
 

@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using PicView.WPF.Properties;
-using PicView.WPF.Views.UserControls.Buttons;
+﻿using PicView.WPF.Views.UserControls.Buttons;
 using PicView.WPF.Views.UserControls.Menus;
 using PicView.WPF.Views.UserControls.Misc;
+using System.Diagnostics;
+using System.Windows;
+using PicView.Core.Config;
 using static PicView.WPF.UILogic.UC;
 
 namespace PicView.WPF.UILogic.Loading
@@ -190,7 +190,7 @@ namespace PicView.WPF.UILogic.Loading
                 Margin = new Thickness(81, 0, 0, 0)
             };
 
-            GetQuickSettingsMenu.SetFit.IsChecked = Settings.Default.AutoFitWindow;
+            GetQuickSettingsMenu.SetFit.IsChecked = SettingsHelper.Settings.WindowProperties.AutoFit;
 
             ConfigureWindows.GetMainWindow.ParentContainer.Children.Add(GetQuickSettingsMenu);
 

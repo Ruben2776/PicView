@@ -4,7 +4,7 @@ using System.Windows.Input;
 using PicView.Editing.HlslEffects;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.FileHandling;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
@@ -209,7 +209,7 @@ namespace PicView.WPF.Views.Windows
 
             // Button, Brush and Text for Save function
             SetButtonIconMouseOverAnimations(SaveButton, SaveBrush, SaveText);
-            SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync(Settings.Default.ShowFileSavingDialog);
+            SaveButton.Click += async (_, _) => await OpenSave.SaveFilesAsync(SettingsHelper.Settings.UIProperties.ShowFileSavingDialog);
 
             #endregion button events
         }

@@ -1,7 +1,7 @@
-﻿using PicView.WPF.ChangeTitlebar;
+﻿using PicView.Core.Config;
+using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.Editing;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
 using System.Collections.Specialized;
@@ -24,7 +24,7 @@ namespace PicView.WPF.UILogic.DragAndDrop
             if (ConfigureWindows.GetMainWindow.MainImage.Source == null
                 || Keyboard.Modifiers is ModifierKeys.Shift or ModifierKeys.Alt
                 || GalleryFunctions.IsGalleryOpen
-                || Settings.Default.Fullscreen
+                || SettingsHelper.Settings.WindowProperties.Fullscreen
                 || Scroll.IsAutoScrolling
                 || ZoomLogic.IsZoomed
                 || UC.GetQuickResize is not null && UC.GetQuickResize.Opacity > 0
@@ -45,7 +45,7 @@ namespace PicView.WPF.UILogic.DragAndDrop
 
             if (UC.GetCroppingTool is { IsVisible: true }) return;
 
-            if (Settings.Default.ShowInterface == false)
+            if (SettingsHelper.Settings.UIProperties.ShowInterface == false)
             {
                 if (Keyboard.Modifiers != ModifierKeys.Control)
                 {

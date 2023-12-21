@@ -1,7 +1,7 @@
-﻿using PicView.WPF.ChangeImage;
+﻿using PicView.Core.Config;
+using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ImageHandling;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
@@ -21,7 +21,7 @@ namespace PicView.WPF.PicGallery
     {
         internal static async Task ClickAsync(int id)
         {
-            if (Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen)
             {
                 await ItemClickAsync(id).ConfigureAwait(false);
                 return;
@@ -32,11 +32,11 @@ namespace PicView.WPF.PicGallery
             var galleryCloseAnimation = new DoubleAnimation
             {
                 FillBehavior = FillBehavior.Stop,
-                AccelerationRatio = Settings.Default.IsBottomGalleryShown ? .6 : 0.5,
-                DecelerationRatio = Settings.Default.IsBottomGalleryShown ? .4 : 0.5,
+                AccelerationRatio = SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? .6 : 0.5,
+                DecelerationRatio = SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? .4 : 0.5,
                 From = GetPicGallery.ActualHeight,
                 To = GalleryNavigation.PicGalleryItemSize + 22,
-                Duration = Settings.Default.IsBottomGalleryShown ? TimeSpan.FromSeconds(.6) : TimeSpan.FromSeconds(.7)
+                Duration = SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? TimeSpan.FromSeconds(.6) : TimeSpan.FromSeconds(.7)
             };
 
             galleryCloseAnimation.Completed += async delegate
@@ -62,25 +62,25 @@ namespace PicView.WPF.PicGallery
                 }
 
                 // Show closing animation from bottom gallery
-                if (!Settings.Default.IsBottomGalleryShown)
+                if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                 {
                     return;
                 }
 
                 ConfigureWindows.GetMainWindow.MainImage.Width = XWidth;
                 ConfigureWindows.GetMainWindow.MainImage.Height = XHeight;
-                GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+                GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.BottomGalleryItemSize);
                 GalleryFunctions.ReCalculateItemSizes();
                 GetPicGallery.BeginAnimation(FrameworkElement.HeightProperty, galleryCloseAnimation);
             });
 
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 await ItemClickAsync(id).ConfigureAwait(false);
                 return; // Only show width and height animation when bottom gallery is not shown
             }
 
-            if (Settings.Default.AutoFitWindow) // Fix stretching whole screen when auto fitting
+            if (SettingsHelper.Settings.WindowProperties.AutoFit) // Fix stretching whole screen when auto fitting
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
@@ -123,7 +123,7 @@ namespace PicView.WPF.PicGallery
                     GetPicGallery.Visibility = Visibility.Collapsed; // prevent it from popping up again
                     GalleryFunctions.IsGalleryOpen = false;
                     ConfigureWindows.GetMainWindow.MainImage.Visibility = Visibility.Visible;
-                    if (Settings.Default.AutoFitWindow) // Revert back to auto fitting
+                    if (SettingsHelper.Settings.WindowProperties.AutoFit) // Revert back to auto fitting
                     {
                         ConfigureWindows.GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                     }
@@ -146,7 +146,7 @@ namespace PicView.WPF.PicGallery
 
                 GetPicGallery.x2.Visibility = Visibility.Hidden;
 
-                if (Settings.Default.IsBottomGalleryShown) return;
+                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown) return;
 
                 ConfigureWindows.GetMainWindow.MainImage.BeginAnimation(FrameworkElement.WidthProperty, widthAnimation);
                 ConfigureWindows.GetMainWindow.MainImage.BeginAnimation(FrameworkElement.HeightProperty,
@@ -163,8 +163,8 @@ namespace PicView.WPF.PicGallery
                 GalleryNavigation.SetSelected(FolderIndex, false);
 
                 // Restore interface elements if needed
-                if (!Settings.Default.ShowInterface || Settings.Default is
-                    { Fullscreen: true, ShowAltInterfaceButtons: true })
+                if (!SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings is
+                    { WindowProperties.Fullscreen: true, UIProperties.ShowAltInterfaceButtons: true })
                 {
                     HideInterfaceLogic.IsNavigationShown(true);
                     HideInterfaceLogic.IsShortcutsShown(true);

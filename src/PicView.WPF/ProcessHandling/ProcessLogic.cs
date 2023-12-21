@@ -1,5 +1,5 @@
-﻿using PicView.WPF.ChangeImage;
-using PicView.WPF.Properties;
+﻿using PicView.Core.Config;
+using PicView.WPF.ChangeImage;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -16,7 +16,7 @@ internal static class ProcessLogic
     /// </summary>
     internal static void RestartApp()
     {
-        Settings.Default.Save();
+        SettingsHelper.SaveSettingsAsync();
 
         string args;
         if (Navigation.Pics?.Count > Navigation.FolderIndex)

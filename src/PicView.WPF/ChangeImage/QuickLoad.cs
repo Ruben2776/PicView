@@ -1,7 +1,7 @@
-﻿using PicView.Core.FileHandling;
+﻿using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
@@ -65,10 +65,10 @@ namespace PicView.WPF.ChangeImage
 
             Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
             FolderIndex = Pics.IndexOf(fileInfo.FullName);
-            var shouldLoadBottomGallery = Settings.Default.IsBottomGalleryShown;
-            if (Settings.Default.ShowInterface == false)
+            var shouldLoadBottomGallery = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+            if (SettingsHelper.Settings.UIProperties.ShowInterface == false)
             {
-                shouldLoadBottomGallery = Settings.Default.ShowAltInterfaceBottomGallery;
+                shouldLoadBottomGallery = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
             }
 
             await mainWindow.Dispatcher.InvokeAsync(() =>

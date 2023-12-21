@@ -1,13 +1,13 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.FileLists;
 
@@ -163,7 +163,7 @@ namespace PicView.WPF.FileHandling
                     {
                         await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
 
-                        if (Settings.Default.IsBottomGalleryShown)
+                        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                         {
                             if (UC.GetPicGallery is null)
                             {
@@ -187,7 +187,7 @@ namespace PicView.WPF.FileHandling
 
                         FileHistoryNavigation.Add(Core.FileHandling.ArchiveExtraction.TempZipFile);
 
-                        if (Settings.Default.IsBottomGalleryShown)
+                        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                         {
                             await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
                         }

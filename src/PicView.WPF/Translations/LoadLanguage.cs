@@ -1,6 +1,6 @@
-﻿using System.Globalization;
+﻿using PicView.Core.Config;
+using System.Globalization;
 using System.Windows;
-using PicView.WPF.Properties;
 
 namespace PicView.WPF.Translations
 {
@@ -14,7 +14,7 @@ namespace PicView.WPF.Translations
         {
             var isoLanguage = isFromCulture
                 ? CultureInfo.CurrentCulture.TwoLetterISOLanguageName
-                : Settings.Default.UserLanguage;
+                : SettingsHelper.Settings.UIProperties.UserLanguage;
             Uri? source;
             switch (isoLanguage)
             {
@@ -127,9 +127,9 @@ namespace PicView.WPF.Translations
         internal static void ChangeLanguage(int language)
         {
             var choice = (Languages)language;
-            Settings.Default.UserLanguage = choice.ToString().Replace('_', '-');
+            SettingsHelper.Settings.UIProperties.UserLanguage = choice.ToString().Replace('_', '-');
 
-            Settings.Default.Save();
+            SettingsHelper.SaveSettingsAsync();
         }
     }
 }

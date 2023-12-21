@@ -1,9 +1,9 @@
-﻿using System.Windows;
+﻿using PicView.Core.Config;
+using PicView.WPF.PicGallery;
+using PicView.WPF.Views.UserControls.Gallery;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
-using PicView.WPF.Views.UserControls.Gallery;
 
 namespace PicView.WPF.Animations
 {
@@ -106,44 +106,44 @@ namespace PicView.WPF.Animations
 
         internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colorTheme)
         {
-            ColorAnimation.From = colorTheme switch
-            {
-                2 => Settings.Default.Pink,
-                3 => Settings.Default.Orange,
-                4 => Settings.Default.Green,
-                5 => Settings.Default.Red,
-                6 => Settings.Default.Teal,
-                7 => Settings.Default.Aqua,
-                8 => Settings.Default.Golden,
-                9 => Settings.Default.Purple,
-                10 => Settings.Default.Cyan,
-                11 => Settings.Default.Magenta,
-                12 => Settings.Default.Lime,
-                _ => Settings.Default.Blue,
-            };
-            ColorAnimation.To = Color.FromArgb(a, r, g, b);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
+            //ColorAnimation.From = colorTheme switch
+            //{
+            //    2 => SettingsHelper.Settings.Pink,
+            //    3 => SettingsHelper.Settings.Orange,
+            //    4 => SettingsHelper.Settings.Green,
+            //    5 => SettingsHelper.Settings.Red,
+            //    6 => SettingsHelper.Settings.Teal,
+            //    7 => SettingsHelper.Settings.Aqua,
+            //    8 => SettingsHelper.Settings.Golden,
+            //    9 => SettingsHelper.Settings.Purple,
+            //    10 => SettingsHelper.Settings.Cyan,
+            //    11 => SettingsHelper.Settings.Magenta,
+            //    12 => SettingsHelper.Settings.Lime,
+            //    _ => SettingsHelper.Settings.Blue,
+            //};
+            //ColorAnimation.To = Color.FromArgb(a, r, g, b);
+            //brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
         internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colorTheme)
         {
-            ColorAnimation.From = Color.FromArgb(a, r, g, b);
-            ColorAnimation.To = colorTheme switch
-            {
-                2 => Settings.Default.Pink,
-                3 => Settings.Default.Orange,
-                4 => Settings.Default.Green,
-                5 => Settings.Default.Red,
-                6 => Settings.Default.Teal,
-                7 => Settings.Default.Aqua,
-                8 => Settings.Default.Golden,
-                9 => Settings.Default.Purple,
-                10 => Settings.Default.Cyan,
-                11 => Settings.Default.Magenta,
-                12 => Settings.Default.Lime,
-                _ => Settings.Default.Blue,
-            };
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
+            //ColorAnimation.From = Color.FromArgb(a, r, g, b);
+            //ColorAnimation.To = colorTheme switch
+            //{
+            //    2 => SettingsHelper.Settings.Pink,
+            //    3 => SettingsHelper.Settings.Orange,
+            //    4 => SettingsHelper.Settings.Green,
+            //    5 => SettingsHelper.Settings.Red,
+            //    6 => SettingsHelper.Settings.Teal,
+            //    7 => SettingsHelper.Settings.Aqua,
+            //    8 => SettingsHelper.Settings.Golden,
+            //    9 => SettingsHelper.Settings.Purple,
+            //    10 => SettingsHelper.Settings.Cyan,
+            //    11 => SettingsHelper.Settings.Magenta,
+            //    12 => SettingsHelper.Settings.Lime,
+            //    _ => SettingsHelper.Settings.Blue,
+            //};
+            //brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
         #endregion Color Events
@@ -152,21 +152,22 @@ namespace PicView.WPF.Animations
 
         internal static Color GetPreferredColor()
         {
-            return Settings.Default.ColorTheme switch
-            {
-                2 => Settings.Default.Pink,
-                3 => Settings.Default.Orange,
-                4 => Settings.Default.Green,
-                5 => Settings.Default.Red,
-                6 => Settings.Default.Teal,
-                7 => Settings.Default.Aqua,
-                8 => Settings.Default.Golden,
-                9 => Settings.Default.Purple,
-                10 => Settings.Default.Cyan,
-                11 => Settings.Default.Magenta,
-                12 => Settings.Default.Lime,
-                _ => Settings.Default.Blue,
-            };
+            //return SettingsHelper.Settings.Theme.ColorTheme switch
+            //{
+            //    2 => SettingsHelper.Settings.Pink,
+            //    3 => SettingsHelper.Settings.Orange,
+            //    4 => SettingsHelper.Settings.Green,
+            //    5 => SettingsHelper.Settings.Red,
+            //    6 => SettingsHelper.Settings.Teal,
+            //    7 => SettingsHelper.Settings.Aqua,
+            //    8 => SettingsHelper.Settings.Golden,
+            //    9 => SettingsHelper.Settings.Purple,
+            //    10 => SettingsHelper.Settings.Cyan,
+            //    11 => SettingsHelper.Settings.Magenta,
+            //    12 => SettingsHelper.Settings.Lime,
+            //    _ => SettingsHelper.Settings.Blue,
+            //};
+            return Colors.Orange;
         }
 
         #endregion Color settings

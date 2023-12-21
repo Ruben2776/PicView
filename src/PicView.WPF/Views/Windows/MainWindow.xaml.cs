@@ -1,21 +1,20 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using PicView.Core.Config;
 using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
-using PicView.WPF.Translations;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.DragAndDrop;
 using PicView.WPF.UILogic.Loading;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 using static PicView.WPF.UILogic.Sizing.WindowSizing;
 using static PicView.WPF.UILogic.UC;
 
@@ -26,31 +25,31 @@ namespace PicView.WPF.Views.Windows
         public MainWindow()
         {
             // Updates settings from older version to newer version
-            if (Settings.Default.CallUpgrade)
-            {
-                Settings.Default.Upgrade();
-                Settings.Default.CallUpgrade = false;
-                LoadLanguage.DetermineLanguage(Settings.Default.UserLanguage != "en");
-            }
-            else if (Settings.Default.UserLanguage != "en")
-            {
-                LoadLanguage.DetermineLanguage(false);
-            }
+            //if (SettingsHelper.Settings.CallUpgrade)
+            //{
+            //    SettingsHelper.Settings.Upgrade();
+            //    SettingsHelper.Settings.CallUpgrade = false;
+            //    LoadLanguage.DetermineLanguage(SettingsHelper.Settings.UIProperties.UserLanguage != "en");
+            //}
+            //else if (SettingsHelper.Settings.UIProperties.UserLanguage; != "en")
+            //{
+            //    LoadLanguage.DetermineLanguage(false);
+            //}
 
-            if (Settings.Default.DarkTheme == false)
+            if (SettingsHelper.Settings.Theme.Dark == false)
             {
                 ConfigColors.ChangeTheme(false);
             }
 
             InitializeComponent();
 
-            if (Settings.Default.AutoFitWindow == false)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
             {
                 // Need to change startup location after initialize component
                 WindowStartupLocation = WindowStartupLocation.Manual;
             }
 
-            Topmost = Settings.Default.TopMost;
+            Topmost = SettingsHelper.Settings.WindowProperties.TopMost;
 
             ContentRendered += delegate
             {
@@ -157,11 +156,11 @@ namespace PicView.WPF.Views.Windows
         protected override void OnRenderSizeChanged(SizeChangedInfo? sizeInfo)
         {
             if (sizeInfo == null || sizeInfo is { WidthChanged: false, HeightChanged: false } ||
-                Settings.Default.AutoFitWindow == false)
+                SettingsHelper.Settings.WindowProperties.AutoFit == false)
             {
                 // Resize Gallery
                 if (GetPicGallery != null && GalleryFunctions.IsGalleryOpen ||
-                    GetPicGallery != null && Settings.Default.IsBottomGalleryShown)
+                    GetPicGallery != null && SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                 {
                     if (GalleryFunctions.IsGalleryOpen)
                     {

@@ -1,14 +1,14 @@
-﻿using System.IO;
+﻿using PicView.Core.Config;
+using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.TransformImage;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.WPF.FileHandling;
-using PicView.WPF.ImageHandling;
-using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
-using PicView.WPF.UILogic;
-using PicView.WPF.UILogic.TransformImage;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -50,7 +50,7 @@ namespace PicView.WPF.ChangeImage
                 FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
 
                 // Scroll to top if scroll enabled
-                if (Settings.Default.ScrollEnabled)
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                 {
                     ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
                 }
@@ -149,7 +149,7 @@ namespace PicView.WPF.ChangeImage
             {
                 ToggleStartUpUC(true);
 
-                if (Settings.Default.ScrollEnabled)
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                 {
                     ConfigureWindows.GetMainWindow.Scroller.ScrollToTop();
                 }

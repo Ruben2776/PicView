@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using static PicView.WPF.ChangeImage.Navigation;
 
 namespace PicView.WPF.UILogic.TransformImage
@@ -25,7 +25,7 @@ namespace PicView.WPF.UILogic.TransformImage
 
         public static void TriggerScalingModeUpdate()
         {
-            var scalingMode = ZoomValue >= 1 && Settings.Default.IsScalingSetToNearestNeighbor ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
+            var scalingMode = ZoomValue >= 1 && SettingsHelper.Settings.ImageScaling.IsScalingSetToNearestNeighbor ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
 
             try
             {
@@ -190,8 +190,8 @@ namespace PicView.WPF.UILogic.TransformImage
             var newYproperty = _origin.Y - dragMousePosition.Y;
 
             // Keep panning it in bounds
-            if (Settings.Default.AutoFitWindow &&
-                !Settings.Default
+            if (SettingsHelper.Settings.WindowProperties.AutoFit &&
+                !SettingsHelper.Settings.WindowProperties
                     .Fullscreen) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
             {
                 var actualScrollWidth = ConfigureWindows.GetMainWindow.Scroller.ActualWidth;
@@ -287,7 +287,7 @@ namespace PicView.WPF.UILogic.TransformImage
             }
 
             var currentZoom = ScaleTransform.ScaleX;
-            var zoomSpeed = Settings.Default.ZoomSpeed;
+            var zoomSpeed = SettingsHelper.Settings.Zoom.ZoomSpeed;
 
             switch (currentZoom)
             {
@@ -315,7 +315,7 @@ namespace PicView.WPF.UILogic.TransformImage
 
             currentZoom += zoomSpeed;
             currentZoom = Math.Max(0.09, currentZoom);
-            if (Settings.Default.AvoidZoomingOut && currentZoom < 1.0)
+            if (SettingsHelper.Settings.Zoom.AvoidZoomingOut && currentZoom < 1.0)
             {
                 ResetZoom();
             }

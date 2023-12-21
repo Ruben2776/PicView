@@ -1,17 +1,17 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Loading;
 using PicView.WPF.UILogic.TransformImage;
+using System.IO;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
 using static PicView.WPF.UILogic.TransformImage.Rotation;
@@ -35,7 +35,7 @@ namespace PicView.WPF.Editing.Crop
             GetCroppingTool.Width = RotationAngle is 0 or 180 ? XWidth : XHeight;
             GetCroppingTool.Height = RotationAngle is 0 or 180 ? XHeight : XWidth;
             GetCroppingTool.Margin = new Thickness(0, 0, 0,
-                Settings.Default.IsBottomGalleryShown
+                SettingsHelper.Settings.Gallery.IsBottomGalleryShown
                     ? GalleryNavigation.PicGalleryItemSize + GalleryNavigation.ScrollbarSize
                     : 0);
 

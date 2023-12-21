@@ -1,6 +1,6 @@
-﻿using PicView.Core.FileHandling;
+﻿using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.Properties;
 using PicView.WPF.SystemIntegration;
 using System.Diagnostics;
 using System.IO;
@@ -19,7 +19,7 @@ internal static class FileLists
     /// <returns>A list of file paths sorted according to the specified sort preference.</returns>
     internal static List<string> FileList(FileInfo fileInfo)
     {
-        return Settings.Default.SortPreference switch
+        return SettingsHelper.Settings.Sorting.SortPreference switch
         {
             0 => FileList(fileInfo, FileListHelper.SortFilesBy.Name),
             1 => FileList(fileInfo, FileListHelper.SortFilesBy.FileSize),
@@ -56,7 +56,7 @@ internal static class FileLists
         string[] enumerable;
         // Check if the subdirectories are to be included in the search
         var recurseSubdirectories =
-            Settings.Default.IncludeSubDirectories && string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveExtraction.TempZipFile);
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories && string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveExtraction.TempZipFile);
         try
         {
             // Get the list of files in the directory
@@ -103,7 +103,7 @@ internal static class FileLists
             default:
             case FileListHelper.SortFilesBy.Name: // Alphanumeric sort
                 var list = files.ToList();
-                if (Settings.Default.Ascending)
+                if (SettingsHelper.Settings.Sorting.Ascending)
                 {
                     list.Sort(NativeMethods.StrCmpLogicalW);
                 }
@@ -116,31 +116,31 @@ internal static class FileLists
 
             case FileListHelper.SortFilesBy.FileSize: // Sort by file size
                 var fileInfoList = files.Select(f => new FileInfo(f)).ToList();
-                var sortedBySize = Settings.Default.Ascending
+                var sortedBySize = SettingsHelper.Settings.Sorting.Ascending
                     ? fileInfoList.OrderBy(f => f.Length)
                     : fileInfoList.OrderByDescending(f => f.Length);
                 return sortedBySize.Select(f => f.FullName).ToList();
 
             case FileListHelper.SortFilesBy.Extension: // Sort by file extension
-                var sortedByExtension = Settings.Default.Ascending
+                var sortedByExtension = SettingsHelper.Settings.Sorting.Ascending
                     ? files.OrderBy(Path.GetExtension)
                     : files.OrderByDescending(Path.GetExtension);
                 return sortedByExtension.ToList();
 
             case FileListHelper.SortFilesBy.CreationTime: // Sort by file creation time
-                var sortedByCreationTime = Settings.Default.Ascending
+                var sortedByCreationTime = SettingsHelper.Settings.Sorting.Ascending
                     ? files.OrderBy(f => new FileInfo(f).CreationTime)
                     : files.OrderByDescending(f => new FileInfo(f).CreationTime);
                 return sortedByCreationTime.ToList();
 
             case FileListHelper.SortFilesBy.LastAccessTime: // Sort by file last access time
-                var sortedByLastAccessTime = Settings.Default.Ascending
+                var sortedByLastAccessTime = SettingsHelper.Settings.Sorting.Ascending
                     ? files.OrderBy(f => new FileInfo(f).LastAccessTime)
                     : files.OrderByDescending(f => new FileInfo(f).LastAccessTime);
                 return sortedByLastAccessTime.ToList();
 
             case FileListHelper.SortFilesBy.LastWriteTime: // Sort by file last write time
-                var sortedByLastWriteTime = Settings.Default.Ascending
+                var sortedByLastWriteTime = SettingsHelper.Settings.Sorting.Ascending
                     ? files.OrderBy(f => new FileInfo(f).LastWriteTime)
                     : files.OrderByDescending(f => new FileInfo(f).LastWriteTime);
                 return sortedByLastWriteTime.ToList();
@@ -167,7 +167,7 @@ internal static class FileLists
             var parentFolder = Path.GetDirectoryName(currentFolder);
             var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
             var directoryIndex = Array.IndexOf(directories, currentFolder);
-            if (Settings.Default.Looping)
+            if (SettingsHelper.Settings.UIProperties.Looping)
                 directoryIndex = (directoryIndex + indexChange + directories.Length) % directories.Length;
             else
             {

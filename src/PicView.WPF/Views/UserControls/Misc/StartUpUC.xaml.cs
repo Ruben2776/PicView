@@ -3,7 +3,7 @@ using System.Windows.Media;
 using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
 namespace PicView.WPF.Views.UserControls.Misc
@@ -15,7 +15,7 @@ namespace PicView.WPF.Views.UserControls.Misc
         {
             InitializeComponent();
 
-            if (Settings.Default.DarkTheme)
+            if (SettingsHelper.Settings.Theme.Dark)
             {
                 SelectFile.MouseEnter += delegate
                 {

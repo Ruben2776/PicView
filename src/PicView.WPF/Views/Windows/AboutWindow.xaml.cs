@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using PicView.WPF.Animations;
 using PicView.WPF.ConfigureSettings;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
@@ -90,7 +90,7 @@ namespace PicView.WPF.Views.Windows
             CloseButton.TheButton.Click += delegate { Hide(); };
             MinButton.TheButton.Click += delegate { SystemCommands.MinimizeWindow(this); };
 
-            var color = Settings.Default.DarkTheme ? Colors.White : (Color)Application.Current.Resources["MainColor"];
+            var color = SettingsHelper.Settings.Theme.Dark ? Colors.White : (Color)Application.Current.Resources["MainColor"];
 
             GitHub.MouseEnter += delegate
             {

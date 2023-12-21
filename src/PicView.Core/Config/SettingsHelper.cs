@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 
 namespace PicView.Core.Config;
 
 public static class SettingsHelper
 {
-    public static AppSettings? AppSettings { get; set; }
+    public static AppSettings? Settings { get; set; }
     private static JsonSerializerOptions? _jsonSerializerOptions;
 
     public static async Task LoadSettingsAsync()
@@ -15,9 +16,9 @@ public static class SettingsHelper
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/AppSettings.json");
             if (File.Exists(path))
             {
-                // Read JSON File
+                // Read JSON File with UTF-8 encoding
                 var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                AppSettings = JsonSerializer.Deserialize<AppSettings>(jsonString);
+                Settings = JsonSerializer.Deserialize<AppSettings>(jsonString);
             }
             else
             {
@@ -36,7 +37,7 @@ public static class SettingsHelper
         {
             _jsonSerializerOptions ??= new JsonSerializerOptions { WriteIndented = true };
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/AppSettings.json");
-            var updatedJson = JsonSerializer.Serialize(AppSettings, _jsonSerializerOptions);
+            var updatedJson = JsonSerializer.Serialize(Settings, _jsonSerializerOptions);
             await File.WriteAllTextAsync(path, updatedJson).ConfigureAwait(false);
         }
         catch (Exception ex)

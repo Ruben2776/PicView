@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using PicView.WPF.Animations;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
@@ -108,10 +108,10 @@ namespace PicView.WPF.Views.UserControls.Misc
 
         public void Show()
         {
-            grid.Width = Settings.Default.AutoFitWindow
+            grid.Width = SettingsHelper.Settings.WindowProperties.AutoFit
                 ? ScaleImage.XWidth
                 : ConfigureWindows.GetMainWindow.ActualWidth;
-            grid.Height = Settings.Default.AutoFitWindow
+            grid.Height = SettingsHelper.Settings.WindowProperties.AutoFit
                 ? ScaleImage.XHeight
                 : ConfigureWindows.GetMainWindow.ActualHeight;
             Visibility = Visibility.Visible;

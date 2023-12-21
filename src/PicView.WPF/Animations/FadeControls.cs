@@ -1,9 +1,9 @@
-﻿using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
+﻿using PicView.Core.Config;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.TransformImage;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 using static PicView.WPF.UILogic.UC;
 using Timer = System.Timers.Timer;
 
@@ -22,7 +22,7 @@ namespace PicView.WPF.Animations
         /// <param name="show"></param>
         internal static void Fade(bool show)
         {
-            if (Settings.Default.ShowInterface && Settings.Default.Fullscreen == false
+            if (SettingsHelper.Settings.UIProperties.ShowInterface && SettingsHelper.Settings.WindowProperties.Fullscreen == false
                 || GetClickArrowRight == null
                 || GetClickArrowLeft == null
                 || GetX2 == null
@@ -40,7 +40,7 @@ namespace PicView.WPF.Animations
                     return;
                 }
 
-                if (Settings.Default.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
                 {
                     ScrollbarFade(show);
                 }
@@ -67,7 +67,7 @@ namespace PicView.WPF.Animations
 
                 AnimationHelper.Fade(GetClickArrowLeft, opacity, timespan);
                 AnimationHelper.Fade(GetClickArrowRight, opacity, timespan);
-                if (!Settings.Default.IsBottomGalleryShown)
+                if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                 {
                     AnimationHelper.Fade(GetGalleryShortcut, opacity, timespan);
                 }

@@ -1,14 +1,14 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Win32;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
+using PicView.WPF.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Microsoft.Win32;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.ImageHandling;
-using PicView.WPF.Properties;
-using PicView.WPF.UILogic;
+using PicView.Core.Config;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
@@ -167,7 +167,7 @@ namespace PicView.WPF.FileHandling
 
         internal static async Task SaveFilesAsync()
         {
-            await SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
+            await SaveFilesAsync(SettingsHelper.Settings.UIProperties.ShowFileSavingDialog).ConfigureAwait(false);
         }
 
         /// <summary>

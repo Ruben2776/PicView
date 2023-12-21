@@ -1,8 +1,8 @@
-﻿using PicView.Core.FileHandling;
+﻿using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.Views.UserControls.Misc;
 using System.Diagnostics;
 using System.IO;
@@ -50,7 +50,7 @@ namespace PicView.WPF.UILogic.DragAndDrop
             }
             else if (Directory.Exists(files[0]))
             {
-                if (Settings.Default.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
+                if (SettingsHelper.Settings.Sorting.IncludeSubDirectories || Directory.GetFiles(files[0]).Length > 0)
                 {
                     await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                     {

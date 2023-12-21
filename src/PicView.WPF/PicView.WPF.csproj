@@ -199,11 +199,6 @@
     <PackageReference Include="System.Drawing.Common" Version="8.0.0-rc.2.23479.14" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Update="Views\UserControls\Buttons\LinkButton.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -246,12 +241,6 @@
       <SubType>Code</SubType>
       <DependentUpon>LinkChain.xaml.cs</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Translations\da.xaml">

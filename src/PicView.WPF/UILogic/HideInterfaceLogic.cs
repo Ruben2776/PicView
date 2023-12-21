@@ -1,6 +1,6 @@
-﻿using PicView.WPF.ChangeImage;
+﻿using PicView.Core.Config;
+using PicView.WPF.ChangeImage;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic.Sizing;
 using System.Windows;
 using static PicView.WPF.Animations.FadeControls;
@@ -15,12 +15,12 @@ namespace PicView.WPF.UILogic
         /// </summary>
         internal static void ToggleInterface()
         {
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 return;
             }
 
-            if (Settings.Default.ShowInterface)
+            if (SettingsHelper.Settings.UIProperties.ShowInterface)
             {
                 if (ConfigureWindows.GetMainWindow.TitleBar.Visibility == Visibility.Visible)
                 {
@@ -48,10 +48,10 @@ namespace PicView.WPF.UILogic
             {
                 ScaleImage.TryFitImage();
                 // Show gallery if needed
-                var shouldLoadBottomGallery = Settings.Default.IsBottomGalleryShown;
-                if (Settings.Default.ShowInterface == false)
+                var shouldLoadBottomGallery = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+                if (SettingsHelper.Settings.UIProperties.ShowInterface == false)
                 {
-                    shouldLoadBottomGallery = Settings.Default.ShowAltInterfaceBottomGallery;
+                    shouldLoadBottomGallery = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
                 }
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
@@ -71,20 +71,19 @@ namespace PicView.WPF.UILogic
                 {
                     await GalleryLoad.LoadAsync().ConfigureAwait(false);
                 }
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             };
-
-            Settings.Default.Save();
         }
 
         internal static void ShowStandardInterface()
         {
-            Settings.Default.ShowInterface = true;
+            SettingsHelper.Settings.UIProperties.ShowInterface = true;
 
             IsTopAndBottomShown(true);
             IsNavigationShown(false);
             IsShortcutsShown(false);
 
-            if (Settings.Default.IsBottomGalleryShown && ConfigureWindows.GetMainWindow.MainImage.Source is not null)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && ConfigureWindows.GetMainWindow.MainImage.Source is not null)
             {
                 GalleryToggle.ShowBottomGallery();
             }
@@ -94,21 +93,21 @@ namespace PicView.WPF.UILogic
 
         private static void ShowMinimalInterface()
         {
-            if (!Settings.Default.ShowAltInterfaceBottomGallery && Settings.Default.IsBottomGalleryShown)
+            if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI && SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 GalleryToggle.CloseBottomGallery();
                 ScaleImage.TryFitImage();
-                Settings.Default.IsBottomGalleryShown = true;
+                SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
             }
             else
             {
-                IsShortcutsShown(Settings.Default.ShowAltInterfaceButtons);
+                IsShortcutsShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
             }
 
             IsTopAndBottomShown(false);
-            IsNavigationShown(Settings.Default.ShowAltInterfaceButtons);
+            IsNavigationShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
 
-            Settings.Default.ShowInterface = false;
+            SettingsHelper.Settings.UIProperties.ShowInterface = false;
 
             ActivityTimer?.Start();
         }
@@ -119,7 +118,7 @@ namespace PicView.WPF.UILogic
             {
                 ConfigureWindows.GetMainWindow.TitleBar.Visibility = Visibility.Visible;
                 ConfigureWindows.GetMainWindow.LowerBar.Visibility =
-                    Settings.Default.ShowBottomNavBar ? Visibility.Visible : Visibility.Collapsed;
+                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {

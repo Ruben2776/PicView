@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using PicView.Core.Config;
 using PicView.WPF.ImageHandling;
-using PicView.WPF.Properties;
+using System.IO;
 using static PicView.WPF.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -15,7 +15,7 @@ namespace PicView.WPF.ChangeImage
         {
             if (_timer is null)
             {
-                _timer = new Timer(TimeSpan.FromSeconds(Settings.Default.NavSpeed))
+                _timer = new Timer(TimeSpan.FromSeconds(SettingsHelper.Settings.UIProperties.NavSpeed))
                 {
                     AutoReset = false,
                     Enabled = true

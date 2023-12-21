@@ -2,7 +2,7 @@
 using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -33,7 +33,7 @@ namespace PicView.WPF.UILogic
             {
                 SlideTimer = new Timer
                 {
-                    Interval = Settings.Default.SlideTimer,
+                    Interval = SettingsHelper.Settings.UIProperties.SlideShowTimer,
                     Enabled = true
                 };
                 SlideTimer.Elapsed += async delegate { await SlideTimer_Elapsed().ConfigureAwait(false); };
@@ -55,7 +55,7 @@ namespace PicView.WPF.UILogic
 
             HideInterfaceLogic.IsNavigationShown(false);
             HideInterfaceLogic.IsShortcutsShown(false);
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 GalleryToggle.CloseBottomGallery();
             }
@@ -66,12 +66,12 @@ namespace PicView.WPF.UILogic
             SlideTimer?.Stop();
             SlideTimer = null;
 
-            if (!Settings.Default.Fullscreen)
+            if (!SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 WindowSizing.Fullscreen_Restore(false);
             }
 
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 _ = GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
             }

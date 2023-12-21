@@ -7,7 +7,7 @@ using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.SystemIntegration;
 using static PicView.WPF.PicGallery.GalleryNavigation;
 
@@ -30,7 +30,7 @@ namespace PicView.WPF.Views.UserControls.Gallery
 
             OuterBorder.Width = OuterBorder.Height = PicGalleryItemSize;
             InnerBorder.Width = InnerBorder.Height =
-                Settings.Default.IsBottomGalleryShown ? PicGalleryItemSize : PicGalleryItemSizeS;
+                SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? PicGalleryItemSize : PicGalleryItemSizeS;
 
             ThumbImage.MouseEnter += delegate
             {

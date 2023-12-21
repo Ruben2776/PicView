@@ -1,16 +1,15 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
-using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
-using PicView.WPF.Properties;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.OpenSave;
 using static PicView.WPF.UILogic.ConfigureWindows;
@@ -39,7 +38,7 @@ namespace PicView.WPF.UILogic.Loading
             var saveCm = (MenuItem)MainContextMenu.Items[1];
             saveCm.InputGestureText = $"{Application.Current.Resources["Ctrl"]} + S";
             saveCm.Click += async (s, x) =>
-                await SaveFilesAsync(Settings.Default.ShowFileSavingDialog).ConfigureAwait(false);
+                await SaveFilesAsync(SettingsHelper.Settings.UIProperties.ShowFileSavingDialog).ConfigureAwait(false);
 
             ///////////////////////////
             //       Print          \\\
@@ -65,7 +64,7 @@ namespace PicView.WPF.UILogic.Loading
             // FileName
             var fileNameMenu = (MenuItem)sortFilesByCm.Items[0];
             var fileNameHeader = (RadioButton)fileNameMenu.Header;
-            fileNameHeader.IsChecked = Settings.Default.SortPreference == (int)FileListHelper.SortFilesBy.Name;
+            fileNameHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Name;
             fileNameHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -75,7 +74,7 @@ namespace PicView.WPF.UILogic.Loading
             // FileSize
             var filesizeMenu = (MenuItem)sortFilesByCm.Items[1];
             var filesizeHeader = (RadioButton)filesizeMenu.Header;
-            filesizeHeader.IsChecked = Settings.Default.SortPreference == (int)FileListHelper.SortFilesBy.FileSize;
+            filesizeHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.FileSize;
             filesizeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -85,7 +84,7 @@ namespace PicView.WPF.UILogic.Loading
             // FileExtension
             var fileExtensionMenu = (MenuItem)sortFilesByCm.Items[2];
             var fileExtensionHeader = (RadioButton)fileExtensionMenu.Header;
-            fileExtensionHeader.IsChecked = Settings.Default.SortPreference == (int)FileListHelper.SortFilesBy.Extension;
+            fileExtensionHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Extension;
             fileExtensionHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -95,7 +94,7 @@ namespace PicView.WPF.UILogic.Loading
             // CreationTime
             var creationTimeMenu = (MenuItem)sortFilesByCm.Items[3];
             var creationTimeHeader = (RadioButton)creationTimeMenu.Header;
-            creationTimeHeader.IsChecked = Settings.Default.SortPreference == (int)FileListHelper.SortFilesBy.CreationTime;
+            creationTimeHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.CreationTime;
             creationTimeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -106,7 +105,7 @@ namespace PicView.WPF.UILogic.Loading
             var lastAccessTimeMenu = (MenuItem)sortFilesByCm.Items[4];
             var lastAccessTimeHeader = (RadioButton)lastAccessTimeMenu.Header;
             lastAccessTimeHeader.IsChecked =
-                Settings.Default.SortPreference == (int)FileListHelper.SortFilesBy.LastAccessTime;
+                SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.LastAccessTime;
             lastAccessTimeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -117,7 +116,7 @@ namespace PicView.WPF.UILogic.Loading
             var lastWriteTimeMenu = (MenuItem)sortFilesByCm.Items[5];
             var lastWriteTimeHeader = (RadioButton)lastWriteTimeMenu.Header;
             lastWriteTimeHeader.IsChecked =
-                Settings.Default.SortPreference == (int)FileListHelper.SortFilesBy.LastWriteTime;
+                SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.LastWriteTime;
             lastWriteTimeHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -127,7 +126,7 @@ namespace PicView.WPF.UILogic.Loading
             // Random
             var randomMenu = (MenuItem)sortFilesByCm.Items[6];
             var randomHeader = (RadioButton)randomMenu.Header;
-            randomHeader.IsChecked = Settings.Default.SortPreference == (int)FileListHelper.SortFilesBy.Random;
+            randomHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Random;
             randomHeader.Click += async delegate
             {
                 MainContextMenu.IsOpen = false;
@@ -139,20 +138,20 @@ namespace PicView.WPF.UILogic.Loading
             // Ascending
             var ascendingMenu = (MenuItem)sortFilesByCm.Items[8];
             var ascendingHeader = (RadioButton)ascendingMenu.Header;
-            ascendingHeader.IsChecked = Settings.Default.Ascending;
+            ascendingHeader.IsChecked = SettingsHelper.Settings.Sorting.Ascending;
             ascendingHeader.Click += async (_, _) =>
             {
-                Settings.Default.Ascending = true;
+                SettingsHelper.Settings.Sorting.Ascending = true;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
 
             // Descending
             var descendingMenu = (MenuItem)sortFilesByCm.Items[9];
             var descendingHeader = (RadioButton)descendingMenu.Header;
-            descendingHeader.IsChecked = Settings.Default.Ascending == false;
+            descendingHeader.IsChecked = SettingsHelper.Settings.Sorting.Ascending == false;
             descendingHeader.Click += async (_, _) =>
             {
-                Settings.Default.Ascending = false;
+                SettingsHelper.Settings.Sorting.Ascending = false;
                 await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
             };
 
@@ -169,7 +168,7 @@ namespace PicView.WPF.UILogic.Loading
             // Looping
             var loopingMenu = (MenuItem)settingsCm.Items[0];
             var loopingHeader = (CheckBox)loopingMenu.Header;
-            loopingHeader.IsChecked = Settings.Default.Looping;
+            loopingHeader.IsChecked = SettingsHelper.Settings.UIProperties.Looping;
             loopingHeader.Click += (_, _) => UpdateUIValues.SetLooping();
             loopingMenu.Click += (_, _) =>
             {
@@ -180,7 +179,7 @@ namespace PicView.WPF.UILogic.Loading
             // Scrolling
             var ScrollingMenu = (MenuItem)settingsCm.Items[1];
             var ScrollingHeader = (CheckBox)ScrollingMenu.Header;
-            ScrollingHeader.IsChecked = Settings.Default.ScrollEnabled;
+            ScrollingHeader.IsChecked = SettingsHelper.Settings.Zoom.ScrollEnabled;
             ScrollingHeader.Click += (_, _) => UpdateUIValues.SetScrolling();
             ScrollingMenu.Click += (_, _) =>
             {
@@ -192,7 +191,7 @@ namespace PicView.WPF.UILogic.Loading
             var ToogleUIMenu = (MenuItem)settingsCm.Items[2];
             ToogleUIMenu.InputGestureText = $"{Application.Current.Resources["Alt"]} + Z";
             var ToogleUIHeader = (CheckBox)ToogleUIMenu.Header;
-            ToogleUIHeader.IsChecked = Settings.Default.ShowInterface;
+            ToogleUIHeader.IsChecked = SettingsHelper.Settings.UIProperties.ShowInterface;
             ToogleUIHeader.Click += (_, _) => HideInterfaceLogic.ToggleInterface();
             ToogleUIMenu.Click += (_, _) =>
             {
@@ -210,7 +209,7 @@ namespace PicView.WPF.UILogic.Loading
             // Topmost
             var TopmostMenu = (MenuItem)settingsCm.Items[4];
             var TopmostHeader = (CheckBox)TopmostMenu.Header;
-            TopmostHeader.IsChecked = Settings.Default.TopMost;
+            TopmostHeader.IsChecked = SettingsHelper.Settings.WindowProperties.TopMost;
             TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
             TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
             TopmostMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
@@ -220,7 +219,7 @@ namespace PicView.WPF.UILogic.Loading
             // Fill Image Height
             var imageHeightMenu = (MenuItem)settingsCm.Items[5];
             var imageHeightHeader = (CheckBox)imageHeightMenu.Header;
-            imageHeightHeader.IsChecked = Settings.Default.FillImage;
+            imageHeightHeader.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
             imageHeightHeader.Click += UpdateUIValues.SetAutoFill;
             imageHeightMenu.Click += UpdateUIValues.SetAutoFill;
             imageHeightMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
@@ -230,7 +229,7 @@ namespace PicView.WPF.UILogic.Loading
             // Ctrl to zoom
             var ctrlZoomMenu = (MenuItem)settingsCm.Items[6];
             var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
-            ctrlZoomHeader.IsChecked = Settings.Default.CtrlZoom;
+            ctrlZoomHeader.IsChecked = SettingsHelper.Settings.Zoom.CtrlZoom;
             ctrlZoomMenu.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
             ctrlZoomHeader.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
 
@@ -391,7 +390,7 @@ namespace PicView.WPF.UILogic.Loading
             WindowContextMenu = (ContextMenu)Application.Current.Resources["windowCM"];
 
             var fullscreenWindow = (MenuItem)WindowContextMenu.Items[0];
-            fullscreenWindow.Click += (_, _) => WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+            fullscreenWindow.Click += (_, _) => WindowSizing.Fullscreen_Restore(!SettingsHelper.Settings.WindowProperties.Fullscreen);
 
             var minWindow = (MenuItem)WindowContextMenu.Items[1];
             minWindow.Click += (_, _) => SystemCommands.MinimizeWindow(GetMainWindow);

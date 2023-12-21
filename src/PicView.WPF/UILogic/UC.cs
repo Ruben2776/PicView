@@ -4,7 +4,7 @@ using System.Windows.Media.Animation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.Views.UserControls.Buttons;
 using PicView.WPF.Views.UserControls.Menus;
 using PicView.WPF.Views.UserControls.Misc;
@@ -77,7 +77,7 @@ namespace PicView.WPF.UILogic
                 }
 
                 GetImageSettingsMenu.ShowBottomGalleryText.Text =
-                    Settings.Default.IsBottomGalleryShown
+                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown
                         ? (string)Application.Current.Resources["HideBottomGallery"]
                         : (string)Application.Current.Resources["ShowBottomGallery"];
             }

@@ -1,8 +1,7 @@
-﻿using PicView.Core.Navigation;
+﻿using PicView.Core.Config;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 
 namespace PicView.WPF.ChangeImage
@@ -85,7 +84,7 @@ namespace PicView.WPF.ChangeImage
                 case NavigateTo.Previous:
                     var indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
                     Reverse = navigateTo == NavigateTo.Previous;
-                    if (Settings.Default.Looping || fastPic || Slideshow.SlideTimer != null)
+                    if (SettingsHelper.Settings.UIProperties.Looping || fastPic || Slideshow.SlideTimer != null)
                     {
                         next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
                     }
@@ -157,7 +156,7 @@ namespace PicView.WPF.ChangeImage
                 case NavigateTo.Previous:
                     var indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
 
-                    if (Settings.Default.Looping || fastPic || Slideshow.SlideTimer != null)
+                    if (SettingsHelper.Settings.UIProperties.Looping || fastPic || Slideshow.SlideTimer != null)
                     {
                         return (FolderIndex + indexChange + Pics.Count) % Pics.Count;
                     }
@@ -200,7 +199,7 @@ namespace PicView.WPF.ChangeImage
             }
 
             await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
                 await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
@@ -230,7 +229,7 @@ namespace PicView.WPF.ChangeImage
                 if (right)
                 {
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (Settings.Default.Fullscreen == false)
+                    if (SettingsHelper.Settings.WindowProperties.Fullscreen == false)
                         RightButtonClicked = true; // Update flag to move cursor when resized
                     else
                         RightButtonClicked = false;
@@ -239,7 +238,7 @@ namespace PicView.WPF.ChangeImage
                 else
                 {
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (Settings.Default.Fullscreen == false)
+                    if (SettingsHelper.Settings.WindowProperties.Fullscreen == false)
                         LeftButtonClicked = true; // Update flag to move cursor when resized
                     else
                         LeftButtonClicked = false;
@@ -251,7 +250,7 @@ namespace PicView.WPF.ChangeImage
                 if (right)
                 {
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (Settings.Default.Fullscreen == false)
+                    if (SettingsHelper.Settings.WindowProperties.Fullscreen == false)
                         ClickArrowRightClicked = true; // Update flag to move cursor when resized
                     else
                         ClickArrowRightClicked = false;
@@ -260,7 +259,7 @@ namespace PicView.WPF.ChangeImage
                 else
                 {
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (Settings.Default.Fullscreen == false)
+                    if (SettingsHelper.Settings.WindowProperties.Fullscreen == false)
                         ClickArrowLeftClicked = true; // Update flag to move cursor when resized
                     else
                         ClickArrowLeftClicked = false;

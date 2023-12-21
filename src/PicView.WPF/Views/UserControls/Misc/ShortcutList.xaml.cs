@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using PicView.WPF.Animations;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.UILogic;
 
@@ -16,7 +16,7 @@ public partial class ShortcutList
     {
         InitializeComponent();
 
-        var color = Settings.Default.DarkTheme ? Colors.White : (Color)Application.Current.Resources["MainColor"];
+        var color = SettingsHelper.Settings.Theme.Dark ? Colors.White : (Color)Application.Current.Resources["MainColor"];
         SetDefaultButton.MouseEnter += delegate
         {
             AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, SetToDefaultText);

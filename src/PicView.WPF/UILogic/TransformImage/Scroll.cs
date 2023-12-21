@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.UILogic.Loading;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
 using static PicView.WPF.UILogic.Tooltip;
@@ -39,12 +39,12 @@ namespace PicView.WPF.UILogic.TransformImage
         /// </summary>
         internal static void SetScrollBehaviour(bool scrolling)
         {
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 return;
             }
 
-            Settings.Default.ScrollEnabled = scrolling;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = scrolling;
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
             {
                 ConfigureWindows.GetMainWindow.Scroller.VerticalScrollBarVisibility =

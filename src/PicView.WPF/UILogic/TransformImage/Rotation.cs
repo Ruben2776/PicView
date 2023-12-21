@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using PicView.WPF.ConfigureSettings;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
 
@@ -30,7 +30,7 @@ namespace PicView.WPF.UILogic.TransformImage
         internal static async Task RotateAndMoveCursor(bool up, UIElement uIElement)
         {
             Rotate(false, up);
-            if (Settings.Default.AutoFitWindow == false)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
             {
                 return;
             }

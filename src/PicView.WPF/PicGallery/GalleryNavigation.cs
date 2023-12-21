@@ -1,10 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Media;
-using PicView.WPF.Animations;
-using PicView.WPF.Properties;
+﻿using PicView.WPF.Animations;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Gallery;
+using System.Windows;
+using System.Windows.Media;
+using PicView.Core.Config;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
 
@@ -197,7 +197,7 @@ namespace PicView.WPF.PicGallery
                 else
                 {
                     nextItem.InnerBorder.Width = nextItem.InnerBorder.Height =
-                        Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen
+                        SettingsHelper.Settings.Gallery.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen
                             ? PicGalleryItemSize
                             : PicGalleryItemSizeS;
                 }

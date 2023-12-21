@@ -1,18 +1,18 @@
-﻿using System.Diagnostics;
+﻿using PicView.Core.Config;
+using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
-using PicView.Core.FileHandling;
-using PicView.Core.Navigation;
-using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.FileHandling;
-using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
-using PicView.WPF.UILogic;
-using PicView.WPF.UILogic.Sizing;
 
 namespace PicView.WPF.ChangeImage
 {
@@ -48,7 +48,7 @@ namespace PicView.WPF.ChangeImage
             }
             await Task.Run(async () => // Make sure UI responsive
             {
-                if (Settings.Default.IncludeSubDirectories)
+                if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
                 {
                     if (file.IsArchive())
                     {
@@ -64,7 +64,7 @@ namespace PicView.WPF.ChangeImage
                         await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
 
                         // Fix if Bottom Gallery is enabled
-                        if (Settings.Default.IsBottomGalleryShown)
+                        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                         {
                             switch (UC.GetPicGallery)
                             {
@@ -121,7 +121,7 @@ namespace PicView.WPF.ChangeImage
             }
 
             _fileHistory ??= new FileHistory();
-            var file = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
+            var file = await Task.FromResult(_fileHistory.GetNextEntry(SettingsHelper.Settings.UIProperties.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
 
             if (Navigation.Pics.Contains(file))
             {
@@ -156,7 +156,7 @@ namespace PicView.WPF.ChangeImage
             }
 
             _fileHistory ??= new FileHistory();
-            var file = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
+            var file = await Task.FromResult(_fileHistory.GetNextEntry(SettingsHelper.Settings.UIProperties.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
 
             if (Navigation.Pics.Contains(file))
             {

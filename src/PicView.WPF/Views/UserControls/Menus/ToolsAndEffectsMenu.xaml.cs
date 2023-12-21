@@ -1,10 +1,10 @@
-﻿using System.Windows.Controls;
-using System.Windows.Media;
+﻿using PicView.Core.Config;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.Editing;
 using PicView.WPF.ImageHandling;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
+using System.Windows.Controls;
+using System.Windows.Media;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
 namespace PicView.WPF.Views.UserControls.Menus
@@ -18,7 +18,7 @@ namespace PicView.WPF.Views.UserControls.Menus
         {
             InitializeComponent();
 
-            switch (Settings.Default.UserLanguage)
+            switch (SettingsHelper.Settings.UIProperties.UserLanguage)
             {
                 case "ru":
                 case "pl":

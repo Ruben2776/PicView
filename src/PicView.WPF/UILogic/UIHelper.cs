@@ -7,7 +7,7 @@ using PicView.WPF.Editing.Crop;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
 using System.IO;
@@ -314,7 +314,7 @@ namespace PicView.WPF.UILogic
             }
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
                     Visibility.Visible)
                 {
                     GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset - 30);
@@ -339,7 +339,7 @@ namespace PicView.WPF.UILogic
             }
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                if (Settings.Default.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility ==
                     Visibility.Visible)
                 {
                     GetMainWindow.Scroller.ScrollToVerticalOffset(GetMainWindow.Scroller.VerticalOffset + 30);
@@ -569,7 +569,7 @@ namespace PicView.WPF.UILogic
                 {
                     GetSettingsWindow.Hide();
                 }
-                else if (Settings.Default.Fullscreen)
+                else if (SettingsHelper.Settings.WindowProperties.Fullscreen)
                 {
                     WindowSizing.Fullscreen_Restore(false);
                 }
@@ -1136,7 +1136,7 @@ namespace PicView.WPF.UILogic
             }
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+                WindowSizing.Fullscreen_Restore(!SettingsHelper.Settings.WindowProperties.Fullscreen);
             });
         }
 

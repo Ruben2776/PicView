@@ -1,5 +1,5 @@
 ﻿using PicView.WPF.Animations;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
 namespace PicView.WPF.Views.UserControls.Buttons
@@ -15,7 +15,7 @@ namespace PicView.WPF.Views.UserControls.Buttons
                 TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
                 TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush);
 
-                if (!Settings.Default.DarkTheme)
+                if (!SettingsHelper.Settings.Theme.Dark)
                 {
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }

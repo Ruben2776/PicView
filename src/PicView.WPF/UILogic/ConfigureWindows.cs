@@ -1,4 +1,4 @@
-﻿using PicView.WPF.Properties;
+﻿using PicView.Core.Config;
 using PicView.WPF.Views.Windows;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,10 +29,10 @@ namespace PicView.WPF.UILogic
 
         internal static bool IsMainWindowTopMost
         {
-            get => Settings.Default.TopMost;
+            get => SettingsHelper.Settings.WindowProperties.TopMost;
             set
             {
-                Settings.Default.TopMost = value;
+                SettingsHelper.Settings.WindowProperties.TopMost = value;
                 GetMainWindow.Topmost = value;
             }
         }
@@ -61,7 +61,7 @@ namespace PicView.WPF.UILogic
                 }
             }
 
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 GetAboutWindow.Topmost = true;
                 GetAboutWindow.BringIntoView();
@@ -95,7 +95,7 @@ namespace PicView.WPF.UILogic
                 }
             }
 
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 GetSettingsWindow.Topmost = true;
                 GetSettingsWindow.BringIntoView();
@@ -129,7 +129,7 @@ namespace PicView.WPF.UILogic
                 }
             }
 
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 GetEffectsWindow.Topmost = true;
                 GetEffectsWindow.BringIntoView();
@@ -163,7 +163,7 @@ namespace PicView.WPF.UILogic
                 }
             }
 
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 GetImageInfoWindow.Topmost = true;
                 GetImageInfoWindow.BringIntoView();
@@ -194,7 +194,7 @@ namespace PicView.WPF.UILogic
                 }
             }
 
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 GetResizeWindow.Topmost = true;
                 GetResizeWindow.BringIntoView();

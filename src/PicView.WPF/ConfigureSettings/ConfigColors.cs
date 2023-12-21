@@ -1,13 +1,13 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+﻿using PicView.Core.Config;
 using PicView.WPF.Animations;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.Themes.Resources;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.DragAndDrop;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace PicView.WPF.ConfigureSettings
 {
@@ -40,7 +40,7 @@ namespace PicView.WPF.ConfigureSettings
             Application.Current.Resources["ChosenAccentColor"] = getAccentColor;
             Application.Current.Resources["ChosenAccentColorBrush"] = getAccentColorBrush;
 
-            Settings.Default.Save();
+            SettingsHelper.SaveSettingsAsync();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace PicView.WPF.ConfigureSettings
 
             w.TitleText.InnerTextBox.Foreground = foregroundColor;
 
-            if (Settings.Default.DarkTheme)
+            if (SettingsHelper.Settings.Theme.Dark)
             {
                 w.BorderBrush = isFocused
                     ? (SolidColorBrush)Application.Current.Resources["BorderBrush"]
@@ -125,7 +125,7 @@ namespace PicView.WPF.ConfigureSettings
                 title.Foreground = foregroundColor;
             }
 
-            if (Settings.Default.DarkTheme)
+            if (SettingsHelper.Settings.Theme.Dark)
             {
                 titleBar.Background =
                     isFocused
@@ -174,13 +174,13 @@ namespace PicView.WPF.ConfigureSettings
             if (HasTransparentBackground(mainWindow.MainImage.Source as BitmapSource) is false) return;
 
             // Increment the BgColorChoice setting
-            Settings.Default.BgColorChoice = (Settings.Default.BgColorChoice + 1) % 5;
+            SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 5;
 
             // Set the background color of the main window to the BackgroundColorBrush brush
             mainWindow.MainImageBorder.Background = BackgroundColorBrush;
 
             // Save the changes to the settings
-            Settings.Default.Save();
+            SettingsHelper.SaveSettingsAsync();
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace PicView.WPF.ConfigureSettings
         /// The BgColorChoice is used to determine the background color of the main window.
         /// The method returns different brushes based on the value of BgColorChoice.
         /// </summary>
-        internal static Brush BackgroundColorBrush => Settings.Default.BgColorChoice switch
+        internal static Brush BackgroundColorBrush => SettingsHelper.Settings.UIProperties.BgColorChoice switch
         {
             0 => Brushes.Transparent,
             1 => Brushes.White,
@@ -239,7 +239,7 @@ namespace PicView.WPF.ConfigureSettings
         /// <param name="useDarkTheme"></param>
         internal static void ChangeTheme(bool useDarkTheme)
         {
-            Settings.Default.DarkTheme = useDarkTheme;
+            SettingsHelper.Settings.Theme.Dark = useDarkTheme;
 
             if (useDarkTheme)
             {
@@ -281,11 +281,11 @@ namespace PicView.WPF.ConfigureSettings
         /// <param name="colorOption"></param>
         internal static void UpdateColorThemeTo(ColorOption colorOption)
         {
-            Settings.Default.ColorTheme = (int)colorOption;
+            SettingsHelper.Settings.Theme.ColorTheme = (int)colorOption;
             UpdateColor();
         }
 
-        internal static Color GetSecondaryAccentColor => Settings.Default.ColorTheme switch
+        internal static Color GetSecondaryAccentColor => SettingsHelper.Settings.Theme.ColorTheme switch
         {
             0 => Color.FromRgb(255, 240, 90), // Blue
             2 => Color.FromRgb(255, 237, 38), // Pink
@@ -299,7 +299,7 @@ namespace PicView.WPF.ConfigureSettings
             10 => Color.FromRgb(255, 253, 66), // Cyan
             11 => Color.FromRgb(255, 237, 38), // Magenta
             12 => Color.FromRgb(255, 253, 42), // Lime
-            _ => throw new ArgumentOutOfRangeException(nameof(Settings.Default.ColorTheme)),
+            _ => throw new ArgumentOutOfRangeException(nameof(GetSecondaryAccentColor)),
         };
 
         #endregion Set ColorTheme

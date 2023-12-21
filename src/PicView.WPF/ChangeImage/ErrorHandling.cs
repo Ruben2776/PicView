@@ -1,17 +1,17 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
+﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.DeleteFiles;
 
@@ -140,7 +140,7 @@ namespace PicView.WPF.ChangeImage
             try
             {
                 string path;
-                if (Settings.Default.IncludeSubDirectories)
+                if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
                 {
                     path = GetReloadPath() ?? BackupPath ?? string.Empty;
                 }
@@ -155,7 +155,7 @@ namespace PicView.WPF.ChangeImage
                 }
                 else if (File.Exists(path))
                 {
-                    if (Settings.Default.IncludeSubDirectories)
+                    if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
                     {
                         var fileInfo = new FileInfo(Path.GetDirectoryName(path));
                         await ResetValues(fileInfo).ConfigureAwait(false);
@@ -168,7 +168,7 @@ namespace PicView.WPF.ChangeImage
                         await LoadPic.LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
                     }
 
-                    if (Settings.Default.IsBottomGalleryShown)
+                    if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                     {
                         var check = false;
                         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -226,7 +226,7 @@ namespace PicView.WPF.ChangeImage
                 });
             }
 
-            if (!string.IsNullOrWhiteSpace(InitialPath) && Settings.Default.IncludeSubDirectories
+            if (!string.IsNullOrWhiteSpace(InitialPath) && SettingsHelper.Settings.Sorting.IncludeSubDirectories
                                                         && Path.GetDirectoryName(InitialPath) !=
                                                         Path.GetDirectoryName(Pics[FolderIndex]))
             {

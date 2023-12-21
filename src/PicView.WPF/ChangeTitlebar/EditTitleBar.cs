@@ -1,10 +1,10 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Input;
+﻿using PicView.Core.Config;
 using PicView.WPF.FileHandling;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
 using static PicView.WPF.ChangeImage.Navigation;
 
 namespace PicView.WPF.ChangeTitlebar
@@ -34,7 +34,7 @@ namespace PicView.WPF.ChangeTitlebar
 
         internal static void Bar_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+            if (Pics == null || !SettingsHelper.Settings.UIProperties.ShowInterface || Pics.Count == 0)
             {
                 e.Handled = true; // Disable text clicking
             }
@@ -42,7 +42,7 @@ namespace PicView.WPF.ChangeTitlebar
 
         internal static void EditTitleBar_Text()
         {
-            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+            if (Pics == null || !SettingsHelper.Settings.UIProperties.ShowInterface || Pics.Count == 0)
             {
                 return;
             }
@@ -65,7 +65,7 @@ namespace PicView.WPF.ChangeTitlebar
         /// <param name="e"></param>
         internal static void EditTitleBar_Text(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (Pics == null || !Settings.Default.ShowInterface || Pics.Count == 0)
+            if (Pics == null || !SettingsHelper.Settings.UIProperties.ShowInterface || Pics.Count == 0)
             {
                 return;
             }

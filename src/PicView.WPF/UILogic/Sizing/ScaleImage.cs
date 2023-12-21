@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic.TransformImage;
+using System.Windows;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryNavigation;
 using static PicView.WPF.UILogic.ConfigureWindows;
@@ -88,45 +88,45 @@ namespace PicView.WPF.UILogic.Sizing
 
             if (UC.GetPicGallery is not null)
             {
-                if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
+                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && UC.GetPicGallery.IsVisible)
                 {
                     galleryHeight = PicGalleryItemSize + ScrollbarSize;
                 }
             }
 
-            var borderSpaceHeight = Settings.Default.Fullscreen
+            var borderSpaceHeight = SettingsHelper.Settings.WindowProperties.Fullscreen
                 ? 0
                 : GetMainWindow.LowerBar.ActualHeight + GetMainWindow.TitleBar.ActualHeight + galleryHeight;
-            var borderSpaceWidth = Settings.Default.Fullscreen ? 0 : padding;
+            var borderSpaceWidth = SettingsHelper.Settings.WindowProperties.Fullscreen ? 0 : padding;
 
             var workAreaWidth = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - borderSpaceWidth;
             var workAreaHeight = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - borderSpaceHeight;
 
-            if (Settings.Default.AutoFitWindow)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                maxWidth = Settings.Default.FillImage ? workAreaWidth : Math.Min(workAreaWidth - padding, width);
-                maxHeight = Settings.Default.FillImage ? workAreaHeight : Math.Min(workAreaHeight - padding, height);
+                maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage ? workAreaWidth : Math.Min(workAreaWidth - padding, width);
+                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage ? workAreaHeight : Math.Min(workAreaHeight - padding, height);
             }
             else
             {
-                maxWidth = Settings.Default.FillImage
+                maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
                     ? GetMainWindow.ParentContainer.ActualWidth
                     : Math.Min(GetMainWindow.ParentContainer.ActualWidth, width);
-                if (Settings.Default.ScrollEnabled)
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                 {
-                    maxHeight = Settings.Default.FillImage ? GetMainWindow.ParentContainer.ActualHeight : height;
+                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage ? GetMainWindow.ParentContainer.ActualHeight : height;
                 }
                 else
                 {
-                    maxHeight = Settings.Default.FillImage
+                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
                         ? GetMainWindow.ParentContainer.ActualHeight - galleryHeight
                         : Math.Min(GetMainWindow.ParentContainer.ActualHeight - galleryHeight, height);
                 }
             }
 
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
-                if (!Settings.Default.ShowInterface && !Settings.Default.ShowAltInterfaceBottomGallery)
+                if (!SettingsHelper.Settings.UIProperties.ShowInterface && !SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
                 {
                     margin = 0;
                 }
@@ -136,7 +136,7 @@ namespace PicView.WPF.UILogic.Sizing
                     {
                         if (PicGalleryItemSize is 0)
                         {
-                            SetSize(Settings.Default.BottomGalleryItemSize);
+                            SetSize(SettingsHelper.Settings.Gallery.BottomGalleryItemSize);
                         }
 
                         margin = UC.GetPicGallery.IsVisible ? galleryHeight : 0;
@@ -169,12 +169,12 @@ namespace PicView.WPF.UILogic.Sizing
             if (width * AspectRatio < 0 || height * AspectRatio < 0)
                 return; // Fix weird error when entering fullscreen gallery
 
-            if (Settings.Default.ScrollEnabled)
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
                 GetMainWindow.MainImage.Height = maxWidth * height / width;
                 GetMainWindow.MainImage.Width = maxWidth - ScrollbarSize;
 
-                if (Settings.Default.AutoFitWindow)
+                if (SettingsHelper.Settings.WindowProperties.AutoFit)
                 {
                     GetMainWindow.ParentContainer.Width = maxWidth - ScrollbarSize;
                     GetMainWindow.ParentContainer.Height = XHeight = height * AspectRatio;
@@ -191,11 +191,11 @@ namespace PicView.WPF.UILogic.Sizing
                 GetMainWindow.ParentContainer.Height = double.NaN;
             }
 
-            if (Settings.Default.IsBottomGalleryShown && UC.GetPicGallery is not null)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && UC.GetPicGallery is not null)
             {
-                if (Settings.Default.AutoFitWindow)
+                if (SettingsHelper.Settings.WindowProperties.AutoFit)
                 {
-                    UC.GetPicGallery.Width = Settings.Default.ScrollEnabled
+                    UC.GetPicGallery.Width = SettingsHelper.Settings.Zoom.ScrollEnabled
                         ? GetMainWindow.ParentContainer.Width
                         : Math.Max(GetMainWindow.MinWidth, XWidth);
                 }
@@ -209,7 +209,7 @@ namespace PicView.WPF.UILogic.Sizing
                 ZoomLogic.ResetZoom(false);
             }
 
-            if (Settings.Default.Fullscreen) return;
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen) return;
 
             // Update TitleBar maxWidth... Ugly code, but it works. Binding to ParentContainer.ActualWidth depends on correct timing.
             var interfaceSize =
@@ -218,16 +218,16 @@ namespace PicView.WPF.UILogic.Sizing
                 + GetMainWindow.MinButton.Width + GetMainWindow.FullscreenButton.Width +
                 GetMainWindow.CloseButton.Width;
 
-            if (Settings.Default.AutoFitWindow)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 // Vertically center or vertically and horizontally center
-                CenterWindowOnScreen(GetMainWindow, Settings.Default.KeepCentered);
+                CenterWindowOnScreen(GetMainWindow, SettingsHelper.Settings.WindowProperties.KeepCentered);
 
                 var titleBarMaxWidth = RotationAngle is 0 or 180
                     ? Math.Max(XWidth, GetMainWindow.MinWidth)
                     : Math.Max(XHeight, GetMainWindow.MinHeight);
 
-                if (Settings.Default.ScrollEnabled)
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                 {
                     GetMainWindow.TitleText.MaxWidth = titleBarMaxWidth;
                 }

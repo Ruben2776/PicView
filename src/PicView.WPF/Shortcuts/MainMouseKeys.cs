@@ -1,12 +1,12 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
+﻿using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.Editing;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic.Sizing;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.TransformImage.Scroll;
@@ -33,7 +33,7 @@ namespace PicView.WPF.Shortcuts
             }
 
             // Move window when Shift is being held down
-            if (Settings.Default.ShowInterface == false ||
+            if (SettingsHelper.Settings.UIProperties.ShowInterface == false ||
                 (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 WindowSizing.Move(sender, e);
@@ -60,7 +60,7 @@ namespace PicView.WPF.Shortcuts
             }
 
             // Drag logic
-            if (Settings.Default.ScrollEnabled == false &&
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled == false &&
                 GetMainWindow.MainImage
                     .IsMouseDirectlyOver) // Only send it when mouse over to not disturb other mouse events
             {
@@ -181,9 +181,9 @@ namespace PicView.WPF.Shortcuts
             }
 
             // Determine horizontal scrolling direction
-            var direction = Settings.Default.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
+            var direction = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? e.Delta > 0 : e.Delta < 0;
 
-            if (Settings.Default.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen)
             {
                 await HandleFullscreenGalleryAsync(direction, e).ConfigureAwait(false);
             }
@@ -217,7 +217,7 @@ namespace PicView.WPF.Shortcuts
 
         private static bool ShouldHandleScroll()
         {
-            return Settings.Default.ScrollEnabled
+            return SettingsHelper.Settings.Zoom.ScrollEnabled
                    && GetMainWindow.Scroller.ComputedVerticalScrollBarVisibility == Visibility.Visible
                    && (Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift
                    && Math.Abs(GetMainWindow.Scroller.ExtentHeight - GetMainWindow.Scroller.ViewportHeight) > 1;
@@ -256,7 +256,7 @@ namespace PicView.WPF.Shortcuts
             var next = direction ? NavigateTo.Previous : NavigateTo.Next;
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
-                if (Settings.Default.CtrlZoom)
+                if (SettingsHelper.Settings.Zoom.CtrlZoom)
                 {
                     await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
                 }
@@ -267,9 +267,9 @@ namespace PicView.WPF.Shortcuts
             }
             else
             {
-                if (Settings.Default.CtrlZoom)
+                if (SettingsHelper.Settings.Zoom.CtrlZoom)
                 {
-                    if (Settings.Default.ScrollEnabled)
+                    if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ||
                             GetMainWindow.Scroller.ScrollableHeight is 0)
@@ -289,7 +289,7 @@ namespace PicView.WPF.Shortcuts
                 }
                 else
                 {
-                    if (Settings.Default.ScrollEnabled)
+                    if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                     {
                         if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ||
                             GetMainWindow.Scroller.ScrollableHeight is 0)

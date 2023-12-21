@@ -1,14 +1,14 @@
-﻿using System.Diagnostics;
+﻿using PicView.Core.Config;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.FileHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.FileHandling;
-using PicView.WPF.Properties;
-using PicView.WPF.UILogic;
-using PicView.WPF.Views.UserControls.Gallery;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.UC;
 
@@ -40,7 +40,7 @@ namespace PicView.WPF.PicGallery
             for (var i = 0; i < GetPicGallery.Container.Children.Count; i++)
             {
                 var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
-                item.InnerBorder.Height = item.InnerBorder.Width = Settings.Default.IsBottomGalleryShown
+                item.InnerBorder.Height = item.InnerBorder.Width = SettingsHelper.Settings.Gallery.IsBottomGalleryShown
                     ? GalleryNavigation.PicGalleryItemSize
                     : GalleryNavigation.PicGalleryItemSizeS;
                 item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;

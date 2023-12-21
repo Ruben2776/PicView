@@ -1,8 +1,9 @@
-﻿using PicView.WPF.ChangeImage;
+﻿using PicView.Core.Config;
+using PicView.Core.FileHandling;
+using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Loading;
 using PicView.WPF.UILogic.Sizing;
@@ -11,7 +12,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using PicView.Core.FileHandling;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.TransformImage.Scroll;
@@ -27,7 +27,7 @@ namespace PicView.WPF.ConfigureSettings
         {
             if (changeOrder == false)
             {
-                Settings.Default.SortPreference = (int)sortFilesBy;
+                SettingsHelper.Settings.Sorting.SortPreference = (int)sortFilesBy;
             }
 
             await GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
@@ -72,7 +72,7 @@ namespace PicView.WPF.ConfigureSettings
             await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource)
                 .ConfigureAwait(false);
             await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
-            if (Settings.Default.IsBottomGalleryShown)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 await GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
             }
@@ -92,14 +92,14 @@ namespace PicView.WPF.ConfigureSettings
             var scrollCm = settingCcm.Items[1] as MenuItem;
             var scrollCmHeader = scrollCm.Header as CheckBox;
 
-            SetScrollBehaviour(!Settings.Default.ScrollEnabled);
-            scrollCmHeader.IsChecked = Settings.Default.ScrollEnabled;
-            UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = Settings.Default.ScrollEnabled;
+            SetScrollBehaviour(!SettingsHelper.Settings.Zoom.ScrollEnabled);
+            scrollCmHeader.IsChecked = SettingsHelper.Settings.Zoom.ScrollEnabled;
+            UC.GetQuickSettingsMenu.ToggleScroll.IsChecked = SettingsHelper.Settings.Zoom.ScrollEnabled;
         }
 
         internal static void SetScrolling(bool value)
         {
-            Settings.Default.ScrollEnabled = value;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = value;
             SetScrolling();
         }
 
@@ -109,12 +109,12 @@ namespace PicView.WPF.ConfigureSettings
             var loopCm = settingsCm.Items[0] as MenuItem;
             var loopCmHeader = loopCm.Header as CheckBox;
 
-            Settings.Default.Looping = !Settings.Default.Looping;
-            loopCmHeader.IsChecked = Settings.Default.Looping;
-            UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = Settings.Default.Looping;
+            SettingsHelper.Settings.UIProperties.Looping = !SettingsHelper.Settings.UIProperties.Looping;
+            loopCmHeader.IsChecked = SettingsHelper.Settings.UIProperties.Looping;
+            UC.GetQuickSettingsMenu.ToggleLooping.IsChecked = SettingsHelper.Settings.UIProperties.Looping;
 
             ShowTooltipMessage(
-                Settings.Default.Looping
+                SettingsHelper.Settings.UIProperties.Looping
                     ? Application.Current.Resources["LoopingEnabled"]
                     : Application.Current.Resources["LoopingDisabled"],
                 UC.UserControls_Open());
@@ -122,7 +122,7 @@ namespace PicView.WPF.ConfigureSettings
 
         internal static void SetTopMost()
         {
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 return;
             }
@@ -131,47 +131,47 @@ namespace PicView.WPF.ConfigureSettings
             var topMostMenu = (MenuItem)settingCcm.Items[4];
             var topMostHeader = (CheckBox)topMostMenu.Header;
 
-            Settings.Default.TopMost = !Settings.Default.TopMost;
-            GetMainWindow.Topmost = Settings.Default.TopMost;
-            topMostHeader.IsChecked = Settings.Default.TopMost;
+            SettingsHelper.Settings.WindowProperties.TopMost = !SettingsHelper.Settings.WindowProperties.TopMost;
+            GetMainWindow.Topmost = SettingsHelper.Settings.WindowProperties.TopMost;
+            topMostHeader.IsChecked = SettingsHelper.Settings.WindowProperties.TopMost;
 
             if (GetSettingsWindow is not null)
             {
-                GetSettingsWindow.TopmostRadio.IsChecked = Settings.Default.TopMost;
+                GetSettingsWindow.TopmostRadio.IsChecked = SettingsHelper.Settings.WindowProperties.TopMost;
             }
 
             if (UC.GetQuickSettingsMenu is not null)
             {
-                UC.GetQuickSettingsMenu.StayOnTop.IsChecked = Settings.Default.TopMost;
+                UC.GetQuickSettingsMenu.StayOnTop.IsChecked = SettingsHelper.Settings.WindowProperties.TopMost;
             }
         }
 
         internal static void SetAutoFit(object sender, RoutedEventArgs e)
         {
-            SetScalingBehaviour(Settings.Default.AutoFitWindow = !Settings.Default.AutoFitWindow,
-                Settings.Default.FillImage);
+            SetScalingBehaviour(SettingsHelper.Settings.WindowProperties.AutoFit = !SettingsHelper.Settings.WindowProperties.AutoFit,
+                SettingsHelper.Settings.ImageScaling.StretchImage);
         }
 
         internal static void SetAutoFill(object sender, RoutedEventArgs e)
         {
-            SetScalingBehaviour(Settings.Default.AutoFitWindow, !Settings.Default.FillImage);
+            SetScalingBehaviour(SettingsHelper.Settings.WindowProperties.AutoFit, !SettingsHelper.Settings.ImageScaling.StretchImage);
             var settingsCm = MainContextMenu.Items[7] as MenuItem;
             var fillCm = settingsCm.Items[5] as MenuItem;
             var fillCmHeader = fillCm.Header as CheckBox;
-            fillCmHeader.IsChecked = Settings.Default.FillImage;
+            fillCmHeader.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
         }
 
         internal static void SetScalingBehaviour(bool autoFit, bool fill)
         {
-            Settings.Default.FillImage = fill;
-            Settings.Default.AutoFitWindow = autoFit;
+            SettingsHelper.Settings.ImageScaling.StretchImage = fill;
+            SettingsHelper.Settings.WindowProperties.AutoFit = autoFit;
 
             UC.GetQuickSettingsMenu.SetFit.IsChecked = autoFit;
             UC.GetQuickSettingsMenu.ToggleFill.IsChecked = fill;
 
             WindowSizing.SetWindowBehavior();
             ScaleImage.TryFitImage();
-            Settings.Default.Save();
+            SettingsHelper.SaveSettingsAsync();
         }
 
         internal static void ToggleQuickResize()
@@ -195,22 +195,22 @@ namespace PicView.WPF.ConfigureSettings
 
         internal static async Task ToggleIncludeSubdirectoriesAsync()
         {
-            var initialValue = Settings.Default.IncludeSubDirectories;
-            Settings.Default.IncludeSubDirectories = !Settings.Default.IncludeSubDirectories;
+            var initialValue = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories = !SettingsHelper.Settings.Sorting.IncludeSubDirectories;
 
             await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (GetSettingsWindow is not null)
                 {
-                    GetSettingsWindow.SubDirRadio.IsChecked = Settings.Default.IncludeSubDirectories;
+                    GetSettingsWindow.SubDirRadio.IsChecked = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
                 }
 
                 if (UC.GetQuickSettingsMenu is not null)
                 {
-                    UC.GetQuickSettingsMenu.SearchSubDir.IsChecked = Settings.Default.IncludeSubDirectories;
+                    UC.GetQuickSettingsMenu.SearchSubDir.IsChecked = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
                 }
             });
-            Settings.Default.Save();
+            await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
 
             if (ErrorHandling.CheckOutOfRange())
             {
@@ -278,12 +278,12 @@ namespace PicView.WPF.ConfigureSettings
 
         internal static void SetCtrlToZoom(bool value)
         {
-            if (Settings.Default.CtrlZoom == value)
+            if (SettingsHelper.Settings.Zoom.CtrlZoom == value)
             {
                 return;
             }
 
-            Settings.Default.CtrlZoom = value;
+            SettingsHelper.Settings.Zoom.CtrlZoom = value;
 
             if (GetSettingsWindow is not null)
             {
@@ -302,7 +302,7 @@ namespace PicView.WPF.ConfigureSettings
             var settingCcm = (MenuItem)MainContextMenu.Items[7];
             var ctrlZoomMenu = (MenuItem)settingCcm.Items[6];
             var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
-            ctrlZoomHeader.IsChecked = Settings.Default.CtrlZoom;
+            ctrlZoomHeader.IsChecked = SettingsHelper.Settings.Zoom.CtrlZoom;
             MainContextMenu.IsOpen = false;
         }
     }

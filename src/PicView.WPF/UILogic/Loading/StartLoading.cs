@@ -1,9 +1,8 @@
-﻿using ImageMagick;
-using PicView.Core.Calculations;
+﻿using PicView.Core.Calculations;
+using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.ImageHandling;
-using PicView.WPF.Properties;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
@@ -38,7 +37,8 @@ internal static class StartLoading
         };
         // Load sizing properties
         MonitorInfo = MonitorSize.GetMonitorSize(startupWindow);
-        if (Settings.Default.AutoFitWindow == false && Settings.Default.Fullscreen == false)
+        await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
+        if (SettingsHelper.Settings.WindowProperties.AutoFit == false && SettingsHelper.Settings.WindowProperties.Fullscreen == false)
         {
             SetLastWindowSize(startupWindow);
         }
@@ -55,29 +55,29 @@ internal static class StartLoading
                     .ConfigureAwait(false);
             });
 
-            size = ImageSizeCalculationHelper.GetImageSize(
-                width: bitmapSource.PixelWidth * MonitorInfo.DpiScaling,
-                height: bitmapSource.PixelHeight * MonitorInfo.DpiScaling,
-                monitorWidth: MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling,
-                monitorHeight: MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling,
-                rotationAngle: 0,
-                stretch: Settings.Default.FillImage,
-                padding: 20 * MonitorInfo.DpiScaling,
-                dpiScaling: MonitorInfo.DpiScaling,
-                fullscreen: Settings.Default.Fullscreen,
-                uiTopSize: 30 * MonitorInfo.DpiScaling,
-                uiBottomSize: 25 * MonitorInfo.DpiScaling,
-                galleryHeight: Settings.Default.IsBottomGalleryShown
-                    ? Settings.Default.BottomGalleryItemSize
-                    : 0,
-                autoFit: Settings.Default.AutoFitWindow,
-                containerWidth: startupWindow.Width * MonitorInfo.DpiScaling,
-                containerHeight: startupWindow.Height * MonitorInfo.DpiScaling,
-                Settings.Default.ScrollEnabled
-            );
-
             await startupWindow.Dispatcher.InvokeAsync(() =>
             {
+                size = ImageSizeCalculationHelper.GetImageSize(
+                    width: bitmapSource.PixelWidth * MonitorInfo.DpiScaling,
+                    height: bitmapSource.PixelHeight * MonitorInfo.DpiScaling,
+                    monitorWidth: MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling,
+                    monitorHeight: MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling,
+                    rotationAngle: 0,
+                    stretch: SettingsHelper.Settings.ImageScaling.StretchImage,
+                    padding: 20 * MonitorInfo.DpiScaling,
+                    dpiScaling: MonitorInfo.DpiScaling,
+                    fullscreen: SettingsHelper.Settings.ImageScaling.StretchImage,
+                    uiTopSize: 30 * MonitorInfo.DpiScaling,
+                    uiBottomSize: 25 * MonitorInfo.DpiScaling,
+                    galleryHeight: SettingsHelper.Settings.Gallery.IsBottomGalleryShown
+                        ? SettingsHelper.Settings.Gallery.BottomGalleryItemSize
+                        : 0,
+                    autoFit: SettingsHelper.Settings.WindowProperties.AutoFit,
+                    containerWidth: startupWindow.Width * MonitorInfo.DpiScaling,
+                    containerHeight: startupWindow.Height * MonitorInfo.DpiScaling,
+                    SettingsHelper.Settings.Zoom.ScrollEnabled
+                );
+
                 image.Stretch = Stretch.Fill;
                 image.Width = startupWindow.Width = size.Value.Width;
                 image.Height = startupWindow.Height = size.Value.Height;
@@ -86,7 +86,7 @@ internal static class StartLoading
                 image.Source = bitmapSource;
                 startupWindow.TheGrid.Children.Add(image);
 
-                if (Settings.Default.AutoFitWindow)
+                if (SettingsHelper.Settings.WindowProperties.AutoFit)
                 {
                     CenterWindowOnScreen(startupWindow);
                 }
@@ -114,7 +114,7 @@ internal static class StartLoading
 
         await startupWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (Settings.Default.AutoFitWindow == false)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
             {
                 SetLastWindowSize(mainWindow);
             }
@@ -124,26 +124,26 @@ internal static class StartLoading
             mainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             SetWindowBehavior();
-            if (Settings.Default.AutoFitWindow == false)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
                 SetLastWindowSize(ConfigureWindows.GetMainWindow);
 
-            mainWindow.Scroller.VerticalScrollBarVisibility = Settings.Default.ScrollEnabled
+            mainWindow.Scroller.VerticalScrollBarVisibility = SettingsHelper.Settings.Zoom.ScrollEnabled
                 ? ScrollBarVisibility.Auto
                 : ScrollBarVisibility.Disabled;
 
-            if (!Settings.Default.ShowInterface)
+            if (!SettingsHelper.Settings.UIProperties.ShowInterface)
             {
                 mainWindow.TitleBar.Visibility =
                     mainWindow.LowerBar.Visibility
                         = Visibility.Collapsed;
             }
-            else if (!Settings.Default.ShowBottomNavBar)
+            else if (!SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
             {
                 mainWindow.LowerBar.Visibility
                     = Visibility.Collapsed;
             }
 
-            if (Settings.Default.AutoFitWindow)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 ConfigureWindows.GetMainWindow.MainImage.Width = startupWindow.ActualWidth;
                 ConfigureWindows.GetMainWindow.MainImage.Height = startupWindow.ActualHeight;
@@ -155,11 +155,11 @@ internal static class StartLoading
             }
 
             ConfigureWindows.GetMainWindow.Show();
-            if (Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 if (args.Length < 2)
                 {
-                    Settings.Default.Fullscreen = false;
+                    SettingsHelper.Settings.WindowProperties.Fullscreen = false;
                 }
                 else
                 {
@@ -167,7 +167,7 @@ internal static class StartLoading
                 }
             }
 
-            if (Settings.Default.AutoFitWindow)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 ScaleImage.TryFitImage();
             }
@@ -253,7 +253,7 @@ internal static class StartLoading
         LoadGalleryShortcut();
 
         // Update WindowStyle
-        if (!Settings.Default.ShowInterface)
+        if (!SettingsHelper.Settings.UIProperties.ShowInterface)
         {
             GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
@@ -271,7 +271,7 @@ internal static class StartLoading
                                 GetRestoreButton.Visibility =
                                     Visibility.Visible;
         }
-        else if (Settings.Default.Fullscreen)
+        else if (SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
             GetClickArrowLeft.Opacity =
                 GetClickArrowRight.Opacity =
@@ -287,7 +287,7 @@ internal static class StartLoading
                                 GetRestoreButton.Visibility =
                                     Visibility.Visible;
 
-            if (!Settings.Default.IsBottomGalleryShown)
+            if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 GetGalleryShortcut.Opacity = 1;
                 GetGalleryShortcut.Visibility = Visibility.Visible;

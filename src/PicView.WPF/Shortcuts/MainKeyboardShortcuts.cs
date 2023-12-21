@@ -1,10 +1,10 @@
-﻿using System.Windows.Input;
+﻿using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.Editing.Crop;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
+using System.Windows.Input;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.UC;
 
@@ -198,7 +198,7 @@ namespace PicView.WPF.Shortcuts
                 {
                     await GetMainWindow.Dispatcher.InvokeAsync(() =>
                     {
-                        WindowSizing.Fullscreen_Restore(!Settings.Default.Fullscreen);
+                        WindowSizing.Fullscreen_Restore(!SettingsHelper.Settings.WindowProperties.Fullscreen);
                     });
                 }
 

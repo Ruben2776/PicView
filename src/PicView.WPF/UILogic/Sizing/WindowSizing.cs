@@ -1,13 +1,13 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using System.Windows.Input;
+﻿using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.Views.UserControls.Buttons;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Input;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.HideInterfaceLogic;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
@@ -27,7 +27,7 @@ namespace PicView.WPF.UILogic.Sizing
         /// </summary>
         internal static void SetWindowBehavior()
         {
-            if (Settings.Default.AutoFitWindow)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 GetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                 GetMainWindow.ResizeMode = ResizeMode.CanMinimize;
@@ -104,11 +104,11 @@ namespace PicView.WPF.UILogic.Sizing
 
             if (e.ClickCount == 2)
             {
-                if (Settings.Default.AutoFitWindow)
+                if (SettingsHelper.Settings.WindowProperties.AutoFit)
                 {
-                    Settings.Default.AutoFitWindow = false;
+                    SettingsHelper.Settings.WindowProperties.AutoFit = false;
                     SetWindowBehavior();
-                    Settings.Default.AutoFitWindow = true;
+                    SettingsHelper.Settings.WindowProperties.AutoFit = true;
                 }
 
                 Fullscreen_Restore(true);
@@ -210,19 +210,19 @@ namespace PicView.WPF.UILogic.Sizing
 
                 if (ErrorHandling.CheckOutOfRange() is false)
                 {
-                    IsNavigationShown(Settings.Default.ShowAltInterfaceButtons);
-                    if (!Settings.Default.IsBottomGalleryShown)
-                        IsShortcutsShown(Settings.Default.ShowAltInterfaceButtons);
+                    IsNavigationShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
+                    if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                        IsShortcutsShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
                 }
 
-                Settings.Default.Fullscreen = true;
+                SettingsHelper.Settings.WindowProperties.Fullscreen = true;
             }
             else
             {
-                GetMainWindow.Topmost = Settings.Default.TopMost;
-                Settings.Default.Fullscreen = false;
+                GetMainWindow.Topmost = SettingsHelper.Settings.WindowProperties.TopMost;
+                SettingsHelper.Settings.WindowProperties.Fullscreen = false;
 
-                if (Settings.Default.ShowInterface)
+                if (SettingsHelper.Settings.UIProperties.ShowInterface)
                 {
                     IsNavigationShown(false);
                     IsTopAndBottomShown(true);
@@ -242,7 +242,7 @@ namespace PicView.WPF.UILogic.Sizing
 
                 SetWindowBehavior();
 
-                if (Settings.Default.AutoFitWindow == false)
+                if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
                 {
                     SetLastWindowSize(GetMainWindow);
                 }
@@ -288,31 +288,31 @@ namespace PicView.WPF.UILogic.Sizing
         {
             window.Dispatcher.Invoke(() =>
             {
-                window.Top = Settings.Default.Top;
-                window.Left = Settings.Default.Left;
-                window.Width = double.IsNaN(Settings.Default.Width) ? window.Width :
-                    double.IsNaN(Settings.Default.Width) ? window.ActualWidth : Settings.Default.Width;
-                window.Height = double.IsNaN(Settings.Default.Height) ? window.Height :
-                    double.IsNaN(Settings.Default.Height) ? window.ActualHeight : Settings.Default.Height;
+                window.Top = SettingsHelper.Settings.WindowProperties.Top;
+                window.Left = SettingsHelper.Settings.WindowProperties.Left;
+                window.Width = double.IsNaN(SettingsHelper.Settings.WindowProperties.Width) ? window.Width :
+                    double.IsNaN(SettingsHelper.Settings.WindowProperties.Width) ? window.ActualWidth : SettingsHelper.Settings.WindowProperties.Width;
+                window.Height = double.IsNaN(SettingsHelper.Settings.WindowProperties.Height) ? window.Height :
+                    double.IsNaN(SettingsHelper.Settings.WindowProperties.Height) ? window.ActualHeight : SettingsHelper.Settings.WindowProperties.Height;
             });
         }
 
         internal static void SetWindowSize(Window window)
         {
-            if (Settings.Default.AutoFitWindow && Settings.Default.Fullscreen)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit && SettingsHelper.Settings.WindowProperties.Fullscreen)
                 return;
 
-            window?.Dispatcher.Invoke(() =>
+            window?.Dispatcher.Invoke(async () =>
             {
-                if (window.WindowState == WindowState.Maximized || Settings.Default.Fullscreen)
+                if (window.WindowState == WindowState.Maximized || SettingsHelper.Settings.WindowProperties.Fullscreen)
                     return;
 
-                Settings.Default.Top = window.Top;
-                Settings.Default.Left = window.Left;
-                Settings.Default.Height = window.ActualHeight;
-                Settings.Default.Width = window.ActualWidth;
+                SettingsHelper.Settings.WindowProperties.Top = window.Top;
+                SettingsHelper.Settings.WindowProperties.Left = window.Left;
+                SettingsHelper.Settings.WindowProperties.Height = window.ActualHeight;
+                SettingsHelper.Settings.WindowProperties.Width = window.ActualWidth;
 
-                Settings.Default.Save();
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
         }
 
@@ -367,12 +367,12 @@ namespace PicView.WPF.UILogic.Sizing
 
             GetSettingsWindow?.Close();
 
-            Settings.Default.Save();
+            await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             DeleteFiles.DeleteTempFiles();
             FileHistoryNavigation.WriteToFile();
             // Update the keybindings.json file
             await CustomKeybindings.UpdateKeyBindingsFile();
-            Application.Current.Shutdown();
+            Environment.Exit(0);
         }
     }
 }

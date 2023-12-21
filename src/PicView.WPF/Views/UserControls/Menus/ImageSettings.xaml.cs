@@ -4,7 +4,7 @@ using PicView.WPF.ConfigureSettings;
 using PicView.WPF.Editing.Crop;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.WPF.Properties;
+using PicView.Core.Config;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.TransformImage;
 using static PicView.WPF.Animations.MouseOverAnimations;
@@ -80,10 +80,10 @@ namespace PicView.WPF.Views.UserControls.Menus
         private static async Task ContainedGalleryClick()
         {
             UC.Close_UserControls();
-            Settings.Default.IsBottomGalleryShown = !Settings.Default.IsBottomGalleryShown;
-            if (Settings.Default.IsBottomGalleryShown)
+            SettingsHelper.Settings.Gallery.IsBottomGalleryShown = !SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
-                GalleryNavigation.SetSize(Settings.Default.BottomGalleryItemSize);
+                GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.BottomGalleryItemSize);
                 GalleryFunctions.ReCalculateItemSizes();
                 await GalleryToggle.OpenHorizontalGalleryAsync().ConfigureAwait(false);
             }

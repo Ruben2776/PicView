@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using PicView.Core.Config;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using PicView.WPF.Properties;
 
 namespace PicView.WPF.Animations
 {
@@ -22,7 +22,7 @@ namespace PicView.WPF.Animations
         internal static void SetButtonIconMouseOverAnimations(UIElement uIElement, Brush backgroundBrush,
             Brush iconBrush, bool force = false)
         {
-            if (Settings.Default.DarkTheme || force)
+            if (SettingsHelper.Settings.Theme.Dark || force)
             {
                 uIElement.MouseLeftButtonDown += delegate
                 {
