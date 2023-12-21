@@ -4,38 +4,11 @@ using System.Text.Json;
 namespace PicView.Core.Navigation
 {
     /// <summary>
-    /// Represents an entry in the file history.
-    /// </summary>
-    public class FileEntry
-    {
-        /// <summary>
-        /// Gets or sets the file path.
-        /// </summary>
-        public string FilePath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the top-level directory.
-        /// </summary>
-        public string TopLevelDirectory { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileEntry"/> class.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="topLevelDirectory">The top-level directory.</param>
-        public FileEntry(string filePath, string topLevelDirectory)
-        {
-            FilePath = filePath;
-            TopLevelDirectory = topLevelDirectory;
-        }
-    }
-
-    /// <summary>
     /// Manages the history of recently accessed files.
     /// </summary>
     public class FileHistory
     {
-        private readonly List<FileEntry?> _fileHistory;
+        private readonly List<string> _fileHistory;
         public const short MaxCount = 15;
 
         /// <summary>
@@ -43,7 +16,7 @@ namespace PicView.Core.Navigation
         /// </summary>
         public FileHistory()
         {
-            _fileHistory ??= new List<FileEntry?>();
+            _fileHistory ??= new();
 
             try
             {
@@ -80,7 +53,7 @@ namespace PicView.Core.Navigation
                 var json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.json"));
                 lock (_fileHistory)
                 {
-                    _fileHistory.AddRange(JsonSerializer.Deserialize<List<FileEntry>>(json));
+                    _fileHistory.AddRange(JsonSerializer.Deserialize<List<string>>(json));
                 }
             }
             catch (Exception e)
@@ -122,10 +95,6 @@ namespace PicView.Core.Navigation
             }
         }
 
-        /// <summary>
-        /// Adds a file to the history.
-        /// </summary>
-        /// <param name="fileName">The name of the file to add.</param>
         public void Add(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
@@ -135,7 +104,7 @@ namespace PicView.Core.Navigation
 
             lock (_fileHistory)
             {
-                if (_fileHistory.Exists(e => e.FilePath.EndsWith(fileName)))
+                if (_fileHistory.Exists(e => e.EndsWith(fileName)))
                 {
                     return;
                 }
@@ -145,17 +114,11 @@ namespace PicView.Core.Navigation
                     _fileHistory.RemoveAt(0);
                 }
 
-                var entry = new FileEntry(fileName, Path.GetDirectoryName(fileName));
-
-                _fileHistory.Add(entry);
+                _fileHistory.Add(fileName);
             }
         }
 
-        /// <summary>
-        /// Gets the last file in the history.
-        /// </summary>
-        /// <returns>The last file entry or null if the history is empty.</returns>
-        public FileEntry? GetLastFile()
+        public string? GetLastFile()
         {
             lock (_fileHistory)
             {
@@ -167,7 +130,7 @@ namespace PicView.Core.Navigation
         /// Gets the first file in the history.
         /// </summary>
         /// <returns>The first file entry or null if the history is empty.</returns>
-        public FileEntry? GetFirstFile()
+        public string? GetFirstFile()
         {
             lock (_fileHistory)
             {
@@ -180,7 +143,7 @@ namespace PicView.Core.Navigation
         /// </summary>
         /// <param name="index">The index of the file entry to retrieve.</param>
         /// <returns>The file entry at the specified index or null if the history is empty.</returns>
-        public FileEntry? GetEntryAt(int index)
+        public string? GetEntryAt(int index)
         {
             lock (_fileHistory)
             {
@@ -205,7 +168,7 @@ namespace PicView.Core.Navigation
         /// <param name="index">The current index in the list.</param>
         /// <param name="list">The list of file names.</param>
         /// <returns>The next file entry or null if not found or an exception occurs.</returns>
-        public FileEntry? GetNextEntry(bool looping, int index, List<string> list)
+        public string? GetNextEntry(bool looping, int index, List<string> list)
         {
             if (list.Count <= 0)
             {
@@ -216,7 +179,7 @@ namespace PicView.Core.Navigation
             {
                 lock (_fileHistory)
                 {
-                    var foundIndex = _fileHistory.FindIndex(entry => entry.FilePath == list[index]);
+                    var foundIndex = _fileHistory.IndexOf(list[index]);
 
                     if (looping)
                     {
@@ -243,18 +206,18 @@ namespace PicView.Core.Navigation
         /// <param name="index">The current index in the list.</param>
         /// <param name="list">The list of file names.</param>
         /// <returns>The previous file entry or null if not found or an exception occurs.</returns>
-        public FileEntry? GetPreviousEntry(bool looping, int index, List<string> list)
+        public string? GetPreviousEntry(bool looping, int index, List<string> list)
         {
             if (list.Count <= 0)
             {
-                return GetLastFile();
+                return GetFirstFile();
             }
 
             try
             {
                 lock (_fileHistory)
                 {
-                    var foundIndex = _fileHistory.FindIndex(entry => entry.FilePath == list[index]);
+                    var foundIndex = _fileHistory.IndexOf(list[index]);
                     if (looping)
                     {
                         return GetEntryAt((foundIndex - 1 + _fileHistory.Count) % _fileHistory.Count);

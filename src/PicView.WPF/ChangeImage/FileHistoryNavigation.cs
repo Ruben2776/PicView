@@ -41,8 +41,8 @@ namespace PicView.WPF.ChangeImage
             }, DispatcherPriority.Normal);
 
             _fileHistory ??= new FileHistory();
-            var fileEntry = await Task.FromResult(_fileHistory.GetLastFile()).ConfigureAwait(false);
-            if (fileEntry is null)
+            var file = await Task.FromResult(_fileHistory.GetLastFile()).ConfigureAwait(false);
+            if (file is null)
             {
                 return;
             }
@@ -50,17 +50,17 @@ namespace PicView.WPF.ChangeImage
             {
                 if (Settings.Default.IncludeSubDirectories)
                 {
-                    if (fileEntry.FilePath.IsArchive())
+                    if (file.IsArchive())
                     {
-                        await LoadPic.LoadPicFromArchiveAsync(fileEntry.FilePath).ConfigureAwait(false);
+                        await LoadPic.LoadPicFromArchiveAsync(file).ConfigureAwait(false);
                         return;
                     }
 
-                    var fileInfo = new FileInfo(fileEntry.TopLevelDirectory);
+                    var fileInfo = new FileInfo(file);
                     Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
                     if (Navigation.Pics.Count > 0)
                     {
-                        Navigation.FolderIndex = Navigation.Pics.IndexOf(fileEntry.FilePath);
+                        Navigation.FolderIndex = Navigation.Pics.IndexOf(file);
                         await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
 
                         // Fix if Bottom Gallery is enabled
@@ -102,12 +102,12 @@ namespace PicView.WPF.ChangeImage
                     }
                     else
                     {
-                        await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
+                        await LoadPic.LoadPicFromStringAsync(file).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
+                    await LoadPic.LoadPicFromStringAsync(file).ConfigureAwait(false);
                 }
             });
         }
@@ -121,11 +121,11 @@ namespace PicView.WPF.ChangeImage
             }
 
             _fileHistory ??= new FileHistory();
-            var fileEntry = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
+            var file = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
 
-            if (Navigation.Pics.Contains(fileEntry.FilePath))
+            if (Navigation.Pics.Contains(file))
             {
-                if (fileEntry.FilePath == Navigation.Pics[Navigation.FolderIndex])
+                if (file == Navigation.Pics[Navigation.FolderIndex])
                 {
                     return;
                 }
@@ -140,11 +140,11 @@ namespace PicView.WPF.ChangeImage
                         GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
                     });
                 }
-                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(fileEntry.FilePath)).ConfigureAwait(false);
+                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(file)).ConfigureAwait(false);
                 return;
             }
 
-            await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(file).ConfigureAwait(false);
         }
 
         internal static async Task PrevAsync()
@@ -156,11 +156,11 @@ namespace PicView.WPF.ChangeImage
             }
 
             _fileHistory ??= new FileHistory();
-            var fileEntry = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
+            var file = await Task.FromResult(_fileHistory.GetNextEntry(Settings.Default.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
 
-            if (Navigation.Pics.Contains(fileEntry.FilePath))
+            if (Navigation.Pics.Contains(file))
             {
-                if (fileEntry.FilePath == Navigation.Pics[Navigation.FolderIndex])
+                if (file == Navigation.Pics[Navigation.FolderIndex])
                 {
                     return;
                 }
@@ -175,11 +175,11 @@ namespace PicView.WPF.ChangeImage
                         GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
                     });
                 }
-                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(fileEntry.FilePath)).ConfigureAwait(false);
+                await LoadPic.LoadPicAtIndexAsync(Navigation.Pics.IndexOf(file)).ConfigureAwait(false);
                 return;
             }
 
-            await LoadPic.LoadPicFromStringAsync(fileEntry.FilePath).ConfigureAwait(false);
+            await LoadPic.LoadPicFromStringAsync(file).ConfigureAwait(false);
         }
 
         private static MenuItem MenuItem(string filePath, int i)
@@ -220,7 +220,7 @@ namespace PicView.WPF.ChangeImage
 
             menuItem.MouseEnter += (_, _) => menuItem.Foreground = new SolidColorBrush(Colors.White);
             menuItem.MouseLeave += (_, _) =>
-                menuItem.Foreground = (SolidColorBrush)Application.Current.Resources["IconColorBrush"];
+                menuItem.Foreground = (SolidColorBrush)Application.Current?.Resources["IconColorBrush"] ?? Brushes.WhiteSmoke;
 
             menuItem.Click += async (_, _) =>
                 await LoadPic.LoadPicFromStringAsync(menuItem.ToolTip.ToString()).ConfigureAwait(false);
@@ -234,7 +234,7 @@ namespace PicView.WPF.ChangeImage
         {
             try
             {
-                var cm = (MenuItem)ConfigureWindows.MainContextMenu.Items[6];
+                var cm = (MenuItem)ConfigureWindows.MainContextMenu?.Items[6]!;
 
                 for (var i = 0; i < FileHistory.MaxCount; i++)
                 {
@@ -243,7 +243,7 @@ namespace PicView.WPF.ChangeImage
                         return;
                     }
 
-                    var item = MenuItem(_fileHistory.GetEntryAt(i).FilePath, i);
+                    var item = MenuItem(_fileHistory.GetEntryAt(i), i);
                     if (cm.Items.Count <= i)
                     {
                         cm.Items.Add(item);
