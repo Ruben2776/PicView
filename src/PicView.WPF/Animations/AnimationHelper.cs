@@ -104,46 +104,37 @@ namespace PicView.WPF.Animations
             };
         }
 
+        internal static Color GetCurrentColor(int colorTheme)
+        {
+            return colorTheme switch
+            {
+                2 => Color.FromRgb(230, 139, 238),
+                3 => Color.FromRgb(219, 91, 61),
+                4 => Color.FromRgb(32, 231, 107),
+                5 => Color.FromRgb(249, 17, 16),
+                6 => Color.FromRgb(68, 161, 160),
+                7 => Color.FromRgb(54, 230, 204),
+                8 => Color.FromRgb(254, 169, 85),
+                9 => Color.FromRgb(151, 56, 235),
+                10 => Color.FromRgb(27, 161, 226),
+                11 => Color.FromRgb(255, 53, 197),
+                12 => Color.FromRgb(34, 203, 151),
+                _ => Color.FromRgb(26, 140, 240),
+            };
+        }
+
         internal static void MouseLeaveColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colorTheme)
         {
-            //ColorAnimation.From = colorTheme switch
-            //{
-            //    2 => SettingsHelper.Settings.Pink,
-            //    3 => SettingsHelper.Settings.Orange,
-            //    4 => SettingsHelper.Settings.Green,
-            //    5 => SettingsHelper.Settings.Red,
-            //    6 => SettingsHelper.Settings.Teal,
-            //    7 => SettingsHelper.Settings.Aqua,
-            //    8 => SettingsHelper.Settings.Golden,
-            //    9 => SettingsHelper.Settings.Purple,
-            //    10 => SettingsHelper.Settings.Cyan,
-            //    11 => SettingsHelper.Settings.Magenta,
-            //    12 => SettingsHelper.Settings.Lime,
-            //    _ => SettingsHelper.Settings.Blue,
-            //};
-            //ColorAnimation.To = Color.FromArgb(a, r, g, b);
-            //brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
+            ColorAnimation.From = GetCurrentColor(colorTheme);
+            ColorAnimation.To = Color.FromArgb(a, r, g, b);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
         internal static void MouseEnterColorEvent(byte a, byte r, byte g, byte b, Brush brush, int colorTheme)
         {
-            //ColorAnimation.From = Color.FromArgb(a, r, g, b);
-            //ColorAnimation.To = colorTheme switch
-            //{
-            //    2 => SettingsHelper.Settings.Pink,
-            //    3 => SettingsHelper.Settings.Orange,
-            //    4 => SettingsHelper.Settings.Green,
-            //    5 => SettingsHelper.Settings.Red,
-            //    6 => SettingsHelper.Settings.Teal,
-            //    7 => SettingsHelper.Settings.Aqua,
-            //    8 => SettingsHelper.Settings.Golden,
-            //    9 => SettingsHelper.Settings.Purple,
-            //    10 => SettingsHelper.Settings.Cyan,
-            //    11 => SettingsHelper.Settings.Magenta,
-            //    12 => SettingsHelper.Settings.Lime,
-            //    _ => SettingsHelper.Settings.Blue,
-            //};
-            //brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
+            ColorAnimation.From = Color.FromArgb(a, r, g, b);
+            ColorAnimation.To = GetCurrentColor(colorTheme);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimation);
         }
 
         #endregion Color Events
@@ -152,22 +143,7 @@ namespace PicView.WPF.Animations
 
         internal static Color GetPreferredColor()
         {
-            //return SettingsHelper.Settings.Theme.ColorTheme switch
-            //{
-            //    2 => SettingsHelper.Settings.Pink,
-            //    3 => SettingsHelper.Settings.Orange,
-            //    4 => SettingsHelper.Settings.Green,
-            //    5 => SettingsHelper.Settings.Red,
-            //    6 => SettingsHelper.Settings.Teal,
-            //    7 => SettingsHelper.Settings.Aqua,
-            //    8 => SettingsHelper.Settings.Golden,
-            //    9 => SettingsHelper.Settings.Purple,
-            //    10 => SettingsHelper.Settings.Cyan,
-            //    11 => SettingsHelper.Settings.Magenta,
-            //    12 => SettingsHelper.Settings.Lime,
-            //    _ => SettingsHelper.Settings.Blue,
-            //};
-            return Colors.Orange;
+            return GetCurrentColor(SettingsHelper.Settings.Theme.ColorTheme);
         }
 
         #endregion Color settings
