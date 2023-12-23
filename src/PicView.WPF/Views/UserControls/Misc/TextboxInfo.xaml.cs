@@ -23,7 +23,6 @@ public partial class TextBoxInfo
 
     public void UpdateLanguage()
     {
-        ValueName.Text = TranslationHelper.GetTranslation("Filename");
         ValueCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
     }
 }

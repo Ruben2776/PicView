@@ -161,7 +161,7 @@
 
             <Button
                 x:Name="FileProperties"
-                Width="126"
+                Width="130"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}">
@@ -207,7 +207,7 @@
 
             <Button
                 x:Name="OptimizeImageButton"
-                Width="123"
+                Width="127"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}">
@@ -253,7 +253,7 @@
 
             <Button
                 x:Name="ShowInFolder"
-                Width="130"
+                Width="131"
                 Height="30"
                 Padding="0"
                 Style="{StaticResource MetroFlatButton}">

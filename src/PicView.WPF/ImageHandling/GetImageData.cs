@@ -307,7 +307,7 @@ namespace PicView.WPF.ImageHandling
             try
             {
                 if (fileInfo.Length < 214783648)
-                    await magickImage.ReadAsync(fileInfo);
+                    await magickImage.ReadAsync(fileInfo).ConfigureAwait(false);
                 else
                     // ReSharper disable once MethodHasAsyncOverload
                     magickImage.Read(fileInfo);
