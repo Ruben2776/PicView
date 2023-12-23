@@ -580,7 +580,11 @@ namespace PicView.WPF.ChangeImage
 
             async Task SkipLoading(CancellationTokenSource? source)
             {
-                await source?.CancelAsync();
+                if (source is not null)
+                {
+                    await source?.CancelAsync();
+                }
+
                 await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
             }
         });

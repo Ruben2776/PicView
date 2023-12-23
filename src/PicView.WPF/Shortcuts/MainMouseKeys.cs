@@ -254,58 +254,47 @@ namespace PicView.WPF.Shortcuts
         private static async Task HandleNavigateOrZoomAsync(bool direction, MouseWheelEventArgs e)
         {
             var next = direction ? NavigateTo.Previous : NavigateTo.Next;
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
-                if (SettingsHelper.Settings.Zoom.CtrlZoom)
+                await ScrollOrNext().ConfigureAwait(false);
+            }
+            else
+            {
+                await ZoomOrNext(SettingsHelper.Settings.Zoom.CtrlZoom).ConfigureAwait(false);
+            }
+            return;
+
+            async Task ScrollOrNext()
+            {
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ||
+                    GetMainWindow.Scroller.ScrollableHeight is 0)
                 {
-                    await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => Zoom(e.Delta > 0));
+                    await GoToNextImage(next).ConfigureAwait(false);
+                }
+                else
+                {
+                    await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        () => HandleScroll(e.Delta > 0));
+                }
+            }
+
+            async Task ZoomOrNext(bool ctrlZoom)
+            {
+                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    if (ctrlZoom)
+                    {
+                        await GetMainWindow.Dispatcher.InvokeAsync(() => Zoom(e.Delta > 0));
+                    }
+                    else
+                    {
+                        await GoToNextImage(next).ConfigureAwait(false);
+                    }
                 }
                 else
                 {
                     await GoToNextImage(next).ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                if (SettingsHelper.Settings.Zoom.CtrlZoom)
-                {
-                    if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-                    {
-                        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ||
-                            GetMainWindow.Scroller.ScrollableHeight is 0)
-                        {
-                            await GoToNextImage(next).ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                () => HandleScroll(e.Delta > 0));
-                        }
-                    }
-                    else
-                    {
-                        await GoToNextImage(next).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-                    {
-                        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift ||
-                            GetMainWindow.Scroller.ScrollableHeight is 0)
-                        {
-                            await GoToNextImage(next).ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                () => HandleScroll(e.Delta > 0));
-                        }
-                    }
-                    else
-                    {
-                        await GoToNextImage(next).ConfigureAwait(false);
-                    }
                 }
             }
         }
