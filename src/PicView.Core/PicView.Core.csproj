@@ -12,9 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Config\appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Config\default-keybindings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
