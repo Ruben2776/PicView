@@ -6,7 +6,6 @@ using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.TransformImage.Scroll;
@@ -189,13 +188,13 @@ namespace PicView.WPF.Shortcuts
             }
             else if (GalleryFunctions.IsGalleryOpen)
             {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                await GetMainWindow.Dispatcher.InvokeAsync(() =>
                     GalleryNavigation.ScrollGallery(direction, false,
                         (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift, false));
             }
             else if (ShouldHandleScroll())
             {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => HandleScroll(direction));
+                await GetMainWindow.Dispatcher.InvokeAsync(() => HandleScroll(direction));
             }
             else
             {
@@ -227,7 +226,7 @@ namespace PicView.WPF.Shortcuts
         {
             if (GetPicGallery is not null && GetPicGallery.IsMouseOver)
             {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                await GetMainWindow.Dispatcher.InvokeAsync(() =>
                     GalleryNavigation.ScrollGallery(direction, false,
                         (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift, false));
             }
@@ -274,8 +273,7 @@ namespace PicView.WPF.Shortcuts
                 }
                 else
                 {
-                    await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        () => HandleScroll(e.Delta > 0));
+                    await GetMainWindow.Dispatcher.InvokeAsync(() => HandleScroll(e.Delta > 0));
                 }
             }
 
@@ -292,9 +290,14 @@ namespace PicView.WPF.Shortcuts
                         await GoToNextImage(next).ConfigureAwait(false);
                     }
                 }
-                else
+                else if (ctrlZoom)
                 {
                     await GoToNextImage(next).ConfigureAwait(false);
+                    
+                }
+                else
+                {
+                    await GetMainWindow.Dispatcher.InvokeAsync(() => Zoom(e.Delta > 0));
                 }
             }
         }
