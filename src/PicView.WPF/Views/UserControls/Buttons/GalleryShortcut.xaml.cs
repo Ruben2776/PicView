@@ -27,6 +27,10 @@ namespace PicView.WPF.Views.UserControls.Buttons
                     MouseOverAnimations.AltInterfaceMouseLeave(ImagePath2Fill, CanvasBGcolor, BorderBrushKey);
                     MouseOverAnimations.AltInterfaceMouseLeave(ImagePath3Fill, CanvasBGcolor, BorderBrushKey);
                 };
+                Loaded += delegate
+                {
+                    ToolTip = Core.Localization.TranslationHelper.GetTranslation("ShowImageGallery");
+                };
             };
         }
     }

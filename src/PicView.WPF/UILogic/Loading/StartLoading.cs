@@ -99,16 +99,24 @@ internal static class StartLoading
                 GetSpinWaiter = spinner;
                 mainWindow.ParentContainer.Children.Add(spinner);
             });
-        }
 
-        if (args.Length > 1)
-        {
             await QuickLoad.QuickLoadAsync(args[1], null, bitmapSource).ConfigureAwait(false);
         }
         else
         {
-            ErrorHandling.Unload(true);
+            Navigation.Pics = new List<string>();
+            await startupWindow.Dispatcher.InvokeAsync(() =>
+            {
+                mainWindow = new MainWindow();
+                ConfigureWindows.GetMainWindow = mainWindow;
+                startupWindow.TheGrid.Children.Remove(spinner);
+                GetSpinWaiter = spinner;
+                mainWindow.ParentContainer.Children.Add(spinner);
+            });
         }
+
+        var language = SettingsHelper.Settings.UIProperties.UserLanguage;
+        await Core.Localization.TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
 
         await CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
 
@@ -174,6 +182,11 @@ internal static class StartLoading
 
             startupWindow.Close();
         });
+
+        if (args.Length <= 1)
+        {
+            ErrorHandling.Unload(true);
+        }
 
         ConfigColors.UpdateColor();
     }
@@ -245,6 +258,7 @@ internal static class StartLoading
         ConfigureWindows.GetMainWindow.AllowDrop = true;
         ConfigColors.SetColors();
 
+        AddDictionaries();
         LoadClickArrow(true);
         LoadClickArrow(false);
         Loadx2();

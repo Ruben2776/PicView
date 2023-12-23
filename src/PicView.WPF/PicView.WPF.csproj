@@ -243,18 +243,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Translations\da.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Themes\Styles\ColorThemes\Light.xaml">
       <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Translations\fr.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Translations\pl.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\UserControls\Buttons\LinkButton.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -292,9 +282,6 @@
     </Page>
     <Page Update="Views\UserControls\Misc\Icon.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Translations\ro.xaml">
-      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

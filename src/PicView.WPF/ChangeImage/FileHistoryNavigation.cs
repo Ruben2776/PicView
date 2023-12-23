@@ -232,6 +232,7 @@ namespace PicView.WPF.ChangeImage
 
         internal static void RefreshRecentItemsMenu()
         {
+            _fileHistory ??= new FileHistory();
             try
             {
                 var cm = (MenuItem)ConfigureWindows.MainContextMenu?.Items[6]!;

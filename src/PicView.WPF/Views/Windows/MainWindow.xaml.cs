@@ -55,7 +55,6 @@ namespace PicView.WPF.Views.Windows
             {
                 WindowBlur.EnableBlur(this);
 
-                StartLoading.AddDictionaries();
                 StartLoading.AddUiElementsAndUpdateValues();
 
                 // keyboard and Mouse_Keys Keys

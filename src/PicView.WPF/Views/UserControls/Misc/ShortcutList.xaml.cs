@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using PicView.WPF.Animations;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.UILogic;
 
@@ -43,6 +44,8 @@ public partial class ShortcutList
                 ConfigureWindows.GetAboutWindow.Container.Children.Add(credits);
             });
         };
+
+        #region Loaded and key events
 
         // NextBox
         NextBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Next", false).ConfigureAwait(false);
@@ -108,19 +111,19 @@ public partial class ShortcutList
         ToggleScrlBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ToggleScroll", true).ConfigureAwait(false);
 
         // Zoom In
-        ZoomInBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ZoomIn", false).ConfigureAwait(false);
+        ZoomInBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ZoomIn", false).ConfigureAwait(false);
 
-        ZoomInBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomIn", false).ConfigureAwait(false);
+        ZoomInBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomIn", false).ConfigureAwait(false);
 
         // Zoom Out
-        ZoomOutBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ZoomOut", false).ConfigureAwait(false);
+        ZoomOutBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ZoomOut", false).ConfigureAwait(false);
 
-        ZoomOutBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomOut", false).ConfigureAwait(false);
+        ZoomOutBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ZoomOut", false).ConfigureAwait(false);
 
         // Reset zoom
-        ResetZoomBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResetZoom", false).ConfigureAwait(false);
+        ResetZoomBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "ResetZoom", false).ConfigureAwait(false);
 
-        ResetZoomBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResetZoom", false).ConfigureAwait(false);
+        ResetZoomBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "ResetZoom", false).ConfigureAwait(false);
 
         // Stretch
         StretchBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Stretch", false).ConfigureAwait(false);
@@ -249,9 +252,9 @@ public partial class ShortcutList
         CopyFilePathBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyFilePath", false).ConfigureAwait(false);
 
         // Copy image
-        CopyImageBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyImage", false).ConfigureAwait(false);
+        CopyImageBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyImage", false).ConfigureAwait(false);
 
-        CopyImageBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyImage", false).ConfigureAwait(false);
+        CopyImageBox1.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CopyImage", false).ConfigureAwait(false);
 
         // Copy base64
         CopyBase64Box1.Loaded += async (s, _) => await UpdateTextBoxes(s, "CopyBase64", false).ConfigureAwait(false);
@@ -273,9 +276,8 @@ public partial class ShortcutList
         DuplicateBox2.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "DuplicateFile", true).ConfigureAwait(false);
 
         // Cut file
-        CopyImageBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CutFile", false).ConfigureAwait(false);
-
-        CopyImageBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CutFile", false).ConfigureAwait(false);
+        CutBox.Loaded += async (s, _) => await UpdateTextBoxes(s, "CutFile", false).ConfigureAwait(false);
+        CutBox.PreviewKeyDown += async (s, e) => await AssociateKey(s, e, "CutFile", false).ConfigureAwait(false);
 
         // About window
         AboutBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "AboutWindow", false).ConfigureAwait(false);
@@ -410,6 +412,10 @@ public partial class ShortcutList
 
         ResetStarsBox1.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set0Star", false).ConfigureAwait(false);
         ResetStarsBox2.Loaded += async (s, _) => await UpdateTextBoxes(s, "Set0Star", true).ConfigureAwait(false);
+
+        #endregion Loaded and key events
+
+        UpdateLanguage();
     }
 
     /// <summary>
@@ -440,7 +446,7 @@ public partial class ShortcutList
                 try
                 {
                     textBox.Foreground = (SolidColorBrush)Application.Current.Resources["MainColorFadedBrush"];
-                    textBox.Text = Application.Current.Resources["PressKey"].ToString();
+                    textBox.Text = TranslationHelper.GetTranslation("PressKey");
                 }
                 catch (Exception)
                 {
@@ -451,7 +457,7 @@ public partial class ShortcutList
             {
                 try
                 {
-                    if (textBox.Text.Equals(Application.Current.Resources["PressKey"].ToString()))
+                    if (textBox.Text.Equals(TranslationHelper.GetTranslation("PressKey")))
                     {
                         textBox.Text = GetFunctionKey();
                     }
@@ -495,13 +501,13 @@ public partial class ShortcutList
             case "Next":
                 if (!alt)
                 {
-                    LastImageBox1.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
-                    NextFolderBox1.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                    LastImageBox1.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {key}";
+                    NextFolderBox1.Text = $"{TranslationHelper.GetTranslation("Shift")} + {key}";
                 }
                 else
                 {
-                    LastImageBox2.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
-                    NextFolderBox2.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                    LastImageBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {key}";
+                    NextFolderBox2.Text = $"{TranslationHelper.GetTranslation("Shift")} + {key}";
                 }
 
                 break;
@@ -509,13 +515,13 @@ public partial class ShortcutList
             case "Prev":
                 if (!alt)
                 {
-                    FirstImageBox1.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
-                    PrevFolderBox1.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                    FirstImageBox1.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {key}";
+                    PrevFolderBox1.Text = $"{TranslationHelper.GetTranslation("Shift")} + {key}";
                 }
                 else
                 {
-                    FirstImageBox2.Text = $"{Application.Current.Resources["Ctrl"]} + {key}";
-                    PrevFolderBox2.Text = $"{Application.Current.Resources["Shift"]} + {key}";
+                    FirstImageBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {key}";
+                    PrevFolderBox2.Text = $"{TranslationHelper.GetTranslation("Shift")} + {key}";
                 }
                 break;
 
@@ -542,6 +548,303 @@ public partial class ShortcutList
 
                 break;
         }
+    }
+
+    internal void UpdateLanguage()
+    {
+        #region Translations
+
+        ApplicationShortcutsLabel.Content = TranslationHelper.GetTranslation("ApplicationShortcuts");
+        ChangeKeybindingText.Text = TranslationHelper.GetTranslation("ChangeKeybindingText");
+        SetDefaultLabel.Content = TranslationHelper.GetTranslation("ResetButtonText");
+
+        NavigationLabel.Content = TranslationHelper.GetTranslation("Navigation");
+
+        NextImageTextBlock.Text = TranslationHelper.GetTranslation("NextImage");
+        NextBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        NextBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        LastImageTextBlock.Text = TranslationHelper.GetTranslation("LastImage");
+        LastImageBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        LastImageBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        LastImageTextBlock.Text = TranslationHelper.GetTranslation("LastImage");
+        LastImageBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        LastImageBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        NextFolderTextBlock.Text = TranslationHelper.GetTranslation("NextFolder");
+        NextFolderBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        NextFolderBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        PrevImageTextBlock.Text = TranslationHelper.GetTranslation("PrevImage");
+        PrevBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        PrevBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        FirstImageTextBlock.Text = TranslationHelper.GetTranslation("FirstImage");
+        FirstImageBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        FirstImageBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        PrevFolderTextBlock.Text = TranslationHelper.GetTranslation("PrevFolder");
+        PrevFolderBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        PrevFolderBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ToggleLoopingTextBlock.Text = TranslationHelper.GetTranslation("ToggleLooping");
+        ToggleLoopingBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ToggleLoopingBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SelectGalleryThumbTextBlock.Text = TranslationHelper.GetTranslation("SelectGalleryThumb");
+        GalleryBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        GalleryBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ScrollAndRotateLabel.Content = TranslationHelper.GetTranslation("ScrollAndRotate");
+
+        RotateRightTextBlock.Text = TranslationHelper.GetTranslation("RotateRight");
+        UpBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        UpBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ScrollUpTextBlock.Text = TranslationHelper.GetTranslation("ScrollUp");
+
+        RotateLeftTextBlock.Text = TranslationHelper.GetTranslation("RotateLeft");
+        DownBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        DownBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ScrollDownTextBlock.Text = TranslationHelper.GetTranslation("ScrollDown");
+
+        ScrollToTopBlock.Text = TranslationHelper.GetTranslation("ScrollToTop");
+        ScrollToTopBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ScrollToTopBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ScrollToBottomTextBlock.Text = TranslationHelper.GetTranslation("ScrollToBottom");
+        ScrlBottomBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ScrlBottomBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ToggleScrollBlock.Text = TranslationHelper.GetTranslation("ToggleScroll");
+        ToggleScrlBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ToggleScrlBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ZoomLabel.Content = TranslationHelper.GetTranslation("Zoom");
+
+        ZoomInTextBlock.Text = TranslationHelper.GetTranslation("ZoomIn");
+        ZoomInBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ZoomInBox2.Text = TranslationHelper.GetTranslation("MouseWheel");
+
+        ZoomOutTextBlock.Text = TranslationHelper.GetTranslation("ZoomOut");
+        ZoomOutBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ZoomOutBox2.Text = TranslationHelper.GetTranslation("MouseWheel");
+
+        PanTextBlock.Text = TranslationHelper.GetTranslation("Pan");
+        PanBox1.Text = TranslationHelper.GetTranslation("MouseDrag");
+
+        ResetZoomTextBlock.Text = TranslationHelper.GetTranslation("ResetZoom");
+        ResetZoomBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ResetZoomBox2.Text = TranslationHelper.GetTranslation("DoubleClick");
+
+        ImageControlLabel.Content = TranslationHelper.GetTranslation("ImageControl");
+
+        StretchImageTextBlock.Text = TranslationHelper.GetTranslation("StretchImage");
+        StretchBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        StretchBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        FlipTextBlock.Text = TranslationHelper.GetTranslation("Flip");
+        FlipBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        FlipBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        CropTextBlock.Text = TranslationHelper.GetTranslation("Crop");
+        CropBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CropBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ChangeBackgroundTextBlock.Text = TranslationHelper.GetTranslation("ChangeBackground");
+        ChangeBgBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ChangeBgBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ResizeImageTextBlock.Text = TranslationHelper.GetTranslation("ResizeImage");
+        QuickResizeBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        QuickResizeBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ColorPickerToolTextBlock.Text = TranslationHelper.GetTranslation("ColorPickerTool");
+        ColorPickBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ColorPickBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        OptimizeImageTextBlock.Text = TranslationHelper.GetTranslation("OptimizeImage");
+        OptimizeBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        OptimizeBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        InterfaceConfigurationLabel.Content = TranslationHelper.GetTranslation("InterfaceConfiguration");
+
+        ShowHideUiTextBlock.Text = TranslationHelper.GetTranslation("ShowHideUI");
+        ToggleUIBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ToggleUIBox2.Text =
+            $"{TranslationHelper.GetTranslation("Alt")} + z";
+
+        ToggleFullscreenTextBlock1.Text = ToggleFullscreenTextBlock2.Text =
+            TranslationHelper.GetTranslation("ToggleFullscreen");
+        ToggleFullscreenTextBlock3.Text =
+            $"{TranslationHelper.GetTranslation("Alt")} + {TranslationHelper.GetTranslation("Enter")}";
+        ToggleFullscreenTextBlock4.Text =
+            $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("DoubleClick")}";
+
+        ToggleFullscreenBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ToggleFullscreenBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SlideShowTextBlock.Text = TranslationHelper.GetTranslation("Slideshow");
+        SlideshowBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SlideshowBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ShowImageGalleryTextBlock.Text = TranslationHelper.GetTranslation("ShowImageGallery");
+        ShowImageGalleryBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ShowImageGalleryBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        FileManagementLabel.Content = TranslationHelper.GetTranslation("FileManagement");
+
+        OpenTextBlock.Text = TranslationHelper.GetTranslation("Open");
+        OpenBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        OpenBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + O";
+
+        OpenWithTextBlock.Text = TranslationHelper.GetTranslation("OpenWith");
+        OpenWithBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        OpenWithBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + E";
+
+        ReloadTextBlock.Text = TranslationHelper.GetTranslation("Reload");
+        ReloadBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ReloadBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + R";
+
+        SaveTextBlock.Text = TranslationHelper.GetTranslation("Save");
+        SaveBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SaveBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + S";
+
+        PrintTextBlock.Text = TranslationHelper.GetTranslation("Print");
+        PrintBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        PrintBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + P";
+
+        DeleteFileTextBlock1.Text = DeleteFileTextBlock2.Text =
+            TranslationHelper.GetTranslation("DeleteFile");
+        DeleteBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        DeleteBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        RenameFileTextBlock.Text = TranslationHelper.GetTranslation("RenameFile");
+        RenameBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        RenameBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ShowInFolderTextBlock.Text = TranslationHelper.GetTranslation("ShowInFolder");
+        ShowInFolderBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ShowInFolderBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        FilePropertiesTextBlock.Text = TranslationHelper.GetTranslation("FileProperties");
+        FilePropertiesBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        FilePropertiesBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + I";
+
+        CopyLabel.Content = TranslationHelper.GetTranslation("Copy");
+
+        CopyFileTextBlock.Text = TranslationHelper.GetTranslation("CopyFile");
+        CopyFileBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CopyFileBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + C";
+
+        FileCopyPathTextBlock.Text = TranslationHelper.GetTranslation("FileCopyPath");
+        CopyFilePathBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CopyFilePathBox2.Text =
+            $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Shift")} C";
+
+        CopyImageTextBlock.Text = TranslationHelper.GetTranslation("CopyImage");
+        CopyImageBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CopyImageBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        Base64TextBlock.Text = $"{TranslationHelper.GetTranslation("Copy")} + Base64";
+        CopyBase64Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CopyBase64Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        FilePasteTextBlock.Text = TranslationHelper.GetTranslation("FilePaste");
+        PasteBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CopyBase64Box2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + V";
+
+        DuplicateFileTextBlock.Text = TranslationHelper.GetTranslation("DuplicateFile");
+        DuplicateBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        DuplicateBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        FileCutTextBlock.Text = TranslationHelper.GetTranslation("FileCut");
+        CutBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CutBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + X";
+
+        WindowManagementLabel.Content = TranslationHelper.GetTranslation("WindowManagement");
+
+        AboutTextBlock.Text = TranslationHelper.GetTranslation("About");
+        AboutBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        AboutBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SettingsTextBlock.Text = TranslationHelper.GetTranslation("Settings");
+        SettingsBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SettingsBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ImageInfoTextBlock.Text = TranslationHelper.GetTranslation("ImageInfo");
+        ImageInfoBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ImageInfoBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        ShowResizeWindowTextBlock.Text = TranslationHelper.GetTranslation("ShowResizeWindow");
+        ResizeWindowBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ResizeWindowBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        CloseTextBlock1.Text = CloseTextBlock2.Text = TranslationHelper.GetTranslation("Close");
+        CloseBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CloseBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CloseBox3.Text = TranslationHelper.GetTranslation("Esc");
+        CloseBox4.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + Q";
+
+        NewWindowTextBlock.Text = TranslationHelper.GetTranslation("NewWindow");
+        NewWindowBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        NewWindowBox2.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + N";
+
+        CenterWindowTextBlock.Text = TranslationHelper.GetTranslation("CenterWindow");
+        CenterWindowBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        CenterWindowBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        StayTopMostTextBlock.Text = TranslationHelper.GetTranslation("StayTopMost");
+        TopMostBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        TopMostBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        WindowScalingLabel.Content = TranslationHelper.GetTranslation("WindowScaling");
+
+        AutoFitWindowTextBlock.Text = TranslationHelper.GetTranslation("AutoFitWindow");
+        AutoFitWindowBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        AutoFitWindowBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        FillHeightTextBlock.Text = TranslationHelper.GetTranslation("FillHeight");
+        AutoFitFillWindowBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        AutoFitFillWindowBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        NormalWindowTextBlock.Text = TranslationHelper.GetTranslation("NormalWindow");
+        NormalWindowBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        NormalWindowBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        NormalFillTextBlock.Text = TranslationHelper.GetTranslation("FillHeight");
+        NormalWindowFillBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        NormalWindowFillBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SetStarRatingLabel.Content = TranslationHelper.GetTranslation("SetStarRating");
+
+        SetStar1TextBlock.Text = TranslationHelper.GetTranslation("1Star");
+        SetStar1Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SetStar1Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SetStar2TextBlock.Text = TranslationHelper.GetTranslation("2Star");
+        SetStar2Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SetStar2Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SetStar3TextBlock.Text = TranslationHelper.GetTranslation("3Star");
+        SetStar3Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SetStar3Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SetStar4TextBlock.Text = TranslationHelper.GetTranslation("4Star");
+        SetStar4Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SetStar4Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        SetStar5TextBlock.Text = TranslationHelper.GetTranslation("5Star");
+        SetStar5Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        SetStar5Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        RemoveStarRatingTextBlock.Text = TranslationHelper.GetTranslation("RemoveStarRating");
+        ResetStarsBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ResetStarsBox2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+
+        #endregion Translations
     }
 
     /// <summary>

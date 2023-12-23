@@ -2,8 +2,7 @@
     x:Class="PicView.WPF.Views.UserControls.Buttons.X2"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Background="Transparent"
-    ToolTip="{StaticResource CloseGallery}">
+    Background="Transparent">
     <Border
         x:Name="border"
         Width="50"

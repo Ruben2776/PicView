@@ -25,7 +25,7 @@
     <ContextMenu x:Key="mainCM">
 
         <!--  Open  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Open}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -37,7 +37,7 @@
         </MenuItem>
 
         <!--  Save  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Save}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -49,7 +49,7 @@
         </MenuItem>
 
         <!--  Print  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Print}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -61,7 +61,7 @@
         </MenuItem>
 
         <!--  Open With  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource OpenWith}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -75,7 +75,7 @@
         <Separator />
 
         <!--  Sort Files By  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource SortFilesBy}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -87,64 +87,43 @@
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource FileName}"
-                        GroupName="sorting" />
+                    <RadioButton Width="130" GroupName="sorting" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource FileSize}"
-                        GroupName="sorting" />
+                    <RadioButton Width="130" GroupName="sorting" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource FileExtension}"
-                        GroupName="sorting" />
+                    <RadioButton Width="130" GroupName="sorting" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource CreationTime}"
-                        GroupName="sorting" />
+                    <RadioButton Width="130" GroupName="sorting" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource LastAccessTime}"
-                        GroupName="sorting" />
+                    <RadioButton Width="130" GroupName="sorting" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource LastWriteTime}"
-                        GroupName="sorting" />
+                    <RadioButton Width="130" GroupName="sorting" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource Random}"
-                        GroupName="sorting" />
+                    <RadioButton Width="130" GroupName="sorting" />
                 </MenuItem.Header>
             </MenuItem>
 
@@ -152,10 +131,7 @@
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource Ascending}"
-                        GroupName="ordering" />
+                    <RadioButton Width="130" GroupName="ordering" />
                 </MenuItem.Header>
                 <MenuItem.Icon>
                     <Image
@@ -167,10 +143,7 @@
 
             <MenuItem>
                 <MenuItem.Header>
-                    <RadioButton
-                        Width="130"
-                        Content="{StaticResource Descending}"
-                        GroupName="ordering" />
+                    <RadioButton Width="130" GroupName="ordering" />
                 </MenuItem.Header>
                 <MenuItem.Icon>
                     <Image
@@ -182,7 +155,7 @@
         </MenuItem>
 
         <!--  Recent files  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource RecentFiles}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -194,7 +167,7 @@
         </MenuItem>
 
         <!--  Settings  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Settings}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -206,76 +179,51 @@
 
             <MenuItem InputGestureText="L">
                 <MenuItem.Header>
-                    <CheckBox
-                        MinWidth="130"
-                        Padding="0,0,5,0"
-                        Content="{StaticResource ToggleLooping}" />
+                    <CheckBox MinWidth="130" Padding="0,0,5,0" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem InputGestureText="X">
                 <MenuItem.Header>
-                    <CheckBox
-                        MinWidth="130"
-                        Padding="0,0,5,0"
-                        Content="{StaticResource Scrolling}" />
+                    <CheckBox MinWidth="130" Padding="0,0,5,0" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <CheckBox
-                        MinWidth="130"
-                        Padding="0,0,5,0"
-                        Content="{StaticResource ShowHideUI}" />
+                    <CheckBox MinWidth="130" Padding="0,0,5,0" />
                 </MenuItem.Header>
             </MenuItem>
 
-            <MenuItem
-                Header="{StaticResource ChangeBackground}"
-                InputGestureText="B"
-                StaysOpenOnClick="True"
-                ToolTip="{StaticResource ChangeBackgroundTooltip}" />
+            <MenuItem InputGestureText="B" StaysOpenOnClick="True" />
 
             <MenuItem InputGestureText="T">
                 <MenuItem.Header>
-                    <CheckBox
-                        MinWidth="130"
-                        Padding="0,0,5,0"
-                        Content="{StaticResource StayTopMost}" />
+                    <CheckBox MinWidth="130" Padding="0,0,5,0" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <CheckBox
-                        MinWidth="130"
-                        Padding="0,0,5,0"
-                        Content="{StaticResource StretchImage}" />
+                    <CheckBox MinWidth="130" Padding="0,0,5,0" />
                 </MenuItem.Header>
             </MenuItem>
 
             <MenuItem>
                 <MenuItem.Header>
-                    <CheckBox
-                        MinWidth="130"
-                        Padding="0,0,5,0"
-                        Content="{StaticResource CtrlToZoom}" />
+                    <CheckBox MinWidth="130" Padding="0,0,5,0" />
                 </MenuItem.Header>
             </MenuItem>
 
             <Separator />
 
-            <MenuItem
-                Header="{StaticResource SettingsWindow}"
-                InputGestureText="F4"
-                ToolTip="{StaticResource ShowAllSettingsWindow}" />
+            <MenuItem InputGestureText="F4" />
         </MenuItem>
 
         <Separator />
 
         <!--  Set As  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource SetAs}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -286,7 +234,7 @@
             </MenuItem.Icon>
 
             <!--  SetAsWallpaper  -->
-            <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource SetAsWallpaper}">
+            <MenuItem Foreground="{StaticResource MainColorBrush}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -298,7 +246,7 @@
             </MenuItem>
 
             <!--  Set As Lock Screen Image  -->
-            <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource SetAsLockScreenImage}">
+            <MenuItem Foreground="{StaticResource MainColorBrush}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -311,10 +259,7 @@
         </MenuItem>
 
         <!--  Show in folder  -->
-        <MenuItem
-            Foreground="{StaticResource MainColorBrush}"
-            Header="{StaticResource ShowInFolder}"
-            InputGestureText="F3">
+        <MenuItem Foreground="{StaticResource MainColorBrush}" InputGestureText="F3">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -326,7 +271,7 @@
         </MenuItem>
 
         <!--  Image  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Image}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -335,27 +280,17 @@
                     Fill="{StaticResource IconColorBrush}"
                     Stretch="Fill" />
             </MenuItem.Icon>
-            <MenuItem
-                Foreground="{StaticResource MainColorBrush}"
-                Header="{StaticResource ImageInfo}"
-                InputGestureText="I"
-                ToolTip="{StaticResource ShowImageInfo}" />
-            <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource FileProperties}" />
+            <MenuItem Foreground="{StaticResource MainColorBrush}" InputGestureText="I" />
+            <MenuItem Foreground="{StaticResource MainColorBrush}" />
             <Separator />
-            <MenuItem
-                Foreground="{StaticResource MainColorBrush}"
-                Header="{StaticResource ResizeImage}"
-                InputGestureText="J" />
-            <MenuItem
-                Foreground="{StaticResource MainColorBrush}"
-                Header="{StaticResource BatchResize}"
-                InputGestureText="N" />
+            <MenuItem Foreground="{StaticResource MainColorBrush}" InputGestureText="J" />
+            <MenuItem Foreground="{StaticResource MainColorBrush}" InputGestureText="N" />
         </MenuItem>
 
         <Separator />
 
         <!--  Copy  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Copy}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -365,24 +300,17 @@
                     Stretch="Fill" />
             </MenuItem.Icon>
 
-            <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource CopyFile}" />
+            <MenuItem Foreground="{StaticResource MainColorBrush}" />
 
-            <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource FileCopyPath}" />
+            <MenuItem Foreground="{StaticResource MainColorBrush}" />
 
-            <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource CopyImage}" />
+            <MenuItem Foreground="{StaticResource MainColorBrush}" />
 
-            <MenuItem Foreground="{StaticResource MainColorBrush}">
-                <MenuItem.Header>
-                    <TextBlock>
-                        <Run Text="{StaticResource Copy}" />
-                        <Run Text=" base64" />
-                    </TextBlock>
-                </MenuItem.Header>
-            </MenuItem>
+            <MenuItem Foreground="{StaticResource MainColorBrush}" />
         </MenuItem>
 
         <!--  Duplicate File  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource DuplicateFile}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -394,7 +322,7 @@
         </MenuItem>
 
         <!--  Cut  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource FileCut}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -406,7 +334,7 @@
         </MenuItem>
 
         <!--  Paste  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource FilePaste}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -420,12 +348,7 @@
         <Separator />
 
         <!--  Delete file  -->
-        <MenuItem
-            Foreground="{StaticResource MainColorBrush}"
-            Header="{StaticResource DeleteFile}"
-            InputGestureText="{StaticResource Del}"
-            StaysOpenOnClick="True"
-            ToolTip="{StaticResource SendCurrentImageToRecycleBin}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}" StaysOpenOnClick="True">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -439,11 +362,7 @@
         <Separator />
 
         <!--  Close  -->
-        <MenuItem
-            Foreground="{StaticResource MainColorBrush}"
-            Header="{StaticResource Close}"
-            InputGestureText="{StaticResource Esc}"
-            ToolTip="{StaticResource CloseApp}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"

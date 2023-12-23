@@ -21,6 +21,10 @@ namespace PicView.WPF.Views.UserControls.Buttons
             };
 
             TheButton.Click += (_, _) => SystemCommands.MinimizeWindow(ConfigureWindows.GetMainWindow);
+            Loaded += delegate
+            {
+                ToolTip = Core.Localization.TranslationHelper.GetTranslation("Minimize");
+            };
         }
     }
 }

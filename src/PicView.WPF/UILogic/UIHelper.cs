@@ -772,6 +772,10 @@ namespace PicView.WPF.UILogic
             {
                 return;
             }
+            if (ErrorHandling.CheckOutOfRange())
+            {
+                return;
+            }
             OpenSave.OpenInExplorer(Navigation.Pics[Navigation.FolderIndex]);
         }
 

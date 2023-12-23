@@ -19,8 +19,7 @@
             BorderThickness="0"
             DockPanel.Dock="Right"
             FocusVisualStyle="{x:Null}"
-            Focusable="False"
-            ToolTip="{StaticResource Close}">
+            Focusable="False">
             <Path
                 Width="10"
                 Height="10"

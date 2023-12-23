@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.Localization;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.Tooltip;
@@ -284,7 +285,7 @@ namespace PicView.WPF.FileHandling
             else if (Clipboard.ContainsImage()) // Clipboard Image
             {
                 await UpdateImage
-                    .UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage())
+                    .UpdateImageAsync(TranslationHelper.GetTranslation("ClipboardImage"), Clipboard.GetImage())
                     .ConfigureAwait(false);
             }
             else // text/string/adddress

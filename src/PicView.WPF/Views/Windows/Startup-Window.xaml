@@ -7,6 +7,7 @@
     Height="450"
     AllowsTransparency="True"
     Background="Transparent"
+    ShowInTaskbar="False"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None">
     <Grid x:Name="TheGrid" />

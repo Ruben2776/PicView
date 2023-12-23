@@ -1,9 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Media;
+﻿using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
-using PicView.Core.Config;
+using System.Windows;
+using System.Windows.Media;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
 namespace PicView.WPF.Views.UserControls.Misc
@@ -14,6 +15,11 @@ namespace PicView.WPF.Views.UserControls.Misc
         public StartUpUC()
         {
             InitializeComponent();
+
+            Loaded += delegate
+            {
+                UpdateLanguage();
+            };
 
             if (SettingsHelper.Settings.Theme.Dark)
             {
@@ -156,6 +162,14 @@ namespace PicView.WPF.Views.UserControls.Misc
                     buttons.VerticalAlignment = VerticalAlignment.Center;
                     break;
             }
+        }
+
+        internal void UpdateLanguage()
+        {
+            OpenLastFileLabel.Content = TranslationHelper.GetTranslation("OpenLastFile");
+            OpenFileDialogLabel.Content = TranslationHelper.GetTranslation("OpenFileDialog");
+            FilePasteLabel.Content = TranslationHelper.GetTranslation("FilePaste");
+            ErrorHandling.ResetTitle();
         }
     }
 }

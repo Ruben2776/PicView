@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using PicView.WPF.Animations;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.UILogic;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
@@ -16,7 +17,6 @@ namespace PicView.WPF.Views.UserControls.Buttons
             {
                 MouseEnter += (s, x) => ButtonMouseOverAnim(CloseButtonBrush, true);
                 MouseLeave += (s, x) => AnimationHelper.MouseLeaveColorEvent(0, 0, 0, 0, CloseButtonBrush);
-                ;
 
                 if (!SettingsHelper.Settings.Theme.Dark)
                 {
@@ -29,6 +29,7 @@ namespace PicView.WPF.Views.UserControls.Buttons
                     Keyboard.ClearFocus();
                     UC.GetImageSettingsMenu?.GoToPic?.GoToPicBox?.Select(0, 0); // Deselect
                 };
+                TheButton.ToolTip = TranslationHelper.GetTranslation("Close");
             };
         }
     }

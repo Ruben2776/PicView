@@ -1,4 +1,5 @@
 ﻿using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
@@ -6,7 +7,6 @@ using PicView.WPF.PicGallery;
 using PicView.WPF.ProcessHandling;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
-using PicView.WPF.Translations;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
@@ -26,7 +26,6 @@ public partial class SettingsWindow
 {
     public SettingsWindow()
     {
-        Title = Application.Current.Resources["SettingsWindow"] + " - PicView";
         MaxHeight = WindowSizing.MonitorInfo.WorkArea.Height;
         Width *= WindowSizing.MonitorInfo.DpiScaling;
         if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
@@ -41,6 +40,8 @@ public partial class SettingsWindow
         ContentRendered += delegate
         {
             WindowBlur.EnableBlur(this);
+            UpdateLanguage();
+            Owner = null; // Remove owner, so that minimizing main-window will not minimize this
 
             foreach (var language in Enum.GetValues(typeof(Languages)))
             {
@@ -113,7 +114,8 @@ public partial class SettingsWindow
 
             // SetExpandedGallerySlider
             SetExpandedGallerySlider.Value = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
-            SetExpandedGalleryText.Text = GalleryNavigation.ItemsPerPage.ToString();
+            SetExpandedGalleryText.Text =
+                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize.ToString(CultureInfo.CurrentCulture);
             SetExpandedGallerySlider.ValueChanged += async (_, e) =>
             {
                 SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = (int)e.NewValue;
@@ -127,13 +129,13 @@ public partial class SettingsWindow
                     GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize);
                 }
 
-                SetExpandedGalleryText.Text = GalleryNavigation.ItemsPerPage.ToString();
+                SetExpandedGalleryText.Text = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize.ToString(CultureInfo.CurrentCulture);
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             };
 
             // SetBottomGallerySlider
             SetBottomGallerySlider.Value = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
-            SetBottomGalleryText.Text = GalleryNavigation.HorizontalItems.ToString();
+            SetBottomGalleryText.Text = SettingsHelper.Settings.Gallery.BottomGalleryItemSize.ToString(CultureInfo.CurrentCulture);
             SetBottomGallerySlider.ValueChanged += async (_, e) =>
             {
                 SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;
@@ -182,7 +184,59 @@ public partial class SettingsWindow
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             };
 
-            LanguageBox.SelectionChanged += delegate { LoadLanguage.ChangeLanguage(LanguageBox.SelectedIndex); };
+            LanguageBox.SelectionChanged += async delegate
+            {
+                await TranslationHelper.ChangeLanguage(LanguageBox.SelectedIndex).ConfigureAwait(false);
+
+                await Dispatcher?.InvokeAsync(UpdateLanguage);
+                if (ConfigureWindows.GetAboutWindow is not null)
+                {
+                    await ConfigureWindows.GetAboutWindow?.Dispatcher?.InvokeAsync(() =>
+                    {
+                        ConfigureWindows.GetAboutWindow?.UpdateLanguage();
+                    });
+                }
+
+                if (UC.GetStartUpUC is not null)
+                {
+                    await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
+                    {
+                        UC.GetStartUpUC.UpdateLanguage();
+                    });
+                }
+
+                if (UC.GetQuickResize is not null)
+                {
+                    await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
+                    {
+                        UC.GetQuickResize.UpdateLanguage();
+                    });
+                }
+
+                if (ConfigureWindows.GetResizeWindow is not null)
+                {
+                    await ConfigureWindows.GetResizeWindow?.Dispatcher?.InvokeAsync(() =>
+                    {
+                        ConfigureWindows.GetResizeWindow?.UpdateLanguage();
+                    });
+                }
+
+                if (ConfigureWindows.GetEffectsWindow is not null)
+                {
+                    await ConfigureWindows.GetEffectsWindow?.Dispatcher?.InvokeAsync(() =>
+                    {
+                        ConfigureWindows.GetEffectsWindow?.UpdateLanguage();
+                    });
+                }
+
+                if (ConfigureWindows.GetImageInfoWindow is not null)
+                {
+                    await ConfigureWindows.GetImageInfoWindow?.Dispatcher?.InvokeAsync(() =>
+                    {
+                        ConfigureWindows.GetImageInfoWindow?.UpdateLanguage();
+                    });
+                }
+            };
 
             // ScrollDirection
             Reverse.IsSelected = SettingsHelper.Settings.Zoom.HorizontalReverseScroll;
@@ -260,7 +314,6 @@ public partial class SettingsWindow
             ScrollZoom.Checked += (_, _) => UpdateUIValues.SetCtrlToZoom(false);
 
             ThemeRestart.MouseLeftButtonDown += (_, _) => ProcessLogic.RestartApp();
-            LanguageRestart.MouseLeftButtonDown += (_, _) => ProcessLogic.RestartApp();
 
             TopmostRadio.Checked += (_, _) => ConfigureWindows.IsMainWindowTopMost = !SettingsHelper.Settings.WindowProperties.TopMost;
             TopmostRadio.Unchecked += (_, _) => ConfigureWindows.IsMainWindowTopMost = false;
@@ -294,7 +347,7 @@ public partial class SettingsWindow
                     PinkRadio.IsChecked = true;
                     break;
 
-                case 3:
+                default:
                     OrangeRadio.IsChecked = true;
                     break;
 
@@ -322,7 +375,6 @@ public partial class SettingsWindow
                     PurpleRadio.IsChecked = true;
                     break;
 
-                default:
                 case 10:
                     CyanRadio.IsChecked = true;
                     break;
@@ -336,6 +388,60 @@ public partial class SettingsWindow
                     break;
             }
         };
+    }
+
+    internal void UpdateLanguage()
+    {
+        Title = TitleText.Text = TranslationHelper.GetTranslation("Settings");
+        GeneralSettingsTextBlock.Text = TranslationHelper.GetTranslation("GeneralSettings");
+        MiscSettingsLabel.Content = MiscSettingsLabel2.Content =
+            TranslationHelper.GetTranslation("MiscSettings");
+        SearchSubdirectoryTextBlock.Text = TranslationHelper.GetTranslation("SearchSubdirectory");
+        StayTopMostTextBlock.Text = TranslationHelper.GetTranslation("StayTopMost");
+        StayCenteredTextBlock.Text = TranslationHelper.GetTranslation("StayCentered");
+        AllowZoomOutTextBlock.Text = TranslationHelper.GetTranslation("AllowZoomOut");
+        ShowFileSavingDialogTextBlock.Text = TranslationHelper.GetTranslation("ShowFileSavingDialog");
+        LanguageLabel.Content = TranslationHelper.GetTranslation("Language");
+        MouseWheelLabel.Content = TranslationHelper.GetTranslation("MouseWheel");
+        CtrlToZoomTextBlock.Text = TranslationHelper.GetTranslation("CtrlToZoom");
+        ScrollToZoomTextBlock.Text = TranslationHelper.GetTranslation("ScrollToZoom");
+        HorizontalScrollLabel.Content = TranslationHelper.GetTranslation("HorizontalScroll");
+        Reverse.Content = TranslationHelper.GetTranslation("Reverse");
+        Forward.Content = TranslationHelper.GetTranslation("Forward");
+        AdjustTimingForSlideshowLabel.Content = TranslationHelper.GetTranslation("AdjustTimingForSlideshow");
+        SecAbbreviationTextBlock.Text = SecAbbreviationTextBlock2.Text =
+            TranslationHelper.GetTranslation("SecAbbreviation");
+        AdjustTimingForZoomLabel.Content = TranslationHelper.GetTranslation("AdjustTimingForZoom");
+        AdjustNavSpeedLabel.Content = TranslationHelper.GetTranslation("AdjustNavSpeed");
+        UiSettingsTextBlock.Text = TranslationHelper.GetTranslation("UISettings");
+        ShowButtonsInHiddenUiTextBlock.Text = TranslationHelper.GetTranslation("ShowButtonsInHiddenUI");
+        ToggleTaskbarProgressTextBlock.Text = TranslationHelper.GetTranslation("ToggleTaskbarProgress");
+        ShowBottomToolbarTextBlock.Text = TranslationHelper.GetTranslation("ShowBottomToolbar");
+        ShowBottomToolbarTextBlock.Text = TranslationHelper.GetTranslation("ShowBottomToolbar");
+        ShowBottomGalleryWhenUiIsHiddenTextBlock.Text = TranslationHelper.GetTranslation("ShowBottomGalleryWhenUiIsHidden");
+        HighlightColorLabel.Content = TranslationHelper.GetTranslation("HighlightColor");
+        BlueRadio.Content = TranslationHelper.GetTranslation("Blue");
+        CyanRadio.Content = TranslationHelper.GetTranslation("Cyan");
+        AquaRadio.Content = TranslationHelper.GetTranslation("Aqua");
+        TealRadio.Content = TranslationHelper.GetTranslation("Teal");
+        LimeRadio.Content = TranslationHelper.GetTranslation("Lime");
+        GreenRadio.Content = TranslationHelper.GetTranslation("Green");
+        GoldenRadio.Content = TranslationHelper.GetTranslation("Golden");
+        OrangeRadio.Content = TranslationHelper.GetTranslation("Orange");
+        RedRadio.Content = TranslationHelper.GetTranslation("Red");
+        PinkRadio.Content = TranslationHelper.GetTranslation("Pink");
+        MagentaRadio.Content = TranslationHelper.GetTranslation("Magenta");
+        PurpleRadio.Content = TranslationHelper.GetTranslation("Purple");
+        ImageAliasingLabel.Content = TranslationHelper.GetTranslation("ImageAliasing");
+        AliasingNearestNeighbor.Content = TranslationHelper.GetTranslation("NearestNeighbor");
+        AliasingBoxHighQuality.Content = TranslationHelper.GetTranslation("HighQuality");
+        ExpandedGalleryItemSizeLabel.Content = TranslationHelper.GetTranslation("ExpandedGalleryItemSize");
+        BottomGalleryItemSizeLabel.Content = TranslationHelper.GetTranslation("BottomGalleryItemSize");
+        ThemeLabel.Content = TranslationHelper.GetTranslation("Theme");
+        DarkThemeRadio.Content = TranslationHelper.GetTranslation("DarkTheme");
+        LightThemeRadio.Content = TranslationHelper.GetTranslation("LightTheme");
+        ThemeRestart.Text = TranslationHelper.GetTranslation("ChangingThemeRequiresRestart");
+        ThemeRestart.ToolTip = TranslationHelper.GetTranslation("RestartApp");
     }
 
     #region EventHandlers
@@ -424,20 +530,6 @@ public partial class SettingsWindow
             colorAnimation.From = AnimationHelper.GetPreferredColor();
             colorAnimation.To = MainColor;
             ThemeRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-        };
-
-        // LanguageRestart
-        LanguageRestart.MouseEnter += delegate
-        {
-            colorAnimation.From = MainColor;
-            colorAnimation.To = AnimationHelper.GetPreferredColor();
-            LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-        };
-        LanguageRestart.MouseLeave += delegate
-        {
-            colorAnimation.From = AnimationHelper.GetPreferredColor();
-            colorAnimation.To = MainColor;
-            LanguageRestartTxt.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         };
 
         // DarkThemeRadio

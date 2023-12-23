@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using PicView.Core.Localization;
 
 namespace PicView.WPF.Views.UserControls.Misc
 {
@@ -7,10 +8,12 @@ namespace PicView.WPF.Views.UserControls.Misc
         public DragDropOverlay()
         {
             InitializeComponent();
+            TextMsg.Text = TranslationHelper.GetTranslation("DragOverString");
         }
 
         public void UpdateContent(UIElement element)
         {
+            TextMsg.Text = TranslationHelper.GetTranslation("DragOverString");
             if (element is null)
             {
                 return;

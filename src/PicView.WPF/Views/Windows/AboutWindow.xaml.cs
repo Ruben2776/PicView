@@ -7,6 +7,7 @@ using System.Windows.Navigation;
 using PicView.WPF.Animations;
 using PicView.WPF.ConfigureSettings;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
@@ -19,17 +20,14 @@ namespace PicView.WPF.Views.Windows
         private readonly double startHeight;
         private readonly double extendedHeight;
 
+        internal UserControls.Misc.ShortcutList? ShortcutList;
+
         public AboutWindow()
         {
             InitializeComponent();
 
             extendedHeight = 750;
             startHeight = Height;
-
-            // Get version
-            var assembly = Assembly.GetExecutingAssembly();
-            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            appVersion.Text += " " + fvi.FileVersion;
 
             ContentRendered += Window_ContentRendered;
 
@@ -45,11 +43,13 @@ namespace PicView.WPF.Views.Windows
         {
             WindowBlur.EnableBlur(this);
 
-            var shortcuts = new UserControls.Misc.ShortcutList
+            UpdateLanguage(GetFileVersionInfo());
+            Owner = null; // Remove owner, so that minimizing main-window will not minimize this
+            ShortcutList = new UserControls.Misc.ShortcutList
             {
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            Container.Children.Add(shortcuts);
+            Container.Children.Add(ShortcutList);
 
             var credits = new UserControls.Misc.Credits
             {
@@ -134,6 +134,30 @@ namespace PicView.WPF.Views.Windows
             {
                 Update.UpdateHelper.Update(this);
             };
+        }
+
+        public void UpdateLanguage()
+        {
+            ShortcutList?.UpdateLanguage();
+            UpdateLanguage(GetFileVersionInfo());
+        }
+
+        private void UpdateLanguage(FileVersionInfo fvi)
+        {
+            Title = TitleText.Text = TranslationHelper.GetTranslation("InfoWindowTitle");
+            appVersion.Text = TranslationHelper.GetTranslation("Version") + " " + fvi.FileVersion;
+
+            GitHub.Text = TranslationHelper.GetTranslation("GithubRepo");
+            GitHub.ToolTip = TranslationHelper.GetTranslation("ViewLicenseFile");
+
+            UpdateButtonLabel.Content = TranslationHelper.GetTranslation("CheckForUpdates");
+        }
+
+        private FileVersionInfo GetFileVersionInfo()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fvi;
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

@@ -30,13 +30,13 @@
 
         <StackPanel Margin="0,3,0,6" Orientation="Horizontal">
 
-            <TextBlock Text="{StaticResource Resize}" />
+            <TextBlock x:Name="ResizeTextBlock" Text="Resize" />
 
             <StackPanel Orientation="Horizontal">
 
                 <ComboBox Width="130">
-                    <ComboBoxItem x:Name="WidthBox" Content="{StaticResource Width}" />
-                    <ComboBoxItem x:Name="HeightBox" Content="{StaticResource Height}" />
+                    <ComboBoxItem x:Name="WidthBox" Content="Width" />
+                    <ComboBoxItem x:Name="HeightBox" Content="Height" />
                     <ComboBoxItem
                         Name="Percentage"
                         Content="Percentage"

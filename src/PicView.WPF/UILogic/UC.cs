@@ -5,6 +5,7 @@ using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.PicGallery;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.Views.UserControls.Buttons;
 using PicView.WPF.Views.UserControls.Menus;
 using PicView.WPF.Views.UserControls.Misc;
@@ -52,6 +53,10 @@ namespace PicView.WPF.UILogic
             private set
             {
                 _imageSettingsMenuOpen = value;
+                if (GetImageSettingsMenu is null)
+                {
+                    return;
+                }
                 GetImageSettingsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
@@ -75,11 +80,10 @@ namespace PicView.WPF.UILogic
                         (Navigation.FolderIndex + 1)
                         .ToString(CultureInfo.CurrentCulture);
                 }
-
-                GetImageSettingsMenu.ShowBottomGalleryText.Text =
-                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown
-                        ? (string)Application.Current.Resources["HideBottomGallery"]
-                        : (string)Application.Current.Resources["ShowBottomGallery"];
+                var showHideGallery = SettingsHelper.Settings.Gallery.IsBottomGalleryShown == false
+                    ? "ShowBottomGallery"
+                    : "HideBottomGallery";
+                GetImageSettingsMenu.ShowBottomGalleryText.Text = TranslationHelper.GetTranslation(showHideGallery);
             }
         }
 
@@ -92,6 +96,10 @@ namespace PicView.WPF.UILogic
             private set
             {
                 _fileMenuOpen = value;
+                if (GetFileMenu is null)
+                {
+                    return;
+                }
                 GetFileMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
@@ -151,6 +159,10 @@ namespace PicView.WPF.UILogic
             private set
             {
                 _toolsAndEffectsMenuOpen = value;
+                if (GetToolsAndEffectsMenu is null)
+                {
+                    return;
+                }
                 GetToolsAndEffectsMenu.Visibility = Visibility.Visible;
                 var da = new DoubleAnimation { Duration = TimeSpan.FromSeconds(.3) };
                 if (!value)
@@ -165,7 +177,7 @@ namespace PicView.WPF.UILogic
                 }
 
                 // ReSharper disable once ConstantConditionalAccessQualifier
-                GetToolsAndEffectsMenu?.BeginAnimation(UIElement.OpacityProperty, da);
+                GetToolsAndEffectsMenu.BeginAnimation(UIElement.OpacityProperty, da);
             }
         }
 

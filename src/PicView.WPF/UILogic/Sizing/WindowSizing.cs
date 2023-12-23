@@ -286,7 +286,7 @@ namespace PicView.WPF.UILogic.Sizing
 
         internal static void SetLastWindowSize(Window window)
         {
-            window.Dispatcher.Invoke(() =>
+            window?.Dispatcher.Invoke(() =>
             {
                 window.Top = SettingsHelper.Settings.WindowProperties.Top;
                 window.Left = SettingsHelper.Settings.WindowProperties.Left;

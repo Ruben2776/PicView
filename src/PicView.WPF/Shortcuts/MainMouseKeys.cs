@@ -205,7 +205,7 @@ namespace PicView.WPF.Shortcuts
 
         private static bool ShouldIgnoreMouseWheel()
         {
-            if (GetImageSettingsMenu.GoToPic != null && GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
+            if (GetImageSettingsMenu?.GoToPic != null && GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
             {
                 return true;
             }

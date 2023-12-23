@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ImageMagick;
+using PicView.Core.Localization;
 using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
@@ -25,7 +26,6 @@ namespace PicView.WPF.Views.Windows
 
         public ResizeWindow()
         {
-            Title = Application.Current.Resources["BatchResize"] + " - PicView";
             MaxHeight = MonitorInfo.WorkArea.Height;
             Width *= MonitorInfo.DpiScaling;
             if (double.IsNaN(Width)) // Fixes if user opens window when loading from startup
@@ -41,7 +41,7 @@ namespace PicView.WPF.Views.Windows
             {
                 WindowBlur.EnableBlur(this);
                 Owner = null; // Remove owner, so that minimizing main-window will not minimize this
-
+                UpdateLanguage();
                 Deactivated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
                 Activated += (_, _) => ConfigColors.WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
                 IsVisibleChanged += (_, _) =>
@@ -109,6 +109,29 @@ namespace PicView.WPF.Views.Windows
             };
         }
 
+        internal void UpdateLanguage()
+        {
+            TitleText.Text = TranslationHelper.GetTranslation("BatchResize");
+            Title = TranslationHelper.GetTranslation("BatchResize") + " - PicView";
+            OutputFolderTextBlock.Text = TranslationHelper.GetTranslation("OutputFolder");
+            ConvertToTextBlock.Text = TranslationHelper.GetTranslation("ConvertTo");
+            SourceFolderTextBlock.Text = TranslationHelper.GetTranslation("SourceFolder");
+            NoConversion.Content = TranslationHelper.GetTranslation("NoConversion");
+            CompressionTextBlock.Text = TranslationHelper.GetTranslation("Compression");
+            LosslessCompressionChoice.Content = TranslationHelper.GetTranslation("Lossless");
+            LossyCompressionChoice.Content = TranslationHelper.GetTranslation("Lossy");
+            QualityTextBlock.Text = TranslationHelper.GetTranslation("Quality");
+            NoneChoice.Content = TranslationHelper.GetTranslation("None");
+            ResizeTextBlock.Text = TranslationHelper.GetTranslation("Resize");
+            NoResize.Content = TranslationHelper.GetTranslation("NoResize");
+            WidthResize.Content = WidthTextBlock.Text = TranslationHelper.GetTranslation("Width");
+            HeightResize.Content = HeightTextBlock.Text = TranslationHelper.GetTranslation("Height");
+            PercentageResize.Content = PercentageTextBlock.Text = TranslationHelper.GetTranslation("Percentage");
+            GenerateThumbnailsTextBlock.Text = TranslationHelper.GetTranslation("GenerateThumbnails");
+            StartButton.Content = TranslationHelper.GetTranslation("Start");
+            CancelButton.Content = TranslationHelper.GetTranslation("Cancel");
+        }
+
         private void Update()
         {
             if (ErrorHandling.CheckOutOfRange() == false)
@@ -123,6 +146,7 @@ namespace PicView.WPF.Views.Windows
 
         private void UpdateThumbnails()
         {
+            // TODO refactor and improve thumbnails output
             var selected = (ComboBoxItem)ThumbnailsComboBox.SelectedItem;
             if (!int.TryParse(selected?.Content.ToString(), out var count)) return;
             GeneratedThumbnailsContainer.Children.Clear();

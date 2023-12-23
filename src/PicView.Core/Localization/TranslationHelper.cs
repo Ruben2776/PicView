@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Text.Json;
+using PicView.Core.Config;
 
 namespace PicView.Core.Localization;
 
@@ -14,9 +16,7 @@ public static class TranslationHelper
         if (Language is null)
             return string.Empty;
 
-        return Language.TryGetValue(key, out var translation) ? translation :
-            // Return the key itself if the translation is not found (or handle as appropriate)
-            key;
+        return Language.TryGetValue(key, out var translation) ? translation : key;
     }
 
     /// <summary>
@@ -27,106 +27,17 @@ public static class TranslationHelper
     /// <summary>
     /// Determines the language based on the specified culture and loads the corresponding language file.
     /// </summary>
-    /// <param name="culture">The culture code representing the desired language.</param>
-    public static async Task DetermineLanguage(string culture)
+    /// <param name="isoLanguageCode">The culture code representing the desired language.</param>
+    public static async Task LoadLanguage(string isoLanguageCode)
     {
-        string jsonLanguageFile;
+        var jsonLanguageFile = DetermineLanguageFilePath(isoLanguageCode);
 
-        switch (culture)
-        {
-            case "da":
-            case "da-DK":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/da.json");
-                break;
-
-            case "de":
-            case "de-DE":
-            case "de-CH":
-            case "de-AT":
-            case "de-LU":
-            case "de-LI":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/de.json");
-                break;
-
-            case "es":
-            case "es-ES":
-            case "es-GT":
-            case "es-CR":
-            case "es-MX":
-            case "es-PA":
-            case "es-DO":
-            case "es-VE":
-            case "es-CO":
-            case "es-PE":
-            case "es-AR":
-            case "es-CL":
-            case "es-EC":
-            case "es-UY":
-            case "es-PY":
-            case "es-BO":
-            case "es-HN":
-            case "es-NI":
-            case "es-PR":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/es.json");
-                break;
-
-            case "ko":
-            case "ko-KR":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/ko.json");
-                break;
-
-            case "zh":
-            case "zh-CN":
-                jsonLanguageFile =
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/zh-CN.json");
-                break;
-
-            case "zh-TW":
-                jsonLanguageFile =
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/zh-TW.json");
-                break;
-
-            case "pl":
-            case "pl-PL":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/pl.json");
-                break;
-
-            case "fr":
-            case "fr-FR":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/fr.json");
-                break;
-
-            case "it":
-            case "it-IT":
-            case "it-CH":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/it.json");
-                break;
-
-            case "ru":
-            case "ru-RU":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/ru.json");
-                break;
-
-            case "ro":
-            case "ro-RO":
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/ro.json");
-                break;
-
-            default:
-                jsonLanguageFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/en.json");
-                break;
-        }
-
-        await LoadLanguage(jsonLanguageFile).ConfigureAwait(false);
-    }
-
-    public static async Task LoadLanguage(string jsonLanguageFile)
-    {
         try
         {
             if (File.Exists(jsonLanguageFile))
             {
-                await Read(jsonLanguageFile).ConfigureAwait(false);
+                var text = await File.ReadAllTextAsync(jsonLanguageFile).ConfigureAwait(false);
+                Language = JsonSerializer.Deserialize<Dictionary<string, string>>(text);
             }
             else
             {
@@ -136,23 +47,30 @@ public static class TranslationHelper
         catch (Exception exception)
         {
 #if DEBUG
-            Trace.WriteLine($"{nameof(Read)} exception:\n{exception.Message}");
+            Trace.WriteLine($"{nameof(LoadLanguage)} exception:\n{exception.Message}");
 #endif
         }
     }
 
-    private static async Task Read(string path)
+    private static string DetermineLanguageFilePath(string isoLanguageCode)
     {
-        try
-        {
-            var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-            Language = JsonSerializer.Deserialize<Dictionary<string, string>>(text);
-        }
-        catch (Exception exception)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(Read)} exception:\n{exception.Message}");
-#endif
-        }
+        var languagesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
+
+        var matchingFiles = Directory.GetFiles(languagesDirectory, "*.json")
+            .Where(file => Path.GetFileNameWithoutExtension(file)?.Equals(isoLanguageCode, StringComparison.OrdinalIgnoreCase) == true)
+            .ToList();
+
+        return matchingFiles.Count > 0 ? matchingFiles.First() :
+            // If no exact match is found, default to English
+            Path.Combine(languagesDirectory, "en.json");
+    }
+
+    public static async Task ChangeLanguage(int language)
+    {
+        var choice = (Languages)language;
+        SettingsHelper.Settings.UIProperties.UserLanguage = choice.ToString().Replace('_', '-');
+        await LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage).ConfigureAwait(false);
+
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 }

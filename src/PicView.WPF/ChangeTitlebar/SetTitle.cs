@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
+﻿using PicView.Core.FileHandling;
+using PicView.Core.Localization;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
-using PicView.Core.FileHandling;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.FileHandling;
-using PicView.WPF.UILogic;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
 
@@ -26,6 +26,12 @@ namespace PicView.WPF.ChangeTitlebar
         /// <returns></returns>
         internal static string[] TitleString(int width, int height, int index, FileInfo? fileInfo)
         {
+            // Check index validity
+            if (index < 0 || index >= Pics.Count)
+            {
+                return ReturnError("index invalid");
+            }
+
             // Check if file info is present or not
             if (fileInfo == null)
             {
@@ -48,15 +54,9 @@ namespace PicView.WPF.ChangeTitlebar
                     return ReturnError("FileInfo does not exist?");
             }
 
-            // Check index validity
-            if (index < 0 || index >= Pics.Count)
-            {
-                return ReturnError("index invalid");
-            }
-
-            var files = (string)(Pics.Count == 1
-                ? Application.Current.Resources["File"]
-                : Application.Current.Resources["Files"]);
+            var files = Pics.Count == 1
+                ? TranslationHelper.GetTranslation("File")
+                : TranslationHelper.GetTranslation("Files");
 
             var stringBuilder = new StringBuilder(90);
             stringBuilder.Append(fileInfo.Name)
@@ -100,9 +100,9 @@ namespace PicView.WPF.ChangeTitlebar
 #endif
             return new[]
             {
-                (string)Application.Current.Resources["UnexpectedError"],
-                (string)Application.Current.Resources["UnexpectedError"],
-                (string)Application.Current.Resources["UnexpectedError"]
+                TranslationHelper.GetTranslation("UnexpectedError"),
+                TranslationHelper.GetTranslation("UnexpectedError"),
+                TranslationHelper.GetTranslation("UnexpectedError")
             };
         }
 

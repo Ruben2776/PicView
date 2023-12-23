@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using PicView.WPF.Animations;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.UILogic.Sizing;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
@@ -14,14 +15,7 @@ namespace PicView.WPF.Views.UserControls.Buttons
 
             MouseEnter += delegate
             {
-                if (SettingsHelper.Settings.WindowProperties.Fullscreen)
-                {
-                    ToolTip = Application.Current.Resources["RestoreDown"];
-                }
-                else
-                {
-                    ToolTip = Application.Current.Resources["Fullscreen"];
-                }
+                ToolTip = TranslationHelper.GetTranslation(SettingsHelper.Settings.WindowProperties.Fullscreen ? "RestoreDown" : "Fullscreen");
 
                 ButtonMouseOverAnim(FullscreenButtonBrush, true);
             };

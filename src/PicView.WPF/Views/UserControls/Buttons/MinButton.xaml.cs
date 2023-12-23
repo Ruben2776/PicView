@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using PicView.WPF.Animations;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
 namespace PicView.WPF.Views.UserControls.Buttons
@@ -26,7 +27,7 @@ namespace PicView.WPF.Views.UserControls.Buttons
 
                 MouseLeave += (s, x) => ButtonMouseLeaveAnim(MinButtonBrush, true);
 
-                ToolTip = Application.Current.Resources["Minimize"];
+                ToolTip = TranslationHelper.GetTranslation("Minimize");
             };
         }
     }

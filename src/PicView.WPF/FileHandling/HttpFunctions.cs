@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using PicView.Core.FileHandling;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
@@ -122,7 +123,7 @@ namespace PicView.WPF.FileHandling
             double? progressPercentage)
         {
             if (!totalFileSize.HasValue || !totalBytesDownloaded.HasValue || !progressPercentage.HasValue) return;
-            var percentComplete = (string)Application.Current.Resources["PercentComplete"];
+            var percentComplete = TranslationHelper.GetTranslation("PercentComplete");
             var displayProgress =
                 $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
 

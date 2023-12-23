@@ -1,6 +1,6 @@
-﻿using System.Windows;
+﻿using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.Animations;
-using PicView.Core.Config;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
 namespace PicView.WPF.Views.UserControls.Buttons
@@ -21,7 +21,7 @@ namespace PicView.WPF.Views.UserControls.Buttons
                     AnimationHelper.LightThemeMouseEvent(this, IconBrush);
                 }
 
-                ToolTip = Application.Current.TryFindResource("Close");
+                ToolTip = TranslationHelper.GetTranslation("Close");
             };
         }
     }

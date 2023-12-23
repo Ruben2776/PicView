@@ -2,10 +2,10 @@
     x:Class="PicView.WPF.Views.Windows.ResizeWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.WPF.Views.UserControls.Misc"
-    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     Width="500"
     AllowDrop="False"
     AllowsTransparency="True"
@@ -77,9 +77,9 @@
                 Width="Auto"
                 Margin="0,0,0,0"
                 VerticalAlignment="Center"
+                d:Text=" BatchResize"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                 FontSize="13"
-                Text="{StaticResource BatchResize}"
                 TextAlignment="Center" />
         </DockPanel>
 
@@ -92,7 +92,7 @@
             <StackPanel Margin="0,0,0,15">
 
                 <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
-                    <TextBlock Text="{StaticResource SourceFolder}" />
+                    <TextBlock x:Name="SourceFolderTextBlock" d:Text="SourceFolder" />
                     <TextBox
                         x:Name="SourceFolderInput"
                         Width="298"
@@ -107,7 +107,7 @@
                     Margin="0,0,0,10"
                     AllowDrop="True"
                     Orientation="Horizontal">
-                    <TextBlock Text="{StaticResource OutputFolder}" />
+                    <TextBlock x:Name="OutputFolderTextBlock" d:Text="OutputFolder" />
                     <TextBox
                         x:Name="OutputFolderInput"
                         Width="298"
@@ -119,9 +119,12 @@
                 </StackPanel>
 
                 <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
-                    <TextBlock Text="{StaticResource ConvertTo}" />
+                    <TextBlock x:Name="ConvertToTextBlock" d:Text=" ConvertTo" />
                     <ComboBox MinWidth="130">
-                        <ComboBoxItem Content="{StaticResource NoConversion}" IsSelected="True" />
+                        <ComboBoxItem
+                            x:Name="NoConversion"
+                            d:Content="NoConversion"
+                            IsSelected="True" />
                         <ComboBoxItem Name="webp" Content=".webp" />
                         <ComboBoxItem Name="jpg" Content=".jpg" />
                         <ComboBoxItem Name="png" Content=".png" />
@@ -139,19 +142,19 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <TextBlock Text="{StaticResource Compression}" />
+                    <TextBlock x:Name="CompressionTextBlock" d:Text=" Compression" />
                     <ComboBox MinWidth="130">
                         <ComboBoxItem
                             x:Name="LosslessCompressionChoice"
-                            Content="{StaticResource Lossless}"
+                            d:Content=" Lossless"
                             IsSelected="True" />
-                        <ComboBoxItem x:Name="LossyCompressionChoice" Content="{StaticResource Lossy}" />
-                        <ComboBoxItem Content="{StaticResource None}" />
+                        <ComboBoxItem x:Name="LossyCompressionChoice" d:Content=" Lossy" />
+                        <ComboBoxItem x:Name="NoneChoice" d:Content=" None}" />
                     </ComboBox>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Quality" />
+                    <TextBlock x:Name="QualityTextBlock" d:Text="Quality" />
                     <ComboBox
                         x:Name="QualityPercentage"
                         MinWidth="130"
@@ -175,15 +178,15 @@
                 </StackPanel>
 
                 <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
-                    <TextBlock Text="{StaticResource Resize}" />
+                    <TextBlock x:Name="ResizeTextBlock" d:Text=" Resize" />
                     <ComboBox x:Name="ResizeComboBox" Width="130">
                         <ComboBoxItem
                             x:Name="NoResize"
-                            Content="{StaticResource NoResize}"
+                            Content=" NoResize"
                             IsSelected="True" />
-                        <ComboBoxItem x:Name="WidthResize" Content="{StaticResource Width}" />
-                        <ComboBoxItem x:Name="HeightResize" Content="{StaticResource Height}" />
-                        <ComboBoxItem x:Name="PercentageResize" Content="{StaticResource Percentage}" />
+                        <ComboBoxItem x:Name="WidthResize" Content=" Width" />
+                        <ComboBoxItem x:Name="HeightResize" Content=" Height" />
+                        <ComboBoxItem x:Name="PercentageResize" Content=" Percentag}" />
                     </ComboBox>
                 </StackPanel>
 
@@ -202,7 +205,7 @@
                         </Style>
                     </StackPanel.Style>
 
-                    <TextBlock Text="{StaticResource Width}" />
+                    <TextBlock x:Name="WidthTextBlock" d:Text=" Width" />
 
                     <TextBox
                         x:Name="WidthValue"
@@ -226,7 +229,7 @@
                         </Style>
                     </StackPanel.Style>
 
-                    <TextBlock Text="{StaticResource Height}" />
+                    <TextBlock x:Name="HeightTextBlock" d:Text=" Height" />
 
                     <TextBox
                         x:Name="HeightValue"
@@ -250,7 +253,7 @@
                         </Style>
                     </StackPanel.Style>
 
-                    <TextBlock Text="{StaticResource Percentage}" />
+                    <TextBlock x:Name="PercentageTextBlock" d:Text=" Percentage" />
 
                     <TextBox
                         x:Name="PercentageBox"
@@ -265,7 +268,7 @@
 
                 <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
 
-                    <TextBlock Text="{StaticResource GenerateThumbnails}" />
+                    <TextBlock x:Name="GenerateThumbnailsTextBlock" d:Text="GenerateThumbnails" />
                     <ComboBox
                         x:Name="ThumbnailsComboBox"
                         Width="65"
@@ -301,6 +304,7 @@
                                             <ScrollContentPresenter Grid.RowSpan="2" Grid.ColumnSpan="2" />
                                             <ScrollBar
                                                 Name="PART_VerticalScrollBar"
+                                                Grid.Row="0"
                                                 Grid.Column="1"
                                                 Maximum="{TemplateBinding ScrollableHeight}"
                                                 ViewportSize="{TemplateBinding ViewportHeight}"
@@ -358,7 +362,7 @@
                         <Label
                             x:Name="StartButton"
                             Padding="20,7,20,7"
-                            Content="{StaticResource Start}"
+                            d:Content=" Start"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                             <Label.Background>
                                 <SolidColorBrush x:Name="StartBrush" Color="{StaticResource BackgroundColorAlt}" />
@@ -382,7 +386,7 @@
                         <Label
                             x:Name="CancelButton"
                             Padding="10,7,10,7"
-                            Content="{StaticResource Cancel}"
+                            d:Content=" Cancel"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                             <Label.Background>
                                 <SolidColorBrush x:Name="CancelBrush" Color="{StaticResource BackgroundColorAlt}" />

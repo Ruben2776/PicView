@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using ImageMagick;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.TransformImage;
@@ -108,27 +109,27 @@ namespace PicView.WPF.ImageHandling
             string ratioText;
             if (firstRatio == secondRatio)
             {
-                ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Square"]})";
+                ratioText = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Square")})";
             }
             else if (firstRatio > secondRatio)
             {
-                ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Landscape"]})";
+                ratioText = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Landscape")})";
             }
             else
             {
-                ratioText = $"{firstRatio}:{secondRatio} ({Application.Current.Resources["Portrait"]})";
+                ratioText = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Portrait")})";
             }
 
             var megaPixels = ((float)bitmapSource.PixelHeight * bitmapSource.PixelWidth / 1000000)
-                .ToString("0.##", CultureInfo.CurrentCulture) + " " + Application.Current.Resources["MegaPixels"];
+                .ToString("0.##", CultureInfo.CurrentCulture) + " " + TranslationHelper.GetTranslation("MegaPixels");
 
             var printSizeCm = cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " +
                               cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                              + " " + Application.Current.Resources["Centimeters"];
+                              + " " + TranslationHelper.GetTranslation("Centimeters");
 
             var printSizeInch = inchesWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " +
                                 inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                                + " " + Application.Current.Resources["Inches"];
+                                + " " + TranslationHelper.GetTranslation("Inches");
 
             var dpi = string.Empty;
 
@@ -296,7 +297,7 @@ namespace PicView.WPF.ImageHandling
             if (dpiX is not null && dpiY is not null)
             {
                 dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " +
-                      Application.Current.Resources["Dpi"];
+                      TranslationHelper.GetTranslation("Dpi");
             }
 
             bitDepth ??= string.Empty;

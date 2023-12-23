@@ -12,6 +12,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.Core.Localization;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.DeleteFiles;
 
@@ -43,13 +44,13 @@ namespace PicView.WPF.ChangeImage
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Render, () =>
             {
                 Unload(true);
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"], true, TimeSpan.FromSeconds(5));
+                Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnexpectedError"), true, TimeSpan.FromSeconds(5));
                 ConfigureWindows.GetMainWindow.Title =
-                    (string)Application.Current.Resources["UnexpectedError"] + " - PicView";
+                    TranslationHelper.GetTranslation("UnexpectedError") + " - PicView";
                 ConfigureWindows.GetMainWindow.TitleText.Text =
-                    (string)Application.Current.Resources["UnexpectedError"];
+                    TranslationHelper.GetTranslation("UnexpectedError");
                 ConfigureWindows.GetMainWindow.TitleText.ToolTip =
-                    (string)Application.Current.Resources["UnexpectedError"];
+                    TranslationHelper.GetTranslation("UnexpectedError");
                 ConfigureWindows.GetMainWindow.MainImage.Cursor = Cursors.Arrow;
 
                 if (UC.GetSpinWaiter is { IsVisible: true })
@@ -194,7 +195,7 @@ namespace PicView.WPF.ChangeImage
                 else if (Clipboard.ContainsImage())
                 {
                     await UpdateImage
-                        .UpdateImageAsync((string)Application.Current.Resources["ClipboardImage"], Clipboard.GetImage())
+                        .UpdateImageAsync(TranslationHelper.GetTranslation("ClipboardImage"), Clipboard.GetImage())
                         .ConfigureAwait(false);
                 }
                 else if (Uri.IsWellFormedUriString(path, UriKind.Absolute)) // Check if from web
@@ -222,7 +223,7 @@ namespace PicView.WPF.ChangeImage
                 return ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
                 {
                     var fileName = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                    return fileName == (string)Application.Current.Resources["Loading"] ? InitialPath : fileName;
+                    return fileName == TranslationHelper.GetTranslation("Loading") ? InitialPath : fileName;
                 });
             }
 
@@ -270,15 +271,16 @@ namespace PicView.WPF.ChangeImage
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke((Action)(() =>
             {
-                ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text =
-                    (string)Application.Current.Resources["NoImage"];
-                ConfigureWindows.GetMainWindow.Title =
-                    Application.Current.Resources["NoImage"] + " - " + SetTitle.AppName;
                 ConfigureWindows.GetMainWindow.MainImage.Source = null;
                 ConfigureWindows.GetMainWindow.MainImage.Width = 0;
                 ConfigureWindows.GetMainWindow.MainImage.Height = 0;
 
                 WindowSizing.SetWindowBehavior();
+
+                if (showStartup == false)
+                {
+                    ResetTitle();
+                }
 
                 UC.ToggleStartUpUC(!showStartup);
                 if (UC.GetSpinWaiter is not null)
@@ -305,6 +307,14 @@ namespace PicView.WPF.ChangeImage
             }
 
             Taskbar.NoProgress();
+        }
+
+        internal static void ResetTitle()
+        {
+            ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text =
+                TranslationHelper.GetTranslation("NoImage");
+            ConfigureWindows.GetMainWindow.Title =
+                TranslationHelper.GetTranslation("NoImage") + " - " + SetTitle.AppName;
         }
     }
 }

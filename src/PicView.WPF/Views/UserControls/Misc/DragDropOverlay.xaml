@@ -1,7 +1,10 @@
 ﻿<UserControl
     x:Class="PicView.WPF.Views.UserControls.Misc.DragDropOverlay"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
     <Grid Background="#A5171717">
         <StackPanel
             HorizontalAlignment="Center"
@@ -11,11 +14,12 @@
             <ContentPresenter x:Name="ContentHolder" />
 
             <TextBlock
+                x:Name="TextMsg"
                 Margin="0,10,0,0"
+                d:Text="DragOverString"
                 FontFamily="Roboto Black"
                 FontSize="16"
                 Foreground="#FFf6f4f4"
-                Text="{StaticResource DragOverString}"
                 TextAlignment="Center" />
         </StackPanel>
     </Grid>

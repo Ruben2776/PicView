@@ -1,32 +1,40 @@
-﻿using PicView.WPF.FileHandling;
+﻿using PicView.Core.Localization;
+using PicView.WPF.FileHandling;
 using PicView.WPF.UILogic;
 using PicView.WPF.Views.Windows;
 
-namespace PicView.WPF.Views.UserControls.Misc
+namespace PicView.WPF.Views.UserControls.Misc;
+
+// ReSharper disable once InconsistentNaming
+public partial class ThumbnailOutputUC
 {
-    // ReSharper disable once InconsistentNaming
-    public partial class ThumbnailOutputUC
+    public ThumbnailOutputUC(int i, string folderPath, string filename, string value)
     {
-        public ThumbnailOutputUC(int i, string folderPath, string filename, string value)
+        InitializeComponent();
+
+        OutPutString.Text = $"Thumb {i}";
+        OutPutStringBox.Text = folderPath + @"\" + filename;
+        ValueBox.Text = value;
+
+        OutputFolderButton.FileMenuButton.Click += (_, _) =>
         {
-            InitializeComponent();
-
-            OutPutString.Text = $"Thumb {i}";
-            OutPutStringBox.Text = folderPath + @"\" + filename;
-            ValueBox.Text = value;
-
-            OutputFolderButton.FileMenuButton.Click += (_, _) =>
+            var newFolder = OpenSave.SelectAndReturnFolder();
+            if (string.IsNullOrWhiteSpace(newFolder) == false)
             {
-                var newFolder = OpenSave.SelectAndReturnFolder();
-                if (string.IsNullOrWhiteSpace(newFolder) == false)
-                {
-                    OutPutStringBox.Text = newFolder;
-                }
+                OutPutStringBox.Text = newFolder;
+            }
 
-                ConfigureWindows.GetResizeWindow.Focus();
-            };
+            ConfigureWindows.GetResizeWindow.Focus();
+        };
 
-            ResizeWindow.SetTextBoxDragEvent(OutPutStringBox);
-        }
+        ResizeWindow.SetTextBoxDragEvent(OutPutStringBox);
+        UpdateLanguage();
+    }
+
+    public void UpdateLanguage()
+    {
+        ResizeTextBlock.Text = TranslationHelper.GetTranslation("Resize");
+        WidthBox.Content = TranslationHelper.GetTranslation("Width");
+        HeightBox.Content = TranslationHelper.GetTranslation("Height");
     }
 }

@@ -158,8 +158,7 @@
                         Canvas.Top="51"
                         Width="133"
                         Height="37"
-                        Style="{StaticResource ButtonBorder}"
-                        ToolTip="{StaticResource ResizeImage}">
+                        Style="{StaticResource ButtonBorder}">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.Background>
                                 <SolidColorBrush x:Name="ResizeBorderBrush" Color="Transparent" />
@@ -198,11 +197,11 @@
                             <Button x:Name="ResizeButton" FocusVisualStyle="{x:Null}">
                                 <Button.Content>
                                     <TextBlock
+                                        x:Name="ResizeButtonTextBlock"
                                         Width="85"
                                         Margin="2,0,4,0"
                                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                         Foreground="{StaticResource ResizeIcon}"
-                                        Text="{StaticResource ResourceKey=Resize}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="NoWrap" />
                                 </Button.Content>
@@ -237,11 +236,11 @@
                                 </Button.Background>
                                 <Button.Content>
                                     <TextBlock
+                                        x:Name="CropButtonTextBlock"
                                         Width="85"
                                         Margin="5,1,3,0"
                                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                         Foreground="{StaticResource CropIcon}"
-                                        Text="{StaticResource ResourceKey=Crop}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="NoWrap" />
                                 </Button.Content>
@@ -255,8 +254,7 @@
                         Canvas.Top="92"
                         Width="133"
                         Height="37"
-                        Style="{StaticResource ButtonBorder}"
-                        ToolTip="{StaticResource ResourceKey=StartSlideshow}">
+                        Style="{StaticResource ButtonBorder}">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.Background>
                                 <SolidColorBrush x:Name="SlideShowBorderBrush" Color="Transparent" />
@@ -271,11 +269,11 @@
                             <Button x:Name="SlideShowButton" FocusVisualStyle="{x:Null}">
                                 <Button.Content>
                                     <TextBlock
+                                        x:Name="SlideShowButtonTextBlock"
                                         Width="93"
                                         Margin="8,1,0,00"
                                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                         Foreground="{StaticResource SlideshowIcon}"
-                                        Text="{StaticResource ResourceKey=Slideshow}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="NoWrap" />
                                 </Button.Content>
@@ -289,8 +287,7 @@
                         Canvas.Top="92"
                         Width="133"
                         Height="37"
-                        Style="{StaticResource ButtonBorder}"
-                        ToolTip="{StaticResource ResourceKey=OptimizeImage}">
+                        Style="{StaticResource ButtonBorder}">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.Background>
                                 <SolidColorBrush x:Name="BgBorderBrush" Color="Transparent" />
@@ -333,11 +330,11 @@
                             <Button x:Name="OptimizeButton" FocusVisualStyle="{x:Null}">
                                 <Button.Content>
                                     <TextBlock
+                                        x:Name="OptimizeButtonTextBlock"
                                         Width="93"
                                         Margin="7,1,3,0"
                                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                         Foreground="{StaticResource OptimizeIcon}"
-                                        Text="{StaticResource ResourceKey=OptimizeImage}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="NoWrap" />
                                 </Button.Content>
@@ -378,7 +375,6 @@
                                     MaxWidth="175"
                                     Margin="10,0,10,0"
                                     Foreground="{StaticResource BottomGalleryIcon}"
-                                    Text="{StaticResource ShowBottomGallery}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </Button>

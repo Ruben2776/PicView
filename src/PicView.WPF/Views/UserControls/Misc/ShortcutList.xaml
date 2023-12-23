@@ -16,17 +16,19 @@
     <StackPanel>
 
         <Label
+            x:Name="ApplicationShortcutsLabel"
             Margin="0,20,0,10"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=ApplicationShortcuts}"
             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Black"
             FontSize="17" />
 
         <TextBlock
+            x:Name="ChangeKeybindingText"
+            Width="450"
             Margin="0,5,0,10"
             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
-            Text="{StaticResource ChangeKeybindingText}"
-            TextAlignment="Center" />
+            TextAlignment="Center"
+            TextWrapping="Wrap" />
 
         <Border
             x:Name="SetDefaultButton"
@@ -40,7 +42,7 @@
             CornerRadius="2"
             Effect="{StaticResource MenuShadowButtonBorder}"
             Focusable="False">
-            <Label Padding="10" Content="{StaticResource ResetButtonText}">
+            <Label x:Name="SetDefaultLabel" Padding="10">
                 <Label.Background>
                     <SolidColorBrush x:Name="SetToDefaultBrush" Color="{StaticResource BackgroundColorAlt}" />
                 </Label.Background>
@@ -51,35 +53,38 @@
         </Border>
 
         <Label
+            x:Name="NavigationLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=Navigation}" />
+            Content="Navigation" />
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="NextImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource NextImage}" />
+                Text="NextImage" />
             <TextBox
                 x:Name="NextBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="NextBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="LastImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
-                Text="{StaticResource LastImage}" />
+                Text="LastImage" />
             <TextBox
                 x:Name="LastImageBox1"
                 Width="150"
@@ -95,9 +100,10 @@
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
 
             <TextBlock
+                x:Name="NextFolderTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
-                Text="{StaticResource NextFolder}" />
+                Text="NextFolder" />
             <TextBox
                 x:Name="NextFolderBox1"
                 Width="150"
@@ -113,29 +119,31 @@
         <!--  Prev  -->
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="PrevImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource PrevImage}" />
+                Text="PrevImage" />
             <TextBox
                 x:Name="PrevBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="PrevBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="FirstImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
-                Text="{StaticResource FirstImage}" />
+                Text="FirstImage" />
             <TextBox
                 x:Name="FirstImageBox1"
                 Width="150"
@@ -151,9 +159,10 @@
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
 
             <TextBlock
+                x:Name="PrevFolderTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
-                Text="{StaticResource PrevFolder}" />
+                Text="PrevFolder" />
             <TextBox
                 x:Name="PrevFolderBox1"
                 Width="150"
@@ -168,75 +177,80 @@
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ToggleLoopingTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ToggleLooping}" />
+                Text="ToggleLooping" />
             <TextBox
                 x:Name="ToggleLoopingBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ToggleLoopingBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SelectGalleryThumbTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource SelectGalleryThumb}" />
+                Text="SelectGalleryThumb" />
             <TextBox
                 x:Name="GalleryBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="GalleryBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <Label
+            x:Name="ScrollAndRotateLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ScrollAndRotate}" />
+            Content="ScrollAndRotate" />
 
         <!--  Rotate Right  -->
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="RotateRightTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource RotateRight}" />
+                Text="RotateRight" />
             <TextBox
                 x:Name="UpBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="UpBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ScrollUpTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
-                Text="{StaticResource ScrollUp}" />
+                Text="ScrollUp" />
             <TextBox
                 x:Name="ScrollUpBox1"
                 Width="150"
@@ -252,29 +266,31 @@
         <!--  Rotate Left  -->
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="RotateLeftTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource RotateLeft}" />
+                Text="RotateLeft" />
             <TextBox
                 x:Name="DownBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="DownBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ScrollDownTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
-                Text="{StaticResource ScrollDown}" />
+                Text="ScrollDown" />
             <TextBox
                 x:Name="ScrollDownBox1"
                 Width="150"
@@ -289,119 +305,130 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ScrollToTopBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ScrollToTop}" />
+                Text="ScrollToTop" />
             <TextBox
                 x:Name="ScrollToTopBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ScrollToTopBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ScrollToBottomTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ScrollToBottom}" />
+                Text="ScrollToBottom" />
             <TextBox
                 x:Name="ScrlBottomBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ScrlBottomBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ToggleScrollBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ToggleScroll}" />
+                Text="ToggleScroll" />
             <TextBox
                 x:Name="ToggleScrlBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ToggleScrlBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <Label
+            x:Name="ZoomLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=Zoom}" />
+            Content="Zoom" />
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ZoomInTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ZoomIn}" />
+                Text="ZoomIn" />
             <TextBox
-                x:Name="ZoomInBox"
+                x:Name="ZoomInBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="ZoomInBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource MouseWheel}"
+                Text="MouseWheel"
                 ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ZoomOutTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ZoomOut}" />
+                Text="ZoomOut" />
             <TextBox
-                x:Name="ZoomOutBox"
+                x:Name="ZoomOutBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="ZoomOutBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource MouseWheel}"
+                Text="MouseWheel}"
                 ToolTip="{x:Null}" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="PanTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource Pan}" />
+                Text="Pan" />
             <TextBox
+                x:Name="PanBox1"
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource MouseDrag}"
+                Text="MouseDrag}"
                 ToolTip="{x:Null}" />
             <TextBox
+                x:Name="PanBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 ToolTip="{x:Null}" />
@@ -409,186 +436,199 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ResetZoomTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResetZoom}" />
+                Text="ResetZoom" />
             <TextBox
-                x:Name="ResetZoomBox"
+                x:Name="ResetZoomBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="ResetZoomBox2"
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource DoubleClick}"
+                Text="DoubleClick}"
                 ToolTip="{x:Null}" />
         </StackPanel>
 
         <Label
+            x:Name="ImageControlLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=ImageControl}" />
+            Content="ImageControl" />
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="StretchImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource StretchImage}" />
+                Text="StretchImage" />
             <TextBox
                 x:Name="StretchBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="StretchBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="FlipTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource Flip}" />
+                Text="Flip" />
             <TextBox
                 x:Name="FlipBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="FlipBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="CropTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource Crop}" />
+                Text="Crop" />
             <TextBox
                 x:Name="CropBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="CropBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ChangeBackgroundTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ChangeBackground}" />
+                Text="ChangeBackgroundTextBlock" />
             <TextBox
                 x:Name="ChangeBgBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ChangeBgBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ResizeImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResizeImage}" />
+                Text="ResizeImage" />
             <TextBox
                 x:Name="QuickResizeBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="QuickResizeBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ColorPickerToolTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ColorPickerTool}" />
+                Text="ColorPickerTool" />
             <TextBox
                 x:Name="ColorPickBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ColorPickBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="OptimizeImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource OptimizeImage}" />
+                Text="OptimizeImage" />
             <TextBox
                 x:Name="OptimizeBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="OptimizeBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <Label
+            x:Name="InterfaceConfigurationLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=InterfaceConfiguration}" />
+            Content="InterfaceConfiguration" />
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ShowHideUiTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ShowHideUI}" />
+                Text="ResourceKey=ShowHideUI" />
             <TextBox
                 x:Name="ToggleUIBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="ToggleUIBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Alt + Z"
@@ -597,16 +637,19 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ToggleFullscreenTextBlock1"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ToggleFullscreen}" />
+                Text="ResourceKey=ToggleFullscreen" />
             <TextBox
+                x:Name="ToggleFullscreenTextBlock3"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Alt + Enter"
                 ToolTip="{x:Null}" />
             <TextBox
+                x:Name="ToggleFullscreenTextBlock4"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Shift + double click"
@@ -615,82 +658,88 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ToggleFullscreenTextBlock2"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ToggleFullscreen}" />
+                Text="ResourceKey=ToggleFullscreen" />
             <TextBox
                 x:Name="ToggleFullscreenBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ToggleFullscreenBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SlideShowTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Slideshow}" />
+                Text="ResourceKey=Slideshow" />
             <TextBox
                 x:Name="SlideshowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="SlideshowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ShowImageGalleryTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ShowImageGallery}" />
+                Text="ResourceKey=ShowImageGallery" />
             <TextBox
                 x:Name="ShowImageGalleryBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ShowImageGalleryBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <Label
+            x:Name="FileManagementLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=FileManagement}" />
+            Content="FileManagement" />
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="OpenTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Open}" />
+                Text="ResourceKey=Open" />
             <TextBox
                 x:Name="OpenBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="OpenBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + O"
@@ -699,17 +748,19 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="OpenWithTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=OpenWith}" />
+                Text="ResourceKey=OpenWith" />
             <TextBox
                 x:Name="OpenWithBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="OpenWithBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + E"
@@ -718,17 +769,19 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ReloadTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Reload}" />
+                Text="ResourceKey=Reload" />
             <TextBox
                 x:Name="ReloadBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="ReloadBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + R"
@@ -737,17 +790,19 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SaveTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Save}" />
+                Text="ResourceKey=Save" />
             <TextBox
                 x:Name="SaveBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="SaveBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + S"
@@ -756,17 +811,19 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="PrintTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Print}" />
+                Text="ResourceKey=Print" />
             <TextBox
                 x:Name="PrintBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="PrintBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + P"
@@ -775,10 +832,11 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="DeleteFileTextBlock1"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=DeleteFile}" />
+                Text="ResourceKey=DeleteFile" />
             <TextBox
                 Width="150"
                 Margin="0,0,5,0"
@@ -793,77 +851,82 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="DeleteFileTextBlock2"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=DeleteFile}" />
+                Text="ResourceKey=DeleteFile" />
             <TextBox
                 x:Name="DeleteBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="DeleteBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="RenameFileTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=RenameFile}" />
+                Text="ResourceKey=RenameFile" />
             <TextBox
                 x:Name="RenameBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="RenameBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ShowInFolderTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ShowInFolder}" />
+                Text="ResourceKey=ShowInFolder" />
             <TextBox
                 x:Name="ShowInFolderBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ShowInFolderBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="FilePropertiesTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=FileProperties}" />
+                Text="ResourceKey=FileProperties" />
             <TextBox
                 x:Name="FilePropertiesBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="FilePropertiesBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + I"
@@ -871,23 +934,26 @@
         </StackPanel>
 
         <Label
+            x:Name="CopyLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=Copy}" />
+            Content="Copy" />
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="CopyFileTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=CopyFile}" />
+                Text="ResourceKey=CopyFile" />
             <TextBox
                 x:Name="CopyFileBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="CopyFileBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + C"
@@ -896,17 +962,19 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="FileCopyPathTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=FileCopyPath}" />
+                Text="ResourceKey=FileCopyPath" />
             <TextBox
                 x:Name="CopyFilePathBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="CopyFilePathBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + Alt + C"
@@ -915,17 +983,19 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="CopyImageTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=CopyImage}" />
+                Text="ResourceKey=CopyImage" />
             <TextBox
-                x:Name="CopyImageBox"
+                x:Name="CopyImageBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="CopyImageBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + Shift + C"
@@ -934,41 +1004,39 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="Base64TextBlock"
                 Width="160"
                 Margin="10,3,0,3"
-                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
-                <TextBlock>
-                    <Run Text="{StaticResource Copy}" />
-                    <Run Text=" base64" />
-                </TextBlock>
-            </TextBlock>
+                FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
             <TextBox
                 x:Name="CopyBase64Box1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="CopyBase64Box2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="FilePasteTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=FilePaste}" />
+                Text="ResourceKey=FilePaste" />
             <TextBox
                 x:Name="PasteBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="PasteBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + V"
@@ -977,37 +1045,40 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="DuplicateFileTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=DuplicateFile}" />
+                Text="ResourceKey=DuplicateFile" />
             <TextBox
                 x:Name="DuplicateBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="DuplicateBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="FileCutTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=FileCut}" />
+                Text="ResourceKey=FileCut" />
             <TextBox
                 x:Name="CutBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="CutBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + X"
@@ -1015,102 +1086,110 @@
         </StackPanel>
 
         <Label
+            x:Name="WindowManagementLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=WindowManagement}" />
+            Content="WindowManagement" />
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="AboutTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=About}" />
+                Text="ResourceKey=About" />
             <TextBox
                 x:Name="AboutBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="AboutBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SettingsTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Settings}" />
+                Text="ResourceKey=Settings" />
             <TextBox
                 x:Name="SettingsBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="SettingsBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ImageInfoTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ImageInfo}" />
+                Text="ResourceKey=ImageInfo" />
             <TextBox
                 x:Name="ImageInfoBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ImageInfoBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="ShowResizeWindowTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=ShowResizeWindow}" />
+                Text="ResourceKey=ShowResizeWindow" />
             <TextBox
                 x:Name="ResizeWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ResizeWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="CloseTextBlock1"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Close}" />
+                Text="ResourceKey=Close" />
             <TextBox
+                x:Name="CloseBox3"
                 Width="150"
                 Margin="0,0,5,0"
-                Text="{StaticResource Esc}"
+                Text="Esc}"
                 ToolTip="{x:Null}" />
             <TextBox
+                x:Name="CloseBox4"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + Q"
@@ -1119,37 +1198,40 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="CloseTextBlock2"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=Close}" />
+                Text="ResourceKey=Close" />
             <TextBox
                 x:Name="CloseBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="CloseBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="NewWindowTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=NewWindow}" />
+                Text="ResourceKey=NewWindow" />
             <TextBox
                 x:Name="NewWindowBox"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
+                x:Name="NewWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 Text="Ctrl + N"
@@ -1158,252 +1240,266 @@
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="CenterWindowTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=CenterWindow}" />
+                Text="ResourceKey=CenterWindow" />
             <TextBox
                 x:Name="CenterWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="CenterWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="StayTopMostTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=StayTopMost}" />
+                Text="ResourceKey=StayTopMost" />
             <TextBox
                 x:Name="TopMostBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="TopMostBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <Label
+            x:Name="WindowScalingLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource ResourceKey=WindowScaling}" />
+            Content="WindowScaling" />
 
         <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="AutoFitWindowTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=AutoFitWindow}" />
+                Text="ResourceKey=AutoFitWindow" />
             <TextBox
                 x:Name="AutoFitWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="AutoFitWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="FillHeightTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=FillHeight}" />
+                Text="ResourceKey=FillHeight" />
             <TextBox
                 x:Name="AutoFitFillWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="AutoFitFillWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="NormalWindowTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=NormalWindow}" />
+                Text="ResourceKey=NormalWindow" />
             <TextBox
                 x:Name="NormalWindowBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="NormalWindowBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="NormalFillTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource ResourceKey=FillHeight}" />
+                Text="ResourceKey=FillHeight" />
             <TextBox
                 x:Name="NormalWindowFillBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="NormalWindowFillBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <Label
+            x:Name="SetStarRatingLabel"
             Margin="5,10,0,15"
             HorizontalAlignment="Center"
-            Content="{StaticResource SetStarRating}" />
+            Content="SetStarRating" />
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SetStar1TextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource 1Star}" />
+                Text="1Star" />
             <TextBox
                 x:Name="SetStar1Box1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="SetStar1Box2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SetStar2TextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource 2Star}" />
+                Text="2Star" />
             <TextBox
                 x:Name="SetStar2Box1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="SetStar2Box2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SetStar3TextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource 3Star}" />
+                Text="3Star" />
             <TextBox
                 x:Name="SetStar3Box1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="SetStar3Box2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SetStar4TextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource 4Star}" />
+                Text="4Star" />
             <TextBox
                 x:Name="SetStar4Box1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="SetStar4Box2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="SetStar5TextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource 5Star}" />
+                Text="5Star" />
             <TextBox
                 x:Name="SetStar5Box1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="SetStar5Box2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
 
         <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
             <TextBlock
+                x:Name="RemoveStarRatingTextBlock"
                 Width="160"
                 Margin="10,3,0,3"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                Text="{StaticResource RemoveStarRating}" />
+                Text="RemoveStarRating" />
             <TextBox
                 x:Name="ResetStarsBox1"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
             <TextBox
                 x:Name="ResetStarsBox2"
                 Width="150"
                 Margin="0,0,5,0"
                 IsReadOnly="False"
-                ToolTip="{StaticResource ChangeKeybindingTooltip}" />
+                ToolTip="ChangeKeybindingTooltip" />
         </StackPanel>
     </StackPanel>
 </UserControl>

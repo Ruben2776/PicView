@@ -2,9 +2,9 @@
     x:Class="PicView.WPF.Views.UserControls.Misc.QuickResize"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     d:DesignHeight="300"
     BorderThickness="1"
     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
@@ -27,16 +27,18 @@
             Panel.ZIndex="1" />
 
         <Label
+            x:Name="ResizeImageLabel"
             Margin="0,0,0,115"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Content="{StaticResource ResizeImage}" />
+            d:Content="ResizeImage" />
 
         <TextBlock
+            x:Name="CropMessageTextBlock"
             Margin="0,0,0,67"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Text="{StaticResource CropMessage}" />
+            d:Text="CropMessage" />
 
         <Border
             HorizontalAlignment="Center"
@@ -49,34 +51,34 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
+                        x:Name="WidthTextBlock"
                         Margin="10,0,10,0"
                         VerticalAlignment="Center"
+                        d:Text="Width"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                         FontSize="14"
-                        Text="{StaticResource Width}"
                         ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
                     <TextBox
                         x:Name="WidthBox"
                         Width="55"
                         d:Text="1920"
-                        IsReadOnly="False"
-                        ToolTip="{StaticResource SizeTooltip}" />
+                        IsReadOnly="False" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
+                        x:Name="HeightTextBlock"
                         Margin="10,0,10,0"
                         VerticalAlignment="Center"
+                        d:Text="Height"
                         FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                         FontSize="14"
-                        Text="{StaticResource Height}"
                         ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
                     <TextBox
                         x:Name="HeightBox"
                         Width="55"
                         d:Text="1080"
-                        IsReadOnly="False"
-                        ToolTip="{StaticResource SizeTooltip}" />
+                        IsReadOnly="False" />
                 </StackPanel>
 
                 <Label
@@ -105,8 +107,8 @@
                     x:Name="ApplyButton"
                     Padding="9,9,9,9"
                     VerticalAlignment="Center"
-                    Background="{DynamicResource BorderBrushAlt}"
-                    Content="{StaticResource Apply}">
+                    d:Content="Apply"
+                    Background="{DynamicResource BorderBrushAlt}">
                     <Label.Foreground>
                         <SolidColorBrush x:Name="ApplyBrush" Color="{StaticResource MainColor}" />
                     </Label.Foreground>

@@ -62,11 +62,11 @@
 
                         <StackPanel Width="173" Orientation="Horizontal">
                             <TextBlock
+                                x:Name="ResizeTextBlock"
                                 Width="125"
                                 Margin="2,2,2,2"
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ResizeIconBrush}"
-                                Text="{StaticResource BatchResize}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap" />
@@ -136,18 +136,17 @@
                     Width="139"
                     Height="43"
                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                    FontSize="13"
-                    ToolTip="{StaticResource EffectsTooltip}">
+                    FontSize="13">
                     <Button.Background>
                         <SolidColorBrush x:Name="EffectsButtonBrush" Color="Transparent" />
                     </Button.Background>
                     <StackPanel MaxWidth="135" Orientation="Horizontal">
                         <TextBlock
+                            x:Name="EffectsTextBlock"
                             Width="110"
                             MaxWidth="110"
                             Margin="0,2,0,2"
                             Foreground="{StaticResource EffectsIconBrush}"
-                            Text="{StaticResource Effects}"
                             TextAlignment="Center"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="Wrap" />
@@ -185,18 +184,17 @@
                         x:Name="ImageInfoButton"
                         Canvas.Left="196"
                         Canvas.Top="59"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        ToolTip="{StaticResource ShowImageInfo}">
+                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Button.Background>
                             <SolidColorBrush x:Name="ImageInfoBrush" Color="Transparent" />
                         </Button.Background>
                         <StackPanel Width="150" Orientation="Horizontal">
                             <TextBlock
+                                x:Name="ImageInfoTextBlock"
                                 Width="126"
                                 MaxWidth="126"
                                 Margin="0,2,2,2"
                                 Foreground="{StaticResource InfoIconBrush}"
-                                Text="{StaticResource ImageInfo}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
                             <Path
@@ -216,20 +214,17 @@
                     Width="174"
                     Height="49"
                     Style="{StaticResource ButtonBorder}">
-                    <Button
-                        x:Name="ColorPickerButton"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        ToolTip="{StaticResource ColorPickerToolTooltip}">
+                    <Button x:Name="ColorPickerButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Button.Background>
                             <SolidColorBrush x:Name="ColorPickerBrush" Color="Transparent" />
                         </Button.Background>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
+                                x:Name="ColorPickerTextBlock"
                                 Width="136"
                                 MaxWidth="136"
                                 Margin="0,2,2,2"
                                 Foreground="{StaticResource ColorIconBrush}"
-                                Text="{StaticResource ColorPickerTool}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
                             <Path
@@ -259,11 +254,11 @@
                         </Button.Background>
                         <StackPanel Width="150" Orientation="Horizontal">
                             <TextBlock
+                                x:Name="OptimizeImageTextBlock"
                                 Width="126"
                                 MaxWidth="126"
                                 Margin="0,2,2,2"
                                 Foreground="{StaticResource OptimizeIconBrush}"
-                                Text="{StaticResource OptimizeImage}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
                             <Image Width="17" Height="17">
@@ -309,21 +304,18 @@
                     Width="174"
                     Height="49"
                     Style="{StaticResource ButtonBorder}">
-                    <Button
-                        x:Name="BgButton"
-                        FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                        ToolTip="{StaticResource ColorPickerToolTooltip}">
+                    <Button x:Name="BgButton" FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium">
                         <Button.Background>
                             <SolidColorBrush x:Name="BgBrush" Color="Transparent" />
                         </Button.Background>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
+                                x:Name="BgTextBlock"
                                 Width="136"
                                 MaxWidth="136"
                                 Margin="4,2,2,2"
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource ChangeIconBrush}"
-                                Text="{StaticResource ChangeBackground}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
                             <Image Width="20" Height="20">

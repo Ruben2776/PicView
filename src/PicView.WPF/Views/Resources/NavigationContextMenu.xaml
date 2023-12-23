@@ -5,7 +5,6 @@
         <!--  Next  -->
         <MenuItem
             Foreground="{StaticResource MainColorBrush}"
-            Header="{StaticResource NextImage}"
             InputGestureText="D"
             StaysOpenOnClick="True">
             <MenuItem.Icon>
@@ -18,7 +17,6 @@
         <!--  Prev  -->
         <MenuItem
             Foreground="{StaticResource MainColorBrush}"
-            Header="{StaticResource PrevImage}"
             InputGestureText="A"
             StaysOpenOnClick="True">
             <MenuItem.Icon>
@@ -31,7 +29,7 @@
         <Separator />
 
         <!--  First Image  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource FirstImage}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Image Width="14" Height="14">
                     <Image.Source>
@@ -69,7 +67,7 @@
         </MenuItem>
 
         <!--  Last Image  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource LastImage}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Image Width="14" Height="14">
                     <Image.Source>
@@ -109,7 +107,7 @@
         <Separator />
 
         <!--  Next folder  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource NextFolder}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Image Width="14" Height="14">
                     <Image.Source>
@@ -147,7 +145,7 @@
         </MenuItem>
 
         <!--  Prev folder  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource PrevFolder}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Image Width="14" Height="14">
                     <Image.Source>

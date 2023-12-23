@@ -2,11 +2,10 @@
     x:Class="PicView.WPF.Views.Windows.AboutWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.WPF.Views.UserControls.Misc"
-    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
-    Title="{StaticResource ResourceKey=InfoWindowTitle}"
     Width="482"
     Height="431"
     MinHeight="431"
@@ -172,7 +171,7 @@
                 VerticalAlignment="Center"
                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                 FontSize="14"
-                Text="{StaticResource InfoWindowTitle}"
+                Text="Loading..."
                 TextAlignment="Center" />
         </DockPanel>
 
@@ -220,7 +219,7 @@
                                 <TextBlock
                                     x:Name="GitHub"
                                     FontSize="14"
-                                    Text="{StaticResource ResourceKey=GithubRepo}"
+                                    Text="GithubRepo"
                                     TextAlignment="Center"
                                     ToolTip="https://github.com/Ruben2776/PicView" />
                             </Hyperlink>
@@ -266,8 +265,7 @@
                             <TextBlock
                                 x:Name="License"
                                 FontSize="12"
-                                Text="GNU GPLv3"
-                                ToolTip="{StaticResource ResourceKey=ViewLicenseFile}" />
+                                Text="GNU GPLv3" />
                         </Hyperlink>
                     </TextBlock>
 
@@ -277,8 +275,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         FontSize="14"
-                        FontWeight="Bold"
-                        Text="{StaticResource ResourceKey=Version}" />
+                        FontWeight="Bold" />
 
                     <Border
                         x:Name="UpdateButton"
@@ -292,7 +289,7 @@
                         CornerRadius="2"
                         Effect="{StaticResource MenuShadowButtonBorder}"
                         Focusable="False">
-                        <Label Padding="10" Content="{StaticResource CheckForUpdates}">
+                        <Label x:Name="UpdateButtonLabel" Padding="10">
                             <Label.Background>
                                 <SolidColorBrush x:Name="UpdateBrush" Color="{StaticResource BackgroundColorAlt}" />
                             </Label.Background>

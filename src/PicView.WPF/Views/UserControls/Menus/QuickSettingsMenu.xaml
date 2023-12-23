@@ -43,7 +43,7 @@
                         <SolidColorBrush x:Name="SettingsButtonBrush" Color="Transparent" />
                     </Border.Background>
 
-                    <Button x:Name="SettingsButton" ToolTip="{StaticResource ShowAllSettingsWindow}">
+                    <Button x:Name="SettingsButton">
                         <StackPanel Orientation="Horizontal">
                             <Image Width="18" Margin="3,0,0,0">
                                 <Image.Source>
@@ -76,14 +76,13 @@
                                 </Image.Source>
                             </Image>
                             <TextBlock
+                                x:Name="SettingsButtonTextBlock"
                                 MaxWidth="80"
                                 Margin="3,0,3,0"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                                 FontSize="13"
                                 Foreground="{StaticResource SettingsIcon}"
-                                Text="{StaticResource Settings}"
-                                TextTrimming="CharacterEllipsis"
-                                ToolTip="{StaticResource Settings}" />
+                                TextTrimming="CharacterEllipsis" />
                         </StackPanel>
                     </Button>
                 </Border>
@@ -96,8 +95,7 @@
                     Height="45"
                     Panel.ZIndex="2"
                     BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    ToolTip="{StaticResource ShowInfoWindow}">
+                    BorderThickness="1">
                     <Button.Background>
                         <SolidColorBrush x:Name="InfoButtonBrush" Color="Transparent" />
                     </Button.Background>
@@ -117,22 +115,20 @@
                             </Image.Source>
                         </Image>
                         <TextBlock
+                            x:Name="InfoButtonTextBlock"
                             MaxWidth="70"
                             Margin="3,0,3,0"
                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
                             FontSize="13"
                             Foreground="{StaticResource AboutIcon}"
-                            Text="{StaticResource About}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTip="{StaticResource About}" />
+                            TextTrimming="CharacterEllipsis" />
                     </StackPanel>
                 </Button>
 
                 <buttons:MenuCloseButton
                     x:Name="CloseButton"
                     Canvas.Left="312"
-                    Panel.ZIndex="2"
-                    ToolTip="Close" />
+                    Panel.ZIndex="2" />
 
                 <Border
                     x:Name="StayOnTopBorder"
@@ -154,11 +150,11 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <TextBlock
+                                x:Name="StayOnTopBorderTextBlock"
                                 MaxWidth="135"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                                Text="{StaticResource StayTopMost}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">
@@ -191,11 +187,11 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <TextBlock
+                                x:Name="SearchSubDirBorderTextBlock"
                                 MaxWidth="135"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                                Text="{StaticResource SearchSubdirectory}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">
@@ -228,11 +224,11 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <TextBlock
+                                x:Name="SetFitTextBlock"
                                 MaxWidth="135"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                                Text="{StaticResource AutoFitWindow}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">
@@ -265,11 +261,11 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <TextBlock
+                                x:Name="ToggleFillTextBlock"
                                 MaxWidth="135"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                                Text="{StaticResource StretchImage}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">
@@ -305,11 +301,11 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <TextBlock
+                                x:Name="ToggleLoopingTextBlock"
                                 MaxWidth="135"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                                Text="{StaticResource ToggleLooping}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">
@@ -342,11 +338,11 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <TextBlock
+                                x:Name="ToggleScrollTextBlock"
                                 MaxWidth="135"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
-                                Text="{StaticResource ToggleScroll}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap">

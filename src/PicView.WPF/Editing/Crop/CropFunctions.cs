@@ -12,6 +12,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PicView.Core.Localization;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
 using static PicView.WPF.UILogic.TransformImage.Rotation;
@@ -39,7 +40,7 @@ namespace PicView.WPF.Editing.Crop
                     ? GalleryNavigation.PicGalleryItemSize + GalleryNavigation.ScrollbarSize
                     : 0);
 
-            ConfigureWindows.GetMainWindow.TitleText.Text = (string)Application.Current.Resources["CropMessage"];
+            ConfigureWindows.GetMainWindow.TitleText.Text = TranslationHelper.GetTranslation("CropMessage");
 
             if (!ConfigureWindows.GetMainWindow.ParentContainer.Children.Contains(GetCroppingTool))
             {

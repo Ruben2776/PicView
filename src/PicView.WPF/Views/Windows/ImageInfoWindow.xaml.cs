@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using PicView.Core.Localization;
 using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
@@ -28,6 +29,7 @@ namespace PicView.WPF.Views.Windows
             ContentRendered += async (_, _) =>
             {
                 WindowBlur.EnableBlur(this);
+                UpdateLanguage();
                 Window_ContentRendered();
                 if (Pics.Count > FolderIndex)
                 {
@@ -38,6 +40,55 @@ namespace PicView.WPF.Views.Windows
                     await UpdateValuesAsync(null).ConfigureAwait(false);
                 }
             };
+        }
+
+        public void UpdateLanguage()
+        {
+            Title = TranslationHelper.GetTranslation("ImageInfo") + " - PicView";
+
+            FilePropertiesTxt.Text = TranslationHelper.GetTranslation("FileProperties");
+            FileProperties.ToolTip = TranslationHelper.GetTranslation("FileProperties");
+            DeleteFile.Text = TranslationHelper.GetTranslation("DeleteFile");
+            Delete.ToolTip = TranslationHelper.GetTranslation("SendCurrentImageToRecycleBin");
+            OptimizeImage.Text = TranslationHelper.GetTranslation("OptimizeImage");
+            OptimizeImageButton.ToolTip = TranslationHelper.GetTranslation("OptimizeImage");
+            OpenWithTxt.Text = TranslationHelper.GetTranslation("OpenWith");
+            OpenWith.ToolTip = TranslationHelper.GetTranslation("OpenWith");
+            ShowInFolderTxt.Text = TranslationHelper.GetTranslation("ShowInFolder");
+            ShowInFolder.ToolTip = TranslationHelper.GetTranslation("ShowInFolder");
+
+            FileName.Text = TranslationHelper.GetTranslation("FileName");
+            Folder.Text = TranslationHelper.GetTranslation("Folder");
+            FullPath.Text = TranslationHelper.GetTranslation("FullPath");
+            Created.Text = TranslationHelper.GetTranslation("Created");
+            Modified.Text = TranslationHelper.GetTranslation("Modified");
+            LastAccessTime.Text = TranslationHelper.GetTranslation("LastAccessTime");
+            BitDepth.Text = TranslationHelper.GetTranslation("BitDepth");
+            WidthTxt.Text = TranslationHelper.GetTranslation("Width");
+            HeightTxt.Text = TranslationHelper.GetTranslation("Height");
+            SizeMp.Text = TranslationHelper.GetTranslation("SizeMp");
+            Resolution.Text = TranslationHelper.GetTranslation("Resolution");
+            PrintSizeCm.Text = TranslationHelper.GetTranslation("PrintSizeCm");
+            PrintSizeIn.Text = TranslationHelper.GetTranslation("PrintSizeIn");
+            AspectRatio.Text = TranslationHelper.GetTranslation("AspectRatio");
+
+            FilenameCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            FolderCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            FullpathCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            CreatedCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            ModifiedCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            Accessedopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            BitDepthCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            WidthCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            HeightCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            SizeMpCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            DpiCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            PrintSizeCmCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            PrintSizeInCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+            AspectRatioCopy.ToolTip = TranslationHelper.GetTranslation("Copy");
+
+            WidthBox.ToolTip = TranslationHelper.GetTranslation("SizeTooltip");
+            HeightBox.ToolTip = TranslationHelper.GetTranslation("SizeTooltip");
         }
 
         private void Window_ContentRendered()
@@ -125,7 +176,7 @@ namespace PicView.WPF.Views.Windows
 
             PreviewMouseWheel += (_, e) => // Collapse when scrolling down
             {
-                if (e.Delta < 0 && Height == _startHeight)
+                if (e.Delta < 0 && Math.Abs(Height - _startHeight) < .4)
                 {
                     UIHelper.ExtendOrCollapse(Height, _startHeight, _extendedHeight, this, Scroller, xGeo);
                 }

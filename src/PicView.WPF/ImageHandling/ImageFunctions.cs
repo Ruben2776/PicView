@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ImageMagick;
 using PicView.Core.FileHandling;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
@@ -219,7 +220,7 @@ namespace PicView.WPF.ImageHandling
                     var typeface = new Typeface(
                         new FontFamily("/PicView;component/Themes/Resources/fonts/#Roboto Bold"),
                         FontStyles.Normal, FontWeights.Medium, FontStretches.Normal);
-                    var text = new FormattedText((string)Application.Current.Resources["UnableToRender"],
+                    var text = new FormattedText(TranslationHelper.GetTranslation("UnableToRender"),
                         CultureInfo.CurrentUICulture, FlowDirection, typeface, 18, brush,
                         WindowSizing.MonitorInfo.DpiScaling)
                     {

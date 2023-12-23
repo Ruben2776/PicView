@@ -2,12 +2,12 @@
     x:Class="PicView.WPF.Views.Windows.ImageInfoWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:PicView.WPF.Views.UserControls.Misc"
-    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
-    Title="{StaticResource ImageInfo}"
-    Width="825"
+    Title="Loading..."
+    Width="835"
     Height="385"
     d:Height="700"
     AllowsTransparency="True"
@@ -164,9 +164,11 @@
                 Width="126"
                 Height="30"
                 Padding="0"
-                Style="{StaticResource MetroFlatButton}"
-                ToolTip="{StaticResource FileProperties}">
-                <TextBlock Text="{StaticResource FileProperties}" TextTrimming="CharacterEllipsis" />
+                Style="{StaticResource MetroFlatButton}">
+                <TextBlock
+                    x:Name="FilePropertiesTxt"
+                    d:Text="FileProperties"
+                    TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="FilePropertiesFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -185,9 +187,11 @@
                 Width="92"
                 Height="30"
                 Padding="0"
-                Style="{StaticResource MetroFlatButton}"
-                ToolTip="{StaticResource SendCurrentImageToRecycleBin}">
-                <TextBlock Text="{StaticResource DeleteFile}" TextTrimming="CharacterEllipsis" />
+                Style="{StaticResource MetroFlatButton}">
+                <TextBlock
+                    x:Name="DeleteFile"
+                    d:Text="DeleteFile"
+                    TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="DeleteFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -206,9 +210,11 @@
                 Width="123"
                 Height="30"
                 Padding="0"
-                Style="{StaticResource MetroFlatButton}"
-                ToolTip="{StaticResource OptimizeImage}">
-                <TextBlock Text="{StaticResource OptimizeImage}" TextTrimming="CharacterEllipsis" />
+                Style="{StaticResource MetroFlatButton}">
+                <TextBlock
+                    x:Name="OptimizeImage"
+                    d:Text="OptimizeImage"
+                    TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="OptimizeImageFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -227,9 +233,11 @@
                 Width="116"
                 Height="30"
                 Padding="0"
-                Style="{StaticResource MetroFlatButton}"
-                ToolTip="{StaticResource OpenWith}">
-                <TextBlock Text="{StaticResource OpenWith}" TextTrimming="CharacterEllipsis" />
+                Style="{StaticResource MetroFlatButton}">
+                <TextBlock
+                    x:Name="OpenWithTxt"
+                    d:Text="OpenWith"
+                    TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="OpenWithFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -248,9 +256,11 @@
                 Width="130"
                 Height="30"
                 Padding="0"
-                Style="{StaticResource MetroFlatButton}"
-                ToolTip="{StaticResource ShowInFolder}">
-                <TextBlock Text="{StaticResource ShowInFolder}" TextTrimming="CharacterEllipsis" />
+                Style="{StaticResource MetroFlatButton}">
+                <TextBlock
+                    x:Name="ShowInFolderTxt"
+                    d:Text="ShowInFolder"
+                    TextTrimming="CharacterEllipsis" />
                 <Button.Foreground>
                     <SolidColorBrush x:Name="ShowInFolderFill" Color="{StaticResource MainColor}" />
                 </Button.Foreground>
@@ -313,12 +323,13 @@
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="FileName"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="FileName"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource FileName}"
                                     TextTrimming="CharacterEllipsis"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
@@ -327,18 +338,19 @@
                                     d:Text="404.jpg"
                                     IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="FilenameCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="FilenameCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="Folder"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="Folder"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource Folder}"
                                     TextTrimming="CharacterEllipsis"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
@@ -347,18 +359,19 @@
                                     d:Text="D:\Pictures"
                                     IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="FolderCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="FolderCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="FullPath"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="FullPath"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource FullPath}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="FullPathBox"
@@ -366,79 +379,83 @@
                                     d:Text="D:\Pictures\404.jpg"
                                     IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="FullpathCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="FullpathCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="Created"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="Created"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource Created}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="CreatedBox"
                                     Width="180"
                                     d:Text="8/9/2019 - 10:37:42 PM" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="CreatedCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="CreatedCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="Modified"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="Modified"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource Modified}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="ModifiedBox"
                                     Width="180"
                                     d:Text="12/10/2018 - 7:41:14 PM" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="ModifiedCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="ModifiedCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="LastAccessTime"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="LastAccessTime"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource LastAccessTime}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="AccessedBox"
                                     Width="180"
                                     d:Text="Today, ‎October ‎25, ‎2021, ‏‎11:29 AM" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="Accessedopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="Accessedopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="BitDepth"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="BitDepth"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource BitDepth}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="BitDepthBox"
                                     Width="180"
                                     d:Text="24" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="BitDepthCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="BitDepthCopy" />
                                 </Border>
                             </StackPanel>
                         </StackPanel>
@@ -447,131 +464,136 @@
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="WidthTxt"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="Width"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource Width}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="WidthBox"
                                     Width="180"
                                     d:Text="1920"
-                                    IsReadOnly="False"
-                                    ToolTip="{StaticResource SizeTooltip}" />
+                                    IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="WidthCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="WidthCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="HeightTxt"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="Height"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource Height}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="HeightBox"
                                     Width="180"
                                     d:Text="1080"
-                                    IsReadOnly="False"
-                                    ToolTip="{StaticResource SizeTooltip}" />
+                                    IsReadOnly="False" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="HeightCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="HeightCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="SizeMp"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="SizeMp"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource SizeMp}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="SizeMpBox"
                                     Width="180"
                                     d:Text="2.1 Megapixels" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="SizeMpCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="SizeMpCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="Resolution"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="Resolution"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource Resolution}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="ResolutionBox"
                                     Width="180"
                                     d:Text="96 x 96 DPI" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="DpiCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="DpiCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="PrintSizeCm"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="PrintSizeCm"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource PrintSizeCm}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="PrintSizeCmBox"
                                     Width="180"
                                     d:Text="50.8 x 28.58 centimeters" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="PrintSizeCmCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="PrintSizeCmCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="PrintSizeIn"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="PrintSizeIn"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource PrintSizeIn}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="PrintSizeInBox"
                                     Width="180"
                                     d:Text="20 x 11.25 inches" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="PrintSizeInCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="PrintSizeInCopy" />
                                 </Border>
                             </StackPanel>
 
                             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                                 <TextBlock
+                                    x:Name="AspectRatio"
                                     Width="130"
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Center"
+                                    d:Text="AspectRatio"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
                                     FontSize="14"
-                                    Text="{StaticResource AspectRatio}"
                                     ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                                 <TextBox
                                     x:Name="AspectRatioBox"
                                     Width="180"
                                     d:Text="16:9 (Landscape)" />
                                 <Border Style="{StaticResource bgRoundedConer}">
-                                    <buttons:CopyButton x:Name="AspectRatioCopy" ToolTip="{StaticResource Copy}" />
+                                    <buttons:CopyButton x:Name="AspectRatioCopy" />
                                 </Border>
                             </StackPanel>
                         </StackPanel>

@@ -67,7 +67,7 @@
                             </DrawingImage>
                         </Image.Source>
                     </Image>
-                    <Label Padding="8,5,15,5" Content="{StaticResource OpenFileDialog}">
+                    <Label x:Name="OpenFileDialogLabel" Padding="8,5,15,5">
                         <Label.Foreground>
                             <SolidColorBrush x:Name="SelectFileBrush" Color="{StaticResource IconColor}" />
                         </Label.Foreground>
@@ -114,7 +114,7 @@
                             </DrawingImage>
                         </Image.Source>
                     </Image>
-                    <Label Padding="8,6,15,2" Content="{StaticResource OpenLastFile}">
+                    <Label x:Name="OpenLastFileLabel" Padding="8,6,15,2">
                         <Label.Foreground>
                             <SolidColorBrush x:Name="OpenLastFileBrush" Color="{StaticResource IconColor}" />
                         </Label.Foreground>
@@ -132,7 +132,7 @@
                             <SolidColorBrush x:Name="PasteIconBrush" Color="{StaticResource IconColor}" />
                         </Path.Fill>
                     </Path>
-                    <Label Padding="8,6,15,0" Content="{StaticResource FilePaste}">
+                    <Label x:Name="FilePasteLabel" Padding="8,6,15,0">
                         <Label.Foreground>
                             <SolidColorBrush x:Name="PasteBrush" Color="{StaticResource IconColor}" />
                         </Label.Foreground>

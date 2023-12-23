@@ -3,7 +3,7 @@
     <ContextMenu x:Key="windowCM">
 
         <!--  Fullscreen  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource ToggleFullscreen}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Image Width="17" Height="17">
                     <Image.Source>
@@ -20,7 +20,7 @@
         </MenuItem>
 
         <!--  Minimize  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Minimize}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Viewbox Width="14" Height="14">
                     <Path Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z" Fill="{StaticResource IconColorBrush}" />
@@ -29,11 +29,7 @@
         </MenuItem>
 
         <!--  Close  -->
-        <MenuItem
-            Foreground="{StaticResource MainColorBrush}"
-            Header="{StaticResource Close}"
-            InputGestureText="{StaticResource Esc}"
-            ToolTip="{StaticResource CloseApp}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"

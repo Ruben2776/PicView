@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using PicView.WPF.Animations;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 
 namespace PicView.WPF.Views.UserControls.Misc;
 
@@ -14,6 +15,9 @@ public partial class Credits
         InitializeComponent();
         Loaded += delegate
         {
+            CreditsLabel.Content = TranslationHelper.GetTranslation("Credits");
+            IconsUsedLabel.Content = TranslationHelper.GetTranslation("IconsUsed");
+
             var color = SettingsHelper.Settings.Theme.Dark
                 ? Colors.White
                 : (Color)Application.Current.Resources["MainColor"];

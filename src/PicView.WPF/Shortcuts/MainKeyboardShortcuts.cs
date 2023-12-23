@@ -53,7 +53,7 @@ namespace PicView.WPF.Shortcuts
             }
 
             // Don't execute keys when typing in GoToPicBox or in QuickResize
-            if (GetImageSettingsMenu.GoToPic != null)
+            if (GetImageSettingsMenu?.GoToPic != null)
             {
                 if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
                 {
@@ -169,7 +169,7 @@ namespace PicView.WPF.Shortcuts
             }
 
             // Don't execute keys when typing in GoToPicBox or in QuickResize
-            if (GetImageSettingsMenu.GoToPic != null)
+            if (GetImageSettingsMenu?.GoToPic != null)
             {
                 if (GetImageSettingsMenu.GoToPic.GoToPicBox.IsKeyboardFocusWithin)
                 {

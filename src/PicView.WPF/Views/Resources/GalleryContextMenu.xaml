@@ -3,7 +3,7 @@
     <ContextMenu x:Key="GalleryCM">
 
         <!--  Print  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource Print}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}" >
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -15,7 +15,7 @@
         </MenuItem>
 
         <!--  Open With  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource OpenWith}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}" >
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -27,7 +27,7 @@
         </MenuItem>
 
         <!--  Show in folder  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource ShowInFolder}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -41,7 +41,7 @@
         <Separator />
 
         <!--  SetAsWallpaper  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource SetAsWallpaper}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -53,7 +53,7 @@
         </MenuItem>
 
         <!--  Set As Lock Screen Image  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource SetAsLockScreenImage}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}" >
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -67,7 +67,7 @@
         <Separator />
 
         <!--  Copy  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource CopyFile}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}">
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -78,7 +78,7 @@
             </MenuItem.Icon>
         </MenuItem>
 
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource CopyImage}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}" >
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -109,7 +109,7 @@
         <Separator />
 
         <!--  Cut  -->
-        <MenuItem Foreground="{StaticResource MainColorBrush}" Header="{StaticResource FileCut}">
+        <MenuItem Foreground="{StaticResource MainColorBrush}" >
             <MenuItem.Icon>
                 <Path
                     Width="12"
@@ -123,9 +123,7 @@
         <!--  Delete file  -->
         <MenuItem
             Foreground="{StaticResource MainColorBrush}"
-            Header="{StaticResource DeleteFile}"
-            StaysOpenOnClick="True"
-            ToolTip="{StaticResource SendCurrentImageToRecycleBin}">
+            StaysOpenOnClick="True">
             <MenuItem.Icon>
                 <Path
                     Width="12"
