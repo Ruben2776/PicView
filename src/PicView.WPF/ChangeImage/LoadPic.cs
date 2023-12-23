@@ -473,7 +473,7 @@ namespace PicView.WPF.ChangeImage
 
                 if (index != FolderIndex || source.IsCancellationRequested)
                 {
-                    await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                    await SkipLoading(source).ConfigureAwait(false);
                     return; // Skip loading if user went to next value
                 }
 
@@ -505,26 +505,23 @@ namespace PicView.WPF.ChangeImage
                     {
                         await Task.Delay(10, source.Token).ConfigureAwait(false);
 
-                        if (index == FolderIndex)
+                        // ReSharper disable once InvertIf
+                        if (index != FolderIndex)
                         {
-                            continue;
+                            await SkipLoading(source).ConfigureAwait(false);
+                            return; // Skip loading if user went to next value
                         }
-
-                        await source.CancelAsync();
                     }
                     catch (Exception)
                     {
                         return;
                     }
-
-                    await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
-                    return; // Skip loading if user went to next value
                 }
             }
 
             if (index != FolderIndex)
             {
-                await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+                await SkipLoading(null).ConfigureAwait(false);
                 return; // Skip loading if user went to next value
             }
 
@@ -579,6 +576,12 @@ namespace PicView.WPF.ChangeImage
                     });
                 }
                 await LoadPicAtIndexAsync(nextIndex).ConfigureAwait(false);
+            }
+
+            async Task SkipLoading(CancellationTokenSource? source)
+            {
+                await source?.CancelAsync();
+                await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
             }
         });
 
