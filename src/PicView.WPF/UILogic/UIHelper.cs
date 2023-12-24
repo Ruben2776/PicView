@@ -885,10 +885,7 @@ namespace PicView.WPF.UILogic
             {
                 return;
             }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                UpdateUIValues.SetAutoFill(null!, null!);
-            });
+            await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
         }
 
         internal static async Task ResizeImage()
@@ -1066,10 +1063,8 @@ namespace PicView.WPF.UILogic
             {
                 return;
             }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                UpdateUIValues.SetScalingBehaviour(true, false);
-            });
+
+            await UpdateUIValues.SetScalingBehaviour(true, false).ConfigureAwait(false);
             Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"] ?? "");
         }
 
@@ -1084,10 +1079,7 @@ namespace PicView.WPF.UILogic
             {
                 return;
             }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                UpdateUIValues.SetScalingBehaviour(true, true);
-            });
+            await UpdateUIValues.SetScalingBehaviour(true, true).ConfigureAwait(false);
             Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"] ?? "");
         }
 
@@ -1102,10 +1094,7 @@ namespace PicView.WPF.UILogic
             {
                 return;
             }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                UpdateUIValues.SetScalingBehaviour(false, false);
-            });
+            await UpdateUIValues.SetScalingBehaviour(false, false).ConfigureAwait(false);
             Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"] ?? "");
         }
 

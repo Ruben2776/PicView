@@ -15,6 +15,7 @@ using System.Windows.Media;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.TransformImage.Scroll;
+using static System.Net.WebRequestMethods;
 
 namespace PicView.WPF.ConfigureSettings
 {
@@ -146,32 +147,39 @@ namespace PicView.WPF.ConfigureSettings
             }
         }
 
-        internal static void SetAutoFit(object sender, RoutedEventArgs e)
+        internal static async Task SetAutoFit()
         {
-            SetScalingBehaviour(SettingsHelper.Settings.WindowProperties.AutoFit = !SettingsHelper.Settings.WindowProperties.AutoFit,
-                SettingsHelper.Settings.ImageScaling.StretchImage);
+            await SetScalingBehaviour(SettingsHelper.Settings.WindowProperties.AutoFit = !SettingsHelper.Settings.WindowProperties.AutoFit,
+                  SettingsHelper.Settings.ImageScaling.StretchImage).ConfigureAwait(false);
         }
 
-        internal static void SetAutoFill(object sender, RoutedEventArgs e)
+        internal static async Task SetAutoFill()
         {
-            SetScalingBehaviour(SettingsHelper.Settings.WindowProperties.AutoFit, !SettingsHelper.Settings.ImageScaling.StretchImage);
-            var settingsCm = MainContextMenu.Items[7] as MenuItem;
-            var fillCm = settingsCm.Items[5] as MenuItem;
-            var fillCmHeader = fillCm.Header as CheckBox;
-            fillCmHeader.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
+            await SetScalingBehaviour(SettingsHelper.Settings.WindowProperties.AutoFit, !SettingsHelper.Settings.ImageScaling.StretchImage).ConfigureAwait(false);
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                var settingsCm = MainContextMenu.Items[7] as MenuItem;
+                var fillCm = settingsCm.Items[5] as MenuItem;
+                var fillCmHeader = fillCm.Header as CheckBox;
+                fillCmHeader.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
+            });
         }
 
-        internal static void SetScalingBehaviour(bool autoFit, bool fill)
+        internal static async Task SetScalingBehaviour(bool autoFit, bool fill)
         {
-            SettingsHelper.Settings.ImageScaling.StretchImage = fill;
-            SettingsHelper.Settings.WindowProperties.AutoFit = autoFit;
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                SettingsHelper.Settings.ImageScaling.StretchImage = fill;
+                SettingsHelper.Settings.WindowProperties.AutoFit = autoFit;
 
-            UC.GetQuickSettingsMenu.SetFit.IsChecked = autoFit;
-            UC.GetQuickSettingsMenu.ToggleFill.IsChecked = fill;
+                UC.GetQuickSettingsMenu.SetFit.IsChecked = autoFit;
+                UC.GetQuickSettingsMenu.ToggleFill.IsChecked = fill;
 
-            WindowSizing.SetWindowBehavior();
-            ScaleImage.TryFitImage();
-            SettingsHelper.SaveSettingsAsync();
+                WindowSizing.SetWindowBehavior();
+                ScaleImage.TryFitImage();
+            });
+
+            await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
         }
 
         internal static void ToggleQuickResize()

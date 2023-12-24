@@ -30,7 +30,7 @@ public partial class ShortcutList
         SetDefaultButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(SetToDefaultBrush); };
         SetDefaultButton.MouseLeftButtonDown += async delegate
         {
-            await CustomKeybindings.ResetToDefault().ConfigureAwait(false);
+            await CustomKeybindings.SetDefaultKeybindings().ConfigureAwait(false);
             await Dispatcher.InvokeAsync(() =>
             {
                 ConfigureWindows.GetAboutWindow.Container.Children.Remove(this);

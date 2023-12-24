@@ -64,7 +64,7 @@ public class Zoom
 {
     public double ZoomSpeed { get; set; } = 0.3;
     public bool AvoidZoomingOut { get; set; } = false;
-    public bool CtrlZoom { get; set; } = false;
+    public bool CtrlZoom { get; set; } = true;
     public bool HorizontalReverseScroll { get; set; } = true;
     public bool ScrollEnabled { get; set; } = false;
 }

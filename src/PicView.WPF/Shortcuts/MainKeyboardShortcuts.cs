@@ -134,7 +134,7 @@ namespace PicView.WPF.Shortcuts
                             backup = true;
                         }
 
-                        await CustomKeybindings.CreateNewDefaultKeybindingFile().ConfigureAwait(false);
+                        await CustomKeybindings.SetDefaultKeybindings().ConfigureAwait(false);
                         // ReSharper disable once TailRecursiveCall
                         await MainWindow_KeysDownAsync(sender, e).ConfigureAwait(false);
                     }

@@ -69,43 +69,18 @@ internal static class CustomKeybindings
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
             if (File.Exists(path))
             {
-                await Read(path).ConfigureAwait(false);
+                var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+                await UpdateKeybindings(text).ConfigureAwait(false);
             }
             else
             {
-                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/default-keybindings.json");
-                if (File.Exists(path))
-                {
-                    await Read(path).ConfigureAwait(false);
-                }
-                else
-                {
-                    await Reload().ConfigureAwait(false);
-                }
+                await SetDefaultKeybindings().ConfigureAwait(false);
             }
-        }
-        catch (FileNotFoundException)
-        {
-            await Reload().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             // Handle other exceptions as needed
             Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
-        }
-
-        return;
-
-        async Task Read(string path)
-        {
-            var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-            await UpdateKeybindings(text).ConfigureAwait(false);
-        }
-
-        async Task Reload()
-        {
-            await CreateNewDefaultKeybindingFile().ConfigureAwait(false);
-            await LoadKeybindings().ConfigureAwait(false);
         }
     }
 
@@ -164,37 +139,24 @@ internal static class CustomKeybindings
         }
     }
 
-    /// <summary>
-    /// Resets the keybindings to the default settings.
-    /// </summary>
-    internal static async Task ResetToDefault()
+    internal static async Task SetDefaultKeybindings()
     {
-        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
-        if (File.Exists(path))
+        if (CustomShortcuts is not null)
         {
-            File.Delete(path);
+            CustomShortcuts?.Clear();
         }
-        await CreateNewDefaultKeybindingFile().ConfigureAwait(false);
-        CustomShortcuts?.Clear();
-        await LoadKeybindings().ConfigureAwait(false);
-    }
+        else
+        {
+            CustomShortcuts = new Dictionary<Key, Func<Task>>();
+        }
 
-    /// <summary>
-    /// Creates a new default keybindings file
-    /// </summary>
-    internal static async Task CreateNewDefaultKeybindingFile()
-    {
-        // Save the default keybindings to a new file
-        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/default-keybindings.json");
-        try
+        var keyValues = JsonSerializer.Deserialize<Dictionary<string, string>>(DefaultKeybindings);
+        foreach (var kvp in keyValues)
         {
-            await File.WriteAllTextAsync(path, DefaultKeybindings).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(CreateNewDefaultKeybindingFile)} {path} exception:\n{exception.Message}");
-#endif
+            var key = Enum.Parse<Key>(kvp.Key);
+            var function = await UIHelper.GetFunctionByName(kvp.Value).ConfigureAwait(false);
+            // Add to the dictionary
+            CustomShortcuts[key] = function;
         }
     }
 }

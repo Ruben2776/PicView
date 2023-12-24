@@ -47,8 +47,8 @@ public partial class QuickSettingsMenu
 
         // Toggle Fill
         ToggleFill.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
-        ToggleFill.Click += UpdateUIValues.SetAutoFill;
-        ToggleFillBorder.MouseLeftButtonDown += UpdateUIValues.SetAutoFill;
+        ToggleFill.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
+        ToggleFillBorder.MouseLeftButtonDown += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(ToggleFillBorder, ToggleFillBrush, ToggleFillFill);
         ToggleFillTextBlock.Text = TranslationHelper.GetTranslation("StretchImage");
 
@@ -61,8 +61,8 @@ public partial class QuickSettingsMenu
 
         // Set Fit
         SetFit.IsChecked = SettingsHelper.Settings.WindowProperties.AutoFit;
-        SetFit.Click += UpdateUIValues.SetAutoFit;
-        SetFitBorder.MouseLeftButtonDown += UpdateUIValues.SetAutoFit;
+        SetFit.Click += async (_, _) => await UpdateUIValues.SetAutoFit().ConfigureAwait(false);
+        SetFitBorder.MouseLeftButtonDown += async (_, _) => await UpdateUIValues.SetAutoFit().ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(SetFitBorder, SetFitBrush, SetFitFill);
         SetFitTextBlock.Text = TranslationHelper.GetTranslation("AutoFitWindow");
 

@@ -243,8 +243,8 @@ namespace PicView.WPF.UILogic.Loading
             var imageHeightMenu = (MenuItem)settingsCm.Items[5];
             var imageHeightHeader = (CheckBox)imageHeightMenu.Header;
             imageHeightHeader.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
-            imageHeightHeader.Click += UpdateUIValues.SetAutoFill;
-            imageHeightMenu.Click += UpdateUIValues.SetAutoFill;
+            imageHeightHeader.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
+            imageHeightMenu.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
             imageHeightMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
                 .FirstOrDefault(kv => kv.Value?.Method?.Name == "Stretch")
                 .Key.ToString() ?? string.Empty;
