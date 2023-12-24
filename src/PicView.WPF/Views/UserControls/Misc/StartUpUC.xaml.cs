@@ -145,6 +145,12 @@ namespace PicView.WPF.Views.UserControls.Misc
             buttons.Visibility = buttons.IsVisible ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        public void ShowMenuAndLogo()
+        {
+            buttons.Visibility = Visibility.Visible;
+            Logo.Visibility = Visibility.Visible;
+        }
+
         public void ResponsiveSize(double width)
         {
             const int bottomMargin = 16;

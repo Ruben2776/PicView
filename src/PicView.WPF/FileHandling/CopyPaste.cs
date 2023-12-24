@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.Tooltip;
@@ -80,7 +81,7 @@ namespace PicView.WPF.FileHandling
                     });
 
                 // Add the new file to Pics and Gallery, clear Preloader to refresh cache
-                var nextIndex = GetNextIndex(NavigateTo.Next, false);
+                var nextIndex = ImageIteration.GetNextIndex(NavigateTo.Next, Slideshow.SlideTimer != null, Pics, FolderIndex);
                 Pics.Insert(nextIndex, newFile);
 
                 // Add next item to gallery if applicable
@@ -125,7 +126,7 @@ namespace PicView.WPF.FileHandling
             try
             {
                 Clipboard.SetText(Pics[FolderIndex]);
-                ShowTooltipMessage(Application.Current.Resources["FileCopyPathMessage"] as string);
+                ShowTooltipMessage(TranslationHelper.GetTranslation("FileCopyPathMessage"));
             }
             catch (Exception exception)
             {
@@ -164,7 +165,7 @@ namespace PicView.WPF.FileHandling
         {
             var paths = new StringCollection { path };
             Clipboard.SetFileDropList(paths);
-            ShowTooltipMessage(Application.Current.Resources["FileCopy"], UC.FileMenuOpen);
+            ShowTooltipMessage(TranslationHelper.GetTranslation("FileCopy"), UC.FileMenuOpen);
         }
 
         internal static void CopyBitmap(int? id = null)
@@ -175,7 +176,7 @@ namespace PicView.WPF.FileHandling
                 {
                     var bmp = ImageFunctions.BitmapSourceToBitmap(source);
                     ClipboardHelper.SetClipboardImage(bmp, bmp, null);
-                    ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+                    ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
                 }));
             }
 
@@ -195,13 +196,13 @@ namespace PicView.WPF.FileHandling
 
                     if (pic == null)
                     {
-                        ShowTooltipMessage(Application.Current.Resources["UnknownError"]);
+                        ShowTooltipMessage(TranslationHelper.GetTranslation("UnknownError"));
                         return;
                     }
                 }
 
                 Set(pic);
-                ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+                ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
             }
             else
             {
@@ -230,7 +231,7 @@ namespace PicView.WPF.FileHandling
                             ShowTooltipMessage(e.Message);
                         }
 
-                        ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+                        ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
                     }
                     catch (Exception e)
                     {
@@ -352,7 +353,7 @@ namespace PicView.WPF.FileHandling
 
             Clipboard.Clear();
             Clipboard.SetDataObject(data, true);
-            ShowTooltipMessage(Application.Current.Resources["FileCutMessage"]);
+            ShowTooltipMessage(TranslationHelper.GetTranslation("FileCutMessage"));
         }
     }
 }

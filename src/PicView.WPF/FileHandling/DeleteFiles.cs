@@ -2,6 +2,8 @@
 using System.IO;
 using System.Windows;
 using Microsoft.VisualBasic.FileIO;
+using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -118,10 +120,10 @@ namespace PicView.WPF.FileHandling
             }
 
             ShowTooltipMessage(recycle
-                ? Application.Current.Resources["SentFileToRecycleBin"]
-                : Application.Current.Resources["Deleted"]);
+                ? TranslationHelper.GetTranslation("SentFileToRecycleBin")
+                : TranslationHelper.GetTranslation("Deleted"));
 
-            FolderIndex = GetNextIndex(NavigateTo.Previous, false);
+            FolderIndex = ImageIteration.GetNextIndex(NavigateTo.Previous, Slideshow.SlideTimer != null, Pics, FolderIndex);
             if (FolderIndex < 0)
             {
                 FolderIndex = 0;

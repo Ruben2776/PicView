@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.OpenSave;
 using static PicView.WPF.UILogic.ConfigureWindows;

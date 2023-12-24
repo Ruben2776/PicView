@@ -96,11 +96,11 @@ namespace PicView.WPF.ChangeImage
             if (File.Exists(s))
                 return Path.GetExtension(s).IsArchive() ? "zip" : s;
 
-            s = s.Trim().Replace("\"", "");
-            if (File.Exists(s))
+            if (Directory.Exists(s))
                 return s;
 
-            return Directory.Exists(s) ? "directory" : string.Empty;
+            s = s.Trim().Replace("\"", "");
+            return File.Exists(s) ? s : string.Empty;
         }
 
         /// <summary>

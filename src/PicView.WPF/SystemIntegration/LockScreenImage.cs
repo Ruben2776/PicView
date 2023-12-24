@@ -1,4 +1,5 @@
 ﻿using PicView.Core.FileHandling;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ImageHandling;
@@ -84,7 +85,7 @@ namespace PicView.WPF.SystemIntegration
 
             try
             {
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"]);
+                Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("Applying"));
 
                 ProcessLogic.RunElevated("PicView.Tools.exe", "lockscreen," + path);
             }

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
 
 namespace PicView.Core.Navigation
 {
@@ -16,15 +15,13 @@ namespace PicView.Core.Navigation
         /// </summary>
         public FileHistory()
         {
-            _fileHistory ??= new();
-
+            _fileHistory ??= new List<string>();
+            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
             try
             {
-                var jsonFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.json");
-
-                if (!File.Exists(jsonFile))
+                if (!File.Exists(file))
                 {
-                    using var fs = File.Create(jsonFile);
+                    using var fs = File.Create(file);
                     fs.Seek(0, SeekOrigin.Begin);
                 }
             }
@@ -47,13 +44,16 @@ namespace PicView.Core.Navigation
             {
                 _fileHistory.Clear();
             }
-
+            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
             try
             {
-                var json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.json"));
-                lock (_fileHistory)
+                using var reader = new StreamReader(file);
+                while (reader.Peek() >= 0)
                 {
-                    _fileHistory.AddRange(JsonSerializer.Deserialize<List<string>>(json));
+                    lock (_fileHistory)
+                    {
+                        _fileHistory.Add(reader.ReadLine());
+                    }
                 }
             }
             catch (Exception e)
@@ -72,12 +72,16 @@ namespace PicView.Core.Navigation
         /// <returns>An empty string if successful, otherwise an error message.</returns>
         public string WriteToFile()
         {
+            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
             try
             {
+                using var writer = new StreamWriter(file);
                 lock (_fileHistory)
                 {
-                    var json = JsonSerializer.Serialize(_fileHistory);
-                    File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.json"), json);
+                    foreach (var item in _fileHistory)
+                    {
+                        writer.WriteLine(item);
+                    }
                 }
             }
             catch (Exception e)

@@ -169,7 +169,7 @@ namespace PicView.WPF.Editing.Crop
                 Clipboard.SetImage(croppedSource);
             }
 
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["CopiedImage"]);
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
         }
 
         /// <summary>

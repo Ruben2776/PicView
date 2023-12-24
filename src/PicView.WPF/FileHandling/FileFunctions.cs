@@ -7,6 +7,7 @@ using PicView.WPF.UILogic;
 using System.Configuration;
 using System.IO;
 using System.Windows.Threading;
+using PicView.Core.Navigation;
 
 namespace PicView.WPF.FileHandling
 {

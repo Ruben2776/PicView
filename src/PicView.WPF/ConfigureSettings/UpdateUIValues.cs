@@ -1,5 +1,6 @@
 ﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
@@ -116,8 +117,8 @@ namespace PicView.WPF.ConfigureSettings
 
             ShowTooltipMessage(
                 SettingsHelper.Settings.UIProperties.Looping
-                    ? Application.Current.Resources["LoopingEnabled"]
-                    : Application.Current.Resources["LoopingDisabled"],
+                    ? TranslationHelper.GetTranslation("LoopingEnabled")
+                    : TranslationHelper.GetTranslation("LoopingDisabled"),
                 UC.UserControls_Open());
         }
 

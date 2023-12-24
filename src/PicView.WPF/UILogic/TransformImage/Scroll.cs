@@ -10,6 +10,7 @@ using static PicView.WPF.UILogic.Sizing.ScaleImage;
 using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.UC;
 using Timer = System.Timers.Timer;
+using PicView.Core.Localization;
 
 namespace PicView.WPF.UILogic.TransformImage
 {
@@ -53,8 +54,8 @@ namespace PicView.WPF.UILogic.TransformImage
             if (Navigation.Pics == null) return;
             TryFitImage();
             ShowTooltipMessage(scrolling
-                ? Application.Current.Resources["ScrollingEnabled"]
-                : Application.Current.Resources["ScrollingDisabled"]);
+                ? TranslationHelper.GetTranslation("ScrollingEnabled")
+                : TranslationHelper.GetTranslation("ScrollingDisabled"));
         }
 
         // AutoScrollSign

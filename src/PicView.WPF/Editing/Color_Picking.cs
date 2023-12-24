@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.Core.Localization;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Loading;
 using PicView.WPF.UILogic.TransformImage;
@@ -78,7 +79,7 @@ namespace PicView.WPF.Editing
 
                     Clipboard.SetText(clipboardContent);
                     Tooltip.ShowTooltipMessage(clipboardContent + " " +
-                                               Application.Current.Resources["AddedToClipboard"]);
+                                               TranslationHelper.GetTranslation("AddedToClipboard"));
                 }
 
                 ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>

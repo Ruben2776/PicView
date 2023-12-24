@@ -1,4 +1,5 @@
 ﻿using PicView.Core.Config;
+using PicView.Core.Navigation;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
@@ -6,14 +7,6 @@ using PicView.WPF.UILogic;
 
 namespace PicView.WPF.ChangeImage
 {
-    internal enum NavigateTo
-    {
-        Next,
-        Previous,
-        First,
-        Last,
-    }
-
     internal static class Navigation
     {
         #region Static fields
@@ -137,42 +130,6 @@ namespace PicView.WPF.ChangeImage
             else
             {
                 await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// Gets the index of the next image based on the specified navigation direction.
-        /// </summary>
-        /// <param name="navigateTo">Specifies whether to navigate to the next or previous image, or to the first or last image.</param>
-        /// <param name="fastPic">Whether to use fast picture loading.</param>
-        /// <returns>
-        /// The index of the next image, or -1 if there is no valid next index based on the specified navigation direction.
-        /// </returns>
-        internal static int GetNextIndex(NavigateTo navigateTo, bool fastPic)
-        {
-            switch (navigateTo)
-            {
-                case NavigateTo.Next:
-                case NavigateTo.Previous:
-                    var indexChange = navigateTo == NavigateTo.Next ? 1 : -1;
-
-                    if (SettingsHelper.Settings.UIProperties.Looping || fastPic || Slideshow.SlideTimer != null)
-                    {
-                        return (FolderIndex + indexChange + Pics.Count) % Pics.Count;
-                    }
-
-                    var newIndex = FolderIndex + indexChange;
-                    if (newIndex < 0 || newIndex >= Pics.Count)
-                        return -1;
-                    return newIndex;
-
-                case NavigateTo.First:
-                    return 0;
-
-                case NavigateTo.Last:
-                    return Pics.Count - 1;
-
-                default: return -1;
             }
         }
 

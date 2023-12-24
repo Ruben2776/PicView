@@ -1,9 +1,9 @@
 ﻿using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.FileHandling;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using System.IO;
-using System.Windows;
 using System.Windows.Input;
 using static PicView.WPF.ChangeImage.Navigation;
 
@@ -97,7 +97,7 @@ namespace PicView.WPF.ChangeTitlebar
                 .ConfigureAwait(false);
             if (success.HasValue == false)
             {
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["AnErrorOccuredMovingFile"]);
+                Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AnErrorOccuredMovingFile"));
             }
 
             await ImageInfo.UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);

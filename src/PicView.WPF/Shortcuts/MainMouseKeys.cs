@@ -6,6 +6,7 @@ using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Input;
+using PicView.Core.Navigation;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.TransformImage.Scroll;
@@ -293,7 +294,6 @@ namespace PicView.WPF.Shortcuts
                 else if (ctrlZoom)
                 {
                     await GoToNextImage(next).ConfigureAwait(false);
-                    
                 }
                 else
                 {

@@ -339,7 +339,7 @@ namespace PicView.WPF.PicGallery
 
             try
             {
-                await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+                await GetMainWindow?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
                 {
                     GalleryNavigation.ScrollToGalleryCenter();
                     GalleryNavigation.SetSelected(FolderIndex, true);

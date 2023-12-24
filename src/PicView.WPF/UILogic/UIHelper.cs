@@ -15,10 +15,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PicView.Core.Navigation;
 using PicView.WPF.Shortcuts;
 using static PicView.WPF.Shortcuts.MainKeyboardShortcuts;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.UC;
+using PicView.Core.Localization;
 
 namespace PicView.WPF.UILogic
 {
@@ -1065,7 +1067,7 @@ namespace PicView.WPF.UILogic
             }
 
             await UpdateUIValues.SetScalingBehaviour(true, false).ConfigureAwait(false);
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowMessage"] ?? "");
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AutoFitWindowMessage"));
         }
 
         internal static async Task AutoFitWindowAndStretch()
@@ -1080,7 +1082,7 @@ namespace PicView.WPF.UILogic
                 return;
             }
             await UpdateUIValues.SetScalingBehaviour(true, true).ConfigureAwait(false);
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["AutoFitWindowFillHeight"] ?? "");
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AutoFitWindowFillHeight"));
         }
 
         internal static async Task NormalWindow()
@@ -1095,7 +1097,7 @@ namespace PicView.WPF.UILogic
                 return;
             }
             await UpdateUIValues.SetScalingBehaviour(false, false).ConfigureAwait(false);
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehavior"] ?? "");
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("NormalWindowBehavior"));
         }
 
         internal static async Task NormalWindowAndStretch()
@@ -1109,11 +1111,8 @@ namespace PicView.WPF.UILogic
             {
                 return;
             }
-            await GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                UpdateUIValues.SetScalingBehaviour(false, true);
-            });
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["NormalWindowBehaviorFillHeight"] ?? "");
+            await UpdateUIValues.SetScalingBehaviour(false, true).ConfigureAwait(false);
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("NormalWindowBehaviorFillHeight"));
         }
 
         internal static async Task Fullscreen()

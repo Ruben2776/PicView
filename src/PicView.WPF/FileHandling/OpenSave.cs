@@ -15,6 +15,7 @@ using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.TransformImage.Rotation;
 using static PicView.WPF.UILogic.UC;
+using PicView.Core.Localization;
 
 namespace PicView.WPF.FileHandling
 {
@@ -238,7 +239,7 @@ namespace PicView.WPF.FileHandling
 
             if (success == false)
             {
-                ShowTooltipMessage(Application.Current.Resources["SavingFileFailed"]);
+                ShowTooltipMessage(TranslationHelper.GetTranslation("SavingFileFailed"));
             }
 
             //Reload if same pic to show changes

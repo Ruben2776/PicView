@@ -141,6 +141,10 @@ namespace PicView.WPF.UILogic.DragAndDrop
                 CloseToolTipMessage();
 
                 ConfigureWindows.GetMainWindow.Activate();
+                if (UC.GetStartUpUC is not null)
+                {
+                    UC.GetStartUpUC.Visibility = Visibility.Collapsed;
+                }
             });
 
             // Get files as strings
@@ -197,7 +201,7 @@ namespace PicView.WPF.UILogic.DragAndDrop
                 }
                 else
                 {
-                    await QuickLoad.QuickLoadAsync(files[0], fileInfo).ConfigureAwait(false);
+                    await LoadPic.LoadPiFromFileAsync(files[0], fileInfo).ConfigureAwait(false);
                 }
 
                 // Open additional windows if multiple files dropped

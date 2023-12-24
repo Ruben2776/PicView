@@ -13,6 +13,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.WPF.UILogic.Loading;
+using PicView.WPF.Views.UserControls.Misc;
 
 namespace PicView.WPF.ChangeImage
 {
@@ -28,6 +30,11 @@ namespace PicView.WPF.ChangeImage
 
         internal static async Task OpenLastFileAsync()
         {
+            if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt")) == false)
+            {
+                return;
+            }
+
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (UC.GetStartUpUC is not null)
@@ -44,6 +51,15 @@ namespace PicView.WPF.ChangeImage
             var file = await Task.FromResult(_fileHistory.GetLastFile()).ConfigureAwait(false);
             if (file is null)
             {
+                if (ErrorHandling.CheckOutOfRange())
+                {
+                    ErrorHandling.Unload(true);
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        UC.GetStartUpUC?.ShowMenuAndLogo();
+                    });
+                }
+
                 return;
             }
             await Task.Run(async () => // Make sure UI responsive

@@ -2,7 +2,6 @@
 using PicView.Core.FileHandling;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.SystemIntegration;
-using System.Diagnostics;
 using System.IO;
 using SearchOption = System.IO.SearchOption;
 
@@ -40,62 +39,12 @@ internal static class FileLists
     /// <returns>A list of file names.</returns>
     private static List<string> FileList(FileInfo fileInfo, FileListHelper.SortFilesBy sortFilesBy)
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (fileInfo == null)
             return new List<string>();
 
-        // Check if the file is a directory or not
-        var isDirectory = fileInfo.Attributes.HasFlag(FileAttributes.Directory);
+        var files = FileListHelper.RetrieveFiles(fileInfo);
 
-        // Get the directory path based on whether the file is a directory or not
-        var directory = isDirectory ? fileInfo.FullName : fileInfo.DirectoryName;
-        if (directory is null)
-            return new List<string>();
-
-        IEnumerable<string> files;
-        string[] enumerable;
-        // Check if the subdirectories are to be included in the search
-        var recurseSubdirectories =
-            SettingsHelper.Settings.Sorting.IncludeSubDirectories && string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveExtraction.TempZipFile);
-        try
-        {
-            // Get the list of files in the directory
-            if (recurseSubdirectories)
-            {
-                files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
-                {
-                    IgnoreInaccessible = true,
-                    RecurseSubdirectories = true
-                }).AsParallel();
-            }
-            else
-            {
-                files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
-                {
-                    IgnoreInaccessible = true,
-                    RecurseSubdirectories = false
-                });
-            }
-
-            enumerable = files as string[] ?? files.ToArray();
-        }
-        catch (Exception exception)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(FileList)} {fileInfo.Name} exception:\n{exception.Message}");
-#endif
-            return new List<string>();
-        }
-
-        // Filter out files with invalid extensions
-        var extensions = SupportedFiles.FileExtensions;
-
-        bool IsExtensionValid(string f)
-        {
-            return extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase);
-        }
-
-        files = enumerable.Where(IsExtensionValid);
+        FileUpdateNavigation.Initiate(fileInfo.Attributes.HasFlag(FileAttributes.Directory) ? fileInfo.DirectoryName : Path.GetDirectoryName(fileInfo.FullName));
 
         // Sort the file names based on the specified sorting method
         switch (sortFilesBy)

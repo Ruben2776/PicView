@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ImageMagick;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
@@ -171,7 +172,7 @@ namespace PicView.WPF.Shortcuts
                 }
                 else
                 {
-                    Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                    Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnexpectedError"));
                     return false;
                 }
             }
@@ -191,7 +192,7 @@ namespace PicView.WPF.Shortcuts
                     }
                     else
                     {
-                        Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                        Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnexpectedError"));
                         return false;
                     }
                 }

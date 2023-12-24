@@ -1,10 +1,10 @@
-﻿using System.Windows;
+﻿using PicView.Core.Config;
+using PicView.Core.Navigation;
 using PicView.WPF.Animations;
-using PicView.WPF.ChangeImage;
 using PicView.WPF.PicGallery;
-using PicView.Core.Config;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
+using System.Windows;
 using static PicView.WPF.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -79,11 +79,6 @@ namespace PicView.WPF.UILogic
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS); // Allow screensaver again
         }
 
-        /// <summary>
-        /// Timer starts Slideshow Fade animation.
-        /// </summary>
-        /// <param name="server"></param>
-        /// <param name="e"></param>
         private static async Task SlideTimer_Elapsed()
         {
             AnimationHelper.Fade(ConfigureWindows.GetMainWindow.MainImage, TimeSpan.FromSeconds(0.8),

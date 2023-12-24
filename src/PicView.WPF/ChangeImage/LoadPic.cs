@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using PicView.Core.Config;
+using PicView.Core.Navigation;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ChangeTitlebar.SetTitle;
@@ -197,21 +198,39 @@ namespace PicView.WPF.ChangeImage
             {
                 if (folderChanged)
                 {
-                    await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+                    if (GetPicGallery is null)
+                    {
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
+
+                        await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+                    }
                 }
                 else
                 {
-                    var checkIfEmpty = false;
-                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    if (GetPicGallery is null)
                     {
-                        checkIfEmpty = GetPicGallery?.Container.Children.Count <= 0;
-                    });
-                    if (checkIfEmpty)
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
+
+                        await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                    }
+                    else
                     {
-                        await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(true);
+                        var checkIfEmpty = false;
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                        {
+                            checkIfEmpty = GetPicGallery?.Container.Children.Count <= 0;
+                        });
+                        if (checkIfEmpty)
+                        {
+                            await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+                        }
                     }
 
-                    await GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    await GetPicGallery?.Dispatcher?.InvokeAsync(() =>
                     {
                         GalleryNavigation.SetSelected(FolderIndex, true);
                         GalleryNavigation.SelectedGalleryItem = FolderIndex;
@@ -562,7 +581,7 @@ namespace PicView.WPF.ChangeImage
                 PreLoader.Remove(index);
                 Pics.RemoveAt(index);
                 var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
-                var nextIndex = GetNextIndex(navigateTo, false);
+                var nextIndex = ImageIteration.GetNextIndex(navigateTo, Slideshow.SlideTimer != null, Pics, FolderIndex);
                 if (nextIndex < 0)
                 {
                     await ReloadAsync().ConfigureAwait(false);

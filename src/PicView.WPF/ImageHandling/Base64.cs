@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using PicView.Core.Localization;
 using PicView.WPF.UILogic;
 
 namespace PicView.WPF.ImageHandling
@@ -88,14 +89,14 @@ namespace PicView.WPF.ImageHandling
             var base64String = await ConvertToBase64(path).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(base64String))
             {
-                Tooltip.ShowTooltipMessage(Application.Current.Resources["UnexpectedError"]);
+                Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnexpectedError"));
                 return;
             }
 
             await UC.GetPicGallery.Dispatcher.InvokeAsync(() => { Clipboard.SetText(base64String); },
                 DispatcherPriority.Background);
 
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["ConvertedToBase64"]);
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("ConvertedToBase64"));
         }
     }
 }
