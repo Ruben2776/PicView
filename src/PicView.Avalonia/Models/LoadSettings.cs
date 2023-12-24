@@ -1,4 +1,7 @@
-﻿namespace PicView.Avalonia.Models;
+﻿using PicView.Core.Config;
+using PicView.Core.Localization;
+
+namespace PicView.Avalonia.Models;
 
 internal static class LoadSettings
 {
@@ -6,8 +9,8 @@ internal static class LoadSettings
     {
         Task.Run(async () =>
         {
-            await Core.Localization.TranslationHelper.DetermineLanguage("da").ConfigureAwait(false);
-            await Core.Config.SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
+            await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
+            await TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage).ConfigureAwait(false);
         });
     }
 }
