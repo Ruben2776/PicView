@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using Microsoft.VisualBasic.FileIO;
+using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
@@ -51,36 +52,6 @@ namespace PicView.WPF.FileHandling
         }
 
         /// <summary>
-        /// Deletes file or send it to recycle bin
-        /// </summary>
-        /// <param name="file"></param>
-        /// <param name="recycle"></param>
-        /// <returns></returns>
-        internal static bool TryDeleteFile(string file, bool recycle)
-        {
-            if (!File.Exists(file))
-            {
-                return false;
-            }
-
-            try
-            {
-                var toRecycleOption = recycle ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
-                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, toRecycleOption);
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine("Delete exception \n" + e.Message);
-#endif
-                ShowTooltipMessage(e.Message);
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Delete file or move it to recycle bin, navigate to next pic
         /// and display information
         /// </summary>
@@ -93,13 +64,12 @@ namespace PicView.WPF.FileHandling
             }
 
             var fileName = Pics[FolderIndex];
-            if (!TryDeleteFile(fileName, recycle))
-            {
-                return;
-            }
             var index = Pics.IndexOf(fileName);
-            if (index < 0)
+            var deleteFile = FileDeletionHelper.DeleteFile(fileName, recycle);
+            if (!string.IsNullOrWhiteSpace(deleteFile))
             {
+                // Show error message to user
+                ShowTooltipMessage(deleteFile);
                 return;
             }
 
@@ -154,8 +124,12 @@ namespace PicView.WPF.FileHandling
             {
                 return;
             }
-            if (!TryDeleteFile(fileName, recycle))
+
+            var deleteFile = FileDeletionHelper.DeleteFile(fileName, recycle);
+            if (!string.IsNullOrWhiteSpace(deleteFile))
             {
+                // Show error message to user
+                ShowTooltipMessage(deleteFile);
                 return;
             }
 

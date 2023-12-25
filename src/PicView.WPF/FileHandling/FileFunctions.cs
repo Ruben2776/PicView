@@ -24,7 +24,13 @@ namespace PicView.WPF.FileHandling
             if (Path.GetExtension(newPath) != Path.GetExtension(Navigation.Pics[Navigation.FolderIndex]))
             {
                 await SaveImages.SaveImageAsync(newPath).ConfigureAwait(false);
-                DeleteFiles.TryDeleteFile(Navigation.Pics[Navigation.FolderIndex], false);
+                var deleteFile = FileDeletionHelper.DeleteFile(Navigation.Pics[Navigation.FolderIndex], false);
+                if (!string.IsNullOrWhiteSpace(deleteFile))
+                {
+                    // Show error message to user
+                    Tooltip.ShowTooltipMessage(deleteFile);
+                    return null;
+                }
                 extChanged = true;
             }
             else if (!FileHelper.RenameFile(Navigation.Pics[Navigation.FolderIndex], newPath))

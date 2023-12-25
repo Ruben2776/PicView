@@ -1,12 +1,11 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Threading;
-using PicView.Core.FileHandling;
+﻿using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.UILogic.Tooltip;
 
@@ -89,7 +88,11 @@ namespace PicView.WPF.FileHandling
             // Create temp directory
             var tempPath = Path.GetTempPath();
             var fileName = Path.GetFileName(url);
-            Core.FileHandling.ArchiveExtraction.CreateTempDirectory(tempPath);
+            var createTempPath = Core.FileHandling.ArchiveExtraction.CreateTempDirectory(tempPath);
+            if (createTempPath == false)
+            {
+                return TranslationHelper.GetTranslation("UnexpectedError");
+            }
 
             // Remove past "?" to not get file exceptions
             var index = fileName.IndexOf("?", StringComparison.InvariantCulture);
@@ -98,19 +101,18 @@ namespace PicView.WPF.FileHandling
                 fileName = fileName[..index];
             }
 
-            Core.FileHandling.ArchiveExtraction.TempFilePath = tempPath + fileName;
+            tempPath += fileName;
+            Core.FileHandling.ArchiveExtraction.TempFilePath = string.Empty; // Reset it, since not browsing archive
 
-            using (var client = new HttpHelper.HttpClientDownloadWithProgress(url, Core.FileHandling.ArchiveExtraction.TempFilePath))
+            using var client = new HttpHelper.HttpClientDownloadWithProgress(url, tempPath);
+            if (displayProgress) // Set up progress display
             {
-                if (displayProgress) // Set up progress display
-                {
-                    client.ProgressChanged += UpdateProgressDisplay;
-                }
-
-                await client.StartDownloadAsync().ConfigureAwait(false);
+                client.ProgressChanged += UpdateProgressDisplay;
             }
 
-            return Core.FileHandling.ArchiveExtraction.TempFilePath;
+            await client.StartDownloadAsync().ConfigureAwait(false);
+
+            return tempPath;
         }
 
         /// <summary>
