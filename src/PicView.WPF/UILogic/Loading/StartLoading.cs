@@ -38,7 +38,6 @@ internal static class StartLoading
         }
 
         var args = Environment.GetCommandLineArgs();
-        ImageSizeCalculationHelper.ImageSize? size = null;
         MainWindow? mainWindow = null;
         await startupWindow.Dispatcher.InvokeAsync(() =>
         {
