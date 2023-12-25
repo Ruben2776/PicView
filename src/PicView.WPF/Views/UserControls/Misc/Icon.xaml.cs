@@ -1,10 +1,9 @@
-﻿namespace PicView.WPF.Views.UserControls.Misc
+﻿namespace PicView.WPF.Views.UserControls.Misc;
+
+public partial class Icon
 {
-    public partial class Icon
+    public Icon()
     {
-        public Icon()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

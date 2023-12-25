@@ -3,26 +3,25 @@ using PicView.Core.Localization;
 using PicView.WPF.Animations;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.WPF.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons;
+
+public partial class CloseButton
 {
-    public partial class CloseButton
+    public CloseButton()
     {
-        public CloseButton()
+        InitializeComponent();
+
+        Loaded += delegate
         {
-            InitializeComponent();
+            MouseEnter += (_, _) => ButtonMouseOverAnim(CloseButtonBrush, true);
+            MouseLeave += (_, _) => ButtonMouseLeaveAnim(CloseButtonBrush, true);
 
-            Loaded += delegate
+            if (!SettingsHelper.Settings.Theme.Dark)
             {
-                MouseEnter += (_, _) => ButtonMouseOverAnim(CloseButtonBrush, true);
-                MouseLeave += (_, _) => ButtonMouseLeaveAnim(CloseButtonBrush, true);
+                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+            }
 
-                if (!SettingsHelper.Settings.Theme.Dark)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
-
-                ToolTip = TranslationHelper.GetTranslation("Close");
-            };
-        }
+            ToolTip = TranslationHelper.GetTranslation("Close");
+        };
     }
 }

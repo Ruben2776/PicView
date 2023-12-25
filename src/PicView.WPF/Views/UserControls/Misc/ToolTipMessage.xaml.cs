@@ -1,14 +1,13 @@
 ﻿using PicView.WPF.Shortcuts;
 
-namespace PicView.WPF.Views.UserControls.Misc
+namespace PicView.WPF.Views.UserControls.Misc;
+
+public partial class ToolTipMessage
 {
-    public partial class ToolTipMessage
+    public ToolTipMessage()
     {
-        public ToolTipMessage()
-        {
-            InitializeComponent();
-            MouseWheel += async (sender, e) =>
-                await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
-        }
+        InitializeComponent();
+        MouseWheel += async (sender, e) =>
+            await MainMouseKeys.MainImage_MouseWheelAsync(sender, e).ConfigureAwait(false);
     }
 }

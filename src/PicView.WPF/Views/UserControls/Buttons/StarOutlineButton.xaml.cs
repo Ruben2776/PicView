@@ -1,24 +1,23 @@
 ﻿using System.Windows.Media;
 
-namespace PicView.WPF.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons;
+
+public partial class StarOutlineButton
 {
-    public partial class StarOutlineButton
+    public StarOutlineButton()
     {
-        public StarOutlineButton()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public void FillStar()
-        {
-            var filled = (DrawingImage)TryFindResource("Star_FilledDrawingImage");
-            Star.Source = filled;
-        }
+    public void FillStar()
+    {
+        var filled = (DrawingImage)TryFindResource("Star_FilledDrawingImage");
+        Star.Source = filled;
+    }
 
-        public void OutlineStar()
-        {
-            var outline = (DrawingImage)TryFindResource("Star_OutlineDrawingImage");
-            Star.Source = outline;
-        }
+    public void OutlineStar()
+    {
+        var outline = (DrawingImage)TryFindResource("Star_OutlineDrawingImage");
+        Star.Source = outline;
     }
 }

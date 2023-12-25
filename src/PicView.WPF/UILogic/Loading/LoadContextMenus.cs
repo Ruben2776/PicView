@@ -16,490 +16,489 @@ using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.OpenSave;
 using static PicView.WPF.UILogic.ConfigureWindows;
 
-namespace PicView.WPF.UILogic.Loading
+namespace PicView.WPF.UILogic.Loading;
+
+internal static class LoadContextMenus
 {
-    internal static class LoadContextMenus
+    internal static void AddContextMenus()
     {
-        internal static void AddContextMenus()
+        // Add main contextmenu
+        MainContextMenu = (ContextMenu)Application.Current.Resources["mainCM"];
+        GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
+        MainContextMenu.Opened += (_, _) => FileHistoryNavigation.RefreshRecentItemsMenu();
+
+        ///////////////////////////
+        //     Open              \\
+        ///////////////////////////
+        var openCm = (MenuItem)MainContextMenu.Items[0];
+        openCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " O";
+        openCm.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
+        openCm.Header = TranslationHelper.GetTranslation("Open");
+
+        ///////////////////////////
+        //     Save             \\
+        ///////////////////////////
+        var saveCm = (MenuItem)MainContextMenu.Items[1];
+        saveCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " S";
+        saveCm.Click += async (s, x) =>
+            await SaveFilesAsync(SettingsHelper.Settings.UIProperties.ShowFileSavingDialog).ConfigureAwait(false);
+        saveCm.Header = TranslationHelper.GetTranslation("Save");
+
+        ///////////////////////////
+        //       Print          \\\
+        ///////////////////////////
+        var printCm = (MenuItem)MainContextMenu.Items[2];
+        printCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " P";
+        printCm.Click += (s, x) => Print(Pics[FolderIndex]);
+        printCm.Header = TranslationHelper.GetTranslation("Print");
+
+        ///////////////////////////
+        //     Open With        \\\
+        ///////////////////////////
+        var openWcm = (MenuItem)MainContextMenu.Items[3];
+        openWcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " E";
+        openWcm.Click += (_, _) => OpenWith();
+        openWcm.Header = TranslationHelper.GetTranslation("OpenWith");
+
+        // 4 == separator
+
+        ///////////////////////////
+        //     Sort by          \\
+        ///////////////////////////
+        var sortFilesByCm = (MenuItem)MainContextMenu.Items[5];
+        sortFilesByCm.Header = TranslationHelper.GetTranslation("SortFilesBy");
+
+        // FileName
+        var fileNameMenu = (MenuItem)sortFilesByCm.Items[0];
+        var fileNameHeader = (RadioButton)fileNameMenu.Header;
+        fileNameHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Name;
+        fileNameHeader.Click += async delegate
         {
-            // Add main contextmenu
-            MainContextMenu = (ContextMenu)Application.Current.Resources["mainCM"];
-            GetMainWindow.ParentContainer.ContextMenu = MainContextMenu;
-            MainContextMenu.Opened += (_, _) => FileHistoryNavigation.RefreshRecentItemsMenu();
+            MainContextMenu.IsOpen = false;
+            await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.Name).ConfigureAwait(false);
+        };
+        fileNameHeader.Content = TranslationHelper.GetTranslation("FileName");
 
-            ///////////////////////////
-            //     Open              \\
-            ///////////////////////////
-            var openCm = (MenuItem)MainContextMenu.Items[0];
-            openCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " O";
-            openCm.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
-            openCm.Header = TranslationHelper.GetTranslation("Open");
+        // FileSize
+        var filesizeMenu = (MenuItem)sortFilesByCm.Items[1];
+        var filesizeHeader = (RadioButton)filesizeMenu.Header;
+        filesizeHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.FileSize;
+        filesizeHeader.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.FileSize).ConfigureAwait(false);
+        };
+        filesizeHeader.Content = TranslationHelper.GetTranslation("FileSize");
 
-            ///////////////////////////
-            //     Save             \\
-            ///////////////////////////
-            var saveCm = (MenuItem)MainContextMenu.Items[1];
-            saveCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " S";
-            saveCm.Click += async (s, x) =>
-                await SaveFilesAsync(SettingsHelper.Settings.UIProperties.ShowFileSavingDialog).ConfigureAwait(false);
-            saveCm.Header = TranslationHelper.GetTranslation("Save");
+        // FileExtension
+        var fileExtensionMenu = (MenuItem)sortFilesByCm.Items[2];
+        var fileExtensionHeader = (RadioButton)fileExtensionMenu.Header;
+        fileExtensionHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Extension;
+        fileExtensionHeader.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.Extension).ConfigureAwait(false);
+        };
+        fileExtensionHeader.Content = TranslationHelper.GetTranslation("FileExtension");
 
-            ///////////////////////////
-            //       Print          \\\
-            ///////////////////////////
-            var printCm = (MenuItem)MainContextMenu.Items[2];
-            printCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " P";
-            printCm.Click += (s, x) => Print(Pics[FolderIndex]);
-            printCm.Header = TranslationHelper.GetTranslation("Print");
+        // CreationTime
+        var creationTimeMenu = (MenuItem)sortFilesByCm.Items[3];
+        var creationTimeHeader = (RadioButton)creationTimeMenu.Header;
+        creationTimeHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.CreationTime;
+        creationTimeHeader.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.CreationTime).ConfigureAwait(false);
+        };
+        creationTimeHeader.Content = TranslationHelper.GetTranslation("CreationTime");
 
-            ///////////////////////////
-            //     Open With        \\\
-            ///////////////////////////
-            var openWcm = (MenuItem)MainContextMenu.Items[3];
-            openWcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " E";
-            openWcm.Click += (_, _) => OpenWith();
-            openWcm.Header = TranslationHelper.GetTranslation("OpenWith");
+        // LastAccessTime
+        var lastAccessTimeMenu = (MenuItem)sortFilesByCm.Items[4];
+        var lastAccessTimeHeader = (RadioButton)lastAccessTimeMenu.Header;
+        lastAccessTimeHeader.IsChecked =
+            SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.LastAccessTime;
+        lastAccessTimeHeader.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.LastAccessTime).ConfigureAwait(false);
+        };
+        lastAccessTimeHeader.Content = TranslationHelper.GetTranslation("LastAccessTime");
 
-            // 4 == separator
+        // LastWriteTime
+        var lastWriteTimeMenu = (MenuItem)sortFilesByCm.Items[5];
+        var lastWriteTimeHeader = (RadioButton)lastWriteTimeMenu.Header;
+        lastWriteTimeHeader.IsChecked =
+            SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.LastWriteTime;
+        lastWriteTimeHeader.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.LastWriteTime).ConfigureAwait(false);
+        };
+        lastWriteTimeHeader.Content = TranslationHelper.GetTranslation("LastWriteTime");
 
-            ///////////////////////////
-            //     Sort by          \\
-            ///////////////////////////
-            var sortFilesByCm = (MenuItem)MainContextMenu.Items[5];
-            sortFilesByCm.Header = TranslationHelper.GetTranslation("SortFilesBy");
+        // Random
+        var randomMenu = (MenuItem)sortFilesByCm.Items[6];
+        var randomHeader = (RadioButton)randomMenu.Header;
+        randomHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Random;
+        randomHeader.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.Random).ConfigureAwait(false);
+        };
+        randomHeader.Content = TranslationHelper.GetTranslation("Random");
 
-            // FileName
-            var fileNameMenu = (MenuItem)sortFilesByCm.Items[0];
-            var fileNameHeader = (RadioButton)fileNameMenu.Header;
-            fileNameHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Name;
-            fileNameHeader.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.Name).ConfigureAwait(false);
-            };
-            fileNameHeader.Content = TranslationHelper.GetTranslation("FileName");
+        // 7 = separator
 
-            // FileSize
-            var filesizeMenu = (MenuItem)sortFilesByCm.Items[1];
-            var filesizeHeader = (RadioButton)filesizeMenu.Header;
-            filesizeHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.FileSize;
-            filesizeHeader.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.FileSize).ConfigureAwait(false);
-            };
-            filesizeHeader.Content = TranslationHelper.GetTranslation("FileSize");
+        // Ascending
+        var ascendingMenu = (MenuItem)sortFilesByCm.Items[8];
+        var ascendingHeader = (RadioButton)ascendingMenu.Header;
+        ascendingHeader.IsChecked = SettingsHelper.Settings.Sorting.Ascending;
+        ascendingHeader.Click += async (_, _) =>
+        {
+            SettingsHelper.Settings.Sorting.Ascending = true;
+            await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
+        };
+        ascendingHeader.Content = TranslationHelper.GetTranslation("Ascending");
 
-            // FileExtension
-            var fileExtensionMenu = (MenuItem)sortFilesByCm.Items[2];
-            var fileExtensionHeader = (RadioButton)fileExtensionMenu.Header;
-            fileExtensionHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Extension;
-            fileExtensionHeader.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.Extension).ConfigureAwait(false);
-            };
-            fileExtensionHeader.Content = TranslationHelper.GetTranslation("FileExtension");
+        // Descending
+        var descendingMenu = (MenuItem)sortFilesByCm.Items[9];
+        var descendingHeader = (RadioButton)descendingMenu.Header;
+        descendingHeader.IsChecked = SettingsHelper.Settings.Sorting.Ascending == false;
+        descendingHeader.Click += async (_, _) =>
+        {
+            SettingsHelper.Settings.Sorting.Ascending = false;
+            await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
+        };
+        descendingHeader.Content = TranslationHelper.GetTranslation("Descending");
 
-            // CreationTime
-            var creationTimeMenu = (MenuItem)sortFilesByCm.Items[3];
-            var creationTimeHeader = (RadioButton)creationTimeMenu.Header;
-            creationTimeHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.CreationTime;
-            creationTimeHeader.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.CreationTime).ConfigureAwait(false);
-            };
-            creationTimeHeader.Content = TranslationHelper.GetTranslation("CreationTime");
+        ///////////////////////////
+        //     Recent files      \\
+        ///////////////////////////
+        var recentMenu = (MenuItem)MainContextMenu.Items[6];
+        recentMenu.Header = TranslationHelper.GetTranslation("RecentFiles");
 
-            // LastAccessTime
-            var lastAccessTimeMenu = (MenuItem)sortFilesByCm.Items[4];
-            var lastAccessTimeHeader = (RadioButton)lastAccessTimeMenu.Header;
-            lastAccessTimeHeader.IsChecked =
-                SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.LastAccessTime;
-            lastAccessTimeHeader.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.LastAccessTime).ConfigureAwait(false);
-            };
-            lastAccessTimeHeader.Content = TranslationHelper.GetTranslation("LastAccessTime");
+        ///////////////////////////
+        //      Settings         \\
+        ///////////////////////////
+        var settingsCm = (MenuItem)MainContextMenu.Items[7];
+        settingsCm.Header = TranslationHelper.GetTranslation("Settings");
 
-            // LastWriteTime
-            var lastWriteTimeMenu = (MenuItem)sortFilesByCm.Items[5];
-            var lastWriteTimeHeader = (RadioButton)lastWriteTimeMenu.Header;
-            lastWriteTimeHeader.IsChecked =
-                SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.LastWriteTime;
-            lastWriteTimeHeader.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.LastWriteTime).ConfigureAwait(false);
-            };
-            lastWriteTimeHeader.Content = TranslationHelper.GetTranslation("LastWriteTime");
+        // Looping
+        var loopingMenu = (MenuItem)settingsCm.Items[0];
+        var loopingHeader = (CheckBox)loopingMenu.Header;
+        loopingHeader.IsChecked = SettingsHelper.Settings.UIProperties.Looping;
+        loopingHeader.Click += (_, _) => UpdateUIValues.SetLooping();
+        loopingMenu.Click += (_, _) =>
+        {
+            UpdateUIValues.SetLooping();
+            loopingHeader.IsChecked = !loopingHeader.IsChecked;
+        };
+        loopingHeader.Content = TranslationHelper.GetTranslation("ToggleLooping");
 
-            // Random
-            var randomMenu = (MenuItem)sortFilesByCm.Items[6];
-            var randomHeader = (RadioButton)randomMenu.Header;
-            randomHeader.IsChecked = SettingsHelper.Settings.Sorting.SortPreference == (int)FileListHelper.SortFilesBy.Random;
-            randomHeader.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.SortFilesBy.Random).ConfigureAwait(false);
-            };
-            randomHeader.Content = TranslationHelper.GetTranslation("Random");
+        // Scrolling
+        var ScrollingMenu = (MenuItem)settingsCm.Items[1];
+        var ScrollingHeader = (CheckBox)ScrollingMenu.Header;
+        ScrollingHeader.IsChecked = SettingsHelper.Settings.Zoom.ScrollEnabled;
+        ScrollingHeader.Click += (_, _) => UpdateUIValues.SetScrolling();
+        ScrollingMenu.Click += (_, _) =>
+        {
+            UpdateUIValues.SetScrolling();
+            ScrollingHeader.IsChecked = !ScrollingHeader.IsChecked;
+        };
+        ScrollingHeader.Content = TranslationHelper.GetTranslation("Scrolling");
 
-            // 7 = separator
+        // ToogleUI
+        var ToogleUIMenu = (MenuItem)settingsCm.Items[2];
+        ToogleUIMenu.InputGestureText = TranslationHelper.GetTranslation("Alt") + " Z";
+        var ToogleUIHeader = (CheckBox)ToogleUIMenu.Header;
+        ToogleUIHeader.IsChecked = SettingsHelper.Settings.UIProperties.ShowInterface;
+        ToogleUIHeader.Click += (_, _) => HideInterfaceLogic.ToggleInterface();
+        ToogleUIMenu.Click += (_, _) =>
+        {
+            HideInterfaceLogic.ToggleInterface();
+            ToogleUIHeader.IsChecked = !ToogleUIHeader.IsChecked;
+        };
+        ToogleUIHeader.Content = TranslationHelper.GetTranslation("ShowHideUI");
 
-            // Ascending
-            var ascendingMenu = (MenuItem)sortFilesByCm.Items[8];
-            var ascendingHeader = (RadioButton)ascendingMenu.Header;
-            ascendingHeader.IsChecked = SettingsHelper.Settings.Sorting.Ascending;
-            ascendingHeader.Click += async (_, _) =>
-            {
-                SettingsHelper.Settings.Sorting.Ascending = true;
-                await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
-            };
-            ascendingHeader.Content = TranslationHelper.GetTranslation("Ascending");
+        // Change bg
+        var ChangeBackgroundMenu = (MenuItem)settingsCm.Items[3];
+        ChangeBackgroundMenu.Click += (_, _) => ConfigColors.ChangeBackground();
+        ChangeBackgroundMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method?.Name == "ChangeBackground")
+            .Key.ToString() ?? string.Empty;
+        ChangeBackgroundMenu.ToolTip = TranslationHelper.GetTranslation("ChangeBackgroundTooltip");
+        ChangeBackgroundMenu.Header = TranslationHelper.GetTranslation("ChangeBackground");
 
-            // Descending
-            var descendingMenu = (MenuItem)sortFilesByCm.Items[9];
-            var descendingHeader = (RadioButton)descendingMenu.Header;
-            descendingHeader.IsChecked = SettingsHelper.Settings.Sorting.Ascending == false;
-            descendingHeader.Click += async (_, _) =>
-            {
-                SettingsHelper.Settings.Sorting.Ascending = false;
-                await UpdateUIValues.ChangeSortingAsync(0, true).ConfigureAwait(false);
-            };
-            descendingHeader.Content = TranslationHelper.GetTranslation("Descending");
+        // Topmost
+        var TopmostMenu = (MenuItem)settingsCm.Items[4];
+        var TopmostHeader = (CheckBox)TopmostMenu.Header;
+        TopmostHeader.IsChecked = SettingsHelper.Settings.WindowProperties.TopMost;
+        TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
+        TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
+        TopmostMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method?.Name == "SetTopMost")
+            .Key.ToString() ?? string.Empty;
+        TopmostHeader.Content = TranslationHelper.GetTranslation("StayTopMost");
 
-            ///////////////////////////
-            //     Recent files      \\
-            ///////////////////////////
-            var recentMenu = (MenuItem)MainContextMenu.Items[6];
-            recentMenu.Header = TranslationHelper.GetTranslation("RecentFiles");
+        // Fill Image Height
+        var imageHeightMenu = (MenuItem)settingsCm.Items[5];
+        var imageHeightHeader = (CheckBox)imageHeightMenu.Header;
+        imageHeightHeader.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
+        imageHeightHeader.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
+        imageHeightMenu.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
+        imageHeightMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method?.Name == "Stretch")
+            .Key.ToString() ?? string.Empty;
+        imageHeightHeader.Content = TranslationHelper.GetTranslation("StretchImage");
 
-            ///////////////////////////
-            //      Settings         \\
-            ///////////////////////////
-            var settingsCm = (MenuItem)MainContextMenu.Items[7];
-            settingsCm.Header = TranslationHelper.GetTranslation("Settings");
+        // Ctrl to zoom
+        var ctrlZoomMenu = (MenuItem)settingsCm.Items[6];
+        var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
+        ctrlZoomHeader.IsChecked = SettingsHelper.Settings.Zoom.CtrlZoom;
+        ctrlZoomMenu.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
+        ctrlZoomHeader.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
+        ctrlZoomHeader.Content = TranslationHelper.GetTranslation("CtrlToZoom");
 
-            // Looping
-            var loopingMenu = (MenuItem)settingsCm.Items[0];
-            var loopingHeader = (CheckBox)loopingMenu.Header;
-            loopingHeader.IsChecked = SettingsHelper.Settings.UIProperties.Looping;
-            loopingHeader.Click += (_, _) => UpdateUIValues.SetLooping();
-            loopingMenu.Click += (_, _) =>
-            {
-                UpdateUIValues.SetLooping();
-                loopingHeader.IsChecked = !loopingHeader.IsChecked;
-            };
-            loopingHeader.Content = TranslationHelper.GetTranslation("ToggleLooping");
+        // 7 = seperator
 
-            // Scrolling
-            var ScrollingMenu = (MenuItem)settingsCm.Items[1];
-            var ScrollingHeader = (CheckBox)ScrollingMenu.Header;
-            ScrollingHeader.IsChecked = SettingsHelper.Settings.Zoom.ScrollEnabled;
-            ScrollingHeader.Click += (_, _) => UpdateUIValues.SetScrolling();
-            ScrollingMenu.Click += (_, _) =>
-            {
-                UpdateUIValues.SetScrolling();
-                ScrollingHeader.IsChecked = !ScrollingHeader.IsChecked;
-            };
-            ScrollingHeader.Content = TranslationHelper.GetTranslation("Scrolling");
+        // Settings
+        var SettingsMenu = (MenuItem)settingsCm.Items[8];
+        SettingsMenu.Click += (_, _) =>
+        {
+            SettingsWindow();
+            MainContextMenu.IsOpen = false;
+        };
+        SettingsMenu.ToolTip = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
+        SettingsMenu.Header = TranslationHelper.GetTranslation("SettingsWindow");
 
-            // ToogleUI
-            var ToogleUIMenu = (MenuItem)settingsCm.Items[2];
-            ToogleUIMenu.InputGestureText = TranslationHelper.GetTranslation("Alt") + " Z";
-            var ToogleUIHeader = (CheckBox)ToogleUIMenu.Header;
-            ToogleUIHeader.IsChecked = SettingsHelper.Settings.UIProperties.ShowInterface;
-            ToogleUIHeader.Click += (_, _) => HideInterfaceLogic.ToggleInterface();
-            ToogleUIMenu.Click += (_, _) =>
-            {
-                HideInterfaceLogic.ToggleInterface();
-                ToogleUIHeader.IsChecked = !ToogleUIHeader.IsChecked;
-            };
-            ToogleUIHeader.Content = TranslationHelper.GetTranslation("ShowHideUI");
+        // 8 = seperator
 
-            // Change bg
-            var ChangeBackgroundMenu = (MenuItem)settingsCm.Items[3];
-            ChangeBackgroundMenu.Click += (_, _) => ConfigColors.ChangeBackground();
-            ChangeBackgroundMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method?.Name == "ChangeBackground")
-                .Key.ToString() ?? string.Empty;
-            ChangeBackgroundMenu.ToolTip = TranslationHelper.GetTranslation("ChangeBackgroundTooltip");
-            ChangeBackgroundMenu.Header = TranslationHelper.GetTranslation("ChangeBackground");
+        ///////////////////////////
+        ///   Set as           \\\\
+        ///////////////////////////
+        var SetAsCm = (MenuItem)MainContextMenu.Items[9];
+        SetAsCm.Header = TranslationHelper.GetTranslation("SetAs");
+        var SetWallpaperCm = (MenuItem)SetAsCm.Items[0];
+        SetWallpaperCm.Click += async (_, _) =>
+        {
+            MainContextMenu.IsOpen = false;
+            await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill).ConfigureAwait(false);
+        };
+        SetWallpaperCm.Header = TranslationHelper.GetTranslation("SetAsWallpaper");
+        var SetLockCm = (MenuItem)SetAsCm.Items[1];
+        SetLockCm.Click += async (_, _) =>
+        {
+            MainContextMenu.IsOpen = false;
+            await LockScreenHelper.SetLockScreenImageAsync().ConfigureAwait(false);
+        };
+        SetLockCm.Header = TranslationHelper.GetTranslation("SetAsLockScreenImage");
 
-            // Topmost
-            var TopmostMenu = (MenuItem)settingsCm.Items[4];
-            var TopmostHeader = (CheckBox)TopmostMenu.Header;
-            TopmostHeader.IsChecked = SettingsHelper.Settings.WindowProperties.TopMost;
-            TopmostHeader.Click += (_, _) => UpdateUIValues.SetTopMost();
-            TopmostMenu.Click += (_, _) => UpdateUIValues.SetTopMost();
-            TopmostMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method?.Name == "SetTopMost")
-                .Key.ToString() ?? string.Empty;
-            TopmostHeader.Content = TranslationHelper.GetTranslation("StayTopMost");
+        ///////////////////////////
+        ///   ShowInFolder     \\\\
+        ///////////////////////////
+        var ShowInFolderCm = (MenuItem)MainContextMenu.Items[10];
+        ShowInFolderCm.Click += (_, _) => OpenInExplorer(Pics?[FolderIndex]);
+        ShowInFolderCm.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method?.Name == "OpenInExplorer")
+            .Key.ToString() ?? string.Empty;
+        ShowInFolderCm.Header = TranslationHelper.GetTranslation("ShowInFolder");
 
-            // Fill Image Height
-            var imageHeightMenu = (MenuItem)settingsCm.Items[5];
-            var imageHeightHeader = (CheckBox)imageHeightMenu.Header;
-            imageHeightHeader.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
-            imageHeightHeader.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
-            imageHeightMenu.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
-            imageHeightMenu.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method?.Name == "Stretch")
-                .Key.ToString() ?? string.Empty;
-            imageHeightHeader.Content = TranslationHelper.GetTranslation("StretchImage");
+        ///////////////////////////
+        ///   Image choices    \\\\
+        ///////////////////////////
+        var ImageChoices = (MenuItem)MainContextMenu.Items[11];
+        ImageChoices.Header = TranslationHelper.GetTranslation("Image");
 
-            // Ctrl to zoom
-            var ctrlZoomMenu = (MenuItem)settingsCm.Items[6];
-            var ctrlZoomHeader = (CheckBox)ctrlZoomMenu.Header;
-            ctrlZoomHeader.IsChecked = SettingsHelper.Settings.Zoom.CtrlZoom;
-            ctrlZoomMenu.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
-            ctrlZoomHeader.Click += (_, _) => UpdateUIValues.SetCtrlToZoom(ctrlZoomHeader.IsChecked.Value);
-            ctrlZoomHeader.Content = TranslationHelper.GetTranslation("CtrlToZoom");
+        var ImageInfoCm = (MenuItem)ImageChoices.Items[0];
+        ImageInfoCm.Click += (_, _) => ImageInfoWindow();
+        ImageInfoCm.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method.Name == "ImageInfoWindow")
+            .Key.ToString() ?? string.Empty;
+        ImageInfoCm.ToolTip = TranslationHelper.GetTranslation("ShowImageInfo");
+        ImageInfoCm.Header = TranslationHelper.GetTranslation("ImageInfo");
 
-            // 7 = seperator
+        var FileProps = (MenuItem)ImageChoices.Items[1];
+        FileProps.Click += (_, _) => FileProperties.ShowFileProperties();
+        FileProps.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " I";
+        FileProps.Header = TranslationHelper.GetTranslation("FileProperties");
 
-            // Settings
-            var SettingsMenu = (MenuItem)settingsCm.Items[8];
-            SettingsMenu.Click += (_, _) =>
-            {
-                SettingsWindow();
-                MainContextMenu.IsOpen = false;
-            };
-            SettingsMenu.ToolTip = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
-            SettingsMenu.Header = TranslationHelper.GetTranslation("SettingsWindow");
+        // 2 = seperator
 
-            // 8 = seperator
+        var ImageSize = (MenuItem)ImageChoices.Items[3];
+        ImageSize.Click += (_, _) => UpdateUIValues.ToggleQuickResize();
+        ImageSize.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method.Name == "ResizeImage")
+            .Key.ToString() ?? string.Empty;
+        ImageSize.Header = TranslationHelper.GetTranslation("ResizeImage");
 
-            ///////////////////////////
-            ///   Set as           \\\\
-            ///////////////////////////
-            var SetAsCm = (MenuItem)MainContextMenu.Items[9];
-            SetAsCm.Header = TranslationHelper.GetTranslation("SetAs");
-            var SetWallpaperCm = (MenuItem)SetAsCm.Items[0];
-            SetWallpaperCm.Click += async (_, _) =>
-            {
-                MainContextMenu.IsOpen = false;
-                await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill).ConfigureAwait(false);
-            };
-            SetWallpaperCm.Header = TranslationHelper.GetTranslation("SetAsWallpaper");
-            var SetLockCm = (MenuItem)SetAsCm.Items[1];
-            SetLockCm.Click += async (_, _) =>
-            {
-                MainContextMenu.IsOpen = false;
-                await LockScreenHelper.SetLockScreenImageAsync().ConfigureAwait(false);
-            };
-            SetLockCm.Header = TranslationHelper.GetTranslation("SetAsLockScreenImage");
+        var BatchSize = (MenuItem)ImageChoices.Items[4];
+        BatchSize.Click += (_, _) => ResizeWindow();
+        BatchSize.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method.Name == "ResizeWindow")
+            .Key.ToString() ?? string.Empty;
+        BatchSize.Header = TranslationHelper.GetTranslation("BatchResize");
 
-            ///////////////////////////
-            ///   ShowInFolder     \\\\
-            ///////////////////////////
-            var ShowInFolderCm = (MenuItem)MainContextMenu.Items[10];
-            ShowInFolderCm.Click += (_, _) => OpenInExplorer(Pics?[FolderIndex]);
-            ShowInFolderCm.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method?.Name == "OpenInExplorer")
-                .Key.ToString() ?? string.Empty;
-            ShowInFolderCm.Header = TranslationHelper.GetTranslation("ShowInFolder");
+        // 12 = seperator
 
-            ///////////////////////////
-            ///   Image choices    \\\\
-            ///////////////////////////
-            var ImageChoices = (MenuItem)MainContextMenu.Items[11];
-            ImageChoices.Header = TranslationHelper.GetTranslation("Image");
+        ///////////////////////////
+        ///   Copy             \\\\
+        ///////////////////////////
+        var CopyCm = (MenuItem)MainContextMenu.Items[13];
+        CopyCm.Header = TranslationHelper.GetTranslation("Copy");
 
-            var ImageInfoCm = (MenuItem)ImageChoices.Items[0];
-            ImageInfoCm.Click += (_, _) => ImageInfoWindow();
-            ImageInfoCm.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method.Name == "ImageInfoWindow")
-                .Key.ToString() ?? string.Empty;
-            ImageInfoCm.ToolTip = TranslationHelper.GetTranslation("ShowImageInfo");
-            ImageInfoCm.Header = TranslationHelper.GetTranslation("ImageInfo");
+        // Copy file
+        var copyFileCm = (MenuItem)CopyCm.Items[0];
+        copyFileCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " C";
+        copyFileCm.Click += (_, _) => CopyPaste.CopyFile();
+        copyFileCm.Header = TranslationHelper.GetTranslation("CopyFile");
 
-            var FileProps = (MenuItem)ImageChoices.Items[1];
-            FileProps.Click += (_, _) => FileProperties.ShowFileProperties();
-            FileProps.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " I";
-            FileProps.Header = TranslationHelper.GetTranslation("FileProperties");
+        // FileCopyPath
+        var FileCopyPathCm = (MenuItem)CopyCm.Items[1];
+        FileCopyPathCm.InputGestureText =
+            $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Alt")} + C";
+        FileCopyPathCm.Click += (_, _) => CopyPaste.CopyFilePath();
+        FileCopyPathCm.Header = TranslationHelper.GetTranslation("FileCopyPath");
 
-            // 2 = seperator
+        // CopyImage
+        var CopyImageCm = (MenuItem)CopyCm.Items[2];
+        CopyImageCm.InputGestureText =
+            $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Shift")} + C";
+        CopyImageCm.Click += (_, _) => CopyPaste.CopyBitmap();
+        CopyImageCm.Header = TranslationHelper.GetTranslation("CopyImage");
 
-            var ImageSize = (MenuItem)ImageChoices.Items[3];
-            ImageSize.Click += (_, _) => UpdateUIValues.ToggleQuickResize();
-            ImageSize.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method.Name == "ResizeImage")
-                .Key.ToString() ?? string.Empty;
-            ImageSize.Header = TranslationHelper.GetTranslation("ResizeImage");
+        // CopyBase64
+        var CopyBase64Cm = (MenuItem)CopyCm.Items[3];
+        CopyBase64Cm.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await Base64.SendToClipboard().ConfigureAwait(false);
+        };
+        CopyBase64Cm.Header = $"{TranslationHelper.GetTranslation("Copy")} base64";
 
-            var BatchSize = (MenuItem)ImageChoices.Items[4];
-            BatchSize.Click += (_, _) => ResizeWindow();
-            BatchSize.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method.Name == "ResizeWindow")
-                .Key.ToString() ?? string.Empty;
-            BatchSize.Header = TranslationHelper.GetTranslation("BatchResize");
+        ///////////////////////////
+        ///   Duplicate File         \\\\
+        ///////////////////////////
+        var Dupcm = (MenuItem)MainContextMenu.Items[14];
+        Dupcm.Click += async (_, _) =>
+        {
+            MainContextMenu.IsOpen = false;
+            await CopyPaste.DuplicateFile().ConfigureAwait(false);
+        };
+        Dupcm.InputGestureText = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method?.Name == "DuplicateFile")
+            .Key.ToString() ?? string.Empty;
+        Dupcm.Header = TranslationHelper.GetTranslation("DuplicateFile");
 
-            // 12 = seperator
+        ///////////////////////////
+        ///   Cut File         \\\\
+        ///////////////////////////
+        var Cutcm = (MenuItem)MainContextMenu.Items[15];
+        Cutcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " X";
+        Cutcm.Click += (_, _) =>
+        {
+            MainContextMenu.IsOpen = false;
+            CopyPaste.Cut();
+        };
+        Cutcm.Header = TranslationHelper.GetTranslation("FileCut");
 
-            ///////////////////////////
-            ///   Copy             \\\\
-            ///////////////////////////
-            var CopyCm = (MenuItem)MainContextMenu.Items[13];
-            CopyCm.Header = TranslationHelper.GetTranslation("Copy");
+        ///////////////////////////
+        ///   Paste File       \\\\
+        ///////////////////////////
+        var pastecm = (MenuItem)MainContextMenu.Items[16];
+        pastecm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " V";
+        pastecm.Click += async delegate
+        {
+            MainContextMenu.IsOpen = false;
+            await CopyPaste.PasteAsync().ConfigureAwait(false);
+        };
+        pastecm.Header = TranslationHelper.GetTranslation("FilePaste");
 
-            // Copy file
-            var copyFileCm = (MenuItem)CopyCm.Items[0];
-            copyFileCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " C";
-            copyFileCm.Click += (_, _) => CopyPaste.CopyFile();
-            copyFileCm.Header = TranslationHelper.GetTranslation("CopyFile");
+        // 17 = seperator
 
-            // FileCopyPath
-            var FileCopyPathCm = (MenuItem)CopyCm.Items[1];
-            FileCopyPathCm.InputGestureText =
-                $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Alt")} + C";
-            FileCopyPathCm.Click += (_, _) => CopyPaste.CopyFilePath();
-            FileCopyPathCm.Header = TranslationHelper.GetTranslation("FileCopyPath");
+        ///////////////////////////
+        ///   Delete File       \\\\
+        ///////////////////////////
+        var Deletecm = (MenuItem)MainContextMenu.Items[18];
+        Deletecm.Click += async (_, _) =>
+            await DeleteFiles
+                .DeleteCurrentFileAsync(
+                    Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)).ConfigureAwait(false);
+        Deletecm.ToolTip = TranslationHelper.GetTranslation("SendCurrentImageToRecycleBin");
+        Deletecm.Header = TranslationHelper.GetTranslation("DeleteFile");
 
-            // CopyImage
-            var CopyImageCm = (MenuItem)CopyCm.Items[2];
-            CopyImageCm.InputGestureText =
-                $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Shift")} + C";
-            CopyImageCm.Click += (_, _) => CopyPaste.CopyBitmap();
-            CopyImageCm.Header = TranslationHelper.GetTranslation("CopyImage");
+        // 19 = seperator
 
-            // CopyBase64
-            var CopyBase64Cm = (MenuItem)CopyCm.Items[3];
-            CopyBase64Cm.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await Base64.SendToClipboard().ConfigureAwait(false);
-            };
-            CopyBase64Cm.Header = $"{TranslationHelper.GetTranslation("Copy")} base64";
+        ///////////////////////////
+        ///   Close       \\\\
+        ///////////////////////////
+        var CloseCm = (MenuItem)MainContextMenu.Items[20];
+        CloseCm.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
+        CloseCm.Header = TranslationHelper.GetTranslation("Close");
 
-            ///////////////////////////
-            ///   Duplicate File         \\\\
-            ///////////////////////////
-            var Dupcm = (MenuItem)MainContextMenu.Items[14];
-            Dupcm.Click += async (_, _) =>
-            {
-                MainContextMenu.IsOpen = false;
-                await CopyPaste.DuplicateFile().ConfigureAwait(false);
-            };
-            Dupcm.InputGestureText = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method?.Name == "DuplicateFile")
-                .Key.ToString() ?? string.Empty;
-            Dupcm.Header = TranslationHelper.GetTranslation("DuplicateFile");
+        // Add Window contextmenu
+        WindowContextMenu = (ContextMenu)Application.Current.Resources["windowCM"];
 
-            ///////////////////////////
-            ///   Cut File         \\\\
-            ///////////////////////////
-            var Cutcm = (MenuItem)MainContextMenu.Items[15];
-            Cutcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " X";
-            Cutcm.Click += (_, _) =>
-            {
-                MainContextMenu.IsOpen = false;
-                CopyPaste.Cut();
-            };
-            Cutcm.Header = TranslationHelper.GetTranslation("FileCut");
+        var fullscreenWindow = (MenuItem)WindowContextMenu.Items[0];
+        fullscreenWindow.Click += (_, _) => WindowSizing.Fullscreen_Restore(!SettingsHelper.Settings.WindowProperties.Fullscreen);
+        fullscreenWindow.Header = TranslationHelper.GetTranslation("ToggleFullscreen");
 
-            ///////////////////////////
-            ///   Paste File       \\\\
-            ///////////////////////////
-            var pastecm = (MenuItem)MainContextMenu.Items[16];
-            pastecm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " V";
-            pastecm.Click += async delegate
-            {
-                MainContextMenu.IsOpen = false;
-                await CopyPaste.PasteAsync().ConfigureAwait(false);
-            };
-            pastecm.Header = TranslationHelper.GetTranslation("FilePaste");
+        var minWindow = (MenuItem)WindowContextMenu.Items[1];
+        minWindow.Click += (_, _) => SystemCommands.MinimizeWindow(GetMainWindow);
+        minWindow.Header = TranslationHelper.GetTranslation("Minimize");
 
-            // 17 = seperator
+        var closeWindow = (MenuItem)WindowContextMenu.Items[2];
+        closeWindow.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
+        closeWindow.Header = TranslationHelper.GetTranslation("Close");
 
-            ///////////////////////////
-            ///   Delete File       \\\\
-            ///////////////////////////
-            var Deletecm = (MenuItem)MainContextMenu.Items[18];
-            Deletecm.Click += async (_, _) =>
-                await DeleteFiles
-                    .DeleteCurrentFileAsync(
-                        Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)).ConfigureAwait(false);
-            Deletecm.ToolTip = TranslationHelper.GetTranslation("SendCurrentImageToRecycleBin");
-            Deletecm.Header = TranslationHelper.GetTranslation("DeleteFile");
+        GetMainWindow.Logo.ContextMenu = WindowContextMenu;
+        GetMainWindow.GalleryButton.ContextMenu = WindowContextMenu;
+        GetMainWindow.RotateButton.ContextMenu = WindowContextMenu;
+        GetMainWindow.FlipButton.ContextMenu = WindowContextMenu;
+        GetMainWindow.MinButton.ContextMenu = WindowContextMenu;
+        GetMainWindow.FullscreenButton.ContextMenu = WindowContextMenu;
+        GetMainWindow.CloseButton.ContextMenu = WindowContextMenu;
 
-            // 19 = seperator
+        NavigationContextMenu = (ContextMenu)Application.Current.Resources["navCM"];
 
-            ///////////////////////////
-            ///   Close       \\\\
-            ///////////////////////////
-            var CloseCm = (MenuItem)MainContextMenu.Items[20];
-            CloseCm.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
-            CloseCm.Header = TranslationHelper.GetTranslation("Close");
+        var nextCm = (MenuItem)NavigationContextMenu.Items[0];
+        nextCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
+        var nextKey = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method?.Name == "Next")
+            .Key;
+        nextCm.InputGestureText = nextKey?.ToString();
+        nextCm.Header = TranslationHelper.GetTranslation("NextImage");
 
-            // Add Window contextmenu
-            WindowContextMenu = (ContextMenu)Application.Current.Resources["windowCM"];
+        var prevCm = (MenuItem)NavigationContextMenu.Items[1];
+        prevCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+        var prevKey = CustomKeybindings.CustomShortcuts?
+            .FirstOrDefault(kv => kv.Value?.Method?.Name == "Prev")
+            .Key;
+        prevCm.InputGestureText = prevKey?.ToString();
+        prevCm.Header = TranslationHelper.GetTranslation("PrevImage");
 
-            var fullscreenWindow = (MenuItem)WindowContextMenu.Items[0];
-            fullscreenWindow.Click += (_, _) => WindowSizing.Fullscreen_Restore(!SettingsHelper.Settings.WindowProperties.Fullscreen);
-            fullscreenWindow.Header = TranslationHelper.GetTranslation("ToggleFullscreen");
+        // 2 = separator
+        var firstCm = (MenuItem)NavigationContextMenu.Items[3];
+        firstCm.Click += async (_, _) => await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
+        firstCm.InputGestureText = $"{TranslationHelper.GetTranslation("Ctrl")} + {prevKey?.ToString()}";
+        firstCm.Header = TranslationHelper.GetTranslation("FirstImage");
 
-            var minWindow = (MenuItem)WindowContextMenu.Items[1];
-            minWindow.Click += (_, _) => SystemCommands.MinimizeWindow(GetMainWindow);
-            minWindow.Header = TranslationHelper.GetTranslation("Minimize");
+        var lastCm = (MenuItem)NavigationContextMenu.Items[4];
+        lastCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
+        lastCm.InputGestureText = $"{TranslationHelper.GetTranslation("Ctrl")} + {nextKey?.ToString()}";
+        lastCm.Header = TranslationHelper.GetTranslation("LastImage");
 
-            var closeWindow = (MenuItem)WindowContextMenu.Items[2];
-            closeWindow.Click += (_, _) => SystemCommands.CloseWindow(GetMainWindow);
-            closeWindow.Header = TranslationHelper.GetTranslation("Close");
+        // 5 = separator
+        var nextFolderCm = (MenuItem)NavigationContextMenu.Items[6];
+        nextFolderCm.Click += async (_, _) => await GoToNextFolder(true).ConfigureAwait(false);
+        nextFolderCm.InputGestureText = $"{TranslationHelper.GetTranslation("Shift")} + {nextKey?.ToString()}";
+        nextFolderCm.Header = TranslationHelper.GetTranslation("NextFolder");
 
-            GetMainWindow.Logo.ContextMenu = WindowContextMenu;
-            GetMainWindow.GalleryButton.ContextMenu = WindowContextMenu;
-            GetMainWindow.RotateButton.ContextMenu = WindowContextMenu;
-            GetMainWindow.FlipButton.ContextMenu = WindowContextMenu;
-            GetMainWindow.MinButton.ContextMenu = WindowContextMenu;
-            GetMainWindow.FullscreenButton.ContextMenu = WindowContextMenu;
-            GetMainWindow.CloseButton.ContextMenu = WindowContextMenu;
+        var prevFolderCm = (MenuItem)NavigationContextMenu.Items[7];
+        prevFolderCm.Click += async (_, _) => await GoToNextFolder(false).ConfigureAwait(false);
+        prevFolderCm.InputGestureText = $"{TranslationHelper.GetTranslation("Shift")} + {prevKey?.ToString()}";
+        prevFolderCm.Header = TranslationHelper.GetTranslation("PrevFolder");
 
-            NavigationContextMenu = (ContextMenu)Application.Current.Resources["navCM"];
-
-            var nextCm = (MenuItem)NavigationContextMenu.Items[0];
-            nextCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
-            var nextKey = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method?.Name == "Next")
-                .Key;
-            nextCm.InputGestureText = nextKey?.ToString();
-            nextCm.Header = TranslationHelper.GetTranslation("NextImage");
-
-            var prevCm = (MenuItem)NavigationContextMenu.Items[1];
-            prevCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-            var prevKey = CustomKeybindings.CustomShortcuts?
-                .FirstOrDefault(kv => kv.Value?.Method?.Name == "Prev")
-                .Key;
-            prevCm.InputGestureText = prevKey?.ToString();
-            prevCm.Header = TranslationHelper.GetTranslation("PrevImage");
-
-            // 2 = separator
-            var firstCm = (MenuItem)NavigationContextMenu.Items[3];
-            firstCm.Click += async (_, _) => await GoToNextImage(NavigateTo.First).ConfigureAwait(false);
-            firstCm.InputGestureText = $"{TranslationHelper.GetTranslation("Ctrl")} + {prevKey?.ToString()}";
-            firstCm.Header = TranslationHelper.GetTranslation("FirstImage");
-
-            var lastCm = (MenuItem)NavigationContextMenu.Items[4];
-            lastCm.Click += async (_, _) => await GoToNextImage(NavigateTo.Last).ConfigureAwait(false);
-            lastCm.InputGestureText = $"{TranslationHelper.GetTranslation("Ctrl")} + {nextKey?.ToString()}";
-            lastCm.Header = TranslationHelper.GetTranslation("LastImage");
-
-            // 5 = separator
-            var nextFolderCm = (MenuItem)NavigationContextMenu.Items[6];
-            nextFolderCm.Click += async (_, _) => await GoToNextFolder(true).ConfigureAwait(false);
-            nextFolderCm.InputGestureText = $"{TranslationHelper.GetTranslation("Shift")} + {nextKey?.ToString()}";
-            nextFolderCm.Header = TranslationHelper.GetTranslation("NextFolder");
-
-            var prevFolderCm = (MenuItem)NavigationContextMenu.Items[7];
-            prevFolderCm.Click += async (_, _) => await GoToNextFolder(false).ConfigureAwait(false);
-            prevFolderCm.InputGestureText = $"{TranslationHelper.GetTranslation("Shift")} + {prevKey?.ToString()}";
-            prevFolderCm.Header = TranslationHelper.GetTranslation("PrevFolder");
-
-            GetMainWindow.LeftButton.ContextMenu = NavigationContextMenu;
-            GetMainWindow.RightButton.ContextMenu = NavigationContextMenu;
-        }
+        GetMainWindow.LeftButton.ContextMenu = NavigationContextMenu;
+        GetMainWindow.RightButton.ContextMenu = NavigationContextMenu;
     }
 }

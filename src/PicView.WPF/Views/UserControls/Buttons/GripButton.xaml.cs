@@ -1,10 +1,9 @@
-﻿namespace PicView.WPF.Views.UserControls.Buttons
+﻿namespace PicView.WPF.Views.UserControls.Buttons;
+
+public partial class GripButton
 {
-    public partial class GripButton
+    public GripButton()
     {
-        public GripButton()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

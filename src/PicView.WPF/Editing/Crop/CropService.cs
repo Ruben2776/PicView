@@ -9,170 +9,169 @@ using PicView.WPF.Editing.Crop.State;
 using PicView.WPF.Editing.Crop.Tools;
 using PicView.WPF.UILogic;
 
-namespace PicView.WPF.Editing.Crop
-{
-    public class CropArea
-    {
-        internal readonly Size OriginalSize;
-        internal readonly Rect CroppedRectAbsolute;
+namespace PicView.WPF.Editing.Crop;
 
-        public CropArea(Size originalSize, Rect croppedRectAbsolute)
+public class CropArea
+{
+    internal readonly Size OriginalSize;
+    internal readonly Rect CroppedRectAbsolute;
+
+    public CropArea(Size originalSize, Rect croppedRectAbsolute)
+    {
+        OriginalSize = originalSize;
+        CroppedRectAbsolute = croppedRectAbsolute;
+    }
+}
+
+public class CropService
+{
+    private readonly CropAdorner cropAdorner;
+    private readonly Canvas? canvas;
+    private readonly CropTool? cropTool;
+
+    private IToolState currentToolState;
+    private readonly IToolState createState;
+    private readonly IToolState dragState;
+    private readonly IToolState completeState;
+
+    public Adorner Adorner => cropAdorner;
+
+    private enum TouchPoint
+    {
+        OutsideRectangle,
+        InsideRectangle
+    }
+
+    internal CropContextMenu CropCM { get; set; }
+
+    public CropService(FrameworkElement? adornedElement)
+    {
+        if (adornedElement == null)
         {
-            OriginalSize = originalSize;
-            CroppedRectAbsolute = croppedRectAbsolute;
+            return;
+        }
+
+        // Make sure menus are hidden when cropping
+        UC.Close_UserControls();
+
+        // Show context menu
+        CropCM ??= new CropContextMenu();
+
+        canvas = new Canvas
+        {
+            Height = adornedElement.ActualHeight,
+            Width = adornedElement.ActualWidth
+        };
+
+        cropAdorner = new CropAdorner(adornedElement, canvas);
+        var adornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
+
+#if DEBUG
+        Debug.Assert(adornerLayer != null, nameof(adornerLayer) + " != null");
+#endif
+
+        adornerLayer.Add(cropAdorner);
+
+        var cropShape = new CropShape(
+            new Rectangle
+            {
+                Height = 4,
+                Width = 4,
+                Stroke = (SolidColorBrush)Application.Current.Resources["MainColorBrush"],
+                StrokeThickness = 2
+            }
+        );
+
+        cropTool = new CropTool(canvas);
+        createState = new CreateState(cropTool, canvas);
+        completeState = new CompleteState();
+        dragState = new DragState(cropTool, canvas);
+
+        currentToolState = completeState;
+
+        cropAdorner.PreviewMouseLeftButtonDown += AdornerOnMouseLeftButtonDown;
+        cropAdorner.PreviewMouseMove += AdornerOnMouseMove;
+        cropAdorner.PreviewMouseLeftButtonUp += AdornerOnMouseLeftButtonUp;
+
+        cropTool.Redraw(0, 0, 0, 0);
+    }
+
+    public CropArea GetCroppedArea()
+    {
+        return new CropArea(
+            cropAdorner.RenderSize,
+            new Rect(cropTool.TopLeftX, cropTool.TopLeftY, cropTool.Width, cropTool.Height)
+        );
+    }
+
+    private void AdornerOnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        canvas.ReleaseMouseCapture();
+        currentToolState = completeState;
+    }
+
+    private void AdornerOnMouseMove(object sender, MouseEventArgs e)
+    {
+        var point = e.GetPosition(canvas);
+        var newPosition = currentToolState.OnMouseMove(point);
+        if (newPosition.HasValue)
+        {
+            cropTool.Redraw(newPosition.Value.Left, newPosition.Value.Top, newPosition.Value.Width,
+                newPosition.Value.Height);
         }
     }
 
-    public class CropService
+    private void AdornerOnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        private readonly CropAdorner cropAdorner;
-        private readonly Canvas? canvas;
-        private readonly CropTool? cropTool;
-
-        private IToolState currentToolState;
-        private readonly IToolState createState;
-        private readonly IToolState dragState;
-        private readonly IToolState completeState;
-
-        public Adorner Adorner => cropAdorner;
-
-        private enum TouchPoint
+        canvas.CaptureMouse();
+        var point = e.GetPosition(canvas);
+        var touch = GetTouchPoint(point);
+        switch (touch)
         {
-            OutsideRectangle,
-            InsideRectangle
-        }
-
-        internal CropContextMenu CropCM { get; set; }
-
-        public CropService(FrameworkElement? adornedElement)
-        {
-            if (adornedElement == null)
-            {
+            case TouchPoint.OutsideRectangle when cropTool.Width >= 1 && cropTool.Height >= 1:
+                // Don't deselect when clicking outside rect
                 return;
-            }
 
-            // Make sure menus are hidden when cropping
-            UC.Close_UserControls();
+            case TouchPoint.OutsideRectangle:
+                currentToolState = createState;
+                break;
 
-            // Show context menu
-            CropCM ??= new CropContextMenu();
-
-            canvas = new Canvas
-            {
-                Height = adornedElement.ActualHeight,
-                Width = adornedElement.ActualWidth
-            };
-
-            cropAdorner = new CropAdorner(adornedElement, canvas);
-            var adornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-
-#if DEBUG
-            Debug.Assert(adornerLayer != null, nameof(adornerLayer) + " != null");
-#endif
-
-            adornerLayer.Add(cropAdorner);
-
-            var cropShape = new CropShape(
-                new Rectangle
-                {
-                    Height = 4,
-                    Width = 4,
-                    Stroke = (SolidColorBrush)Application.Current.Resources["MainColorBrush"],
-                    StrokeThickness = 2
-                }
-            );
-
-            cropTool = new CropTool(canvas);
-            createState = new CreateState(cropTool, canvas);
-            completeState = new CompleteState();
-            dragState = new DragState(cropTool, canvas);
-
-            currentToolState = completeState;
-
-            cropAdorner.PreviewMouseLeftButtonDown += AdornerOnMouseLeftButtonDown;
-            cropAdorner.PreviewMouseMove += AdornerOnMouseMove;
-            cropAdorner.PreviewMouseLeftButtonUp += AdornerOnMouseLeftButtonUp;
-
-            cropTool.Redraw(0, 0, 0, 0);
+            case TouchPoint.InsideRectangle:
+                currentToolState = dragState;
+                break;
         }
 
-        public CropArea GetCroppedArea()
+        currentToolState.OnMouseDown(point);
+    }
+
+    private TouchPoint GetTouchPoint(Point mousePoint)
+    {
+        // 13 to not hit resize function
+
+        //left
+        if (mousePoint.X < cropTool.TopLeftX + 13)
         {
-            return new CropArea(
-                cropAdorner.RenderSize,
-                new Rect(cropTool.TopLeftX, cropTool.TopLeftY, cropTool.Width, cropTool.Height)
-            );
+            return TouchPoint.OutsideRectangle;
         }
 
-        private void AdornerOnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        //right
+        if (mousePoint.X > cropTool.BottomRightX - 13)
         {
-            canvas.ReleaseMouseCapture();
-            currentToolState = completeState;
+            return TouchPoint.OutsideRectangle;
         }
 
-        private void AdornerOnMouseMove(object sender, MouseEventArgs e)
+        //top
+        if (mousePoint.Y < cropTool.TopLeftY + 13)
         {
-            var point = e.GetPosition(canvas);
-            var newPosition = currentToolState.OnMouseMove(point);
-            if (newPosition.HasValue)
-            {
-                cropTool.Redraw(newPosition.Value.Left, newPosition.Value.Top, newPosition.Value.Width,
-                    newPosition.Value.Height);
-            }
+            return TouchPoint.OutsideRectangle;
         }
 
-        private void AdornerOnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        //bottom
+        if (mousePoint.Y > cropTool.BottomRightY - 13)
         {
-            canvas.CaptureMouse();
-            var point = e.GetPosition(canvas);
-            var touch = GetTouchPoint(point);
-            switch (touch)
-            {
-                case TouchPoint.OutsideRectangle when cropTool.Width >= 1 && cropTool.Height >= 1:
-                    // Don't deselect when clicking outside rect
-                    return;
-
-                case TouchPoint.OutsideRectangle:
-                    currentToolState = createState;
-                    break;
-
-                case TouchPoint.InsideRectangle:
-                    currentToolState = dragState;
-                    break;
-            }
-
-            currentToolState.OnMouseDown(point);
+            return TouchPoint.OutsideRectangle;
         }
 
-        private TouchPoint GetTouchPoint(Point mousePoint)
-        {
-            // 13 to not hit resize function
-
-            //left
-            if (mousePoint.X < cropTool.TopLeftX + 13)
-            {
-                return TouchPoint.OutsideRectangle;
-            }
-
-            //right
-            if (mousePoint.X > cropTool.BottomRightX - 13)
-            {
-                return TouchPoint.OutsideRectangle;
-            }
-
-            //top
-            if (mousePoint.Y < cropTool.TopLeftY + 13)
-            {
-                return TouchPoint.OutsideRectangle;
-            }
-
-            //bottom
-            if (mousePoint.Y > cropTool.BottomRightY - 13)
-            {
-                return TouchPoint.OutsideRectangle;
-            }
-
-            return TouchPoint.InsideRectangle;
-        }
+        return TouchPoint.InsideRectangle;
     }
 }

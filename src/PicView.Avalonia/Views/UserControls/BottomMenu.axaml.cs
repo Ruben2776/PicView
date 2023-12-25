@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace PicView.Avalonia.Views.UserControls
+namespace PicView.Avalonia.Views.UserControls;
+
+public partial class BottomMenu : UserControl
 {
-    public partial class BottomMenu : UserControl
+    public BottomMenu()
     {
-        public BottomMenu()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

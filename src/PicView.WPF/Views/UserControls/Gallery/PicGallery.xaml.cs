@@ -1,16 +1,15 @@
 ﻿using PicView.WPF.PicGallery;
 
-namespace PicView.WPF.Views.UserControls.Gallery
+namespace PicView.WPF.Views.UserControls.Gallery;
+
+/// <summary>
+/// Interaction logic for PicGallery.xaml
+/// </summary>
+public partial class PicGallery
 {
-    /// <summary>
-    /// Interaction logic for PicGallery.xaml
-    /// </summary>
-    public partial class PicGallery
+    public PicGallery()
     {
-        public PicGallery()
-        {
-            InitializeComponent();
-            Loaded += GalleryLoad.PicGallery_Loaded;
-        }
+        InitializeComponent();
+        Loaded += GalleryLoad.PicGallery_Loaded;
     }
 }

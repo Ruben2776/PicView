@@ -2,24 +2,23 @@
 using PicView.Core.Config;
 using static PicView.WPF.Animations.MouseOverAnimations;
 
-namespace PicView.WPF.Views.UserControls.Buttons
+namespace PicView.WPF.Views.UserControls.Buttons;
+
+public partial class LinkButton
 {
-    public partial class LinkButton
+    public LinkButton()
     {
-        public LinkButton()
+        InitializeComponent();
+
+        Loaded += delegate
         {
-            InitializeComponent();
+            TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
+            TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush);
 
-            Loaded += delegate
+            if (!SettingsHelper.Settings.Theme.Dark)
             {
-                TheButton.MouseEnter += (s, x) => ButtonMouseOverAnim(CopyButtonBrush, true);
-                TheButton.MouseLeave += (s, x) => ButtonMouseLeaveAnimBgColor(CopyButtonBrush);
-
-                if (!SettingsHelper.Settings.Theme.Dark)
-                {
-                    AnimationHelper.LightThemeMouseEvent(this, IconBrush);
-                }
-            };
-        }
+                AnimationHelper.LightThemeMouseEvent(this, IconBrush);
+            }
+        };
     }
 }

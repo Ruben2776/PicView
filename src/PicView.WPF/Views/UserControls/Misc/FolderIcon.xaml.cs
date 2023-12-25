@@ -1,10 +1,9 @@
-﻿namespace PicView.WPF.Views.UserControls.Misc
+﻿namespace PicView.WPF.Views.UserControls.Misc;
+
+public partial class FolderIcon
 {
-    public partial class FolderIcon
+    public FolderIcon()
     {
-        public FolderIcon()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -1,14 +1,13 @@
 ﻿using PicView.WPF.Editing.Crop;
 
-namespace PicView.WPF.Views.UserControls.Misc
-{
-    public partial class CroppingTool
-    {
-        public CroppingTool()
-        {
-            InitializeComponent();
+namespace PicView.WPF.Views.UserControls.Misc;
 
-            Loaded += delegate { CropFunctions.InitializeCrop(); };
-        }
+public partial class CroppingTool
+{
+    public CroppingTool()
+    {
+        InitializeComponent();
+
+        Loaded += delegate { CropFunctions.InitializeCrop(); };
     }
 }

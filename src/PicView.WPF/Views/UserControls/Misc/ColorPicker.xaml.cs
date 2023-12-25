@@ -1,10 +1,9 @@
-﻿namespace PicView.WPF.Views.UserControls.Misc
+﻿namespace PicView.WPF.Views.UserControls.Misc;
+
+public partial class ColorPicker
 {
-    public partial class ColorPicker
+    public ColorPicker()
     {
-        public ColorPicker()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
