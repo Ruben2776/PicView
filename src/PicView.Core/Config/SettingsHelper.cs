@@ -22,23 +22,31 @@ public static class SettingsHelper
             }
             else
             {
-                Settings = new AppSettings
-                {
-                    UIProperties = new UIProperties(),
-                    Gallery = new Gallery(),
-                    ImageScaling = new ImageScaling(),
-                    Sorting = new Sorting(),
-                    Theme = new Theme(),
-                    WindowProperties = new WindowProperties(),
-                    Zoom = new Zoom(),
-                    StartUp = new StartUp()
-                };
+                SetDefaults();
             }
         }
         catch (Exception ex)
         {
+#if DEBUG
             Trace.WriteLine($"{nameof(LoadSettingsAsync)} error loading settings:\n {ex.Message}");
+#endif
+            SetDefaults();
         }
+    }
+
+    private static void SetDefaults()
+    {
+        Settings = new AppSettings
+        {
+            UIProperties = new UIProperties(),
+            Gallery = new Gallery(),
+            ImageScaling = new ImageScaling(),
+            Sorting = new Sorting(),
+            Theme = new Theme(),
+            WindowProperties = new WindowProperties(),
+            Zoom = new Zoom(),
+            StartUp = new StartUp()
+        };
     }
 
     public static async Task SaveSettingsAsync()
@@ -85,6 +93,7 @@ public static class SettingsHelper
 
             if (existingSettings == null)
             {
+                SetDefaults();
                 return;
             }
 
