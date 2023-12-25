@@ -5,12 +5,12 @@ namespace PicView.Avalonia.Models;
 
 internal static class LoadSettings
 {
-    internal static void StartLoading()
+    internal static async Task StartLoadingAsync()
     {
-        Task.Run(async () =>
+        await Task.Run(async () =>
         {
             await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
             await TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage).ConfigureAwait(false);
-        });
+        }).ConfigureAwait(false);
     }
 }

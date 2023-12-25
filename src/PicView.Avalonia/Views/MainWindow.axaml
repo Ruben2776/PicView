@@ -17,12 +17,8 @@
     TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <Border>
-        <DockPanel>
-            <TextBox
-                Width="200"
-                Height="30"
-                Text="Test" />
-        </DockPanel>
-    </Border>
+    <Grid>
+
+        <Image x:Name="MainImage" Stretch="Uniform" />
+    </Grid>
 </Window>
