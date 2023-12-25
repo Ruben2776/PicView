@@ -113,7 +113,7 @@ internal static class FileUpdateNavigation
 
         if (UC.GetPicGallery is not null)
         {
-            var thumbData = await GalleryLoad.GalleryThumbHolder.GetThumbDataAsync(index).ConfigureAwait(false);
+            var thumbData = await GalleryLoad.GalleryThumbHolder.GetThumbDataAsync(index, fileInfo).ConfigureAwait(false);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
                 var item = new PicGalleryItem(thumbData.BitmapSource, e.FullPath, false)

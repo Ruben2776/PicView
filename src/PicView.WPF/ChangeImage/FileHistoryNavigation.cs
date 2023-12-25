@@ -13,8 +13,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
-using PicView.WPF.UILogic.Loading;
-using PicView.WPF.Views.UserControls.Misc;
 
 namespace PicView.WPF.ChangeImage
 {
@@ -48,7 +46,7 @@ namespace PicView.WPF.ChangeImage
             }, DispatcherPriority.Normal);
 
             _fileHistory ??= new FileHistory();
-            var file = await Task.FromResult(_fileHistory.GetLastFile()).ConfigureAwait(false);
+            var file = _fileHistory.GetLastFile();
             if (file is null)
             {
                 if (ErrorHandling.CheckOutOfRange())
@@ -62,70 +60,8 @@ namespace PicView.WPF.ChangeImage
 
                 return;
             }
-            await Task.Run(async () => // Make sure UI responsive
-            {
-                if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
-                {
-                    if (file.IsArchive())
-                    {
-                        await LoadPic.LoadPicFromArchiveAsync(file).ConfigureAwait(false);
-                        return;
-                    }
 
-                    var fileInfo = new FileInfo(file);
-                    Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
-                    if (Navigation.Pics.Count > 0)
-                    {
-                        Navigation.FolderIndex = Navigation.Pics.IndexOf(file);
-                        await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
-
-                        // Fix if Bottom Gallery is enabled
-                        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                        {
-                            switch (UC.GetPicGallery)
-                            {
-                                case null:
-                                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
-                                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                                    {
-                                        GalleryToggle.ShowBottomGallery();
-                                        ScaleImage.TryFitImage();
-                                    });
-                                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                                    break;
-
-                                case { Visibility: Visibility.Collapsed }:
-                                    {
-                                        var shouldLoadGallery = false;
-                                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                                        {
-                                            GalleryToggle.ShowBottomGallery();
-                                            ScaleImage.TryFitImage();
-                                            if (UC.GetPicGallery.Container.Children.Count <= 0)
-                                            {
-                                                shouldLoadGallery = true;
-                                            }
-                                        });
-                                        if (shouldLoadGallery)
-                                        {
-                                            await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                                        }
-
-                                        break;
-                                    }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        await LoadPic.LoadPicFromStringAsync(file).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    await LoadPic.LoadPicFromStringAsync(file).ConfigureAwait(false);
-                }
-            });
+            await LoadPic.LoadPicFromStringAsync(file).ConfigureAwait(false);
         }
 
         internal static async Task NextAsync()

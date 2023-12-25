@@ -84,10 +84,10 @@ namespace PicView.WPF.PicGallery
             /// </summary>
             /// <param name="index">The index of the thumbnail.</param>
             /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
-            internal static async Task<GalleryThumbHolder> GetThumbDataAsync(int index)
+            internal static async Task<GalleryThumbHolder> GetThumbDataAsync(int index, FileInfo? fileInfo = null)
             {
                 var fileNameLength = 60;
-                var fileInfo = new FileInfo(Navigation.Pics[index]);
+                fileInfo ??= new FileInfo(Navigation.Pics[index]);
                 var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[index],
                     (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
                 var fileLocation = fileInfo.FullName;

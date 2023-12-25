@@ -52,7 +52,7 @@ namespace PicView.WPF.ChangeImage
                     {
                         if (fileInfo.IsSupported())
                         {
-                            await LoadPiFromFileAsync(null, fileInfo).ConfigureAwait(false);
+                            await LoadPiFromFileAsync(fileInfo).ConfigureAwait(false);
                         }
                         else if (fileInfo.IsArchive())
                         {
@@ -146,7 +146,7 @@ namespace PicView.WPF.ChangeImage
             }
         }
 
-        private static async Task LoadPiFromFileAsync(FileInfo fileInfo)
+        internal static async Task LoadPiFromFileAsync(FileInfo fileInfo)
         {
             if (!fileInfo.Exists) // If file does not exist, try to load it if base64 or URL
             {
@@ -200,7 +200,11 @@ namespace PicView.WPF.ChangeImage
                 {
                     if (GetPicGallery is null)
                     {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                        {
+                            GalleryToggle.ShowBottomGallery();
+                            ScaleImage.TryFitImage();
+                        });
 
                         await GalleryLoad.LoadAsync().ConfigureAwait(false);
                     }
@@ -213,7 +217,11 @@ namespace PicView.WPF.ChangeImage
                 {
                     if (GetPicGallery is null)
                     {
-                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryToggle.ShowBottomGallery);
+                        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                        {
+                            GalleryToggle.ShowBottomGallery();
+                            ScaleImage.TryFitImage();
+                        });
 
                         await GalleryLoad.LoadAsync().ConfigureAwait(false);
                     }

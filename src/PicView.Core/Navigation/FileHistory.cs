@@ -40,20 +40,14 @@ namespace PicView.Core.Navigation
         /// <returns>An empty string if successful, otherwise an error message.</returns>
         public string ReadFromFile()
         {
-            lock (_fileHistory)
-            {
-                _fileHistory.Clear();
-            }
+            _fileHistory.Clear();
             var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
             try
             {
                 using var reader = new StreamReader(file);
                 while (reader.Peek() >= 0)
                 {
-                    lock (_fileHistory)
-                    {
-                        _fileHistory.Add(reader.ReadLine());
-                    }
+                    _fileHistory.Add(reader.ReadLine());
                 }
             }
             catch (Exception e)
@@ -76,12 +70,9 @@ namespace PicView.Core.Navigation
             try
             {
                 using var writer = new StreamWriter(file);
-                lock (_fileHistory)
+                foreach (var item in _fileHistory)
                 {
-                    foreach (var item in _fileHistory)
-                    {
-                        writer.WriteLine(item);
-                    }
+                    writer.WriteLine(item);
                 }
             }
             catch (Exception e)
@@ -93,10 +84,7 @@ namespace PicView.Core.Navigation
 
         public int GetCount()
         {
-            lock (_fileHistory)
-            {
-                return _fileHistory.Count;
-            }
+            return _fileHistory.Count;
         }
 
         public void Add(string fileName)
@@ -105,29 +93,22 @@ namespace PicView.Core.Navigation
             {
                 return;
             }
-
-            lock (_fileHistory)
+            if (_fileHistory.Exists(e => e.EndsWith(fileName)))
             {
-                if (_fileHistory.Exists(e => e.EndsWith(fileName)))
-                {
-                    return;
-                }
-
-                if (_fileHistory.Count >= MaxCount)
-                {
-                    _fileHistory.RemoveAt(0);
-                }
-
-                _fileHistory.Add(fileName);
+                return;
             }
+
+            if (_fileHistory.Count >= MaxCount)
+            {
+                _fileHistory.RemoveAt(0);
+            }
+
+            _fileHistory.Add(fileName);
         }
 
         public string? GetLastFile()
         {
-            lock (_fileHistory)
-            {
-                return _fileHistory.Count > 0 ? _fileHistory[^1] : null;
-            }
+            return _fileHistory.Count > 0 ? _fileHistory[^1] : null;
         }
 
         /// <summary>
@@ -136,10 +117,7 @@ namespace PicView.Core.Navigation
         /// <returns>The first file entry or null if the history is empty.</returns>
         public string? GetFirstFile()
         {
-            lock (_fileHistory)
-            {
-                return _fileHistory.Count > 0 ? _fileHistory[0] : null;
-            }
+            return _fileHistory.Count > 0 ? _fileHistory[0] : null;
         }
 
         /// <summary>
@@ -149,20 +127,17 @@ namespace PicView.Core.Navigation
         /// <returns>The file entry at the specified index or null if the history is empty.</returns>
         public string? GetEntryAt(int index)
         {
-            lock (_fileHistory)
+            if (_fileHistory.Count == 0)
             {
-                if (_fileHistory.Count == 0)
-                {
-                    return null;
-                }
-
-                if (index < 0)
-                {
-                    return _fileHistory[0];
-                }
-
-                return index >= _fileHistory.Count ? _fileHistory[^1] : _fileHistory[index];
+                return null;
             }
+
+            if (index < 0)
+            {
+                return _fileHistory[0];
+            }
+
+            return index >= _fileHistory.Count ? _fileHistory[^1] : _fileHistory[index];
         }
 
         /// <summary>
@@ -181,18 +156,15 @@ namespace PicView.Core.Navigation
 
             try
             {
-                lock (_fileHistory)
+                var foundIndex = _fileHistory.IndexOf(list[index]);
+
+                if (looping)
                 {
-                    var foundIndex = _fileHistory.IndexOf(list[index]);
-
-                    if (looping)
-                    {
-                        return GetEntryAt((foundIndex + 1 + _fileHistory.Count) % _fileHistory.Count);
-                    }
-
-                    foundIndex++;
-                    return foundIndex >= MaxCount ? null : GetEntryAt(foundIndex);
+                    return GetEntryAt((foundIndex + 1 + _fileHistory.Count) % _fileHistory.Count);
                 }
+
+                foundIndex++;
+                return foundIndex >= MaxCount ? null : GetEntryAt(foundIndex);
             }
             catch (Exception e)
             {
@@ -219,17 +191,14 @@ namespace PicView.Core.Navigation
 
             try
             {
-                lock (_fileHistory)
+                var foundIndex = _fileHistory.IndexOf(list[index]);
+                if (looping)
                 {
-                    var foundIndex = _fileHistory.IndexOf(list[index]);
-                    if (looping)
-                    {
-                        return GetEntryAt((foundIndex - 1 + _fileHistory.Count) % _fileHistory.Count);
-                    }
-
-                    index--;
-                    return index < 0 ? null : GetEntryAt(index);
+                    return GetEntryAt((foundIndex - 1 + _fileHistory.Count) % _fileHistory.Count);
                 }
+
+                index--;
+                return index < 0 ? null : GetEntryAt(index);
             }
             catch (Exception e)
             {
