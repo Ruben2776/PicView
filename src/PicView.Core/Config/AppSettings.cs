@@ -2,7 +2,7 @@
 
 public class AppSettings
 {
-    public int Version { get; set; } = 1;
+    public double Version { get; set; } = 1;
     public WindowProperties? WindowProperties { get; set; }
     public UIProperties? UIProperties { get; set; }
     public Theme? Theme { get; set; }
@@ -10,6 +10,7 @@ public class AppSettings
     public ImageScaling? ImageScaling { get; set; }
     public Sorting? Sorting { get; set; }
     public Zoom? Zoom { get; set; }
+    public StartUp? StartUp { get; set; }
 }
 
 public class WindowProperties
@@ -75,4 +76,11 @@ public class Sorting
     public bool Ascending { get; set; } = true;
     public int SortPreference { get; set; } = 0;
     public bool IncludeSubDirectories { get; set; } = false;
+}
+
+public class StartUp
+{
+    public bool OpenLastFile { get; set; } = false;
+    public bool OpenSpecificFile { get; set; } = false;
+    public string OpenSpecificString { get; set; } = "";
 }

@@ -578,7 +578,7 @@ namespace PicView.WPF.ChangeImage
             }
 
             // Add recent files, except when browsing archive
-            if (string.IsNullOrWhiteSpace(ArchiveExtraction.TempZipFile) && Pics.Count > index)
+            if (string.IsNullOrWhiteSpace(ArchiveExtraction.TempFilePath) && Pics.Count > index)
             {
                 FileHistoryNavigation.Add(Pics[index]);
             }

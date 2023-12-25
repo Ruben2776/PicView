@@ -5,7 +5,7 @@ namespace PicView.Core.Config;
 
 public static class SettingsHelper
 {
-    private const int CurrentSettingsVersion = 1;
+    private const double CurrentSettingsVersion = 1;
 
     public static AppSettings? Settings { get; private set; }
     private static JsonSerializerOptions? _jsonSerializerOptions;
@@ -30,7 +30,8 @@ public static class SettingsHelper
                     Sorting = new Sorting(),
                     Theme = new Theme(),
                     WindowProperties = new WindowProperties(),
-                    Zoom = new Zoom()
+                    Zoom = new Zoom(),
+                    StartUp = new StartUp()
                 };
             }
         }

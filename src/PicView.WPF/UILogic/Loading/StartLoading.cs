@@ -2,17 +2,13 @@
 using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
-using PicView.WPF.ImageHandling;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Misc;
 using PicView.WPF.Views.Windows;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using static PicView.WPF.UILogic.Loading.LoadContextMenus;
 using static PicView.WPF.UILogic.Loading.LoadControls;
 using static PicView.WPF.UILogic.Sizing.WindowSizing;
@@ -25,16 +21,10 @@ internal static class StartLoading
 {
     internal static async Task LoadedEvent(Startup_Window startupWindow)
     {
-        var spinner = GetSpinWaiter;
-        spinner = new SpinWaiter();
-        startupWindow.TheGrid.Children.Add(spinner);
-        Panel.SetZIndex(spinner, 99);
-        BitmapSource? bitmapSource = null;
+        GetSpinWaiter = new SpinWaiter();
+        startupWindow.TheGrid.Children.Add(GetSpinWaiter);
+        Panel.SetZIndex(GetSpinWaiter, 99);
 
-        var image = new Image
-        {
-            Stretch = Stretch.Uniform,
-        };
         // Load sizing properties
         MonitorInfo = MonitorSize.GetMonitorSize(startupWindow);
         await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
@@ -42,86 +32,20 @@ internal static class StartLoading
         {
             SetLastWindowSize(startupWindow);
         }
+        else
+        {
+            CenterWindowOnScreen(startupWindow);
+        }
 
         var args = Environment.GetCommandLineArgs();
         ImageSizeCalculationHelper.ImageSize? size = null;
         MainWindow? mainWindow = null;
-
-        if (args.Length > 1)
-        {
-            await Task.Run(async () =>
-            {
-                bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(new FileInfo(args[1]))
-                    .ConfigureAwait(false);
-            });
-
-            await startupWindow.Dispatcher.InvokeAsync(() =>
-            {
-                size = ImageSizeCalculationHelper.GetImageSize(
-                    width: bitmapSource.PixelWidth * MonitorInfo.DpiScaling,
-                    height: bitmapSource.PixelHeight * MonitorInfo.DpiScaling,
-                    monitorWidth: MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling,
-                    monitorHeight: MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling,
-                    rotationAngle: 0,
-                    stretch: SettingsHelper.Settings.ImageScaling.StretchImage,
-                    padding: 20 * MonitorInfo.DpiScaling,
-                    dpiScaling: MonitorInfo.DpiScaling,
-                    fullscreen: SettingsHelper.Settings.ImageScaling.StretchImage,
-                    uiTopSize: 30 * MonitorInfo.DpiScaling,
-                    uiBottomSize: 25 * MonitorInfo.DpiScaling,
-                    galleryHeight: SettingsHelper.Settings.Gallery.IsBottomGalleryShown
-                        ? SettingsHelper.Settings.Gallery.BottomGalleryItemSize
-                        : 0,
-                    autoFit: SettingsHelper.Settings.WindowProperties.AutoFit,
-                    containerWidth: startupWindow.Width * MonitorInfo.DpiScaling,
-                    containerHeight: startupWindow.Height * MonitorInfo.DpiScaling,
-                    SettingsHelper.Settings.Zoom.ScrollEnabled
-                );
-
-                image.Stretch = Stretch.Fill;
-                image.Width = startupWindow.Width = size.Value.Width;
-                image.Height = startupWindow.Height = size.Value.Height;
-                ScaleImage.AspectRatio = size.Value.AspectRatio;
-
-                image.Source = bitmapSource;
-                startupWindow.TheGrid.Children.Add(image);
-
-                if (SettingsHelper.Settings.WindowProperties.AutoFit)
-                {
-                    CenterWindowOnScreen(startupWindow);
-                }
-
-                image.Source = bitmapSource;
-                mainWindow = new MainWindow();
-                ConfigureWindows.GetMainWindow = mainWindow;
-                startupWindow.TheGrid.Children.Remove(spinner);
-                mainWindow.MainImage.Source = image.Source;
-                GetSpinWaiter = spinner;
-                mainWindow.ParentContainer.Children.Add(spinner);
-            });
-
-            await QuickLoad.QuickLoadAsync(args[1], null, bitmapSource).ConfigureAwait(false);
-        }
-        else
-        {
-            Navigation.Pics = new List<string>();
-            await startupWindow.Dispatcher.InvokeAsync(() =>
-            {
-                mainWindow = new MainWindow();
-                ConfigureWindows.GetMainWindow = mainWindow;
-                startupWindow.TheGrid.Children.Remove(spinner);
-                GetSpinWaiter = spinner;
-                mainWindow.ParentContainer.Children.Add(spinner);
-            });
-        }
-
-        var language = SettingsHelper.Settings.UIProperties.UserLanguage;
-        await Core.Localization.TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
-
-        await CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
-
         await startupWindow.Dispatcher.InvokeAsync(() =>
         {
+            mainWindow = new MainWindow();
+            ConfigureWindows.GetMainWindow = mainWindow;
+            GetSpinWaiter = GetSpinWaiter;
+
             if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
             {
                 SetLastWindowSize(mainWindow);
@@ -180,13 +104,37 @@ internal static class StartLoading
                 ScaleImage.TryFitImage();
             }
 
-            startupWindow.Close();
+            startupWindow.TheGrid.Children.Remove(GetSpinWaiter);
+            mainWindow.ParentContainer.Children.Add(GetSpinWaiter);
         });
 
-        if (args.Length <= 1)
+        var language = SettingsHelper.Settings.UIProperties.UserLanguage;
+        await Core.Localization.TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
+        Navigation.Pics = new List<string>();
+
+        if (args.Length > 1)
         {
-            ErrorHandling.Unload(true);
+            await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
         }
+        else
+        {
+            if (SettingsHelper.Settings.StartUp.OpenLastFile)
+            {
+                await FileHistoryNavigation.OpenLastFileAsync().ConfigureAwait(false);
+            }
+            else if (SettingsHelper.Settings.StartUp.OpenSpecificFile)
+            {
+                await LoadPic.LoadPicFromStringAsync(SettingsHelper.Settings.StartUp.OpenSpecificString).ConfigureAwait(false);
+            }
+            else
+            {
+                ErrorHandling.Unload(true);
+            }
+        }
+
+        await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
+
+        await CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
 
         ConfigColors.UpdateColor();
     }

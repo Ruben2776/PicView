@@ -9,6 +9,7 @@ namespace PicView.Core.Navigation
     {
         private readonly List<string> _fileHistory;
         public const short MaxCount = 15;
+        private readonly string _fileLocation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileHistory"/> class.
@@ -16,12 +17,12 @@ namespace PicView.Core.Navigation
         public FileHistory()
         {
             _fileHistory ??= new List<string>();
-            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
+            _fileLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
             try
             {
-                if (!File.Exists(file))
+                if (!File.Exists(_fileLocation))
                 {
-                    using var fs = File.Create(file);
+                    using var fs = File.Create(_fileLocation);
                     fs.Seek(0, SeekOrigin.Begin);
                 }
             }
@@ -41,10 +42,9 @@ namespace PicView.Core.Navigation
         public string ReadFromFile()
         {
             _fileHistory.Clear();
-            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
             try
             {
-                using var reader = new StreamReader(file);
+                using var reader = new StreamReader(_fileLocation);
                 while (reader.Peek() >= 0)
                 {
                     _fileHistory.Add(reader.ReadLine());
@@ -66,10 +66,9 @@ namespace PicView.Core.Navigation
         /// <returns>An empty string if successful, otherwise an error message.</returns>
         public string WriteToFile()
         {
-            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
             try
             {
-                using var writer = new StreamWriter(file);
+                using var writer = new StreamWriter(_fileLocation);
                 foreach (var item in _fileHistory)
                 {
                     writer.WriteLine(item);
@@ -89,21 +88,30 @@ namespace PicView.Core.Navigation
 
         public void Add(string fileName)
         {
-            if (string.IsNullOrWhiteSpace(fileName))
+            try
             {
-                return;
-            }
-            if (_fileHistory.Exists(e => e.EndsWith(fileName)))
-            {
-                return;
-            }
+                if (string.IsNullOrWhiteSpace(fileName))
+                {
+                    return;
+                }
+                if (_fileHistory.Exists(e => e.EndsWith(fileName)))
+                {
+                    return;
+                }
 
-            if (_fileHistory.Count >= MaxCount)
-            {
-                _fileHistory.RemoveAt(0);
-            }
+                if (_fileHistory.Count >= MaxCount)
+                {
+                    _fileHistory.RemoveAt(0);
+                }
 
-            _fileHistory.Add(fileName);
+                _fileHistory.Add(fileName);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(FileHistory)}: {nameof(Add)} exception,\n{e.Message}");
+#endif
+            }
         }
 
         public string? GetLastFile()
