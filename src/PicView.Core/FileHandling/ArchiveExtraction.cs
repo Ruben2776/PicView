@@ -20,15 +20,4 @@ public static class ArchiveExtraction
 
         return Directory.Exists(TempFilePath);
     }
-
-    public static string? ExtractAndReturnPath(string pathToArchiveFile, string pathToFileArchiver, string arguments)
-    {
-        var tempDirectory = CreateTempDirectory(pathToArchiveFile);
-        if (!tempDirectory)
-        {
-            return null;
-        }
-
-        return string.Empty;
-    }
 }

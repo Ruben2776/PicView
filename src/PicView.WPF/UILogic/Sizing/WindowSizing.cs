@@ -275,13 +275,16 @@ namespace PicView.WPF.UILogic.Sizing
         /// </summary>
         internal static void CenterWindowOnScreen(Window window, bool horizontal = true)
         {
-            window.Top =
-                ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - window.ActualHeight) / 2 +
-                MonitorInfo.WorkArea.Top;
-            if (horizontal)
-                window.Left =
-                    ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - window.ActualWidth) / 2 +
-                    MonitorInfo.WorkArea.Left;
+            window?.Dispatcher.Invoke(() =>
+            {
+                window.Top =
+                    ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - window.ActualHeight) / 2 +
+                    MonitorInfo.WorkArea.Top;
+                if (horizontal)
+                    window.Left =
+                        ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - window.ActualWidth) / 2 +
+                        MonitorInfo.WorkArea.Left;
+            });
         }
 
         internal static void SetLastWindowSize(Window window)

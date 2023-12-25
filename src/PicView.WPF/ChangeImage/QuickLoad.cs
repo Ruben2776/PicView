@@ -26,26 +26,23 @@ namespace PicView.WPF.ChangeImage
         /// Load Image from blank values and show loading preview
         /// </summary>
         /// <param name="file"></param>
-        internal static async Task QuickLoadAsync(string file, FileInfo? fileInfo = null, BitmapSource? preparedSource = null) => await Task.Run(async () =>
+        internal static async Task QuickLoadAsync(string file, FileInfo? fileInfo = null) => await Task.Run(async () =>
         {
             var mainWindow = ConfigureWindows.GetMainWindow;
             fileInfo ??= new FileInfo(file);
-            if (preparedSource is not null)
+            if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
             {
-                if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
-                {
-                    await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
-                    return;
-                }
-
-                if (file.IsArchive()) // Handle if file exist and is archive
-                {
-                    await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
-                    return;
-                }
+                await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
+                return;
             }
 
-            var bitmapSource = preparedSource ?? await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            if (file.IsArchive()) // Handle if file exist and is archive
+            {
+                await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
+                return;
+            }
+
+            var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
             await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
             {
                 mainWindow.MainImage.Source = bitmapSource;
@@ -81,10 +78,7 @@ namespace PicView.WPF.ChangeImage
                     GalleryToggle.ShowBottomGallery();
                 }
 
-                if (preparedSource is not null)
-                {
-                    FitImage(bitmapSource.Width, bitmapSource.Height);
-                }
+                FitImage(bitmapSource.Width, bitmapSource.Height);
             }, DispatcherPriority.Normal);
 
             if (FolderIndex > 0)

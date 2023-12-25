@@ -1,8 +1,8 @@
-﻿using System.IO;
-using System.Text;
-using ImageMagick;
+﻿using ImageMagick;
 using PicView.Core.FileHandling;
-using PicView.WPF.FileHandling;
+using PicView.WPF.UILogic;
+using System.IO;
+using System.Text;
 
 namespace PicView.WPF.ImageHandling
 {
@@ -31,11 +31,9 @@ namespace PicView.WPF.ImageHandling
                     await using var fileStream = new FileStream(sourceFile.FullName, FileMode.OpenOrCreate,
                         FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true);
                     // ReSharper disable once IdentifierTypo
-                    using var magickImage = new MagickImage(fileStream)
-                    {
-                        ColorSpace = ColorSpace.Transparent,
-                        Quality = quality,
-                    };
+                    using var magickImage = new MagickImage(fileStream);
+                    magickImage.ColorSpace = ColorSpace.Transparent;
+                    magickImage.Quality = quality;
 
                     if (percentage is not null)
                     {
@@ -86,7 +84,12 @@ namespace PicView.WPF.ImageHandling
                             await using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write,
                                 FileShare.ReadWrite, 4096, true);
                             await magickImage.WriteAsync(saveStream).ConfigureAwait(false);
-                            DeleteFiles.TryDeleteFile(sourceFile.FullName, true);
+                            var deleteFile = FileDeletionHelper.DeleteFile(sourceFile.FullName, true);
+                            if (!string.IsNullOrWhiteSpace(deleteFile))
+                            {
+                                // Show error message to user
+                                Tooltip.ShowTooltipMessage(deleteFile);
+                            }
                             if (compress.HasValue)
                             {
                                 ImageFunctions.OptimizeImage(destination, compress.Value);
@@ -139,7 +142,12 @@ namespace PicView.WPF.ImageHandling
 
                             if (File.Exists(destination))
                             {
-                                DeleteFiles.TryDeleteFile(destination, true);
+                                var deleteFile = FileDeletionHelper.DeleteFile(destination, true);
+                                if (!string.IsNullOrWhiteSpace(deleteFile))
+                                {
+                                    // Show error message to user
+                                    Tooltip.ShowTooltipMessage(deleteFile);
+                                }
                             }
 
                             destination = Path.ChangeExtension(destination, ext);

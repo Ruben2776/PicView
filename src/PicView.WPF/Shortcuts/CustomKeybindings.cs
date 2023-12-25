@@ -34,7 +34,6 @@ internal static class CustomKeybindings
   ""C"": ""Crop"",
   ""E"": ""GalleryClick"",
   ""Enter"": ""GalleryClick"",
-  ""Delete"": ""DeleteFile"",
   ""I"": ""ImageInfoWindow"",
   ""F6"": ""EffectsWindow"",
   ""F1"": ""AboutWindow"",

@@ -2,10 +2,8 @@
 {
     public static class HttpHelper
     {
-        public sealed class HttpClientDownloadWithProgress : IDisposable
+        public sealed class HttpClientDownloadWithProgress(string downloadUrl, string destinationFilePath) : IDisposable
         {
-            private readonly string _downloadUrl;
-            private readonly string _destinationFilePath;
             private HttpClient? _httpClient;
             private bool _disposedValue;
 
@@ -14,16 +12,10 @@
 
             public event ProgressChangedHandler? ProgressChanged;
 
-            public HttpClientDownloadWithProgress(string downloadUrl, string destinationFilePath)
-            {
-                _downloadUrl = downloadUrl;
-                _destinationFilePath = destinationFilePath;
-            }
-
             public async Task StartDownloadAsync()
             {
                 _httpClient = new HttpClient { Timeout = TimeSpan.FromHours(6) };
-                using var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead)
+                using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead)
                     .ConfigureAwait(false);
                 await DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);
             }
@@ -39,7 +31,7 @@
             private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
             {
                 var buffer = new byte[8192];
-                await using var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write,
+                await using var fileStream = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write,
                     FileShare.None, 8192, true);
                 var totalBytesRead = 0L;
                 do

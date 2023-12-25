@@ -313,6 +313,16 @@ namespace PicView.WPF.PicGallery
 
         internal static void Add(int i)
         {
+            if (Navigation.Pics is { Count: 0 })
+            {
+                return;
+            }
+
+            if (i < 0 || i >= Navigation.Pics.Count)
+            {
+                return;
+            }
+
             var selected = i == Navigation.FolderIndex;
             var item = new PicGalleryItem(null, Navigation.Pics[i], selected);
             item.MouseLeftButtonUp += async delegate { await GalleryClick.ClickAsync(i).ConfigureAwait(false); };
