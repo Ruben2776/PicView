@@ -2,9 +2,9 @@
 <img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
 </h1>
 
-PicView is a fast and efficient picture viewer that comes equipped with a clean and concise user interface that can be conveniently hidden when not needed. It supports a vast range of image file types, including `WEBP`, `GIF`, `SVG`, `PNG`, `JXL`, `HEIC`, `PSD` and many others. 
+PicView is a fast, free and fully customizable image viewer for Windows 10 and 11. It supports a vast range of image file types, including `WEBP`, `GIF`, `SVG`, `PNG`, `JXL`, `HEIC`, `PSD` and many others. 
 
-Additionally, PicView also includes features such as EXIF data display, image compression, batch resizing, viewing images within archives/comic books, image effects, galleries, and more.
+Additional features includes viewing EXIF metadata, image compression, batch resizing, viewing images within archives and comic books, image effects, image galleries, and more.
 
 <p align=center>
     <a href="https://github.com/Ruben2776/PicView/releases">
@@ -19,7 +19,7 @@ Additionally, PicView also includes features such as EXIF data display, image co
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.0/PicView.2.0.win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.0/PicView.2.0.win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.1/PicView.2.1.x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.1/PicView.2.1.arm64.zip)
 
 Latest releases at https://picview.org/download
 
@@ -27,7 +27,8 @@ Latest releases at https://picview.org/download
 
 [FossHub](https://www.fosshub.com/PicView.html) <br>
 [MajorGeeks](https://www.majorgeeks.com/files/details/picview.html)  <br>
-[SourceForge](https://sourceforge.net/projects/picview/)
+[SourceForge](https://sourceforge.net/projects/picview/) <br>
+[uptodown](https://picview.en.uptodown.com/windows)
 
 
 Winget:
@@ -177,7 +178,8 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
    
    _* RAW camera formats may be slower to load_
 
-## Shortcuts
+## Default Shortcuts
+_* Shortcuts can be changed by opening the `About` window, and scrolling down_
 | Shortcut             | Explanation                                                                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Esc                  | Close window or current open menu                                                                                |
@@ -254,7 +256,7 @@ Rename or move files in the titlebar by pressing `F2` or right clicking it.
 
 _* Scrollwheel behavior can be changed in settings_
 
-You can also view shortcuts by opening the about window `F1`
+You can also view and change shortcuts by opening the `About` window `F1`
 
 
 # Contributions
