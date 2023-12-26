@@ -71,6 +71,7 @@ internal static class Navigation
             return;
 
         int next;
+        var prev = FolderIndex;
         switch (navigateTo)
         {
             case NavigateTo.Next:
@@ -79,11 +80,11 @@ internal static class Navigation
                 Reverse = navigateTo == NavigateTo.Previous;
                 if (SettingsHelper.Settings.UIProperties.Looping || fastPic || Slideshow.SlideTimer != null)
                 {
-                    next = (FolderIndex + indexChange + Pics.Count) % Pics.Count;
+                    next = (prev + indexChange + Pics.Count) % Pics.Count;
                 }
                 else
                 {
-                    var newIndex = FolderIndex + indexChange;
+                    var newIndex = prev + indexChange;
                     if (newIndex < 0 || newIndex >= Pics.Count)
                         return;
                     next = newIndex;
@@ -109,6 +110,7 @@ internal static class Navigation
                 UC.GetPicGallery.Scroller.CanContentScroll = true; // Disable animations
                 // Deselect current item
                 GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+                GalleryNavigation.SetSelected(prev, false);
                 GalleryNavigation.SetSelected(FolderIndex, false);
             });
         }
@@ -116,20 +118,26 @@ internal static class Navigation
         if (fastPic)
         {
             await FastPic.Run(next).ConfigureAwait(false);
-            if (UC.GetPicGallery is not null)
-            {
-                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                {
-                    // Select next item
-                    GalleryNavigation.SetSelected(FolderIndex, true);
-                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                    GalleryNavigation.ScrollToGalleryCenter();
-                });
-            }
         }
         else
         {
             await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
+        }
+        if (UC.GetPicGallery is not null)
+        {
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                if (next != FolderIndex)
+                {
+                    return;
+                }
+
+                // Select next item
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+
+            });
         }
     }
 

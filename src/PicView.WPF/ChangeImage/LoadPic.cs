@@ -357,7 +357,10 @@ internal static class LoadPic
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
                     GalleryToggle.ShowBottomGallery();
-                    ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    if (ConfigureWindows.GetMainWindow.MainImage.Source is not null)
+                    {
+                        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    }
                 });
             }
             else
@@ -365,7 +368,10 @@ internal static class LoadPic
                 await GetPicGallery?.Dispatcher.InvokeAsync(() =>
                 {
                     GetPicGallery.Visibility = Visibility.Visible;
-                    ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    if (ConfigureWindows.GetMainWindow.MainImage.Source is not null)
+                    {
+                        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    }
                 });
             }
 
@@ -412,102 +418,78 @@ internal static class LoadPic
 
         FolderIndex = index;
         var preLoadValue = PreLoader.Get(index);
-        fileInfo ??= preLoadValue?.FileInfo ?? new FileInfo(Pics[index]);
-
-        if (!fileInfo.Exists)
+        fileInfo ??= preLoadValue?.FileInfo;
+        if (fileInfo == null)
         {
             try
             {
-                fileInfo = new FileInfo(Path.GetInvalidFileNameChars().Aggregate(fileInfo.FullName,
-                    (current, c) => current.Replace(c.ToString(), string.Empty)));
-
-                if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-                {
-                    // If the file is a directory, create a new FileInfo object using the file path from the image list.
-                    fileInfo = new FileInfo(Pics[index]);
-                }
-                else if (!fileInfo.Exists) // Fix deleting files outside application
-                {
-                    await FixOutsideDeletion().ConfigureAwait(false);
-                    return;
-                }
+                fileInfo = new FileInfo(Pics[index]);
             }
             catch (Exception ex)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} {fileInfo.Name} exception:\n{ex.Message}");
+                Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} {index} exception:\n{ex.Message}");
 #endif
                 Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
-                await ReloadAsync().ConfigureAwait(false);
                 return;
             }
         }
 
-        // If the preload value for the image is null or the image is still loading,
-        // display the loading preview and wait until the image is loaded.
-        if (preLoadValue is null or { BitmapSource: null })
+        if (!fileInfo.Exists)
         {
-            if (!File.Exists(fileInfo.FullName))// Fix deleting files outside application
-            {
-                await FixOutsideDeletion().ConfigureAwait(false);
-                return;
-            }
+            return;
+        }
 
-            var source = new CancellationTokenSource();
-            BitmapSource? thumb = null;
-
-            if (GetPicGallery != null)
+        if (preLoadValue != null)
+        {
+            var showThumb = true;
+            while (preLoadValue.IsLoading)
             {
-                await GetPicGallery?.Dispatcher?.InvokeAsync(() =>
+                if (showThumb)
                 {
-                    if (GetPicGallery.Container.Children.Count > 0 && index < GetPicGallery.Container.Children.Count)
+                    var thumb = Thumbnails.GetThumb(index, fileInfo);
+                    if (thumb != null)
                     {
-                        var y = GetPicGallery.Container.Children[index] as PicGalleryItem;
-                        thumb = (BitmapSource)y.ThumbImage.Source;
-                    }
-                    if (thumb is not null)
-                    {
-                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                    }
-                }, DispatcherPriority.Normal, source.Token);
-            }
-
-            if (index != FolderIndex)
-            {
-                await SkipLoading(source).ConfigureAwait(false);
-
-                return; // Skip loading if user went to next value
-            }
-
-            if (preLoadValue is null)
-            {
-                await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
-                preLoadValue = PreLoader.Get(index);
-            }
-            else
-            {
-                while (preLoadValue.IsLoading)
-                {
-                    try
-                    {
-                        if (index != FolderIndex)
+                        await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
                         {
-                            await SkipLoading(source).ConfigureAwait(false);
-                            return; // Skip loading if user went to next value
-                        }
-                        await Task.Delay(10, source.Token);
+                            if (index != FolderIndex)
+                                return;
+                            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                        });
                     }
-                    catch (Exception)
-                    {
-                        return;
-                    }
+                    showThumb = false;
                 }
+
+                await Task.Delay(10).ConfigureAwait(false);
+                if (index != FolderIndex || preLoadValue is null)
+                {
+                    return; // Skip loading if user went to next value
+                }
+            }
+        }
+        else
+        {
+            fileInfo = new FileInfo(Pics[index]);
+            var thumb = Thumbnails.GetThumb(index, fileInfo);
+            if (thumb != null)
+            {
+                await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
+                {
+                    if (index != FolderIndex)
+                        return;
+                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+                });
+            }
+            await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
+            preLoadValue = PreLoader.Get(index);
+            if (index != FolderIndex || preLoadValue is null)
+            {
+                return; // Skip loading if user went to next value
             }
         }
 
         if (index != FolderIndex || preLoadValue is null)
         {
-            await SkipLoading(null).ConfigureAwait(false);
             return; // Skip loading if user went to next value
         }
 
@@ -540,38 +522,6 @@ internal static class LoadPic
         if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && Pics.Count > index)
         {
             FileHistoryNavigation.Add(Pics[index]);
-        }
-        return;
-
-        async Task FixOutsideDeletion()
-        {
-            PreLoader.Remove(index);
-            Pics.RemoveAt(index);
-            var navigateTo = Reverse ? NavigateTo.Previous : NavigateTo.Next;
-            var nextIndex = ImageIteration.GetNextIndex(navigateTo, Slideshow.SlideTimer != null, Pics, FolderIndex);
-            if (nextIndex < 0)
-            {
-                await ReloadAsync().ConfigureAwait(false);
-                return;
-            }
-            if (GetPicGallery is not null)
-            {
-                await GetPicGallery.Dispatcher.InvokeAsync(() =>
-                {
-                    GetPicGallery.Container.Children.RemoveAt(index);
-                });
-            }
-            await LoadPicAtIndexAsync(nextIndex).ConfigureAwait(false);
-        }
-
-        async Task SkipLoading(CancellationTokenSource? source)
-        {
-            if (source is not null)
-            {
-                await source?.CancelAsync();
-            }
-
-            await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
         }
     });
 

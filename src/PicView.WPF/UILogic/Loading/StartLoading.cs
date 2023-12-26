@@ -39,6 +39,8 @@ internal static class StartLoading
 
         var args = Environment.GetCommandLineArgs();
         MainWindow? mainWindow = null;
+        var language = SettingsHelper.Settings.UIProperties.UserLanguage;
+        await Core.Localization.TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
         await startupWindow.Dispatcher.InvokeAsync(() =>
         {
             mainWindow = new MainWindow();
@@ -107,9 +109,8 @@ internal static class StartLoading
             mainWindow.ParentContainer.Children.Add(GetSpinWaiter);
         });
 
-        var language = SettingsHelper.Settings.UIProperties.UserLanguage;
-        await Core.Localization.TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
         Navigation.Pics = new List<string>();
+        _ = CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
 
         if (args.Length > 1)
         {
@@ -132,8 +133,6 @@ internal static class StartLoading
         }
 
         await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
-
-        await CustomKeybindings.LoadKeybindings().ConfigureAwait(false);
 
         ConfigColors.UpdateColor();
     }

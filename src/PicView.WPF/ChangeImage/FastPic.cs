@@ -51,6 +51,10 @@ internal static class FastPic
         else
         {
             fileInfo = new FileInfo(Pics[index]);
+            if (fileInfo.Exists == false)
+            {
+                return;
+            }
             LoadPic.LoadingPreview(fileInfo);
             await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
             preLoadValue = PreLoader.Get(index);

@@ -38,18 +38,16 @@ internal static class UpdateImage
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
         var source = new CancellationTokenSource();
 
-        await ConfigureWindows.GetMainWindow.MainImage.Dispatcher.InvokeAsync(() =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (index != FolderIndex)
+            if (index != FolderIndex || preLoadValue.BitmapSource is null)
             {
                 source.Cancel();
                 return;
             }
-
             ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
 
             SetOrientation(preLoadValue.Orientation);
-
             FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
 
             // Scroll to top if scroll enabled
@@ -63,6 +61,12 @@ internal static class UpdateImage
                 ZoomLogic.ResetZoom(false);
             }
         }, DispatcherPriority.Send, source.Token);
+
+        if (index != FolderIndex || preLoadValue.BitmapSource is null)
+        {
+            await source.CancelAsync();
+            return;
+        }
 
         var titleString = await Task.FromResult(TitleHelper.GetTitle(preLoadValue.BitmapSource.PixelWidth,
             preLoadValue.BitmapSource.PixelHeight, index, preLoadValue.FileInfo,

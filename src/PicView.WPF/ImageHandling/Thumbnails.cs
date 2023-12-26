@@ -1,12 +1,12 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Windows.Media.Imaging;
-using ImageMagick;
+﻿using ImageMagick;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
 
@@ -20,14 +20,22 @@ internal static class Thumbnails
     /// <returns></returns>
     internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
     {
-        BitmapSource? pic;
+        BitmapSource? pic = null;
         try
         {
-            if (ConfigureWindows.GetMainWindow.CheckAccess() && GetPicGallery != null &&
-                GetPicGallery.Container.Children.Count > 0 && x < GetPicGallery.Container.Children.Count)
+            if (GetPicGallery != null)
             {
-                var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
-                pic = (BitmapSource)y.ThumbImage.Source;
+                GetPicGallery.Dispatcher.Invoke(DispatcherPriority.Send, () =>
+                {
+                    if (GetPicGallery.Container.Children.Count <= 0 || x >= GetPicGallery.Container.Children.Count)
+                    {
+                        return;
+                    }
+
+                    var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
+                    pic = (BitmapSource)y.ThumbImage.Source;
+
+                });
             }
             else
             {

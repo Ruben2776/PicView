@@ -45,7 +45,7 @@ internal static class PreLoader
         // 8 = 270 degrees, flipped
         internal ushort? Orientation;
 
-        internal bool IsLoading;
+        internal bool IsLoading = true;
 
         /// <summary>
         /// Constructs a new PreLoadValue object with the specified values
