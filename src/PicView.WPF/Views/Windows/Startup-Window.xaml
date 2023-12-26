@@ -1,0 +1,14 @@
+﻿<Window
+    x:Class="PicView.WPF.Views.Windows.Startup_Window"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Loading..."
+    Width="500"
+    Height="450"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None">
+    <Grid x:Name="TheGrid" />
+</Window>

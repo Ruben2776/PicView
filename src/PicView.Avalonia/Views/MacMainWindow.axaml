@@ -1,0 +1,23 @@
+<Window
+    x:Class="PicView.Avalonia.Views.MacMainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Loading..."
+    MinWidth="462"
+    MinHeight="400"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Background="Transparent"
+    ExtendClientAreaChromeHints="PreferSystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    ExtendClientAreaToDecorationsHint="True"
+    SizeToContent="WidthAndHeight"
+    TransparencyLevelHint="AcrylicBlur"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Border>
+        <DockPanel />
+    </Border>
+</Window>

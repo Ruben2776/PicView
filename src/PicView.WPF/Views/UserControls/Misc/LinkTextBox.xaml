@@ -1,0 +1,31 @@
+﻿<UserControl
+    x:Class="PicView.WPF.Views.UserControls.Misc.LinkTextBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons"
+    Margin="10,10,10,0">
+    <StackPanel Orientation="Horizontal">
+        <TextBlock
+            x:Name="ValueName"
+            Width="130"
+            Margin="0,0,10,0"
+            VerticalAlignment="Center"
+            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+            FontSize="14"
+            Foreground="{StaticResource MainColorBrush}"
+            TextTrimming="CharacterEllipsis"
+            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
+        <TextBox
+            x:Name="ValueBox"
+            Width="180"
+            IsReadOnly="True" />
+        <Border
+            Width="37"
+            Height="35"
+            Margin="10,0,0,0"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1">
+            <buttons:LinkButton x:Name="linkButton" />
+        </Border>
+    </StackPanel>
+</UserControl>

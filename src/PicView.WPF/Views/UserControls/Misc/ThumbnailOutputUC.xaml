@@ -1,0 +1,72 @@
+﻿<UserControl
+    x:Class="PicView.WPF.Views.UserControls.Misc.ThumbnailOutputUC"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.WPF.Views.UserControls.Buttons">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="/PicView;component/Themes/Resources/fonts/#Roboto Medium" />
+            <Setter Property="Foreground" Value="{StaticResource MainColorBrush}" />
+            <Setter Property="Width" Value="130" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <StackPanel Margin="0,3,0,5" Orientation="Horizontal">
+            <TextBlock x:Name="OutPutString" TextWrapping="Wrap" />
+
+            <TextBox
+                x:Name="OutPutStringBox"
+                Width="280"
+                AllowDrop="True"
+                FontSize="11"
+                IsReadOnly="False" />
+            <buttons:FolderButton x:Name="OutputFolderButton" />
+        </StackPanel>
+
+        <StackPanel Margin="0,3,0,6" Orientation="Horizontal">
+
+            <TextBlock x:Name="ResizeTextBlock" Text="Resize" />
+
+            <StackPanel Orientation="Horizontal">
+
+                <ComboBox Width="130">
+                    <ComboBoxItem x:Name="WidthBox" Content="Width" />
+                    <ComboBoxItem x:Name="HeightBox" Content="Height" />
+                    <ComboBoxItem
+                        Name="Percentage"
+                        Content="Percentage"
+                        IsSelected="True" />
+                </ComboBox>
+                <TextBox
+                    x:Name="ValueBox"
+                    Width="135"
+                    Margin="15,0,0,0"
+                    IsReadOnly="False"
+                    Text="80" />
+                <Label
+                    Margin="16,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="%"
+                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Bold"
+                    FontSize="14"
+                    Foreground="{StaticResource IconColorBrush}">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=Percentage, Path=IsSelected}" Value="false">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
