@@ -43,9 +43,93 @@ internal static class UpdateImage
             }
 
             ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
-            if (Rotation.RotationAngle is not 0)
+
+            if (preLoadValue.Orientation is not 0)
+            {
+                // 0 = none
+                // 1 = 0 degrees
+                // 2 = 0 degrees, flipped
+                // 3 = 180 degrees
+                // 4 = 180 degrees, flipped
+                // 5 = 270 degrees, flipped
+                // 6 = 90 degrees
+                // 7 = 90 degrees, flipped
+                // 8 = 270 degrees, flipped
+                switch (preLoadValue.Orientation)
+                {
+                    case 0:
+                    case 1:
+                        Rotation.Rotate(0);
+                        if (Rotation.IsFlipped)
+                        {
+                            Rotation.Flip();
+                        }
+                        break;
+
+                    case 2:
+                        if (Rotation.IsFlipped == false)
+                        {
+                            Rotation.Flip();
+                        }
+                        Rotation.Rotate(0);
+                        break;
+
+                    case 3:
+                        if (Rotation.IsFlipped)
+                        {
+                            Rotation.Flip();
+                        }
+                        Rotation.Rotate(180);
+                        break;
+
+                    case 4:
+                        if (Rotation.IsFlipped == false)
+                        {
+                            Rotation.Flip();
+                        }
+                        Rotation.Rotate(180);
+                        break;
+
+                    case 5:
+                        if (Rotation.IsFlipped == false)
+                        {
+                            Rotation.Flip();
+                        }
+                        Rotation.Rotate(270);
+                        break;
+
+                    case 6:
+                        if (Rotation.IsFlipped)
+                        {
+                            Rotation.Flip();
+                        }
+                        Rotation.Rotate(90);
+                        break;
+
+                    case 7:
+                        if (Rotation.IsFlipped == false)
+                        {
+                            Rotation.Flip();
+                        }
+                        Rotation.Rotate(90);
+                        break;
+
+                    case 8:
+                        if (Rotation.IsFlipped)
+                        {
+                            Rotation.Flip();
+                        }
+                        Rotation.Rotate(270);
+                        break;
+                }
+            }
+            else
             {
                 Rotation.Rotate(0);
+                if (Rotation.IsFlipped)
+                {
+                    Rotation.Flip();
+                }
             }
 
             FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
@@ -59,11 +143,6 @@ internal static class UpdateImage
             if (ZoomLogic.IsZoomed)
             {
                 ZoomLogic.ResetZoom(false);
-            }
-
-            if (Rotation.IsFlipped)
-            {
-                Rotation.Flip();
             }
         }, DispatcherPriority.Send, source.Token);
 

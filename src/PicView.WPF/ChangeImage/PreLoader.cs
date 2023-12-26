@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
+using ImageMagick;
+using PicView.Core.ImageDecoding;
 using PicView.WPF.ImageHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 
@@ -30,14 +32,30 @@ internal static class PreLoader
         internal FileInfo? FileInfo;
 
         /// <summary>
+        /// The orientation of the image
+        /// </summary>
+        // 0 = none
+        // 1 = 0 degrees
+        // 2 = 0 degrees, flipped
+        // 3 = 180 degrees
+        // 4 = 180 degrees, flipped
+        // 5 = 270 degrees, flipped
+        // 6 = 90 degrees
+        // 7 = 90 degrees, flipped
+        // 8 = 270 degrees, flipped
+        internal ushort Orientation;
+
+        /// <summary>
         /// Constructs a new PreLoadValue object with the specified values
         /// </summary>
         /// <param name="bitmap">The BitmapSource image that is preloaded and cached.</param>
         /// <param name="fileInfo">The file info of the image</param>
-        internal PreLoadValue(BitmapSource? bitmap, FileInfo? fileInfo)
+        /// <param name="orientation">The orientation of the images</param>
+        internal PreLoadValue(BitmapSource? bitmap, FileInfo? fileInfo, ushort orientation)
         {
             BitmapSource = bitmap;
             FileInfo = fileInfo;
+            Orientation = orientation;
         }
     }
 
@@ -81,7 +99,7 @@ internal static class PreLoader
 
         try
         {
-            var preLoadValue = new PreLoadValue(null, null);
+            var preLoadValue = new PreLoadValue(null, null, 0);
             var add = PreLoadList.TryAdd(index, preLoadValue);
             if (add)
             {
@@ -89,6 +107,8 @@ internal static class PreLoader
                 bitmapSource ??= await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
                 preLoadValue.BitmapSource = bitmapSource;
                 preLoadValue.FileInfo = fileInfo;
+                using var magickImage = new MagickImage(fileInfo);
+                preLoadValue.Orientation = EXIFHelper.GetImageOrientation(magickImage);
 #if DEBUG
                 if (ShowAddRemove)
                     Trace.WriteLine($"{fileInfo.Name} added at {index}");

@@ -21,6 +21,8 @@ using static PicView.WPF.Shortcuts.MainKeyboardShortcuts;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.UC;
 using PicView.Core.Localization;
+using ImageMagick;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.WPF.UILogic;
 
@@ -1041,7 +1043,7 @@ internal static class UIHelper
                 {
                     var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
                     var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                    preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
+                    preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo, EXIFHelper.GetImageOrientation(new MagickImage(fileInfo)));
                 }
                 await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
             }

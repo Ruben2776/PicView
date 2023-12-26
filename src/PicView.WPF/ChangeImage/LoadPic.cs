@@ -21,6 +21,7 @@ using static PicView.WPF.FileHandling.ArchiveExtraction;
 using static PicView.WPF.FileHandling.FileLists;
 using static PicView.WPF.UILogic.UC;
 using ArchiveHelper = PicView.Core.FileHandling.ArchiveHelper;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -523,7 +524,7 @@ internal static class LoadPic
             if (preLoadValue is null)
             {
                 var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo);
+                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo, EXIFHelper.GetImageOrientation(new MagickImage(fileInfo)));
             }
 
             while (preLoadValue.BitmapSource is null)

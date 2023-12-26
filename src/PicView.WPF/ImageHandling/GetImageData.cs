@@ -65,7 +65,7 @@ internal static class GetImageData
             if (preloadValue is null)
             {
                 await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-                preloadValue = new PreLoader.PreLoadValue(null, fileInfo);
+                preloadValue = new PreLoader.PreLoadValue(null, fileInfo, 0);
                 if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
                 {
                     return null;
