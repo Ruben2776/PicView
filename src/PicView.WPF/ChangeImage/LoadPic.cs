@@ -505,7 +505,7 @@ internal static class LoadPic
             }
         }
 
-        if (index != FolderIndex)
+        if (index != FolderIndex || preLoadValue is null)
         {
             await SkipLoading(null).ConfigureAwait(false);
             return; // Skip loading if user went to next value
@@ -527,9 +527,9 @@ internal static class LoadPic
         }
 
         if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
-            await ImageInfo.UpdateValuesAsync(preLoadValue.FileInfo).ConfigureAwait(false);
+            await ImageInfo.UpdateValuesAsync(preLoadValue?.FileInfo).ConfigureAwait(false);
 
-        await PreLoader.AddAsync(index, preLoadValue.FileInfo, preLoadValue.BitmapSource).ConfigureAwait(false);
+        await PreLoader.AddAsync(index, preLoadValue?.FileInfo, preLoadValue?.BitmapSource).ConfigureAwait(false);
         if (Pics.Count > 1)
         {
             Taskbar.Progress((double)index / Pics.Count);

@@ -203,7 +203,7 @@ internal static class ImageFunctions
         }
     }
 
-    internal static RenderTargetBitmap ImageErrorMessage()
+    internal static RenderTargetBitmap? ImageErrorMessage()
     {
         var brokenBitmapImage = (DrawingImage)Application.Current.Resources["BrokenDrawingImage"];
         var brush = Application.Current.TryFindResource("MainColorBrush") as Brush;
@@ -240,7 +240,7 @@ internal static class ImageFunctions
 #if DEBUG
             Trace.WriteLine($"{nameof(ImageErrorMessage)} exception:\n{exception.Message}");
 #endif
-            throw new Exception();
+            return null;
         }
     }
 

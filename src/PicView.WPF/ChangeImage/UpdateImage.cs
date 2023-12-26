@@ -31,6 +31,10 @@ internal static class UpdateImage
     /// <param name="preLoadValue"></param>
     internal static async Task UpdateImageValuesAsync(int index, PreLoadValue preLoadValue)
     {
+        if (preLoadValue is null)
+        {
+            return;
+        }
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
         var source = new CancellationTokenSource();
 
