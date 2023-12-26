@@ -6,6 +6,7 @@ using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.IO;
 using PicView.WPF.FileHandling;
+using System.Diagnostics;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -35,10 +36,22 @@ internal static class FileUpdateNavigation
             }
             return;
         }
+        var fileInfo = new FileInfo(e.FullPath);
+        if (fileInfo.Exists == false) { return; }
+
         var index = Navigation.Pics.IndexOf(e.FullPath);
         if (index < 0) { return; }
 
-        Navigation.Pics[Navigation.Pics.IndexOf(e.OldFullPath)] = e.FullPath;
+        try
+        {
+            Navigation.Pics[Navigation.Pics.IndexOf(e.OldFullPath)] = e.FullPath;
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(OnFileRenamed)} exception:\n{exception.Message}");
+#endif
+        }
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ChangeTitlebar.SetTitle.SetTitleString);
         if (PreLoader.Contains(index))
         {

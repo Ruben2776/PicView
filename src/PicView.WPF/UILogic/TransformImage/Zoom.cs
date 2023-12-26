@@ -75,53 +75,6 @@ internal static class ZoomLogic
     }
 
     /// <summary>
-    /// Generates a string representation of the aspect ratio based on the provided width and height.
-    /// </summary>
-    /// <param name="width">The width of the image.</param>
-    /// <param name="height">The height of the image.</param>
-    /// <returns>
-    /// A string representation of the aspect ratio if within specified limits; otherwise, an empty string.
-    /// </returns>
-    internal static string StringAspect(int width, int height)
-    {
-        if (width is 0 || height is 0)
-        {
-            return ") ";
-        }
-
-        // Calculate the greatest common divisor
-        var gcd = GCD(width, height);
-        var x = width / gcd;
-        var y = height / gcd;
-
-        // Check if aspect ratio is within specified limits
-        if (x > 48 || y > 18)
-        {
-            return ") ";
-        }
-
-        return $", {x} : {y}) ";
-    }
-
-    /// <summary>
-    /// Calculates the Greatest Common Divisor (GCD) of two integers.
-    /// </summary>
-    /// <param name="x">The first integer.</param>
-    /// <param name="y">The second integer.</param>
-    /// <returns>The GCD of the two integers.</returns>
-    // ReSharper disable once InconsistentNaming
-    internal static int GCD(int x, int y)
-    {
-        while (true)
-        {
-            if (y == 0) return x;
-            var x1 = x;
-            x = y;
-            y = x1 % y;
-        }
-    }
-
-    /// <summary>
     /// Manipulates the required elements to allow zooming
     /// by modifying ScaleTransform and TranslateTransform
     /// </summary>
@@ -264,8 +217,7 @@ internal static class ZoomLogic
         if (Pics.Count == 0)
         {
             // Display values from web
-            SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-                (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+            SetTitle.SetTitleString();
         }
         else
         {
@@ -349,21 +301,7 @@ internal static class ZoomLogic
             Tooltip.CloseToolTipMessage();
         }
 
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
-        {
-            // Display updated values
-            if (Pics.Count == 0)
-            {
-                //  values from web
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-            }
-            else
-            {
-                SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-                    (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
-            }
-        });
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(SetTitle.SetTitleString);
     }
 
     /// <summary>

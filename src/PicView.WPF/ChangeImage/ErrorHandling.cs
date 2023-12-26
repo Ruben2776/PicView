@@ -12,6 +12,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.DeleteFiles;
@@ -78,29 +79,6 @@ internal static class ErrorHandling
         // Reset old values and get new
         ChangeFolder(true);
         return true;
-    }
-
-    /// <summary>
-    /// If url returns "web", if base64 returns "base64" if file, returns file path, if directory returns "directory" else returns empty
-    /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
-    internal static string CheckIfLoadableString(string s)
-    {
-        if (!string.IsNullOrWhiteSpace(s.GetURL()))
-            return "web";
-
-        if (Base64.IsBase64String(s))
-            return "base64";
-
-        if (File.Exists(s))
-            return Path.GetExtension(s).IsArchive() ? "zip" : s;
-
-        if (Directory.Exists(s))
-            return s;
-
-        s = s.Trim().Replace("\"", "");
-        return File.Exists(s) ? s : string.Empty;
     }
 
     /// <summary>
@@ -188,7 +166,7 @@ internal static class ErrorHandling
                 await ResetValues(fileInfo).ConfigureAwait(false);
                 await LoadPic.LoadPicFromFolderAsync(fileInfo, FolderIndex).ConfigureAwait(false);
             }
-            else if (Base64.IsBase64String(path))
+            else if (Base64Helper.IsBase64String(path))
             {
                 await UpdateImage.UpdateImageFromBase64PicAsync(new FileInfo(path)).ConfigureAwait(false);
             }
@@ -300,10 +278,10 @@ internal static class ErrorHandling
         GalleryFunctions.Clear();
         ScaleImage.XWidth = ScaleImage.XHeight = 0;
 
-        if (!string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveExtraction.TempFilePath))
+        if (!string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveHelper.TempFilePath))
         {
             DeleteTempFiles();
-            Core.FileHandling.ArchiveExtraction.TempFilePath = string.Empty;
+            Core.FileHandling.ArchiveHelper.TempFilePath = string.Empty;
         }
 
         Taskbar.NoProgress();
@@ -314,6 +292,6 @@ internal static class ErrorHandling
         ConfigureWindows.GetMainWindow.TitleText.ToolTip = ConfigureWindows.GetMainWindow.TitleText.Text =
             TranslationHelper.GetTranslation("NoImage");
         ConfigureWindows.GetMainWindow.Title =
-            TranslationHelper.GetTranslation("NoImage") + " - " + SetTitle.AppName;
+            TranslationHelper.GetTranslation("NoImage") + " - PicVIew";
     }
 }

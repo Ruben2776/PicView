@@ -148,7 +148,7 @@ internal static class CopyPaste
             var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
             if (!string.IsNullOrEmpty(url))
             {
-                CopyFile(Core.FileHandling.ArchiveExtraction.TempFilePath);
+                CopyFile(Core.FileHandling.ArchiveHelper.TempFilePath);
             }
             else
             {
@@ -298,7 +298,7 @@ internal static class CopyPaste
                 return;
             }
 
-            var check = ErrorHandling.CheckIfLoadableString(s);
+            var check = ErrorHelper.CheckIfLoadableString(s);
             switch (check)
             {
                 case "": return;

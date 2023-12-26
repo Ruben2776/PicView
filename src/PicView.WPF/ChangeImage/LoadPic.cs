@@ -20,7 +20,7 @@ using static PicView.WPF.ChangeTitlebar.SetTitle;
 using static PicView.WPF.FileHandling.ArchiveExtraction;
 using static PicView.WPF.FileHandling.FileLists;
 using static PicView.WPF.UILogic.UC;
-using ArchiveExtraction = PicView.Core.FileHandling.ArchiveExtraction;
+using ArchiveHelper = PicView.Core.FileHandling.ArchiveHelper;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -75,7 +75,7 @@ internal static class LoadPic
             }
             else if (!string.IsNullOrWhiteSpace(path))
             {
-                var check = CheckIfLoadableString(path);
+                var check = ErrorHelper.CheckIfLoadableString(path);
                 switch (check)
                 {
                     default:
@@ -578,7 +578,7 @@ internal static class LoadPic
         }
 
         // Add recent files, except when browsing archive
-        if (string.IsNullOrWhiteSpace(ArchiveExtraction.TempFilePath) && Pics.Count > index)
+        if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && Pics.Count > index)
         {
             FileHistoryNavigation.Add(Pics[index]);
         }

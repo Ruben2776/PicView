@@ -8,6 +8,7 @@ using ImageMagick;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.TransformImage;
@@ -103,9 +104,9 @@ internal static class GetImageData
         var cmWidth = inchesWidth * 2.54;
         var cmHeight = inchesHeight * 2.54;
 
-        var firstRatio = bitmapSource.PixelWidth / ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+        var firstRatio = bitmapSource.PixelWidth / TitleHelper.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
         var secondRatio = bitmapSource.PixelHeight /
-                          ZoomLogic.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
+                          TitleHelper.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
         string ratioText;
         if (firstRatio == secondRatio)
         {

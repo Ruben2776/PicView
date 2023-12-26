@@ -130,6 +130,6 @@ public static partial class FileHelper
         var url = GetURL(value);
         if (string.IsNullOrEmpty(url))
             return string.Empty;
-        return File.Exists(ArchiveExtraction.TempFilePath) ? ArchiveExtraction.TempFilePath : string.Empty;
+        return File.Exists(ArchiveHelper.TempFilePath) ? ArchiveHelper.TempFilePath : string.Empty;
     }
 }

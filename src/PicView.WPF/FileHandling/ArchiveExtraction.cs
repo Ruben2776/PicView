@@ -106,13 +106,13 @@ internal static class ArchiveExtraction
     /// <param name="isWinrar">If WinRar or 7-Zip</param>
     private static bool Extract(string archivePath, string exe, bool isWinrar)
     {
-        if (!Core.FileHandling.ArchiveExtraction.CreateTempDirectory(archivePath))
+        if (!Core.FileHandling.ArchiveHelper.CreateTempDirectory(archivePath))
         {
             return false;
         }
 
 #if DEBUG
-        Trace.WriteLine("Created temp dir: " + Core.FileHandling.ArchiveExtraction.TempFilePath);
+        Trace.WriteLine("Created temp dir: " + Core.FileHandling.ArchiveHelper.TempFilePath);
 #endif
 
         BackupPath = ErrorHandling.CheckOutOfRange() == false ? Pics[FolderIndex] : null;
@@ -124,7 +124,7 @@ internal static class ArchiveExtraction
                 : $"x \"{archivePath}\" -o"; // 7-Zip
 
             var supportedFilesFilter = " *" + string.Join(" *", SupportedFiles.FileExtensions) + " ";
-            arguments += Core.FileHandling.ArchiveExtraction.TempFilePath + supportedFilesFilter + " -r -aou";
+            arguments += Core.FileHandling.ArchiveHelper.TempFilePath + supportedFilesFilter + " -r -aou";
 
             var process = Process.Start(new ProcessStartInfo
             {
@@ -185,7 +185,7 @@ internal static class ArchiveExtraction
                         }
                     }
 
-                    FileHistoryNavigation.Add(Core.FileHandling.ArchiveExtraction.TempZipFile);
+                    FileHistoryNavigation.Add(Core.FileHandling.ArchiveHelper.TempZipFile);
 
                     if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                     {
@@ -212,7 +212,7 @@ internal static class ArchiveExtraction
 
     private static bool SetDirectory()
     {
-        if (string.IsNullOrEmpty(Core.FileHandling.ArchiveExtraction.TempFilePath))
+        if (string.IsNullOrEmpty(Core.FileHandling.ArchiveHelper.TempFilePath))
         {
 #if DEBUG
             Trace.WriteLine("SetDirectory empty zip archivePath");
@@ -221,18 +221,18 @@ internal static class ArchiveExtraction
         }
 
         // Set extracted files to Pics
-        if (!Directory.Exists(Core.FileHandling.ArchiveExtraction.TempFilePath))
+        if (!Directory.Exists(Core.FileHandling.ArchiveHelper.TempFilePath))
         {
             return false;
         }
 
-        var directory = Directory.GetDirectories(Core.FileHandling.ArchiveExtraction.TempFilePath);
+        var directory = Directory.GetDirectories(Core.FileHandling.ArchiveHelper.TempFilePath);
         if (directory.Length > 0)
         {
-            Core.FileHandling.ArchiveExtraction.TempFilePath = directory[0];
+            Core.FileHandling.ArchiveHelper.TempFilePath = directory[0];
         }
 
-        var extractedFiles = FileList(new FileInfo(Core.FileHandling.ArchiveExtraction.TempFilePath));
+        var extractedFiles = FileList(new FileInfo(Core.FileHandling.ArchiveHelper.TempFilePath));
         if (extractedFiles.Count > 0)
         {
             Pics = extractedFiles;

@@ -12,22 +12,6 @@ namespace PicView.WPF.ImageHandling;
 internal static class Base64
 {
     /// <summary>
-    /// Determines whether a string is a valid Base64 string.
-    /// </summary>
-    /// <param name="base64">The string to check.</param>
-    /// <returns>True if the string is a valid Base64 string; otherwise, false.</returns>
-    internal static bool IsBase64String(string base64)
-    {
-        if (string.IsNullOrEmpty(base64))
-        {
-            return false;
-        }
-
-        var buffer = new Span<byte>(new byte[base64.Length]);
-        return Convert.TryFromBase64String(base64, buffer, out _);
-    }
-
-    /// <summary>
     /// Converts the current rendered bitmap frame to a Base64 string.
     /// </summary>
     /// <returns>A Task representing the asynchronous operation.</returns>

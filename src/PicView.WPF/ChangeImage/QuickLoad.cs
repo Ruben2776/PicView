@@ -46,6 +46,7 @@ internal static class QuickLoad
         await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
             mainWindow.MainImage.Source = bitmapSource;
+            FitImage(bitmapSource.Width, bitmapSource.Height);
         }, DispatcherPriority.Send);
 
         if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
@@ -77,53 +78,51 @@ internal static class QuickLoad
             {
                 GalleryToggle.ShowBottomGallery();
             }
-
-            FitImage(bitmapSource.Width, bitmapSource.Height);
         }, DispatcherPriority.Normal);
+
+        _ = AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
             _ = PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
-        }
 
-        _ = AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
-
-        if (shouldLoadBottomGallery)
-        {
-            _ = Task.Run(async () =>
+            if (shouldLoadBottomGallery)
             {
-                try
+                _ = Task.Run(async () =>
                 {
-                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                    // Update gallery selections
-                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    try
                     {
-                        // Select current item
-                        GalleryNavigation.SetSelected(FolderIndex, true);
-                        GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                        GalleryNavigation.ScrollToGalleryCenter();
-                    });
-                }
-                catch (TaskCanceledException exception)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(QuickLoadAsync)}  exception:\n{exception.Message}");
-#endif
-                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                    {
-                        Environment.Exit(0);
+                        await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                        // Update gallery selections
+                        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                        {
+                            // Select current item
+                            GalleryNavigation.SetSelected(FolderIndex, true);
+                            GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                            GalleryNavigation.ScrollToGalleryCenter();
+                        });
                     }
-                }
-                catch (Exception)
-                {
-                    //
-                }
-            });
+                    catch (TaskCanceledException exception)
+                    {
+#if DEBUG
+                        Trace.WriteLine($"{nameof(QuickLoadAsync)}  exception:\n{exception.Message}");
+#endif
+                        if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                        {
+                            Environment.Exit(0);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //
+                    }
+                });
+            }
         }
 
         // Add recent files, except when browsing archive
-        if (string.IsNullOrWhiteSpace(ArchiveExtraction.TempZipFile) && Pics.Count > FolderIndex)
+        if (string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile) && Pics.Count > FolderIndex)
         {
             FileHistoryNavigation.Add(Pics[FolderIndex]);
         }

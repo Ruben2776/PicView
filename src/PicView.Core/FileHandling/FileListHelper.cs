@@ -62,7 +62,7 @@ public static class FileListHelper
         string[] enumerable;
         // Check if the subdirectories are to be included in the search
         var recurseSubdirectories =
-            SettingsHelper.Settings.Sorting.IncludeSubDirectories && string.IsNullOrWhiteSpace(ArchiveExtraction.TempZipFile);
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories && string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile);
         try
         {
             // Get the list of files in the directory

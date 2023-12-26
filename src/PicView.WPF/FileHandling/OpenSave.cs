@@ -69,7 +69,7 @@ internal static class OpenSave
                         var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                         if (!string.IsNullOrEmpty(url))
                         {
-                            file = Core.FileHandling.ArchiveExtraction.TempFilePath;
+                            file = Core.FileHandling.ArchiveHelper.TempFilePath;
                             directory = Path.GetDirectoryName(file);
                         }
 
@@ -113,7 +113,7 @@ internal static class OpenSave
         var dlg = new OpenFileDialog
         {
             Filter = FilterFiles,
-            Title = $"{Application.Current.Resources["OpenFileDialog"]} - {SetTitle.AppName}"
+            Title = $"{Application.Current.Resources["OpenFileDialog"]} - PicView"
         };
         if (dlg.ShowDialog() == true)
         {
@@ -201,7 +201,7 @@ internal static class OpenSave
             saveDialog = new SaveFileDialog
             {
                 Filter = FilterFiles,
-                Title = Application.Current.Resources["Save"] + $" - {SetTitle.AppName}",
+                Title = TranslationHelper.GetTranslation("Save") + " - PicView",
                 FileName = fileName,
             };
             IsDialogOpen = true;

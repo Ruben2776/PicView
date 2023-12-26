@@ -1,6 +1,6 @@
 ﻿namespace PicView.Core.FileHandling;
 
-public static class ArchiveExtraction
+public static class ArchiveHelper
 {
     /// <summary>
     /// File archive path for the extracted folder

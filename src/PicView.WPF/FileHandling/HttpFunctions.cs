@@ -6,6 +6,7 @@ using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Threading;
+using PicView.Core.Navigation;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.UILogic.Tooltip;
 
@@ -41,7 +42,7 @@ public abstract class HttpFunctions
             return;
         }
 
-        var check = CheckIfLoadableString(destination);
+        var check = ErrorHelper.CheckIfLoadableString(destination);
         switch (check)
         {
             default:
@@ -88,7 +89,7 @@ public abstract class HttpFunctions
         // Create temp directory
         var tempPath = Path.GetTempPath();
         var fileName = Path.GetFileName(url);
-        var createTempPath = Core.FileHandling.ArchiveExtraction.CreateTempDirectory(tempPath);
+        var createTempPath = Core.FileHandling.ArchiveHelper.CreateTempDirectory(tempPath);
         if (createTempPath == false)
         {
             return TranslationHelper.GetTranslation("UnexpectedError");
@@ -102,7 +103,7 @@ public abstract class HttpFunctions
         }
 
         tempPath += fileName;
-        Core.FileHandling.ArchiveExtraction.TempFilePath = string.Empty; // Reset it, since not browsing archive
+        Core.FileHandling.ArchiveHelper.TempFilePath = string.Empty; // Reset it, since not browsing archive
 
         using var client = new HttpHelper.HttpClientDownloadWithProgress(url, tempPath);
         if (displayProgress) // Set up progress display

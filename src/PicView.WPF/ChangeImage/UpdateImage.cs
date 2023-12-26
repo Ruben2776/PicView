@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.Navigation;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -66,9 +67,9 @@ internal static class UpdateImage
             }
         }, DispatcherPriority.Send, source.Token);
 
-        var titleString = await Task.FromResult(TitleString(preLoadValue.BitmapSource.PixelWidth,
-            preLoadValue.BitmapSource.PixelHeight,
-            index, preLoadValue.FileInfo)).ConfigureAwait(false);
+        var titleString = await Task.FromResult(TitleHelper.GetTitle(preLoadValue.BitmapSource.PixelWidth,
+            preLoadValue.BitmapSource.PixelHeight, index, preLoadValue.FileInfo,
+            ZoomLogic.ZoomValue, Pics)).ConfigureAwait(false);
         if (source.IsCancellationRequested)
         {
             return;

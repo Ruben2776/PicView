@@ -61,16 +61,7 @@ internal static class CropFunctions
 
     internal static void CloseCrop()
     {
-        if (Pics.Count == 0)
-        {
-            SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-                (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-        }
-        else
-        {
-            SetTitle.SetTitleString((int)ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-                (int)ConfigureWindows.GetMainWindow.MainImage.Source.Height, FolderIndex, null);
-        }
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(SetTitle.SetTitleString);
 
         ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCroppingTool);
     }
@@ -117,7 +108,7 @@ internal static class CropFunctions
         var saveDialog = new SaveFileDialog
         {
             Filter = OpenSave.FilterFiles,
-            Title = $"{Application.Current.Resources["SaveImage"]} - {SetTitle.AppName}",
+            Title = $"{Application.Current.Resources["SaveImage"]} - PicView",
             FileName = filename,
         };
 

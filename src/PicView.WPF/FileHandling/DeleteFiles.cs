@@ -19,14 +19,14 @@ internal static class DeleteFiles
     /// </summary>
     internal static void DeleteTempFiles()
     {
-        if (!Directory.Exists(Core.FileHandling.ArchiveExtraction.TempFilePath))
+        if (!Directory.Exists(Core.FileHandling.ArchiveHelper.TempFilePath))
         {
             return;
         }
 
         try
         {
-            Array.ForEach(Directory.GetFiles(Core.FileHandling.ArchiveExtraction.TempFilePath), File.Delete);
+            Array.ForEach(Directory.GetFiles(Core.FileHandling.ArchiveHelper.TempFilePath), File.Delete);
 #if DEBUG
             Trace.WriteLine("Temp zip files deleted");
 #endif
@@ -38,9 +38,9 @@ internal static class DeleteFiles
 
         try
         {
-            Directory.Delete(Core.FileHandling.ArchiveExtraction.TempFilePath);
+            Directory.Delete(Core.FileHandling.ArchiveHelper.TempFilePath);
 #if DEBUG
-            Trace.WriteLine("Temp zip folder " + Core.FileHandling.ArchiveExtraction.TempFilePath + " deleted");
+            Trace.WriteLine("Temp zip folder " + Core.FileHandling.ArchiveHelper.TempFilePath + " deleted");
 #endif
         }
         catch (Exception)
@@ -48,7 +48,7 @@ internal static class DeleteFiles
             return;
         }
 
-        Core.FileHandling.ArchiveExtraction.TempZipFile = Core.FileHandling.ArchiveExtraction.TempFilePath = null;
+        Core.FileHandling.ArchiveHelper.TempZipFile = Core.FileHandling.ArchiveHelper.TempFilePath = null;
     }
 
     /// <summary>

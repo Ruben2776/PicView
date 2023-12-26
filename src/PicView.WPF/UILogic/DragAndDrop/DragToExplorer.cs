@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.SystemIntegration.NativeMethods;
-using ArchiveExtraction = PicView.Core.FileHandling.ArchiveExtraction;
+using ArchiveHelper = PicView.Core.FileHandling.ArchiveHelper;
 
 namespace PicView.WPF.UILogic.DragAndDrop;
 
@@ -64,7 +64,7 @@ internal static class DragToExplorer
                 var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
                 if (!string.IsNullOrEmpty(url))
                 {
-                    file = ArchiveExtraction.TempFilePath;
+                    file = ArchiveHelper.TempFilePath;
                 }
                 else
                 {
