@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ImageMagick;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.LoadPic;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -43,9 +44,11 @@ internal static class QuickLoad
         }
 
         var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+        var orientation = Core.ImageDecoding.EXIFHelper.GetImageOrientation(new MagickImage(fileInfo));
         await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
             mainWindow.MainImage.Source = bitmapSource;
+            UpdateImage.SetOrientation(orientation);
             FitImage(bitmapSource.Width, bitmapSource.Height);
         }, DispatcherPriority.Send);
 
