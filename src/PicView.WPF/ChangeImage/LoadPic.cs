@@ -1,5 +1,6 @@
-﻿using ImageMagick;
+﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
@@ -12,8 +13,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.Core.Config;
-using PicView.Core.Navigation;
+using ImageMagick;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ChangeTitlebar.SetTitle;
@@ -21,7 +21,6 @@ using static PicView.WPF.FileHandling.ArchiveExtraction;
 using static PicView.WPF.FileHandling.FileLists;
 using static PicView.WPF.UILogic.UC;
 using ArchiveHelper = PicView.Core.FileHandling.ArchiveHelper;
-using PicView.Core.ImageDecoding;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -453,96 +452,55 @@ internal static class LoadPic
                 await FixOutsideDeletion().ConfigureAwait(false);
                 return;
             }
-            using var image = new MagickImage();
-            try
-            {
-                image.Ping(fileInfo);
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} exception:\n{e.Message}");
-#endif
-            }
-            BitmapSource? thumb = null;
+
             var source = new CancellationTokenSource();
+            BitmapSource? thumb = null;
+
             if (GetPicGallery != null)
             {
-                var fromGallery = false;
-                await GetPicGallery.Dispatcher.InvokeAsync(() =>
+                await GetPicGallery?.Dispatcher?.InvokeAsync(() =>
                 {
-                    if (index != FolderIndex)
+                    if (GetPicGallery.Container.Children.Count > 0 && index < GetPicGallery.Container.Children.Count)
                     {
-                        source.Cancel();
-                        return;
+                        var y = GetPicGallery.Container.Children[index] as PicGalleryItem;
+                        thumb = (BitmapSource)y.ThumbImage.Source;
                     }
-
-                    if (GetPicGallery.Container.Children.Count <= 0 ||
-                        index >= GetPicGallery.Container.Children.Count)
+                    if (thumb is not null)
                     {
-                        return;
+                        ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
                     }
-
-                    var y = GetPicGallery.Container.Children[index] as PicGalleryItem;
-                    thumb = (BitmapSource)y.ThumbImage.Source;
-                    fromGallery = true;
                 }, DispatcherPriority.Normal, source.Token);
-                if (!fromGallery)
-                {
-                    var exifThumbnail = image?.GetExifProfile()?.CreateThumbnail();
-                    thumb = exifThumbnail?.ToBitmapSource();
-                }
-            }
-            else
-            {
-                var exifThumbnail = image?.GetExifProfile()?.CreateThumbnail();
-                thumb = exifThumbnail?.ToBitmapSource();
             }
 
-            if (index != FolderIndex || source.IsCancellationRequested)
+            if (index != FolderIndex)
             {
                 await SkipLoading(source).ConfigureAwait(false);
+
                 return; // Skip loading if user went to next value
             }
 
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                if (index != FolderIndex)
-                {
-                    source.Cancel();
-                    return;
-                }
-
-                SetLoadingString();
-                GetSpinWaiter.Visibility = Visibility.Visible;
-
-                ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                if (image is { Height: > 0, Width: > 0 })
-                    ScaleImage.FitImage(image.Width, image.Height);
-            }, DispatcherPriority.Send, source.Token);
-
             if (preLoadValue is null)
             {
-                var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo, EXIFHelper.GetImageOrientation(new MagickImage(fileInfo)));
+                await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
+                preLoadValue = PreLoader.Get(index);
             }
-
-            while (preLoadValue.BitmapSource is null)
+            else
             {
-                try
+                while (preLoadValue.IsLoading)
                 {
-                    await Task.Delay(10, source.Token).ConfigureAwait(false);
-
-                    // ReSharper disable once InvertIf
-                    if (index != FolderIndex)
+                    try
                     {
-                        await SkipLoading(source).ConfigureAwait(false);
-                        return; // Skip loading if user went to next value
+                        if (index != FolderIndex)
+                        {
+                            await SkipLoading(source).ConfigureAwait(false);
+                            return; // Skip loading if user went to next value
+                        }
+                        await Task.Delay(10, source.Token);
                     }
-                }
-                catch (Exception)
-                {
-                    return;
+                    catch (Exception)
+                    {
+                        return;
+                    }
                 }
             }
         }
@@ -557,7 +515,7 @@ internal static class LoadPic
 
         if (GetPicGallery is not null)
         {
-            await GetPicGallery.Dispatcher.InvokeAsync(() =>
+            await GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
                 if (index != FolderIndex)
                     return;

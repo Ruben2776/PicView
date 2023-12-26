@@ -43,7 +43,9 @@ internal static class PreLoader
         // 6 = 90 degrees
         // 7 = 90 degrees, flipped
         // 8 = 270 degrees, flipped
-        internal ushort Orientation;
+        internal ushort? Orientation;
+
+        internal bool IsLoading;
 
         /// <summary>
         /// Constructs a new PreLoadValue object with the specified values
@@ -51,7 +53,7 @@ internal static class PreLoader
         /// <param name="bitmap">The BitmapSource image that is preloaded and cached.</param>
         /// <param name="fileInfo">The file info of the image</param>
         /// <param name="orientation">The orientation of the images</param>
-        internal PreLoadValue(BitmapSource? bitmap, FileInfo? fileInfo, ushort orientation)
+        internal PreLoadValue(BitmapSource? bitmap, FileInfo? fileInfo, ushort? orientation)
         {
             BitmapSource = bitmap;
             FileInfo = fileInfo;
@@ -93,7 +95,7 @@ internal static class PreLoader
     /// <param name="fileInfo">The file info of the image</param>
     /// <param name="bitmapSource">The bitmap source of the image</param>
     /// <returns>PreLoadValue that can be null</returns>
-    internal static async Task AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null)
+    internal static async Task AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null, ushort? orientation = null)
     {
         if (index < 0 || index >= Pics.Count) return;
 
@@ -104,11 +106,24 @@ internal static class PreLoader
             if (add)
             {
                 fileInfo ??= new FileInfo(Pics[index]);
-                bitmapSource ??= await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                if (bitmapSource is null)
+                {
+                    preLoadValue.IsLoading = true;
+                    bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+                }
+
                 preLoadValue.BitmapSource = bitmapSource;
                 preLoadValue.FileInfo = fileInfo;
-                using var magickImage = new MagickImage(fileInfo);
-                preLoadValue.Orientation = EXIFHelper.GetImageOrientation(magickImage);
+                if (orientation is null)
+                {
+                    using var magickImage = new MagickImage(fileInfo);
+                    preLoadValue.Orientation = EXIFHelper.GetImageOrientation(magickImage);
+                }
+                else
+                {
+                    preLoadValue.Orientation = 0;
+                }
+                preLoadValue.IsLoading = false;
 #if DEBUG
                 if (ShowAddRemove)
                     Trace.WriteLine($"{fileInfo.Name} added at {index}");

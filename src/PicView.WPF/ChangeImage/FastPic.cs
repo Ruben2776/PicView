@@ -1,8 +1,6 @@
 ﻿using PicView.Core.Config;
 using PicView.WPF.ImageHandling;
 using System.IO;
-using ImageMagick;
-using PicView.Core.ImageDecoding;
 using static PicView.WPF.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -39,7 +37,7 @@ internal static class FastPic
         {
             fileInfo = preLoadValue.FileInfo ?? new FileInfo(Pics[index]);
             var showThumb = true;
-            while (preLoadValue.BitmapSource is null)
+            while (preLoadValue.IsLoading)
             {
                 if (showThumb)
                 {
@@ -93,7 +91,7 @@ internal static class FastPic
             {
                 var fileInfo = new FileInfo(Pics[FolderIndex]);
                 var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo, EXIFHelper.GetImageOrientation(new MagickImage(fileInfo)));
+                preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo, null);
             }
         }
 

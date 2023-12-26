@@ -94,6 +94,10 @@ internal static class Thumbnails
                 case ".webp":
                 case ".wbmp":
                     var skImage = SKBitmap.Decode(fileStream);
+                    if (skImage is null)
+                    {
+                        return ImageFunctions.ImageErrorMessage();
+                    }
                     var resized = skImage.Resize(new SKImageInfo(size, size), SKFilterQuality.Medium);
                     var writeableBitmap = resized.ToWriteableBitmap();
                     writeableBitmap.Freeze();
@@ -104,17 +108,17 @@ internal static class Thumbnails
             {
                 // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
                 // ReSharper disable once MethodHasAsyncOverload
-                image.Read(fileStream);
+                image?.Read(fileStream);
             }
             else
             {
                 await image.ReadAsync(fileStream).ConfigureAwait(false);
             }
-            image.Thumbnail(new MagickGeometry(size, size));
-            var bmp = image.ToBitmapSource();
+            image?.Thumbnail(new MagickGeometry(size, size));
+            var bmp = image?.ToBitmapSource();
             bmp?.Freeze();
-            image.Dispose();
-            return bmp ?? ImageFunctions.ShowLogo();
+            image?.Dispose();
+            return bmp ?? ImageFunctions.ImageErrorMessage();
         }
         catch (Exception e)
         {

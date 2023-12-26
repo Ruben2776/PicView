@@ -178,6 +178,7 @@ internal static class UpdateImage
             return;
         }
 
+        preLoadValue.FileInfo ??= new FileInfo(Pics[FolderIndex]);
         if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
         {
             var frames = await Task.FromResult(ImageFunctions.GetImageFrames(preLoadValue.FileInfo.FullName))

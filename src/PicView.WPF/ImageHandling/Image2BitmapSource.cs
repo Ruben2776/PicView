@@ -22,7 +22,7 @@ internal static class Image2BitmapSource
     /// </summary>
     /// <param name="fileInfo">The FileInfo representing the image file.</param>
     /// <returns>A Task containing the BitmapSource if successful, otherwise an error image.</returns>
-    internal static async Task<BitmapSource> ReturnBitmapSourceAsync(FileInfo fileInfo)
+    internal static async Task<BitmapSource?> ReturnBitmapSourceAsync(FileInfo fileInfo)
     {
         if (fileInfo is not { Length: > 0 })
         {
@@ -152,13 +152,13 @@ internal static class Image2BitmapSource
     /// </summary>
     /// <param name="fileInfo">The FileInfo representing the SVG file.</param>
     /// <param name="magickFormat">The MagickFormat for the SVG image.</param>
-    /// <returns>A Task containing the BitmapSource for SVG if successful, otherwise an error image.</returns>
-    private static async Task<BitmapSource> GetMagickSvg(FileInfo fileInfo, MagickFormat magickFormat)
+    /// <returns>A Task containing the BitmapSource for SVG if successful</returns>
+    private static async Task<BitmapSource?> GetMagickSvg(FileInfo fileInfo, MagickFormat magickFormat)
     {
         var magickImage = await ImageDecoder.GetMagickSvgAsync(fileInfo, magickFormat).ConfigureAwait(false);
         if (magickImage is null)
         {
-            return ImageFunctions.ImageErrorMessage();
+            return null;
         }
         var bitmap = magickImage.ToBitmapSource();
         bitmap.Freeze();
@@ -170,13 +170,13 @@ internal static class Image2BitmapSource
     /// Asynchronously returns a BitmapSource for Base64 images using MagickImage.
     /// </summary>
     /// <param name="fileInfo">The FileInfo representing the Base64 file.</param>
-    /// <returns>A Task containing the BitmapSource for Base64 if successful, otherwise an error image.</returns>
-    internal static async Task<BitmapSource> GetMagickBase64(FileInfo fileInfo)
+    /// <returns>A Task containing the BitmapSource for Base64 if successful</returns>
+    internal static async Task<BitmapSource?> GetMagickBase64(FileInfo fileInfo)
     {
         var magickImage = await ImageDecoder.Base64ToMagickImage(fileInfo).ConfigureAwait(false);
         if (magickImage is null)
         {
-            return ImageFunctions.ImageErrorMessage();
+            return null;
         }
         var bitmap = magickImage.ToBitmapSource();
         bitmap.Freeze();
@@ -184,12 +184,12 @@ internal static class Image2BitmapSource
         return bitmap;
     }
 
-    internal static async Task<BitmapSource> GetMagickBase64(string base64)
+    internal static async Task<BitmapSource?> GetMagickBase64(string base64)
     {
         var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
         if (magickImage is null)
         {
-            return ImageFunctions.ImageErrorMessage();
+            return null;
         }
         var bitmap = magickImage.ToBitmapSource();
         bitmap.Freeze();
@@ -201,13 +201,13 @@ internal static class Image2BitmapSource
     /// Asynchronously returns a BitmapSource using SKBitmap.
     /// </summary>
     /// <param name="fileInfo">The FileInfo representing the image file.</param>
-    /// <returns>A Task containing the BitmapSource if successful, otherwise an error image.</returns>
-    private static async Task<BitmapSource> GetWriteAbleBitmapAsync(FileInfo fileInfo)
+    /// <returns>A Task containing the BitmapSource if successful</returns>
+    private static async Task<BitmapSource?> GetWriteAbleBitmapAsync(FileInfo fileInfo)
     {
         using var sKBitmap = await fileInfo.GetSKBitmapAsync();
         if (sKBitmap is null)
         {
-            return ImageFunctions.ImageErrorMessage();
+            return null;
         }
 
         var skPic = sKBitmap.ToWriteableBitmap();
@@ -222,13 +222,13 @@ internal static class Image2BitmapSource
     /// </summary>
     /// <param name="fileInfo">The FileInfo representing the image file.</param>
     /// <param name="extension">The file extension</param>
-    /// <returns>A Task containing the BitmapSource if successful, otherwise an error image.</returns>
-    private static async Task<BitmapSource> GetDefaultBitmapSource(FileInfo fileInfo, string extension)
+    /// <returns>A Task containing the BitmapSource if successful</returns>
+    private static async Task<BitmapSource?> GetDefaultBitmapSource(FileInfo fileInfo, string extension)
     {
         var magickImage = await ImageDecoder.GetMagickImageAsync(fileInfo, extension).ConfigureAwait(false);
         if (magickImage is null)
         {
-            return ImageFunctions.ImageErrorMessage();
+            return null;
         }
 
         var bitmap = magickImage.ToBitmapSource();
