@@ -437,6 +437,9 @@ internal static class LoadPic
 
         if (!fileInfo.Exists)
         {
+            var next = ImageIteration.GetNextIndex(Reverse ? NavigateTo.Previous : NavigateTo.Next,
+                SettingsHelper.Settings.UIProperties.Looping, Pics, index);
+            await LoadPicAtIndexAsync(next).ConfigureAwait(false);
             return;
         }
 

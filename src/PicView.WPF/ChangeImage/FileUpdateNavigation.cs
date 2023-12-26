@@ -37,11 +37,17 @@ internal static class FileUpdateNavigation
             }
             return;
         }
+
         var fileInfo = new FileInfo(e.FullPath);
         if (fileInfo.Exists == false) { return; }
 
         var index = Navigation.Pics.IndexOf(e.FullPath);
         if (index < 0) { return; }
+
+        if (fileInfo.Exists == false)
+        {
+            return;
+        }
 
         try
         {

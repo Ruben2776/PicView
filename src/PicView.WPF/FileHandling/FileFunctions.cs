@@ -7,7 +7,6 @@ using PicView.WPF.UILogic;
 using System.Configuration;
 using System.IO;
 using System.Windows.Threading;
-using PicView.Core.Navigation;
 
 namespace PicView.WPF.FileHandling;
 
@@ -18,50 +17,48 @@ internal static class FileFunctions
     /// </summary>
     /// <param name="newPath"></param>
     /// <returns></returns>
-    internal static async Task<bool?> RenameFileWithErrorChecking(string newPath)
+    internal static async Task<bool?> RenameFileWithErrorChecking(string newPath, string oldPath)
     {
-        var extChanged = false;
-        if (Path.GetExtension(newPath) != Path.GetExtension(Navigation.Pics[Navigation.FolderIndex]))
+        if (Path.GetExtension(newPath) != Path.GetExtension(oldPath))
         {
-            await SaveImages.SaveImageAsync(newPath).ConfigureAwait(false);
-            var deleteFile = FileDeletionHelper.DeleteFile(Navigation.Pics[Navigation.FolderIndex], false);
+            await SaveImages.SaveImageAsync(oldPath, newPath).ConfigureAwait(false);
+            if (ErrorHandling.CheckOutOfRange() == false)
+            {
+                if (Navigation.Pics[Navigation.FolderIndex] == oldPath)
+                {
+                    PreLoader.Remove(Navigation.FolderIndex);
+                }
+            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                () => { SetTitle.SetTitleString(); });
+            await Task.Delay(1000); // Fixes "this action can't be completed because the file is open"
+            var deleteFile = FileDeletionHelper.DeleteFile(oldPath, false);
             if (!string.IsNullOrWhiteSpace(deleteFile))
             {
                 // Show error message to user
                 Tooltip.ShowTooltipMessage(deleteFile);
                 return null;
             }
-            extChanged = true;
         }
-        else if (!FileHelper.RenameFile(Navigation.Pics[Navigation.FolderIndex], newPath))
+        else if (!FileHelper.RenameFile(oldPath, newPath))
         {
             return null;
         }
-
-        // Check if the file is not in the same folder
-        if (!extChanged && Path.GetDirectoryName(newPath) !=
-            Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]))
+        else
         {
             if (Navigation.Pics.Count < 1)
             {
                 await LoadPic.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
                 return false;
             }
-
-            if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > Navigation.FolderIndex)
+            if (ErrorHandling.CheckOutOfRange() == false)
             {
-                UC.GetPicGallery.Container.Children.RemoveAt(Navigation.FolderIndex);
+                if (Navigation.Pics[Navigation.FolderIndex] == oldPath)
+                {
+                    PreLoader.Remove(Navigation.FolderIndex);
+                }
             }
-
-            Navigation.Pics.Remove(Navigation.Pics[Navigation.FolderIndex]);
-            await Navigation.GoToNextImage(NavigateTo.Next).ConfigureAwait(false);
-            return false;
         }
-
-        Navigation.Pics[Navigation.FolderIndex] = newPath;
-        PreLoader.Rename(Navigation.FolderIndex);
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-            () => { SetTitle.SetTitleString(); });
 
         return true;
     }

@@ -21,7 +21,7 @@ internal static class ImageInfo
         }
 
         e.Handled = true;
-        var rename = await FileFunctions.RenameFileWithErrorChecking(newFileName).ConfigureAwait(false);
+        var rename = await FileFunctions.RenameFileWithErrorChecking(newFileName, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
         if (rename.HasValue == false)
         {
             return;

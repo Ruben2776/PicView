@@ -93,14 +93,16 @@ internal static class EditTitleBar
             return;
         }
 
-        var success = await FileFunctions.RenameFileWithErrorChecking(ConfigureWindows.GetMainWindow.TitleText.Text)
+        var path = ConfigureWindows.GetMainWindow.TitleText.Text;
+        var success = await FileFunctions.RenameFileWithErrorChecking(path, Pics[FolderIndex])
             .ConfigureAwait(false);
         if (success.HasValue == false)
         {
             Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AnErrorOccuredMovingFile"));
+            return;
         }
 
-        await ImageInfo.UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
+        await ImageInfo.UpdateValuesAsync(new FileInfo(path)).ConfigureAwait(false);
     }
 
     /// <summary>

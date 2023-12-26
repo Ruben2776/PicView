@@ -1,19 +1,18 @@
-﻿using System.Diagnostics;
+﻿using ImageMagick;
+using PicView.WPF.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using ImageMagick;
-using PicView.WPF.ChangeImage;
-using PicView.WPF.UILogic;
 
 namespace PicView.WPF.ImageHandling;
 
 internal static class SaveImages
 {
-    internal static async Task<bool> SaveImageAsync(string path)
+    internal static async Task<bool> SaveImageAsync(string path, string destination)
     {
-        return await SaveImageAsync(0, false, null, Navigation.Pics[Navigation.FolderIndex], path, null, false)
+        return await SaveImageAsync(0, false, null, path, destination, null, false)
             .ConfigureAwait(false);
     }
 
