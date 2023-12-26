@@ -48,7 +48,7 @@ internal static class UpdateImage
 
             ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
 
-            SetOrientation(preLoadValue.Orientation.Value);
+            SetOrientation(preLoadValue.Orientation);
 
             FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
 

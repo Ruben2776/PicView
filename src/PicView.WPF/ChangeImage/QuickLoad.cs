@@ -1,4 +1,5 @@
-﻿using PicView.Core.Config;
+﻿using ImageMagick;
+using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
@@ -8,9 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using ImageMagick;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.LoadPic;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -83,16 +82,22 @@ internal static class QuickLoad
             }
         }, DispatcherPriority.Normal);
 
-        _ = AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
+        // Add recent files, except when browsing archive
+        if (string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile) && Pics.Count > FolderIndex)
+        {
+            FileHistoryNavigation.Add(Pics[FolderIndex]);
+        }
+
+        await AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
 
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
-            _ = PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
+            await PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
 
             if (shouldLoadBottomGallery)
             {
-                _ = Task.Run(async () =>
+                await Task.Run(async () =>
                 {
                     try
                     {
@@ -122,12 +127,6 @@ internal static class QuickLoad
                     }
                 });
             }
-        }
-
-        // Add recent files, except when browsing archive
-        if (string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile) && Pics.Count > FolderIndex)
-        {
-            FileHistoryNavigation.Add(Pics[FolderIndex]);
         }
     });
 }
