@@ -1,12 +1,13 @@
 ﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
-using PicView.Core.Navigation;
+using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
-using System.IO;
-using PicView.WPF.FileHandling;
 using System.Diagnostics;
+using System.IO;
+using PicView.Core.Gallery;
+using PicView.WPF.ImageHandling;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -60,7 +61,7 @@ internal static class FileUpdateNavigation
         }
         if (UC.GetPicGallery is not null)
         {
-            var thumbData = await GalleryLoad.GalleryThumbHolder.GetThumbDataAsync(index).ConfigureAwait(false);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
                 if (UC.GetPicGallery.Container.Children[index] is not PicGalleryItem item)
@@ -126,10 +127,12 @@ internal static class FileUpdateNavigation
 
         if (UC.GetPicGallery is not null)
         {
-            var thumbData = await GalleryLoad.GalleryThumbHolder.GetThumbDataAsync(index, fileInfo).ConfigureAwait(false);
+            var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[Navigation.FolderIndex],
+                (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(Navigation.FolderIndex, bitmapSource, fileInfo);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
-                var item = new PicGalleryItem(thumbData.BitmapSource, e.FullPath, false)
+                var item = new PicGalleryItem(bitmapSource, e.FullPath, false)
                 {
                     FileName = thumbData.FileName,
                     ThumbFileDate =

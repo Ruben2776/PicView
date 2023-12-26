@@ -16,6 +16,8 @@ using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.TransformImage.Rotation;
 using static PicView.WPF.UILogic.UC;
 using PicView.Core.Localization;
+using PicView.Core.Gallery;
+using PicView.WPF.PicGallery;
 
 namespace PicView.WPF.FileHandling;
 
@@ -251,14 +253,16 @@ internal static class OpenSave
                 await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
                 if (GetPicGallery is not null)
                 {
-                    var galleryThumbHolderItem = await GalleryThumbHolder.GetThumbDataAsync(FolderIndex)
-                        .ConfigureAwait(false);
+                    var fileInfo = new FileInfo(Pics[FolderIndex]);
+                    var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Pics[FolderIndex],
+                        (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
+                    var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(FolderIndex, bitmapSource, fileInfo);
                     await GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
-                        UpdatePic(FolderIndex, galleryThumbHolderItem.BitmapSource,
-                            galleryThumbHolderItem.FileLocation,
-                            galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
-                            galleryThumbHolderItem.FileDate);
+                        UpdatePic(FolderIndex, bitmapSource,
+                            thumbData.FileLocation,
+                            thumbData.FileName, thumbData.FileSize,
+                            thumbData.FileDate);
                     }, DispatcherPriority.Render);
                 }
             }

@@ -14,6 +14,9 @@ using PicView.Core.Navigation;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.Tooltip;
+using PicView.Core.Gallery;
+using PicView.WPF.PicGallery;
+using System;
 
 namespace PicView.WPF.FileHandling;
 
@@ -87,10 +90,12 @@ internal static class CopyPaste
             // Add next item to gallery if applicable
             if (UC.GetPicGallery is not null)
             {
-                var thumbData = await GalleryThumbHolder.GetThumbDataAsync(nextIndex).ConfigureAwait(false);
+                var fileInfo = new FileInfo(Pics[FolderIndex]);
+                var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Pics[FolderIndex],
+                    (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
-                    var item = new PicGalleryItem(thumbData.BitmapSource, newFile, false)
+                    var item = new PicGalleryItem(bitmapSource, newFile, false)
                     {
                         FileName = newFile
                     };

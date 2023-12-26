@@ -6,10 +6,16 @@ namespace PicView.Core.Navigation;
 public static class ErrorHelper
 {
     /// <summary>
-    /// If url returns "web", if base64 returns "base64" if file, returns file path, if directory returns "directory" else returns empty
+    /// Determines the type of resource based on the provided string.
     /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
+    /// <param name="s">The input string representing a URL, base64 data, file path, or directory path.</param>
+    /// <returns>
+    /// - If the input represents a web URL, returns "web".
+    /// - If the input represents base64-encoded data, returns "base64".
+    /// - If the input represents a valid file path, returns the file path.
+    /// - If the input represents a directory path, returns "directory".
+    /// - Otherwise, returns an empty string.
+    /// </returns>
     public static string CheckIfLoadableString(string s)
     {
         if (s.StartsWith("file:///"))

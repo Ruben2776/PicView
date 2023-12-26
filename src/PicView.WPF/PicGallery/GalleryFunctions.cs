@@ -9,8 +9,10 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.Gallery;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.UC;
+using PicView.WPF.ImageHandling;
 
 namespace PicView.WPF.PicGallery;
 
@@ -71,28 +73,28 @@ internal static class GalleryFunctions
 
         IsLoading = false; // Hack to cancel loading to prevent crash if it is running. Maybe find a better solution in future
 
-        var thumbs = new List<GalleryThumbHolder>();
+        var thumbs = new List<GalleryThumbInfo.GalleryThumbHolder>();
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        for (var i = 0; i < Navigation.Pics.Count; i++)
         {
-            for (var i = 0; i < Navigation.Pics.Count; i++)
+            try
             {
-                try
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
                     var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                    thumbs.Add(new GalleryThumbHolder(picGalleryItem.ThumbFileLocation.Text,
+                    var thumb = new GalleryThumbInfo.GalleryThumbHolder(picGalleryItem.ThumbFileLocation.Text,
                         picGalleryItem.ThumbFileName.Text, picGalleryItem.ThumbFileSize.Text,
-                        picGalleryItem.ThumbFileDate.Text, picGalleryItem.ThumbImage?.Source as BitmapSource));
-                }
-                catch (Exception)
-                {
-                    thumbs = null;
-                    Clear();
-                    _ = LoadAsync().ConfigureAwait(false);
-                    return;
-                }
+                        picGalleryItem.ThumbFileDate.Text, picGalleryItem.ThumbImage?.Source as BitmapSource);
+                    thumbs.Add(thumb);
+                }, DispatcherPriority.Render, cancelToken);
             }
-        }, DispatcherPriority.Render, cancelToken);
+            catch (Exception)
+            {
+                Clear();
+                await LoadAsync().ConfigureAwait(false);
+                return;
+            }
+        }
 
         try
         {
@@ -110,7 +112,7 @@ internal static class GalleryFunctions
             var i1 = i;
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                UpdatePic(i1, thumbs[i1].BitmapSource, thumbs[i1].FileLocation, thumbs[i1].FileName,
+                UpdatePic(i1, (BitmapSource?)thumbs[i1].ImageSource, thumbs[i1].FileLocation, thumbs[i1].FileName,
                     thumbs[i1].FileSize, thumbs[i1].FileDate);
             }, DispatcherPriority.Background, cancelToken);
         }

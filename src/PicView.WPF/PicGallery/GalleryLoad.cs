@@ -1,10 +1,9 @@
-﻿using PicView.Core.FileHandling;
+﻿using PicView.Core.Gallery;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -29,88 +28,6 @@ internal static class GalleryLoad
         // Add events and set fields when it's loaded.
         UC.GetPicGallery.grid.MouseLeftButtonDown += (_, _) => ConfigureWindows.GetMainWindow.Focus();
         UC.GetPicGallery.x2.MouseLeftButtonDown += (_, _) => GalleryToggle.CloseHorizontalGallery();
-    }
-
-    /// <summary>
-    /// Represents the data for a gallery thumbnail.
-    /// </summary>
-    internal class GalleryThumbHolder
-    {
-        /// <summary>
-        /// Gets or sets the file location of the thumbnail.
-        /// </summary>
-        internal string FileLocation { get; set; }
-
-        /// <summary>
-        /// Gets or sets the file name of the thumbnail.
-        /// </summary>
-        internal string FileName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the file size of the thumbnail.
-        /// </summary>
-        internal string FileSize { get; set; }
-
-        /// <summary>
-        /// Gets or sets the file date of the thumbnail.
-        /// </summary>
-        internal string FileDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the bitmap source of the thumbnail.
-        /// </summary>
-        internal BitmapSource BitmapSource { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GalleryThumbHolder"/> class.
-        /// </summary>
-        /// <param name="fileLocation">The file location of the thumbnail.</param>
-        /// <param name="fileName">The file name of the thumbnail.</param>
-        /// <param name="fileSize">The file size of the thumbnail.</param>
-        /// <param name="fileDate">The file date of the thumbnail.</param>
-        /// <param name="bitmapSource">The bitmap source of the thumbnail.</param>
-        internal GalleryThumbHolder(string fileLocation, string fileName, string fileSize, string fileDate,
-            BitmapSource bitmapSource)
-        {
-            FileLocation = fileLocation;
-            FileName = fileName;
-            FileSize = fileSize;
-            FileDate = fileDate;
-            BitmapSource = bitmapSource;
-        }
-
-        /// <summary>
-        /// Gets thumbnail data for the specified index.
-        /// </summary>
-        /// <param name="index">The index of the thumbnail.</param>
-        /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
-        internal static async Task<GalleryThumbHolder> GetThumbDataAsync(int index, FileInfo? fileInfo = null)
-        {
-            var fileNameLength = 60;
-            fileInfo ??= new FileInfo(Navigation.Pics[index]);
-            var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[index],
-                (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
-            var fileLocation = fileInfo.FullName;
-            fileLocation = fileLocation.Length > fileNameLength ? fileLocation.Shorten(fileNameLength) : fileLocation;
-            var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-            fileName = fileName.Length > fileNameLength ? fileName.Shorten(fileNameLength) : fileName;
-            var getFileSizeResource = Application.Current?.TryFindResource("FileSize");
-            var getFileDateResource = Application.Current?.TryFindResource("Modified");
-            var fileSize = "";
-            var fileDate = "";
-            if (getFileSizeResource != null)
-            {
-                fileSize = $"{getFileSizeResource}: {fileInfo.Length.GetReadableFileSize()}";
-            }
-
-            if (getFileDateResource != null)
-            {
-                fileDate =
-                    $"{getFileDateResource}: {fileInfo.LastWriteTimeUtc.ToString(CultureInfo.CurrentCulture)}";
-            }
-
-            return new GalleryThumbHolder(fileLocation, fileName, fileSize, fileDate, bitmapSource);
-        }
     }
 
     /// <summary>
@@ -274,13 +191,15 @@ internal static class GalleryLoad
 
         async Task UpdateThumbAsync(int i, CancellationToken token)
         {
-            var galleryThumbHolderItem =
-                await GalleryThumbHolder.GetThumbDataAsync(i).ConfigureAwait(false);
+            var fileInfo = new FileInfo(Navigation.Pics[i]);
+            var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[i],
+                (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, bitmapSource, fileInfo);
             await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
             {
-                UpdatePic(i, galleryThumbHolderItem.BitmapSource, galleryThumbHolderItem.FileLocation,
-                    galleryThumbHolderItem.FileName, galleryThumbHolderItem.FileSize,
-                    galleryThumbHolderItem.FileDate);
+                UpdatePic(i, bitmapSource, thumbData.FileLocation,
+                    thumbData.FileName, thumbData.FileSize,
+                    thumbData.FileDate);
             }, DispatcherPriority.Background, token);
             if (updates >= Navigation.Pics.Count)
                 IsLoading = false;
