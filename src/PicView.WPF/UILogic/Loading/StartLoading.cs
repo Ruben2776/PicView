@@ -62,8 +62,11 @@ internal static class StartLoading
                 if (args.Length > 1)
                 {
                     // Another instance is running, send arguments and exit
-                    await IPCHelper.SendArgumentToRunningInstance(args[1], pipeName).ConfigureAwait(false);
-                    Environment.Exit(0);
+                    var argument = await IPCHelper.SendArgumentToRunningInstance(args[1], pipeName).ConfigureAwait(false);
+                    if (argument)
+                    {
+                        Environment.Exit(0);
+                    }
                 }
             }
             else
@@ -76,6 +79,7 @@ internal static class StartLoading
         MainWindow? mainWindow = null;
         var language = SettingsHelper.Settings.UIProperties.UserLanguage;
         await Core.Localization.TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
+
         await startupWindow.Dispatcher.InvokeAsync(() =>
         {
             mainWindow = new MainWindow();

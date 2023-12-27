@@ -1,26 +1,35 @@
-﻿using System.Diagnostics;
+﻿using PicView.Core.ProcessHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.UILogic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using PicView.WPF.ChangeImage;
 
 namespace PicView.WPF.ProcessHandling
 {
     internal static class IPCHelper
     {
-        public static async Task SendArgumentToRunningInstance(string arg, string pipeName)
+        public static async Task<bool> SendArgumentToRunningInstance(string arg, string pipeName)
         {
             await using var pipeClient = new NamedPipeClientStream(pipeName);
             try
             {
-                await pipeClient.ConnectAsync(5000).ConfigureAwait(false);
+                await pipeClient.ConnectAsync(750).ConfigureAwait(false);
 
                 await using var writer = new StreamWriter(pipeClient);
                 await writer.WriteLineAsync(arg).ConfigureAwait(false);
             }
-            catch (Exception)
+            catch (TimeoutException)
             {
-                // Handle connection or write error
+                return false;
             }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(SendArgumentToRunningInstance)} exception: \n{ex}");
+#endif
+            }
+            return true;
         }
 
         public static async Task StartListeningForArguments(string pipeName)
@@ -43,11 +52,17 @@ namespace PicView.WPF.ProcessHandling
                         Trace.WriteLine("Received argument: " + line);
 #endif
                         await LoadPic.LoadPicFromStringAsync(line).ConfigureAwait(false);
+                        await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
+                        {
+                            ConfigureWindows.GetMainWindow.Focus();
+                        });
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // Handle connection or read error
+#if DEBUG
+                    Trace.WriteLine($"{nameof(StartListeningForArguments)} exception: \n{ex}");
+#endif
                 }
             }
         }

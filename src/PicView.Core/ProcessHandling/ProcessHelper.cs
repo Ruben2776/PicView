@@ -53,7 +53,7 @@ public static class ProcessHelper
     /// Starts a new instance of the current process with the provided file argument.
     /// </summary>
     /// <param name="argument">The file argument to be passed to the new instance of the current process.</param>
-    public static void StartProcessWithFileArgument(string argument)
+    public static void StartNewProcess(string argument)
     {
         var pathToExe = GetPathToProcess();
 

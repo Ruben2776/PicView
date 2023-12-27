@@ -253,7 +253,7 @@ internal static class CopyPaste
 
             for (var i = 1; i < files.Length; i++) // If Clipboard has more files
             {
-                Core.ProcessHandling.ProcessHelper.StartProcessWithFileArgument(files[i]);
+                Core.ProcessHandling.ProcessHelper.StartNewProcess(files[i]);
             }
         }
         else if (Clipboard.ContainsImage()) // Clipboard Image

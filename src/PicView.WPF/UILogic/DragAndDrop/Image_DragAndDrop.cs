@@ -207,7 +207,7 @@ internal static class ImageDragAndDrop
             // Open additional windows if multiple files dropped
             foreach (var file in files.Skip(1))
             {
-                Core.ProcessHandling.ProcessHelper.StartProcessWithFileArgument(file);
+                Core.ProcessHandling.ProcessHelper.StartNewProcess(file);
             }
         });
     }
