@@ -163,6 +163,7 @@
                             x:Name="MiscSettingsLabel"
                             Margin="0,0,0,5"
                             VerticalAlignment="Center"
+                            d:Content="Misc settings"
                             Content=""
                             Foreground="{StaticResource MainColorBrush}" />
 

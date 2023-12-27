@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.ImageDecoding;
 using Brush = System.Windows.Media.Brush;
 using FontFamily = System.Windows.Media.FontFamily;
 using Point = System.Windows.Point;
@@ -39,28 +40,12 @@ internal static class ImageFunctions
 
         try
         {
-            using var image = new MagickImage(Navigation.Pics[Navigation.FolderIndex]);
-            var profile = image?.GetExifProfile();
-            if (profile is null)
-            {
-                profile = new ExifProfile(Navigation.Pics[Navigation.FolderIndex]);
-                if (profile is null || image is null)
-                    return false;
-            }
-            else if (image is null)
-                return false;
-
-            profile.SetValue(ExifTag.Rating, rating);
-            image.SetProfile(profile);
-
-            image.Write(Navigation.Pics[Navigation.FolderIndex]);
-            return true;
+            return EXIFHelper.SetEXIFRating(Navigation.Pics[Navigation.FolderIndex], rating);
         }
         catch (MagickException exception)
         {
 #if DEBUG
-            Trace.WriteLine(
-                $"{nameof(ImageFunctions)}::{nameof(SetRating)} caught exception:\n{exception.Message}");
+            Trace.WriteLine($"{nameof(ImageFunctions)}::{nameof(SetRating)} caught exception:\n{exception.Message}");
 #endif
             Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
             return false;
@@ -140,17 +125,17 @@ internal static class ImageFunctions
     /// <returns>True if the optimization was successful, false otherwise.</returns>
     internal static bool OptimizeImage(string file, bool lossless = true)
     {
-        // Create a new ImageOptimizer with the specified lossless compression option
+        // Create a new ImageOptimizationHelper with the specified lossless compression option
         ImageOptimizer imageOptimizer = new()
         {
             OptimalCompression = lossless
         };
 
-        // Check if the file is supported by the ImageOptimizer
+        // Check if the file is supported by the ImageOptimizationHelper
         if (imageOptimizer.IsSupported(file) == false)
         {
             // Show a tooltip message indicating that the file is unsupported
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["UnsupportedFile"], true, TimeSpan.FromSeconds(5));
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnsupportedFile"), true, TimeSpan.FromSeconds(5));
 
             // Return false to indicate that the optimization was not successful
             return false;
@@ -158,7 +143,7 @@ internal static class ImageFunctions
 
         try
         {
-            // Compress the image using the ImageOptimizer and return true if successful
+            // Compress the image using the ImageOptimizationHelper and return true if successful
             return imageOptimizer.LosslessCompress(file);
         }
         catch (MagickException exception)

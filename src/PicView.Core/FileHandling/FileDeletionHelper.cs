@@ -44,21 +44,17 @@ public static class FileDeletionHelper
 #if DEBUG
             Trace.WriteLine("Temp zip files deleted");
 #endif
-        }
-        catch (Exception)
-        {
-            return;
-        }
 
-        try
-        {
             Directory.Delete(ArchiveHelper.TempFilePath);
 #if DEBUG
             Trace.WriteLine("Temp zip folder " + ArchiveHelper.TempFilePath + " deleted");
 #endif
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+#if DEBUG
+            Trace.WriteLine($"{nameof(DeleteTempFiles)} caught exception:\n{exception.Message}");
+#endif
             return;
         }
 

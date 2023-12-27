@@ -20,4 +20,25 @@ public static class EXIFHelper
         var orientationValue = profile?.GetValue(ExifTag.Orientation);
         return orientationValue?.Value ?? 0;
     }
+
+    public static bool SetEXIFRating(string filePath, ushort rating)
+    {
+        using var image = new MagickImage(filePath);
+        var profile = image?.GetExifProfile();
+        if (profile is null)
+        {
+            profile = new ExifProfile(filePath);
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (profile is null || image is null)
+                return false;
+        }
+        else if (image is null)
+            return false;
+
+        profile.SetValue(ExifTag.Rating, rating);
+        image.SetProfile(profile);
+
+        image.Write(filePath);
+        return true;
+    }
 }
