@@ -305,5 +305,6 @@
   "Thumbnail": "Thumb",
   "Start": "Start",
   "Cancel": "Cancel",
-  "None": "None"
+  "None": "None",
+  "ApplicationStartup": "Application startup"
 }

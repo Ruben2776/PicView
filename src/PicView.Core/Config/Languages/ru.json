@@ -305,5 +305,6 @@
   "Thumbnail": "Thumb",
   "Start": "Начинать",
   "Cancel": "Отмена",
-  "None": "Никто"
+  "None": "Никто",
+  "ApplicationStartup": "Запуск приложения"
 }

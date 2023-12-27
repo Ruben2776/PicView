@@ -305,5 +305,6 @@
   "Thumbnail": "Miniatură",
   "Start": "Pornire",
   "Cancel": "Anulare",
-  "None": "Nici unul"
+  "None": "Nici unul",
+  "ApplicationStartup": "Pornirea aplicației"
 }

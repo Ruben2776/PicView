@@ -278,6 +278,25 @@
                             IsTabStop="False" />
 
                         <Label
+                            x:Name="StartUpLabel"
+                            Margin="0,15,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            d:Content="Start Up" />
+
+                        <ComboBox
+                            x:Name="StartUpBox"
+                            Margin="5,9,0,7"
+                            HorizontalAlignment="Left"
+                            IsTabStop="False">
+                            <ComboBoxItem
+                                x:Name="StartUpNone"
+                                d:Content="None"
+                                d:IsSelected="True" />
+                            <ComboBoxItem x:Name="StartUpLastFile" d:Content="Open Last File" />
+                        </ComboBox>
+
+                        <Label
                             x:Name="MouseWheelLabel"
                             Margin="0,3,0,4"
                             HorizontalAlignment="Left"

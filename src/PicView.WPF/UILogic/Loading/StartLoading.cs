@@ -1,5 +1,4 @@
-﻿using PicView.Core.Calculations;
-using PicView.Core.Config;
+﻿using PicView.Core.Config;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.Shortcuts;

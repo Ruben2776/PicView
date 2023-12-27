@@ -337,6 +337,18 @@ public partial class SettingsWindow
                 ZoomLogic.TriggerScalingModeUpdate();
             };
 
+            StartUpNone.IsSelected = SettingsHelper.Settings.StartUp.OpenLastFile == false;
+            StartUpLastFile.IsSelected = SettingsHelper.Settings.StartUp.OpenLastFile;
+
+            StartUpNone.Selected += delegate
+            {
+                SettingsHelper.Settings.StartUp.OpenLastFile = false;
+            };
+            StartUpLastFile.Selected += delegate
+            {
+                SettingsHelper.Settings.StartUp.OpenLastFile = true;
+            };
+
             switch (SettingsHelper.Settings.Theme.ColorTheme)
             {
                 case 1:
@@ -442,6 +454,9 @@ public partial class SettingsWindow
         LightThemeRadio.Content = TranslationHelper.GetTranslation("LightTheme");
         ThemeRestart.Text = TranslationHelper.GetTranslation("ChangingThemeRequiresRestart");
         ThemeRestart.ToolTip = TranslationHelper.GetTranslation("RestartApp");
+        StartUpLabel.Content = TranslationHelper.GetTranslation("StartUp");
+        StartUpNone.Content = TranslationHelper.GetTranslation("None");
+        StartUpLastFile.Content = TranslationHelper.GetTranslation("OpenLastFile");
     }
 
     #region EventHandlers

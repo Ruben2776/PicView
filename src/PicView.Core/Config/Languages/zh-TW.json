@@ -305,5 +305,6 @@
   "Thumbnail": "縮圖",
   "Start": "啟動",
   "Cancel": "取消",
-  "None": "沒有任何"
+  "None": "沒有任何",
+  "ApplicationStartup": "應用程式啟動"
 }

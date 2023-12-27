@@ -305,5 +305,6 @@
   "Thumbnail": "Miniatur",
   "Start": "Anfang",
   "Cancel": "Abbrechen",
-  "None": "Keiner"
+  "None": "Keiner",
+  "ApplicationStartup": "Anwendungsstart"
 }

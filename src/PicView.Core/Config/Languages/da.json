@@ -305,5 +305,6 @@
   "Thumbnail": "Thumb",
   "Start": "Start",
   "Cancel": "Annuler",
-  "None": "Ingen"
+  "None": "Ingen",
+  "ApplicationStartup": "Opstart af programmet"
 }

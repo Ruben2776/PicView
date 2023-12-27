@@ -305,5 +305,6 @@
   "Thumbnail": "缩略图",
   "Start": "启动",
   "Cancel": "取消",
-  "None": "没有任何"
+  "None": "没有任何",
+  "ApplicationStartup": "应用程序启动"
 }
