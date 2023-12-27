@@ -9,6 +9,8 @@ using PicView.WPF.Views.Windows;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using PicView.Core.ProcessHandling;
+using PicView.WPF.ProcessHandling;
 using static PicView.WPF.UILogic.Loading.LoadContextMenus;
 using static PicView.WPF.UILogic.Loading.LoadControls;
 using static PicView.WPF.UILogic.Sizing.WindowSizing;
@@ -48,6 +50,26 @@ internal static class StartLoading
                 path = Path.GetFullPath(path);
                 LockScreenHelper.SetLockScreenImage(path);
                 Environment.Exit(0);
+            }
+        }
+
+        if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
+        {
+            var pipeName = "PicViewPipe";
+
+            if (ProcessHelper.CheckIfAnotherInstanceIsRunning())
+            {
+                if (args.Length > 1)
+                {
+                    // Another instance is running, send arguments and exit
+                    await IPCHelper.SendArgumentToRunningInstance(args[1], pipeName).ConfigureAwait(false);
+                    Environment.Exit(0);
+                }
+            }
+            else
+            {
+                // No other instance is running, create named pipe server
+                _ = IPCHelper.StartListeningForArguments(pipeName).ConfigureAwait(false);
             }
         }
 

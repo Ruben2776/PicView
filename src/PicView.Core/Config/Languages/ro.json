@@ -306,5 +306,6 @@
   "Start": "Pornire",
   "Cancel": "Anulare",
   "None": "Nici unul",
-  "ApplicationStartup": "Pornirea aplicației"
+  "ApplicationStartup": "Pornirea aplicației",
+  "OpenInSameWindow": "Deschideți fișierele în aceeași fereastră"
 }

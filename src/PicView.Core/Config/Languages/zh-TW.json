@@ -306,5 +306,6 @@
   "Start": "啟動",
   "Cancel": "取消",
   "None": "沒有任何",
-  "ApplicationStartup": "應用程式啟動"
+  "ApplicationStartup": "應用程式啟動",
+  "OpenInSameWindow": "在同一視窗中開啟檔案"
 }

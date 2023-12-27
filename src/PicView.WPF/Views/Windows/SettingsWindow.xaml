@@ -236,6 +236,7 @@
                                 <TextBlock
                                     x:Name="AllowZoomOutTextBlock"
                                     Width="310"
+                                    d:Text="Allow Zoom Out"
                                     Focusable="False"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                     FontSize="13"
@@ -257,6 +258,28 @@
                                 <TextBlock
                                     x:Name="ShowFileSavingDialogTextBlock"
                                     Width="310"
+                                    d:Text="Show File Saving Dialog"
+                                    Focusable="False"
+                                    FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
+                                    FontSize="13"
+                                    Text=""
+                                    TextWrapping="Wrap" />
+                            </CheckBox.Content>
+                        </CheckBox>
+
+                        <CheckBox
+                            x:Name="OpenInSameWindowRadio"
+                            Margin="10,0,0,0"
+                            HorizontalContentAlignment="Center"
+                            Focusable="False">
+                            <CheckBox.Foreground>
+                                <SolidColorBrush x:Name="OpenInSameWindowText" Color="{StaticResource MainColor}" />
+                            </CheckBox.Foreground>
+                            <CheckBox.Content>
+                                <TextBlock
+                                    x:Name="OpenInSameWindowTextBlock"
+                                    Width="310"
+                                    d:Text="OpenInSameWindow"
                                     Focusable="False"
                                     FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                     FontSize="13"

@@ -306,5 +306,6 @@
   "Start": "Start",
   "Cancel": "Cancel",
   "None": "None",
-  "ApplicationStartup": "Application startup"
+  "ApplicationStartup": "Application startup",
+  "OpenInSameWindow": "Open files in the same window"
 }

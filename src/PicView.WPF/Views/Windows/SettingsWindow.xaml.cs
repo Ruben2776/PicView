@@ -273,6 +273,12 @@ public partial class SettingsWindow
                 SettingsHelper.Settings.UIProperties.ShowFileSavingDialog = !SettingsHelper.Settings.UIProperties.ShowFileSavingDialog;
             };
 
+            OpenInSameWindowRadio.IsChecked = SettingsHelper.Settings.UIProperties.OpenInSameWindow;
+            OpenInSameWindowRadio.Click += delegate
+            {
+                SettingsHelper.Settings.UIProperties.OpenInSameWindow = !SettingsHelper.Settings.UIProperties.OpenInSameWindow;
+            };
+
             ShowBottomRadio.IsChecked = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
             ShowBottomRadio.Click += delegate
             {
@@ -457,6 +463,7 @@ public partial class SettingsWindow
         StartUpLabel.Content = TranslationHelper.GetTranslation("StartUp");
         StartUpNone.Content = TranslationHelper.GetTranslation("None");
         StartUpLastFile.Content = TranslationHelper.GetTranslation("OpenLastFile");
+        OpenInSameWindowTextBlock.Text = TranslationHelper.GetTranslation("OpenInSameWindow");
     }
 
     #region EventHandlers
@@ -582,6 +589,10 @@ public partial class SettingsWindow
         // SaveDialogRadio
         SaveDialogRadio.MouseEnter += delegate { ButtonMouseOverAnim(SaveDialogText); };
         SaveDialogRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(SaveDialogText); };
+
+        // OpenInSameWindowRadio
+        OpenInSameWindowRadio.MouseEnter += delegate { ButtonMouseOverAnim(OpenInSameWindowText); };
+        OpenInSameWindowRadio.MouseLeave += delegate { ButtonMouseLeaveAnim(OpenInSameWindowText); };
 
         // ShowBottomRadio
         ShowBottomRadio.MouseEnter += delegate { ButtonMouseOverAnim(ShowBottomText); };

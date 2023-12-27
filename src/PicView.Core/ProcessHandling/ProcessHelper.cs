@@ -86,4 +86,26 @@ public static class ProcessHelper
         };
         process.Start();
     }
+
+    public static bool CheckIfAnotherInstanceIsRunning()
+    {
+        try
+        {
+            // Get the current process name without the extension
+            var currentProcessName = Process.GetCurrentProcess().ProcessName;
+
+            // Check for other processes with the same name
+            var processes = Process.GetProcessesByName(currentProcessName);
+
+            // If there is more than one process, another instance is running
+            return processes.Length > 1;
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(CheckIfAnotherInstanceIsRunning)}: caught exception:\n{exception.Message}");
+#endif
+            return false;
+        }
+    }
 }

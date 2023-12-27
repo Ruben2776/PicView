@@ -38,6 +38,7 @@ public class UIProperties
     public bool Looping { get; set; } = false;
     public int BgColorChoice { get; set; } = 0;
     public double SlideShowTimer { get; set; } = 5000;
+    public bool OpenInSameWindow { get; set; } = false;
 }
 
 public class Theme
