@@ -8,6 +8,7 @@ using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 using PicView.WPF.SystemIntegration;
 using static PicView.WPF.PicGallery.GalleryNavigation;
 
@@ -64,7 +65,7 @@ public partial class PicGalleryItem
         //Print
         var printMenu = new MenuItem
         {
-            Header = Application.Current.Resources["Print"],
+            Header = TranslationHelper.GetTranslation("Print"),
             Icon = new Path
             {
                 Width = 14,
@@ -81,7 +82,7 @@ public partial class PicGalleryItem
         // Open With
         var openWithMenu = new MenuItem
         {
-            Header = Application.Current.Resources["OpenWith"],
+            Header = TranslationHelper.GetTranslation("OpenWith"),
             Icon = new Path
             {
                 Width = 14,
@@ -98,7 +99,7 @@ public partial class PicGalleryItem
         // Show in folder
         var showInFolderMenu = new MenuItem
         {
-            Header = Application.Current.Resources["ShowInFolder"],
+            Header = TranslationHelper.GetTranslation("ShowInFolder"),
             Icon = new Path
             {
                 Width = 14,
@@ -117,7 +118,7 @@ public partial class PicGalleryItem
         // Set As Wallpaper
         var setAsWallpaperMenu = new MenuItem
         {
-            Header = Application.Current.Resources["SetAsWallpaper"],
+            Header = TranslationHelper.GetTranslation("SetAsWallpaper"),
             Icon = new Path
             {
                 Width = 14,
@@ -136,7 +137,7 @@ public partial class PicGalleryItem
         // Set As Lockscreen
         var setAsLockScreenImageMenu = new MenuItem
         {
-            Header = Application.Current.Resources["SetAsLockScreenImage"],
+            Header = TranslationHelper.GetTranslation("SetAsLockScreenImage"),
             Icon = new Path
             {
                 Width = 14,
@@ -156,7 +157,7 @@ public partial class PicGalleryItem
         // Copy File
         var copyFileMenu = new MenuItem
         {
-            Header = Application.Current.Resources["CopyFile"],
+            Header = TranslationHelper.GetTranslation("CopyFile"),
             Icon = new Path
             {
                 Width = 14,
@@ -173,7 +174,7 @@ public partial class PicGalleryItem
         // Copy Image
         var copyImageMenu = new MenuItem
         {
-            Header = Application.Current.Resources["CopyImage"],
+            Header = TranslationHelper.GetTranslation("CopyImage"),
             Icon = new Path
             {
                 Width = 14,
@@ -190,7 +191,7 @@ public partial class PicGalleryItem
         // Copy Image
         var copyBase64Menu = new MenuItem
         {
-            Header = Application.Current.Resources["Copy"] + "base64",
+            Header = TranslationHelper.GetTranslation("Copy") + "base64",
             Icon = new Path
             {
                 Width = 14,
@@ -210,7 +211,7 @@ public partial class PicGalleryItem
         // Cut
         var fileCutMenu = new MenuItem
         {
-            Header = Application.Current.Resources["FileCut"],
+            Header = TranslationHelper.GetTranslation("FileCut"),
             Icon = new Path
             {
                 Width = 14,
@@ -227,7 +228,7 @@ public partial class PicGalleryItem
         // Delete file
         var deleteFileMenu = new MenuItem
         {
-            Header = Application.Current.Resources["DeleteFile"],
+            Header = TranslationHelper.GetTranslation("DeleteFile"),
             Icon = new Path
             {
                 Width = 14,
