@@ -34,7 +34,7 @@ internal class DefaultKeybindings
     public string E { get; set; } = "GalleryClick";
     public string T { get; set; } = "SetTopMost";
     public string Enter { get; set; } = "GalleryClick";
-    public string Delete { get; set; } = "DeleteFile";
+    public string Delete { get; set; } = "DeleteFileWithErrorMsg";
     public string I { get; set; } = "ImageInfoWindow";
     public string F6 { get; set; } = "EffectsWindow";
     public string F1 { get; set; } = "AboutWindow";

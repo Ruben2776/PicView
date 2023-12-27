@@ -125,6 +125,9 @@ internal static class FileUpdateNavigation
         var newList = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
         if (newList.Count == 0) { return; }
         if (newList.Count == Navigation.Pics.Count) { return; }
+
+        if (fileInfo.Exists == false) { return; }
+
         Navigation.Pics = newList;
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ChangeTitlebar.SetTitle.SetTitleString);

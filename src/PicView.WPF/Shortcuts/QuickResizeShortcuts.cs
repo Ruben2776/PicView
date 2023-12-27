@@ -1,14 +1,14 @@
-﻿using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using ImageMagick;
+﻿using ImageMagick;
 using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace PicView.WPF.Shortcuts;
 
@@ -150,10 +150,24 @@ internal static partial class QuickResizeShortcuts
 
     internal static async Task Fire(string width, string height)
     {
-        var resize = await FireResizeAsync(width, height).ConfigureAwait(false);
-        if (resize && UC.GetQuickResize is not null)
+        if (UC.GetQuickResize is not null)
         {
             UC.GetQuickResize.Hide();
+        }
+        try
+        {
+            var resize = await FireResizeAsync(width, height).ConfigureAwait(false);
+            if (!resize)
+            {
+                Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnexpectedError"));
+            }
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(QuickResizeShortcuts)} {nameof(Fire)} exception:\n{ex.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
         }
     }
 

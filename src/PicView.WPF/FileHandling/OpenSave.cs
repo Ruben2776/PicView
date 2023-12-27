@@ -1,23 +1,22 @@
 ﻿using Microsoft.Win32;
+using PicView.Core.Config;
+using PicView.Core.Gallery;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.Core.Config;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.TransformImage.Rotation;
 using static PicView.WPF.UILogic.UC;
-using PicView.Core.Localization;
-using PicView.Core.Gallery;
-using PicView.WPF.PicGallery;
 
 namespace PicView.WPF.FileHandling;
 

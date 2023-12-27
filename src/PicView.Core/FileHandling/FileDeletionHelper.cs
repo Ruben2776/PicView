@@ -5,7 +5,7 @@ namespace PicView.Core.FileHandling;
 
 public static class FileDeletionHelper
 {
-    public static string DeleteFile(string file, bool recycle)
+    public static string DeleteFileWithErrorMsg(string file, bool recycle)
     {
         if (File.Exists(file) == false)
         {

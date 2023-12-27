@@ -22,23 +22,18 @@ internal static class FileFunctions
         if (Path.GetExtension(newPath) != Path.GetExtension(oldPath))
         {
             await SaveImages.SaveImageAsync(oldPath, newPath).ConfigureAwait(false);
-            if (ErrorHandling.CheckOutOfRange() == false)
-            {
-                if (Navigation.Pics[Navigation.FolderIndex] == oldPath)
-                {
-                    PreLoader.Remove(Navigation.FolderIndex);
-                }
-            }
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                () => { SetTitle.SetTitleString(); });
-            await Task.Delay(1000); // Fixes "this action can't be completed because the file is open"
-            var deleteFile = FileDeletionHelper.DeleteFile(oldPath, false);
-            if (!string.IsNullOrWhiteSpace(deleteFile))
+
+            await Task.Delay(700); // Fixes "this action can't be completed because the file is open"
+            var deleteMsg = FileDeletionHelper.DeleteFileWithErrorMsg(oldPath, false);
+            if (!string.IsNullOrWhiteSpace(deleteMsg))
             {
                 // Show error message to user
-                Tooltip.ShowTooltipMessage(deleteFile);
+                Tooltip.ShowTooltipMessage(deleteMsg);
                 return null;
             }
+            Refresh();
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(
+                SetTitle.SetTitleString, DispatcherPriority.Background);
         }
         else if (!FileHelper.RenameFile(oldPath, newPath))
         {
@@ -51,16 +46,18 @@ internal static class FileFunctions
                 await LoadPic.LoadPiFromFileAsync(newPath).ConfigureAwait(false);
                 return false;
             }
+        }
+        Refresh();
+        return true;
+
+        void Refresh()
+        {
             if (ErrorHandling.CheckOutOfRange() == false)
             {
-                if (Navigation.Pics[Navigation.FolderIndex] == oldPath)
-                {
-                    PreLoader.Remove(Navigation.FolderIndex);
-                }
+                Navigation.Pics.Remove(oldPath);
+                PreLoader.Clear(); // Need cache to be refreshed
             }
         }
-
-        return true;
     }
 
     /// <summary>

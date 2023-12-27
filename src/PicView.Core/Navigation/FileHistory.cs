@@ -94,7 +94,7 @@ public class FileHistory
             {
                 return;
             }
-            if (_fileHistory.Exists(e => e.EndsWith(fileName)))
+            if (_fileHistory.Exists(e => e is not null && e.EndsWith(fileName)))
             {
                 return;
             }

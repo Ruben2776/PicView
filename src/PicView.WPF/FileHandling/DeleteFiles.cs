@@ -65,7 +65,7 @@ internal static class DeleteFiles
 
         var fileName = Pics[FolderIndex];
         var index = Pics.IndexOf(fileName);
-        var deleteFile = FileDeletionHelper.DeleteFile(fileName, recycle);
+        var deleteFile = FileDeletionHelper.DeleteFileWithErrorMsg(fileName, recycle);
         if (!string.IsNullOrWhiteSpace(deleteFile))
         {
             // Show error message to user
@@ -125,7 +125,7 @@ internal static class DeleteFiles
             return;
         }
 
-        var deleteFile = FileDeletionHelper.DeleteFile(fileName, recycle);
+        var deleteFile = FileDeletionHelper.DeleteFileWithErrorMsg(fileName, recycle);
         if (!string.IsNullOrWhiteSpace(deleteFile))
         {
             // Show error message to user

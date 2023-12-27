@@ -2,10 +2,8 @@
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
-using PicView.WPF.UILogic.Sizing;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;

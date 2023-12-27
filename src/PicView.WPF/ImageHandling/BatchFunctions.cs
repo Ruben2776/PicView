@@ -84,7 +84,7 @@ internal static class BatchFunctions
                         await using var saveStream = new FileStream(destination, FileMode.Create, FileAccess.Write,
                             FileShare.ReadWrite, 4096, true);
                         await magickImage.WriteAsync(saveStream).ConfigureAwait(false);
-                        var deleteFile = FileDeletionHelper.DeleteFile(sourceFile.FullName, true);
+                        var deleteFile = FileDeletionHelper.DeleteFileWithErrorMsg(sourceFile.FullName, true);
                         if (!string.IsNullOrWhiteSpace(deleteFile))
                         {
                             // Show error message to user
@@ -142,7 +142,7 @@ internal static class BatchFunctions
 
                         if (File.Exists(destination))
                         {
-                            var deleteFile = FileDeletionHelper.DeleteFile(destination, true);
+                            var deleteFile = FileDeletionHelper.DeleteFileWithErrorMsg(destination, true);
                             if (!string.IsNullOrWhiteSpace(deleteFile))
                             {
                                 // Show error message to user
