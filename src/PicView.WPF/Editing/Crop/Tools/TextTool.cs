@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PicView.Core.Localization;
 using PicView.WPF.ConfigureSettings;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
@@ -69,6 +70,6 @@ internal class TextTool
         var width = Math.Round(_cropTool.Width / zoomValue);
         var height = Math.Round(_cropTool.Height / zoomValue);
         TextBlock.Text =
-            $"{Application.Current.Resources["Width"]} : {width}, {Application.Current.Resources["Height"]}: {height}";
+            $"{TranslationHelper.GetTranslation("Width")} : {width}, {TranslationHelper.GetTranslation("Height")}: {height}";
     }
 }

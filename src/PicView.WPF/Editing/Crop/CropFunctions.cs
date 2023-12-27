@@ -28,6 +28,17 @@ internal static class CropFunctions
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null || ZoomLogic.IsZoomed) return;
 
+        switch (RotationAngle)
+        {
+            case 0:
+            case 180:
+            case 90:
+            case 270:
+                break;
+
+            default: return;
+        }
+
         if (GetCroppingTool == null)
         {
             LoadControls.LoadCroppingTool();
