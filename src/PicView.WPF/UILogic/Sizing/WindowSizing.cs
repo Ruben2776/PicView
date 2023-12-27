@@ -8,6 +8,7 @@ using PicView.WPF.Views.UserControls.Buttons;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using PicView.Core.FileHandling;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.HideInterfaceLogic;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
@@ -371,7 +372,7 @@ internal static class WindowSizing
         GetSettingsWindow?.Close();
 
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-        DeleteFiles.DeleteTempFiles();
+        FileDeletionHelper.DeleteTempFiles();
         FileHistoryNavigation.WriteToFile();
         // Update the keybindings.json file
         await CustomKeybindings.UpdateKeyBindingsFile();

@@ -107,7 +107,7 @@ internal static class ErrorHandling
         }
 
         PreLoader.Clear();
-        DeleteTempFiles();
+        FileDeletionHelper.DeleteTempFiles();
     }
 
     /// <summary>
@@ -280,7 +280,7 @@ internal static class ErrorHandling
 
         if (!string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveHelper.TempFilePath))
         {
-            DeleteTempFiles();
+            FileDeletionHelper.DeleteTempFiles();
             Core.FileHandling.ArchiveHelper.TempFilePath = string.Empty;
         }
 

@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using PicView.Core.Config;
+using System.Diagnostics;
 using System.Text.Json;
-using PicView.Core.Config;
 
 namespace PicView.Core.Localization;
 
@@ -12,7 +11,6 @@ public static class TranslationHelper
 {
     public static string GetTranslation(string key)
     {
-        // ReSharper disable once InvertIf
         if (Language is null)
             return string.Empty;
 
@@ -41,7 +39,18 @@ public static class TranslationHelper
             }
             else
             {
-                // TODO: Recreate English file?
+                var languagesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
+
+                var file = Directory.GetFiles(languagesDirectory, "*.json").FirstOrDefault();
+                if (file != null)
+                {
+                    var text = await File.ReadAllTextAsync(file).ConfigureAwait(false);
+                    Language = JsonSerializer.Deserialize<Dictionary<string, string>>(text);
+                }
+                else
+                {
+                    throw new FileNotFoundException();
+                }
             }
         }
         catch (Exception exception)

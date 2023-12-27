@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.ErrorHandling;
@@ -200,7 +201,7 @@ internal static class UpdateImage
         GalleryFunctions.Clear();
         XWidth = XHeight = 0;
 
-        DeleteFiles.DeleteTempFiles();
+        FileDeletionHelper.DeleteTempFiles();
 
         if (ConfigureWindows.GetImageInfoWindow is not null)
         {

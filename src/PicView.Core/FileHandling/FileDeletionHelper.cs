@@ -27,4 +27,41 @@ public static class FileDeletionHelper
 
         return string.Empty;
     }
+
+    /// <summary>
+    /// Deletes the temporary files when an archived file has been opened
+    /// </summary>
+    public static void DeleteTempFiles()
+    {
+        if (!Directory.Exists(ArchiveHelper.TempFilePath))
+        {
+            return;
+        }
+
+        try
+        {
+            Array.ForEach(Directory.GetFiles(ArchiveHelper.TempFilePath), File.Delete);
+#if DEBUG
+            Trace.WriteLine("Temp zip files deleted");
+#endif
+        }
+        catch (Exception)
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.Delete(ArchiveHelper.TempFilePath);
+#if DEBUG
+            Trace.WriteLine("Temp zip folder " + ArchiveHelper.TempFilePath + " deleted");
+#endif
+        }
+        catch (Exception)
+        {
+            return;
+        }
+
+        ArchiveHelper.TempZipFile = ArchiveHelper.TempFilePath = null;
+    }
 }

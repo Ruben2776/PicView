@@ -1,4 +1,5 @@
-﻿using PicView.Core.FileHandling;
+﻿using Microsoft.Win32;
+using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
@@ -7,6 +8,7 @@ using PicView.WPF.ProcessHandling;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -87,7 +89,7 @@ public static class LockScreenHelper
         {
             Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("Applying"));
 
-            ProcessLogic.RunElevated("PicView.Tools.exe", "lockscreen," + path);
+            ProcessLogic.RunElevated("PicView.exe", "lockscreen," + path);
         }
         catch (Exception ex)
         {
@@ -99,7 +101,7 @@ public static class LockScreenHelper
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 SetTitle.SetTitleString();
-                Application.Current.MainWindow!.Cursor = Cursors.Arrow;
+                ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
             });
             return false;
         }
@@ -117,8 +119,32 @@ public static class LockScreenHelper
                         : checkOutOfRange
                             ? Navigation.Pics[Navigation.FolderIndex]
                             : Application.Current.Resources["Image"] as string);
-            Application.Current.MainWindow!.Cursor = Cursors.Arrow;
+            ConfigureWindows.GetMainWindow.Cursor = Cursors.Arrow;
         });
+
+        return true;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool Wow64DisableWow64FsRedirection(ref IntPtr ptr); //If on 64 bit, C# will replace "System32" with "SysWOW64". This disables that.
+
+    public static bool SetLockScreenImage(string path)
+    {
+        const string registryKey =
+            @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP";
+        var ptr = new IntPtr();
+        Wow64DisableWow64FsRedirection(ref ptr);
+
+        try
+        {
+            Registry.SetValue(registryKey, "LockScreenImageStatus", 1, RegistryValueKind.DWord);
+            Registry.SetValue(registryKey, "LockScreenImagePath", path, RegistryValueKind.String);
+            Registry.SetValue(registryKey, "LockScreenImageUrl", path, RegistryValueKind.String);
+        }
+        catch
+        {
+            return false;
+        }
 
         return true;
     }

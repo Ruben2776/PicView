@@ -17,6 +17,7 @@ using static PicView.WPF.UILogic.Tooltip;
 using PicView.Core.Gallery;
 using PicView.WPF.PicGallery;
 using System;
+using PicView.Core.FileHandling;
 
 namespace PicView.WPF.FileHandling;
 
@@ -48,40 +49,7 @@ internal static class CopyPaste
 
         try
         {
-            string newFile =
-                await Task.Run(() =>
-                {
-                    var dir = Path.GetDirectoryName(currentFile);
-                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(currentFile);
-                    var extension = Path.GetExtension(currentFile);
-
-                    int i = 1;
-
-                    // Check if the original filename already contains parentheses
-                    if (fileNameWithoutExtension.Contains("(") && fileNameWithoutExtension.EndsWith(")"))
-                    {
-                        // Extract the number from the existing parentheses
-                        var lastParenIndex = fileNameWithoutExtension.LastIndexOf("(", StringComparison.Ordinal);
-                        var numberStr = fileNameWithoutExtension.Substring(lastParenIndex + 1,
-                            fileNameWithoutExtension.Length - lastParenIndex - 2);
-
-                        if (int.TryParse(numberStr, out int existingNumber))
-                        {
-                            i = existingNumber + 1;
-                            fileNameWithoutExtension = fileNameWithoutExtension[..lastParenIndex].TrimEnd();
-                        }
-                    }
-
-                    // Generate a new filename with an incremented number inside parentheses
-                    do
-                    {
-                        newFile = Path.Combine(dir, $"{fileNameWithoutExtension}({i++}){extension}");
-                    } while (File.Exists(newFile));
-
-                    // Copy the file to the new location
-                    File.Copy(currentFile, newFile);
-                    return newFile;
-                });
+            var newFile = await Task.FromResult(FileHelper.DuplicateAndReturnFileName(currentFile)).ConfigureAwait(false);
 
             // Add the new file to Pics and Gallery, clear Preloader to refresh cache
             var nextIndex = ImageIteration.GetNextIndex(NavigateTo.Next, Slideshow.SlideTimer != null, Pics, FolderIndex);

@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using Microsoft.VisualBasic.FileIO;
-using PicView.Core.FileHandling;
+﻿using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
@@ -14,43 +10,6 @@ namespace PicView.WPF.FileHandling;
 
 internal static class DeleteFiles
 {
-    /// <summary>
-    /// Deletes the temporary files when an archived file has been opened
-    /// </summary>
-    internal static void DeleteTempFiles()
-    {
-        if (!Directory.Exists(Core.FileHandling.ArchiveHelper.TempFilePath))
-        {
-            return;
-        }
-
-        try
-        {
-            Array.ForEach(Directory.GetFiles(Core.FileHandling.ArchiveHelper.TempFilePath), File.Delete);
-#if DEBUG
-            Trace.WriteLine("Temp zip files deleted");
-#endif
-        }
-        catch (Exception)
-        {
-            return;
-        }
-
-        try
-        {
-            Directory.Delete(Core.FileHandling.ArchiveHelper.TempFilePath);
-#if DEBUG
-            Trace.WriteLine("Temp zip folder " + Core.FileHandling.ArchiveHelper.TempFilePath + " deleted");
-#endif
-        }
-        catch (Exception)
-        {
-            return;
-        }
-
-        Core.FileHandling.ArchiveHelper.TempZipFile = Core.FileHandling.ArchiveHelper.TempFilePath = null;
-    }
-
     /// <summary>
     /// Delete file or move it to recycle bin, navigate to next pic
     /// and display information

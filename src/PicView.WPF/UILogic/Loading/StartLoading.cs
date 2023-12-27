@@ -7,6 +7,7 @@ using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Misc;
 using PicView.WPF.Views.Windows;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using static PicView.WPF.UILogic.Loading.LoadContextMenus;
@@ -38,6 +39,19 @@ internal static class StartLoading
         }
 
         var args = Environment.GetCommandLineArgs();
+        if (args.Length > 1)
+        {
+            // Apply lockscreen and close
+            var arg = args[1];
+            if (arg.StartsWith("lockscreen"))
+            {
+                var path = arg[(arg.LastIndexOf(',') + 1)..];
+                path = Path.GetFullPath(path);
+                LockScreenHelper.SetLockScreenImage(path);
+                Environment.Exit(0);
+            }
+        }
+
         MainWindow? mainWindow = null;
         var language = SettingsHelper.Settings.UIProperties.UserLanguage;
         await Core.Localization.TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
@@ -132,7 +146,14 @@ internal static class StartLoading
             }
         }
 
-        await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
+        try
+        {
+            await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
+        }
+        catch (Exception)
+        {
+            //
+        }
 
         ConfigColors.UpdateColor();
     }
