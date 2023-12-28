@@ -1,21 +1,19 @@
-﻿using PicView.Core.Config;
-using PicView.Core.FileHandling;
-using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.FileHandling;
-using PicView.WPF.ImageHandling;
-using PicView.WPF.PicGallery;
-using PicView.WPF.SystemIntegration;
-using PicView.WPF.UILogic;
-using PicView.WPF.UILogic.Sizing;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.FileHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.SystemIntegration;
+using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
 using static PicView.WPF.ChangeImage.Navigation;
-using static PicView.WPF.FileHandling.DeleteFiles;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -278,10 +276,10 @@ internal static class ErrorHandling
         GalleryFunctions.Clear();
         ScaleImage.XWidth = ScaleImage.XHeight = 0;
 
-        if (!string.IsNullOrWhiteSpace(Core.FileHandling.ArchiveHelper.TempFilePath))
+        if (!string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath))
         {
             FileDeletionHelper.DeleteTempFiles();
-            Core.FileHandling.ArchiveHelper.TempFilePath = string.Empty;
+            ArchiveHelper.TempFilePath = string.Empty;
         }
 
         Taskbar.NoProgress();

@@ -49,6 +49,8 @@ internal static class QuickLoad
             mainWindow.MainImage.Source = bitmapSource;
             UpdateImage.SetOrientation(orientation);
             FitImage(bitmapSource.Width, bitmapSource.Height);
+            UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
+            mainWindow.MainImage.Cursor = Cursors.Arrow;
         }, DispatcherPriority.Send);
 
         if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
@@ -74,8 +76,6 @@ internal static class QuickLoad
         await mainWindow.Dispatcher.InvokeAsync(() =>
         {
             SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
-            UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
-            mainWindow.MainImage.Cursor = Cursors.Arrow;
             if (shouldLoadBottomGallery)
             {
                 GalleryToggle.ShowBottomGallery();

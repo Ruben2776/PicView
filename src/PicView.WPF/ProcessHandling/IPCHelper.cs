@@ -6,6 +6,9 @@ using System.IO.Pipes;
 
 namespace PicView.WPF.ProcessHandling
 {
+    /// <summary>
+    /// inter-process communication helper
+    /// </summary>
     internal static class IPCHelper
     {
         public static async Task<bool> SendArgumentToRunningInstance(string arg, string pipeName)

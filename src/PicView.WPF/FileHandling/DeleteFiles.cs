@@ -48,10 +48,6 @@ internal static class DeleteFiles
             return;
         }
 
-        ShowTooltipMessage(recycle
-            ? TranslationHelper.GetTranslation("SentFileToRecycleBin")
-            : TranslationHelper.GetTranslation("Deleted"));
-
         FolderIndex = ImageIteration.GetNextIndex(NavigateTo.Previous, Slideshow.SlideTimer != null, Pics, FolderIndex);
         if (FolderIndex < 0)
         {
@@ -63,6 +59,10 @@ internal static class DeleteFiles
         await PreLoader.AddAsync(FolderIndex, preloadValue?.FileInfo, preloadValue?.BitmapSource)
             .ConfigureAwait(false);
         await LoadPic.LoadPicAtIndexAsync(FolderIndex).ConfigureAwait(false);
+
+        ShowTooltipMessage(recycle
+            ? TranslationHelper.GetTranslation("SentFileToRecycleBin")
+            : TranslationHelper.GetTranslation("Deleted"));
     }
 
     /// Delete file or move it to recycle bin, navigate to next pic

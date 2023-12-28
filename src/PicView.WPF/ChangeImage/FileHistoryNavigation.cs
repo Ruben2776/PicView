@@ -106,7 +106,7 @@ internal static class FileHistoryNavigation
         }
 
         _fileHistory ??= new FileHistory();
-        var file = await Task.FromResult(_fileHistory.GetNextEntry(SettingsHelper.Settings.UIProperties.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
+        var file = await Task.FromResult(_fileHistory.GetPreviousEntry(SettingsHelper.Settings.UIProperties.Looping, Navigation.FolderIndex, Navigation.Pics)).ConfigureAwait(false);
 
         if (Navigation.Pics.Contains(file))
         {

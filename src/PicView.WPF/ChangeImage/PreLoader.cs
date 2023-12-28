@@ -241,13 +241,13 @@ internal static class PreLoader
             Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
 #endif
 
-        await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, async (i, loopState) =>
+        await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, async (i, _) =>
         {
             try
             {
                 if (Pics.Count == 0 || count != Pics.Count)
                 {
-                    loopState.ThrowIfCancellationRequested();
+                    await source.CancelAsync();
                 }
             }
             catch (Exception)
