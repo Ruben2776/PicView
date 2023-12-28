@@ -16,6 +16,8 @@ using static PicView.WPF.UILogic.Loading.LoadControls;
 using static PicView.WPF.UILogic.Sizing.WindowSizing;
 using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
 using static PicView.WPF.UILogic.UC;
+using PicView.Core.Navigation;
+using System.Diagnostics;
 
 namespace PicView.WPF.UILogic.Loading;
 
@@ -175,9 +177,11 @@ internal static class StartLoading
         {
             await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //
+#if DEBUG
+            Trace.WriteLine($"{nameof(LoadedEvent)}: {nameof(startupWindow)} exception,\n{e.Message}");
+#endif
         }
 
         ConfigColors.UpdateColor();

@@ -11,6 +11,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.FileHandling;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
@@ -67,10 +68,10 @@ internal static class OpenSave
                 {
                     case false when Pics?.Count <= 0:
                         // Check if from URL and locate it
-                        var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+                        var url = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
                         if (!string.IsNullOrEmpty(url))
                         {
-                            file = Core.FileHandling.ArchiveHelper.TempFilePath;
+                            file = ArchiveHelper.TempFilePath;
                             directory = Path.GetDirectoryName(file);
                         }
 

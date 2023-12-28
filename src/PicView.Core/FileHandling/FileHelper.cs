@@ -112,19 +112,6 @@ public static partial class FileHelper
     }
 
     /// <summary>
-    /// Returns the URL path if it exists or an empty string if not.
-    /// </summary>
-    // ReSharper disable once InconsistentNaming
-    public static string RetrieveFromURL(string value)
-    {
-        // Check if from URL and download it
-        var url = GetURL(value);
-        if (string.IsNullOrEmpty(url))
-            return string.Empty;
-        return File.Exists(ArchiveHelper.TempFilePath) ? ArchiveHelper.TempFilePath : string.Empty;
-    }
-
-    /// <summary>
     /// Generates a new filename with an incremented number inside parentheses to avoid duplication.
     /// </summary>
     /// <param name="currentFile">The path of the current file.</param>

@@ -1,7 +1,6 @@
 ﻿using System.Runtime;
 using System.Windows;
 using System.Windows.Threading;
-using PicView.WPF.FileHandling;
 
 namespace PicView.WPF;
 
@@ -9,7 +8,7 @@ public partial class App
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        ProfileOptimization.SetProfileRoot(FileFunctions.GetWritingPath());
+        ProfileOptimization.SetProfileRoot(AppDomain.CurrentDomain.BaseDirectory);
         ProfileOptimization.StartProfile("ProfileOptimization");
         DispatcherUnhandledException += App_DispatcherUnhandledException;
     }

@@ -86,6 +86,16 @@ public class FileHistory
         return _fileHistory.Count;
     }
 
+    public bool Contains(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return false;
+        }
+
+        return _fileHistory.Contains(name);
+    }
+
     public void Add(string fileName)
     {
         try

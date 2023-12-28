@@ -84,4 +84,5 @@ public class StartUp
     public bool OpenLastFile { get; set; } = false;
     public bool OpenSpecificFile { get; set; } = false;
     public string OpenSpecificString { get; set; } = "";
+    public string LastFile { get; set; } = "";
 }

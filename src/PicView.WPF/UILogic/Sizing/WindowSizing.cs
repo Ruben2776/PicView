@@ -358,9 +358,7 @@ internal static class WindowSizing
     {
         GetMainWindow.Hide(); // Make it feel faster
 
-        SetWindowSize(ConfigureWindows.GetMainWindow);
-
-        Navigation.Pics?.Clear(); // Make it cancel task
+        SetWindowSize(GetMainWindow);
 
         // Close Extra windows when closing
         GetAboutWindow?.Close();
@@ -371,10 +369,26 @@ internal static class WindowSizing
 
         GetSettingsWindow?.Close();
 
+        if (GetMainWindow.MainImage.Source != null)
+        {
+            if (Navigation.Pics.Count > 0 && Navigation.FolderIndex < Navigation.Pics.Count)
+            {
+                SettingsHelper.Settings.StartUp.LastFile = Navigation.Pics[Navigation.FolderIndex];
+            }
+            else
+            {
+                var url = GetMainWindow.TitleText.Text.GetURL();
+                if (!string.IsNullOrEmpty(url))
+                {
+                    SettingsHelper.Settings.StartUp.LastFile = url;
+                }
+            }
+        }
+        Navigation.Pics?.Clear(); // Make it cancel task
+
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
         FileDeletionHelper.DeleteTempFiles();
         FileHistoryNavigation.WriteToFile();
-        // Update the keybindings.json file
         await CustomKeybindings.UpdateKeyBindingsFile();
         Environment.Exit(0);
     }

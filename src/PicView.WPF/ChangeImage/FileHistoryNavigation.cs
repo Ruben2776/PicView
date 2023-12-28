@@ -44,7 +44,10 @@ internal static class FileHistoryNavigation
         }, DispatcherPriority.Normal);
 
         _fileHistory ??= new FileHistory();
-        var file = _fileHistory.GetLastFile();
+        string? file;
+        file = _fileHistory.Contains(SettingsHelper.Settings.StartUp.LastFile) ?
+            SettingsHelper.Settings.StartUp.LastFile : _fileHistory.GetLastFile();
+
         if (file is null)
         {
             if (ErrorHandling.CheckOutOfRange())

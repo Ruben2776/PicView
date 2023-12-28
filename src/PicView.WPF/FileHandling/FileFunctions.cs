@@ -4,7 +4,6 @@ using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
-using System.Configuration;
 using System.IO;
 using System.Windows.Threading;
 
@@ -61,25 +60,6 @@ internal static class FileFunctions
     }
 
     /// <summary>
-    /// Returns the file path of the default configuration file for the specified `userLevel`.
-    /// If there's a `ConfigurationException` thrown, returns the `Filename` from the exception.
-    /// </summary>
-    /// <param name="userLevel">The `userLevel` for which to get the configuration file</param>
-    /// <returns>The file path of the default configuration file</returns>
-    internal static string GetDefaultExeConfigPath(ConfigurationUserLevel userLevel)
-    {
-        try
-        {
-            var userConfig = ConfigurationManager.OpenExeConfiguration(userLevel);
-            return userConfig.FilePath;
-        }
-        catch (ConfigurationException e)
-        {
-            return e.Filename;
-        }
-    }
-
-    /// <summary>
     /// Retrieves the file path for the executable file associated with the specified file name, if any, from the registry key "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths".
     /// </summary>
     /// <param name="fileName">The file name (with or without extension) of the executable file to retrieve the path for.</param>
@@ -98,14 +78,5 @@ internal static class FileFunctions
         fileKey.Close();
 
         return (string)result;
-    }
-
-    /// <summary>
-    /// Returns the directory path of the default configuration file for the specified `userLevel` with PerUserRoamingAndLocal value.
-    /// </summary>
-    /// <returns>The directory path of the default configuration file</returns>
-    internal static string? GetWritingPath()
-    {
-        return Path.GetDirectoryName(GetDefaultExeConfigPath(ConfigurationUserLevel.PerUserRoamingAndLocal));
     }
 }

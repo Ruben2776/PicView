@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PicView.Core.FileHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.SystemIntegration.NativeMethods;
 using ArchiveHelper = PicView.Core.FileHandling.ArchiveHelper;
@@ -61,7 +62,7 @@ internal static class DragToExplorer
             try
             {
                 // Check if from URL and locate it
-                var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+                var url = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
                 if (!string.IsNullOrEmpty(url))
                 {
                     file = ArchiveHelper.TempFilePath;

@@ -1,23 +1,21 @@
-﻿using PicView.WPF.ChangeImage;
-using PicView.WPF.ChangeTitlebar;
-using PicView.WPF.ImageHandling;
-using PicView.WPF.UILogic;
-using PicView.WPF.Views.UserControls.Gallery;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
-using static PicView.WPF.ChangeImage.Navigation;
-using static PicView.WPF.PicGallery.GalleryLoad;
-using static PicView.WPF.UILogic.Tooltip;
-using PicView.Core.Gallery;
+using PicView.Core.ProcessHandling;
+using PicView.WPF.ChangeImage;
+using PicView.WPF.ChangeTitlebar;
+using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using System;
-using PicView.Core.FileHandling;
+using PicView.WPF.UILogic;
+using PicView.WPF.Views.UserControls.Gallery;
+using static PicView.WPF.ChangeImage.Navigation;
+using static PicView.WPF.UILogic.Tooltip;
 
 namespace PicView.WPF.FileHandling;
 
@@ -118,10 +116,10 @@ internal static class CopyPaste
         if (Pics?.Count <= 0)
         {
             // Check if from URL and download it
-            var url = Core.FileHandling.FileHelper.RetrieveFromURL(ConfigureWindows.GetMainWindow.TitleText.Text);
+            var url = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
             if (!string.IsNullOrEmpty(url))
             {
-                CopyFile(Core.FileHandling.ArchiveHelper.TempFilePath);
+                CopyFile(ArchiveHelper.TempFilePath);
             }
             else
             {
@@ -253,7 +251,7 @@ internal static class CopyPaste
 
             for (var i = 1; i < files.Length; i++) // If Clipboard has more files
             {
-                Core.ProcessHandling.ProcessHelper.StartNewProcess(files[i]);
+                ProcessHelper.StartNewProcess(files[i]);
             }
         }
         else if (Clipboard.ContainsImage()) // Clipboard Image
