@@ -1,5 +1,6 @@
 ﻿using PicView.Core.Config;
-using PicView.WPF.FileHandling;
+using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
@@ -9,12 +10,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.Core.FileHandling;
-using PicView.Core.Navigation;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
-using static PicView.WPF.ChangeImage.PreLoader;
 using static PicView.WPF.ChangeTitlebar.SetTitle;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
 using static PicView.WPF.UILogic.Tooltip;
@@ -30,11 +28,33 @@ internal static class UpdateImage
     /// </summary>
     /// <param name="index"></param>
     /// <param name="preLoadValue"></param>
-    internal static async Task UpdateImageValuesAsync(int index, PreLoadValue preLoadValue)
+    internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue)
     {
         if (preLoadValue is null)
         {
             return;
+        }
+
+        var x = 0;
+        while (preLoadValue.IsLoading) // Fix rare occurrences of non-loaded image
+        {
+            x++;
+            await Task.Delay(50);
+            if (index != FolderIndex)
+            {
+                mis
+                return;
+            }
+            // ReSharper disable once InvertIf
+            if (x > 20)
+            {
+                await PreLoader.AddAsync(index).ConfigureAwait(false);
+                preLoadValue = PreLoader.Get(index)!;
+                if (preLoadValue is null)
+                {
+                    return;
+                }
+            }
         }
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
         var source = new CancellationTokenSource();
@@ -197,7 +217,7 @@ internal static class UpdateImage
         CloseToolTipMessage();
         Pics?.Clear();
 
-        Clear();
+        PreLoader.Clear();
         GalleryFunctions.Clear();
         XWidth = XHeight = 0;
 

@@ -280,14 +280,7 @@ public partial class SettingsWindow
                 SettingsHelper.Settings.UIProperties.OpenInSameWindow = !SettingsHelper.Settings.UIProperties.OpenInSameWindow;
                 if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
                 {
-                    if (IPCHelper.IsListening == false)
-                    {
-                        _ = IPCHelper.StartListeningForArguments("PicViewPipe").ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    IPCHelper.StopListening();
+                    _ = IPCHelper.StartListeningForArguments("PicViewPipe").ConfigureAwait(false);
                 }
             };
 
@@ -472,7 +465,7 @@ public partial class SettingsWindow
         LightThemeRadio.Content = TranslationHelper.GetTranslation("LightTheme");
         ThemeRestart.Text = TranslationHelper.GetTranslation("ChangingThemeRequiresRestart");
         ThemeRestart.ToolTip = TranslationHelper.GetTranslation("RestartApp");
-        StartUpLabel.Content = TranslationHelper.GetTranslation("StartUp");
+        StartUpLabel.Content = TranslationHelper.GetTranslation("ApplicationStartup");
         StartUpNone.Content = TranslationHelper.GetTranslation("None");
         StartUpLastFile.Content = TranslationHelper.GetTranslation("OpenLastFile");
         OpenInSameWindowTextBlock.Text = TranslationHelper.GetTranslation("OpenInSameWindow");
