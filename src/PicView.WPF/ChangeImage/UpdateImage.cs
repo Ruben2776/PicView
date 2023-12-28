@@ -42,7 +42,6 @@ internal static class UpdateImage
             await Task.Delay(50);
             if (index != FolderIndex)
             {
-                mis
                 return;
             }
             // ReSharper disable once InvertIf

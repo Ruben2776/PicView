@@ -1,6 +1,6 @@
 ﻿using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.FileHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
@@ -8,7 +8,6 @@ using PicView.WPF.Views.UserControls.Buttons;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using PicView.Core.FileHandling;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.HideInterfaceLogic;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
@@ -369,11 +368,13 @@ internal static class WindowSizing
 
         GetSettingsWindow?.Close();
 
+        // Set last opened file, determine if URL/archive or file
         if (GetMainWindow.MainImage.Source != null)
         {
             if (Navigation.Pics.Count > 0 && Navigation.FolderIndex < Navigation.Pics.Count)
             {
-                SettingsHelper.Settings.StartUp.LastFile = Navigation.Pics[Navigation.FolderIndex];
+                SettingsHelper.Settings.StartUp.LastFile = !string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile) ?
+                    ArchiveHelper.TempZipFile : Navigation.Pics[Navigation.FolderIndex];
             }
             else
             {
