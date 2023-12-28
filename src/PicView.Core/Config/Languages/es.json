@@ -307,5 +307,6 @@
   "Cancel": "Cancelar",
   "None": "Ninguna",
   "ApplicationStartup": "Inicio de la aplicación",
-  "OpenInSameWindow": "Abrir archivos en la misma ventana"
+  "OpenInSameWindow": "Abrir archivos en la misma ventana",
+  "NoChange": "Sin cambios"
 }

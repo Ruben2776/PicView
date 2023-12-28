@@ -12,6 +12,7 @@ using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -277,6 +278,17 @@ public partial class SettingsWindow
             OpenInSameWindowRadio.Click += delegate
             {
                 SettingsHelper.Settings.UIProperties.OpenInSameWindow = !SettingsHelper.Settings.UIProperties.OpenInSameWindow;
+                if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
+                {
+                    if (IPCHelper.IsListening == false)
+                    {
+                        _ = IPCHelper.StartListeningForArguments("PicViewPipe").ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    IPCHelper.StopListening();
+                }
             };
 
             ShowBottomRadio.IsChecked = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;

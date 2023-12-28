@@ -69,8 +69,6 @@ public partial class ToolsAndEffectsMenu
         // Change background
         var changeIconBrush = (SolidColorBrush)Resources["ChangeIconBrush"];
         SetButtonIconMouseOverAnimations(BgButton, BgBrush, changeIconBrush);
-        OptimizeImageButton.Click += async (_, _) =>
-            await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
         BgTextBlock.Text = TranslationHelper.GetTranslation("ChangeBackground");
 
         BgButton.Click += (_, _) => ConfigColors.ChangeBackground();

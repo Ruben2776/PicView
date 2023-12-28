@@ -307,5 +307,6 @@
   "Cancel": "Отмена",
   "None": "Никто",
   "ApplicationStartup": "Запуск приложения",
-   "OpenInSameWindow": "Открывать файлы в том же окне"
+  "OpenInSameWindow": "Открывать файлы в том же окне",
+  "NoChange": "Без изменений"
 }

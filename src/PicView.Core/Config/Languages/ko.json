@@ -307,5 +307,6 @@
   "Cancel": "취소",
   "None": "없음",
   "ApplicationStartup": "애플리케이션 시작",
-  "OpenInSameWindow": "동일한 창에서 파일 열기"
+  "OpenInSameWindow": "동일한 창에서 파일 열기",
+  "NoChange": "변경 없음"
 }

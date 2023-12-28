@@ -1,5 +1,4 @@
-﻿using PicView.Core.ProcessHandling;
-using PicView.WPF.ChangeImage;
+﻿using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
@@ -32,9 +31,12 @@ namespace PicView.WPF.ProcessHandling
             return true;
         }
 
+        public static bool IsListening { get; private set; }
+
         public static async Task StartListeningForArguments(string pipeName)
         {
-            while (true) // Continue listening for new connections
+            IsListening = true;
+            while (IsListening) // Continue listening for new connections
             {
                 await using var pipeServer = new NamedPipeServerStream(pipeName);
 
@@ -65,6 +67,11 @@ namespace PicView.WPF.ProcessHandling
 #endif
                 }
             }
+        }
+
+        public static void StopListening()
+        {
+            IsListening = false;
         }
     }
 }

@@ -59,33 +59,56 @@ internal static class ImageFunctions
             return;
         }
 
+        var toCenter = false;
+
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { toCenter = UC.UserControls_Open(); });
+
+        Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("Applying"), toCenter);
+
         await Task.Run(async () =>
         {
-            var toCenter = false;
-
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { toCenter = UC.UserControls_Open(); });
-
-            Tooltip.ShowTooltipMessage(Application.Current.Resources["Applying"] as string, toCenter);
-
-            var success = OptimizeImage(Navigation.Pics[Navigation.FolderIndex]);
-
-            // Update title to show new file size
-            if (success)
+            ImageOptimizer imageOptimizer = new()
             {
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                {
-                    var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
-                    var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+                OptimalCompression = true
+            };
 
-                    SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
-                    Tooltip.CloseToolTipMessage();
-                });
-            }
-            else
+            if (imageOptimizer.IsSupported(Navigation.Pics[Navigation.FolderIndex]) == false)
             {
-                Tooltip.ShowTooltipMessage("0%", toCenter);
+                // Show a tooltip message indicating that the file is unsupported
+                Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnsupportedFile"), toCenter);
+
+                // Return false to indicate that the optimization was not successful
                 return;
             }
+
+            try
+            {
+                if (!imageOptimizer.LosslessCompress(Navigation.Pics[Navigation.FolderIndex]))
+                {
+                    Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("NoChange"), toCenter);
+                    return;
+                }
+            }
+            catch (MagickException exception)
+            {
+#if DEBUG
+                // Output exception message to Trace in debug mode
+                Trace.WriteLine(
+                    $"{nameof(ImageFunctions)}::{nameof(SetRating)} caught exception:\n{exception.Message}");
+#endif
+                // Show a tooltip message indicating that an error occurred during compression
+                Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
+            }
+
+            // Update title to show new file size
+
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
+                var height = ConfigureWindows.GetMainWindow.MainImage.Source.Height;
+
+                SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
+            });
 
             var preloadValue = PreLoader.Get(Navigation.FolderIndex);
             if (preloadValue == null)
@@ -99,21 +122,10 @@ internal static class ImageFunctions
 
             var originalValue = preloadValue.FileInfo.Length;
             var decreasedValue = fileInfo.Length;
-            if (originalValue != decreasedValue)
-            {
-                var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
-                await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Render,
-                    () =>
-                    {
-                        Tooltip.ShowTooltipMessage(
-                            $"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%",
-                            toCenter, TimeSpan.FromSeconds(3.5));
-                    });
-            }
-            else
-            {
-                Tooltip.ShowTooltipMessage("0%", toCenter);
-            }
+            var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
+            Tooltip.ShowTooltipMessage(
+                $"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%",
+                toCenter, TimeSpan.FromSeconds(4));
         });
     }
 
