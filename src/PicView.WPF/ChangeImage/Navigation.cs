@@ -136,7 +136,6 @@ internal static class Navigation
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = FolderIndex;
                 GalleryNavigation.ScrollToGalleryCenter();
-
             });
         }
     }

@@ -1,8 +1,11 @@
 ﻿using PicView.Core.Config;
 using PicView.WPF.ImageHandling;
+using System.Diagnostics;
 using System.IO;
+using PicView.WPF.UILogic;
 using static PicView.WPF.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
+using System;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -12,6 +15,29 @@ internal static class FastPic
     private static bool _updateSource;
 
     internal static async Task Run(int index)
+    {
+        using var cts = new CancellationTokenSource();
+        var cancelToken = cts.Token;
+        try
+        {
+            await Run(index, cancelToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(Run)} cancelled:\n");
+#endif
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(Run)} exception:\n{ex.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
+        }
+    }
+
+    private static async Task Run(int index, CancellationToken cancellationToken)
     {
         if (_timer is null)
         {
@@ -45,7 +71,7 @@ internal static class FastPic
                     showThumb = false;
                 }
 
-                await Task.Delay(10).ConfigureAwait(false);
+                await Task.Delay(10, cancellationToken).ConfigureAwait(false);
             }
         }
         else
@@ -69,7 +95,7 @@ internal static class FastPic
             }
         }
 
-        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, cancellationToken).ConfigureAwait(false);
 
         _updateSource = false;
         await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
@@ -103,7 +129,25 @@ internal static class FastPic
         {
             await Task.Delay(10).ConfigureAwait(false);
         }
-
-        await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
+        using var cts = new CancellationTokenSource();
+        var cancelToken = cts.Token;
+        try
+        {
+            await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue, cancelToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(FastPicUpdateAsync)} cancelled:\n");
+#endif
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(FastPicUpdateAsync)} exception:\n{ex.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
+        }
+        
     }
 }

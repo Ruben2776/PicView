@@ -9,23 +9,31 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PicView.WPF.ImageHandling;
 
 internal static class Thumbnails
 {
+    internal struct ThumbHolder(double? width, double? height, BitmapSource? bitmapSource)
+    {
+        internal double? Width = width;
+        internal double? Height = height;
+        internal BitmapSource? BitmapSource = bitmapSource;
+    }
+
     /// <summary>
     /// Load thumbnail at provided index
     /// </summary>
     /// <returns></returns>
-    internal static BitmapSource? GetThumb(int x, FileInfo? fileInfo = null)
+    internal static ThumbHolder? GetThumb(int x, FileInfo? fileInfo = null)
     {
         BitmapSource? pic = null;
         try
         {
             if (GetPicGallery != null)
             {
-                GetPicGallery.Dispatcher.Invoke(DispatcherPriority.Send, () =>
+                GetPicGallery.Dispatcher.Invoke(DispatcherPriority.Render, () =>
                 {
                     if (GetPicGallery.Container.Children.Count <= 0 || x >= GetPicGallery.Container.Children.Count)
                     {
@@ -34,7 +42,6 @@ internal static class Thumbnails
 
                     var y = GetPicGallery.Container.Children[x] as PicGalleryItem;
                     pic = (BitmapSource)y.ThumbImage.Source;
-
                 });
             }
             else
@@ -44,11 +51,11 @@ internal static class Thumbnails
                     var preLoadValue = PreLoader.Get(x);
                     if (preLoadValue is null)
                     {
-                        fileInfo = new FileInfo(Pics[x]);
+                        fileInfo = preLoadValue.FileInfo ?? new FileInfo(Pics[x]);
                     }
                     else
                     {
-                        return preLoadValue.BitmapSource;
+                        return new ThumbHolder(preLoadValue.BitmapSource.Width, preLoadValue.BitmapSource.Height, preLoadValue.BitmapSource);
                     }
                 }
 
@@ -56,6 +63,11 @@ internal static class Thumbnails
                 image.Ping(fileInfo);
                 var thumb = image.GetExifProfile()?.CreateThumbnail();
                 pic = thumb?.ToBitmapSource();
+                if (pic is { IsFrozen: false })
+                {
+                    pic.Freeze();
+                }
+                return new ThumbHolder(image?.Width, image?.Height, pic);
             }
         }
         catch (Exception)
@@ -68,7 +80,7 @@ internal static class Thumbnails
             pic.Freeze();
         }
 
-        return pic;
+        return new ThumbHolder(null, null, pic);
     }
 
     internal static async Task<BitmapSource> GetBitmapSourceThumbAsync(string file, int size, FileInfo? fileInfo = null)

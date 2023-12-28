@@ -400,12 +400,35 @@ internal static class LoadPic
 
     #region Load Pic at Index
 
+    internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
+    {
+        using var cts = new CancellationTokenSource();
+        var cancelToken = cts.Token;
+        try
+        {
+            await LoadPicAtIndexAsync(index, cancelToken, fileInfo).ConfigureAwait(false);
+        }
+        catch (TaskCanceledException)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} cancelled:\n");
+#endif
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} exception:\n{ex.Message}");
+#endif
+            Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
+        }
+    }
+
     /// <summary>
     /// Loads the image at the specified index asynchronously and updates the UI.
     /// </summary>
     /// <param name="index">The index of the image to load.</param>
     /// <param name="fileInfo">The file information for the image. If not specified, the file information will be obtained from the image list using the specified index.</param>
-    internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null) => await Task.Run(async () =>
+    private static async Task LoadPicAtIndexAsync(int index, CancellationToken cancellationToken, FileInfo? fileInfo = null) => await Task.Run(async () =>
     {
         if (index < 0 || index >= Pics.Count)
         {
@@ -436,7 +459,7 @@ internal static class LoadPic
         {
             var next = ImageIteration.GetNextIndex(Reverse ? NavigateTo.Previous : NavigateTo.Next,
                 SettingsHelper.Settings.UIProperties.Looping, Pics, index);
-            await LoadPicAtIndexAsync(next).ConfigureAwait(false);
+            await LoadPicAtIndexAsync(next, cancellationToken).ConfigureAwait(false);
             return;
         }
 
@@ -447,22 +470,14 @@ internal static class LoadPic
             {
                 if (showThumb)
                 {
-                    var thumb = Thumbnails.GetThumb(index, fileInfo);
-                    if (thumb != null)
-                    {
-                        await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
-                        {
-                            if (index != FolderIndex)
-                                return;
-                            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                        });
-                    }
+                    await SetThumb();
                     showThumb = false;
                 }
 
-                await Task.Delay(10).ConfigureAwait(false);
-                if (index != FolderIndex || preLoadValue is null)
+                await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+                if (FolderIndex != index)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     return; // Skip loading if user went to next value
                 }
             }
@@ -470,30 +485,23 @@ internal static class LoadPic
         else
         {
             fileInfo = new FileInfo(Pics[index]);
-            var thumb = Thumbnails.GetThumb(index, fileInfo);
-            if (thumb != null)
-            {
-                await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
-                {
-                    if (index != FolderIndex)
-                        return;
-                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
-                });
-            }
+            await SetThumb();
             await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
-            preLoadValue = PreLoader.Get(index);
-            if (index != FolderIndex || preLoadValue is null)
+            if (index != FolderIndex)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 return; // Skip loading if user went to next value
             }
+            preLoadValue = PreLoader.Get(index);
         }
 
-        if (index != FolderIndex || preLoadValue is null)
+        if (FolderIndex != index)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             return; // Skip loading if user went to next value
         }
 
-        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue).ConfigureAwait(false);
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, cancellationToken).ConfigureAwait(false);
 
         if (GetPicGallery is not null)
         {
@@ -505,7 +513,7 @@ internal static class LoadPic
                 GalleryNavigation.SetSelected(FolderIndex, true);
                 GalleryNavigation.SelectedGalleryItem = FolderIndex;
                 GalleryNavigation.ScrollToGalleryCenter();
-            });
+            }, DispatcherPriority.Render, cancellationToken);
         }
 
         if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
@@ -523,7 +531,26 @@ internal static class LoadPic
         {
             FileHistoryNavigation.Add(Pics[index]);
         }
-    });
+        return;
+
+        async Task SetThumb()
+        {
+            var thumb = Thumbnails.GetThumb(index, fileInfo);
+            if (thumb.HasValue)
+            {
+                await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
+                {
+                    if (index != FolderIndex)
+                        return;
+                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb.Value.BitmapSource;
+                    if (thumb.Value.Width.HasValue && thumb.Value.Height.HasValue)
+                    {
+                        ScaleImage.FitImage(thumb.Value.Width.Value, thumb.Value.Height.Value);
+                    }
+                }, DispatcherPriority.Normal, cancellationToken);
+            }
+        }
+    }, cancellationToken);
 
     #endregion Load Pic at Index
 
@@ -548,7 +575,16 @@ internal static class LoadPic
 
             GetSpinWaiter.Visibility = Visibility.Visible;
 
-            ConfigureWindows.GetMainWindow.MainImage.Source = thumb;
+            if (thumb.HasValue == false)
+            {
+                return;
+            }
+
+            ConfigureWindows.GetMainWindow.MainImage.Source = thumb.Value.BitmapSource;
+            if (thumb.Value.Width.HasValue && thumb.Value.Height.HasValue)
+            {
+                ScaleImage.FitImage(thumb.Value.Width.Value, thumb.Value.Height.Value);
+            }
         });
     }
 

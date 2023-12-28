@@ -28,7 +28,7 @@ internal static class UpdateImage
     /// </summary>
     /// <param name="index"></param>
     /// <param name="preLoadValue"></param>
-    internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue)
+    internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue, CancellationToken cancellationToken)
     {
         if (preLoadValue is null)
         {
@@ -39,7 +39,7 @@ internal static class UpdateImage
         while (preLoadValue.IsLoading) // Fix rare occurrences of non-loaded image
         {
             x++;
-            await Task.Delay(50);
+            await Task.Delay(50, cancellationToken);
             if (index != FolderIndex)
             {
                 return;
@@ -51,18 +51,18 @@ internal static class UpdateImage
                 preLoadValue = PreLoader.Get(index)!;
                 if (preLoadValue is null)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     return;
                 }
             }
         }
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
-        var source = new CancellationTokenSource();
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             if (index != FolderIndex || preLoadValue.BitmapSource is null)
             {
-                source.Cancel();
+                cancellationToken.ThrowIfCancellationRequested();
                 return;
             }
             ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
@@ -80,18 +80,18 @@ internal static class UpdateImage
             {
                 ZoomLogic.ResetZoom(false);
             }
-        }, DispatcherPriority.Send, source.Token);
+        }, DispatcherPriority.Send, cancellationToken);
 
         if (index != FolderIndex || preLoadValue.BitmapSource is null)
         {
-            await source.CancelAsync();
+            cancellationToken.ThrowIfCancellationRequested();
             return;
         }
 
         var titleString = await Task.FromResult(TitleHelper.GetTitle(preLoadValue.BitmapSource.PixelWidth,
             preLoadValue.BitmapSource.PixelHeight, index, preLoadValue.FileInfo,
             ZoomLogic.ZoomValue, Pics)).ConfigureAwait(false);
-        if (source.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
         {
             return;
         }
@@ -100,7 +100,7 @@ internal static class UpdateImage
         {
             if (index != FolderIndex)
             {
-                source.Cancel();
+                cancellationToken.ThrowIfCancellationRequested();
                 return;
             }
 
@@ -113,9 +113,9 @@ internal static class UpdateImage
             {
                 GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
-        }, DispatcherPriority.Send, source.Token);
+        }, DispatcherPriority.Send, cancellationToken);
 
-        if (source.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
         {
             return;
         }
@@ -132,12 +132,12 @@ internal static class UpdateImage
                 {
                     if (index != FolderIndex)
                     {
-                        source.Cancel();
+                        cancellationToken.ThrowIfCancellationRequested();
                         return;
                     }
 
                     AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
-                }, DispatcherPriority.Normal, source.Token);
+                }, DispatcherPriority.Normal, cancellationToken);
             }
         }
 
