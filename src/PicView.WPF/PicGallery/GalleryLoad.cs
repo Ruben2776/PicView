@@ -45,31 +45,39 @@ internal static class GalleryLoad
         using var source = new CancellationTokenSource();
         var updates = 0;
 
-        for (var i = 0; i < Navigation.Pics.Count; i++)
+        // Update UI in batch sizes and await task delay to ensure responsive UI
+        var batchSize = 100;
+        for (var start = 0; start < Navigation.Pics.Count; start += batchSize)
         {
-            try
-            {
-                var i1 = i;
-                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                {
-                    if (!IsLoading)
-                    {
-                        source.Cancel();
-                        source.Dispose();
-                        return;
-                    }
+            var end = Math.Min(start + batchSize, Navigation.Pics.Count);
 
-                    Add(i1);
-                }, DispatcherPriority.DataBind, source.Token);
-            }
-            catch (Exception exception)
+            for (var i = start; i < end; i++)
             {
+                try
+                {
+                    var i1 = i;
+                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+                    {
+                        if (!IsLoading)
+                        {
+                            source.Cancel();
+                            source.Dispose();
+                            return;
+                        }
+
+                        Add(i1);
+                    }, DispatcherPriority.DataBind, source.Token);
+                }
+                catch (Exception exception)
+                {
 #if DEBUG
-                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+                    Trace.WriteLine($"{nameof(LoadAsync)} exception:\n{exception.Message}");
 #endif
-                GalleryFunctions.Clear();
-                return;
+                    GalleryFunctions.Clear();
+                    return;
+                }
             }
+            await Task.Delay(50, source.Token);
         }
 
         if (source.IsCancellationRequested)
@@ -108,31 +116,16 @@ internal static class GalleryLoad
             await Loop(0, index, options).ConfigureAwait(false);
             IsLoading = false;
         }
-        catch (ObjectDisposedException exception)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-            if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-            {
-                Environment.Exit(0);
-            }
-        }
-        catch (TaskCanceledException exception)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-            if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-            {
-                Environment.Exit(0);
-            }
-        }
         catch (Exception exception)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
+            if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+            {
+                // Fix window not shutting down when it's supposed to. MainWindow is only hidden when closing
+                Environment.Exit(0);
+            }
         }
         return;
 
@@ -156,31 +149,16 @@ internal static class GalleryLoad
                         await UpdateThumbAsync(i, source.Token).ConfigureAwait(false);
                     }
                 }
-                catch (ObjectDisposedException exception)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                    {
-                        Environment.Exit(0);
-                    }
-                }
-                catch (TaskCanceledException exception)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                    {
-                        Environment.Exit(0);
-                    }
-                }
                 catch (Exception exception)
                 {
 #if DEBUG
                     Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
+                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                    {
+                        // Fix window not shutting down when it's supposed to. MainWindow is only hidden when closing
+                        Environment.Exit(0);
+                    }
                 }
             });
         }

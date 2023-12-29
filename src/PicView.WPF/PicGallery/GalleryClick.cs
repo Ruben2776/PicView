@@ -169,10 +169,6 @@ internal static class GalleryClick
                 HideInterfaceLogic.IsNavigationShown(true);
                 HideInterfaceLogic.IsShortcutsShown(true);
             }
-
-            // Select next item
-            GalleryNavigation.SetSelected(id, true);
-            GalleryNavigation.SelectedGalleryItem = id;
         });
         if (!PreLoader.Contains(id))
         {

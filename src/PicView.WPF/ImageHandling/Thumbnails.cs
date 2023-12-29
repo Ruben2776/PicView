@@ -102,6 +102,7 @@ internal static class Thumbnails
         {
             using var image = new MagickImage();
             image.Ping(file);
+            image.Quality = 85;
             var thumb = image.GetExifProfile()?.CreateThumbnail();
             var bitmapThumb = thumb?.ToBitmapSource();
             if (bitmapThumb != null)
@@ -131,7 +132,7 @@ internal static class Thumbnails
                     {
                         return ImageFunctions.ImageErrorMessage();
                     }
-                    var resized = skImage.Resize(new SKImageInfo(size, size), SKFilterQuality.Medium);
+                    var resized = skImage.Resize(new SKImageInfo(size, size), SKFilterQuality.High);
                     var writeableBitmap = resized.ToWriteableBitmap();
                     writeableBitmap.Freeze();
                     return writeableBitmap;
