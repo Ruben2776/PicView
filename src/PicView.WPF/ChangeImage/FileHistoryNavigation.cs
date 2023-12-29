@@ -24,6 +24,18 @@ internal static class FileHistoryNavigation
         _fileHistory.Add(file);
     }
 
+    internal static bool Contains(string file)
+    {
+        _fileHistory ??= new FileHistory();
+        return _fileHistory.Contains(file);
+    }
+
+    internal static string GetLastFile()
+    {
+        _fileHistory ??= new FileHistory();
+        return _fileHistory.GetLastFile() ?? string.Empty;
+    }
+
     internal static async Task OpenLastFileAsync()
     {
         if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt")) == false)

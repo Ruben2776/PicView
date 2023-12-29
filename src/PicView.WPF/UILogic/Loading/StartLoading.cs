@@ -160,7 +160,14 @@ internal static class StartLoading
         {
             if (SettingsHelper.Settings.StartUp.OpenLastFile)
             {
-                await FileHistoryNavigation.OpenLastFileAsync().ConfigureAwait(false);
+                var file = FileHistoryNavigation.Contains(SettingsHelper.Settings.StartUp.LastFile)
+                    ? SettingsHelper.Settings.StartUp.LastFile
+                    : FileHistoryNavigation.GetLastFile();
+
+                if (!string.IsNullOrWhiteSpace(file))
+                {
+                    await QuickLoad.QuickLoadAsync(file).ConfigureAwait(false);
+                }
             }
             else if (SettingsHelper.Settings.StartUp.OpenSpecificFile)
             {

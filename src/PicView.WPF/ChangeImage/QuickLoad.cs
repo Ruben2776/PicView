@@ -22,10 +22,6 @@ namespace PicView.WPF.ChangeImage;
 
 internal static class QuickLoad
 {
-    /// <summary>
-    /// Load Image from blank values and show loading preview
-    /// </summary>
-    /// <param name="file"></param>
     internal static async Task QuickLoadAsync(string file, FileInfo? fileInfo = null) => await Task.Run(async () =>
     {
         var mainWindow = ConfigureWindows.GetMainWindow;
@@ -79,6 +75,7 @@ internal static class QuickLoad
             if (shouldLoadBottomGallery)
             {
                 GalleryToggle.ShowBottomGallery();
+                FitImage(bitmapSource.Width, bitmapSource.Height);
             }
         }, DispatcherPriority.Normal);
 
@@ -109,7 +106,7 @@ internal static class QuickLoad
                         GalleryNavigation.ScrollToGalleryCenter();
                     });
                 }
-                catch (TaskCanceledException exception)
+                catch (Exception exception)
                 {
 #if DEBUG
                     Trace.WriteLine($"{nameof(QuickLoadAsync)}  exception:\n{exception.Message}");
@@ -118,10 +115,6 @@ internal static class QuickLoad
                     {
                         Environment.Exit(0);
                     }
-                }
-                catch (Exception)
-                {
-                    //
                 }
             }
         }

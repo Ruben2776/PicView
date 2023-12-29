@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
@@ -14,8 +15,6 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using PicView.Core.ImageDecoding;
 using Brush = System.Windows.Media.Brush;
 using FontFamily = System.Windows.Media.FontFamily;
 using Point = System.Windows.Point;
@@ -100,8 +99,50 @@ internal static class ImageFunctions
                 Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
             }
 
-            // Update title to show new file size
+            var preloadValue = PreLoader.Get(Navigation.FolderIndex);
+            var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
+            var readablePrevSize = preloadValue?.FileInfo?.Length.GetReadableFileSize();
+            var originalValue = preloadValue?.FileInfo?.Length;
+            if (originalValue is null)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    originalValue = FileHelper.GetFileSizeFromString(ConfigureWindows.GetMainWindow.TitleText.Text);
+                });
+            }
+            if (readablePrevSize is null)
+            {
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync((() =>
+                {
+                    readablePrevSize = ConfigureWindows.GetMainWindow.TitleText.Text.ExtractFileSize();
+                }));
+                if (readablePrevSize is null)
+                {
+                    preloadValue = PreLoader.Get(Navigation.FolderIndex);
+                    if (preloadValue is null)
+                    {
+                        await PreLoader.AddAsync(Navigation.FolderIndex);
+                    }
+                    readablePrevSize = preloadValue?.FileInfo?.Length.GetReadableFileSize();
+                }
+            }
+            originalValue ??= preloadValue?.FileInfo?.Length;
+            var readableNewSize = fileInfo.Length.GetReadableFileSize();
 
+            try
+            {
+                var decreasedValue = fileInfo.Length;
+                var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
+                Tooltip.ShowTooltipMessage(
+                    $"{readablePrevSize} \u21e2 {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%",
+                    toCenter, TimeSpan.FromSeconds(7));
+            }
+            catch (Exception exception)
+            {
+                Tooltip.ShowTooltipMessage(exception);
+            }
+
+            // Update title to show new file size
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 var width = ConfigureWindows.GetMainWindow.MainImage.Source.Width;
@@ -109,23 +150,6 @@ internal static class ImageFunctions
 
                 SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
             });
-
-            var preloadValue = PreLoader.Get(Navigation.FolderIndex);
-            if (preloadValue == null)
-            {
-                await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-            }
-
-            var fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-            var readablePrevSize = preloadValue.FileInfo.Length.GetReadableFileSize();
-            var readableNewSize = fileInfo.Length.GetReadableFileSize();
-
-            var originalValue = preloadValue.FileInfo.Length;
-            var decreasedValue = fileInfo.Length;
-            var percentDecrease = ((float)(originalValue - decreasedValue) / decreasedValue) * 100;
-            Tooltip.ShowTooltipMessage(
-                $"{readablePrevSize} > {readableNewSize} = {percentDecrease.ToString("0.## ", CultureInfo.CurrentCulture)}%",
-                toCenter, TimeSpan.FromSeconds(4));
         });
     }
 
@@ -243,16 +267,6 @@ internal static class ImageFunctions
     private static FlowDirection FlowDirection => CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft
         ? FlowDirection.RightToLeft
         : FlowDirection.LeftToRight;
-
-    internal static BitmapSource ShowLogo()
-    {
-        var bitmap = new BitmapImage(new Uri(@"pack://application:,,,/"
-                                             + Assembly.GetExecutingAssembly().GetName().Name
-                                             + ";component/"
-                                             + "Themes/Resources/img/icon.png", UriKind.Absolute));
-        bitmap.Freeze();
-        return bitmap;
-    }
 
     internal static Bitmap BitmapSourceToBitmap(BitmapSource source)
     {

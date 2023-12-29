@@ -119,14 +119,6 @@ internal static class LoadPic
     /// <param name="fileInfo"></param>
     internal static async Task LoadPiFromFileAsync(string? path, FileInfo? fileInfo = null)
     {
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-        {
-            ToggleStartUpUC(true);
-            SetLoadingString();
-            GetSpinWaiter.Visibility = Visibility.Visible;
-            ConfigureWindows.GetMainWindow.MainImage.Source = null;
-        });
-
         fileInfo ??= new FileInfo(path);
         try
         {

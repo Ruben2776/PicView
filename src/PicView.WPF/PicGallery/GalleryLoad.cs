@@ -46,11 +46,10 @@ internal static class GalleryLoad
         var updates = 0;
 
         // Update UI in batch sizes and await task delay to ensure responsive UI
-        var batchSize = 100;
+        var batchSize = 200;
         for (var start = 0; start < Navigation.Pics.Count; start += batchSize)
         {
             var end = Math.Min(start + batchSize, Navigation.Pics.Count);
-
             for (var i = start; i < end; i++)
             {
                 try
@@ -112,6 +111,10 @@ internal static class GalleryLoad
                 CancellationToken = source.Token,
                 MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
             };
+            for (var i = index; i < Navigation.Pics.Count; i++)
+            {
+                var end = Math.Min(i + batchSize, Navigation.Pics.Count);
+            }
             await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
             await Loop(0, index, options).ConfigureAwait(false);
             IsLoading = false;
