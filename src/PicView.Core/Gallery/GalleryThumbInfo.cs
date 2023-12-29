@@ -9,7 +9,7 @@ public class GalleryThumbInfo
     /// <summary>
     /// Represents the data for a gallery thumbnail.
     /// </summary>
-    public class GalleryThumbHolder
+    public struct GalleryThumbHolder
     {
         /// <summary>
         /// Gets or sets the file location of the thumbnail.

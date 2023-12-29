@@ -543,9 +543,9 @@ internal static class LoadPic
                     if (index != FolderIndex)
                         return;
                     ConfigureWindows.GetMainWindow.MainImage.Source = thumb.Value.BitmapSource;
-                    if (thumb.Value.Width.HasValue && thumb.Value.Height.HasValue)
+                    if (thumb.Value.OriginalWidth.HasValue && thumb.Value.OriginalHeight.HasValue)
                     {
-                        ScaleImage.FitImage(thumb.Value.Width.Value, thumb.Value.Height.Value);
+                        ScaleImage.FitImage(thumb.Value.OriginalWidth.Value, thumb.Value.OriginalHeight.Value);
                     }
                 }, DispatcherPriority.Normal, cancellationToken);
             }
@@ -581,9 +581,9 @@ internal static class LoadPic
             }
 
             ConfigureWindows.GetMainWindow.MainImage.Source = thumb.Value.BitmapSource;
-            if (thumb.Value.Width.HasValue && thumb.Value.Height.HasValue)
+            if (thumb.Value.OriginalWidth.HasValue && thumb.Value.OriginalHeight.HasValue)
             {
-                ScaleImage.FitImage(thumb.Value.Width.Value, thumb.Value.Height.Value);
+                ScaleImage.FitImage(thumb.Value.OriginalWidth.Value, thumb.Value.OriginalHeight.Value);
             }
         });
     }

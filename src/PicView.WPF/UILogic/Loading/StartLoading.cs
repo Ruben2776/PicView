@@ -1,23 +1,22 @@
 ﻿using PicView.Core.Config;
+using PicView.Core.ProcessHandling;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ConfigureSettings;
+using PicView.WPF.ProcessHandling;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Misc;
 using PicView.WPF.Views.Windows;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using PicView.Core.ProcessHandling;
-using PicView.WPF.ProcessHandling;
 using static PicView.WPF.UILogic.Loading.LoadContextMenus;
 using static PicView.WPF.UILogic.Loading.LoadControls;
 using static PicView.WPF.UILogic.Sizing.WindowSizing;
 using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
 using static PicView.WPF.UILogic.UC;
-using PicView.Core.Navigation;
-using System.Diagnostics;
 
 namespace PicView.WPF.UILogic.Loading;
 

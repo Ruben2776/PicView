@@ -42,7 +42,7 @@ internal static class GalleryLoad
         }
 
         IsLoading = true;
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var updates = 0;
 
         for (var i = 0; i < Navigation.Pics.Count; i++)
@@ -97,46 +97,43 @@ internal static class GalleryLoad
             index = index < 0 ? 0 : index;
         }, DispatcherPriority.DataBind, source.Token);
 
-        await Task.Run(async () =>
+        try
         {
-            try
+            ParallelOptions options = new()
             {
-                ParallelOptions options = new()
-                {
-                    CancellationToken = source.Token,
-                    MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
-                };
-                await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
-                await Loop(0, index, options).ConfigureAwait(false);
-                IsLoading = false;
-            }
-            catch (ObjectDisposedException exception)
-            {
+                CancellationToken = source.Token,
+                MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
+            };
+            await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
+            await Loop(0, index, options).ConfigureAwait(false);
+            IsLoading = false;
+        }
+        catch (ObjectDisposedException exception)
+        {
 #if DEBUG
-                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+            Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
 #endif
-                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                {
-                    Environment.Exit(0);
-                }
-            }
-            catch (TaskCanceledException exception)
+            if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
             {
-#if DEBUG
-                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
-                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                {
-                    Environment.Exit(0);
-                }
+                Environment.Exit(0);
             }
-            catch (Exception exception)
+        }
+        catch (TaskCanceledException exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+            if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
             {
-#if DEBUG
-                Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
-#endif
+                Environment.Exit(0);
             }
-        }, source.Token);
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+#endif
+        }
         return;
 
         async Task Loop(int startPosition, int end, ParallelOptions options)
@@ -150,7 +147,6 @@ internal static class GalleryLoad
                     {
                         IsLoading = false;
                         await source.CancelAsync().ConfigureAwait(false);
-                        source.Dispose();
                         loopState.ThrowIfCancellationRequested();
                         return;
                     }
