@@ -131,13 +131,12 @@ public partial class SettingsWindow
                 }
 
                 SetExpandedGalleryText.Text = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize.ToString(CultureInfo.CurrentCulture);
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             };
 
             // SetBottomGallerySlider
             SetBottomGallerySlider.Value = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
             SetBottomGalleryText.Text = SettingsHelper.Settings.Gallery.BottomGalleryItemSize.ToString(CultureInfo.CurrentCulture);
-            SetBottomGallerySlider.ValueChanged += async (_, e) =>
+            SetBottomGallerySlider.ValueChanged += (_, e) =>
             {
                 SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;
                 if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
@@ -150,8 +149,7 @@ public partial class SettingsWindow
                     GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.BottomGalleryItemSize);
                 }
 
-                SetBottomGalleryText.Text = GalleryNavigation.HorizontalItems.ToString();
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+                SetBottomGalleryText.Text = SettingsHelper.Settings.Gallery.BottomGalleryItemSize.ToString(CultureInfo.CurrentCulture);
             };
 
             // Themes
@@ -167,7 +165,7 @@ public partial class SettingsWindow
                     return;
                 }
 
-                ChangeTheme(true);
+                SettingsHelper.Settings.Theme.Dark = true;
                 LightThemeRadio.IsChecked = false;
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             };
@@ -180,7 +178,7 @@ public partial class SettingsWindow
                     return;
                 }
 
-                ChangeTheme(false);
+                SettingsHelper.Settings.Theme.Dark = false;
                 DarkThemeRadio.IsChecked = false;
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             };

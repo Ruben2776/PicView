@@ -16,6 +16,7 @@
     ResizeMode="CanMinimize"
     SizeToContent="Height"
     Style="{DynamicResource MyWindowStyle}"
+    WindowStartupLocation="CenterOwner"
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
