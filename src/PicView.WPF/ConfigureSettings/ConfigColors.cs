@@ -30,21 +30,22 @@ internal static class ConfigColors
 
     internal static void UpdateColor()
     {
-        var getColor = AnimationHelper.GetPreferredColor();
-        var getColorBrush = new SolidColorBrush(getColor);
-        Application.Current.Resources["ChosenColor"] = getColor;
-        Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
+        ConfigureWindows.GetMainWindow?.Dispatcher?.Invoke(() =>
+        {
+            var getColor = AnimationHelper.GetPreferredColor();
+            var getColorBrush = new SolidColorBrush(getColor);
+            Application.Current.Resources["ChosenColor"] = getColor;
+            Application.Current.Resources["ChosenColorBrush"] = getColorBrush;
 
-        var getAccentColor = GetSecondaryAccentColor;
-        var getAccentColorBrush = new SolidColorBrush(getAccentColor);
-        Application.Current.Resources["ChosenAccentColor"] = getAccentColor;
-        Application.Current.Resources["ChosenAccentColorBrush"] = getAccentColorBrush;
-
-        SettingsHelper.SaveSettingsAsync();
+            var getAccentColor = GetSecondaryAccentColor;
+            var getAccentColorBrush = new SolidColorBrush(getAccentColor);
+            Application.Current.Resources["ChosenAccentColor"] = getAccentColor;
+            Application.Current.Resources["ChosenAccentColorBrush"] = getAccentColorBrush;
+        });
     }
 
     /// <summary>
-    /// Apply color varaibles from themes
+    /// Apply color variables from themes
     /// </summary>
     internal static void SetColors()
     {
@@ -239,14 +240,6 @@ internal static class ConfigColors
     /// <param name="useDarkTheme"></param>
     internal static void ChangeTheme(bool useDarkTheme)
     {
-        SettingsHelper.Settings.Theme.Dark = useDarkTheme;
-
-        if (useDarkTheme)
-        {
-            // TODO create function to switch without restarting
-            return;
-        }
-
         Application.Current.Resources.MergedDictionaries[1] = new ResourceDictionary
         {
             Source = new Uri(@"/PicView;component/Themes/Styles/ColorThemes/Light.xaml", UriKind.Relative)
