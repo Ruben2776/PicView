@@ -119,7 +119,7 @@ internal static class CropFunctions
         var saveDialog = new SaveFileDialog
         {
             Filter = OpenSave.FilterFiles,
-            Title = $"{Application.Current.Resources["SaveImage"]} - PicView",
+            Title = $"{TranslationHelper.GetTranslation("SaveImage")} - PicView",
             FileName = filename,
         };
 
@@ -174,10 +174,6 @@ internal static class CropFunctions
         Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
     }
 
-    /// <summary>
-    /// Gets the coordinates and dimensions of the cropped area, scaled based on the aspect ratio.
-    /// </summary>
-    /// <returns>The Int32Rect object containing the X and Y coordinates, width, and height of the cropped area. Returns null if there is no cropped area defined.</returns>
     private static Int32Rect GetCrop()
     {
         var cropArea = CropService.GetCroppedArea();
@@ -205,11 +201,17 @@ internal static class CropFunctions
         {
             case 0:
             case 180:
-                break; // No adjustment needed
+                break;
 
-            default:
+            case 90:
+            case 270:
                 // Swap width and height
                 (width, height) = (height, width);
+                break;
+
+            default:
+                var rotationRadians = RotationAngle * Math.PI / 180;
+
                 break;
         }
 

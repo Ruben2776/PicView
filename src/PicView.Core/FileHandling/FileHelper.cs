@@ -167,67 +167,46 @@ public static partial class FileHelper
     public static long GetFileSizeFromString(string input)
     {
         // Define a regular expression pattern to match file size formats like "2GB", "100MB", etc.
-        var pattern = @"(\d+)\s*([KMGTP]B)";
+        const string pattern = @"(\d+)\s*([KMGTP]B)";
         var regex = new Regex(pattern, RegexOptions.IgnoreCase);
 
         var match = regex.Match(input);
 
-        if (match.Success)
+        if (!match.Success)
         {
-            // Extract the size and unit from the matched groups
-            var size = long.Parse(match.Groups[1].Value);
-            var unit = match.Groups[2].Value.ToUpper();
-
-            // Convert the size to bytes based on the unit
-            switch (unit)
-            {
-                case "KB":
-                    size *= 1024;
-                    break;
-
-                case "MB":
-                    size *= 1024 * 1024;
-                    break;
-
-                case "GB":
-                    size *= 1024 * 1024 * 1024;
-                    break;
-
-                case "TB":
-                    size *= 1024L * 1024 * 1024 * 1024;
-                    break;
-
-                case "PB":
-                    size *= 1024L * 1024 * 1024 * 1024 * 1024;
-                    break;
-            }
-
-            return size;
+            return -1;
         }
+
+        // Extract the size and unit from the matched groups
+        var size = long.Parse(match.Groups[1].Value);
+        var unit = match.Groups[2].Value.ToUpper();
+
+        // Convert the size to bytes based on the unit
+        switch (unit)
+        {
+            case "KB":
+                size *= 1024;
+                break;
+
+            case "MB":
+                size *= 1024 * 1024;
+                break;
+
+            case "GB":
+                size *= 1024 * 1024 * 1024;
+                break;
+
+            case "TB":
+                size *= 1024L * 1024 * 1024 * 1024;
+                break;
+
+            case "PB":
+                size *= 1024L * 1024 * 1024 * 1024 * 1024;
+                break;
+        }
+
+        return size;
 
         // If no match is found, return an appropriate value (e.g., -1 indicating an error)
-        return -1;
-    }
-
-    public static bool DoesDirectoryContainFiles(string directoryPath)
-    {
-        // Check if the directory path is null or empty
-        if (string.IsNullOrEmpty(directoryPath))
-        {
-            return false;
-        }
-
-        // Check if the directory exists
-        if (!Directory.Exists(directoryPath))
-        {
-            return false;
-        }
-
-        // Get all files in the directory
-        var files = Directory.GetFiles(directoryPath);
-
-        // Check if the directory is empty
-        return files.Length != 0;
-        // Directory contains files
     }
 }

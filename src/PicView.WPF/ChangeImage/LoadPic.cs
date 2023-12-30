@@ -149,6 +149,15 @@ internal static class LoadPic
             return;
         }
 
+        if (!CheckOutOfRange())
+        {
+            if (Pics.Contains(fileInfo.FullName))
+            {
+                await LoadPicAtIndexAsync(Pics.IndexOf(fileInfo.FullName), fileInfo);
+                return;
+            }
+        }
+
         var fileList = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
 
         if (fileList.Count <= 0) // If no files, reload if possible or unload if not
