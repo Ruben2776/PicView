@@ -36,7 +36,12 @@ internal static class GalleryLoad
     /// <returns>A task representing the asynchronous operation.</returns>
     internal static async Task LoadAsync()
     {
-        if (UC.GetPicGallery is null || IsLoading)
+        if (UC.GetPicGallery is null || IsLoading || Navigation.Pics is null)
+        {
+            return;
+        }
+
+        if (Navigation.Pics.Count <= 0)
         {
             return;
         }
@@ -49,9 +54,15 @@ internal static class GalleryLoad
         var batchSize = 200;
         for (var start = 0; start < Navigation.Pics.Count; start += batchSize)
         {
+            if (Navigation.Pics.Count <= 0)
+                return;
+
             var end = Math.Min(start + batchSize, Navigation.Pics.Count);
             for (var i = start; i < end; i++)
             {
+                if (Navigation.Pics.Count <= 0)
+                    return;
+
                 try
                 {
                     var i1 = i;
@@ -111,10 +122,6 @@ internal static class GalleryLoad
                 CancellationToken = source.Token,
                 MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
             };
-            for (var i = index; i < Navigation.Pics.Count; i++)
-            {
-                var end = Math.Min(i + batchSize, Navigation.Pics.Count);
-            }
             await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
             await Loop(0, index, options).ConfigureAwait(false);
             IsLoading = false;
@@ -234,7 +241,10 @@ internal static class GalleryLoad
             if (Navigation.Pics?.Count < Navigation.FolderIndex || Navigation.Pics?.Count < 1 ||
                 i >= UC.GetPicGallery.Container.Children.Count)
             {
-                GalleryFunctions.Clear();
+#if DEBUG
+                Trace.WriteLine($"{nameof(UpdatePic)} wrong index {Navigation.Pics?.Count}," +
+                                $" {Navigation.FolderIndex}, {UC.GetPicGallery?.Container?.Children.Count}");
+#endif
                 return;
             }
 

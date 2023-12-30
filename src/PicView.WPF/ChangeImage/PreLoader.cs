@@ -241,32 +241,41 @@ internal static class PreLoader
             Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
 #endif
 
-        await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, async (i, _) =>
+        try
         {
-            try
+            await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, async (i, _) =>
             {
-                if (Pics.Count == 0 || count != Pics.Count)
+                try
                 {
-                    await source.CancelAsync();
+                    if (Pics.Count == 0 || count != Pics.Count)
+                    {
+                        await source.CancelAsync();
+                    }
                 }
-            }
-            catch (Exception)
-            {
-                return;
-            }
+                catch (Exception)
+                {
+                    return;
+                }
 
-            int index;
-            if (Reverse)
-            {
-                index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
-            }
-            else
-            {
-                index = (nextStartingIndex + i) % Pics.Count;
-            }
+                int index;
+                if (Reverse)
+                {
+                    index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
+                }
+                else
+                {
+                    index = (nextStartingIndex + i) % Pics.Count;
+                }
 
-            await AddAsync(index).ConfigureAwait(false);
-        });
+                await AddAsync(index).ConfigureAwait(false);
+            });
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{exception.Message}");
+#endif
+        }
 
         if (Pics.Count > MaxCount + NegativeIterations)
         {

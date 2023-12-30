@@ -20,7 +20,7 @@ public abstract class HttpFunctions
     /// <param name="url"></param>
     internal static async Task LoadPicFromUrlAsync(string url)
     {
-        ChangeFolder(true);
+        ChangeFolder();
 
         string destination;
 

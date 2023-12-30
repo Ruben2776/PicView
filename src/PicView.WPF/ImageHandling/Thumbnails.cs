@@ -74,7 +74,16 @@ internal static class Thumbnails
                 }
                 fileInfo = preLoadValue.FileInfo;
             }
-            fileInfo ??= new FileInfo(Pics[x]);
+
+            if (fileInfo is null)
+            {
+                if (Pics.Count <= 0 || FolderIndex >= Pics.Count || FolderIndex < 0)
+                {
+                    return new ThumbHolder(null, null, null);
+                }
+                fileInfo ??= new FileInfo(Pics[x]);
+            }
+
             using var image = new MagickImage();
             image.Ping(fileInfo);
             var thumb = image.GetExifProfile()?.CreateThumbnail();

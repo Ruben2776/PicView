@@ -119,13 +119,12 @@ internal static class GalleryFunctions
 
     internal static void Clear()
     {
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
+        GetPicGallery?.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
         {
-            if (GetPicGallery == null)
+            if (GetPicGallery.Container.Children.Count <= 0)
             {
                 return;
             }
-
             GetPicGallery.Container.Children.Clear();
 
 #if DEBUG

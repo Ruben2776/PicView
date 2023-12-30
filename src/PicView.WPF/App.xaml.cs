@@ -1,4 +1,5 @@
-﻿using System.Runtime;
+﻿using System.IO;
+using System.Runtime;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -8,7 +9,7 @@ public partial class App
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        ProfileOptimization.SetProfileRoot(AppDomain.CurrentDomain.BaseDirectory);
+        ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
         ProfileOptimization.StartProfile("ProfileOptimization");
         DispatcherUnhandledException += App_DispatcherUnhandledException;
     }

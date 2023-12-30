@@ -143,22 +143,48 @@ internal static class LoadPic
             return;
         }
 
-        if (Pics.Count == 0)
+        if (fileInfo.IsArchive())
         {
-            if (fileInfo.IsArchive())
-            {
-                await LoadPicFromArchiveAsync(fileInfo.FullName).ConfigureAwait(false);
-                return;
-            }
-
-            Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
+            await LoadPicFromArchiveAsync(fileInfo.FullName).ConfigureAwait(false);
+            return;
         }
 
-        var folderChanged = CheckDirectoryChangeAndPicGallery(fileInfo);
+        var fileList = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
+
+        if (fileList.Count <= 0) // If no files, reload if possible or unload if not
+        {
+            if (!string.IsNullOrWhiteSpace(BackupPath))
+            {
+                await ReloadAsync(true).ConfigureAwait(false);
+            }
+            else
+            {
+                Unload(true);
+            }
+
+            return;
+        }
+
+        var folderChanged = Pics.Count > 0;
+        if (folderChanged)
+        {
+            folderChanged = fileInfo.Directory.FullName != Path.GetDirectoryName(Pics[FolderIndex]);
+        }
 
         if (folderChanged)
         {
-            PreLoader.Clear();
+            ChangeFolder();
+        }
+
+        Pics = fileList;
+
+        if (Pics.Count == 0)
+        {
+        }
+
+        if (folderChanged)
+        {
+            ChangeFolder();
 
             Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
 
@@ -267,7 +293,7 @@ internal static class LoadPic
             var extraction = Extract(archive);
             if (!extraction)
             {
-                _ = ReloadAsync(true).ConfigureAwait(false);
+                _ = LoadPicFromStringAsync(BackupPath);
             }
         }).ConfigureAwait(false);
     }
@@ -302,21 +328,9 @@ internal static class LoadPic
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
         });
 
-        if (CheckOutOfRange() == false)
-        {
-            BackupPath = Pics[FolderIndex];
-        }
+        var fileList = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
 
-        var folderChanged = CheckDirectoryChangeAndPicGallery(fileInfo);
-
-        if (folderChanged)
-        {
-            PreLoader.Clear();
-        }
-
-        Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
-
-        if (Pics.Count <= 0) // If no files, reload if possible or unload if not
+        if (fileList.Count <= 0) // If no files, reload if possible or unload if not
         {
             if (!string.IsNullOrWhiteSpace(BackupPath))
             {
@@ -330,13 +344,26 @@ internal static class LoadPic
             return;
         }
 
+        var folderChanged = Pics.Count > 0;
+        if (folderChanged)
+        {
+            folderChanged = fileInfo.Directory.FullName != Path.GetDirectoryName(Pics[FolderIndex]);
+        }
+
+        if (folderChanged)
+        {
+            ChangeFolder();
+        }
+
+        Pics = fileList;
+
         if (index >= 0)
         {
             await LoadPicAtIndexAsync(index, fileInfo).ConfigureAwait(false);
         }
         else
         {
-            await LoadPicAtIndexAsync(0, fileInfo).ConfigureAwait(false);
+            await LoadPicAtIndexAsync(0).ConfigureAwait(false);
         }
 
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
@@ -381,11 +408,6 @@ internal static class LoadPic
                 }
             }
         }
-
-        if (folderChanged || string.IsNullOrWhiteSpace(InitialPath))
-        {
-            InitialPath = fileInfo.FullName;
-        }
     }
 
     #endregion Load Pic from Folder
@@ -424,7 +446,6 @@ internal static class LoadPic
     {
         if (index < 0 || index >= Pics.Count)
         {
-            await ReloadAsync().ConfigureAwait(false);
             return;
         }
 
@@ -449,10 +470,18 @@ internal static class LoadPic
 
         if (!fileInfo.Exists)
         {
-            var next = ImageIteration.GetNextIndex(Reverse ? NavigateTo.Previous : NavigateTo.Next,
-                SettingsHelper.Settings.UIProperties.Looping, Pics, index);
-            await LoadPicAtIndexAsync(next, cancellationToken).ConfigureAwait(false);
-            return;
+            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                // If the file is a directory, create a new FileInfo object using the file path from the image list.
+                fileInfo = new FileInfo(Pics[index]);
+            }
+            else
+            {
+                var next = ImageIteration.GetNextIndex(Reverse ? NavigateTo.Previous : NavigateTo.Next,
+                    SettingsHelper.Settings.UIProperties.Looping, Pics, index);
+                await LoadPicAtIndexAsync(next, cancellationToken).ConfigureAwait(false);
+                return;
+            }
         }
 
         if (preLoadValue != null)
@@ -476,7 +505,7 @@ internal static class LoadPic
         }
         else
         {
-            fileInfo = new FileInfo(Pics[index]);
+            fileInfo ??= new FileInfo(Pics[index]);
             await SetThumb();
             await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
             if (index != FolderIndex)

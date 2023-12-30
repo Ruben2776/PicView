@@ -2,7 +2,10 @@
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
+using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
+using System;
+using System.Diagnostics;
 using System.IO;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
@@ -39,7 +42,34 @@ internal static class SetTitle
         var preloadValue = PreLoader.Get(FolderIndex);
         var width = preloadValue?.BitmapSource?.PixelWidth ?? ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
         var height = preloadValue?.BitmapSource?.PixelHeight ?? ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
-        var fileInfo = ErrorHandling.CheckOutOfRange() ? null : new FileInfo(Pics[FolderIndex]);
+        FileInfo? fileInfo;
+        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+        if (ErrorHandling.CheckOutOfRange())
+        {
+            fileInfo = null;
+        }
+        else
+        {
+            if (Pics.Count < FolderIndex || Pics.Count < 1 || FolderIndex > Pics.Count)
+            {
+                fileInfo = null;
+            }
+            else
+            {
+                try
+                {
+                    fileInfo = new FileInfo(Pics[FolderIndex]);
+                }
+                catch (Exception exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(SetTitleString)} exception:\n{exception.Message}");
+#endif
+                    return;
+                }
+            }
+        }
+
         if (fileInfo is null)
         {
             var path = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();

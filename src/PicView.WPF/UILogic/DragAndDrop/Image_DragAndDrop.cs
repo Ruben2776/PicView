@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.Core.Localization;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ImageHandling.Thumbnails;
 using static PicView.WPF.UILogic.Tooltip;
@@ -113,7 +114,7 @@ internal static class ImageDragAndDrop
             RemoveDragOverlay();
         }
         else if (ConfigureWindows.GetMainWindow.TitleText.Text ==
-                 Application.Current.Resources["NoImage"] as string)
+                 TranslationHelper.GetTranslation("NoImage"))
         {
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
         }
@@ -150,36 +151,33 @@ internal static class ImageDragAndDrop
         // Get files as strings
         if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
         {
-            await Task.Run(async () =>
+            try
             {
-                try
+                // ReSharper disable once AssignNullToNotNullAttribute
+                var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
+
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (memoryStream is not null)
+                {
+                    await LoadUrlAsync(memoryStream).ConfigureAwait(false);
+                }
+                else
                 {
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    var memoryStream = (MemoryStream)e.Data.GetData("text/x-moz-url");
-
-                    // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                    if (memoryStream is not null)
-                    {
-                        await LoadUrlAsync(memoryStream).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        // ReSharper disable once AssignNullToNotNullAttribute
-                        await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat))
-                            .ConfigureAwait(false);
-                    }
+                    await LoadPic.LoadPicFromStringAsync((string)e.Data.GetData(DataFormats.StringFormat))
+                        .ConfigureAwait(false);
                 }
-                catch (Exception)
-                {
-                    //
-                }
-            });
+            }
+            catch (Exception)
+            {
+                //
+            }
 
             return;
         }
 
         // Check if same file
-        if (files.Length == 1 && Pics.Count > 0)
+        if (files.Length == 1 && Pics.Count > 0 && FolderIndex < Pics.Count)
         {
             if (files[0] == Pics[FolderIndex])
             {
@@ -189,27 +187,24 @@ internal static class ImageDragAndDrop
             }
         }
 
-        await Task.Run(async () =>
+        InitialPath = files[0];
+        var fileInfo = new FileInfo(files[0]);
+
+        //detect whether its a directory or file
+        if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
         {
-            InitialPath = files[0];
-            var fileInfo = new FileInfo(files[0]);
+            await LoadPic.LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
+        }
+        else
+        {
+            await LoadPic.LoadPiFromFileAsync(files[0], fileInfo).ConfigureAwait(false);
+        }
 
-            //detect whether its a directory or file
-            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-            {
-                await LoadPic.LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);
-            }
-            else
-            {
-                await LoadPic.LoadPiFromFileAsync(files[0], fileInfo).ConfigureAwait(false);
-            }
-
-            // Open additional windows if multiple files dropped
-            foreach (var file in files.Skip(1))
-            {
-                Core.ProcessHandling.ProcessHelper.StartNewProcess(file);
-            }
-        });
+        // Open additional windows if multiple files dropped
+        foreach (var file in files.Skip(1))
+        {
+            Core.ProcessHandling.ProcessHelper.StartNewProcess(file);
+        }
     }
 
     private static async Task LoadUrlAsync(MemoryStream memoryStream)

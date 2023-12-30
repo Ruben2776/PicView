@@ -59,32 +59,12 @@ internal static class ErrorHandling
         });
     }
 
-    internal static bool CheckDirectoryChangeAndPicGallery(FileInfo fileInfo)
-    {
-        // If count not correct or just started, get values
-        if (Pics?.Count <= FolderIndex || FolderIndex < 0)
-        {
-            return true;
-        }
-
-        // If the file is in the same folder, navigate to it. If not, start manual loading procedure.
-        if (string.IsNullOrWhiteSpace(Pics?[FolderIndex]) ||
-            fileInfo.Directory.FullName == Path.GetDirectoryName(Pics[FolderIndex]))
-        {
-            return Pics.Contains(fileInfo.FullName) == false;
-        }
-
-        // Reset old values and get new
-        ChangeFolder(true);
-        return true;
-    }
-
     /// <summary>
     /// Clears data, to free objects no longer necessary to store in memory and allow changing folder without error.
     /// </summary>
-    internal static void ChangeFolder(bool backup = false)
+    internal static void ChangeFolder()
     {
-        if (Pics?.Count > 0 && Pics.Count > FolderIndex && backup)
+        if (Pics?.Count > 0 && Pics.Count > FolderIndex)
         {
             // Make a backup of xPicPath and FolderIndex
             if (!string.IsNullOrWhiteSpace(Pics[FolderIndex]))
@@ -94,16 +74,7 @@ internal static class ErrorHandling
         }
 
         Pics.Clear();
-        if (ConfigureWindows.GetMainWindow.CheckAccess())
-        {
-            GalleryFunctions.Clear();
-        }
-        else
-        {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Background,
-                new Action(GalleryFunctions.Clear));
-        }
-
+        GalleryFunctions.Clear();
         PreLoader.Clear();
         FileDeletionHelper.DeleteTempFiles();
     }

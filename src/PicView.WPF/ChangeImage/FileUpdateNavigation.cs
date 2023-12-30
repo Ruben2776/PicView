@@ -1,13 +1,13 @@
 ﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Gallery;
 using PicView.WPF.FileHandling;
+using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
-using PicView.Core.Gallery;
-using PicView.WPF.ImageHandling;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -17,14 +17,32 @@ internal static class FileUpdateNavigation
 
     internal static void Initiate(string path)
     {
-        watcher ??= new FileSystemWatcher();
-        watcher.Path = path;
-        watcher.EnableRaisingEvents = true;
-        watcher.Filter = "*.*";
-        watcher.IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
-        watcher.Created += async (_, e) => await OnFileAdded(e).ConfigureAwait(false);
-        watcher.Deleted += async (_, e) => await OnFileDeleted(e).ConfigureAwait(false);
-        watcher.Renamed += async (_, e) => await OnFileRenamed(e).ConfigureAwait(false);
+        // Don't run when browsing archive
+        if (!string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath))
+        {
+            if (watcher is not null)
+            {
+                watcher = null;
+            }
+            return;
+        }
+        try
+        {
+            watcher ??= new FileSystemWatcher();
+            watcher.Path = path;
+            watcher.EnableRaisingEvents = true;
+            watcher.Filter = "*.*";
+            watcher.IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+            watcher.Created += async (_, e) => await OnFileAdded(e).ConfigureAwait(false);
+            watcher.Deleted += async (_, e) => await OnFileDeleted(e).ConfigureAwait(false);
+            watcher.Renamed += async (_, e) => await OnFileRenamed(e).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(Initiate)} exception:\n{exception.Message}");
+#endif
+        }
     }
 
     private static async Task OnFileRenamed(RenamedEventArgs e)
@@ -115,6 +133,10 @@ internal static class FileUpdateNavigation
 
     private static async Task OnFileAdded(FileSystemEventArgs e)
     {
+        if (Navigation.Pics.Contains(e.FullPath))
+        {
+            return;
+        }
         if (e.FullPath.IsSupported() == false)
         {
             return;
@@ -134,11 +156,48 @@ internal static class FileUpdateNavigation
         var index = Navigation.Pics.IndexOf(e.FullPath);
         if (index < 0) { return; }
 
+        var nextIndex = index + 1;
+        if (index >= Navigation.Pics.Count)
+        {
+            nextIndex = 0;
+        }
+        var prevIndex = index - 1;
+        if (prevIndex < 0)
+        {
+            prevIndex = Navigation.Pics.Count - 1;
+        }
+        if (PreLoader.Contains(index) || PreLoader.Contains(nextIndex) || PreLoader.Contains(prevIndex))
+        {
+            PreLoader.Clear();
+            await PreLoader.PreLoadAsync(Navigation.FolderIndex, Navigation.Pics.Count).ConfigureAwait(false);
+        }
+
         if (UC.GetPicGallery is not null)
         {
-            var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[Navigation.FolderIndex],
+            if (Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || index > Navigation.Pics.Count)
+            {
+                return;
+            }
+
+            while (GalleryLoad.IsLoading)
+            {
+                // Don't add when they're being loaded
+                await Task.Delay(500);
+            }
+
+            var exists = false;
+            await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
+            {
+                if (UC.GetPicGallery.Container.Children.Count == Navigation.Pics.Count)
+                    exists = true;
+            });
+            if (exists)
+            {
+                return;
+            }
+            var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(e.FullPath,
                 (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(Navigation.FolderIndex, bitmapSource, fileInfo);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, bitmapSource, fileInfo);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
                 var item = new PicGalleryItem(bitmapSource, e.FullPath, false)
@@ -157,23 +216,17 @@ internal static class FileUpdateNavigation
                         Text = thumbData.FileSize
                     }
                 };
-                UC.GetPicGallery.Container.Children.Insert(index, item);
+                try
+                {
+                    UC.GetPicGallery.Container.Children.Insert(index, item);
+                }
+                catch (Exception exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(OnFileAdded)} add gallery item exception:\n{exception.Message}");
+#endif
+                }
             });
-        }
-        var nextIndex = index + 1;
-        if (index >= Navigation.Pics.Count)
-        {
-            nextIndex = 0;
-        }
-        var prevIndex = index - 1;
-        if (prevIndex < 0)
-        {
-            prevIndex = Navigation.Pics.Count - 1;
-        }
-        if (PreLoader.Contains(index) || PreLoader.Contains(nextIndex) || PreLoader.Contains(prevIndex))
-        {
-            PreLoader.Clear();
-            await PreLoader.PreLoadAsync(Navigation.FolderIndex, Navigation.Pics.Count).ConfigureAwait(false);
         }
     }
 }

@@ -71,7 +71,7 @@ internal static class ImageFunctions
                 OptimalCompression = true
             };
 
-            if (imageOptimizer.IsSupported(Navigation.Pics[Navigation.FolderIndex]) == false)
+            if (!imageOptimizer.IsSupported(Navigation.Pics[Navigation.FolderIndex]))
             {
                 // Show a tooltip message indicating that the file is unsupported
                 Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("UnsupportedFile"), toCenter);

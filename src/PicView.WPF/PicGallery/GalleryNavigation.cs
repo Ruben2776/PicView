@@ -1,10 +1,10 @@
-﻿using PicView.WPF.Animations;
+﻿using PicView.Core.Config;
+using PicView.WPF.Animations;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media;
-using PicView.Core.Config;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
 
@@ -76,6 +76,11 @@ internal static class GalleryNavigation
             }
 
             if (GetPicGallery.Container.Children.Count <= SelectedGalleryItem)
+            {
+                return 0;
+            }
+
+            if (SelectedGalleryItem < 0)
             {
                 return 0;
             }
@@ -201,6 +206,11 @@ internal static class GalleryNavigation
                         ? PicGalleryItemSize
                         : PicGalleryItemSizeS;
             }
+        }
+
+        while (GetPicGallery.Container.Children.Count > Pics.Count)
+        {
+            GetPicGallery.Container.Children.RemoveAt(GetPicGallery.Container.Children.Count - 1);
         }
     }
 

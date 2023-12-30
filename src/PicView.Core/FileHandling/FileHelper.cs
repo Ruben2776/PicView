@@ -208,4 +208,26 @@ public static partial class FileHelper
         // If no match is found, return an appropriate value (e.g., -1 indicating an error)
         return -1;
     }
+
+    public static bool DoesDirectoryContainFiles(string directoryPath)
+    {
+        // Check if the directory path is null or empty
+        if (string.IsNullOrEmpty(directoryPath))
+        {
+            return false;
+        }
+
+        // Check if the directory exists
+        if (!Directory.Exists(directoryPath))
+        {
+            return false;
+        }
+
+        // Get all files in the directory
+        var files = Directory.GetFiles(directoryPath);
+
+        // Check if the directory is empty
+        return files.Length != 0;
+        // Directory contains files
+    }
 }

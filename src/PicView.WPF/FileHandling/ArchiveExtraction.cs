@@ -1,13 +1,13 @@
-﻿using Microsoft.Win32;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using Microsoft.Win32;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.FileLists;
 
@@ -22,12 +22,14 @@ internal static class ArchiveExtraction
     /// <returns></returns>
     internal static bool Extract(string pathToArchiveFile)
     {
-        string[] appNames = { "WinRAR.exe", "7z.exe" };
-        string[] appPathNames = { "\\WinRAR\\WinRAR.exe", "\\7-Zip\\7z.exe" };
+        string[] appNames = { "WinRAR.exe", "7z.exe", "Nanazip.exe" };
+        string[] appPathNames = { "\\WinRAR\\WinRAR.exe", "\\7-Zip\\7z.exe", "\\Nanazip\\Nanazip.exe" };
 
         var extractAppPath = GetExtractAppPath(appPathNames, appNames);
         return extractAppPath != null && Extract(pathToArchiveFile, extractAppPath,
-            extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase));
+            extractAppPath.Contains("WinRAR", StringComparison.OrdinalIgnoreCase),
+            extractAppPath.Contains("7z", StringComparison.OrdinalIgnoreCase),
+            extractAppPath.Contains("Nanazip", StringComparison.OrdinalIgnoreCase));
     }
 
     private static string? GetExtractAppPath(string[] commonPaths, string[] appNames)
@@ -56,18 +58,26 @@ internal static class ArchiveExtraction
             foreach (var subKeyName in key.GetSubKeyNames())
             {
                 using var subKey = key.OpenSubKey(subKeyName);
-                if (subKeyName.Equals("7-Zip") || subKeyName.Equals("WinRAR"))
+                switch (subKeyName)
                 {
-                    var installDir = subKey.GetValue("InstallLocation").ToString();
+                    case "7-Zip":
+                        {
+                            var installDir = subKey.GetValue("InstallLocation").ToString();
 
-                    return Path.Combine(installDir, "7z.exe");
-                }
+                            return Path.Combine(installDir, "7z.exe");
+                        }
+                    case "WinRAR":
+                        {
+                            var installDir = subKey.GetValue("InstallLocation").ToString();
 
-                if (subKeyName.Equals("WinRAR"))
-                {
-                    var installDir = subKey.GetValue("InstallLocation").ToString();
+                            return Path.Combine(installDir, "WinRAR.exe");
+                        }
+                    case "NanaZip":
+                        {
+                            var installDir = subKey.GetValue("InstallLocation").ToString();
 
-                    return Path.Combine(installDir, "WinRAR.exe");
+                            return Path.Combine(installDir, "NanaZip.exe");
+                        }
                 }
             }
         }
@@ -103,28 +113,45 @@ internal static class ArchiveExtraction
     /// </summary>
     /// <param name="archivePath">The path to the archived file</param>
     /// <param name="exe">Full path of the executable</param>
-    /// <param name="isWinrar">If WinRar or 7-Zip</param>
-    private static bool Extract(string archivePath, string exe, bool isWinrar)
+    /// <param name="isWinrar">If WinRar</param>
+    /// <param name="is7zip">If 7-Zip</param>
+    /// <param name="isNanazip">If Nanazip</param>
+    private static bool Extract(string archivePath, string exe, bool isWinrar, bool is7zip, bool isNanazip)
     {
-        if (!Core.FileHandling.ArchiveHelper.CreateTempDirectory(archivePath))
+        if (!ArchiveHelper.CreateTempDirectory(archivePath))
         {
             return false;
         }
 
 #if DEBUG
-        Trace.WriteLine("Created temp dir: " + Core.FileHandling.ArchiveHelper.TempFilePath);
+        Trace.WriteLine("Created temp dir: " + ArchiveHelper.TempFilePath);
 #endif
 
         BackupPath = ErrorHandling.CheckOutOfRange() == false ? Pics[FolderIndex] : null;
 
         try
         {
-            var arguments = isWinrar
-                ? $"x -o- \"{archivePath}\" " // WinRAR
-                : $"x \"{archivePath}\" -o"; // 7-Zip
+            string arguments;
+            if (isWinrar)
+            {
+                arguments = $"x -o- \"{archivePath}\" "; // WinRAR
+            }
+            else if (is7zip)
+            {
+                arguments = $"x \"{archivePath}\" -o"; // 7-Zip
+            }
+            else if (isNanazip)
+            {
+                arguments = $"extract \"{archivePath}\" -o"; // Nanazip
+            }
+            else
+            {
+                // Handle unsupported archive format
+                return false;
+            }
 
             var supportedFilesFilter = " *" + string.Join(" *", SupportedFiles.FileExtensions) + " ";
-            arguments += Core.FileHandling.ArchiveHelper.TempFilePath + supportedFilesFilter + " -r -aou";
+            arguments += ArchiveHelper.TempFilePath + supportedFilesFilter + " -r -aou";
 
             var process = Process.Start(new ProcessStartInfo
             {
@@ -140,62 +167,16 @@ internal static class ArchiveExtraction
                 return false;
             }
 
-            var previewed = false;
-
             process.EnableRaisingEvents = true;
             process.BeginOutputReadLine();
             process.OutputDataReceived += (_, _) =>
             {
-                // Fix it if files are in sub directory
-                while (!process.HasExited)
-                {
-                    if (previewed) return;
-
-                    if (!SetDirectory() || Pics.Count < 1) continue;
-                    LoadPic.LoadingPreview(new FileInfo(Pics[0]));
-                    previewed = true;
-                }
+                ProcessOutPut(process);
             };
 
             process.Exited += async (_, _) =>
             {
-                if (SetDirectory())
-                {
-                    await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
-
-                    if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                    {
-                        if (UC.GetPicGallery is null)
-                        {
-                            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                            {
-                                GalleryToggle.ShowBottomGallery();
-                                ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-                            });
-
-                            await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
-                            {
-                                UC.GetPicGallery.Visibility = Visibility.Visible;
-                                ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-                            });
-                        }
-                    }
-
-                    FileHistoryNavigation.Add(Core.FileHandling.ArchiveHelper.TempZipFile);
-
-                    if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                    {
-                        await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    await ErrorHandling.ReloadAsync(true).ConfigureAwait(false);
-                }
+                await ProcessExited().ConfigureAwait(false);
             };
         }
         catch (Exception e)
@@ -212,7 +193,7 @@ internal static class ArchiveExtraction
 
     private static bool SetDirectory()
     {
-        if (string.IsNullOrEmpty(Core.FileHandling.ArchiveHelper.TempFilePath))
+        if (string.IsNullOrEmpty(ArchiveHelper.TempFilePath))
         {
 #if DEBUG
             Trace.WriteLine("SetDirectory empty zip archivePath");
@@ -221,18 +202,18 @@ internal static class ArchiveExtraction
         }
 
         // Set extracted files to Pics
-        if (!Directory.Exists(Core.FileHandling.ArchiveHelper.TempFilePath))
+        if (!Directory.Exists(ArchiveHelper.TempFilePath))
         {
             return false;
         }
 
-        var directory = Directory.GetDirectories(Core.FileHandling.ArchiveHelper.TempFilePath);
+        var directory = Directory.GetDirectories(ArchiveHelper.TempFilePath);
         if (directory.Length > 0)
         {
-            Core.FileHandling.ArchiveHelper.TempFilePath = directory[0];
+            ArchiveHelper.TempFilePath = directory[0];
         }
 
-        var extractedFiles = FileList(new FileInfo(Core.FileHandling.ArchiveHelper.TempFilePath));
+        var extractedFiles = FileList(new FileInfo(ArchiveHelper.TempFilePath));
         if (extractedFiles.Count > 0)
         {
             Pics = extractedFiles;
@@ -243,5 +224,56 @@ internal static class ArchiveExtraction
         }
 
         return true;
+    }
+
+    private static async Task ProcessExited()
+    {
+        if (SetDirectory())
+        {
+            await LoadPic.LoadPicAtIndexAsync(0).ConfigureAwait(false);
+
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            {
+                if (UC.GetPicGallery is null)
+                {
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        GalleryToggle.ShowBottomGallery();
+                        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    });
+
+                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    await UC.GetPicGallery?.Dispatcher.InvokeAsync(() =>
+                    {
+                        UC.GetPicGallery.Visibility = Visibility.Visible;
+                        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width, ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+                    });
+                }
+            }
+
+            FileHistoryNavigation.Add(ArchiveHelper.TempZipFile);
+
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            {
+                await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
+            }
+        }
+    }
+
+    private static void ProcessOutPut(Process process)
+    {
+        var previewed = false;
+        // Fix it if files are in sub directory
+        while (!process.HasExited)
+        {
+            if (previewed) return;
+
+            if (!SetDirectory() || Pics.Count < 1) continue;
+            LoadPic.LoadingPreview(new FileInfo(Pics[0]));
+            previewed = true;
+        }
     }
 }
