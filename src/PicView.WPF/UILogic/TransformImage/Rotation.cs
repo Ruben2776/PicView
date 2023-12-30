@@ -1,9 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Media;
+﻿using PicView.Core.Config;
 using PicView.WPF.ConfigureSettings;
-using PicView.Core.Config;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace PicView.WPF.UILogic.TransformImage;
 
@@ -61,7 +62,7 @@ internal static class Rotation
             }
             else
             {
-                Rotate(NextRotationAngle(RotationAngle, up));
+                Rotate(NextRotationAngle(RotationAngle, up), true);
             }
         }
     }
@@ -93,33 +94,58 @@ internal static class Rotation
     }
 
     /// <summary>
-    /// Rotates the image by the specified angle in degrees.
+    /// Rotates the image.
     /// </summary>
-    /// <param name="degrees">The angle in degrees to rotate the image.</param>
-    internal static void Rotate(double degrees)
+    /// <param name="degrees">The rotation angle in degrees.</param>
+    /// <param name="animate">If true, animates the rotation; otherwise, performs the rotation instantly.</param>
+    internal static void Rotate(double degrees, bool animate = false)
     {
         if (ConfigureWindows.GetMainWindow.MainImage.Source == null)
         {
             return;
         }
 
-        var rt = new RotateTransform { Angle = RotationAngle = degrees };
-
-        ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width,
-            ConfigureWindows.GetMainWindow.MainImage.Source.Height);
-
-        // If it's flipped, keep it flipped when rotating
-        if (IsFlipped)
+        if (animate)
         {
-            var tg = new TransformGroup();
-            var flip = new ScaleTransform { ScaleX = -1 };
-            tg.Children.Add(flip);
-            tg.Children.Add(rt);
-            ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = tg;
+            var animatedRotation = new DoubleAnimation
+            {
+                From = RotationAngle,
+                To = degrees,
+                Duration = TimeSpan.FromSeconds(.7),
+            };
+            animatedRotation.Completed += (_, _) =>
+            {
+                DoRotation();
+            };
+            ConfigureWindows.GetMainWindow.MainImage.LayoutTransform.BeginAnimation(RotateTransform.AngleProperty, animatedRotation);
         }
         else
         {
-            ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = rt;
+            DoRotation();
+        }
+
+        return;
+
+        void DoRotation()
+        {
+            var rt = new RotateTransform { Angle = RotationAngle = degrees };
+
+            ScaleImage.FitImage(ConfigureWindows.GetMainWindow.MainImage.Source.Width,
+                ConfigureWindows.GetMainWindow.MainImage.Source.Height);
+
+            // If it's flipped, keep it flipped when rotating
+            if (IsFlipped)
+            {
+                var tg = new TransformGroup();
+                var flip = new ScaleTransform { ScaleX = -1 };
+                tg.Children.Add(flip);
+                tg.Children.Add(rt);
+                ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = tg;
+            }
+            else
+            {
+                ConfigureWindows.GetMainWindow.MainImage.LayoutTransform = rt;
+            }
         }
     }
 
@@ -170,43 +196,30 @@ internal static class Rotation
     }
 
     /// <summary>
-    /// This method returns the next rotation angle to be used based on the current rotation angle and the direction of rotation.
-    /// If roundUp is true, the method returns the next multiple of 90 degrees that is greater than the current rotation angle.
-    /// Otherwise, it returns the next multiple of 90 degrees that is less than the current rotation angle.
-    /// The returned value is an integer representing the next rotation angle in degrees.
+    /// This method returns the next rotation angle based on the current rotation angle and the direction of rotation.
     /// </summary>
-    /// <param name="currentDegrees">A double value representing the current rotation angle in degrees.</param>
-    /// <param name="roundUp">A bool value indicating the direction of rotation. If true, the method returns the next higher multiple of 90 degrees.
-    /// Otherwise, it returns the next lower multiple of 90 degrees.</param>
-    /// <returns>An integer representing the next rotation angle in degrees.</returns>
-    private static int NextRotationAngle(double currentDegrees, bool roundUp)
+    /// <param name="currentDegrees">The current rotation angle in degrees.</param>
+    /// <param name="clockWise">A boolean value indicating the direction of rotation. If true, the rotation is clockwise; otherwise, it is counterclockwise.</param>
+    /// <returns>The next rotation angle in degrees.</returns>
+    private static int NextRotationAngle(double currentDegrees, bool clockWise)
     {
-        var nearestMultipleOf90 = (int)Math.Round(currentDegrees / 90.0) * 90;
-        int nextRotationAngle;
-
-        if (roundUp)
+        if (clockWise)
         {
-            if (nearestMultipleOf90 < 360)
+            return currentDegrees switch
             {
-                nextRotationAngle = nearestMultipleOf90 + 90;
-            }
-            else
-            {
-                nextRotationAngle = 0;
-            }
-        }
-        else
-        {
-            if (nearestMultipleOf90 > 0)
-            {
-                nextRotationAngle = nearestMultipleOf90 - 90;
-            }
-            else
-            {
-                nextRotationAngle = 270;
-            }
+                > 0 and < 90 => 90,
+                > 90 and < 180 => 180,
+                > 180 and < 270 => 270,
+                _ => 0
+            };
         }
 
-        return nextRotationAngle;
+        return currentDegrees switch
+        {
+            > 0 and < 90 => 0,
+            > 90 and < 180 => 90,
+            > 180 and < 270 => 180,
+            _ => 270
+        };
     }
 }
