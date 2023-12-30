@@ -63,7 +63,6 @@ public class GalleryThumbInfo
         {
             var fileNameLength = 60;
             var fileLocation = fileInfo.FullName;
-            fileLocation = fileLocation.Length > fileNameLength ? fileLocation.Shorten(fileNameLength) : fileLocation;
             var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
             fileName = fileName.Length > fileNameLength ? fileName.Shorten(fileNameLength) : fileName;
             var getFileSizeResource = TranslationHelper.GetTranslation("FileSize");

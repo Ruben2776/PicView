@@ -3,6 +3,8 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
+using System;
+using System.Diagnostics;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Tooltip;
 
@@ -69,22 +71,20 @@ internal static class DeleteFiles
     /// and display information
     /// </summary>
     /// <param name="recycle"></param>
-    internal static async Task DeleteFileAsync(bool recycle, int index)
+    internal static async Task DeleteFileAsync(bool recycle, string file)
     {
-        if (index == FolderIndex)
+        var index = 0;
+        if (FolderIndex < Pics.Count && Pics.Count > 0)
         {
-            await DeleteCurrentFileAsync(recycle).ConfigureAwait(false);
-            return;
+            index = Pics.IndexOf(file);
+            if (index == FolderIndex)
+            {
+                await DeleteCurrentFileAsync(recycle).ConfigureAwait(false);
+                return;
+            }
         }
 
-        var currentFile = Pics.IndexOf(Pics[FolderIndex]);
-        var fileName = Pics[index];
-        if (index < 0)
-        {
-            return;
-        }
-
-        var deleteFile = FileDeletionHelper.DeleteFileWithErrorMsg(fileName, recycle);
+        var deleteFile = FileDeletionHelper.DeleteFileWithErrorMsg(file, recycle);
         if (!string.IsNullOrWhiteSpace(deleteFile))
         {
             // Show error message to user
@@ -92,13 +92,22 @@ internal static class DeleteFiles
             return;
         }
 
-        Pics.RemoveAt(index);
+        try
+        {
+            Pics.RemoveAt(index);
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(DeleteFileAsync)} caught exception:\n{exception.Message}");
+#endif
+            return;
+        }
         if (Pics.Count <= 0)
         {
             ErrorHandling.UnexpectedError();
             return;
         }
-        FolderIndex = Pics.IndexOf(Pics[currentFile]);
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
@@ -109,14 +118,10 @@ internal static class DeleteFiles
             }
         });
 
-        try
+        if (PreLoader.Contains(index))
         {
             PreLoader.Clear();
+            await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
         }
-        catch (Exception)
-        {
-            //
-        }
-        await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
     }
 }

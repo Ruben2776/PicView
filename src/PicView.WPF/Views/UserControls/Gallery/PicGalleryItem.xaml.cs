@@ -240,7 +240,7 @@ public partial class PicGalleryItem
             }
         };
         deleteFileMenu.Click += async (_, _) =>
-            await DeleteFiles.DeleteFileAsync(true, Navigation.Pics.IndexOf(FileName)).ConfigureAwait(false);
+            await DeleteFiles.DeleteFileAsync(true, FileName).ConfigureAwait(false);
         cm.Items.Add(deleteFileMenu);
 
         ContextMenu = cm;
