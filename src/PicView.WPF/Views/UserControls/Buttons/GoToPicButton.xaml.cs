@@ -28,7 +28,7 @@ public partial class GoToPicButton
                 GoToPicBox.CaretBrush = new SolidColorBrush(ConfigColors.MainColor);
             };
             GoToPicBox.PreviewKeyDown += async (s, x) => await GoToPicPreviewKeysAsync(s, x).ConfigureAwait(false);
-            GoToPicBox.Text = TranslationHelper.GetTranslation("GoToImageAtSpecifiedIndex");
+            GoToPicBox.ToolTip = TranslationHelper.GetTranslation("GoToImageAtSpecifiedIndex");
         };
     }
 
