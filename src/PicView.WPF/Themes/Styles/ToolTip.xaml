@@ -17,19 +17,13 @@
                         Background="{StaticResource BackgroundColorBrushAlt}"
                         BorderBrush="{StaticResource BorderBrush}"
                         BorderThickness="1"
-                        CornerRadius="3">
+                        CornerRadius="5">
 
                         <ContentPresenter
                             Margin="7"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top" />
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="HasDropShadow" Value="true">
-                            <Setter TargetName="Border" Property="CornerRadius" Value="0" />
-                            <Setter TargetName="Border" Property="SnapsToDevicePixels" Value="true" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
