@@ -16,6 +16,8 @@ namespace PicView.WPF.ChangeImage;
 /// </summary>
 internal static class PreLoader
 {
+    private static bool _isRunning;
+
     /// <summary>
     /// Represents a value that is preloaded and cached, including information about the image file.
     /// </summary>
@@ -84,17 +86,18 @@ internal static class PreLoader
 #if DEBUG
 
     // ReSharper disable once ConvertToConstant.Local
-    private static readonly bool ShowAddRemove = false;
+    private static readonly bool ShowAddRemove = true;
 
 #endif
 
     /// <summary>
-    /// Adds a file to the PreLoader from the specified index. Returns true if a new value was added.
+    /// Adds a new image to the PreLoadList dictionary at the specified index.
     /// </summary>
-    /// <param name="index">Index of the image in the list of Pics</param>
-    /// <param name="fileInfo">The file info of the image</param>
-    /// <param name="bitmapSource">The bitmap source of the image</param>
-    /// <returns>PreLoadValue that can be null</returns>
+    /// <param name="index">The index at which to add the image.</param>
+    /// <param name="fileInfo">The FileInfo object of the image file.</param>
+    /// <param name="bitmapSource">The BitmapSource of the image.</param>
+    /// <param name="orientation">The orientation of the image.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     internal static async Task AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null, ushort? orientation = null)
     {
         if (index < 0 || index >= Pics.Count) return;
@@ -221,21 +224,24 @@ internal static class PreLoader
     /// <param name="count">The current count of the iterated list</param>
     internal static async Task PreLoadAsync(int currentIndex, int count)
     {
+        if (_isRunning)
+        {
+            return;
+        }
+        _isRunning = true;
         int nextStartingIndex, prevStartingIndex, deleteIndex;
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
+        nextStartingIndex = currentIndex;
         if (Reverse)
         {
-            nextStartingIndex = currentIndex + NegativeIterations > count
-                ? count
-                : currentIndex + NegativeIterations;
-            prevStartingIndex = currentIndex + 1;
-            deleteIndex = prevStartingIndex + NegativeIterations;
+            prevStartingIndex = currentIndex - 1;
+            deleteIndex = prevStartingIndex - NegativeIterations;
         }
         else
         {
-            nextStartingIndex = currentIndex - NegativeIterations < 0 ? 0 : currentIndex - NegativeIterations;
-            prevStartingIndex = currentIndex - 1;
-            deleteIndex = prevStartingIndex - NegativeIterations;
+            nextStartingIndex = currentIndex;
+            prevStartingIndex = currentIndex + 1;
+            deleteIndex = prevStartingIndex + NegativeIterations;
         }
 
 #if DEBUG
@@ -245,73 +251,79 @@ internal static class PreLoader
 
         try
         {
-            await Parallel.ForAsync(0, PositiveIterations + NegativeIterations, source.Token, async (i, _) =>
+            if (Reverse)
             {
-                try
-                {
-                    if (Pics.Count == 0 || count != Pics.Count)
-                    {
-                        await source.CancelAsync();
-                    }
-                }
-                catch (Exception)
-                {
-                    return;
-                }
-
-                int index;
-                if (Reverse)
-                {
-                    index = (nextStartingIndex - i + Pics.Count) % Pics.Count;
-                }
-                else
-                {
-                    index = (nextStartingIndex + i) % Pics.Count;
-                }
-
-                await AddAsync(index).ConfigureAwait(false);
-            });
+                await NegativeLoop().ConfigureAwait(false);
+                await PositiveLoop().ConfigureAwait(false);
+            }
+            else
+            {
+                await PositiveLoop().ConfigureAwait(false);
+                await NegativeLoop().ConfigureAwait(false);
+            }
         }
         catch (Exception exception)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(PreLoadAsync)} exception:\n{exception.Message}");
 #endif
+            _isRunning = false;
         }
 
-        if (Pics.Count > MaxCount + NegativeIterations)
+        _isRunning = false;
+
+        if (Pics.Count <= MaxCount + NegativeIterations)
         {
-            for (var i = 0; i < NegativeIterations; i++)
+            return;
+        }
+
+        while (PreLoadList.Count > MaxCount)
+        {
+            Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
+        }
+
+        return;
+
+        async Task PositiveLoop()
+        {
+            await Parallel.ForAsync(0, PositiveIterations, source.Token, async (i, _) =>
             {
                 try
                 {
                     if (Pics.Count == 0 || count != Pics.Count)
                     {
-                        throw new TaskCanceledException();
+                        await source.CancelAsync();
+                        _isRunning = false;
                     }
                 }
                 catch (Exception)
                 {
                     return;
                 }
-
-                int index;
-                if (Reverse)
-                {
-                    index = (deleteIndex + i) % Pics.Count;
-                }
-                else
-                {
-                    index = (deleteIndex - i + Pics.Count) % Pics.Count;
-                }
-
-                Remove(index);
-            }
+                var index = (nextStartingIndex + i) % Pics.Count;
+                await AddAsync(index).ConfigureAwait(false);
+            });
         }
 
-        while (PreLoadList.Count > MaxCount)
+        async Task NegativeLoop()
         {
-            Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
+            await Parallel.ForAsync(0, NegativeIterations, source.Token, async (i, _) =>
+            {
+                try
+                {
+                    if (Pics.Count == 0 || count != Pics.Count)
+                    {
+                        await source.CancelAsync();
+                        _isRunning = false;
+                    }
+                }
+                catch (Exception)
+                {
+                    return;
+                }
+                var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
+                await AddAsync(index).ConfigureAwait(false);
+            });
         }
     }
 }
