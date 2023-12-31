@@ -197,8 +197,8 @@ internal static class LoadPic
 
             Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
 
-            if (string.IsNullOrWhiteSpace(InitialPath) || folderChanged)
-                InitialPath = fileInfo.FullName;
+            if (string.IsNullOrWhiteSpace(BackupPath) || folderChanged)
+                BackupPath = fileInfo.FullName;
         }
         else
         {

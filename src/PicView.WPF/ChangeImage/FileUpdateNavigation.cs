@@ -1,6 +1,8 @@
 ﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.Navigation;
+using PicView.WPF.ConfigureSettings;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
@@ -14,6 +16,7 @@ namespace PicView.WPF.ChangeImage;
 internal static class FileUpdateNavigation
 {
     internal static FileSystemWatcher? watcher;
+    private static bool _running;
 
     internal static void Initiate(string path)
     {
@@ -47,6 +50,10 @@ internal static class FileUpdateNavigation
 
     private static async Task OnFileRenamed(RenamedEventArgs e)
     {
+        if (FileFunctions.IsFileBeingRenamed)
+        {
+            return;
+        }
         if (e.FullPath.IsSupported() == false)
         {
             if (Navigation.Pics.Contains(e.OldFullPath))
@@ -55,9 +62,21 @@ internal static class FileUpdateNavigation
             }
             return;
         }
+        if (_running) { return; }
+        _running = true;
+
+        var oldIndex = Navigation.Pics.IndexOf(e.OldFullPath);
+        var sameFile = Navigation.FolderIndex == Navigation.Pics.IndexOf(e.OldFullPath);
 
         var fileInfo = new FileInfo(e.FullPath);
         if (fileInfo.Exists == false) { return; }
+
+        var newList = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+        if (newList.Count == 0) { return; }
+
+        if (fileInfo.Exists == false) { return; }
+
+        Navigation.Pics = newList;
 
         var index = Navigation.Pics.IndexOf(e.FullPath);
         if (index < 0) { return; }
@@ -66,53 +85,112 @@ internal static class FileUpdateNavigation
         {
             return;
         }
+        var bitmapSource = !sameFile ? null : PreLoader.Get(Navigation.FolderIndex)?.BitmapSource;
+        PreLoader.Remove(index);
 
-        try
+        if (sameFile)
         {
-            Navigation.Pics[Navigation.Pics.IndexOf(e.OldFullPath)] = e.FullPath;
+            Navigation.FolderIndex = index;
+            await PreLoader.AddAsync(Navigation.FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
         }
-        catch (Exception exception)
+
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
+            var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
+            var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
+            try
+            {
+                ChangeTitlebar.SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
+            }
+            catch (Exception exception)
+            {
 #if DEBUG
-            Trace.WriteLine($"{nameof(OnFileRenamed)} exception:\n{exception.Message}");
+                Trace.WriteLine($"{nameof(OnFileRenamed)} update title exception:\n{exception.Message}");
 #endif
-        }
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ChangeTitlebar.SetTitle.SetTitleString);
-        if (PreLoader.Contains(index))
-        {
-            PreLoader.Remove(index);
-            await PreLoader.AddAsync(index).ConfigureAwait(false);
-        }
+            }
+        });
+        _running = false;
+
         if (UC.GetPicGallery is not null)
         {
+            while (GalleryLoad.IsLoading)
+            {
+                await Task.Delay(100);
+            }
+
+            if (Path.GetFileNameWithoutExtension(e.OldName) != Path.GetFileNameWithoutExtension(e.Name))
+            {
+                await UpdateUIValues.ChangeSortingAsync(FileListHelper.GetSordOrder()).ConfigureAwait(false);
+            }
+
             var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
-                if (UC.GetPicGallery.Container.Children[index] is not PicGalleryItem item)
+                var item = UC.GetPicGallery.Container.Children.OfType<PicGalleryItem>().FirstOrDefault(x => x.FilePath == e.FullPath);
+                if (item is null)
                 {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(OnFileDeleted)} item null");
+#endif
                     return;
                 }
-
-                item.FileName = thumbData.FileName;
-                item.ThumbFileDate.Text = thumbData.FileDate;
-                item.ThumbFileLocation.Text = thumbData.FileLocation;
-                item.ThumbFileSize.Text = thumbData.FileSize;
+                item.UpdateValues(thumbData.FileName, thumbData.FileDate, thumbData.FileSize, thumbData.FileLocation);
             });
         }
+        await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
     }
 
     private static async Task OnFileDeleted(FileSystemEventArgs e)
     {
+        if (FileFunctions.IsFileBeingRenamed)
+        {
+            return;
+        }
         if (e.FullPath.IsSupported() == false)
         {
             return;
         }
 
-        var index = Navigation.Pics.IndexOf(e.FullPath);
-        if (index < 0) { return; }
-        if (Navigation.Pics.Remove(e.FullPath)) { return; }
+        if (Navigation.Pics.Contains(e.FullPath) == false)
+        {
+            return;
+        }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ChangeTitlebar.SetTitle.SetTitleString);
+        if (_running) { return; }
+        _running = true;
+        var sameFile = Navigation.FolderIndex == Navigation.Pics.IndexOf(e.FullPath);
+        if (!Navigation.Pics.Remove(e.FullPath))
+        {
+            return;
+        }
+        Navigation.FolderIndex--;
+
+        PreLoader.Remove(Navigation.FolderIndex);
+
+        if (sameFile)
+        {
+            await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+        }
+        else
+        {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
+                var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
+                try
+                {
+                    ChangeTitlebar.SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
+                }
+                catch (Exception exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(OnFileDeleted)} update title exception:\n{exception.Message}");
+#endif
+                }
+            });
+        }
+        _running = false;
+
         if (UC.GetPicGallery is not null)
         {
             while (GalleryLoad.IsLoading)
@@ -121,18 +199,34 @@ internal static class FileUpdateNavigation
             }
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
-                UC.GetPicGallery.Container.Children.RemoveAt(index);
+                var item = UC.GetPicGallery.Container.Children.OfType<PicGalleryItem>().FirstOrDefault(x => x.FilePath == e.FullPath);
+                if (item is null)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(OnFileDeleted)} item null");
+#endif
+                    return;
+                }
+                try
+                {
+                    UC.GetPicGallery.Container.Children.Remove(item);
+                }
+                catch (Exception exception)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(OnFileDeleted)} remove gallery item exception:\n{exception.Message}");
+#endif
+                }
             });
-        }
-
-        if (PreLoader.Contains(index))
-        {
-            PreLoader.Remove(index);
         }
     }
 
     private static async Task OnFileAdded(FileSystemEventArgs e)
     {
+        if (FileFunctions.IsFileBeingRenamed)
+        {
+            return;
+        }
         if (Navigation.Pics.Contains(e.FullPath))
         {
             return;
@@ -144,6 +238,9 @@ internal static class FileUpdateNavigation
         var fileInfo = new FileInfo(e.FullPath);
         if (fileInfo.Exists == false) { return; }
 
+        if (_running) { return; }
+        _running = true;
+
         var newList = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
         if (newList.Count == 0) { return; }
         if (newList.Count == Navigation.Pics.Count) { return; }
@@ -152,7 +249,24 @@ internal static class FileUpdateNavigation
 
         Navigation.Pics = newList;
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(ChangeTitlebar.SetTitle.SetTitleString);
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        {
+            var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
+            var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
+            try
+            {
+                ChangeTitlebar.SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(OnFileAdded)} update title exception:\n{exception.Message}");
+#endif
+            }
+        });
+
+        _running = false;
+
         var index = Navigation.Pics.IndexOf(e.FullPath);
         if (index < 0) { return; }
 
@@ -195,14 +309,14 @@ internal static class FileUpdateNavigation
             {
                 return;
             }
-            var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(e.FullPath,
+            var thumbSource = await Thumbnails.GetBitmapSourceThumbAsync(e.FullPath,
                 (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, bitmapSource, fileInfo);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, thumbSource, fileInfo);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
-                var item = new PicGalleryItem(bitmapSource, e.FullPath, false)
+                var item = new PicGalleryItem(thumbSource, e.FullPath, false)
                 {
-                    FileName = thumbData.FileName,
+                    FilePath = thumbData.FileName,
                     ThumbFileDate =
                     {
                         Text = thumbData.FileDate

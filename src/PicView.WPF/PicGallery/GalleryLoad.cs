@@ -248,16 +248,11 @@ internal static class GalleryLoad
 #endif
                 return;
             }
-            var fileNameLength = 60;
             var item = (PicGalleryItem)UC.GetPicGallery.Container.Children[i];
             item.ThumbImage.Source = pic;
             item.MouseEnter += delegate { item.Popup.IsOpen = true; };
             item.MouseLeave += delegate { item.Popup.IsOpen = false; };
-            item.ThumbFileLocation.Text = fileLocation.Length > fileNameLength ? fileLocation.Shorten(fileNameLength) : fileLocation;
-            item.FileName = fileLocation;
-            item.ThumbFileName.Text = fileName;
-            item.ThumbFileSize.Text = fileSize;
-            item.ThumbFileDate.Text = fileDate;
+            item.UpdateValues(fileName, fileDate, fileSize, fileLocation);
 
             item.AddContextMenu();
         }

@@ -1,10 +1,9 @@
-﻿using System.Windows;
+﻿using PicView.Core.Config;
+using PicView.WPF.ChangeTitlebar;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
-using PicView.WPF.ChangeTitlebar;
-using PicView.Core.Config;
 using static PicView.WPF.ChangeImage.Navigation;
 
 namespace PicView.WPF.UILogic.TransformImage;
@@ -143,39 +142,35 @@ internal static class ZoomLogic
         var newYproperty = _origin.Y - dragMousePosition.Y;
 
         // Keep panning it in bounds
-        if (SettingsHelper.Settings.WindowProperties.AutoFit &&
-            !SettingsHelper.Settings.WindowProperties
-                .Fullscreen) // TODO develop solution where you can keep window in bounds when using normal window behavior and fullscreen
+
+        var actualScrollWidth = ConfigureWindows.GetMainWindow.Scroller.ActualWidth;
+        var actualBorderWidth = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth;
+        var actualScrollHeight = ConfigureWindows.GetMainWindow.Scroller.ActualHeight;
+        var actualBorderHeight = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight;
+
+        var isXOutOfBorder = actualScrollWidth < actualBorderWidth * ScaleTransform.ScaleX;
+        var isYOutOfBorder = actualScrollHeight < actualBorderHeight * ScaleTransform.ScaleY;
+        var maxX = actualScrollWidth - actualBorderWidth * ScaleTransform.ScaleX;
+        var maxY = actualScrollHeight - actualBorderHeight * ScaleTransform.ScaleY;
+
+        if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
         {
-            var actualScrollWidth = ConfigureWindows.GetMainWindow.Scroller.ActualWidth;
-            var actualBorderWidth = ConfigureWindows.GetMainWindow.MainImageBorder.ActualWidth;
-            var actualScrollHeight = ConfigureWindows.GetMainWindow.Scroller.ActualHeight;
-            var actualBorderHeight = ConfigureWindows.GetMainWindow.MainImageBorder.ActualHeight;
+            newXproperty = maxX;
+        }
 
-            var isXOutOfBorder = actualScrollWidth < actualBorderWidth * ScaleTransform.ScaleX;
-            var isYOutOfBorder = actualScrollHeight < actualBorderHeight * ScaleTransform.ScaleY;
-            var maxX = actualScrollWidth - actualBorderWidth * ScaleTransform.ScaleX;
-            var maxY = actualScrollHeight - actualBorderHeight * ScaleTransform.ScaleY;
+        if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
+        {
+            newYproperty = maxY;
+        }
 
-            if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
-            {
-                newXproperty = maxX;
-            }
+        if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
+        {
+            newXproperty = 0;
+        }
 
-            if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
-            {
-                newYproperty = maxY;
-            }
-
-            if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
-            {
-                newXproperty = 0;
-            }
-
-            if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
-            {
-                newYproperty = 0;
-            }
+        if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+        {
+            newYproperty = 0;
         }
 
         // TODO Don't pan image out of screen border

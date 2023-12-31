@@ -261,6 +261,31 @@ internal static class ArchiveExtraction
                 await GalleryLoad.ReloadGalleryAsync().ConfigureAwait(false);
             }
         }
+        else
+        {
+            if (FileHelper.IsDirectoryEmpty(ArchiveHelper.TempFilePath))
+            {
+                try
+                {
+                    Directory.Delete(ArchiveHelper.TempFilePath);
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine($"{nameof(ProcessExited)} exception, \n {e.Message}");
+#endif
+                }
+
+                if (!string.IsNullOrWhiteSpace(BackupPath))
+                {
+                    await LoadPic.LoadPicFromStringAsync(BackupPath).ConfigureAwait(false);
+                }
+                else
+                {
+                    ErrorHandling.UnexpectedError();
+                }
+            }
+        }
     }
 
     private static void ProcessOutPut(Process process)

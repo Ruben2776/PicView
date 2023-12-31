@@ -16,7 +16,6 @@ using System.Windows.Media;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.Tooltip;
 using static PicView.WPF.UILogic.TransformImage.Scroll;
-using static System.Net.WebRequestMethods;
 
 namespace PicView.WPF.ConfigureSettings;
 
@@ -44,6 +43,8 @@ internal static class UpdateUIValues
         {
             if (UC.GetPicGallery is not null && UC.GetPicGallery.Container.Children.Count > 0)
                 sortGallery = true;
+            GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+            GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
         });
 
         if (sortGallery)
@@ -51,7 +52,7 @@ internal static class UpdateUIValues
             try
             {
                 await GalleryFunctions
-                    .SortGalleryAsync(new FileInfo(Navigation.InitialPath ??
+                    .SortGalleryAsync(new FileInfo(Navigation.BackupPath ??
                                                    ErrorHandling.GetReloadPath() ??
                                                    throw new InvalidOperationException())).ConfigureAwait(false);
             }
@@ -66,12 +67,12 @@ internal static class UpdateUIValues
         {
             Navigation.Pics = await Task
                 .FromResult(
-                    FileLists.FileList(new FileInfo(Navigation.InitialPath ?? ErrorHandling.GetReloadPath())))
+                    FileLists.FileList(new FileInfo(Navigation.BackupPath ?? ErrorHandling.GetReloadPath())))
                 .ConfigureAwait(false);
         }
 
         Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
-        await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource)
+        await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue?.FileInfo, preloadValue?.BitmapSource)
             .ConfigureAwait(false);
         await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)

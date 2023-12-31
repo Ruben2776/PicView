@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
@@ -21,22 +22,10 @@ internal static class ImageInfo
         }
 
         e.Handled = true;
-        var rename = await FileFunctions.RenameFileWithErrorChecking(newFileName, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
+        var rename = await FileFunctions.RenameCurrentFileWithErrorChecking(newFileName, Navigation.Pics[Navigation.FolderIndex]).ConfigureAwait(false);
         if (rename.HasValue == false)
         {
-            return;
-        }
-
-        if (rename.Value)
-        {
-            await ConfigureWindows.GetImageInfoWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-            {
-                ConfigureWindows.GetImageInfoWindow.FilenameBox.Text =
-                    Path.GetFileNameWithoutExtension(newFileName);
-                textBox.CaretIndex = textBox.Text.Length;
-                ConfigureWindows.GetImageInfoWindow.FolderBox.Text = Path.GetDirectoryName(newFileName);
-                ConfigureWindows.GetImageInfoWindow.FullPathBox.Text = newFileName;
-            });
+            Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AnErrorOccuredMovingFile"));
         }
     }
 

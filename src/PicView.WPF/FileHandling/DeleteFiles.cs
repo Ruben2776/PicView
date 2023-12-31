@@ -3,7 +3,6 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
-using System;
 using System.Diagnostics;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Tooltip;
@@ -67,10 +66,12 @@ internal static class DeleteFiles
             : TranslationHelper.GetTranslation("Deleted"));
     }
 
+    /// <summary>
     /// Delete file or move it to recycle bin, navigate to next pic
     /// and display information
     /// </summary>
     /// <param name="recycle"></param>
+    /// <param name="file"></param>
     internal static async Task DeleteFileAsync(bool recycle, string file)
     {
         var index = 0;

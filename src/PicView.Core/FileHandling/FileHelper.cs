@@ -209,4 +209,27 @@ public static partial class FileHelper
 
         // If no match is found, return an appropriate value (e.g., -1 indicating an error)
     }
+
+    /// <summary>
+    /// Checks if the given directory is empty.
+    ///    </summary>
+    public static bool IsDirectoryEmpty(string path)
+    {
+        return !Directory.EnumerateFileSystemEntries(path).Any();
+    }
+
+    public static bool IsFileInUse(string filePath)
+    {
+        try
+        {
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            // If the file can be opened, it's not in use by another process
+            return false;
+        }
+        catch (IOException)
+        {
+            // If an IOException occurs, the file is in use by another process
+            return true;
+        }
+    }
 }

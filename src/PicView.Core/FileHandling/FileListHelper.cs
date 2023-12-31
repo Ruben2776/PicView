@@ -46,6 +46,21 @@ public static class FileListHelper
         Random = 6
     }
 
+    public static SortFilesBy GetSordOrder()
+    {
+        return SettingsHelper.Settings.Sorting.SortPreference switch
+        {
+            0 => SortFilesBy.Name,
+            1 => SortFilesBy.FileSize,
+            2 => SortFilesBy.CreationTime,
+            3 => SortFilesBy.Extension,
+            4 => SortFilesBy.LastAccessTime,
+            5 => SortFilesBy.LastWriteTime,
+            6 => SortFilesBy.Random,
+            _ => SortFilesBy.Name,
+        };
+    }
+
     public static IEnumerable<string> RetrieveFiles(FileInfo fileInfo)
     {
         if (fileInfo == null)

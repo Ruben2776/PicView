@@ -75,7 +75,7 @@ public abstract class HttpFunctions
             }
         });
         FileHistoryNavigation.Add(url);
-        Navigation.InitialPath = url;
+        Navigation.BackupPath = url;
     }
 
     /// <summary>

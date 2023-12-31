@@ -187,7 +187,7 @@ internal static class ImageDragAndDrop
             }
         }
 
-        InitialPath = files[0];
+        BackupPath = files[0];
         var fileInfo = new FileInfo(files[0]);
 
         //detect whether its a directory or file

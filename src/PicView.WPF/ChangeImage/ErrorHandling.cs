@@ -170,15 +170,15 @@ internal static class ErrorHandling
             return ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
             {
                 var fileName = Path.GetFileName(ConfigureWindows.GetMainWindow.TitleText.Text);
-                return fileName == TranslationHelper.GetTranslation("Loading") ? InitialPath : fileName;
+                return fileName == TranslationHelper.GetTranslation("Loading") ? BackupPath : fileName;
             });
         }
 
-        if (!string.IsNullOrWhiteSpace(InitialPath) && SettingsHelper.Settings.Sorting.IncludeSubDirectories
-                                                    && Path.GetDirectoryName(InitialPath) !=
+        if (!string.IsNullOrWhiteSpace(BackupPath) && SettingsHelper.Settings.Sorting.IncludeSubDirectories
+                                                    && Path.GetDirectoryName(BackupPath) !=
                                                     Path.GetDirectoryName(Pics[FolderIndex]))
         {
-            return InitialPath;
+            return BackupPath;
         }
 
         return Pics[FolderIndex];

@@ -188,11 +188,11 @@ internal static class PreLoader
     /// Removes the key with the specified index, after checking if it exists
     /// </summary>
     /// <param name="key"></param>
-    internal static void Remove(int key)
+    internal static bool Remove(int key)
     {
         if (!Contains(key))
         {
-            return;
+            return false;
         }
 
         try
@@ -203,12 +203,14 @@ internal static class PreLoader
             if (remove && ShowAddRemove)
                 Trace.WriteLine($"{Pics[key]} removed at {Pics.IndexOf(Pics[key])}");
 #endif
+            return remove;
         }
         catch (Exception e)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(Remove)} exception:\n{e.Message}");
 #endif
+            return false;
         }
     }
 

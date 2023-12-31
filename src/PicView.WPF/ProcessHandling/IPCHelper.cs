@@ -1,4 +1,5 @@
 ﻿using PicView.WPF.ChangeImage;
+using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
@@ -66,11 +67,23 @@ internal static class IPCHelper
 #if DEBUG
                     Trace.WriteLine("Received argument: " + line);
 #endif
-                    await LoadPic.LoadPicFromStringAsync(line).ConfigureAwait(false);
                     await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
                     {
-                        ConfigureWindows.GetMainWindow.Focus();
+                        ConfigureWindows.GetMainWindow.BringIntoView();
                     });
+                    if (ErrorHandling.CheckOutOfRange())
+                    {
+                        if (UC.GetPicGallery is not null)
+                        {
+                            await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
+                            {
+                                GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+                                GalleryNavigation.SetSelected(Navigation.FolderIndex, false);
+                            });
+                        }
+                    }
+                    await LoadPic.LoadPicFromStringAsync(line).ConfigureAwait(false);
+
                 }
             }
             catch (Exception ex)

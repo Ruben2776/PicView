@@ -1,17 +1,15 @@
-﻿using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using ImageMagick;
+﻿using ImageMagick;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
-using PicView.WPF.UILogic.TransformImage;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace PicView.WPF.ImageHandling;
 
@@ -19,9 +17,19 @@ internal static class GetImageData
 {
     internal static async Task<string[]?> RetrieveData(FileInfo? fileInfo)
     {
-        if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
+        if (fileInfo is null)
         {
             return null;
+        }
+
+        if (!fileInfo.Exists)
+        {
+            return null;
+        }
+        if (ErrorHandling.CheckOutOfRange() == false)
+        {
+            if (Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
+                return null;
         }
 
         string name, directoryName, fullname, creationTime, lastWriteTime, lastAccessTime;

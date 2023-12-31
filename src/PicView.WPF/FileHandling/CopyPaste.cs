@@ -63,7 +63,7 @@ internal static class CopyPaste
                 {
                     var item = new PicGalleryItem(bitmapSource, newFile, false)
                     {
-                        FileName = newFile
+                        FilePath = newFile
                     };
                     UC.GetPicGallery.Container.Children.Insert(nextIndex, item);
                 });
@@ -141,16 +141,6 @@ internal static class CopyPaste
 
     internal static void CopyBitmap(int? id = null)
     {
-        void Set(BitmapSource source)
-        {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
-            {
-                var bmp = ImageFunctions.BitmapSourceToBitmap(source);
-                ClipboardHelper.SetClipboardImage(bmp, bmp, null);
-                ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
-            }));
-        }
-
         if (id is null)
         {
             BitmapSource? pic = null;
@@ -209,6 +199,18 @@ internal static class CopyPaste
                     ShowTooltipMessage(e.Message);
                 }
             }).ConfigureAwait(false);
+        }
+
+        return;
+
+        void Set(BitmapSource source)
+        {
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
+            {
+                var bmp = ImageFunctions.BitmapSourceToBitmap(source);
+                ClipboardHelper.SetClipboardImage(bmp, bmp, null);
+                ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
+            }));
         }
     }
 

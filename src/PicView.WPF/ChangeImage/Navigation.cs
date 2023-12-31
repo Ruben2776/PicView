@@ -27,11 +27,6 @@ internal static class Navigation
     internal static string? BackupPath { get; set; }
 
     /// <summary>
-    /// Keep track for recursive directory, error checking etc.
-    /// </summary>
-    internal static string? InitialPath { get; set; }
-
-    /// <summary>
     /// Determine direction user is going
     /// </summary>
     internal static bool Reverse { get; private set; }

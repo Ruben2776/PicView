@@ -63,12 +63,19 @@ internal static class GalleryFunctions
         }
     }
 
-    internal static async Task SortGalleryAsync(FileInfo? fileInfo = null)
+    internal static async Task SortGalleryAsync(FileInfo? fileInfo = null, List<string>? list = null)
     {
         var cancelToken = new CancellationToken();
 
         fileInfo ??= new FileInfo(Navigation.Pics[0]);
-        Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+        if (list is null)
+        {
+            Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+        }
+        else
+        {
+            Navigation.Pics = list;
+        }
 
         IsLoading = false; // Hack to cancel loading to prevent crash if it is running. Maybe find a better solution in future
 
@@ -80,6 +87,10 @@ internal static class GalleryFunctions
             {
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
+                    if (i > GetPicGallery.Container.Children.Count || i < 0)
+                    {
+                        return;
+                    }
                     var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
                     var thumb = new GalleryThumbInfo.GalleryThumbHolder(picGalleryItem.ThumbFileLocation.Text,
                         picGalleryItem.ThumbFileName.Text, picGalleryItem.ThumbFileSize.Text,
@@ -99,8 +110,11 @@ internal static class GalleryFunctions
         {
             thumbs = thumbs.OrderBySequence(Navigation.Pics, x => x.FileLocation).ToList();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+#if DEBUG
+            Trace.WriteLine($"{nameof(SortGalleryAsync)} exception: \n{ex}");
+#endif
             Clear();
             await LoadAsync().ConfigureAwait(false);
             return;

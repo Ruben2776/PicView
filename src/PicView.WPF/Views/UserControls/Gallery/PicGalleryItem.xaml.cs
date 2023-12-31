@@ -11,14 +11,15 @@ using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.WPF.SystemIntegration;
 using static PicView.WPF.PicGallery.GalleryNavigation;
+using PicView.Core.FileHandling;
 
 namespace PicView.WPF.Views.UserControls.Gallery;
 
 public partial class PicGalleryItem
 {
-    internal string FileName { get; set; }
+    internal string FilePath { get; set; }
 
-    public PicGalleryItem(ImageSource? pic, string fileName, bool selected)
+    public PicGalleryItem(ImageSource? pic, string filePath, bool selected)
     {
         InitializeComponent();
 
@@ -27,7 +28,7 @@ public partial class PicGalleryItem
             ThumbImage.Source = pic;
         }
 
-        FileName = fileName;
+        FilePath = filePath;
 
         OuterBorder.Width = OuterBorder.Height = PicGalleryItemSize;
         InnerBorder.Width = InnerBorder.Height =
@@ -40,7 +41,7 @@ public partial class PicGalleryItem
 
         ThumbImage.MouseLeave += delegate
         {
-            if (Navigation.Pics.IndexOf(FileName) == Navigation.FolderIndex)
+            if (Navigation.Pics.IndexOf(FilePath) == Navigation.FolderIndex)
                 return;
             if (GalleryFunctions.IsGalleryOpen)
             {
@@ -56,6 +57,16 @@ public partial class PicGalleryItem
         if (!selected) return;
         InnerBorder.BorderBrush = new SolidColorBrush(AnimationHelper.GetPreferredColor());
         InnerBorder.Width = InnerBorder.Height = PicGalleryItemSize;
+    }
+
+    public void UpdateValues(string fileName, string fileDate, string fileSize, string fileLocation)
+    {
+        var fileNameLength = 60;
+        FilePath = fileLocation;
+        ThumbFileName.Text = fileName.Length > fileNameLength ? fileName.Shorten(fileNameLength) : fileName;
+        ThumbFileDate.Text = fileDate;
+        ThumbFileLocation.Text = fileLocation.Length > fileNameLength ? fileLocation.Shorten(fileNameLength) : fileLocation;
+        ThumbFileSize.Text = fileSize;
     }
 
     public void AddContextMenu()
@@ -76,7 +87,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        printMenu.Click += (_, _) => OpenSave.Print(FileName);
+        printMenu.Click += (_, _) => OpenSave.Print(FilePath);
         cm.Items.Add(printMenu);
 
         // Open With
@@ -93,7 +104,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        openWithMenu.Click += (_, _) => OpenSave.OpenWith(FileName);
+        openWithMenu.Click += (_, _) => OpenSave.OpenWith(FilePath);
         cm.Items.Add(openWithMenu);
 
         // Show in folder
@@ -110,7 +121,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        showInFolderMenu.Click += (_, _) => OpenSave.OpenInExplorer(FileName);
+        showInFolderMenu.Click += (_, _) => OpenSave.OpenInExplorer(FilePath);
         cm.Items.Add(showInFolderMenu);
 
         cm.Items.Add(new Separator());
@@ -130,7 +141,7 @@ public partial class PicGalleryItem
             }
         };
         setAsWallpaperMenu.Click += async (_, _) =>
-            await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill, FileName)
+            await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill, FilePath)
                 .ConfigureAwait(false);
         cm.Items.Add(setAsWallpaperMenu);
 
@@ -168,7 +179,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        copyFileMenu.Click += (_, _) => CopyPaste.CopyFile(FileName);
+        copyFileMenu.Click += (_, _) => CopyPaste.CopyFile(FilePath);
         cm.Items.Add(copyFileMenu);
 
         // Copy Image
@@ -185,7 +196,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        copyImageMenu.Click += (_, _) => CopyPaste.CopyBitmap(Navigation.Pics.IndexOf(FileName));
+        copyImageMenu.Click += (_, _) => CopyPaste.CopyBitmap(Navigation.Pics.IndexOf(FilePath));
         cm.Items.Add(copyImageMenu);
 
         // Copy Image
@@ -203,7 +214,7 @@ public partial class PicGalleryItem
             }
         };
         copyBase64Menu.Click += async (_, _) =>
-            await Base64.SendToClipboard(FileName).ConfigureAwait(false);
+            await Base64.SendToClipboard(FilePath).ConfigureAwait(false);
         cm.Items.Add(copyBase64Menu);
 
         cm.Items.Add(new Separator());
@@ -222,7 +233,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        fileCutMenu.Click += (_, _) => CopyPaste.Cut(FileName);
+        fileCutMenu.Click += (_, _) => CopyPaste.Cut(FilePath);
         cm.Items.Add(fileCutMenu);
 
         // Delete file
@@ -240,7 +251,7 @@ public partial class PicGalleryItem
             }
         };
         deleteFileMenu.Click += async (_, _) =>
-            await DeleteFiles.DeleteFileAsync(true, FileName).ConfigureAwait(false);
+            await DeleteFiles.DeleteFileAsync(true, FilePath).ConfigureAwait(false);
         cm.Items.Add(deleteFileMenu);
 
         ContextMenu = cm;

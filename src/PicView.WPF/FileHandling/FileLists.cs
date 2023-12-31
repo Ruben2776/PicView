@@ -18,17 +18,7 @@ internal static class FileLists
     /// <returns>A list of file paths sorted according to the specified sort preference.</returns>
     internal static List<string> FileList(FileInfo fileInfo)
     {
-        return SettingsHelper.Settings.Sorting.SortPreference switch
-        {
-            0 => FileList(fileInfo, FileListHelper.SortFilesBy.Name),
-            1 => FileList(fileInfo, FileListHelper.SortFilesBy.FileSize),
-            2 => FileList(fileInfo, FileListHelper.SortFilesBy.CreationTime),
-            3 => FileList(fileInfo, FileListHelper.SortFilesBy.Extension),
-            4 => FileList(fileInfo, FileListHelper.SortFilesBy.LastAccessTime),
-            5 => FileList(fileInfo, FileListHelper.SortFilesBy.LastWriteTime),
-            6 => FileList(fileInfo, FileListHelper.SortFilesBy.Random),
-            _ => FileList(fileInfo, FileListHelper.SortFilesBy.Name),
-        };
+        return FileList(fileInfo, FileListHelper.GetSordOrder());
     }
 
     /// <summary>
