@@ -107,7 +107,7 @@ public partial class ImageInfoWindow
         KeyDown += (_, e) => GenericWindowShortcuts.KeysDown(Scroller, e, this);
 
         // Deselect border on mouse click
-        MouseLeftButtonDown += delegate
+        PreviewMouseLeftButtonDown += delegate
         {
             FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), null);
             Keyboard.ClearFocus();
@@ -238,17 +238,35 @@ public partial class ImageInfoWindow
                 FilenameBox,
                 (Path.GetDirectoryName(Pics[FolderIndex])) + "/" + FilenameBox.Text +
                 Path.GetExtension(Pics[FolderIndex])).ConfigureAwait(false);
+        FilenameBox.GotFocus += async (_, _) =>
+        {
+            await Task.Delay(20); // Fix deselection
+            FilenameBox.SelectAll();
+        };
 
         // FolderBox
         FolderBox.AcceptsReturn = false;
         FolderBox.KeyUp += async (_, e) =>
             await RenameTask(e, FolderBox, FolderBox.Text + "/" + Path.GetFileName(FullPathBox.Text))
                 .ConfigureAwait(false);
+        FolderBox.GotFocus += async (_, _) =>
+        {
+            await Task.Delay(50); // Fix deselection
+            var filename = Path.GetDirectoryName(Pics[FolderIndex]);
+            var start = Pics[FolderIndex].Length - filename.Length;
+            var end = Path.GetFileNameWithoutExtension(filename).Length;
+            FolderBox.Select(start, end);
+        };
 
         // FullPathBox
         FullPathBox.AcceptsReturn = false;
         FullPathBox.KeyUp += async (_, e) =>
             await RenameTask(e, FullPathBox, FullPathBox.Text).ConfigureAwait(false);
+        FullPathBox.GotFocus += async (_, _) =>
+        {
+            await Task.Delay(20); // Fix deselection
+            FullPathBox.SelectAll();
+        };
 
         // WidhtBox
         WidthBox.AcceptsReturn = false;
