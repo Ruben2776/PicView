@@ -21,15 +21,18 @@ public partial class ImageSettings
         RotateLeftButton.Click += async (_, _) =>
             await Rotation.RotateAndMoveCursor(true, RotateLeftButton).ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(RotateLeftButton, RotateLeftButtonBrush, RotateLeftIconBrush);
+        RotateLeftButton.ToolTip = TranslationHelper.GetTranslation("RotateLeft");
 
         // RotateRightButton
         RotateRightButton.Click += async (_, _) =>
             await Rotation.RotateAndMoveCursor(false, RotateRightButton).ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(RotateRightButton, RotateRightButtonBrush, RotateRightIconBrush);
+        RotateRightButton.ToolTip = TranslationHelper.GetTranslation("RotateRight");
 
         // FlipButton
         FlipButton.Click += (_, _) => Rotation.Flip();
         SetButtonIconMouseOverAnimations(FlipButton, FlipButtonBrush, FlipIconBrush);
+        FlipButton.ToolTip = TranslationHelper.GetTranslation("Flip");
 
         // ResizeButton
         SetButtonIconMouseOverAnimations(ResizeButtonBorder, ResizeBorderBrush,
@@ -79,7 +82,7 @@ public partial class ImageSettings
         var showHideGallery = SettingsHelper.Settings.Gallery.IsBottomGalleryShown
             ? "ShowBottomGallery"
             : "HideBottomGallery";
-        ShowBottomGalleryText.Text = TranslationHelper.GetTranslation("ShowBottomGallery");
+        ShowBottomGalleryText.Text = showHideGallery;
     }
 
     private static async Task ContainedGalleryClick()
