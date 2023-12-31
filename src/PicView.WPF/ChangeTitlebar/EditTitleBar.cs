@@ -5,9 +5,7 @@ using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using System.IO;
 using System.Windows.Input;
-using PicView.WPF.ChangeImage;
 using static PicView.WPF.ChangeImage.Navigation;
-using System.Diagnostics;
 
 namespace PicView.WPF.ChangeTitlebar;
 
