@@ -1,16 +1,9 @@
 ﻿using Microsoft.Win32;
 using PicView.Core.FileHandling;
-using PicView.Core.Gallery;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ImageHandling;
-using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
-using PicView.WPF.Views.UserControls.Gallery;
-using System.Diagnostics;
 using System.IO;
-using PicView.Core.Config;
-using PicView.WPF.ConfigureSettings;
 
 namespace PicView.WPF.FileHandling;
 
@@ -25,7 +18,23 @@ internal static class FileFunctions
     /// <returns></returns>
     internal static async Task<bool?> RenameCurrentFileWithErrorChecking(string newPath, string oldPath)
     {
+        if (File.Exists(newPath))
+        {
+            return null;
+        }
         IsFileBeingRenamed = true;
+
+        if (Path.GetDirectoryName(oldPath) != Path.GetDirectoryName(newPath))
+        {
+            IsFileBeingRenamed = false;
+            if (!FileHelper.RenameFile(oldPath, newPath))
+            {
+                return null;
+            }
+
+            return true;
+        }
+
         var oldIndex = Navigation.FolderIndex;
         if (Path.GetExtension(newPath) != Path.GetExtension(oldPath))
         {
@@ -48,57 +57,29 @@ internal static class FileFunctions
             IsFileBeingRenamed = false;
             return null;
         }
-
         var bitmapsource = PreLoader.Get(oldIndex)?.BitmapSource;
         PreLoader.Remove(oldIndex);
         var fileInfo = new FileInfo(newPath);
-        Navigation.Pics.Remove(oldPath);
-        Navigation.Pics.Add(newPath);
-        Navigation.FolderIndex = Navigation.Pics.IndexOf(newPath);
+        if (fileInfo.Exists == false) { return null; }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        var newList = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+        if (newList.Count == 0) { return null; }
+
+        Navigation.Pics = newList;
+        Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
+        if (Navigation.FolderIndex < 0)
         {
-            var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
-            var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
-            try
-            {
-                SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, fileInfo);
-            }
-            catch (Exception exception)
-            {
-#if DEBUG
-                Trace.WriteLine($"{nameof(RenameCurrentFileWithErrorChecking)} update title exception:\n{exception.Message}");
-#endif
-            }
-        });
+            await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+            return null;
+        }
+        IsFileBeingRenamed = false;
+
+        await FileUpdateNavigation.UpdateTitle(Navigation.FolderIndex);
+        await FileUpdateNavigation.UpdateGalleryAsync(Navigation.FolderIndex, oldIndex, fileInfo, oldPath, newPath, true).ConfigureAwait(false);
         await PreLoader.AddAsync(Navigation.FolderIndex, fileInfo, bitmapsource).ConfigureAwait(false);
         await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
 
-        if (UC.GetPicGallery is not null)
-        {
-            while (GalleryLoad.IsLoading)
-            {
-                await Task.Delay(50);
-            }
-            if (Path.GetFileNameWithoutExtension(newPath) != Path.GetFileNameWithoutExtension(oldPath))
-            {
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.GetSordOrder()).ConfigureAwait(false);
-            }
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(Navigation.FolderIndex, null, fileInfo);
-            await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
-            {
-                var item = UC.GetPicGallery.Container.Children.OfType<PicGalleryItem>().FirstOrDefault(x => x.FilePath == oldPath);
-                if (item is null)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(RenameCurrentFileWithErrorChecking)} item null");
-#endif
-                    return;
-                }
-                item.UpdateValues(thumbData.FileName, thumbData.FileDate, thumbData.FileSize, thumbData.FileLocation);
-            });
-        }
-        IsFileBeingRenamed = false;
+        FileHistoryNavigation.Rename(oldPath, newPath);
         return true;
     }
 

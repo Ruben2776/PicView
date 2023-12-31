@@ -24,6 +24,18 @@ internal static class FileHistoryNavigation
         _fileHistory.Add(file);
     }
 
+    internal static void Remove(string file)
+    {
+        _fileHistory ??= new FileHistory();
+        _fileHistory.Remove(file);
+    }
+
+    internal static void Rename(string oldPath, string newPath)
+    {
+        _fileHistory ??= new FileHistory();
+        _fileHistory.Rename(oldPath, newPath);
+    }
+
     internal static bool Contains(string file)
     {
         _fileHistory ??= new FileHistory();

@@ -10,6 +10,8 @@ using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Media.Imaging;
+using Windows.Devices.Geolocation;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -47,6 +49,84 @@ internal static class FileUpdateNavigation
 #endif
         }
     }
+
+    #region Methods
+
+    internal static async Task UpdateTitle(int index)
+    {
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        {
+            var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
+            var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
+            try
+            {
+                ChangeTitlebar.SetTitle.SetTitleString((int)width, (int)height, index, null);
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(OnFileRenamed)} update title exception:\n{exception.Message}");
+#endif
+            }
+        });
+    }
+
+    internal static async Task UpdateGalleryAsync(int index, int oldIndex, FileInfo fileInfo, string oldPath, string newPath, bool sameFile)
+    {
+        if (UC.GetPicGallery is null)
+        {
+            return;
+        }
+
+        if (index < 0 || oldIndex < 0)
+        {
+            return;
+        }
+
+        // Fix incorrect selection
+        await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+        {
+            GalleryNavigation.SelectedGalleryItem = - 1;
+            GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
+            GalleryNavigation.SetSelected(oldIndex, false);
+        });
+
+        while (GalleryLoad.IsLoading)
+        {
+            await Task.Delay(100);
+        }
+        var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
+        await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
+        {
+            var item = UC.GetPicGallery.Container.Children.OfType<PicGalleryItem>().FirstOrDefault(x => x.FilePath == oldPath);
+            if (item is not null)
+            {
+                item.UpdateValues(thumbData.FileName, thumbData.FileDate, thumbData.FileSize, thumbData.FileLocation);
+                // I need to change it's position here because it's not updating the position when it's renamed
+                UC.GetPicGallery.Container.Children.Remove(item);
+                UC.GetPicGallery.Container.Children.Insert(index, item);
+            }
+            else
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(OnFileRenamed)} item null");
+#endif
+            }
+        });
+        if (sameFile)
+        {
+            await Task.Delay(100); // Fixes not scrolling
+            await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
+            {
+                GalleryNavigation.SelectedGalleryItem = index;
+                GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, true);
+                GalleryNavigation.SetSelected(index, true);
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
+        }
+    }
+
+    #endregion Methods
 
     private static async Task OnFileRenamed(RenamedEventArgs e)
     {
@@ -93,50 +173,10 @@ internal static class FileUpdateNavigation
             Navigation.FolderIndex = index;
             await PreLoader.AddAsync(Navigation.FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
         }
-
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-        {
-            var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
-            var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
-            try
-            {
-                ChangeTitlebar.SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
-            }
-            catch (Exception exception)
-            {
-#if DEBUG
-                Trace.WriteLine($"{nameof(OnFileRenamed)} update title exception:\n{exception.Message}");
-#endif
-            }
-        });
+        await UpdateTitle(index);
         _running = false;
-
-        if (UC.GetPicGallery is not null)
-        {
-            while (GalleryLoad.IsLoading)
-            {
-                await Task.Delay(100);
-            }
-
-            if (Path.GetFileNameWithoutExtension(e.OldName) != Path.GetFileNameWithoutExtension(e.Name))
-            {
-                await UpdateUIValues.ChangeSortingAsync(FileListHelper.GetSordOrder()).ConfigureAwait(false);
-            }
-
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
-            await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
-            {
-                var item = UC.GetPicGallery.Container.Children.OfType<PicGalleryItem>().FirstOrDefault(x => x.FilePath == e.FullPath);
-                if (item is null)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(OnFileDeleted)} item null");
-#endif
-                    return;
-                }
-                item.UpdateValues(thumbData.FileName, thumbData.FileDate, thumbData.FileSize, thumbData.FileLocation);
-            });
-        }
+        FileHistoryNavigation.Rename(e.OldFullPath, e.FullPath);
+        await UpdateGalleryAsync(index, oldIndex, fileInfo, e.OldFullPath, e.FullPath, sameFile).ConfigureAwait(false);
         await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
     }
 
@@ -173,23 +213,11 @@ internal static class FileUpdateNavigation
         }
         else
         {
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
-                var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
-                try
-                {
-                    ChangeTitlebar.SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
-                }
-                catch (Exception exception)
-                {
-#if DEBUG
-                    Trace.WriteLine($"{nameof(OnFileDeleted)} update title exception:\n{exception.Message}");
-#endif
-                }
-            });
+            await UpdateTitle(Navigation.FolderIndex);
         }
         _running = false;
+
+        FileHistoryNavigation.Remove(e.FullPath);
 
         if (UC.GetPicGallery is not null)
         {
@@ -249,21 +277,7 @@ internal static class FileUpdateNavigation
 
         Navigation.Pics = newList;
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-        {
-            var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
-            var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
-            try
-            {
-                ChangeTitlebar.SetTitle.SetTitleString((int)width, (int)height, Navigation.FolderIndex, null);
-            }
-            catch (Exception exception)
-            {
-#if DEBUG
-                Trace.WriteLine($"{nameof(OnFileAdded)} update title exception:\n{exception.Message}");
-#endif
-            }
-        });
+        await UpdateTitle(Navigation.FolderIndex);
 
         _running = false;
 

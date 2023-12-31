@@ -27,6 +27,8 @@ internal static class ImageInfo
         {
             Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AnErrorOccuredMovingFile"));
         }
+
+        await ConfigureWindows.GetImageInfoWindow?.Dispatcher?.InvokeAsync(Keyboard.ClearFocus);
     }
 
     internal static async Task UpdateValuesAsync(FileInfo? fileInfo)

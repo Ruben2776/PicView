@@ -96,8 +96,7 @@ internal static class EditTitleBar
         }
 
         var path = ConfigureWindows.GetMainWindow.TitleText.Text;
-        var success = await FileFunctions.RenameCurrentFileWithErrorChecking(path, Pics[FolderIndex])
-            .ConfigureAwait(false);
+        var success = await FileFunctions.RenameCurrentFileWithErrorChecking(path, Pics[FolderIndex]).ConfigureAwait(false);
         if (success.HasValue == false)
         {
             Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AnErrorOccuredMovingFile"));

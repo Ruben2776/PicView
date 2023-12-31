@@ -88,12 +88,7 @@ public class FileHistory
 
     public bool Contains(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            return false;
-        }
-
-        return _fileHistory.Contains(name);
+        return !string.IsNullOrWhiteSpace(name) && _fileHistory.Contains(name);
     }
 
     public void Add(string fileName)
@@ -120,6 +115,47 @@ public class FileHistory
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(FileHistory)}: {nameof(Add)} exception,\n{e.Message}");
+#endif
+        }
+    }
+
+    public void Remove(string fileName)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return;
+            }
+            _fileHistory.Remove(fileName);
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(FileHistory)}: {nameof(Remove)} exception,\n{e.Message}");
+#endif
+        }
+    }
+
+    public void Rename(string oldName, string newName)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName))
+            {
+                return;
+            }
+            var index = _fileHistory.IndexOf(oldName);
+            if (index < 0)
+            {
+                return;
+            }
+            _fileHistory[index] = newName;
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(FileHistory)}: {nameof(Rename)} exception,\n{e.Message}");
 #endif
         }
     }
