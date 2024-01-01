@@ -358,5 +358,7 @@ MigrationBackup/
 # Rider
 */.idea.
 /.idea/.idea.PicView/.idea
+
+
 *.7z 
 *.zip 
