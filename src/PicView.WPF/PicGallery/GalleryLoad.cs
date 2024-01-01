@@ -49,6 +49,7 @@ internal static class GalleryLoad
         IsLoading = true;
         using var source = new CancellationTokenSource();
         var updates = 0;
+        var count = Navigation.Pics.Count;
 
         // Update UI in batch sizes and await task delay to ensure responsive UI
         var batchSize = 200;
@@ -120,16 +121,22 @@ internal static class GalleryLoad
             ParallelOptions options = new()
             {
                 // Don't slow the system down too much
-                MaxDegreeOfParallelism = Environment.ProcessorCount / 2
+                MaxDegreeOfParallelism = 4
             };
-            await Loop(index, Navigation.Pics.Count, options, source).ConfigureAwait(false);
-            await Loop(0, index, options, source).ConfigureAwait(false);
+            ParallelOptions secondOptions = new()
+            {
+                MaxDegreeOfParallelism = 2
+            };
+            var positiveLoopTask = Loop(positive: true, index, Navigation.Pics.Count, options, source);
+            var negativeLoopTask = Loop(positive: false, 0, index, secondOptions, source);
+
+            await Task.WhenAll(positiveLoopTask, negativeLoopTask).ConfigureAwait(false);
             IsLoading = false;
         }
         catch (Exception exception)
         {
 #if DEBUG
-            Trace.WriteLine($"{nameof(LoadAsync)}  exception:\n{exception.Message}");
+            Trace.WriteLine($"{nameof(LoadAsync)} exception:\n{exception.Message}");
 #endif
             if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
             {
@@ -139,24 +146,24 @@ internal static class GalleryLoad
         }
         return;
 
-        async Task Loop(int startPosition, int end, ParallelOptions options, CancellationTokenSource tokenSource)
+        async Task Loop(bool positive, int startPosition, int end, ParallelOptions parallelOptions, CancellationTokenSource tokenSource)
         {
-            await Parallel.ForAsync(startPosition, end, options, async (i, loopState) =>
+            await Parallel.ForAsync(0, end, parallelOptions, async (i, _) =>
             {
-                updates++;
                 try
                 {
-                    if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
+                    if (Navigation.Pics.Count == 0 || count != Navigation.Pics.Count)
                     {
-                        IsLoading = false;
-                        await tokenSource.CancelAsync().ConfigureAwait(false);
-                        loopState.ThrowIfCancellationRequested();
+                        await tokenSource.CancelAsync();
                         return;
                     }
+                    var nextIndex = positive ?
+                        (startPosition + i) % end :
+                        (startPosition - i + end) % end;
 
                     if (!tokenSource.IsCancellationRequested)
                     {
-                        await UpdateThumbAsync(i, tokenSource.Token).ConfigureAwait(false);
+                        await UpdateThumbAsync(nextIndex, tokenSource.Token).ConfigureAwait(false);
                     }
                 }
                 catch (Exception exception)
@@ -185,6 +192,7 @@ internal static class GalleryLoad
                     thumbData.FileName, thumbData.FileSize,
                     thumbData.FileDate);
             }, DispatcherPriority.Background, token);
+            updates++;
             if (updates >= Navigation.Pics.Count)
                 IsLoading = false;
         }

@@ -118,21 +118,6 @@ internal static class Navigation
         {
             await LoadPic.LoadPicAtIndexAsync(next).ConfigureAwait(false);
         }
-        if (UC.GetPicGallery is not null)
-        {
-            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-            {
-                if (next != FolderIndex)
-                {
-                    return;
-                }
-
-                // Select next item
-                GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-            });
-        }
     }
 
     /// <summary>

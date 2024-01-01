@@ -429,7 +429,7 @@ internal static class LoadPic
         var cancelToken = cts.Token;
         try
         {
-            await LoadPicAtIndexAsync(index, cancelToken, fileInfo).ConfigureAwait(false);
+            await LoadPicAtIndexAsync(index, cancelToken, fileInfo);
         }
         catch (TaskCanceledException)
         {
@@ -514,7 +514,6 @@ internal static class LoadPic
         }
         else
         {
-            fileInfo ??= new FileInfo(Pics[index]);
             await SetThumb();
             await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
             if (index != FolderIndex)
@@ -532,19 +531,6 @@ internal static class LoadPic
         }
 
         await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, cancellationToken).ConfigureAwait(false);
-
-        if (GetPicGallery is not null)
-        {
-            await GetPicGallery?.Dispatcher?.InvokeAsync(() =>
-            {
-                if (index != FolderIndex)
-                    return;
-                // Select next item
-                GalleryNavigation.SetSelected(FolderIndex, true);
-                GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                GalleryNavigation.ScrollToGalleryCenter();
-            }, DispatcherPriority.Render, cancellationToken);
-        }
 
         if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
             await ImageInfo.UpdateValuesAsync(preLoadValue?.FileInfo).ConfigureAwait(false);

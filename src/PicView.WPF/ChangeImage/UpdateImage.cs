@@ -28,34 +28,38 @@ internal static class UpdateImage
     /// </summary>
     /// <param name="index"></param>
     /// <param name="preLoadValue"></param>
-    internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue, CancellationToken cancellationToken)
+    internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue, CancellationToken cancellationToken, bool fastPic = false)
     {
         if (preLoadValue is null)
         {
             return;
         }
 
-        var x = 0;
-        while (preLoadValue.IsLoading) // Fix rare occurrences of non-loaded image
+        if (!fastPic)
         {
-            x++;
-            await Task.Delay(50, cancellationToken);
-            if (index != FolderIndex)
+            var x = 0;
+            while (preLoadValue.IsLoading) // Fix rare occurrences of non-loaded image
             {
-                return;
-            }
-            // ReSharper disable once InvertIf
-            if (x > 20)
-            {
-                await PreLoader.AddAsync(index).ConfigureAwait(false);
-                preLoadValue = PreLoader.Get(index)!;
-                if (preLoadValue is null)
+                x++;
+                await Task.Delay(50, cancellationToken);
+                if (index != FolderIndex)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
                     return;
+                }
+                // ReSharper disable once InvertIf
+                if (x > 20)
+                {
+                    await PreLoader.AddAsync(index).ConfigureAwait(false);
+                    preLoadValue = PreLoader.Get(index)!;
+                    if (preLoadValue is null)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return;
+                    }
                 }
             }
         }
+
         preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
@@ -86,6 +90,24 @@ internal static class UpdateImage
         {
             cancellationToken.ThrowIfCancellationRequested();
             return;
+        }
+
+        if (GetPicGallery is not null)
+        {
+            await GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                if (index != FolderIndex)
+                {
+                    return;
+                }
+
+                if (!fastPic)
+                {
+                    GalleryNavigation.SetSelected(FolderIndex, true);
+                }
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
         }
 
         var titleString = await Task.FromResult(TitleHelper.GetTitle(preLoadValue.BitmapSource.PixelWidth,

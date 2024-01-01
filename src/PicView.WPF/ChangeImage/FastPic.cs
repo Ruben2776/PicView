@@ -1,11 +1,11 @@
 ﻿using PicView.Core.Config;
 using PicView.WPF.ImageHandling;
+using PicView.WPF.PicGallery;
+using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
-using PicView.WPF.UILogic;
 using static PicView.WPF.ChangeImage.Navigation;
 using Timer = System.Timers.Timer;
-using System;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -71,7 +71,7 @@ internal static class FastPic
                     showThumb = false;
                 }
 
-                await Task.Delay(10, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(10, cancellationToken);
             }
         }
         else
@@ -88,14 +88,14 @@ internal static class FastPic
             {
                 if (FolderIndex == index)
                 {
-                    await ErrorHandling.ReloadAsync().ConfigureAwait(false);
+                    await ErrorHandling.ReloadAsync();
                 }
 
                 return;
             }
         }
 
-        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, cancellationToken).ConfigureAwait(false);
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, cancellationToken, true).ConfigureAwait(false);
 
         _updateSource = false;
         await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
@@ -104,6 +104,17 @@ internal static class FastPic
     internal static async Task FastPicUpdateAsync()
     {
         _timer = null;
+
+        if (UC.GetPicGallery is not null)
+        {
+            await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
+            {
+                // Select next item
+                GalleryNavigation.SetSelected(FolderIndex, true);
+                GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                GalleryNavigation.ScrollToGalleryCenter();
+            });
+        }
 
         if (_updateSource == false)
         {
@@ -148,6 +159,5 @@ internal static class FastPic
 #endif
             Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
         }
-        
     }
 }
