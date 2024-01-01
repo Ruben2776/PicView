@@ -1,5 +1,4 @@
-﻿using PicView.Core.FileHandling;
-using PicView.Core.Gallery;
+﻿using PicView.Core.Gallery;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
@@ -120,11 +119,11 @@ internal static class GalleryLoad
         {
             ParallelOptions options = new()
             {
-                CancellationToken = source.Token,
-                MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
+                // Don't slow the system down too much
+                MaxDegreeOfParallelism = Environment.ProcessorCount / 2
             };
-            await Loop(index, Navigation.Pics.Count, options).ConfigureAwait(false);
-            await Loop(0, index, options).ConfigureAwait(false);
+            await Loop(index, Navigation.Pics.Count, options, source).ConfigureAwait(false);
+            await Loop(0, index, options, source).ConfigureAwait(false);
             IsLoading = false;
         }
         catch (Exception exception)
@@ -140,7 +139,7 @@ internal static class GalleryLoad
         }
         return;
 
-        async Task Loop(int startPosition, int end, ParallelOptions options)
+        async Task Loop(int startPosition, int end, ParallelOptions options, CancellationTokenSource tokenSource)
         {
             await Parallel.ForAsync(startPosition, end, options, async (i, loopState) =>
             {
@@ -150,14 +149,14 @@ internal static class GalleryLoad
                     if (!IsLoading || Navigation.Pics.Count < Navigation.FolderIndex || Navigation.Pics.Count < 1 || i > Navigation.Pics.Count)
                     {
                         IsLoading = false;
-                        await source.CancelAsync().ConfigureAwait(false);
+                        await tokenSource.CancelAsync().ConfigureAwait(false);
                         loopState.ThrowIfCancellationRequested();
                         return;
                     }
 
-                    if (!source.IsCancellationRequested)
+                    if (!tokenSource.IsCancellationRequested)
                     {
-                        await UpdateThumbAsync(i, source.Token).ConfigureAwait(false);
+                        await UpdateThumbAsync(i, tokenSource.Token).ConfigureAwait(false);
                     }
                 }
                 catch (Exception exception)
@@ -227,8 +226,7 @@ internal static class GalleryLoad
             return;
         }
 
-        var selected = i == Navigation.FolderIndex;
-        var item = new PicGalleryItem(null, Navigation.Pics[i], selected);
+        var item = new PicGalleryItem(null, Navigation.Pics[i], false);
         item.MouseLeftButtonUp += async delegate { await GalleryClick.ClickAsync(i).ConfigureAwait(false); };
 
         UC.GetPicGallery.Container.Children.Add(item);

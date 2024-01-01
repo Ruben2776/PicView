@@ -86,7 +86,7 @@ internal static class PreLoader
 #if DEBUG
 
     // ReSharper disable once ConvertToConstant.Local
-    private static readonly bool ShowAddRemove = false;
+    private static readonly bool ShowAddRemove = true;
 
 #endif
 
@@ -284,17 +284,22 @@ internal static class PreLoader
             Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
 #endif
 
+        ParallelOptions options = new()
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
+        };
+
         try
         {
             if (Reverse)
             {
-                await NegativeLoop(cancellationTokenSource);
-                await PositiveLoop(cancellationTokenSource);
+                await NegativeLoop(options, cancellationTokenSource);
+                await PositiveLoop(options, cancellationTokenSource);
             }
             else
             {
-                await PositiveLoop(cancellationTokenSource);
-                await NegativeLoop(cancellationTokenSource);
+                await PositiveLoop(options, cancellationTokenSource);
+                await NegativeLoop(options, cancellationTokenSource);
             }
         }
         catch (Exception exception)
@@ -320,19 +325,13 @@ internal static class PreLoader
 
         return;
 
-        async Task PositiveLoop(CancellationTokenSource source)
+        async Task PositiveLoop(ParallelOptions parallelOptions, CancellationTokenSource source)
         {
-            await Parallel.ForAsync(0, PositiveIterations, source.Token, async (i, _) =>
+            await Parallel.ForAsync(0, PositiveIterations, parallelOptions, async (i, _) =>
             {
-                try
+                if (Pics.Count == 0 || count != Pics.Count)
                 {
-                    if (Pics.Count == 0 || count != Pics.Count)
-                    {
-                        await source.CancelAsync();
-                    }
-                }
-                catch (Exception)
-                {
+                    await source.CancelAsync();
                     return;
                 }
                 var index = (nextStartingIndex + i) % Pics.Count;
@@ -340,19 +339,13 @@ internal static class PreLoader
             });
         }
 
-        async Task NegativeLoop(CancellationTokenSource source)
+        async Task NegativeLoop(ParallelOptions parallelOptions, CancellationTokenSource source)
         {
-            await Parallel.ForAsync(0, NegativeIterations, source.Token, async (i, _) =>
+            await Parallel.ForAsync(0, NegativeIterations, parallelOptions, async (i, _) =>
             {
-                try
+                if (Pics.Count == 0 || count != Pics.Count)
                 {
-                    if (Pics.Count == 0 || count != Pics.Count)
-                    {
-                        await source.CancelAsync();
-                    }
-                }
-                catch (Exception)
-                {
+                    await source.CancelAsync();
                     return;
                 }
                 var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
