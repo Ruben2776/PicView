@@ -148,23 +148,28 @@ internal static class PreLoader
     }
 
     /// <summary>
-    ///  Renames the key of a specified file in the cache.
+    /// Refreshes the file information for the specified index in the PreLoadList dictionary.
     /// </summary>
-    /// <param name="index">index of file to be renamed</param>
-    /// <returns></returns>
-    internal static void Rename(int index)
+    /// <param name="index">The index of the image.</param>
+    /// <returns>True if the file information was successfully refreshed, false otherwise.</returns>
+    internal static async Task<bool> RefreshFileInfo(int index)
     {
         if (index < 0 || index >= Pics.Count)
         {
 #if DEBUG
-            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(ReferenceEquals)} invalid index: \n{index}");
+            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(RefreshFileInfo)} invalid index: \n{index}");
 #endif
-            return;
+            return false;
         }
 
-        PreLoadList.TryRemove(index, out var preLoadValue);
-        preLoadValue.FileInfo = null;
-        _ = AddAsync(index, null, preLoadValue.BitmapSource, preLoadValue.Orientation).ConfigureAwait(true);
+        var removed = PreLoadList.TryRemove(index, out var preLoadValue);
+        if (preLoadValue is not null)
+        {
+            preLoadValue.FileInfo = null;
+        }
+
+        await AddAsync(index, null, preLoadValue?.BitmapSource, preLoadValue?.Orientation).ConfigureAwait(false);
+        return removed;
     }
 
     /// <summary>
@@ -283,13 +288,13 @@ internal static class PreLoader
         {
             if (Reverse)
             {
-                await NegativeLoop(cancellationTokenSource).ConfigureAwait(false);
-                await PositiveLoop(cancellationTokenSource).ConfigureAwait(false);
+                await NegativeLoop(cancellationTokenSource);
+                await PositiveLoop(cancellationTokenSource);
             }
             else
             {
-                await PositiveLoop(cancellationTokenSource).ConfigureAwait(false);
-                await NegativeLoop(cancellationTokenSource).ConfigureAwait(false);
+                await PositiveLoop(cancellationTokenSource);
+                await NegativeLoop(cancellationTokenSource);
             }
         }
         catch (Exception exception)
@@ -331,7 +336,7 @@ internal static class PreLoader
                     return;
                 }
                 var index = (nextStartingIndex + i) % Pics.Count;
-                await AddAsync(index).ConfigureAwait(false);
+                await AddAsync(index);
             });
         }
 
@@ -351,7 +356,7 @@ internal static class PreLoader
                     return;
                 }
                 var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
-                await AddAsync(index).ConfigureAwait(false);
+                await AddAsync(index);
             });
         }
     }

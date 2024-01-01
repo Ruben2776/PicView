@@ -86,7 +86,7 @@ internal static class FileUpdateNavigation
         // Fix incorrect selection
         await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
         {
-            GalleryNavigation.SelectedGalleryItem = - 1;
+            GalleryNavigation.SelectedGalleryItem = -1;
             GalleryNavigation.SetSelected(GalleryNavigation.SelectedGalleryItem, false);
             GalleryNavigation.SetSelected(oldIndex, false);
         });
@@ -165,13 +165,11 @@ internal static class FileUpdateNavigation
         {
             return;
         }
-        var bitmapSource = !sameFile ? null : PreLoader.Get(Navigation.FolderIndex)?.BitmapSource;
-        PreLoader.Remove(index);
 
-        if (sameFile)
+        var clearedCache = await PreLoader.RefreshFileInfo(index).ConfigureAwait(false);
+        if (!clearedCache)
         {
-            Navigation.FolderIndex = index;
-            await PreLoader.AddAsync(Navigation.FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
+            PreLoader.Remove(index);
         }
         await UpdateTitle(index);
         _running = false;

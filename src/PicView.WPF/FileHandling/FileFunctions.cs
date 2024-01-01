@@ -57,8 +57,7 @@ internal static class FileFunctions
             IsFileBeingRenamed = false;
             return null;
         }
-        var bitmapsource = PreLoader.Get(oldIndex)?.BitmapSource;
-        PreLoader.Remove(oldIndex);
+
         var fileInfo = new FileInfo(newPath);
         if (fileInfo.Exists == false) { return null; }
 
@@ -73,10 +72,14 @@ internal static class FileFunctions
             return null;
         }
         IsFileBeingRenamed = false;
+        var clearedCache = await PreLoader.RefreshFileInfo(Navigation.FolderIndex);
+        if (!clearedCache)
+        {
+            PreLoader.Remove(Navigation.FolderIndex);
+        }
 
         await FileUpdateNavigation.UpdateTitle(Navigation.FolderIndex);
         await FileUpdateNavigation.UpdateGalleryAsync(Navigation.FolderIndex, oldIndex, fileInfo, oldPath, newPath, true).ConfigureAwait(false);
-        await PreLoader.AddAsync(Navigation.FolderIndex, fileInfo, bitmapsource).ConfigureAwait(false);
         await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
 
         FileHistoryNavigation.Rename(oldPath, newPath);

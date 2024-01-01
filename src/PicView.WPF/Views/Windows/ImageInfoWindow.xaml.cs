@@ -155,7 +155,11 @@ public partial class ImageInfoWindow
         ShowInFolder.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(ShowInFolderBrush);
         ShowInFolder.MouseLeave += (_, _) => ButtonMouseLeaveAnim(ShowInFolderFill);
         ShowInFolder.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(ShowInFolderBrush);
-        ShowInFolder.Click += (_, _) => OpenSave.OpenInExplorer(Pics[FolderIndex]);
+        ShowInFolder.Click += (_, _) =>
+        {
+            if (ErrorHandling.CheckOutOfRange()) return;
+            OpenSave.OpenInExplorer(Pics[FolderIndex]);
+        };
 
         // Optimize Image
         OptimizeImageButton.MouseEnter += (_, _) => ButtonMouseOverAnim(OptimizeImageFill);
