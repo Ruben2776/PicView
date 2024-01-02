@@ -33,8 +33,6 @@ internal static class ImageDragAndDrop
         if (GalleryFunctions.IsGalleryOpen)
             return;
 
-        AddDragOverlay();
-
         UIElement? element = null;
 
         if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
@@ -88,6 +86,9 @@ internal static class ImageDragAndDrop
                 element = new DragDropOverlayPic(thumb);
             });
         }
+        else return;
+
+        AddDragOverlay();
 
         // Tell that it's succeeded
         e.Effects = DragDropEffects.Copy;
@@ -176,6 +177,17 @@ internal static class ImageDragAndDrop
             return;
         }
 
+        if (files[0].IsSupported() == false)
+        {
+            if (files[0].IsArchive() == false)
+            {
+                if (Directory.Exists(files[0]) == false)
+                {
+                    return;
+                }
+            }
+        }
+
         // Check if same file
         if (files.Length == 1 && Pics.Count > 0 && FolderIndex < Pics.Count)
         {
@@ -201,6 +213,7 @@ internal static class ImageDragAndDrop
         }
 
         // Open additional windows if multiple files dropped
+        // TODO figure something out if the setting to files in the same window is enabled
         foreach (var file in files.Skip(1))
         {
             Core.ProcessHandling.ProcessHelper.StartNewProcess(file);
