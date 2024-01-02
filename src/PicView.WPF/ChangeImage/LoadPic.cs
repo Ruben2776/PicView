@@ -500,7 +500,7 @@ internal static class LoadPic
             {
                 if (showThumb)
                 {
-                    SetThumb();
+                    await SetThumb();
                     showThumb = false;
                 }
 
@@ -514,7 +514,7 @@ internal static class LoadPic
         }
         else
         {
-            SetThumb();
+            await SetThumb();
             await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
             if (index != FolderIndex)
             {
@@ -549,12 +549,12 @@ internal static class LoadPic
         }
         return;
 
-        void SetThumb()
+        async Task SetThumb()
         {
             var thumb = Thumbnails.GetThumb(index, fileInfo);
             if (thumb.HasValue)
             {
-                ConfigureWindows.GetMainWindow?.Dispatcher?.Invoke(() =>
+                await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
                 {
                     if (index != FolderIndex)
                         return;
@@ -562,11 +562,6 @@ internal static class LoadPic
                     if (thumb.Value.OriginalWidth.HasValue && thumb.Value.OriginalHeight.HasValue)
                     {
                         ScaleImage.FitImage(thumb.Value.OriginalWidth.Value, thumb.Value.OriginalHeight.Value);
-                    }
-
-                    if (thumb.Value.BitmapSource is null)
-                    {
-                        GetSpinWaiter.Visibility = Visibility.Visible;
                     }
                 }, DispatcherPriority.Normal, cancellationToken);
             }
