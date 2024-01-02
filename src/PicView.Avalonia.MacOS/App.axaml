@@ -1,9 +1,11 @@
 <Application
-    x:Class="PicView.Avalonia.App"
+    x:Class="PicView.Avalonia.MacOS.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     RequestedThemeVariant="Default">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
+
     <Application.Styles>
-        <SimpleTheme />
+        <FluentTheme />
     </Application.Styles>
 </Application>

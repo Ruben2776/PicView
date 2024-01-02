@@ -37,12 +37,6 @@ internal static partial class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool SetCursorPos(int x, int y);
 
-    // Used to check for wallpaper support
-    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam,
-        string pvParam, uint fWinIni);
-
     #region Disable Screensaver and Power options
 
     internal const uint ES_CONTINUOUS = 0x80000000;

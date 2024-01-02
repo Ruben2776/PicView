@@ -292,6 +292,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
+    <ProjectReference Include="..\PicView.Windows\PicView.Windows.csproj" />
     <ProjectReference Include="..\XamlAnimatedGif\XamlAnimatedGif.csproj" />
   </ItemGroup>
   <ItemGroup>

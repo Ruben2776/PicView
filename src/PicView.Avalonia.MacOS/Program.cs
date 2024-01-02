@@ -1,6 +1,9 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.ReactiveUI;
 
-namespace PicView.Avalonia;
+namespace PicView.Avalonia.MacOS;
 
 internal class Program
 {
@@ -9,13 +12,17 @@ internal class Program
     // yet and stuff might break.
     [STAThread]
     public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+        .StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        return AppBuilder.Configure<App>()
 #if DEBUG
             .LogToTrace()
 #endif
-            .UsePlatformDetect();
+            .UseReactiveUI()
+            .UsePlatformDetect()
+            .UseSkia();
+    }
 }

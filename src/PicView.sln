@@ -9,7 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlAnimatedGif", "XamlAnim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Core", "PicView.Core\PicView.Core.csproj", "{17C701BC-1F25-4995-A7E5-1360EBC5904B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Avalonia", "PicView.Avalonia\PicView.Avalonia.csproj", "{E36E03B2-6CAB-407F-AD72-411F43CFC5A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Avalonia", "PicView.Avalonia\PicView.Avalonia.csproj", "{83A0AA39-97B2-453B-BDAB-3DB4D8684D3B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Avalonia.Win32", "PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj", "{CDE55370-A53E-43C1-9FAB-B2973462A3C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Avalonia.MacOS", "PicView.Avalonia.MacOS\PicView.Avalonia.MacOS.csproj", "{79402A1F-0EDE-49C8-970A-E7AC0065FFB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.Windows", "PicView.Windows\PicView.Windows.csproj", "{D63E2F56-02CC-4E23-AF78-F5218E83B2E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.MacOS", "PicView.MacOS\PicView.MacOS.csproj", "{FEAC727E-1102-4F11-A747-5A5789FBBF81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +37,26 @@ Global
 		{17C701BC-1F25-4995-A7E5-1360EBC5904B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17C701BC-1F25-4995-A7E5-1360EBC5904B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17C701BC-1F25-4995-A7E5-1360EBC5904B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E36E03B2-6CAB-407F-AD72-411F43CFC5A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E36E03B2-6CAB-407F-AD72-411F43CFC5A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E36E03B2-6CAB-407F-AD72-411F43CFC5A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E36E03B2-6CAB-407F-AD72-411F43CFC5A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83A0AA39-97B2-453B-BDAB-3DB4D8684D3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83A0AA39-97B2-453B-BDAB-3DB4D8684D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83A0AA39-97B2-453B-BDAB-3DB4D8684D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83A0AA39-97B2-453B-BDAB-3DB4D8684D3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDE55370-A53E-43C1-9FAB-B2973462A3C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDE55370-A53E-43C1-9FAB-B2973462A3C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDE55370-A53E-43C1-9FAB-B2973462A3C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDE55370-A53E-43C1-9FAB-B2973462A3C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79402A1F-0EDE-49C8-970A-E7AC0065FFB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79402A1F-0EDE-49C8-970A-E7AC0065FFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79402A1F-0EDE-49C8-970A-E7AC0065FFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79402A1F-0EDE-49C8-970A-E7AC0065FFB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D63E2F56-02CC-4E23-AF78-F5218E83B2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D63E2F56-02CC-4E23-AF78-F5218E83B2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D63E2F56-02CC-4E23-AF78-F5218E83B2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D63E2F56-02CC-4E23-AF78-F5218E83B2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEAC727E-1102-4F11-A747-5A5789FBBF81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEAC727E-1102-4F11-A747-5A5789FBBF81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEAC727E-1102-4F11-A747-5A5789FBBF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEAC727E-1102-4F11-A747-5A5789FBBF81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

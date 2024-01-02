@@ -1,0 +1,1 @@
+This project is for containing the views specific for the MacOS platform.

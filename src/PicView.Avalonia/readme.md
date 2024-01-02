@@ -1,0 +1,1 @@
+Shared project for UI components and UI related logic in Avalonia, that is not platform specific. 

@@ -12,6 +12,7 @@ using PicView.Core.Localization;
 using PicView.WPF.SystemIntegration;
 using static PicView.WPF.PicGallery.GalleryNavigation;
 using PicView.Core.FileHandling;
+using PicView.Windows.Wallpaper;
 
 namespace PicView.WPF.Views.UserControls.Gallery;
 
@@ -141,7 +142,7 @@ public partial class PicGalleryItem
             }
         };
         setAsWallpaperMenu.Click += async (_, _) =>
-            await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill, FilePath)
+            await Wallpaper.SetWallpaperAsync(WallpaperHelper.WallpaperStyle.Fill, FilePath)
                 .ConfigureAwait(false);
         cm.Items.Add(setAsWallpaperMenu);
 

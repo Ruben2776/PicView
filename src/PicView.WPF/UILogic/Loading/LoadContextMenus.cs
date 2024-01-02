@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
+using PicView.Windows.Wallpaper;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.FileHandling.OpenSave;
 using static PicView.WPF.UILogic.ConfigureWindows;
@@ -282,7 +283,7 @@ internal static class LoadContextMenus
         SetWallpaperCm.Click += async (_, _) =>
         {
             MainContextMenu.IsOpen = false;
-            await Wallpaper.SetWallpaperAsync(Wallpaper.WallpaperStyle.Fill).ConfigureAwait(false);
+            await Wallpaper.SetWallpaperAsync(WallpaperHelper.WallpaperStyle.Fill).ConfigureAwait(false);
         };
         SetWallpaperCm.Header = TranslationHelper.GetTranslation("SetAsWallpaper");
         var SetLockCm = (MenuItem)SetAsCm.Items[1];

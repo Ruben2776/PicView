@@ -6,6 +6,7 @@ using PicView.WPF.ConfigureSettings;
 using PicView.WPF.FileHandling;
 using PicView.Core.Config;
 using PicView.Core.Localization;
+using PicView.Windows.Wallpaper;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
@@ -177,25 +178,25 @@ public partial class EffectsWindow
         SetButtonIconMouseOverAnimations(SetAsWallpaperButton, SetAsWallpaperButtonBrush, SetAsWallpaperText);
         SetAsWallpaperButton.Click += async delegate
         {
-            var x = WallpaperStyle.Fill;
+            var x = WallpaperHelper.WallpaperStyle.Fill;
             if (Fit.IsSelected)
             {
-                x = WallpaperStyle.Fit;
+                x = WallpaperHelper.WallpaperStyle.Fit;
             }
 
             if (Center.IsSelected)
             {
-                x = WallpaperStyle.Center;
+                x = WallpaperHelper.WallpaperStyle.Center;
             }
 
             if (Tile.IsSelected)
             {
-                x = WallpaperStyle.Tile;
+                x = WallpaperHelper.WallpaperStyle.Tile;
             }
 
             if (Fit.IsSelected)
             {
-                x = WallpaperStyle.Fit;
+                x = WallpaperHelper.WallpaperStyle.Fit;
             }
 
             await SetWallpaperAsync(x).ConfigureAwait(false);

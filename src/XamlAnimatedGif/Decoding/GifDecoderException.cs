@@ -13,10 +13,7 @@ public abstract class GifDecoderException : Exception
     {
     }
 
-    protected GifDecoderException(
-        SerializationInfo info,
-        StreamingContext context)
-        : base(info, context)
+    protected GifDecoderException(SerializationInfo info, StreamingContext context)
     {
     }
 }

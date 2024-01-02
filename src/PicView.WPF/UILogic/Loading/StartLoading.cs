@@ -41,18 +41,6 @@ internal static class StartLoading
         }
 
         var args = Environment.GetCommandLineArgs();
-        if (args.Length > 1)
-        {
-            // Apply lockscreen and close
-            var arg = args[1];
-            if (arg.StartsWith("lockscreen"))
-            {
-                var path = arg[(arg.LastIndexOf(',') + 1)..];
-                path = Path.GetFullPath(path);
-                LockScreenHelper.SetLockScreenImage(path);
-                Environment.Exit(0);
-            }
-        }
 
         if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
         {
@@ -74,6 +62,19 @@ internal static class StartLoading
             {
                 // No other instance is running, create named pipe server
                 _ = IPCHelper.StartListeningForArguments(pipeName).ConfigureAwait(false);
+            }
+        }
+
+        if (args.Length > 1)
+        {
+            // Apply lockscreen and close
+            var arg = args[1];
+            if (arg.StartsWith("lockscreen"))
+            {
+                var path = arg[(arg.LastIndexOf(',') + 1)..];
+                path = Path.GetFullPath(path);
+                Windows.Lockscreen.LockscreenHelper.SetLockScreenImage(path);
+                Environment.Exit(0);
             }
         }
 
@@ -182,6 +183,7 @@ internal static class StartLoading
         try
         {
             await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
+            ConfigColors.UpdateColor(); // Try catch to prevent task canceled exception
         }
         catch (Exception e)
         {
@@ -189,8 +191,6 @@ internal static class StartLoading
             Trace.WriteLine($"{nameof(LoadedEvent)}: {nameof(startupWindow)} exception,\n{e.Message}");
 #endif
         }
-
-        ConfigColors.UpdateColor();
     }
 
     internal static void AddDictionaries()

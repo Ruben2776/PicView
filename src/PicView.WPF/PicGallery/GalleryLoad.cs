@@ -121,7 +121,7 @@ internal static class GalleryLoad
             ParallelOptions options = new()
             {
                 // Don't slow the system down too much
-                MaxDegreeOfParallelism = 4
+                MaxDegreeOfParallelism = Math.Max(Environment.ProcessorCount - 2, 4)
             };
             ParallelOptions secondOptions = new()
             {
