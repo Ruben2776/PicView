@@ -47,31 +47,8 @@ internal static class CopyPaste
 
         try
         {
-            var newFile = await Task.FromResult(FileHelper.DuplicateAndReturnFileName(currentFile)).ConfigureAwait(false);
-
-            // Add the new file to Pics and Gallery, clear Preloader to refresh cache
-            var nextIndex = ImageIteration.GetNextIndex(NavigateTo.Next, Slideshow.SlideTimer != null, Pics, FolderIndex);
-            Pics.Insert(nextIndex, newFile);
-
-            // Add next item to gallery if applicable
-            if (UC.GetPicGallery is not null)
-            {
-                var fileInfo = new FileInfo(Pics[FolderIndex]);
-                var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Pics[FolderIndex],
-                    (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
-                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-                {
-                    var item = new PicGalleryItem(bitmapSource, newFile, false)
-                    {
-                        FilePath = newFile
-                    };
-                    UC.GetPicGallery.Container.Children.Insert(nextIndex, item);
-                });
-            }
-
-            var preloadValue = PreLoader.Get(FolderIndex);
-            PreLoader.Clear();
-            await PreLoader.AddAsync(FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource).ConfigureAwait(false);
+            await Task.Run(() => FileHelper.DuplicateAndReturnFileName(currentFile)).ConfigureAwait(false);
+            // File system watcher takes care of updating the UI
         }
         catch (Exception exception)
         {
@@ -85,8 +62,6 @@ internal static class CopyPaste
             // Revert to the previous title since it's no longer loading
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetTitleString);
         }
-
-        await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
     }
 
     /// <summary>
