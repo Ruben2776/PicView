@@ -7,5 +7,6 @@
 
     <Application.Styles>
         <SimpleTheme />
+        <StyleInclude Source="avares://PicView.Avalonia/Themes/Dark/DarkTheme.axaml" />
     </Application.Styles>
 </Application>

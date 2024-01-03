@@ -1,0 +1,39 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Styles.Resources>
+        <ResourceDictionary>
+            <Color x:Key="AccentColor">#FFDB5B3D</Color>
+            <Color x:Key="SecondaryAccentColor">#FFf8af3c</Color>
+
+            <Color x:Key="MainTextColor">#FFf6f4f4</Color>
+            <Color x:Key="MainTextColorFaded">#FFf6f4f4</Color>
+
+            <Color x:Key="MainIconColor">#eeebebeb</Color>
+            <Color x:Key="SecondaryIconColor">#eeebebeb</Color>
+
+            <Color x:Key="MainBackgroundColor">#FF2b2b2b</Color>
+            <Color x:Key="SecondaryBackgroundColor">#F2252525</Color>
+
+            <Color x:Key="MainButtonBackgroundColor">#FF2e2e2e</Color>
+
+            <Color x:Key="MainBorderColor">#FF3A3A3A</Color>
+
+            <ImageBrush
+                x:Key="NoisyTexture"
+                DestinationRect="0,0,100,100"
+                Opacity=".9"
+                Source="\Themes\Dark\noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                SourceRect="0,0,200,200"
+                Stretch="Fill"
+                TileMode="FlipXY" />
+        </ResourceDictionary>
+    </Styles.Resources>
+    <Style Selector="TextBox, Label, Button">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontFamily" Value="avares://PicView.Avalonia/Assets/Fonts#Roboto" />
+    </Style>
+    <Style Selector="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
+        <Setter Property="FontFamily" Value="avares://PicView.Avalonia/Assets/Fonts#Roboto" />
+    </Style>
+</Styles>
