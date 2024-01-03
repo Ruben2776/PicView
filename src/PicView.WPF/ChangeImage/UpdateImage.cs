@@ -24,10 +24,13 @@ namespace PicView.WPF.ChangeImage;
 internal static class UpdateImage
 {
     /// <summary>
-    /// Update picture, size it and set the title from index
+    /// Updates the image values asynchronously.
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="preLoadValue"></param>
+    /// <param name="index">The index.</param>
+    /// <param name="preLoadValue">The pre-load value.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="fastPic">Use different loading when key held down.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue, CancellationToken cancellationToken, bool fastPic = false)
     {
         if (preLoadValue is null)
@@ -53,7 +56,6 @@ internal static class UpdateImage
                     preLoadValue = PreLoader.Get(index)!;
                     if (preLoadValue is null)
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
                         return;
                     }
                 }
@@ -66,7 +68,6 @@ internal static class UpdateImage
         {
             if (index != FolderIndex || preLoadValue.BitmapSource is null)
             {
-                cancellationToken.ThrowIfCancellationRequested();
                 return;
             }
             ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
@@ -88,7 +89,6 @@ internal static class UpdateImage
 
         if (index != FolderIndex || preLoadValue.BitmapSource is null)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             return;
         }
 
@@ -113,16 +113,11 @@ internal static class UpdateImage
         var titleString = await Task.FromResult(TitleHelper.GetTitle(preLoadValue.BitmapSource.PixelWidth,
             preLoadValue.BitmapSource.PixelHeight, index, preLoadValue.FileInfo,
             ZoomLogic.ZoomValue, Pics)).ConfigureAwait(false);
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return;
-        }
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             if (index != FolderIndex)
             {
-                cancellationToken.ThrowIfCancellationRequested();
                 return;
             }
 
@@ -137,11 +132,6 @@ internal static class UpdateImage
             }
         }, DispatcherPriority.Send, cancellationToken);
 
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return;
-        }
-
         preLoadValue.FileInfo ??= new FileInfo(Pics[FolderIndex]);
         if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
         {
@@ -154,7 +144,6 @@ internal static class UpdateImage
                 {
                     if (index != FolderIndex)
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
                         return;
                     }
 
