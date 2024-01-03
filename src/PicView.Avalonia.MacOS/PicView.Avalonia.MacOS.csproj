@@ -10,11 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PicView.Avalonia\PicView.Avalonia.csproj" />
+    <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
+    <ProjectReference Include="..\PicView.MacOS\PicView.MacOS.csproj" />
   </ItemGroup>
 
   <ItemGroup>
