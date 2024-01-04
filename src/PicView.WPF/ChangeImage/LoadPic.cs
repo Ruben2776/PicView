@@ -428,7 +428,7 @@ internal static class LoadPic
     /// </summary>
     /// <param name="index">The index of the image to load.</param>
     /// <param name="fileInfo">The file information for the image. If not specified, the file information will be obtained from the image list using the specified index.</param>
-    internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null)
+    internal static async Task LoadPicAtIndexAsync(int index, FileInfo? fileInfo = null) => await Task.Run(async () =>
     {
         if (index < 0 || index >= Pics.Count)
         {
@@ -436,31 +436,23 @@ internal static class LoadPic
         }
 
         FolderIndex = index;
-        using var cts = new CancellationTokenSource();
-        var cancelToken = cts.Token;
-        try
-        {
-            await LoadPicAtIndexAsync(index, cancelToken, fileInfo);
-        }
-        catch (TaskCanceledException)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} cancelled");
-#endif
-        }
-        catch (Exception ex)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} exception:\n{ex.Message}");
-#endif
-            Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
-        }
-    }
-
-    private static async Task LoadPicAtIndexAsync(int index, CancellationToken cancellationToken, FileInfo? fileInfo = null) => await Task.Run(async () =>
-    {
         var preLoadValue = PreLoader.Get(index);
-        fileInfo ??= preLoadValue?.FileInfo ?? new FileInfo(Pics[index]);
+        fileInfo ??= preLoadValue?.FileInfo;
+        if (fileInfo == null)
+        {
+            try
+            {
+                fileInfo = new FileInfo(Pics[index]);
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(LoadPicAtIndexAsync)} {index} exception:\n{ex.Message}");
+#endif
+                Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
+                return;
+            }
+        }
 
         if (!fileInfo.Exists)
         {
@@ -473,7 +465,7 @@ internal static class LoadPic
             {
                 var next = ImageIteration.GetNextIndex(Reverse ? NavigateTo.Previous : NavigateTo.Next,
                     SettingsHelper.Settings.UIProperties.Looping, Pics, index);
-                await LoadPicAtIndexAsync(next, cancellationToken);
+                await LoadPicAtIndexAsync(next);
                 return;
             }
         }
@@ -485,37 +477,47 @@ internal static class LoadPic
             {
                 if (showThumb)
                 {
-                    await SetThumb();
+                    LoadingPreview(fileInfo);
                     showThumb = false;
                 }
 
-                await Task.Delay(50, cancellationToken);
+                await Task.Delay(50);
                 if (FolderIndex != index)
                 {
                     // Skip loading if user went to next value
-                    throw new TaskCanceledException();
+                    return;
                 }
             }
         }
         else
         {
-            await SetThumb();
-            await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
+            LoadingPreview(fileInfo);
+            _ = Task.Run(() => PreLoader.AddAsync(index, fileInfo));
+            do
+            {
+                preLoadValue = PreLoader.Get(index);
+                await Task.Delay(50);
+                if (index != FolderIndex)
+                {
+                    // Skip loading if user went to next value
+                    return;
+                }
+            } while (preLoadValue is null || preLoadValue.IsLoading);
+            //await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
             if (index != FolderIndex)
             {
                 // Skip loading if user went to next value
-                throw new TaskCanceledException();
+                return;
             }
-            preLoadValue = PreLoader.Get(index);
         }
 
         if (FolderIndex != index)
         {
             // Skip loading if user went to next value
-            throw new TaskCanceledException();
+            return;
         }
 
-        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, cancellationToken);
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue);
 
         if (ConfigureWindows.GetImageInfoWindow is { IsVisible: true })
             await ImageInfo.UpdateValuesAsync(preLoadValue?.FileInfo).ConfigureAwait(false);
@@ -532,26 +534,7 @@ internal static class LoadPic
         {
             FileHistoryNavigation.Add(Pics[index]);
         }
-        return;
-
-        async Task SetThumb()
-        {
-            var thumb = Thumbnails.GetThumb(index, fileInfo);
-            if (thumb.HasValue)
-            {
-                await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
-                {
-                    if (index != FolderIndex)
-                        return;
-                    ConfigureWindows.GetMainWindow.MainImage.Source = thumb.Value.BitmapSource;
-                    if (thumb.Value is { OriginalWidth: not null, OriginalHeight: not null })
-                    {
-                        ScaleImage.FitImage(thumb.Value.OriginalWidth.Value, thumb.Value.OriginalHeight.Value);
-                    }
-                }, DispatcherPriority.Normal, cancellationToken);
-            }
-        }
-    }, cancellationToken);
+    });
 
     #endregion Load Pic at Index
 
@@ -582,7 +565,7 @@ internal static class LoadPic
             }
 
             ConfigureWindows.GetMainWindow.MainImage.Source = thumb.Value.BitmapSource;
-            if (thumb.Value.OriginalWidth.HasValue && thumb.Value.OriginalHeight.HasValue)
+            if (thumb.Value is { OriginalWidth: not null, OriginalHeight: not null })
             {
                 ScaleImage.FitImage(thumb.Value.OriginalWidth.Value, thumb.Value.OriginalHeight.Value);
             }

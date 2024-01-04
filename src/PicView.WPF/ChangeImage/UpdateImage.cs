@@ -31,7 +31,7 @@ internal static class UpdateImage
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <param name="fastPic">Use different loading when key held down.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue, CancellationToken cancellationToken, bool fastPic = false)
+    internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue, bool fastPic = false)
     {
         if (preLoadValue is null)
         {
@@ -44,7 +44,7 @@ internal static class UpdateImage
             while (preLoadValue.IsLoading) // Fix rare occurrences of non-loaded image
             {
                 x++;
-                await Task.Delay(50, cancellationToken);
+                await Task.Delay(50);
                 if (index != FolderIndex)
                 {
                     return;
@@ -85,7 +85,7 @@ internal static class UpdateImage
             {
                 ZoomLogic.ResetZoom(false);
             }
-        }, DispatcherPriority.Send, cancellationToken);
+        }, DispatcherPriority.Send);
 
         if (index != FolderIndex || preLoadValue.BitmapSource is null)
         {
@@ -130,7 +130,7 @@ internal static class UpdateImage
             {
                 GetSpinWaiter.Visibility = Visibility.Collapsed;
             }
-        }, DispatcherPriority.Send, cancellationToken);
+        }, DispatcherPriority.Send);
 
         preLoadValue.FileInfo ??= new FileInfo(Pics[FolderIndex]);
         if (preLoadValue.FileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
@@ -148,7 +148,7 @@ internal static class UpdateImage
                     }
 
                     AnimationBehavior.SetSourceUri(ConfigureWindows.GetMainWindow.MainImage, uri);
-                }, DispatcherPriority.Normal, cancellationToken);
+                }, DispatcherPriority.Normal);
             }
         }
 

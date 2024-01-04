@@ -16,29 +16,6 @@ internal static class FastPic
 
     internal static async Task Run(int index)
     {
-        using var cts = new CancellationTokenSource();
-        var cancelToken = cts.Token;
-        try
-        {
-            await Run(index, cancelToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(Run)} cancelled:\n");
-#endif
-        }
-        catch (Exception ex)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(Run)} exception:\n{ex.Message}");
-#endif
-            Tooltip.ShowTooltipMessage(ex.Message, true, TimeSpan.FromSeconds(5));
-        }
-    }
-
-    private static async Task Run(int index, CancellationToken cancellationToken)
-    {
         if (_timer is null)
         {
             _timer = new Timer(TimeSpan.FromSeconds(SettingsHelper.Settings.UIProperties.NavSpeed))
@@ -71,7 +48,7 @@ internal static class FastPic
                     showThumb = false;
                 }
 
-                await Task.Delay(10, cancellationToken);
+                await Task.Delay(10);
             }
         }
         else
@@ -95,7 +72,7 @@ internal static class FastPic
             }
         }
 
-        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, cancellationToken, true).ConfigureAwait(false);
+        await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, true).ConfigureAwait(false);
 
         _updateSource = false;
         await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
@@ -140,11 +117,9 @@ internal static class FastPic
         {
             await Task.Delay(10).ConfigureAwait(false);
         }
-        using var cts = new CancellationTokenSource();
-        var cancelToken = cts.Token;
         try
         {
-            await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue, cancelToken).ConfigureAwait(false);
+            await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

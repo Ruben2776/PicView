@@ -86,7 +86,7 @@ internal static class PreLoader
 #if DEBUG
 
     // ReSharper disable once ConvertToConstant.Local
-    private static readonly bool ShowAddRemove = false;
+    private static readonly bool ShowAddRemove = true;
 
 #endif
 
@@ -267,16 +267,21 @@ internal static class PreLoader
             return;
         }
         _isRunning = true;
-        int prevStartingIndex;
-        using var cancellationTokenSource = new CancellationTokenSource();
-        var nextStartingIndex = currentIndex;
+        int nextStartingIndex, prevStartingIndex, deleteIndex;
+        var cancellationTokenSource = new CancellationTokenSource();
         if (Reverse)
         {
-            prevStartingIndex = currentIndex - 1;
+            nextStartingIndex = currentIndex + NegativeIterations > count
+                ? count
+                : currentIndex + NegativeIterations;
+            prevStartingIndex = currentIndex + 1;
+            deleteIndex = prevStartingIndex + NegativeIterations;
         }
         else
         {
-            prevStartingIndex = currentIndex + 1;
+            nextStartingIndex = currentIndex - NegativeIterations < 0 ? 0 : currentIndex - NegativeIterations;
+            prevStartingIndex = currentIndex - 1;
+            deleteIndex = prevStartingIndex - NegativeIterations;
         }
 
 #if DEBUG
@@ -284,6 +289,7 @@ internal static class PreLoader
             Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
 #endif
 
+        var array = new int[MaxCount];
         ParallelOptions options = new()
         {
             MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
@@ -318,6 +324,32 @@ internal static class PreLoader
             return;
         }
 
+        for (var i = 0; i < NegativeIterations; i++)
+        {
+            try
+            {
+                if (Pics.Count == 0 || count != Pics.Count)
+                {
+                    throw new TaskCanceledException();
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            int index;
+            if (Reverse)
+            {
+                index = (deleteIndex + i) % Pics.Count;
+            }
+            else
+            {
+                index = (deleteIndex - i + Pics.Count) % Pics.Count;
+            }
+
+            Remove(index);
+        }
         while (PreLoadList.Count > MaxCount)
         {
             Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
