@@ -1,19 +1,17 @@
-﻿using System.Collections.Specialized;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using PicView.Core.FileHandling;
+﻿using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ImageHandling;
-using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
-using PicView.WPF.Views.UserControls.Gallery;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Tooltip;
 
