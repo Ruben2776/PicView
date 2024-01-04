@@ -6,7 +6,6 @@
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
 
     <Application.Styles>
-        <SimpleTheme />
         <StyleInclude Source="avares://PicView.Avalonia/Themes/Dark/DarkTheme.axaml" />
     </Application.Styles>
 </Application>

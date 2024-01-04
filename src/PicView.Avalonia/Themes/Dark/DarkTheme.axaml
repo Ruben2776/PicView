@@ -21,12 +21,25 @@
                 x:Key="NoisyTexture"
                 DestinationRect="0,0,100,100"
                 Opacity=".9"
-                Source="\Themes\Dark\noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                Source="\Themes\Dark\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 SourceRect="0,0,200,200"
                 Stretch="Fill"
                 TileMode="FlipXY" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/Button.axaml" />
+                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/Border.axaml" />
+                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/TextBlock.axaml" />
+                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/Window.axaml" />
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
+    <Style Selector="Window">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
+        <Setter Property="MinWidth" Value="400" />
+        <Setter Property="MinHeight" Value="400" />
+    </Style>
     <Style Selector="TextBox, Label, Button">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontFamily" Value="avares://PicView.Avalonia/Assets/Fonts#Roboto" />

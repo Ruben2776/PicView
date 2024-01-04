@@ -10,9 +10,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="icon.ico">
+    <AvaloniaResource Include="icon.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +31,9 @@
     </Compile>
     <Compile Update="Views\MainWindow.axaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <Compile Update="Views\WinTitleBar.axaml.cs">
+      <DependentUpon>WinTitleBar.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

@@ -4,18 +4,12 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <AvaloniaResource Remove="Assets\icon.ico" />
-    <AvaloniaResource Remove="Assets\icon.png" />
   </ItemGroup>
 
   
@@ -33,14 +27,7 @@
     <None Remove="Assets\Fonts\texgyreheros-bold.otf" />
     <None Remove="Assets\Fonts\texgyreheros-italic.otf" />
     <None Remove="Assets\Fonts\texgyreheros-regular.otf" />
-    <None Remove="Assets\icon.ico" />
-    <None Remove="Assets\icon.png" />
     <None Remove="Themes\Dark\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <Content Include="Assets\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,8 +38,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\icon.png" />
-    <Resource Include="Assets\icon.ico" />
-    <AvaloniaResource Include="Themes\Dark\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+    <AvaloniaResource Include="Themes\Dark\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\TitleTextbox.axaml.cs">
+      <DependentUpon>TitleTextBox.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

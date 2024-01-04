@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Avalonia.Win32", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Avalonia.MacOS", "PicView.Avalonia.MacOS\PicView.Avalonia.MacOS.csproj", "{79402A1F-0EDE-49C8-970A-E7AC0065FFB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.Windows", "PicView.Windows\PicView.Windows.csproj", "{D63E2F56-02CC-4E23-AF78-F5218E83B2E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Windows", "PicView.Windows\PicView.Windows.csproj", "{D63E2F56-02CC-4E23-AF78-F5218E83B2E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.MacOS", "PicView.MacOS\PicView.MacOS.csproj", "{FEAC727E-1102-4F11-A747-5A5789FBBF81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.MacOS", "PicView.MacOS\PicView.MacOS.csproj", "{FEAC727E-1102-4F11-A747-5A5789FBBF81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

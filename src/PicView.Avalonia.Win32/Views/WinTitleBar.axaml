@@ -1,20 +1,28 @@
 <UserControl
-    x:Class="PicView.Avalonia.Win32.TitleBar"
+    x:Class="PicView.Avalonia.Win32.Views.WinTitleBar"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     Height="32"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
     <Border
         Background="{StaticResource MainButtonBackgroundColor}"
         BorderBrush="{StaticResource MainBorderColor}"
-        BorderThickness="0,1,0,1">
+        BorderThickness="0,1,0,1"
+        PointerPressed="MoveWindow">
         <DockPanel LastChildFill="True">
 
-            <Border BorderBrush="#FF3A3A3A" BorderThickness="0,0,1,0">
+            <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="0,0,1,0">
                 <Image
                     Width="30"
                     Height="25"
@@ -86,6 +94,7 @@
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
+                Command="{Binding ExitCommand}"
                 DockPanel.Dock="Right">
                 <Path
                     Width="12"
@@ -115,6 +124,7 @@
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
+                Command="{Binding MinimizeCommand}"
                 DockPanel.Dock="Right">
                 <Viewbox Width="12" Height="12">
                     <Path
@@ -123,18 +133,7 @@
                         Stretch="Fill" />
                 </Viewbox>
             </Button>
-
-            <TextBlock
-                Height="30"
-                Padding="3,7,3,5"
-                VerticalAlignment="Center"
-                Background="{StaticResource SecondaryBackgroundColor}"
-                FontSize="13"
-                FontWeight="Medium"
-                IsTabStop="False"
-                Text="PicView"
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
+            <views:TitleTextBox />
         </DockPanel>
     </Border>
 </UserControl>

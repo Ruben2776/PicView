@@ -5,19 +5,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
     xmlns:win32="clr-namespace:PicView.Avalonia.Win32"
     Title="PicView.Avalonia"
-    MinWidth="400"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Background="Transparent"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaTitleBarHeightHint="32"
     ExtendClientAreaToDecorationsHint="True"
+    Icon="/icon.ico"
     mc:Ignorable="d">
     <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1">
         <DockPanel Background="{StaticResource NoisyTexture}">
-            <win32:TitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
+            <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
             <views:MainView />
         </DockPanel>
     </Border>
