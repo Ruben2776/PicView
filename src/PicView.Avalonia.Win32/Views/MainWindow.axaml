@@ -10,15 +10,29 @@
     Title="PicView.Avalonia"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Background="Transparent"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaTitleBarHeightHint="32"
     ExtendClientAreaToDecorationsHint="True"
     Icon="/icon.ico"
+    TransparencyLevelHint="AcrylicBlur"
     mc:Ignorable="d">
-    <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1">
-        <DockPanel Background="{StaticResource NoisyTexture}">
-            <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
-            <views:MainView />
-        </DockPanel>
-    </Border>
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    MaterialOpacity="0.1"
+                    TintColor="Black"
+                    TintOpacity=".9" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1">
+            <DockPanel Background="{StaticResource NoisyTexture}">
+                <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
+                <views:MainView />
+            </DockPanel>
+        </Border>
+    </Panel>
 </Window>

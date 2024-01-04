@@ -1,18 +1,22 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PicView.Avalonia.Views.TitleTextBox">
-            <TextBlock
-                Height="30"
-                Padding="3,7,3,5"
-                VerticalAlignment="Center"
-                Background="{StaticResource SecondaryBackgroundColor}"
-                FontSize="13"
-                FontWeight="Medium"
-                IsTabStop="False"
-                Text="Loading...."
-                TextAlignment="Center"
-                TextTrimming="CharacterEllipsis" />
+<UserControl
+    x:Class="PicView.Avalonia.Views.TitleTextBox"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <TextBlock
+        Height="30"
+        Padding="3,7,3,5"
+        VerticalAlignment="Center"
+        Background="{StaticResource SecondaryBackgroundColor}"
+        FontFamily="avares://PicView.Avalonia.Theme/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+        FontSize="13"
+        FontWeight="Medium"
+        IsTabStop="False"
+        Text="Loading...."
+        TextAlignment="Center"
+        TextTrimming="CharacterEllipsis" />
 </UserControl>

@@ -14,20 +14,10 @@
 
   
   <ItemGroup>
-    <None Remove="Assets\Fonts\Roboto-Black.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Bold.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Italic.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Light.ttf" />
-    <None Remove="Assets\Fonts\Roboto-LightItalic.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Medium.ttf" />
-    <None Remove="Assets\Fonts\Roboto-MediumItalic.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Regular.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Thin.ttf" />
-    <None Remove="Assets\Fonts\Roboto-ThinItalic.ttf" />
-    <None Remove="Assets\Fonts\texgyreheros-bold.otf" />
-    <None Remove="Assets\Fonts\texgyreheros-italic.otf" />
-    <None Remove="Assets\Fonts\texgyreheros-regular.otf" />
-    <None Remove="Themes\Dark\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+    <AvaloniaXaml Remove="Themes\**" />
+    <Compile Remove="Themes\**" />
+    <EmbeddedResource Remove="Themes\**" />
+    <None Remove="Themes\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,12 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Themes\Dark\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Views\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
   </ItemGroup>
 </Project>

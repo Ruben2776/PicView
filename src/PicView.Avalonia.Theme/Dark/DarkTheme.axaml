@@ -2,7 +2,8 @@
     <Styles.Resources>
         <ResourceDictionary>
             <Color x:Key="AccentColor">#FFDB5B3D</Color>
-            <Color x:Key="SecondaryAccentColor">#FFf8af3c</Color>
+            <Color x:Key="SecondaryAccentColor">#e0755a</Color>
+            <Color x:Key="LogoAccentColor">#FFf8af3c</Color>
 
             <Color x:Key="MainTextColor">#FFf6f4f4</Color>
             <Color x:Key="MainTextColorFaded">#FFf6f4f4</Color>
@@ -17,19 +18,22 @@
 
             <Color x:Key="MainBorderColor">#FF3A3A3A</Color>
 
+            <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
+
             <ImageBrush
                 x:Key="NoisyTexture"
                 DestinationRect="0,0,100,100"
-                Opacity=".9"
-                Source="\Themes\Dark\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                Opacity=".7"
+                Source="\Dark\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 SourceRect="0,0,200,200"
                 Stretch="Fill"
                 TileMode="FlipXY" />
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/Button.axaml" />
-                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/Border.axaml" />
-                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/TextBlock.axaml" />
-                <ResourceInclude Source="avares://PicView.Avalonia/Themes/Controls/Window.axaml" />
+                <ResourceInclude Source="/Controls/Button.axaml" />
+                <ResourceInclude Source="/Controls/Border.axaml" />
+                <ResourceInclude Source="/Controls/TextBlock.axaml" />
+                <ResourceInclude Source="/Controls/PathIcon.axaml" />
+                <ResourceInclude Source="/Controls/Window.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
@@ -42,11 +46,17 @@
     </Style>
     <Style Selector="TextBox, Label, Button">
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontFamily" Value="avares://PicView.Avalonia/Assets/Fonts#Roboto" />
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
     </Style>
     <Style Selector="TextBlock">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
-        <Setter Property="FontFamily" Value="avares://PicView.Avalonia/Assets/Fonts#Roboto" />
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
+    </Style>
+
+    <Style Selector="Button.hover">
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+        </Style>
     </Style>
 </Styles>

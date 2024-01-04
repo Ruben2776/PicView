@@ -22,5 +22,23 @@
                     TextElement.Foreground="{TemplateBinding Foreground}" />
             </ControlTemplate>
         </Setter>
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <!--<Style.Animations>
+                <Animation IterationCount="1" Duration=".35">
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>-->
+            <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+        </Style>
+        <Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+        </Style>
     </ControlTheme>
 </ResourceDictionary>
