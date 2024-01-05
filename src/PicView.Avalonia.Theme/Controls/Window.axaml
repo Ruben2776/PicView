@@ -18,13 +18,27 @@
                         <VisualLayerManager.ChromeOverlayLayer>
                             <TitleBar />
                         </VisualLayerManager.ChromeOverlayLayer>
-                        <ContentPresenter
-                            Name="PART_ContentPresenter"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        <Panel>
+                            <ExperimentalAcrylicBorder IsHitTestVisible="False">
+                                <ExperimentalAcrylicBorder.Material>
+                                    <ExperimentalAcrylicMaterial
+                                        BackgroundSource="Digger"
+                                        MaterialOpacity="0.1"
+                                        TintColor="Black"
+                                        TintOpacity=".9" />
+                                </ExperimentalAcrylicBorder.Material>
+                            </ExperimentalAcrylicBorder>
+
+                            <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1">
+                                <ContentPresenter
+                                    Name="PART_ContentPresenter"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}" />
+                            </Border>
+                        </Panel>
                     </VisualLayerManager>
                 </Panel>
             </ControlTemplate>

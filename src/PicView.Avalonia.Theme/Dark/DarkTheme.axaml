@@ -13,6 +13,7 @@
 
             <Color x:Key="MainBackgroundColor">#FF2b2b2b</Color>
             <Color x:Key="SecondaryBackgroundColor">#F2252525</Color>
+            <Color x:Key="BackgroundHoverColor">#FF4B4B4B</Color>
 
             <Color x:Key="MainButtonBackgroundColor">#FF2e2e2e</Color>
 
@@ -39,10 +40,9 @@
     </Styles.Resources>
     <Style Selector="Window">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
-        <Setter Property="MinWidth" Value="400" />
-        <Setter Property="MinHeight" Value="400" />
+        <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome" />
+        <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="32" />
+        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
     </Style>
     <Style Selector="TextBox, Label, Button">
         <Setter Property="FontSize" Value="12" />

@@ -22,17 +22,39 @@
                     TextElement.Foreground="{TemplateBinding Foreground}" />
             </ControlTemplate>
         </Setter>
-        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <!--<Style.Animations>
+        <Style Selector="^.hover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
                 <Animation IterationCount="1" Duration=".35">
-                    <KeyFrame Cue="100%">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource AccentColor}" />
                         </Setter>
                     </KeyFrame>
                 </Animation>
-            </Style.Animations>-->
+            </Style.Animations>
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+        </Style>
+        <Style Selector="^.altHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration=".35">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{StaticResource BackgroundHoverColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
         </Style>
         <Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />

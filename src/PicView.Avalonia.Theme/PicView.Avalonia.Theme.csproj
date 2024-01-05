@@ -9,94 +9,6 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
-
-  
-  <ItemGroup>
-    <None Remove="Assets\Fonts\Roboto-Black.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Bold.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Italic.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Light.ttf" />
-    <None Remove="Assets\Fonts\Roboto-LightItalic.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Medium.ttf" />
-    <None Remove="Assets\Fonts\Roboto-MediumItalic.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Regular.ttf" />
-    <None Remove="Assets\Fonts\Roboto-Thin.ttf" />
-    <None Remove="Assets\Fonts\Roboto-ThinItalic.ttf" />
-    <None Remove="Assets\Fonts\texgyreheros-bold.otf" />
-    <None Remove="Assets\Fonts\texgyreheros-italic.otf" />
-    <None Remove="Assets\Fonts\texgyreheros-regular.otf" />
-    <None Remove="Controls\AdornerLayer.xaml" />
-    <None Remove="Controls\AutoCompleteBox.xaml" />
-    <None Remove="Controls\Button.xaml" />
-    <None Remove="Controls\ButtonSpinner.xaml" />
-    <None Remove="Controls\Calendar.xaml" />
-    <None Remove="Controls\CalendarButton.xaml" />
-    <None Remove="Controls\CalendarDatePicker.xaml" />
-    <None Remove="Controls\CalendarDayButton.xaml" />
-    <None Remove="Controls\CalendarItem.xaml" />
-    <None Remove="Controls\CaptionButtons.xaml" />
-    <None Remove="Controls\Carousel.xaml" />
-    <None Remove="Controls\CheckBox.xaml" />
-    <None Remove="Controls\ComboBox.xaml" />
-    <None Remove="Controls\ComboBoxItem.xaml" />
-    <None Remove="Controls\ContextMenu.xaml" />
-    <None Remove="Controls\DataValidationErrors.xaml" />
-    <None Remove="Controls\DatePicker.xaml" />
-    <None Remove="Controls\DateTimePickerShared.xaml" />
-    <None Remove="Controls\DropDownButton.xaml" />
-    <None Remove="Controls\EmbeddableControlRoot.xaml" />
-    <None Remove="Controls\Expander.xaml" />
-    <None Remove="Controls\FlyoutPresenter.xaml" />
-    <None Remove="Controls\GridSplitter.xaml" />
-    <None Remove="Controls\HeaderedContentControl.xaml" />
-    <None Remove="Controls\ItemsControl.xaml" />
-    <None Remove="Controls\Label.xaml" />
-    <None Remove="Controls\ListBox.xaml" />
-    <None Remove="Controls\ListBoxItem.xaml" />
-    <None Remove="Controls\ManagedFileChooser.xaml" />
-    <None Remove="Controls\Menu.xaml" />
-    <None Remove="Controls\MenuFlyoutPresenter.xaml" />
-    <None Remove="Controls\MenuItem.xaml" />
-    <None Remove="Controls\NativeMenuBar.xaml" />
-    <None Remove="Controls\NotificationCard.xaml" />
-    <None Remove="Controls\NumericUpDown.xaml" />
-    <None Remove="Controls\OverlayPopupHost.xaml" />
-    <None Remove="Controls\PathIcon.xaml" />
-    <None Remove="Controls\PopupRoot.xaml" />
-    <None Remove="Controls\ProgressBar.xaml" />
-    <None Remove="Controls\RadioButton.xaml" />
-    <None Remove="Controls\RefreshContainer.xaml" />
-    <None Remove="Controls\RefreshVisualizer.xaml" />
-    <None Remove="Controls\RepeatButton.xaml" />
-    <None Remove="Controls\ScrollBar.xaml" />
-    <None Remove="Controls\ScrollViewer.xaml" />
-    <None Remove="Controls\SelectableTextBlock.xaml" />
-    <None Remove="Controls\Separator.xaml" />
-    <None Remove="Controls\SimpleControls.xaml" />
-    <None Remove="Controls\Slider.xaml" />
-    <None Remove="Controls\SplitButton.xaml" />
-    <None Remove="Controls\SplitView.xaml" />
-    <None Remove="Controls\TabControl.xaml" />
-    <None Remove="Controls\TabItem.xaml" />
-    <None Remove="Controls\TabStrip.xaml" />
-    <None Remove="Controls\TabStripItem.xaml" />
-    <None Remove="Controls\TextBox.xaml" />
-    <None Remove="Controls\TextSelectionHandle.xaml" />
-    <None Remove="Controls\ThemeVariantScope.xaml" />
-    <None Remove="Controls\TimePicker.xaml" />
-    <None Remove="Controls\TitleBar.xaml" />
-    <None Remove="Controls\ToggleButton.xaml" />
-    <None Remove="Controls\ToggleSwitch.xaml" />
-    <None Remove="Controls\ToolTip.xaml" />
-    <None Remove="Controls\TransitioningContentControl.xaml" />
-    <None Remove="Controls\TreeView.xaml" />
-    <None Remove="Controls\TreeViewItem.xaml" />
-    <None Remove="Controls\Window.xaml" />
-    <None Remove="Controls\WindowNotificationManager.xaml" />
-    <None Remove="DarkTheme.xaml" />
-    <None Remove="Dark\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
-  </ItemGroup>
-
   
   <ItemGroup>
     <AvaloniaResource Include="DarkTheme.xaml" />
@@ -110,5 +22,9 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CustomControls\" />
   </ItemGroup>
 </Project>

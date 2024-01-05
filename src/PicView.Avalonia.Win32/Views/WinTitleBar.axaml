@@ -66,6 +66,7 @@
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
+                Classes="hover"
                 DockPanel.Dock="Left">
                 <Path
                     Width="12"
@@ -114,6 +115,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
+                Command="{Binding MaximizeCommand}"
                 DockPanel.Dock="Right">
                 <Path
                     Width="12"

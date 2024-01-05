@@ -11,6 +11,7 @@ public class MainViewModel : ViewModelBase
     public string Greeting => "Welcome to Avalonia!";
     public ICommand? ExitCommand { get; }
     public ICommand? MinimizeCommand { get; }
+    public ICommand? MaximizeCommand { get; }
 
     public MainViewModel()
     {
@@ -22,5 +23,9 @@ public class MainViewModel : ViewModelBase
         ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
         MinimizeCommand = ReactiveCommand.Create(() =>
             desktop.MainWindow.WindowState = WindowState.Minimized);
+        MaximizeCommand = ReactiveCommand.Create(() =>
+        {
+            desktop.MainWindow.WindowState = desktop.MainWindow.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        });
     }
 }

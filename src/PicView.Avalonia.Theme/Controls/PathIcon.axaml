@@ -12,6 +12,7 @@
                 <Border Background="{TemplateBinding Background}">
                     <Viewbox Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
                         <Path
+                            Name="PART_ContentPresenter"
                             Data="{TemplateBinding Data}"
                             Fill="{TemplateBinding Foreground}"
                             Stretch="Uniform" />
@@ -19,5 +20,22 @@
                 </Border>
             </ControlTemplate>
         </Setter>
+        <Style Selector="^.iconHover:pointerover /template/ Path#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration=".35">
+                    <KeyFrame>
+                        <Setter Property="Fill">
+                            <SolidColorBrush Color="{StaticResource MainIconColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Fill">
+                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+        </Style>
     </ControlTheme>
 </ResourceDictionary>

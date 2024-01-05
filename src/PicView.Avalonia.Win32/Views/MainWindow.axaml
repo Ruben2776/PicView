@@ -8,31 +8,17 @@
     xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
     xmlns:win32="clr-namespace:PicView.Avalonia.Win32"
     Title="PicView.Avalonia"
+    MinWidth="435"
+    MinHeight="400"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Background="Transparent"
-    ExtendClientAreaChromeHints="NoChrome"
-    ExtendClientAreaTitleBarHeightHint="32"
-    ExtendClientAreaToDecorationsHint="True"
     Icon="/icon.ico"
     TransparencyLevelHint="AcrylicBlur"
     mc:Ignorable="d">
-    <Panel>
-        <ExperimentalAcrylicBorder IsHitTestVisible="False">
-            <ExperimentalAcrylicBorder.Material>
-                <ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    MaterialOpacity="0.1"
-                    TintColor="Black"
-                    TintOpacity=".9" />
-            </ExperimentalAcrylicBorder.Material>
-        </ExperimentalAcrylicBorder>
 
-        <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1">
-            <DockPanel Background="{StaticResource NoisyTexture}">
-                <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
-                <views:MainView />
-            </DockPanel>
-        </Border>
-    </Panel>
+    <DockPanel Background="{StaticResource NoisyTexture}" LastChildFill="True">
+        <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
+        <views:BottomBar DockPanel.Dock="Bottom" />
+        <views:MainView />
+    </DockPanel>
 </Window>
