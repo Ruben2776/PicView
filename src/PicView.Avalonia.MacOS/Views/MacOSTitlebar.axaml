@@ -1,17 +1,20 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
-             x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar">
+<UserControl
+    x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
     <DockPanel LastChildFill="True">
-        <Rectangle DockPanel.Dock="Left" Width="80"></Rectangle>
-        
+        <Rectangle Width="80" DockPanel.Dock="Left" />
+
         <Button
             Name="GalleryButton"
             Width="30"
@@ -28,7 +31,7 @@
                 </DrawingImage>
             </Image>
         </Button>
-        
+
         <Button
             Width="30"
             Margin="0"
@@ -44,7 +47,7 @@
                 Fill="{StaticResource MainIconColor}"
                 Stretch="Fill" />
         </Button>
-        
+
         <Button
             Width="30"
             Margin="0"
@@ -60,7 +63,75 @@
                 Fill="{StaticResource MainIconColor}"
                 Stretch="Fill" />
         </Button>
-        
-        <views:TitleTextBox  Height="28" Background="Transparent" />
+
+        <Button
+            Width="30"
+            Margin="0"
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="hover"
+            DockPanel.Dock="Right">
+            <Path
+                Width="12"
+                Height="12"
+                Data="M413.967,276.8c1.06-6.235,1.06-13.518,1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318   c4.26-3.118,5.319-8.317,2.13-13.518L418.215,115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186,20.801   c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098   c-5.318,0-9.577,4.164-10.637,8.318l-8.508,55.117c-12.767,5.2-24.464,12.482-36.171,20.801l-53.186-20.801   c-5.319-2.071-10.638,0-12.767,4.164l-42.549,71.765c-2.119,4.153-1.061,10.399,2.129,13.518L96.97,235.2   c0,7.282-1.06,13.518-1.06,20.8s1.06,13.518,1.06,20.8l-44.668,34.318c-4.26,3.118-5.318,8.317-2.13,13.518L92.721,396.4   c2.13,4.164,8.508,6.235,12.767,4.164l53.187-20.801c10.637,8.318,23.394,15.601,36.16,20.801l8.508,55.117   c1.069,5.2,5.318,8.318,10.637,8.318h85.098c5.319,0,9.578-4.164,10.638-8.318l8.518-55.117c12.757-5.2,24.464-12.482,36.16-20.801   l53.187,20.801c5.318,2.071,10.637,0,12.767-4.164l42.549-71.765c2.129-4.153,1.06-10.399-2.13-13.518L413.967,276.8z    M255.468,328.8c-41.489,0-74.46-32.235-74.46-72.8s32.971-72.8,74.46-72.8s74.461,32.235,74.461,72.8S296.957,328.8,255.468,328.8   z"
+                Fill="{StaticResource MainIconColor}"
+                Stretch="Fill" />
+        </Button>
+
+        <Button
+            Width="30"
+            Margin="0"
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="hover"
+            DockPanel.Dock="Right">
+            <Image Width="12" Height="12">
+                <Image.Resources>
+                    <Pen
+                        x:Key="Pen0"
+                        Brush="{StaticResource MainIconColor}"
+                        LineCap="Round"
+                        LineJoin="Round"
+                        MiterLimit="4"
+                        Thickness="48" />
+                </Image.Resources>
+                <DrawingImage>
+                    <DrawingGroup>
+                        <GeometryDrawing Geometry="F1 M184 112L328 256L184 400" Pen="{DynamicResource Pen0}" />
+                    </DrawingGroup>
+                </DrawingImage>
+            </Image>
+        </Button>
+
+        <Button
+            Width="30"
+            Margin="0"
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="hover"
+            DockPanel.Dock="Right">
+            <Image Width="12" Height="12">
+                <Image.Resources>
+                    <Pen
+                        x:Key="Pen0"
+                        Brush="{StaticResource MainIconColor}"
+                        LineCap="Round"
+                        LineJoin="Round"
+                        MiterLimit="4"
+                        Thickness="48" />
+                </Image.Resources>
+                <DrawingImage>
+                    <DrawingGroup>
+                        <GeometryDrawing Geometry="F1 M328 112L184 256L328 400" Pen="{DynamicResource Pen0}" />
+                    </DrawingGroup>
+                </DrawingImage>
+            </Image>
+        </Button>
+
+        <views:TitleTextBox Height="28" Background="Transparent" />
     </DockPanel>
 </UserControl>

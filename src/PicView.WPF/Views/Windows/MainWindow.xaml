@@ -470,7 +470,8 @@
                             Focusable="False"
                             RenderOptions.BitmapScalingMode="Fant"
                             RenderOptions.EdgeMode="Aliased"
-                            Stretch="Fill" />
+                            Stretch="Fill"
+                            UseLayoutRounding="True" />
                     </Border>
                 </ScrollViewer>
                 <Canvas
