@@ -29,7 +29,7 @@
                                 </ExperimentalAcrylicBorder.Material>
                             </ExperimentalAcrylicBorder>
 
-                            <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                 <ContentPresenter
                                     Name="PART_ContentPresenter"
                                     Margin="{TemplateBinding Padding}"

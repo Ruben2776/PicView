@@ -6,9 +6,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:vm="using:PicView.Avalonia.ViewModels"
+    xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
     Title="PicView MacOS"
     d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignWidth="800" 
+    BorderBrush="{StaticResource SecondaryBackgroundColor}"
+    BorderThickness="1"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="28"
     mc:Ignorable="d">
-    <views:MainView />
+    <DockPanel LastChildFill="True">
+        <views1:MacOSTitlebar DockPanel.Dock="Top" />
+        <views:BottomBar DockPanel.Dock="Bottom" />
+        <views:MainView />
+    </DockPanel>
 </Window>

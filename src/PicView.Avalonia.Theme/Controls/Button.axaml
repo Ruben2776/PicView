@@ -56,6 +56,23 @@
             </Style.Animations>
             <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
         </Style>
+        <Style Selector="^.alphaHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration=".35">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="Transparent" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{StaticResource AltBackgroundHoverColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{StaticResource AltBackgroundHoverColor}" />
+        </Style>
         <Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>

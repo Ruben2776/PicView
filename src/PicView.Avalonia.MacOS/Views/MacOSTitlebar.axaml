@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+             x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    <DockPanel LastChildFill="True">
+        <Rectangle DockPanel.Dock="Left" Width="80"></Rectangle>
+        
+        <Button
+            Name="GalleryButton"
+            Width="30"
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="alphaHover"
+            DockPanel.Dock="Left">
+            <Image Width="17">
+                <DrawingImage>
+                    <DrawingGroup>
+                        <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M22 16L22 4C22 2.9 21.1 2 20 2L8 2C6.9 2 6 2.9 6 4L6 16C6 17.1 6.9 18 8 18L20 18C21.1 18 22 17.1 22 16ZM11 12L13.03 14.71L16 11L20 16L8 16L11 12ZM2 6L2 20C2 21.1 2.9 22 4 22L18 22L18 20L4 20L4 6L2 6Z" />
+                    </DrawingGroup>
+                </DrawingImage>
+            </Image>
+        </Button>
+        
+        <Button
+            Width="30"
+            Margin="0"
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="hover"
+            DockPanel.Dock="Left">
+            <Path
+                Width="12"
+                Height="12"
+                Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
+                Fill="{StaticResource MainIconColor}"
+                Stretch="Fill" />
+        </Button>
+        
+        <Button
+            Width="30"
+            Margin="0"
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="hover"
+            DockPanel.Dock="Left">
+            <Path
+                Width="12"
+                Height="12"
+                Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
+                Fill="{StaticResource MainIconColor}"
+                Stretch="Fill" />
+        </Button>
+        
+        <views:TitleTextBox  Height="28" Background="Transparent" />
+    </DockPanel>
+</UserControl>
