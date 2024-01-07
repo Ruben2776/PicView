@@ -12,8 +12,11 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <DockPanel LastChildFill="True">
-        <Rectangle Width="80" DockPanel.Dock="Left" />
+    <DockPanel
+        Background="{StaticResource MainBackgroundColor}"
+        LastChildFill="True"
+        PointerPressed="MoveWindow">
+        <Rectangle Width="70" DockPanel.Dock="Left" />
 
         <Button
             Name="GalleryButton"
@@ -22,7 +25,7 @@
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
             Classes="alphaHover"
-            DockPanel.Dock="Left">
+            DockPanel.Dock="Right">
             <Image Width="17">
                 <DrawingImage>
                     <DrawingGroup>
@@ -38,8 +41,8 @@
             Background="Transparent"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
-            Classes="hover"
-            DockPanel.Dock="Left">
+            Classes="alphaHover"
+            DockPanel.Dock="Right">
             <Path
                 Width="12"
                 Height="12"
@@ -54,8 +57,8 @@
             Background="Transparent"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
-            Classes="hover"
-            DockPanel.Dock="Left">
+            Classes="alphaHover"
+            DockPanel.Dock="Right">
             <Path
                 Width="12"
                 Height="12"
@@ -70,7 +73,7 @@
             Background="Transparent"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
-            Classes="hover"
+            Classes="alphaHover"
             DockPanel.Dock="Right">
             <Path
                 Width="12"
@@ -80,7 +83,7 @@
                 Stretch="Fill" />
         </Button>
 
-        <Button
+        <!--<Button
             Width="30"
             Margin="0"
             Background="Transparent"
@@ -130,7 +133,7 @@
                     </DrawingGroup>
                 </DrawingImage>
             </Image>
-        </Button>
+        </Button>-->
 
         <views:TitleTextBox Height="28" Background="Transparent" />
     </DockPanel>

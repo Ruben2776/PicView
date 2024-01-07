@@ -28,13 +28,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\TitleTextbox.axaml.cs">
+    <Compile Update="Views\UC\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Assets\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>

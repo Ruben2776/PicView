@@ -14,7 +14,7 @@
             <Color x:Key="MainBackgroundColor">#FF2b2b2b</Color>
             <Color x:Key="SecondaryBackgroundColor">#F2252525</Color>
             <Color x:Key="BackgroundHoverColor">#FF4B4B4B</Color>
-            <Color x:Key="AltBackgroundHoverColor">#F14B4B4B</Color>
+            <Color x:Key="AltBackgroundHoverColor">#22FFFFFF</Color>
 
             <Color x:Key="MainButtonBackgroundColor">#FF2e2e2e</Color>
 
@@ -47,8 +47,8 @@
         <Setter Property="TransparencyLevelHint" Value="AcrylicBlur" />
     </Style>
     <Style Selector="TextBox, Label, Button">
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
     </Style>
     <Style Selector="TextBlock">
         <Setter Property="FontSize" Value="14" />

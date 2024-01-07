@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -17,8 +18,5 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <TextBlock
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Text="{Binding Greeting}" />
+    <uc:StartUpMenu />
 </UserControl>

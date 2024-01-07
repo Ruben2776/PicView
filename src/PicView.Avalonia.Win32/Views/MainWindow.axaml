@@ -16,9 +16,11 @@
     TransparencyLevelHint="AcrylicBlur"
     mc:Ignorable="d">
 
-    <DockPanel Background="{StaticResource NoisyTexture}" LastChildFill="True">
-        <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
-        <views:BottomBar DockPanel.Dock="Bottom" />
-        <views:MainView />
-    </DockPanel>
+    <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1,0,1,1">
+        <DockPanel Background="{StaticResource NoisyTexture}" LastChildFill="True">
+            <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
+            <views:BottomBar DockPanel.Dock="Bottom" />
+            <views:MainView />
+        </DockPanel>
+    </Border>
 </Window>

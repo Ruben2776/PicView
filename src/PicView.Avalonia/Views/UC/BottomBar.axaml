@@ -76,6 +76,7 @@
                 </Button>
 
                 <Button
+                    x:Name="PreviousButton"
                     Width="90"
                     Height="25"
                     Background="{StaticResource SecondaryBackgroundColor}"
@@ -84,6 +85,7 @@
                     Classes="hover"
                     Focusable="False">
                     <Path
+                        x:Name="PrevIcon"
                         Width="17"
                         Height="20"
                         Data="F1M27.008,0L27.01,31.062 0,15.529z"
@@ -92,6 +94,7 @@
                 </Button>
 
                 <Button
+                    x:Name="NextButton"
                     Width="90"
                     Height="25"
                     Background="{StaticResource SecondaryBackgroundColor}"
@@ -99,11 +102,13 @@
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     Focusable="False">
-                    <PathIcon
+                    <Path
+                        x:Name="NextIcon"
                         Width="17"
                         Height="20"
                         Data="F1M0.002,31.062L0,0 27.01,15.534z"
-                        Foreground="{StaticResource MainIconColor}" />
+                        Fill="{StaticResource MainIconColor}"
+                        Stretch="Fill" />
                 </Button>
 
                 <Button
