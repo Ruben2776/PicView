@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 
 namespace PicView.Core.Config;
@@ -23,6 +24,8 @@ public static class SettingsHelper
             else
             {
                 SetDefaults();
+                // Get the default culture from the OS
+                Settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
             }
         }
         catch (Exception ex)
