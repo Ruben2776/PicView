@@ -4,9 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
     <UserControl.Resources>
         <DrawingImage x:Key="Logo">
             <DrawingImage.Drawing>
@@ -89,7 +94,7 @@
                     <Label
                         x:Name="OpenFileDialogLabel"
                         Padding="8,8,15,5"
-                        Content="Select file"
+                        Content="{Binding SelectFile}"
                         Foreground="{StaticResource MainTextColor}" />
                 </StackPanel>
             </Button>
@@ -126,7 +131,7 @@
                     <Label
                         x:Name="OpenLastFileLabel"
                         Padding="8,8,15,2"
-                        Content="Open Last file"
+                        Content="{Binding OpenLastFile}"
                         Foreground="{StaticResource MainTextColor}" />
                 </StackPanel>
             </Button>
@@ -141,7 +146,7 @@
                     <Label
                         x:Name="FilePasteLabel"
                         Padding="8,8,15,0"
-                        Content="Paste"
+                        Content="{Binding Paste}"
                         Foreground="{StaticResource MainTextColor}" />
                 </StackPanel>
             </Button>

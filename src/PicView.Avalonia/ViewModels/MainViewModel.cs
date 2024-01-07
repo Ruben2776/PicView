@@ -1,14 +1,19 @@
-﻿using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using PicView.Core.Config;
+using PicView.Core.Localization;
 using ReactiveUI;
 using System.Windows.Input;
-using Avalonia;
-using Avalonia.Controls;
 
 namespace PicView.Avalonia.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    public string Greeting => "Welcome to Avalonia!";
+    public string SelectFile => TranslationHelper.GetTranslation("OpenFileDialog");
+
+    public string OpenLastFile => TranslationHelper.GetTranslation("OpenLastFile");
+    public string Paste => TranslationHelper.GetTranslation("Paste");
     public ICommand? ExitCommand { get; }
     public ICommand? MinimizeCommand { get; }
     public ICommand? MaximizeCommand { get; }
@@ -19,6 +24,8 @@ public class MainViewModel : ViewModelBase
         {
             return;
         }
+
+        WindowLogic.WindowHelper. InitializeWindowSizeAndPosition(desktop);
 
         ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
         MinimizeCommand = ReactiveCommand.Create(() =>

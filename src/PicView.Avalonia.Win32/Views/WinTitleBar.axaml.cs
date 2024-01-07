@@ -16,5 +16,6 @@ public partial class WinTitleBar : UserControl
 
         var hostWindow = (Window)VisualRoot;
         hostWindow?.BeginMoveDrag(e);
+        WindowLogic.WindowHelper.UpdateWindowPosToSettings();
     }
 }

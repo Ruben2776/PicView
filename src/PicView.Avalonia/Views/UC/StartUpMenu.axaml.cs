@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
+using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Views.UC;
 
