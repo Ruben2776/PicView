@@ -16,10 +16,11 @@ public partial class StartUpMenu : UserControl
 
     public void ResponsiveSize(double width)
     {
+        const int breakPoint = 900;
         const int bottomMargin = 16;
         switch (width)
         {
-            case < 1265:
+            case < breakPoint:
                 if (this.TryFindResource("Icon", ThemeVariant.Default, out var icon))
                     Logo.Source = icon as DrawingImage;
                 LogoViewbox.Width = 350;
@@ -27,7 +28,7 @@ public partial class StartUpMenu : UserControl
                 Buttons.VerticalAlignment = VerticalAlignment.Bottom;
                 break;
 
-            case > 1265:
+            case > breakPoint:
                 if (this.TryFindResource("Logo", ThemeVariant.Default, out var logo))
                     Logo.Source = logo as DrawingImage;
                 LogoViewbox.Width = double.NaN;

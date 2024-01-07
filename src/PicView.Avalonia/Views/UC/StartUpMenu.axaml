@@ -39,6 +39,7 @@
     <Grid>
         <Viewbox
             x:Name="LogoViewbox"
+            Margin="15,20"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
             <Image

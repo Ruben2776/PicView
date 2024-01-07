@@ -10,6 +10,8 @@
     Title="PicView MacOS"
     d:DesignHeight="450"
     d:DesignWidth="800" 
+    MinWidth="435"
+    MinHeight="400"
     BorderBrush="{StaticResource SecondaryBackgroundColor}"
     BorderThickness="1"
     ExtendClientAreaChromeHints="SystemChrome"
