@@ -407,12 +407,17 @@ internal static class PreLoader
             {
                 return;
             }
-
-            for (var i = 0; i < NegativeIterations; i++)
+            var deleteCount = PreLoadList.Count - MaxCount < MaxCount ? MaxCount : PreLoadList.Count - MaxCount;
+            for (var i = 0; i < deleteCount; i++)
             {
                 var removeIndex = Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min();
 
-                if (!list.Contains(removeIndex))
+                if (list.Contains(removeIndex) || removeIndex == currentIndex)
+                {
+                    continue;
+                }
+
+                if (removeIndex > currentIndex + 1 || removeIndex < currentIndex - 1)
                 {
                     Remove(removeIndex);
                 }
