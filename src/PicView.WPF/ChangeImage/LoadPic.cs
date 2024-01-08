@@ -484,6 +484,7 @@ internal static class LoadPic
                 await Task.Delay(50);
                 if (FolderIndex != index)
                 {
+                    await PreLoader.AddAsync(index, preLoadValue?.FileInfo, preLoadValue?.BitmapSource).ConfigureAwait(false);
                     // Skip loading if user went to next value
                     return;
                 }
@@ -492,8 +493,13 @@ internal static class LoadPic
         else
         {
             LoadingPreview(fileInfo);
-            await Task.Run(() => PreLoader.AddAsync(index, fileInfo));
-            preLoadValue = PreLoader.Get(index);
+            preLoadValue = new PreLoader.PreLoadValue(await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo),
+                fileInfo, null);
+            if (FolderIndex != index)
+            {
+                // Skip loading if user went to next value
+                return;
+            }
         }
 
         if (FolderIndex != index)
