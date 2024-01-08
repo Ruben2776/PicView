@@ -11,10 +11,41 @@ namespace PicView.Avalonia.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
+    #region Localization
+
+    private string? _currentLanguageKey;
+
+    public string CurrentLanguageValue
+    {
+        get => SettingsHelper.Settings.UIProperties.UserLanguage;
+    }
+
+    public string? CurrentLanguageKey
+    {
+        get => _currentLanguageKey ?? "en";
+        set
+        {
+            if (_currentLanguageKey == value)
+            {
+                return;
+            }
+
+            _currentLanguageKey = value;
+            this.RaisePropertyChanged(nameof(CurrentLanguageValue));
+            this.RaisePropertyChanged(nameof(CurrentLanguageValue));
+            this.RaisePropertyChanged(nameof(SelectFile));
+            this.RaisePropertyChanged(nameof(OpenLastFile));
+            this.RaisePropertyChanged(nameof(Paste));
+        }
+    }
+
     public string SelectFile => TranslationHelper.GetTranslation("OpenFileDialog");
 
     public string OpenLastFile => TranslationHelper.GetTranslation("OpenLastFile");
-    public string Paste => TranslationHelper.GetTranslation("Paste");
+    public string Paste => TranslationHelper.GetTranslation("FilePaste");
+
+    #endregion Localization
+
     public ICommand? ExitCommand { get; }
     public ICommand? MinimizeCommand { get; }
     public ICommand? MaximizeCommand { get; }

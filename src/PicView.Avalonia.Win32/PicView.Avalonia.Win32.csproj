@@ -30,8 +30,8 @@
     <Compile Update="App.axaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
-    <Compile Update="Views\MainWindow.axaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
+    <Compile Update="Views\WinMainWindow.axaml.cs">
+      <DependentUpon>WinMainWindow.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\WinTitleBar.axaml.cs">
       <DependentUpon>WinTitleBar.axaml</DependentUpon>

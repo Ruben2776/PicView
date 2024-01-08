@@ -17,10 +17,11 @@
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
     xmlns:vm="using:PicView.Avalonia.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia">
     <DockPanel LastChildFill="True">
         <views1:MacOSTitlebar DockPanel.Dock="Top" />
-        <views:BottomBar DockPanel.Dock="Bottom" />
+        <uc:BottomBar DockPanel.Dock="Bottom" />
         <views:MainView />
     </DockPanel>
 </Window>

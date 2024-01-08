@@ -61,4 +61,5 @@
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
     </Style>
+
 </Styles>

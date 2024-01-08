@@ -1,5 +1,5 @@
 <Window
-    x:Class="PicView.Avalonia.Win32.Views.MainWindow"
+    x:Class="PicView.Avalonia.Win32.Views.WinMainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,6 +7,7 @@
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
     xmlns:win32="clr-namespace:PicView.Avalonia.Win32"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     Title="PicView.Avalonia"
     MinWidth="435"
     MinHeight="400"
@@ -19,7 +20,7 @@
     <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1,0,1,1">
         <DockPanel Background="{StaticResource NoisyTexture}" LastChildFill="True">
             <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
-            <views:BottomBar DockPanel.Dock="Bottom" />
+            <uc:BottomBar DockPanel.Dock="Bottom" />
             <views:MainView />
         </DockPanel>
     </Border>

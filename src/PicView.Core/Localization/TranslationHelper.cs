@@ -11,10 +11,7 @@ public static class TranslationHelper
 {
     public static string GetTranslation(string key)
     {
-        if (Language is null)
-            return string.Empty;
-
-        return Language.TryGetValue(key, out var translation) ? translation : key;
+        return Language is null ? string.Empty : Language.GetValueOrDefault(key, key);
     }
 
     /// <summary>

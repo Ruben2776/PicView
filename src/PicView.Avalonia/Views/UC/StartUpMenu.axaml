@@ -61,7 +61,8 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Orientation="Horizontal">
-            <Button x:Name="SelectFile">
+
+            <Button x:Name="SelectFileButton">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="20.091">
                         <Image.Source>
@@ -98,6 +99,7 @@
                         Foreground="{StaticResource MainTextColor}" />
                 </StackPanel>
             </Button>
+
             <Button x:Name="OpenLastFileButton">
                 <StackPanel Height="30" Orientation="Horizontal">
                     <Image Height="20.091">
@@ -138,14 +140,14 @@
             <Button x:Name="PasteButton">
                 <StackPanel Height="30" Orientation="Horizontal">
                     <Path
-                        Width="16"
-                        Height="16"
+                        Width="20"
+                        Height="20"
                         Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
                         Fill="{StaticResource MainIconColor}"
                         Stretch="Fill" />
                     <Label
                         x:Name="FilePasteLabel"
-                        Padding="8,8,15,0"
+                        Padding="8,8,15,5"
                         Content="{Binding Paste}"
                         Foreground="{StaticResource MainTextColor}" />
                 </StackPanel>

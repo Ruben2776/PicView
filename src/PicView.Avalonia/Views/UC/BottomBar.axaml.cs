@@ -4,7 +4,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
 
-namespace PicView.Avalonia.Views;
+namespace PicView.Avalonia.Views.UC;
 
 public partial class BottomBar : UserControl
 {

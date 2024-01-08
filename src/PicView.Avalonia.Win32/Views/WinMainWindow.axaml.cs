@@ -4,19 +4,19 @@ using System;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class MainWindow : Window
+public partial class WinMainWindow : Window
 {
-    public MainWindow()
+    public WinMainWindow()
     {
         InitializeComponent();
     }
 
-    protected override void OnClosing(WindowClosingEventArgs e)
+    protected override async void OnClosing(WindowClosingEventArgs e)
     {
         e.Cancel = true;
         Hide();
 
-        SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
         Environment.Exit(0);
     }
 }

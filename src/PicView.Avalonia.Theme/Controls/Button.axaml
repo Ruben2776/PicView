@@ -22,6 +22,7 @@
                     TextElement.Foreground="{TemplateBinding Foreground}" />
             </ControlTemplate>
         </Setter>
+
         <Style Selector="^.hover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
                 <Animation IterationCount="1" Duration=".35">
@@ -73,7 +74,10 @@
             </Style.Animations>
             <Setter Property="Background" Value="{StaticResource AltBackgroundHoverColor}" />
         </Style>
-        <Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="^.hover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+        <Style Selector="^.alphaHover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
         <Style Selector="^:disabled">
