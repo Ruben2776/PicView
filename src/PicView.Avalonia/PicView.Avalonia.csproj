@@ -5,6 +5,8 @@
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Company>Ruben Hyldgaard Negendahl</Company>
+    <Product>PicView</Product>
   </PropertyGroup>
 
   

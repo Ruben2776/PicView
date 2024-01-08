@@ -1,0 +1,26 @@
+<Window
+    BorderBrush="{StaticResource SecondaryBackgroundColor}"
+    BorderThickness="1"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="28"
+    Icon="avares://PicView.Avalonia/Assets/icon.icns"
+    MinHeight="400"
+    MinWidth="435"
+    Title="PicView MacOS"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.MacOS.Views.MacMainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
+    xmlns:vm="using:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel LastChildFill="True">
+        <views1:MacOSTitlebar DockPanel.Dock="Top" />
+        <views:BottomBar DockPanel.Dock="Bottom" />
+        <views:MainView />
+    </DockPanel>
+</Window>

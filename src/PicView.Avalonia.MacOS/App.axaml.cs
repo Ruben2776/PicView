@@ -1,8 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.ViewModels;
-using MainWindow = PicView.Avalonia.MacOS.Views.MainWindow;
 
 namespace PicView.Avalonia.MacOS;
 
@@ -17,7 +17,7 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var w = desktop.MainWindow = new MainWindow();
+            var w = desktop.MainWindow = new MacMainWindow();
             w.DataContext = new MainViewModel();
         }
 

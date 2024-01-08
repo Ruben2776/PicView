@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace PicView.Avalonia.MacOS.Views;
 
-public partial class MainWindow : Window
+public partial class MacMainWindow : Window
 {
-    public MainWindow()
+    public MacMainWindow()
     {
         InitializeComponent();
     }
