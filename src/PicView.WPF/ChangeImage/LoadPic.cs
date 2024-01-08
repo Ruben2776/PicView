@@ -492,23 +492,8 @@ internal static class LoadPic
         else
         {
             LoadingPreview(fileInfo);
-            _ = Task.Run(() => PreLoader.AddAsync(index, fileInfo));
-            do
-            {
-                preLoadValue = PreLoader.Get(index);
-                await Task.Delay(50);
-                if (index != FolderIndex)
-                {
-                    // Skip loading if user went to next value
-                    return;
-                }
-            } while (preLoadValue is null || preLoadValue.IsLoading);
-            //await PreLoader.AddAsync(index, fileInfo).ConfigureAwait(false);
-            if (index != FolderIndex)
-            {
-                // Skip loading if user went to next value
-                return;
-            }
+            await Task.Run(() => PreLoader.AddAsync(index, fileInfo));
+            preLoadValue = PreLoader.Get(index);
         }
 
         if (FolderIndex != index)
@@ -526,7 +511,7 @@ internal static class LoadPic
         if (Pics.Count > 1)
         {
             Taskbar.Progress((double)index / Pics.Count);
-            await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(index, Pics.Count, false).ConfigureAwait(false);
         }
 
         // Add recent files, except when browsing archive

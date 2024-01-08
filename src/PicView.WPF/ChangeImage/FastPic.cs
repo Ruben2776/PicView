@@ -75,7 +75,7 @@ internal static class FastPic
         await UpdateImage.UpdateImageValuesAsync(index, preLoadValue, true).ConfigureAwait(false);
 
         _updateSource = false;
-        await PreLoader.PreLoadAsync(index, Pics.Count).ConfigureAwait(false);
+        await PreLoader.PreLoadAsync(index, Pics.Count, false).ConfigureAwait(false);
     }
 
     internal static async Task FastPicUpdateAsync()

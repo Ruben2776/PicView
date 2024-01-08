@@ -98,14 +98,14 @@ internal static class PreLoader
     /// <param name="bitmapSource">The BitmapSource of the image.</param>
     /// <param name="orientation">The orientation of the image.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    internal static async Task AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null, ushort? orientation = null)
+    internal static async Task<bool> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null, ushort? orientation = null)
     {
         if (index < 0 || index >= Pics.Count)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(PreLoader)}.{nameof(AddAsync)} invalid index: \n{index}");
 #endif
-            return;
+            return false;
         }
 
         try
@@ -137,6 +137,7 @@ internal static class PreLoader
                 if (ShowAddRemove)
                     Trace.WriteLine($"{fileInfo.Name} added at {index}");
 #endif
+                return true;
             }
         }
         catch (Exception ex)
@@ -145,6 +146,7 @@ internal static class PreLoader
             Trace.WriteLine($"{nameof(AddAsync)} exception: \n{ex}");
 #endif
         }
+        return false;
     }
 
     /// <summary>
@@ -260,40 +262,40 @@ internal static class PreLoader
     /// </summary>
     /// <param name="currentIndex">The starting point for the iteration.</param>
     /// <param name="count">The current count of the iterated list</param>
-    internal static async Task PreLoadAsync(int currentIndex, int count)
+    /// <param name="parallel">Whether to use parallel processing</param>
+    internal static async Task PreLoadAsync(int currentIndex, int count, bool parallel)
     {
         if (_isRunning)
         {
             return;
         }
         _isRunning = true;
-        int nextStartingIndex, prevStartingIndex, deleteIndex;
+
+        int nextStartingIndex, prevStartingIndex;
         var cancellationTokenSource = new CancellationTokenSource();
         if (Reverse)
         {
-            nextStartingIndex = currentIndex + NegativeIterations > count
-                ? count
-                : currentIndex + NegativeIterations;
+            nextStartingIndex = (currentIndex - 1 + count) % count;
             prevStartingIndex = currentIndex + 1;
-            deleteIndex = prevStartingIndex + NegativeIterations;
         }
         else
         {
-            nextStartingIndex = currentIndex - NegativeIterations < 0 ? 0 : currentIndex - NegativeIterations;
+            nextStartingIndex = (currentIndex + 1) % count;
             prevStartingIndex = currentIndex - 1;
-            deleteIndex = prevStartingIndex - NegativeIterations;
         }
+        var list = new List<int>();
 
 #if DEBUG
         if (ShowAddRemove)
-            Trace.WriteLine($"\nPreLoading started at {nextStartingIndex}\n");
+            Trace.WriteLine($"\nPreLoading started at {currentIndex}\n");
 #endif
 
-        var array = new int[MaxCount];
-        ParallelOptions options = new()
-        {
-            MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
-        };
+        var options = parallel
+            ? new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
+            }
+            : null;
 
         try
         {
@@ -319,70 +321,102 @@ internal static class PreLoader
             _isRunning = false;
         }
 
-        if (Pics.Count <= MaxCount + NegativeIterations)
-        {
-            return;
-        }
-
-        for (var i = 0; i < NegativeIterations; i++)
-        {
-            try
-            {
-                if (Pics.Count == 0 || count != Pics.Count)
-                {
-                    throw new TaskCanceledException();
-                }
-            }
-            catch (Exception)
-            {
-                return;
-            }
-
-            int index;
-            if (Reverse)
-            {
-                index = (deleteIndex + i) % Pics.Count;
-            }
-            else
-            {
-                index = (deleteIndex - i + Pics.Count) % Pics.Count;
-            }
-
-            Remove(index);
-        }
-        while (PreLoadList.Count > MaxCount)
-        {
-            Remove(Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min());
-        }
+        RemoveLoop();
 
         return;
 
         async Task PositiveLoop(ParallelOptions parallelOptions, CancellationTokenSource source)
         {
-            await Parallel.ForAsync(0, PositiveIterations, parallelOptions, async (i, _) =>
+            if (parallel)
             {
-                if (Pics.Count == 0 || count != Pics.Count)
+                await Parallel.ForAsync(0, PositiveIterations, parallelOptions, async (i, _) =>
                 {
-                    await source.CancelAsync();
-                    return;
+                    if (Pics.Count == 0 || count != Pics.Count)
+                    {
+                        await source.CancelAsync();
+                        return;
+                    }
+                    var index = (nextStartingIndex + i) % Pics.Count;
+                    var isAdded = await AddAsync(index);
+                    if (isAdded)
+                    {
+                        list.Add(index);
+                    }
+                });
+            }
+            else
+            {
+                for (var i = 0; i < PositiveIterations; i++)
+                {
+                    if (Pics.Count == 0 || count != Pics.Count)
+                    {
+                        await source.CancelAsync();
+                        return;
+                    }
+                    var index = (nextStartingIndex + i) % Pics.Count;
+                    var isAdded = await AddAsync(index);
+                    if (isAdded)
+                    {
+                        list.Add(index);
+                    }
                 }
-                var index = (nextStartingIndex + i) % Pics.Count;
-                await AddAsync(index);
-            });
+            }
         }
 
         async Task NegativeLoop(ParallelOptions parallelOptions, CancellationTokenSource source)
         {
-            await Parallel.ForAsync(0, NegativeIterations, parallelOptions, async (i, _) =>
+            if (parallel)
             {
-                if (Pics.Count == 0 || count != Pics.Count)
+                await Parallel.ForAsync(0, NegativeIterations, parallelOptions, async (i, _) =>
                 {
-                    await source.CancelAsync();
-                    return;
+                    if (Pics.Count == 0 || count != Pics.Count)
+                    {
+                        await source.CancelAsync();
+                        return;
+                    }
+                    var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
+                    var isAdded = await AddAsync(index);
+                    if (isAdded)
+                    {
+                        list.Add(index);
+                    }
+                });
+            }
+            else
+            {
+                for (var i = 0; i < NegativeIterations; i++)
+                {
+                    if (Pics.Count == 0 || count != Pics.Count)
+                    {
+                        await source.CancelAsync();
+                        return;
+                    }
+                    var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
+                    var isAdded = await AddAsync(index);
+                    if (isAdded)
+                    {
+                        list.Add(index);
+                    }
                 }
-                var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
-                await AddAsync(index);
-            });
+            }
+        }
+
+        void RemoveLoop()
+        {
+            if (Pics.Count <= MaxCount + NegativeIterations || PreLoadList.Count <= MaxCount)
+            {
+                return;
+            }
+
+            for (var i = 0; i < NegativeIterations; i++)
+            {
+                var removeIndex = Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min();
+
+                if (!list.Contains(removeIndex))
+                {
+                    Remove(removeIndex);
+                }
+            }
         }
     }
 }

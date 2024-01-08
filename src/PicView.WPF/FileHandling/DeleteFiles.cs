@@ -122,7 +122,7 @@ internal static class DeleteFiles
         if (PreLoader.Contains(index))
         {
             PreLoader.Clear();
-            await PreLoader.PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(FolderIndex, Pics.Count, false).ConfigureAwait(false);
         }
     }
 }

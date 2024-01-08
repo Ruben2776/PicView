@@ -35,7 +35,13 @@ internal static class UpdateImage
     {
         if (preLoadValue is null)
         {
-            return;
+            await Task.Run(() => PreLoader.AddAsync(index, new FileInfo(Pics[index])));
+            preLoadValue = PreLoader.Get(index);
+            if (preLoadValue is null)
+            {
+                await ReloadAsync().ConfigureAwait(false);
+                return;
+            }
         }
 
         if (!fastPic)

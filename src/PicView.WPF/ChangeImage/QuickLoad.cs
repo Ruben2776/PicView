@@ -90,7 +90,7 @@ internal static class QuickLoad
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
-            await PreLoadAsync(FolderIndex, Pics.Count).ConfigureAwait(false);
+            await PreLoadAsync(FolderIndex, Pics.Count, true).ConfigureAwait(false);
 
             if (shouldLoadBottomGallery)
             {

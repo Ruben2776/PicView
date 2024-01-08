@@ -295,7 +295,7 @@ internal static class FileUpdateNavigation
         if (PreLoader.Contains(index) || PreLoader.Contains(nextIndex) || PreLoader.Contains(prevIndex))
         {
             PreLoader.Clear();
-            await PreLoader.PreLoadAsync(Navigation.FolderIndex, Navigation.Pics.Count).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(Navigation.FolderIndex, Navigation.Pics.Count, false).ConfigureAwait(false);
         }
 
         if (UC.GetPicGallery is not null)
