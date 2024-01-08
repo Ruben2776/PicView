@@ -5,6 +5,7 @@ using PicView.Core.Config;
 using PicView.Core.Localization;
 using ReactiveUI;
 using System.Windows.Input;
+using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.ViewModels;
 
@@ -25,7 +26,7 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        WindowLogic.WindowHelper. InitializeWindowSizeAndPosition(desktop);
+        WindowHelper.InitializeWindowSizeAndPosition(desktop);
 
         ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
         MinimizeCommand = ReactiveCommand.Create(() =>

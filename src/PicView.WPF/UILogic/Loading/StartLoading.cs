@@ -61,7 +61,7 @@ internal static class StartLoading
             else
             {
                 // No other instance is running, create named pipe server
-                _ = IPCHelper.StartListeningForArguments(pipeName).ConfigureAwait(false);
+                _ = IPCHelper.StartListeningForArguments(pipeName);
             }
         }
 

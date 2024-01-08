@@ -35,7 +35,6 @@
 
   <ItemGroup>
     <Folder Include="Assets\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -16,6 +17,6 @@ public partial class WinTitleBar : UserControl
 
         var hostWindow = (Window)VisualRoot;
         hostWindow?.BeginMoveDrag(e);
-        WindowLogic.WindowHelper.UpdateWindowPosToSettings();
+        WindowHelper.UpdateWindowPosToSettings();
     }
 }
