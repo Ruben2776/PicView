@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using ImageMagick;
+﻿using ImageMagick;
 using ImageMagick.Formats;
 using SkiaSharp;
+using System.Diagnostics;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -69,8 +69,14 @@ public static class ImageDecoder
 
             if (fileInfo.Length >= 2147483648)
             {
-                await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
-                    FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
+                var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
+                var data = new byte[fileStream.Length];
+                var writeIndex = 0;
+                while (writeIndex < fileStream.Length)
+                {
+                    var n = await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
+                    writeIndex += n;
+                }
 
                 // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
                 // ReSharper disable once MethodHasAsyncOverload
@@ -122,11 +128,14 @@ public static class ImageDecoder
             }
             else
             {
-                await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
-                    FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
+                var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: fileInfo.Length > 1e+8);
                 var data = new byte[fileStream.Length];
-                // ReSharper disable once MustUseReturnValue
-                await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
+                var writeIndex = 0;
+                while (writeIndex < fileStream.Length)
+                {
+                    var n = await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
+                    writeIndex += n;
+                }
                 magickImage.Read(data);
             }
 
@@ -190,9 +199,15 @@ public static class ImageDecoder
     {
         try
         {
-            await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
-                FileShare.ReadWrite, bufferSize: 4096, useAsync: fileInfo.Length > 1e+8);
-            return SKBitmap.Decode(fileStream);
+            var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: fileInfo.Length > 1e+8);
+            var data = new byte[fileStream.Length];
+            var writeIndex = 0;
+            while (writeIndex < fileStream.Length)
+            {
+                var n = await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
+                writeIndex += n;
+            }
+            return SKBitmap.Decode(data);
         }
         catch (Exception e)
         {

@@ -27,16 +27,15 @@ internal static class UpdateImage
     /// Updates the image values asynchronously.
     /// </summary>
     /// <param name="index">The index.</param>
-    /// <param name="preLoadValue">The pre-load value.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="preLoadValue">The PreLoadValue</param>
     /// <param name="fastPic">Use different loading when key held down.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     internal static async Task UpdateImageValuesAsync(int index, PreLoader.PreLoadValue preLoadValue, bool fastPic = false)
     {
         if (preLoadValue is null)
         {
-            await Task.Run(() => PreLoader.AddAsync(index, new FileInfo(Pics[index])));
-            preLoadValue = PreLoader.Get(index);
+            await PreLoader.AddAsync(index, new FileInfo(Pics[index]));
+            preLoadValue = PreLoader.Get(index)!;
             if (preLoadValue is null)
             {
                 await ReloadAsync().ConfigureAwait(false);

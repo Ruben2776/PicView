@@ -481,10 +481,10 @@ internal static class LoadPic
                     showThumb = false;
                 }
 
-                await Task.Delay(50);
+                await Task.Delay(20);
                 if (FolderIndex != index)
                 {
-                    await PreLoader.AddAsync(index, preLoadValue?.FileInfo, preLoadValue?.BitmapSource).ConfigureAwait(false);
+                    await PreLoader.AddAsync(index, preLoadValue?.FileInfo, preLoadValue?.BitmapSource);
                     // Skip loading if user went to next value
                     return;
                 }
@@ -493,12 +493,15 @@ internal static class LoadPic
         else
         {
             LoadingPreview(fileInfo);
-            preLoadValue = new PreLoader.PreLoadValue(await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo),
-                fileInfo, null);
+            var added = await PreLoader.AddAsync(index, fileInfo);
             if (FolderIndex != index)
             {
                 // Skip loading if user went to next value
                 return;
+            }
+            if (added)
+            {
+                preLoadValue = PreLoader.Get(index);
             }
         }
 
@@ -539,16 +542,19 @@ internal static class LoadPic
     internal static void LoadingPreview(FileInfo fileInfo, bool showLoading = true)
     {
         var thumb = Thumbnails.GetThumb(FolderIndex, fileInfo);
+        if (thumb.HasValue == false && showLoading == false)
+        {
+            return;
+        }
 
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, () =>
         {
             if (showLoading)
             {
                 // Set Loading
-                SetLoadingString();
+                SetLoadingString(); 
+                GetSpinWaiter.Visibility = Visibility.Visible;
             }
-
-            GetSpinWaiter.Visibility = Visibility.Visible;
 
             if (thumb.HasValue == false)
             {

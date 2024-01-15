@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
-using static PicView.WPF.ChangeImage.Navigation;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -100,7 +99,7 @@ internal static class PreLoader
     /// <returns>A task representing the asynchronous operation.</returns>
     internal static async Task<bool> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null, ushort? orientation = null)
     {
-        if (index < 0 || index >= Pics.Count)
+        if (index < 0 || index >= Navigation.Pics.Count)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(PreLoader)}.{nameof(AddAsync)} invalid index: \n{index}");
@@ -114,7 +113,7 @@ internal static class PreLoader
             var add = PreLoadList.TryAdd(index, preLoadValue);
             if (add)
             {
-                fileInfo ??= new FileInfo(Pics[index]);
+                fileInfo ??= new FileInfo(Navigation.Pics[index]);
                 if (bitmapSource is null)
                 {
                     preLoadValue.IsLoading = true;
@@ -156,7 +155,7 @@ internal static class PreLoader
     /// <returns>True if the file information was successfully refreshed, false otherwise.</returns>
     internal static async Task<bool> RefreshFileInfo(int index)
     {
-        if (index < 0 || index >= Pics.Count)
+        if (index < 0 || index >= Navigation.Pics.Count)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(PreLoader)}.{nameof(RefreshFileInfo)} invalid index: \n{index}");
@@ -190,7 +189,7 @@ internal static class PreLoader
     /// <returns></returns>
     internal static PreLoadValue? Get(int key)
     {
-        if (key < 0 || key >= Pics.Count)
+        if (key < 0 || key >= Navigation.Pics.Count)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Get)} invalid key: \n{key}");
@@ -208,7 +207,7 @@ internal static class PreLoader
     /// <returns></returns>
     internal static bool Contains(int key)
     {
-        if (key < 0 || key >= Pics.Count)
+        if (key < 0 || key >= Navigation.Pics.Count)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Contains)} invalid key: \n{key}");
@@ -225,7 +224,7 @@ internal static class PreLoader
     /// <param name="key"></param>
     internal static bool Remove(int key)
     {
-        if (key < 0 || key >= Pics.Count)
+        if (key < 0 || key >= Navigation.Pics.Count)
         {
 #if DEBUG
             Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Remove)} invalid key: \n{key}");
@@ -244,7 +243,7 @@ internal static class PreLoader
             var remove = PreLoadList.TryRemove(key, out _);
 #if DEBUG
             if (remove && ShowAddRemove)
-                Trace.WriteLine($"{Pics[key]} removed at {Pics.IndexOf(Pics[key])}");
+                Trace.WriteLine($"{Navigation.Pics[key]} removed at {Navigation.Pics.IndexOf(Navigation.Pics[key])}");
 #endif
             return remove;
         }
@@ -272,8 +271,7 @@ internal static class PreLoader
         _isRunning = true;
 
         int nextStartingIndex, prevStartingIndex;
-        var cancellationTokenSource = new CancellationTokenSource();
-        if (Reverse)
+        if (Navigation.Reverse)
         {
             nextStartingIndex = (currentIndex - 1 + count) % count;
             prevStartingIndex = currentIndex + 1;
@@ -283,7 +281,7 @@ internal static class PreLoader
             nextStartingIndex = (currentIndex + 1) % count;
             prevStartingIndex = currentIndex - 1;
         }
-        var list = new List<int>();
+        var array = new int[MaxCount];
 
 #if DEBUG
         if (ShowAddRemove)
@@ -299,15 +297,15 @@ internal static class PreLoader
 
         try
         {
-            if (Reverse)
+            if (Navigation.Reverse)
             {
-                await NegativeLoop(options, cancellationTokenSource);
-                await PositiveLoop(options, cancellationTokenSource);
+                await NegativeLoop(options);
+                await PositiveLoop(options);
             }
             else
             {
-                await PositiveLoop(options, cancellationTokenSource);
-                await NegativeLoop(options, cancellationTokenSource);
+                await PositiveLoop(options);
+                await NegativeLoop(options);
             }
         }
         catch (Exception exception)
@@ -325,22 +323,22 @@ internal static class PreLoader
 
         return;
 
-        async Task PositiveLoop(ParallelOptions parallelOptions, CancellationTokenSource source)
+        async Task PositiveLoop(ParallelOptions parallelOptions)
         {
             if (parallel)
             {
                 await Parallel.ForAsync(0, PositiveIterations, parallelOptions, async (i, _) =>
                 {
-                    if (Pics.Count == 0 || count != Pics.Count)
+                    if (Navigation.Pics.Count == 0 || count != Navigation.Pics.Count)
                     {
-                        await source.CancelAsync();
+                        Clear();
                         return;
                     }
-                    var index = (nextStartingIndex + i) % Pics.Count;
+                    var index = (nextStartingIndex + i) % Navigation.Pics.Count;
                     var isAdded = await AddAsync(index);
                     if (isAdded)
                     {
-                        list.Add(index);
+                        array[i] = index;
                     }
                 });
             }
@@ -348,37 +346,34 @@ internal static class PreLoader
             {
                 for (var i = 0; i < PositiveIterations; i++)
                 {
-                    if (Pics.Count == 0 || count != Pics.Count)
+                    if (Navigation.Pics.Count == 0 || count != Navigation.Pics.Count)
                     {
-                        await source.CancelAsync();
+                        Clear();
                         return;
                     }
-                    var index = (nextStartingIndex + i) % Pics.Count;
-                    var isAdded = await AddAsync(index);
-                    if (isAdded)
-                    {
-                        list.Add(index);
-                    }
+                    var index = (nextStartingIndex + i) % Navigation.Pics.Count;
+                    _= AddAsync(index);
+                    array[i] = index;
                 }
             }
         }
 
-        async Task NegativeLoop(ParallelOptions parallelOptions, CancellationTokenSource source)
+        async Task NegativeLoop(ParallelOptions parallelOptions)
         {
             if (parallel)
             {
                 await Parallel.ForAsync(0, NegativeIterations, parallelOptions, async (i, _) =>
                 {
-                    if (Pics.Count == 0 || count != Pics.Count)
+                    if (Navigation.Pics.Count == 0 || count != Navigation.Pics.Count)
                     {
-                        await source.CancelAsync();
+                        Clear();
                         return;
                     }
-                    var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
+                    var index = (prevStartingIndex - i + Navigation.Pics.Count) % Navigation.Pics.Count;
                     var isAdded = await AddAsync(index);
                     if (isAdded)
                     {
-                        list.Add(index);
+                        array[i] = index;
                     }
                 });
             }
@@ -386,38 +381,39 @@ internal static class PreLoader
             {
                 for (var i = 0; i < NegativeIterations; i++)
                 {
-                    if (Pics.Count == 0 || count != Pics.Count)
+                    if (Navigation.Pics.Count == 0 || count != Navigation.Pics.Count)
                     {
-                        await source.CancelAsync();
+                        Clear();
                         return;
                     }
-                    var index = (prevStartingIndex - i + Pics.Count) % Pics.Count;
-                    var isAdded = await AddAsync(index);
-                    if (isAdded)
-                    {
-                        list.Add(index);
-                    }
+                    var index = (prevStartingIndex - i + Navigation.Pics.Count) % Navigation.Pics.Count;
+                    _ = AddAsync(index);
+                    array[i] = index;
                 }
             }
         }
 
         void RemoveLoop()
         {
-            if (Pics.Count <= MaxCount + NegativeIterations || PreLoadList.Count <= MaxCount)
+            if (Navigation.Pics.Count <= MaxCount + NegativeIterations || PreLoadList.Count <= MaxCount)
             {
                 return;
             }
             var deleteCount = PreLoadList.Count - MaxCount < MaxCount ? MaxCount : PreLoadList.Count - MaxCount;
             for (var i = 0; i < deleteCount; i++)
             {
-                var removeIndex = Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min();
+                var removeIndex = Navigation.Reverse ? PreLoadList.Keys.Max() : PreLoadList.Keys.Min();
+                if (i >= array.Length)
+                {
+                    return;
+                }
 
-                if (list.Contains(removeIndex) || removeIndex == currentIndex)
+                if (array[i] == removeIndex || removeIndex == currentIndex || removeIndex == Navigation.FolderIndex)
                 {
                     continue;
                 }
 
-                if (removeIndex > currentIndex + 1 || removeIndex < currentIndex - 1)
+                if (removeIndex > currentIndex + 2 || removeIndex < currentIndex - 2)
                 {
                     Remove(removeIndex);
                 }
