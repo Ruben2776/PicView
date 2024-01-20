@@ -2,6 +2,7 @@
 using ImageMagick.Formats;
 using SkiaSharp;
 using System.Diagnostics;
+using PicView.Core.FileHandling;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -67,25 +68,8 @@ public static class ImageDecoder
                     break;
             }
 
-            if (fileInfo.Length >= 2147483648)
-            {
-                var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
-                var data = new byte[fileStream.Length];
-                var writeIndex = 0;
-                while (writeIndex < fileStream.Length)
-                {
-                    var n = await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
-                    writeIndex += n;
-                }
-
-                // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
-                // ReSharper disable once MethodHasAsyncOverload
-                magickImage.Read(fileStream, format);
-            }
-            else
-            {
-                await magickImage.ReadAsync(fileInfo, format).ConfigureAwait(false);
-            }
+            magickImage.Format = format;
+            magickImage.Read(await FileHelper.GetBytesFromFile(fileInfo), format);
 
             magickImage?.AutoOrient();
             return magickImage;
@@ -116,28 +100,7 @@ public static class ImageDecoder
                 BackgroundColor = MagickColors.Transparent,
                 Format = magickFormat,
             };
-
-            // Streams with a length larger than 2GB are not supported, read from file instead
-            if (fileInfo.Length >= 2147483648)
-            {
-                await Task.Run(() =>
-                {
-                    magickImage = new MagickImage();
-                    magickImage.Read(fileInfo);
-                }).ConfigureAwait(false);
-            }
-            else
-            {
-                var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: fileInfo.Length > 1e+8);
-                var data = new byte[fileStream.Length];
-                var writeIndex = 0;
-                while (writeIndex < fileStream.Length)
-                {
-                    var n = await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
-                    writeIndex += n;
-                }
-                magickImage.Read(data);
-            }
+            magickImage.Read(await FileHelper.GetBytesFromFile(fileInfo));
 
             magickImage.Settings.BackgroundColor = MagickColors.Transparent;
             magickImage.Settings.FillColor = MagickColors.Transparent;
@@ -199,15 +162,7 @@ public static class ImageDecoder
     {
         try
         {
-            var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: fileInfo.Length > 1e+8);
-            var data = new byte[fileStream.Length];
-            var writeIndex = 0;
-            while (writeIndex < fileStream.Length)
-            {
-                var n = await fileStream.ReadAsync(data.AsMemory(0, (int)fileStream.Length)).ConfigureAwait(false);
-                writeIndex += n;
-            }
-            return SKBitmap.Decode(data);
+            return SKBitmap.Decode(await FileHelper.GetBytesFromFile(fileInfo));
         }
         catch (Exception e)
         {

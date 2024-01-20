@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace PicView.Core.FileHandling;
@@ -212,7 +214,7 @@ public static partial class FileHelper
 
     /// <summary>
     /// Checks if the given directory is empty.
-    ///    </summary>
+    /// </summary>
     public static bool IsDirectoryEmpty(string path)
     {
         return !Directory.EnumerateFileSystemEntries(path).Any();
@@ -231,5 +233,25 @@ public static partial class FileHelper
             // If an IOException occurs, the file is in use by another process
             return true;
         }
+    }
+
+    public static async Task<byte[]> GetBytesFromFile(string filePath, CancellationToken cancellationToken = default)
+    {
+        var fileInfo = new FileInfo(filePath);
+        return await GetBytesFromFile(fileInfo, cancellationToken).ConfigureAwait(false);
+    }
+
+    public static async Task<byte[]> GetBytesFromFile(FileInfo fileInfo, CancellationToken cancellationToken = default)
+    {
+        await using var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: fileInfo.Length > 1e+8);
+        var count = fs.Length;
+        var bytes = new byte[count];
+        var writeIndex = 0;
+        while (writeIndex < count)
+        {
+            var n = await fs.ReadAsync(bytes.AsMemory(writeIndex, (int)count - writeIndex), cancellationToken).ConfigureAwait(false);
+            writeIndex += n;
+        }
+        return bytes;
     }
 }
