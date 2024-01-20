@@ -7,13 +7,10 @@ namespace PicView.WPF.SystemIntegration;
 
 internal static class Taskbar
 {
-    #region Progress
-
     /// <summary>
-    /// Show progress on taskbar
+    /// Updates the progress of the taskbar.
     /// </summary>
-    /// <param name="i">index</param>
-    /// <param name="ii">size</param>
+    /// <param name="d">The progress value.</param>
     internal static void Progress(double d)
     {
         if (!SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
@@ -54,6 +51,4 @@ internal static class Taskbar
             // Catch task canceled exception
         }
     }
-
-    #endregion Progress
 }

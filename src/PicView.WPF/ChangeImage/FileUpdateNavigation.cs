@@ -2,7 +2,6 @@
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
 using PicView.Core.Navigation;
-using PicView.WPF.ConfigureSettings;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
@@ -10,8 +9,6 @@ using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Media.Imaging;
-using Windows.Devices.Geolocation;
 
 namespace PicView.WPF.ChangeImage;
 
@@ -295,7 +292,7 @@ internal static class FileUpdateNavigation
         if (PreLoader.Contains(index) || PreLoader.Contains(nextIndex) || PreLoader.Contains(prevIndex))
         {
             PreLoader.Clear();
-            await PreLoader.PreLoadAsync(Navigation.FolderIndex, Navigation.Pics.Count, false).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(Navigation.FolderIndex, Navigation.Pics.Count, true).ConfigureAwait(false);
         }
 
         if (UC.GetPicGallery is not null)
