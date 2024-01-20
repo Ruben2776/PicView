@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Text.RegularExpressions;
 
 namespace PicView.Core.FileHandling;
@@ -243,7 +241,7 @@ public static partial class FileHelper
 
     public static async Task<byte[]> GetBytesFromFile(FileInfo fileInfo, CancellationToken cancellationToken = default)
     {
-        await using var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: fileInfo.Length > 1e+8);
+        await using var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: true);
         var count = fs.Length;
         var bytes = new byte[count];
         var writeIndex = 0;

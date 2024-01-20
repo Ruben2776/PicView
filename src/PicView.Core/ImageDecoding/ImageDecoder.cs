@@ -11,6 +11,14 @@ namespace PicView.Core.ImageDecoding;
 /// </summary>
 public static class ImageDecoder
 {
+    private static readonly string[] Defines =
+    [
+        "34022", // ColorTable
+        "34025", // ImageColorValue
+        "34026", // BackgroundColorValue
+        "32928"
+    ];
+
     /// <summary>
     /// Asynchronously reads and returns a MagickImage from the specified FileInfo.
     /// </summary>
@@ -48,13 +56,7 @@ public static class ImageDecoder
                 case ".tiff":
                     magickImage.Settings.SetDefines(new TiffReadDefines
                     {
-                        IgnoreTags = new[]
-                        {
-                            "34022", // ColorTable
-                            "34025", // ImageColorValue
-                            "34026", // BackgroundColorValue
-                            "32928",
-                        },
+                        IgnoreTags = Defines,
                     });
                     format = MagickFormat.Tif;
                     break;
@@ -68,8 +70,16 @@ public static class ImageDecoder
                     break;
             }
 
-            magickImage.Format = format;
-            magickImage.Read(await FileHelper.GetBytesFromFile(fileInfo), format);
+            if (fileInfo.Length >= 2147483648)
+            {
+                // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+                // ReSharper disable once MethodHasAsyncOverload
+                magickImage.Read(fileInfo);
+            }
+            else
+            {
+                await magickImage.ReadAsync(fileInfo, format).ConfigureAwait(false);
+            }
 
             magickImage?.AutoOrient();
             return magickImage;
@@ -100,7 +110,16 @@ public static class ImageDecoder
                 BackgroundColor = MagickColors.Transparent,
                 Format = magickFormat,
             };
-            magickImage.Read(await FileHelper.GetBytesFromFile(fileInfo));
+            if (fileInfo.Length >= 2147483648)
+            {
+                // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+                // ReSharper disable once MethodHasAsyncOverload
+                magickImage.Read(fileInfo);
+            }
+            else
+            {
+                await magickImage.ReadAsync(fileInfo, magickFormat).ConfigureAwait(false);
+            }
 
             magickImage.Settings.BackgroundColor = MagickColors.Transparent;
             magickImage.Settings.FillColor = MagickColors.Transparent;

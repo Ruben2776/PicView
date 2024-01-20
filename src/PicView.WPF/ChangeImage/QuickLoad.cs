@@ -44,7 +44,7 @@ internal static class QuickLoad
         {
             mainWindow.MainImage.Source = bitmapSource;
             UpdateImage.SetOrientation(orientation);
-            FitImage(bitmapSource.Width, bitmapSource.Height);
+            FitImage(bitmapSource?.Width ?? 0, bitmapSource?.Height ?? 0);
             UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
             mainWindow.MainImage.Cursor = Cursors.Arrow;
         }, DispatcherPriority.Send);
@@ -71,11 +71,11 @@ internal static class QuickLoad
 
         await mainWindow.Dispatcher.InvokeAsync(() =>
         {
-            SetTitleString(bitmapSource.PixelWidth, bitmapSource.PixelHeight, FolderIndex, fileInfo);
+            SetTitleString(bitmapSource?.PixelWidth ?? 0, bitmapSource?.PixelHeight ?? 0, FolderIndex, fileInfo);
             if (shouldLoadBottomGallery)
             {
                 GalleryToggle.ShowBottomGallery();
-                FitImage(bitmapSource.Width, bitmapSource.Height);
+                FitImage(bitmapSource?.Width ?? 0, bitmapSource?.Height ?? 0);
             }
         }, DispatcherPriority.Normal);
 
