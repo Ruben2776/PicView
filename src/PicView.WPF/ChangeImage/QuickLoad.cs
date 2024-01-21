@@ -42,7 +42,7 @@ internal static class QuickLoad
         var orientation = Core.ImageDecoding.EXIFHelper.GetImageOrientation(new MagickImage(fileInfo));
         await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
-            mainWindow.MainImage.Source = bitmapSource;
+            mainWindow.MainImage.Source = bitmapSource ?? ImageFunctions.ImageErrorMessage();
             UpdateImage.SetOrientation(orientation);
             FitImage(bitmapSource?.Width ?? 0, bitmapSource?.Height ?? 0);
             UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
@@ -109,7 +109,7 @@ internal static class QuickLoad
                 catch (Exception exception)
                 {
 #if DEBUG
-                    Trace.WriteLine($"{nameof(QuickLoadAsync)}  exception:\n{exception.Message}");
+                    Trace.WriteLine($"{nameof(QuickLoadAsync)} exception:\n{exception.Message}");
 #endif
                     if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
                     {

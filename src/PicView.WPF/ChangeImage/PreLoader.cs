@@ -107,9 +107,10 @@ internal static class PreLoader
             return false;
         }
 
+        var preLoadValue = new PreLoadValue(null, null, 0);
         try
         {
-            var preLoadValue = new PreLoadValue(null, null, 0);
+           
             var add = PreLoadList.TryAdd(index, preLoadValue);
             if (add)
             {
@@ -122,7 +123,7 @@ internal static class PreLoader
 
                 preLoadValue.BitmapSource = bitmapSource;
                 preLoadValue.FileInfo = fileInfo;
-                if (orientation is null)
+                if (orientation is null && bitmapSource is not null)
                 {
                     using var magickImage = new MagickImage(fileInfo);
                     preLoadValue.Orientation = EXIFHelper.GetImageOrientation(magickImage);
@@ -131,7 +132,6 @@ internal static class PreLoader
                 {
                     preLoadValue.Orientation = orientation;
                 }
-                preLoadValue.IsLoading = false;
 #if DEBUG
                 if (ShowAddRemove)
                     Trace.WriteLine($"{fileInfo.Name} added at {index}");
@@ -144,6 +144,10 @@ internal static class PreLoader
 #if DEBUG
             Trace.WriteLine($"{nameof(AddAsync)} exception: \n{ex}");
 #endif
+        }
+        finally
+        {
+            preLoadValue.IsLoading = false;
         }
         return false;
     }
@@ -352,7 +356,7 @@ internal static class PreLoader
                         return;
                     }
                     var index = (nextStartingIndex + i) % Navigation.Pics.Count;
-                    _= AddAsync(index);
+                    _ = AddAsync(index);
                     array[i] = index;
                 }
             }

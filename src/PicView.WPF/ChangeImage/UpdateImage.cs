@@ -46,10 +46,10 @@ internal static class UpdateImage
         if (!fastPic)
         {
             var x = 0;
-            while (preLoadValue.IsLoading) // Fix rare occurrences of non-loaded image
+            while (preLoadValue.IsLoading) // Fix occurrences of non-loaded image
             {
                 x++;
-                await Task.Delay(50);
+                await Task.Delay(20);
                 if (index != FolderIndex)
                 {
                     return;
@@ -67,18 +67,29 @@ internal static class UpdateImage
             }
         }
 
-        preLoadValue.BitmapSource ??= ImageFunctions.ImageErrorMessage();
-
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
-            if (index != FolderIndex || preLoadValue.BitmapSource is null)
+            if (index != FolderIndex)
             {
                 return;
             }
-            ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue.BitmapSource;
+            ConfigureWindows.GetMainWindow.MainImage.Source = preLoadValue?.BitmapSource ?? ImageFunctions.ImageErrorMessage();
 
             SetOrientation(preLoadValue.Orientation);
-            FitImage(preLoadValue.BitmapSource.PixelWidth, preLoadValue.BitmapSource.PixelHeight);
+            var width = preLoadValue?.BitmapSource?.PixelWidth ??
+                        ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+            var height = preLoadValue?.BitmapSource?.PixelHeight ??
+                         ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+            if (double.IsNaN(width))
+            {
+                width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
+            }
+
+            if (double.IsNaN(height))
+            {
+                height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
+            }
+            FitImage(width, height);
 
             // Scroll to top if scroll enabled
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
@@ -115,9 +126,9 @@ internal static class UpdateImage
             });
         }
 
-        var titleString = await Task.FromResult(TitleHelper.GetTitle(preLoadValue.BitmapSource.PixelWidth,
-            preLoadValue.BitmapSource.PixelHeight, index, preLoadValue.FileInfo,
-            ZoomLogic.ZoomValue, Pics)).ConfigureAwait(false);
+        var titleString = TitleHelper.GetTitle(preLoadValue?.BitmapSource?.PixelWidth ?? 0,
+            preLoadValue?.BitmapSource?.PixelHeight ?? 0, index, preLoadValue.FileInfo,
+            ZoomLogic.ZoomValue, Pics);
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
