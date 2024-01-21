@@ -28,18 +28,23 @@ internal static class QuickLoad
         fileInfo ??= new FileInfo(file);
         if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
         {
-            await LoadPicFromStringAsync(file, fileInfo).ConfigureAwait(false);
+            await LoadPicFromStringAsync(file, fileInfo);
             return;
         }
 
-        if (file.IsArchive()) // Handle if file exist and is archive
+        if (file.IsArchive()) // Handle if file exist and is an archive
         {
-            await LoadPicFromArchiveAsync(file).ConfigureAwait(false);
+            await LoadPicFromArchiveAsync(file);
             return;
         }
 
-        var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
-        var orientation = Core.ImageDecoding.EXIFHelper.GetImageOrientation(new MagickImage(fileInfo));
+        var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo);
+        ushort orientation = 0;
+        if (bitmapSource is not null)
+        {
+            orientation = Core.ImageDecoding.EXIFHelper.GetImageOrientation(new MagickImage(fileInfo));
+        }
+
         await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
             mainWindow.MainImage.Source = bitmapSource ?? ImageFunctions.ImageErrorMessage();
@@ -61,7 +66,7 @@ internal static class QuickLoad
             }
         }
 
-        Pics = await Task.FromResult(FileList(fileInfo)).ConfigureAwait(false);
+        Pics = await Task.FromResult(FileList(fileInfo));
         FolderIndex = Pics.IndexOf(fileInfo.FullName);
         var shouldLoadBottomGallery = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
         if (SettingsHelper.Settings.UIProperties.ShowInterface == false)
@@ -85,12 +90,12 @@ internal static class QuickLoad
             FileHistoryNavigation.Add(Pics[FolderIndex]);
         }
 
-        await AddAsync(FolderIndex, fileInfo, bitmapSource).ConfigureAwait(false);
+        await AddAsync(FolderIndex, fileInfo, bitmapSource);
 
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
-            await PreLoadAsync(FolderIndex, Pics.Count, true).ConfigureAwait(false);
+            await PreLoadAsync(FolderIndex, Pics.Count, true);
 
             if (shouldLoadBottomGallery)
             {

@@ -4,6 +4,7 @@ using PicView.Core.Navigation;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
 using System.IO;
 using System.Windows;
@@ -77,9 +78,9 @@ internal static class UpdateImage
 
             SetOrientation(preLoadValue.Orientation);
             var width = preLoadValue?.BitmapSource?.PixelWidth ??
-                        ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                        ConfigureWindows.GetMainWindow.MainImage.Source.Width;
             var height = preLoadValue?.BitmapSource?.PixelHeight ??
-                         ConfigureWindows.GetMainWindow.ParentContainer.ActualHeight;
+                         ConfigureWindows.GetMainWindow.MainImage.Source.Height;
             if (double.IsNaN(width))
             {
                 width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
@@ -103,7 +104,7 @@ internal static class UpdateImage
             }
         }, DispatcherPriority.Send);
 
-        if (index != FolderIndex || preLoadValue.BitmapSource is null)
+        if (index != FolderIndex)
         {
             return;
         }

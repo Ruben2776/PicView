@@ -26,7 +26,7 @@ internal static class Image2BitmapSource
     {
         if (fileInfo is not { Length: > 0 })
         {
-            return ImageFunctions.ImageErrorMessage();
+            return null;
         }
 
         var extension = fileInfo.Extension.ToLowerInvariant();
