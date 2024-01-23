@@ -16,7 +16,7 @@ public class FileHistory
     /// </summary>
     public FileHistory()
     {
-        _fileHistory ??= new List<string>();
+        _fileHistory ??= [];
         _fileLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt");
         try
         {
