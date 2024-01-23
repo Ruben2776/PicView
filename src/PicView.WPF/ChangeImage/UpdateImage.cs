@@ -81,15 +81,6 @@ internal static class UpdateImage
                         ConfigureWindows.GetMainWindow.MainImage.Source.Width;
             var height = preLoadValue?.BitmapSource?.PixelHeight ??
                          ConfigureWindows.GetMainWindow.MainImage.Source.Height;
-            if (double.IsNaN(width))
-            {
-                width = ConfigureWindows.GetMainWindow.ParentContainer.Width;
-            }
-
-            if (double.IsNaN(height))
-            {
-                height = ConfigureWindows.GetMainWindow.ParentContainer.Height;
-            }
             FitImage(width, height);
 
             // Scroll to top if scroll enabled
