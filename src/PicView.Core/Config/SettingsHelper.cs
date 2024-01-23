@@ -1,8 +1,15 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PicView.Core.Config;
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(AppSettings))]
+internal partial class SourceGenerationContext : JsonSerializerContext
+{
+}
 
 public static class SettingsHelper
 {
@@ -19,7 +26,15 @@ public static class SettingsHelper
             if (File.Exists(path))
             {
                 var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                Settings = await UpgradeSettings(JsonSerializer.Deserialize<AppSettings>(jsonString)).ConfigureAwait(false);
+                _jsonSerializerOptions ??= new JsonSerializerOptions
+                {
+                    TypeInfoResolver = SourceGenerationContext.Default,
+                    AllowTrailingCommas = true
+                };
+                var settings = JsonSerializer.Deserialize(
+                        jsonString, typeof(AppSettings), SourceGenerationContext.Default)
+                    as AppSettings;
+                Settings = await UpgradeSettings(settings).ConfigureAwait(false);
             }
             else
             {
@@ -56,9 +71,14 @@ public static class SettingsHelper
     {
         try
         {
-            _jsonSerializerOptions ??= new JsonSerializerOptions { WriteIndented = true };
+            _jsonSerializerOptions ??= new JsonSerializerOptions
+            {
+                TypeInfoResolver = SourceGenerationContext.Default,
+                AllowTrailingCommas = true
+            };
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
-            var updatedJson = JsonSerializer.Serialize(Settings, _jsonSerializerOptions);
+            var updatedJson = JsonSerializer.Serialize(
+                Settings, typeof(AppSettings), SourceGenerationContext.Default);
             await File.WriteAllTextAsync(path, updatedJson).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -92,9 +112,9 @@ public static class SettingsHelper
             }
 
             var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-            var existingSettings = JsonSerializer.Deserialize<AppSettings>(jsonString);
 
-            if (existingSettings == null)
+            if (JsonSerializer.Deserialize(
+                    jsonString, typeof(AppSettings), SourceGenerationContext.Default) is not AppSettings existingSettings)
             {
                 SetDefaults();
                 return;
@@ -113,8 +133,13 @@ public static class SettingsHelper
             }
 
             // Save the synchronized settings back to the JSON file
-            _jsonSerializerOptions ??= new JsonSerializerOptions { WriteIndented = true };
-            var updatedJson = JsonSerializer.Serialize(existingSettings, _jsonSerializerOptions);
+            _jsonSerializerOptions ??= new JsonSerializerOptions
+            {
+                TypeInfoResolver = SourceGenerationContext.Default,
+                AllowTrailingCommas = true
+            };
+            var updatedJson = JsonSerializer.Serialize(
+                existingSettings, typeof(AppSettings), SourceGenerationContext.Default);
             await File.WriteAllTextAsync(path, updatedJson).ConfigureAwait(false);
         }
         catch (Exception ex)
