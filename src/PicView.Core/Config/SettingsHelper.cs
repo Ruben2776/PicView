@@ -20,17 +20,13 @@ public static class SettingsHelper
 
     public static async Task LoadSettingsAsync()
     {
+        InitiateJson();
         try
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
             if (File.Exists(path))
             {
                 var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                _jsonSerializerOptions ??= new JsonSerializerOptions
-                {
-                    TypeInfoResolver = SourceGenerationContext.Default,
-                    AllowTrailingCommas = true
-                };
                 var settings = JsonSerializer.Deserialize(
                         jsonString, typeof(AppSettings), SourceGenerationContext.Default)
                     as AppSettings;
@@ -67,19 +63,25 @@ public static class SettingsHelper
         };
     }
 
+    private static void InitiateJson()
+    {
+        _jsonSerializerOptions ??= new JsonSerializerOptions
+        {
+            TypeInfoResolver = SourceGenerationContext.Default,
+            AllowTrailingCommas = true
+        };
+    }
+
     public static async Task SaveSettingsAsync()
     {
+        InitiateJson();
         try
         {
-            _jsonSerializerOptions ??= new JsonSerializerOptions
-            {
-                TypeInfoResolver = SourceGenerationContext.Default,
-                AllowTrailingCommas = true
-            };
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
             var updatedJson = JsonSerializer.Serialize(
                 Settings, typeof(AppSettings), SourceGenerationContext.Default);
-            await File.WriteAllTextAsync(path, updatedJson).ConfigureAwait(false);
+            await using var writer = new StreamWriter(path);
+            await writer.WriteAsync(updatedJson).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -133,11 +135,7 @@ public static class SettingsHelper
             }
 
             // Save the synchronized settings back to the JSON file
-            _jsonSerializerOptions ??= new JsonSerializerOptions
-            {
-                TypeInfoResolver = SourceGenerationContext.Default,
-                AllowTrailingCommas = true
-            };
+            InitiateJson();
             var updatedJson = JsonSerializer.Serialize(
                 existingSettings, typeof(AppSettings), SourceGenerationContext.Default);
             await File.WriteAllTextAsync(path, updatedJson).ConfigureAwait(false);
