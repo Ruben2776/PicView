@@ -35,16 +35,7 @@ internal static class PreLoader
         /// <summary>
         /// The orientation of the image
         /// </summary>
-        // 0 = none
-        // 1 = 0 degrees
-        // 2 = 0 degrees, flipped
-        // 3 = 180 degrees
-        // 4 = 180 degrees, flipped
-        // 5 = 270 degrees, flipped
-        // 6 = 90 degrees
-        // 7 = 90 degrees, flipped
-        // 8 = 270 degrees, flipped
-        internal ushort? Orientation;
+        internal EXIFHelper.EXIFOrientation? Orientation;
 
         internal bool IsLoading = true;
 
@@ -54,11 +45,11 @@ internal static class PreLoader
         /// <param name="bitmap">The BitmapSource image that is preloaded and cached.</param>
         /// <param name="fileInfo">The file info of the image</param>
         /// <param name="orientation">The orientation of the images</param>
-        internal PreLoadValue(BitmapSource? bitmap, FileInfo? fileInfo, ushort? orientation)
+        internal PreLoadValue(BitmapSource? bitmap, FileInfo? fileInfo, EXIFHelper.EXIFOrientation? orientation)
         {
             BitmapSource = bitmap;
             FileInfo = fileInfo;
-            Orientation = orientation;
+            Orientation = orientation ?? 0;
         }
     }
 
@@ -97,7 +88,7 @@ internal static class PreLoader
     /// <param name="bitmapSource">The BitmapSource of the image.</param>
     /// <param name="orientation">The orientation of the image.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    internal static async Task<bool> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null, ushort? orientation = null)
+    internal static async Task<bool> AddAsync(int index, FileInfo? fileInfo = null, BitmapSource? bitmapSource = null, EXIFHelper.EXIFOrientation orientation = 0)
     {
         if (index < 0 || index >= Navigation.Pics.Count)
         {
@@ -110,7 +101,6 @@ internal static class PreLoader
         var preLoadValue = new PreLoadValue(null, null, 0);
         try
         {
-           
             var add = PreLoadList.TryAdd(index, preLoadValue);
             if (add)
             {
@@ -123,7 +113,7 @@ internal static class PreLoader
 
                 preLoadValue.BitmapSource = bitmapSource;
                 preLoadValue.FileInfo = fileInfo;
-                if (orientation is null && bitmapSource is not null)
+                if (orientation is 0 && bitmapSource is not null)
                 {
                     using var magickImage = new MagickImage(fileInfo);
                     preLoadValue.Orientation = EXIFHelper.GetImageOrientation(magickImage);
@@ -173,7 +163,7 @@ internal static class PreLoader
             preLoadValue.FileInfo = null;
         }
 
-        await AddAsync(index, null, preLoadValue?.BitmapSource, preLoadValue?.Orientation).ConfigureAwait(false);
+        await AddAsync(index, null, preLoadValue?.BitmapSource, preLoadValue?.Orientation ?? 0).ConfigureAwait(false);
         return removed;
     }
 

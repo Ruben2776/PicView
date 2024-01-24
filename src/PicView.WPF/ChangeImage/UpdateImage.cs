@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.ImageDecoding;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -256,84 +257,91 @@ internal static class UpdateImage
         await UpdateImageFromBase64PicAsync(bitmapSource);
     }
 
-    internal static void SetOrientation(ushort? value)
+    internal static void SetOrientation(EXIFHelper.EXIFOrientation? orientation)
     {
-        if (value.HasValue)
+        if (orientation is not null)
         {
-            // 0 = none
-            // 1 = 0 degrees
-            // 2 = 0 degrees, flipped
-            // 3 = 180 degrees
-            // 4 = 180 degrees, flipped
-            // 5 = 270 degrees, flipped
-            // 6 = 90 degrees
-            // 7 = 90 degrees, flipped
-            // 8 = 270 degrees, flipped
-            switch (value)
+            switch (orientation)
             {
-                case 0:
-                case 1:
+                default:
                     Rotation.Rotate(0);
                     if (Rotation.IsFlipped)
                     {
                         Rotation.Flip();
                     }
+
                     break;
 
-                case 2:
-                    if (Rotation.IsFlipped == false)
-                    {
-                        Rotation.Flip();
-                    }
+                case EXIFHelper.EXIFOrientation.Normal:
                     Rotation.Rotate(0);
-                    break;
-
-                case 3:
                     if (Rotation.IsFlipped)
                     {
                         Rotation.Flip();
                     }
+
+                    break;
+
+                case EXIFHelper.EXIFOrientation.Flipped:
+                    Rotation.Rotate(0);
+                    if (!Rotation.IsFlipped)
+                    {
+                        Rotation.Flip();
+                    }
+
+                    break;
+
+                case EXIFHelper.EXIFOrientation.Rotated180:
                     Rotation.Rotate(180);
-                    break;
-
-                case 4:
-                    if (Rotation.IsFlipped == false)
+                    if (Rotation.IsFlipped)
                     {
                         Rotation.Flip();
                     }
+
+                    break;
+
+                case EXIFHelper.EXIFOrientation.Rotated180Flipped:
                     Rotation.Rotate(180);
-                    break;
-
-                case 5:
-                    if (Rotation.IsFlipped == false)
+                    if (!Rotation.IsFlipped)
                     {
                         Rotation.Flip();
                     }
-                    Rotation.Rotate(270);
+
                     break;
 
-                case 6:
+                case EXIFHelper.EXIFOrientation.Rotated270Flipped:
+                    Rotation.Rotate(270);
+                    if (!Rotation.IsFlipped)
+                    {
+                        Rotation.Flip();
+                    }
+
+                    break;
+
+                case EXIFHelper.EXIFOrientation.Rotated90:
+                    Rotation.Rotate(90);
                     if (Rotation.IsFlipped)
                     {
                         Rotation.Flip();
                     }
-                    Rotation.Rotate(90);
+
                     break;
 
-                case 7:
-                    if (Rotation.IsFlipped == false)
+                case EXIFHelper.EXIFOrientation.Rotated90Flipped:
+                    Rotation.Rotate(90);
+                    if (!Rotation.IsFlipped)
                     {
                         Rotation.Flip();
                     }
-                    Rotation.Rotate(90);
+
                     break;
 
-                case 8:
+                case EXIFHelper.EXIFOrientation.Rotated270:
+                    Rotation.Rotate(270);
                     if (Rotation.IsFlipped)
                     {
                         Rotation.Flip();
                     }
-                    Rotation.Rotate(270);
+
                     break;
             }
         }

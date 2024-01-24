@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.SystemIntegration;
@@ -39,16 +40,20 @@ internal static class QuickLoad
         }
 
         var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo);
-        ushort orientation = 0;
+        EXIFHelper.EXIFOrientation orientation = 0;
         if (bitmapSource is not null)
         {
-            orientation = Core.ImageDecoding.EXIFHelper.GetImageOrientation(new MagickImage(fileInfo));
+            orientation = EXIFHelper.GetImageOrientation(new MagickImage(fileInfo));
         }
 
         await mainWindow.MainImage.Dispatcher.InvokeAsync(() =>
         {
             mainWindow.MainImage.Source = bitmapSource ?? ImageFunctions.ImageErrorMessage();
-            UpdateImage.SetOrientation(orientation);
+            if (orientation != 0)
+            {
+                UpdateImage.SetOrientation(orientation);
+            }
+
             FitImage(bitmapSource?.Width ?? 0, bitmapSource?.Height ?? 0);
             UC.GetSpinWaiter.Visibility = Visibility.Collapsed;
             mainWindow.MainImage.Cursor = Cursors.Arrow;
