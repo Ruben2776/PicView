@@ -18,7 +18,7 @@ internal static class FileLists
     /// <returns>A list of file paths sorted according to the specified sort preference.</returns>
     internal static List<string> FileList(FileInfo fileInfo)
     {
-        return FileList(fileInfo, FileListHelper.GetSordOrder());
+        return FileList(fileInfo, FileListHelper.GetSortOrder());
     }
 
     /// <summary>

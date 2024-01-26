@@ -46,7 +46,7 @@ public static class FileListHelper
         Random = 6
     }
 
-    public static SortFilesBy GetSordOrder()
+    public static SortFilesBy GetSortOrder()
     {
         return SettingsHelper.Settings.Sorting.SortPreference switch
         {
@@ -109,14 +109,11 @@ public static class FileListHelper
             return new List<string>();
         }
 
-        // Filter out files with invalid extensions
-        var extensions = SupportedFiles.FileExtensions;
-
         return enumerable.Where(IsExtensionValid);
 
         bool IsExtensionValid(string f)
         {
-            return extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase);
+            return SupportedFiles.FileExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase);
         }
     }
 }
