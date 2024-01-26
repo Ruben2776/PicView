@@ -69,7 +69,7 @@ internal static class IPCHelper
 #endif
                     await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
                     {
-                        ConfigureWindows.GetMainWindow.BringIntoView();
+                        ConfigureWindows.GetMainWindow.Activate();
                     });
                     if (ErrorHandling.CheckOutOfRange())
                     {
@@ -83,7 +83,6 @@ internal static class IPCHelper
                         }
                     }
                     await LoadPic.LoadPicFromStringAsync(line).ConfigureAwait(false);
-
                 }
             }
             catch (Exception ex)
