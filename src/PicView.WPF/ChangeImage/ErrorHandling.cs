@@ -35,7 +35,7 @@ internal static class ErrorHandling
             return true;
         }
         var value = true;
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
+        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Send, (Action)(() =>
         {
             value = UC.GetCroppingTool is { IsVisible: true } || (UC.GetQuickResize?.Opacity > 0);
         }));
