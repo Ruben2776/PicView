@@ -429,11 +429,11 @@ public partial class SettingsWindow
         HorizontalScrollLabel.Content = TranslationHelper.GetTranslation("HorizontalScroll");
         Reverse.Content = TranslationHelper.GetTranslation("Reverse");
         Forward.Content = TranslationHelper.GetTranslation("Forward");
-        AdjustTimingForSlideshowLabel.Content = TranslationHelper.GetTranslation("AdjustTimingForSlideshow");
+        AdjustTimingForSlideshowLabel.Text = TranslationHelper.GetTranslation("AdjustTimingForSlideshow");
         SecAbbreviationTextBlock.Text = SecAbbreviationTextBlock2.Text =
             TranslationHelper.GetTranslation("SecAbbreviation");
-        AdjustTimingForZoomLabel.Content = TranslationHelper.GetTranslation("AdjustTimingForZoom");
-        AdjustNavSpeedLabel.Content = TranslationHelper.GetTranslation("AdjustNavSpeed");
+        AdjustTimingForZoomLabel.Text = TranslationHelper.GetTranslation("AdjustTimingForZoom");
+        AdjustNavSpeedLabel.Text = TranslationHelper.GetTranslation("AdjustNavSpeed");
         UiSettingsTextBlock.Text = TranslationHelper.GetTranslation("UISettings");
         ShowButtonsInHiddenUiTextBlock.Text = TranslationHelper.GetTranslation("ShowButtonsInHiddenUI");
         ToggleTaskbarProgressTextBlock.Text = TranslationHelper.GetTranslation("ToggleTaskbarProgress");

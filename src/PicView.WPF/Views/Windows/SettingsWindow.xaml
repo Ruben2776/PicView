@@ -382,12 +382,17 @@
                             <ComboBoxItem Name="Forward" Content="" />
                         </ComboBox>
 
-                        <Label
+                        <TextBlock
                             x:Name="AdjustTimingForSlideshowLabel"
-                            Margin="0,20,0,4"
+                            Width="330"
+                            Margin="5,20,0,4"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Content="" />
+                            d:Text="Adjust slideshow speed"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                            FontSize="14"
+                            Foreground="{StaticResource MainColorBrush}"
+                            TextWrapping="Wrap" />
 
                         <StackPanel
                             Margin="5,3,0,10"
@@ -429,12 +434,17 @@
                                 Text="" />
                         </StackPanel>
 
-                        <Label
+                        <TextBlock
                             x:Name="AdjustTimingForZoomLabel"
-                            Margin="0,10,0,4"
+                            Width="330"
+                            Margin="5,10,0,4"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Content="" />
+                            d:Text="Adjust Zooming speed"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                            FontSize="14"
+                            Foreground="{StaticResource MainColorBrush}"
+                            TextWrapping="Wrap" />
 
                         <StackPanel
                             Margin="5,3,0,5"
@@ -468,12 +478,17 @@
                                 TextAlignment="Center" />
                         </StackPanel>
 
-                        <Label
+                        <TextBlock
                             x:Name="AdjustNavSpeedLabel"
-                            Margin="0,10,0,4"
+                            Width="330"
+                            Margin="5,10,0,4"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Content="" />
+                            d:Text="Adjust speed when key is held down"
+                            FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto Medium"
+                            FontSize="14"
+                            Foreground="{StaticResource MainColorBrush}"
+                            TextWrapping="Wrap" />
 
                         <StackPanel
                             Margin="5,3,0,25"
