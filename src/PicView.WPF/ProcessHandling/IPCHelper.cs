@@ -56,12 +56,12 @@ internal static class IPCHelper
 
             try
             {
-                await pipeServer.WaitForConnectionAsync().ConfigureAwait(false);
+                await pipeServer.WaitForConnectionAsync();
 
                 using var reader = new StreamReader(pipeServer);
 
                 // Read and process incoming arguments
-                while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
+                while (await reader.ReadLineAsync() is { } line)
                 {
                     // Process the incoming argument as needed
 #if DEBUG
