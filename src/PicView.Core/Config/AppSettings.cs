@@ -15,8 +15,8 @@ public class AppSettings
 
 public class WindowProperties
 {
-    public double Top { get; set; } = 300;
-    public double Left { get; set; } = 500;
+    public double Top { get; set; } = 150;
+    public double Left { get; set; } = 200;
     public double Width { get; set; } = 750;
     public double Height { get; set; } = 1024;
     public bool AutoFit { get; set; } = false;
