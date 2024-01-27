@@ -15,6 +15,10 @@ namespace PicView.WPF.FileHandling;
 
 internal static class ArchiveExtraction
 {
+    private const string Winrar = "WinRAR.exe";
+    private const string SevenZip = "7z.exe";
+    private const string Nanazip = "NanaZipG.exe";
+
     /// <summary>
     /// Attempts to extract folder
     /// </summary>
@@ -22,8 +26,8 @@ internal static class ArchiveExtraction
     /// <returns></returns>
     internal static bool Extract(string pathToArchiveFile)
     {
-        string[] appNames = { "WinRAR.exe", "7z.exe", "Nanazip.exe" };
-        string[] appPathNames = { "\\WinRAR\\WinRAR.exe", "\\7-Zip\\7z.exe", "\\Nanazip\\Nanazip.exe" };
+        string[] appNames = [Winrar, SevenZip, Nanazip];
+        string[] appPathNames = [$@"\WinRAR\{Winrar}", $@"\7-Zip\{SevenZip}", $@"\Nanazip\{Nanazip}"];
 
         var extractAppPath = GetExtractAppPath(appPathNames, appNames);
         return extractAppPath != null && Extract(pathToArchiveFile, extractAppPath,
@@ -64,19 +68,19 @@ internal static class ArchiveExtraction
                         {
                             var installDir = subKey.GetValue("InstallLocation").ToString();
 
-                            return Path.Combine(installDir, "7z.exe");
+                            return Path.Combine(installDir, SevenZip);
                         }
                     case "WinRAR":
                         {
                             var installDir = subKey.GetValue("InstallLocation").ToString();
 
-                            return Path.Combine(installDir, "WinRAR.exe");
+                            return Path.Combine(installDir, Winrar);
                         }
                     case "NanaZip":
                         {
                             var installDir = subKey.GetValue("InstallLocation").ToString();
 
-                            return Path.Combine(installDir, "NanaZip.exe");
+                            return Path.Combine(installDir, Nanazip);
                         }
                 }
             }
@@ -92,20 +96,20 @@ internal static class ArchiveExtraction
 
         return appNames.Select(FileFunctions.GetPathForExe).Where(registryPath => registryPath != null)
             .FirstOrDefault(File.Exists);
-    }
 
-    private static string GetProgramFilePath(Environment.SpecialFolder specialFolder, IEnumerable<string> paths)
-    {
-        foreach (var path in paths)
+        string GetProgramFilePath(Environment.SpecialFolder specialFolder, IEnumerable<string> paths)
         {
-            var fullPath = Environment.GetFolderPath(specialFolder) + path;
-            if (File.Exists(fullPath))
+            foreach (var path in paths)
             {
-                return fullPath;
+                var fullPath = Environment.GetFolderPath(specialFolder) + path;
+                if (File.Exists(fullPath))
+                {
+                    return fullPath;
+                }
             }
-        }
 
-        return string.Empty;
+            return string.Empty;
+        }
     }
 
     /// <summary>
@@ -132,21 +136,16 @@ internal static class ArchiveExtraction
         try
         {
             string arguments;
-            if (isWinrar)
+            if (is7zip || isNanazip)
             {
-                arguments = $"x -o- \"{archivePath}\" "; // WinRAR
+                arguments = $"x \"{archivePath}\" -o";
             }
-            else if (is7zip)
+            else if (isWinrar)
             {
-                arguments = $"x \"{archivePath}\" -o"; // 7-Zip
-            }
-            else if (isNanazip)
-            {
-                arguments = $"extract \"{archivePath}\" -o"; // Nanazip
+                arguments = $"x -o- \"{archivePath}\" ";
             }
             else
             {
-                // Handle unsupported archive format
                 return false;
             }
 
