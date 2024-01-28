@@ -2,9 +2,7 @@
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
-using System;
 using System.Diagnostics;
 using System.IO;
 using static PicView.WPF.ChangeImage.Navigation;

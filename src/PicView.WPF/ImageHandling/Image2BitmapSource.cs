@@ -1,6 +1,8 @@
 ﻿using ImageMagick;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.WPF.UILogic;
+using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
@@ -204,14 +206,14 @@ internal static class Image2BitmapSource
     /// <returns>A Task containing the BitmapSource if successful</returns>
     private static async Task<BitmapSource?> GetWriteAbleBitmapAsync(FileInfo fileInfo)
     {
-        using var sKBitmap = await fileInfo.GetSKBitmapAsync();
+        var bytes = await FileHelper.GetBytesFromFile(fileInfo).ConfigureAwait(false);
+        using var sKBitmap = SKBitmap.Decode(bytes);
         if (sKBitmap is null)
         {
             return null;
         }
 
         var skPic = sKBitmap.ToWriteableBitmap();
-        sKBitmap.Dispose();
 
         skPic.Freeze();
         return skPic;

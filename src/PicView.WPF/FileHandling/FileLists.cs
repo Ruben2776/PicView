@@ -30,7 +30,7 @@ internal static class FileLists
     private static List<string> FileList(FileInfo fileInfo, FileListHelper.SortFilesBy sortFilesBy)
     {
         if (fileInfo == null)
-            return new List<string>();
+            return [];
 
         var files = FileListHelper.RetrieveFiles(fileInfo);
 

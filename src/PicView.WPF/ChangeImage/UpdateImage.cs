@@ -1,17 +1,16 @@
 ﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Navigation;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
-using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using PicView.Core.ImageDecoding;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
