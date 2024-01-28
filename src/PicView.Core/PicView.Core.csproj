@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.5.0" />
-    <PackageReference Include="SkiaSharp" Version="2.88.7" />
   </ItemGroup>
 
   <ItemGroup>

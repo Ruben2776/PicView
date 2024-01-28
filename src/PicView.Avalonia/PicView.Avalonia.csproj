@@ -36,6 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\UC\ImageViewer.axaml.cs">
+      <DependentUpon>ImageViewer.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\UC\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>
     </Compile>

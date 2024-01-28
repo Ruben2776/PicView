@@ -1,8 +1,6 @@
 ﻿using ImageMagick;
 using ImageMagick.Formats;
-using SkiaSharp;
 using System.Diagnostics;
-using PicView.Core.FileHandling;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -169,26 +167,5 @@ public static class ImageDecoder
     {
         var base64String = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
         return await Base64ToMagickImage(base64String).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    /// Asynchronously reads and returns an SKBitmap from the specified FileInfo.
-    /// </summary>
-    /// <param name="fileInfo">The FileInfo representing the image file.</param>
-    /// <returns>A Task containing the SKBitmap if successful, otherwise null.</returns>
-    // ReSharper disable once InconsistentNaming
-    public static async Task<SKBitmap?> GetSKBitmapAsync(this FileInfo fileInfo)
-    {
-        try
-        {
-            return SKBitmap.Decode(await FileHelper.GetBytesFromFile(fileInfo));
-        }
-        catch (Exception e)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(GetSKBitmapAsync)} {fileInfo.Name} exception:\n{e.Message}");
-#endif
-            return null;
-        }
     }
 }

@@ -83,6 +83,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
+                    Command="{Binding PreviousCommand}"
                     Focusable="False">
                     <Path
                         x:Name="PrevIcon"
@@ -101,6 +102,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
+                    Command="{Binding NextCommand}"
                     Focusable="False">
                     <Path
                         x:Name="NextIcon"

@@ -4,10 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    x:DataType="viewModels:MainViewModel"
     Background="{StaticResource SecondaryBackgroundColor}"
     mc:Ignorable="d">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
     <TextBlock
         Height="30"
         Padding="3,7,3,5"
@@ -15,7 +20,8 @@
         FontFamily="avares://PicView.Avalonia.Theme/Assets/Fonts/Roboto-Medium.ttf#Roboto"
         FontWeight="Medium"
         IsTabStop="False"
-        Text="Loading...."
+        Text="{Binding Title}"
         TextAlignment="Center"
-        TextTrimming="CharacterEllipsis" />
+        TextTrimming="CharacterEllipsis"
+        ToolTip.Tip="{Binding TitleTooltip}" />
 </UserControl>

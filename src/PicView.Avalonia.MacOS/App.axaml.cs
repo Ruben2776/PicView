@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.ViewModels;
 
@@ -10,6 +11,7 @@ public partial class App : Application
 {
     public override void Initialize()
     {
+        StartUpHelper.InitializeSettings();
         AvaloniaXamlLoader.Load(this);
     }
 

@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="PicView.Avalonia.Views.MainView"
+    x:Class="PicView.Avalonia.Views.UC.ImageViewer"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,11 +10,9 @@
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
     <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
         <vm:MainViewModel />
     </Design.DataContext>
-    <ContentControl Content="{Binding CurrentView}" />
+    <Grid>
+        <Image Source="{Binding Image}" />
+    </Grid>
 </UserControl>
