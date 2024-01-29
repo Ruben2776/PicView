@@ -1,8 +1,5 @@
-﻿using Avalonia.Media.Imaging;
-using ImageMagick;
+﻿using ImageMagick;
 using PicView.Avalonia.Models;
-using PicView.Avalonia.Services;
-using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using System.Collections.Concurrent;
 using System.Diagnostics;

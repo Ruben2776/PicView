@@ -35,6 +35,8 @@
                 <ResourceInclude Source="/Controls/Border.axaml" />
                 <ResourceInclude Source="/Controls/TextBlock.axaml" />
                 <ResourceInclude Source="/Controls/PathIcon.axaml" />
+                <ResourceInclude Source="/Controls/ScrollBar.axaml" />
+                <ResourceInclude Source="/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="/Controls/Window.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -61,5 +63,4 @@
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
     </Style>
-
 </Styles>

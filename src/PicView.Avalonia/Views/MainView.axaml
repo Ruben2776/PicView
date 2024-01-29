@@ -16,5 +16,7 @@
         -->
         <vm:MainViewModel />
     </Design.DataContext>
-    <ContentControl Content="{Binding CurrentView}" />
+    <Grid x:Name="MainGrid">
+        <ContentControl Content="{Binding CurrentView}" />
+    </Grid>
 </UserControl>

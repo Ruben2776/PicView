@@ -1,9 +1,8 @@
-﻿using Avalonia.Media;
+﻿using PicView.Avalonia.Models;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
-using PicView.Avalonia.Models;
 
 namespace PicView.Avalonia.Navigation
 {
@@ -21,9 +20,36 @@ namespace PicView.Avalonia.Navigation
             if (next < 0)
                 throw new InvalidOperationException("Invalid iteration");
             Index = next;
+            var x = 0;
 
             var preLoadValue = PreLoader.Get(next, Pics);
             if (preLoadValue is null)
+            {
+                await GetPreload();
+            }
+
+            while (preLoadValue.IsLoading)
+            {
+                x++;
+                await Task.Delay(20);
+                if (Index != next)
+                {
+                    throw new TaskCanceledException();
+                }
+
+                if (x > 100)
+                {
+                    await GetPreload();
+#if DEBUG
+                    Trace.WriteLine("Loading timeout");
+#endif
+                    break;
+                }
+            }
+
+            return preLoadValue.ImageModel;
+
+            async Task GetPreload()
             {
                 await PreLoader.AddAsync(next, Pics).ConfigureAwait(false);
                 preLoadValue = PreLoader.Get(next, Pics);
@@ -31,18 +57,12 @@ namespace PicView.Avalonia.Navigation
                 {
                     throw new TaskCanceledException();
                 }
-            }
 
-            while (preLoadValue.IsLoading)
-            {
-                await Task.Delay(20).ConfigureAwait(false);
-                if (Index != next)
+                if (preLoadValue is null)
                 {
-                    throw new TaskCanceledException();
+                    throw new ArgumentNullException();
                 }
             }
-
-            return preLoadValue.ImageModel;
         }
 
         public async Task Preload()
@@ -50,12 +70,13 @@ namespace PicView.Avalonia.Navigation
             await PreLoader.PreLoadAsync(Index, Pics.Count, true, Reverse, Pics).ConfigureAwait(false);
         }
 
+        public async Task AddAsync(int index, ImageModel imageModel)
+        {
+            await PreLoader.AddAsync(index, Pics, imageModel).ConfigureAwait(false);
+        }
+
         private int GetIteration(int index, NavigateTo navigateTo)
         {
-#if DEBUG
-            Debug.Assert(Pics != null, nameof(Pics) + " != null");
-#endif
-
             int next;
             var prev = Index;
             switch (navigateTo)

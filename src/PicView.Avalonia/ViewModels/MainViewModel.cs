@@ -65,6 +65,8 @@ public class MainViewModel : ViewModelBase
 
     #endregion Commands
 
+    #region Fields
+
     private string _title = "Loading...";
 
     public string Title
@@ -169,6 +171,22 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
     }
 
+    public ImageIterator? ImageIterator;
+
+    public ImageService? ImageService;
+
+    private bool _isFileMenuVisible;
+
+    public bool IsFileMenuVisible
+    {
+        get => _isFileMenuVisible;
+        set => this.RaiseAndSetIfChanged(ref _isFileMenuVisible, value);
+    }
+
+    #endregion Fields
+
+    #region Methods
+
     public void SetImageModel(ImageModel? imageModel)
     {
         ArgumentNullException.ThrowIfNull(imageModel);
@@ -181,6 +199,7 @@ public class MainViewModel : ViewModelBase
         IsAnimated = imageModel.IsAnimated;
         IsFlipped = imageModel.IsFlipped;
         Rotation = imageModel.Rotation;
+        ZoomValue = 1;
     }
 
     public void SetTitle(ImageModel? imageModel, ImageIterator imageIterator)
@@ -222,12 +241,11 @@ public class MainViewModel : ViewModelBase
         ImageIterator = new ImageIterator(imageModel.FileInfo);
         ImageIterator.Index = ImageIterator.Pics.IndexOf(path);
         SetTitle(imageModel, ImageIterator);
+        await ImageIterator.AddAsync(ImageIterator.Index, imageModel);
         await ImageIterator.Preload();
     }
 
-    public ImageIterator? ImageIterator;
-
-    public ImageService? ImageService;
+    #endregion Methods
 
     public MainViewModel()
     {
@@ -235,6 +253,8 @@ public class MainViewModel : ViewModelBase
         {
             return;
         }
+
+        WindowHelper.InitializeWindowSizeAndPosition(desktop);
 
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
@@ -252,7 +272,7 @@ public class MainViewModel : ViewModelBase
             CurrentView = new StartUpMenu();
         }
 
-        WindowHelper.InitializeWindowSizeAndPosition(desktop);
+        IsFileMenuVisible = true;
 
         ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
         MinimizeCommand = ReactiveCommand.Create(() =>

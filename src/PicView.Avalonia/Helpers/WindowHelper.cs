@@ -24,5 +24,7 @@ public static class WindowHelper
         SettingsHelper.Settings.WindowProperties.Left = desktop.MainWindow.Position.Y;
         SettingsHelper.Settings.WindowProperties.Width = desktop.MainWindow.Width;
         SettingsHelper.Settings.WindowProperties.Height = desktop.MainWindow.Height;
+
+        _ = SettingsHelper.SaveSettingsAsync();
     }
 }

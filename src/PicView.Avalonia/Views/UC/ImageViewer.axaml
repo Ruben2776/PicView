@@ -12,7 +12,7 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    <Grid>
+    <ScrollViewer>
         <Image Source="{Binding Image}" />
-    </Grid>
+    </ScrollViewer>
 </UserControl>
