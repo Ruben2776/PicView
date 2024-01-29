@@ -216,6 +216,8 @@ internal static class WindowSizing
             }
 
             SettingsHelper.Settings.WindowProperties.Fullscreen = true;
+
+            Close_UserControls();
         }
         else
         {
