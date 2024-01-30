@@ -17,7 +17,7 @@
         Height="30"
         Padding="3,7,3,5"
         VerticalAlignment="Center"
-        FontFamily="avares://PicView.Avalonia.Theme/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+        FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
         FontSize="13"
         FontWeight="Medium"
         IsTabStop="False"

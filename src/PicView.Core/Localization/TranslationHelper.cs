@@ -1,23 +1,42 @@
 ﻿using PicView.Core.Config;
 using System.Diagnostics;
+using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PicView.Core.Localization;
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(LanguageModel))]
+internal partial class LanguageSourceGenerationContext : JsonSerializerContext
+{
+}
 
 /// <summary>
 /// Helper class for managing language-related tasks.
 /// </summary>
 public static class TranslationHelper
 {
-    public static string GetTranslation(string key)
+    public static string? GetTranslation(string key)
     {
-        return Language is null ? string.Empty : Language.GetValueOrDefault(key, key);
+        if (Language == null)
+        {
+            return string.Empty;
+        }
+
+        var propertyInfo = typeof(LanguageModel).GetProperty(key);
+        if (propertyInfo == null)
+        {
+            return string.Empty;
+        }
+
+        return propertyInfo.GetValue(Language) as string ?? string.Empty;
     }
 
     /// <summary>
     /// Dictionary to store language key-value pairs.
     /// </summary>
-    internal static Dictionary<string, string>? Language;
+    internal static LanguageModel? Language;
 
     /// <summary>
     /// Determines the language based on the specified culture and loads the corresponding language file.
@@ -31,8 +50,7 @@ public static class TranslationHelper
         {
             if (File.Exists(jsonLanguageFile))
             {
-                var text = await File.ReadAllTextAsync(jsonLanguageFile).ConfigureAwait(false);
-                Language = JsonSerializer.Deserialize<Dictionary<string, string>>(text);
+                await Deserialize(jsonLanguageFile).ConfigureAwait(false);
             }
             else
             {
@@ -41,8 +59,7 @@ public static class TranslationHelper
                 var file = Directory.GetFiles(languagesDirectory, "*.json").FirstOrDefault();
                 if (file != null)
                 {
-                    var text = await File.ReadAllTextAsync(file).ConfigureAwait(false);
-                    Language = JsonSerializer.Deserialize<Dictionary<string, string>>(text);
+                    await Deserialize(file).ConfigureAwait(false);
                 }
                 else
                 {
@@ -55,6 +72,17 @@ public static class TranslationHelper
 #if DEBUG
             Trace.WriteLine($"{nameof(LoadLanguage)} exception:\n{exception.Message}");
 #endif
+        }
+
+        return;
+
+        async Task Deserialize(string file)
+        {
+            var jsonString = await File.ReadAllTextAsync(file).ConfigureAwait(false);
+            var language = JsonSerializer.Deserialize(
+                    jsonString, typeof(LanguageModel), LanguageSourceGenerationContext.Default)
+                as LanguageModel;
+            Language = language;
         }
     }
 

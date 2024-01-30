@@ -5,14 +5,13 @@ using Avalonia.Media;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.Config;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using ReactiveUI;
 using System.Windows.Input;
-using PicView.Avalonia.Services;
 
 namespace PicView.Avalonia.ViewModels;
 
@@ -20,36 +19,108 @@ public class MainViewModel : ViewModelBase
 {
     #region Localization
 
-    private string? _currentLanguageKey;
-
-    public string CurrentLanguageValue
+    private void UpdateLanguage()
     {
-        get => SettingsHelper.Settings.UIProperties.UserLanguage;
+        SelectFile = TranslationHelper.GetTranslation("OpenFileDialog");
+        OpenLastFile = TranslationHelper.GetTranslation("OpenLastFile");
+        Paste = TranslationHelper.GetTranslation("FilePaste");
+        Copy = TranslationHelper.GetTranslation("Copy");
+        Reload = TranslationHelper.GetTranslation("Reload");
+        Print = TranslationHelper.GetTranslation("Print");
+        DeleteFile = TranslationHelper.GetTranslation("DeleteFile");
+        Save = TranslationHelper.GetTranslation("Save");
+        CopyFile = TranslationHelper.GetTranslation("CopyFile");
+        NewWindow = TranslationHelper.GetTranslation("NewWindow");
+        Close = TranslationHelper.GetTranslation("Close");
     }
 
-    public string? CurrentLanguageKey
-    {
-        get => _currentLanguageKey ?? "en";
-        set
-        {
-            if (_currentLanguageKey == value)
-            {
-                return;
-            }
+    private string? _selectFile;
 
-            _currentLanguageKey = value;
-            this.RaisePropertyChanged(nameof(CurrentLanguageValue));
-            this.RaisePropertyChanged(nameof(CurrentLanguageValue));
-            this.RaisePropertyChanged(nameof(SelectFile));
-            this.RaisePropertyChanged(nameof(OpenLastFile));
-            this.RaisePropertyChanged(nameof(Paste));
-        }
+    public string? SelectFile
+    {
+        get => _selectFile;
+        set => this.RaiseAndSetIfChanged(ref _selectFile, value);
     }
 
-    public string SelectFile => TranslationHelper.GetTranslation("OpenFileDialog");
+    private string? _openLastFile;
 
-    public string OpenLastFile => TranslationHelper.GetTranslation("OpenLastFile");
-    public string Paste => TranslationHelper.GetTranslation("FilePaste");
+    public string? OpenLastFile
+    {
+        get => _openLastFile;
+        set => this.RaiseAndSetIfChanged(ref _openLastFile, value);
+    }
+
+    private string? _paste;
+
+    public string? Paste
+    {
+        get => _paste;
+        set => this.RaiseAndSetIfChanged(ref _paste, value);
+    }
+
+    private string? _copy;
+
+    public string? Copy
+    {
+        get => _copy;
+        set => this.RaiseAndSetIfChanged(ref _copy, value);
+    }
+
+    private string? _reload;
+
+    public string? Reload
+    {
+        get => _reload;
+        set => this.RaiseAndSetIfChanged(ref _reload, value);
+    }
+
+    private string? _print;
+
+    public string? Print
+    {
+        get => _print;
+        set => this.RaiseAndSetIfChanged(ref _print, value);
+    }
+
+    private string? _deleteFile;
+
+    public string? DeleteFile
+    {
+        get => _deleteFile;
+        set => this.RaiseAndSetIfChanged(ref _deleteFile, value);
+    }
+
+    private string? _save;
+
+    public string? Save
+    {
+        get => _save;
+        set => this.RaiseAndSetIfChanged(ref _save, value);
+    }
+
+    private string? _copyFile;
+
+    public string? CopyFile
+    {
+        get => _copyFile;
+        set => this.RaiseAndSetIfChanged(ref _copyFile, value);
+    }
+
+    private string? _newWindow;
+
+    public string? NewWindow
+    {
+        get => _newWindow;
+        set => this.RaiseAndSetIfChanged(ref _newWindow, value);
+    }
+
+    private string? _close;
+
+    public string? Close
+    {
+        get => _close;
+        set => this.RaiseAndSetIfChanged(ref _close, value);
+    }
 
     #endregion Localization
 
@@ -62,30 +133,40 @@ public class MainViewModel : ViewModelBase
     public ICommand? PreviousCommand { get; private set; }
     public ICommand? FirstCommand { get; private set; }
     public ICommand? LastCommand { get; private set; }
+    public ICommand? OpenFileCommand { get; private set; }
+    public ICommand? OpenLastFileCommand { get; private set; }
+    public ICommand? PasteCommand { get; private set; }
+    public ICommand? CopyCommand { get; private set; }
+    public ICommand? ReloadCommand { get; private set; }
+    public ICommand? PrintCommand { get; private set; }
+    public ICommand? DeleteFileCommand { get; private set; }
+    public ICommand? SaveCommand { get; private set; }
+    public ICommand? CloseMenuCommand { get; }
+    public ICommand? ToggleFileMenuCommand { get; }
 
     #endregion Commands
 
     #region Fields
 
-    private string _title = "Loading...";
+    private string? _title = "Loading...";
 
-    public string Title
+    public string? Title
     {
         get => _title;
         set => this.RaiseAndSetIfChanged(ref _title, value);
     }
 
-    private string _titleTooltip = "Loading...";
+    private string? _titleTooltip = "Loading...";
 
-    public string TitleTooltip
+    public string? TitleTooltip
     {
         get => _titleTooltip;
         set => this.RaiseAndSetIfChanged(ref _titleTooltip, value);
     }
 
-    private string _windowTitle = "PicView";
+    private string? _windowTitle = "PicView";
 
-    public string WindowTitle
+    public string? WindowTitle
     {
         get => _windowTitle;
         set => this.RaiseAndSetIfChanged(ref _windowTitle, value);
@@ -214,6 +295,12 @@ public class MainViewModel : ViewModelBase
         TitleTooltip = titleString[2];
     }
 
+    public void ResetTitle()
+    {
+        WindowTitle = TranslationHelper.GetTranslation("NoImage") + " - PicView";
+        TitleTooltip = Title = TranslationHelper.GetTranslation("NoImage");
+    }
+
     private async Task SetImageModelAsync(NavigateTo navigateTo)
     {
         ArgumentNullException.ThrowIfNull(ImageIterator);
@@ -254,8 +341,6 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        WindowHelper.InitializeWindowSizeAndPosition(desktop);
-
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
@@ -270,9 +355,11 @@ public class MainViewModel : ViewModelBase
         {
             // Otherwise, display the menu
             CurrentView = new StartUpMenu();
+            ResetTitle();
         }
 
-        IsFileMenuVisible = true;
+        WindowHelper.InitializeWindowSizeAndPosition(desktop);
+        UpdateLanguage();
 
         ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
         MinimizeCommand = ReactiveCommand.Create(() =>
@@ -316,6 +403,16 @@ public class MainViewModel : ViewModelBase
                 return;
             }
             await SetImageModelAsync(NavigateTo.Last).ConfigureAwait(false);
+        });
+
+        CloseMenuCommand = ReactiveCommand.Create(() =>
+        {
+            IsFileMenuVisible = false;
+        });
+
+        ToggleFileMenuCommand = ReactiveCommand.Create(() =>
+        {
+            IsFileMenuVisible = !IsFileMenuVisible;
         });
     }
 }

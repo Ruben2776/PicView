@@ -29,7 +29,8 @@
                     Background="{StaticResource MainButtonBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
-                    Classes="altHover">
+                    Classes="altHover"
+                    Command="{Binding ToggleFileMenuCommand}">
                     <Path
                         Width="25.112"
                         Height="20.091"

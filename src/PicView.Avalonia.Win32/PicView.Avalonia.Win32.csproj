@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PicView.Avalonia.Theme\PicView.Avalonia.Theme.csproj" />
     <ProjectReference Include="..\PicView.Avalonia\PicView.Avalonia.csproj" />
     <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
     <ProjectReference Include="..\PicView.Windows\PicView.Windows.csproj" />

@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <PathIcon />
+    </Design.PreviewWith>
+    <ControlTheme x:Key="{x:Type PathIcon}" TargetType="PathIcon">
+        <Setter Property="Foreground" Value="{TemplateBinding Foreground}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Height" Value="{TemplateBinding Height}" />
+        <Setter Property="Width" Value="{TemplateBinding Width}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}">
+                    <Viewbox Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Path
+                            Name="PART_ContentPresenter"
+                            Data="{TemplateBinding Data}"
+                            Fill="{TemplateBinding Foreground}"
+                            Stretch="Uniform" />
+                    </Viewbox>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^.iconHover:pointerover /template/ Path#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration=".35">
+                    <KeyFrame>
+                        <Setter Property="Fill">
+                            <SolidColorBrush Color="{StaticResource MainIconColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Fill">
+                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>
