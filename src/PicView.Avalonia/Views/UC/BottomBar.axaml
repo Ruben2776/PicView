@@ -45,7 +45,8 @@
                     Background="{StaticResource MainButtonBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="altHover">
+                    Classes="altHover"
+                    Command="{Binding ToggleImageMenuCommand}">
                     <Canvas
                         Width="28"
                         Height="25"
@@ -121,7 +122,8 @@
                     Background="{StaticResource MainButtonBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="altHover">
+                    Classes="altHover"
+                    Command="{Binding ToggleSettingsMenuCommand}">
                     <Path
                         Width="18"
                         Height="18"
@@ -136,7 +138,8 @@
                     Background="{StaticResource MainButtonBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="altHover">
+                    Classes="altHover"
+                    Command="{Binding ToggleToolsMenuCommand}">
                     <Image Width="22" Height="22">
                         <Image.Resources>
                             <SolidColorBrush x:Key="Brush0" Color="{StaticResource MainIconColor}" />

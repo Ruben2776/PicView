@@ -39,6 +39,12 @@
                 <ResourceInclude Source="/DarkTheme/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />
             </ResourceDictionary.MergedDictionaries>
+            <DropShadowEffect
+                x:Key="MenuShadowButtonBorder"
+                BlurRadius="5"
+                OffsetX="2"
+                OffsetY="2"
+                Color="#112e2e2e" />
         </ResourceDictionary>
     </Styles.Resources>
     <Style Selector="Window">
@@ -52,7 +58,7 @@
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
     </Style>
-    <Style Selector="TextBlock">
+    <Style Selector="TextBlock.txt">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
@@ -62,5 +68,16 @@
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
+    </Style>
+
+    <Style Selector="Button.ButtonBorder">
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Width" Value="147" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
+        <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
+        <Setter Property="Background" Value="{StaticResource MainBackgroundColor}" />
     </Style>
 </Styles>

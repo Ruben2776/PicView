@@ -96,12 +96,12 @@ public static class TitleHelper
 #if DEBUG
         Trace.WriteLine(exception);
 #endif
-        return new[]
-        {
+        return
+        [
             TranslationHelper.GetTranslation("UnexpectedError"),
             TranslationHelper.GetTranslation("UnexpectedError"),
             TranslationHelper.GetTranslation("UnexpectedError")
-        };
+        ];
     }
 
     private static string ZoomPercentage(double zoomValue)

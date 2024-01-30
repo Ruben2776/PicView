@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Diagnostics.CodeAnalysis;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
@@ -23,7 +24,7 @@ public class MainViewModel : ViewModelBase
     {
         SelectFile = TranslationHelper.GetTranslation("OpenFileDialog");
         OpenLastFile = TranslationHelper.GetTranslation("OpenLastFile");
-        Paste = TranslationHelper.GetTranslation("FilePaste");
+        FilePaste = TranslationHelper.GetTranslation("FilePaste");
         Copy = TranslationHelper.GetTranslation("Copy");
         Reload = TranslationHelper.GetTranslation("Reload");
         Print = TranslationHelper.GetTranslation("Print");
@@ -32,6 +33,12 @@ public class MainViewModel : ViewModelBase
         CopyFile = TranslationHelper.GetTranslation("CopyFile");
         NewWindow = TranslationHelper.GetTranslation("NewWindow");
         Close = TranslationHelper.GetTranslation("Close");
+        Open = TranslationHelper.GetTranslation("Open");
+        OpenFileDialog = TranslationHelper.GetTranslation("OpenFileDialog");
+        ShowInFolder = TranslationHelper.GetTranslation("ShowInFolder");
+        OpenWith = TranslationHelper.GetTranslation("OpenWith");
+        RenameFile = TranslationHelper.GetTranslation("RenameFile");
+        DuplicateFile = TranslationHelper.GetTranslation("DuplicateFile");
     }
 
     private string? _selectFile;
@@ -50,12 +57,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _openLastFile, value);
     }
 
-    private string? _paste;
+    private string? _filePaste;
 
-    public string? Paste
+    public string? FilePaste
     {
-        get => _paste;
-        set => this.RaiseAndSetIfChanged(ref _paste, value);
+        get => _filePaste;
+        set => this.RaiseAndSetIfChanged(ref _filePaste, value);
     }
 
     private string? _copy;
@@ -122,6 +129,54 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _close, value);
     }
 
+    private string? _open;
+
+    public string? Open
+    {
+        get => _open;
+        set => this.RaiseAndSetIfChanged(ref _open, value);
+    }
+
+    private string? _openFileDialog;
+
+    public string? OpenFileDialog
+    {
+        get => _openFileDialog;
+        set => this.RaiseAndSetIfChanged(ref _openFileDialog, value);
+    }
+
+    private string? _showInFolder;
+
+    public string? ShowInFolder
+    {
+        get => _showInFolder;
+        set => this.RaiseAndSetIfChanged(ref _showInFolder, value);
+    }
+
+    private string? _openWith;
+
+    public string? OpenWith
+    {
+        get => _openWith;
+        set => this.RaiseAndSetIfChanged(ref _openWith, value);
+    }
+
+    private string? _renameFile;
+
+    public string? RenameFile
+    {
+        get => _renameFile;
+        set => this.RaiseAndSetIfChanged(ref _renameFile, value);
+    }
+
+    private string? _duplicateFile;
+
+    public string? DuplicateFile
+    {
+        get => _duplicateFile;
+        set => this.RaiseAndSetIfChanged(ref _duplicateFile, value);
+    }
+
     #endregion Localization
 
     #region Commands
@@ -143,6 +198,14 @@ public class MainViewModel : ViewModelBase
     public ICommand? SaveCommand { get; private set; }
     public ICommand? CloseMenuCommand { get; }
     public ICommand? ToggleFileMenuCommand { get; }
+    public ICommand? ToggleImageMenuCommand { get; }
+    public ICommand? ToggleSettingsMenuCommand { get; }
+    public ICommand? ToggleToolsMenuCommand { get; }
+    public ICommand? ShowInFolderCommand { get; }
+    public ICommand? OpenWithCommand { get; }
+    public ICommand? RenameCommand { get; }
+    public ICommand? NewWindowCommand { get; }
+    public ICommand? DuplicateFileCommand { get; }
 
     #endregion Commands
 
@@ -252,10 +315,6 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
     }
 
-    public ImageIterator? ImageIterator;
-
-    public ImageService? ImageService;
-
     private bool _isFileMenuVisible;
 
     public bool IsFileMenuVisible
@@ -264,7 +323,41 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isFileMenuVisible, value);
     }
 
+    private bool _isImageMenuVisible;
+
+    public bool IsImageMenuVisible
+    {
+        get => _isImageMenuVisible;
+        set => this.RaiseAndSetIfChanged(ref _isImageMenuVisible, value);
+    }
+
+    private bool _isSettingsMenuVisible;
+
+    public bool IsSettingsMenuVisible
+    {
+        get => _isSettingsMenuVisible;
+        set => this.RaiseAndSetIfChanged(ref _isSettingsMenuVisible, value);
+    }
+
+    private bool _isToolsMenuVisible;
+
+    public bool IsToolsMenuVisible
+    {
+        get => _isToolsMenuVisible;
+        set => this.RaiseAndSetIfChanged(ref _isToolsMenuVisible, value);
+    }
+
     #endregion Fields
+
+    #region Services
+
+    public ImageIterator? ImageIterator;
+
+    public ImageService? ImageService;
+
+    public FileService? FileService;
+
+    #endregion Services
 
     #region Methods
 
@@ -301,7 +394,7 @@ public class MainViewModel : ViewModelBase
         TitleTooltip = Title = TranslationHelper.GetTranslation("NoImage");
     }
 
-    private async Task SetImageModelAsync(NavigateTo navigateTo)
+    private async Task SetNextImageModelAsync(NavigateTo navigateTo)
     {
         ArgumentNullException.ThrowIfNull(ImageIterator);
 
@@ -318,15 +411,26 @@ public class MainViewModel : ViewModelBase
             throw new FileNotFoundException(path);
         }
 
+        await SetImageModelAsync(new FileInfo(path)).ConfigureAwait(false);
+    }
+
+    private async Task SetImageModelAsync(FileInfo fileInfo)
+    {
+        ArgumentNullException.ThrowIfNull(fileInfo);
+        if (!fileInfo.Exists)
+        {
+            throw new FileNotFoundException();
+        }
+
         var imageModel = new ImageModel
         {
-            FileInfo = new FileInfo(path)
+            FileInfo = fileInfo
         };
         ImageService = new ImageService();
         await ImageModel.LoadImageAsync(imageModel).ConfigureAwait(false);
         SetImageModel(imageModel);
         ImageIterator = new ImageIterator(imageModel.FileInfo);
-        ImageIterator.Index = ImageIterator.Pics.IndexOf(path);
+        ImageIterator.Index = ImageIterator.Pics.IndexOf(fileInfo.FullName);
         SetTitle(imageModel, ImageIterator);
         await ImageIterator.AddAsync(ImageIterator.Index, imageModel);
         await ImageIterator.Preload();
@@ -344,7 +448,6 @@ public class MainViewModel : ViewModelBase
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
-            // If a valid file path is provided, display the image viewer
             CurrentView = new ImageViewer();
             Task.Run(async () =>
             {
@@ -375,7 +478,7 @@ public class MainViewModel : ViewModelBase
             {
                 return;
             }
-            await SetImageModelAsync(NavigateTo.Next).ConfigureAwait(false);
+            await SetNextImageModelAsync(NavigateTo.Next).ConfigureAwait(false);
         });
 
         PreviousCommand = ReactiveCommand.Create(async () =>
@@ -384,7 +487,7 @@ public class MainViewModel : ViewModelBase
             {
                 return;
             }
-            await SetImageModelAsync(NavigateTo.Previous).ConfigureAwait(false);
+            await SetNextImageModelAsync(NavigateTo.Previous).ConfigureAwait(false);
         });
 
         FirstCommand = ReactiveCommand.Create(async () =>
@@ -393,7 +496,7 @@ public class MainViewModel : ViewModelBase
             {
                 return;
             }
-            await SetImageModelAsync(NavigateTo.First).ConfigureAwait(false);
+            await SetNextImageModelAsync(NavigateTo.First).ConfigureAwait(false);
         });
 
         LastCommand = ReactiveCommand.Create(async () =>
@@ -402,17 +505,83 @@ public class MainViewModel : ViewModelBase
             {
                 return;
             }
-            await SetImageModelAsync(NavigateTo.Last).ConfigureAwait(false);
+            await SetNextImageModelAsync(NavigateTo.Last).ConfigureAwait(false);
         });
 
         CloseMenuCommand = ReactiveCommand.Create(() =>
         {
             IsFileMenuVisible = false;
+            IsImageMenuVisible = false;
+            IsSettingsMenuVisible = false;
+            IsToolsMenuVisible = false;
         });
 
         ToggleFileMenuCommand = ReactiveCommand.Create(() =>
         {
             IsFileMenuVisible = !IsFileMenuVisible;
+            IsImageMenuVisible = false;
+            IsSettingsMenuVisible = false;
+            IsToolsMenuVisible = false;
+        });
+
+        ToggleImageMenuCommand = ReactiveCommand.Create(() =>
+        {
+            IsFileMenuVisible = false;
+            IsImageMenuVisible = !IsImageMenuVisible;
+            IsSettingsMenuVisible = false;
+            IsToolsMenuVisible = false;
+        });
+
+        ToggleSettingsMenuCommand = ReactiveCommand.Create(() =>
+        {
+            IsFileMenuVisible = false;
+            IsImageMenuVisible = false;
+            IsSettingsMenuVisible = !IsSettingsMenuVisible;
+            IsToolsMenuVisible = false;
+        });
+
+        ToggleToolsMenuCommand = ReactiveCommand.Create(() =>
+        {
+            IsFileMenuVisible = false;
+            IsImageMenuVisible = false;
+            IsSettingsMenuVisible = false;
+            IsToolsMenuVisible = !IsToolsMenuVisible;
+        });
+
+        OpenFileCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            FileService ??= new FileService();
+            var file = await FileService.OpenFile(new CancellationToken());
+            if (file is null)
+            {
+                return;
+            }
+            CurrentView = new ImageViewer();
+            await SetImageModelAsync(new FileInfo(file.Path.AbsolutePath));
+        });
+
+        ShowInFolderCommand = ReactiveCommand.Create(() =>
+        {
+        });
+
+        PasteCommand = ReactiveCommand.Create(() =>
+        {
+        });
+
+        OpenWithCommand = ReactiveCommand.Create(() =>
+        {
+        });
+
+        RenameCommand = ReactiveCommand.Create(() =>
+        {
+        });
+
+        NewWindowCommand = ReactiveCommand.Create(() =>
+        {
+        });
+
+        DuplicateFileCommand = ReactiveCommand.Create(() =>
+        {
         });
     }
 }

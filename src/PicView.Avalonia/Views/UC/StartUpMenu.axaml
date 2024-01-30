@@ -148,7 +148,7 @@
                     <Label
                         x:Name="FilePasteLabel"
                         Padding="8,8,15,5"
-                        Content="{Binding Paste}"
+                        Content="{Binding FilePaste}"
                         Foreground="{StaticResource MainTextColor}" />
                 </StackPanel>
             </Button>

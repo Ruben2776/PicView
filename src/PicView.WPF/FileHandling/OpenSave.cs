@@ -115,7 +115,7 @@ internal static class OpenSave
         var dlg = new OpenFileDialog
         {
             Filter = FilterFiles,
-            Title = $"{Application.Current.Resources["OpenFileDialog"]} - PicView"
+            Title = $"{TranslationHelper.GetTranslation("OpenFileDialog")} - PicView"
         };
         if (dlg.ShowDialog() == true)
         {

@@ -20,6 +20,11 @@ public static class SupportedFiles
         ".pgm", ".ppm", ".cut", ".exr", ".dib", ".emf", ".wmf", ".wpg", ".pcx", ".xbm", ".xpm",
     };
 
+    public static List<string> ConvertFilesToGlobFormat()
+    {
+        return FileExtensions.Select(ext => $"*{ext}").ToList();
+    }
+
     /// <summary>
     /// List of supported archive file extensions.
     /// </summary>
@@ -28,6 +33,11 @@ public static class SupportedFiles
         ".zip", ".7zip", ".7z", ".rar", ".cbr", ".cb7", ".cbt", ".cbz", ".xz", ".bzip2",
         ".gzip", ".tar", ".wim", ".iso", ".cab"
     };
+
+    public static List<string> ConvertArchivesToGlobFormat()
+    {
+        return FileExtensionsArchives.Select(ext => $"*{ext}").ToList();
+    }
 
     /// <summary>
     /// Extension method to check if a file is supported.
