@@ -10,12 +10,13 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <IsAotCompatible>True</IsAotCompatible>
+    <IsAotCompatible>False</IsAotCompatible>
     <IsTrimmable>True</IsTrimmable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <IsAotCompatible>True</IsAotCompatible>
     <IsTrimmable>True</IsTrimmable>
+	  <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   
@@ -41,6 +42,15 @@
   <ItemGroup>
     <Compile Update="Views\UC\ImageViewer.axaml.cs">
       <DependentUpon>ImageViewer.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UC\Menus\ToolsMenu.axaml.cs">
+      <DependentUpon>ToolsMenu.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UC\Menus\SettingsMenu.axaml.cs">
+      <DependentUpon>SettingsMenu.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UC\Menus\ImageMenu.axaml.cs">
+      <DependentUpon>ImageMenu.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\UC\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>

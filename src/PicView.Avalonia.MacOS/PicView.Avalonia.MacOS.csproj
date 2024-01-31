@@ -10,6 +10,7 @@
     <Company>Ruben Hyldgaard Negendahl</Company>
     <Product>PicView</Product>
     <UseAppHost>true</UseAppHost>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
