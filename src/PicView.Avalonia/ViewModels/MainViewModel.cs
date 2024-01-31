@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
@@ -12,12 +11,15 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using ReactiveUI;
+using System.Reactive.Disposables;
 using System.Windows.Input;
 
 namespace PicView.Avalonia.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : ViewModelBase, IActivatableViewModel
 {
+    public ViewModelActivator? Activator { get; }
+
     #region Localization
 
     private void UpdateLanguage()
@@ -416,24 +418,31 @@ public class MainViewModel : ViewModelBase
 
     private async Task SetImageModelAsync(FileInfo fileInfo)
     {
-        ArgumentNullException.ThrowIfNull(fileInfo);
-        if (!fileInfo.Exists)
+        try
         {
-            throw new FileNotFoundException();
-        }
+            ArgumentNullException.ThrowIfNull(fileInfo);
 
-        var imageModel = new ImageModel
+            CloseMenuCommand?.Execute(null);
+            var imageModel = new ImageModel
+            {
+                FileInfo = fileInfo
+            };
+            ImageService = new ImageService();
+            await ImageModel.LoadImageAsync(imageModel).ConfigureAwait(false);
+            SetImageModel(imageModel);
+            ImageIterator = new ImageIterator(imageModel.FileInfo);
+            ImageIterator.Index = ImageIterator.Pics.IndexOf(fileInfo.FullName);
+            SetTitle(imageModel, ImageIterator);
+            await ImageIterator.AddAsync(ImageIterator.Index, imageModel);
+            await ImageIterator.Preload();
+        }
+        catch (Exception)
         {
-            FileInfo = fileInfo
-        };
-        ImageService = new ImageService();
-        await ImageModel.LoadImageAsync(imageModel).ConfigureAwait(false);
-        SetImageModel(imageModel);
-        ImageIterator = new ImageIterator(imageModel.FileInfo);
-        ImageIterator.Index = ImageIterator.Pics.IndexOf(fileInfo.FullName);
-        SetTitle(imageModel, ImageIterator);
-        await ImageIterator.AddAsync(ImageIterator.Index, imageModel);
-        await ImageIterator.Preload();
+            if (ImageIterator is null)
+            {
+                CurrentView = new StartUpMenu();
+            }
+        }
     }
 
     #endregion Methods
@@ -557,7 +566,8 @@ public class MainViewModel : ViewModelBase
                 return;
             }
             CurrentView = new ImageViewer();
-            await SetImageModelAsync(new FileInfo(file.Path.AbsolutePath));
+
+            await SetImageModelAsync(new FileInfo(file.Path.LocalPath));
         });
 
         ShowInFolderCommand = ReactiveCommand.Create(() =>
@@ -582,6 +592,15 @@ public class MainViewModel : ViewModelBase
 
         DuplicateFileCommand = ReactiveCommand.Create(() =>
         {
+        });
+
+        Activator = new ViewModelActivator();
+        this.WhenActivated((disposables) =>
+        {
+            /* handle activation */
+            Disposable
+                .Create(() => { /* handle deactivation */ })
+                .DisposeWith(disposables);
         });
     }
 }
