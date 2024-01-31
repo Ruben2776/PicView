@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -12,6 +13,8 @@ public class App : Application
 {
     public override void Initialize()
     {
+        ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
+        ProfileOptimization.StartProfile("ProfileOptimization");
         StartUpHelper.InitializeSettings();
         AvaloniaXamlLoader.Load(this);
     }

@@ -4,6 +4,9 @@ using Avalonia.Markup.Xaml;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.ViewModels;
+using System.Runtime;
+using System;
+using System.IO;
 
 namespace PicView.Avalonia.MacOS;
 
@@ -11,6 +14,8 @@ public partial class App : Application
 {
     public override void Initialize()
     {
+        ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
+        ProfileOptimization.StartProfile("ProfileOptimization");
         StartUpHelper.InitializeSettings();
         AvaloniaXamlLoader.Load(this);
     }
