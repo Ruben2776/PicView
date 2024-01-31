@@ -2,6 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using ImageMagick;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
@@ -11,6 +13,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using ReactiveUI;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Windows.Input;
 
@@ -353,11 +356,11 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
 
     #region Services
 
+    public FileService? FileService;
+
     public ImageIterator? ImageIterator;
 
     public ImageService? ImageService;
-
-    public FileService? FileService;
 
     #endregion Services
 
@@ -396,14 +399,86 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         TitleTooltip = Title = TranslationHelper.GetTranslation("NoImage");
     }
 
-    private async Task SetNextImageModelAsync(NavigateTo navigateTo)
+    private async Task SetImageNavigation(NavigateTo navigateTo)
     {
-        ArgumentNullException.ThrowIfNull(ImageIterator);
+        try
+        {
+            ArgumentNullException.ThrowIfNull(ImageIterator);
 
-        var imageModel = await ImageIterator.GetImageModelAsync(ImageIterator.Index, navigateTo).ConfigureAwait(false);
-        SetImageModel(imageModel);
-        SetTitle(imageModel, ImageIterator);
-        await ImageIterator.Preload();
+            var next = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
+            if (next < 0)
+                throw new InvalidOperationException("Invalid iteration");
+            ImageIterator.Index = next;
+            var x = 0;
+
+            var preLoadValue = ImageIterator.PreLoader.Get(next, ImageIterator.Pics);
+            if (preLoadValue is not null)
+            {
+                while (preLoadValue.IsLoading)
+                {
+                    if (x == 0)
+                    {
+                        using var image = new MagickImage();
+                        image.Ping(ImageIterator.Pics[ImageIterator.Index]);
+                        var thumb = image.GetExifProfile()?.CreateThumbnail();
+                        if (thumb is not null)
+                        {
+                            var stream = new MemoryStream(thumb?.ToByteArray());
+                            Image = new Bitmap(stream);
+                        }
+                        else
+                        {
+                            Image = null;
+                        }
+                    }
+                    x++;
+                    await Task.Delay(20);
+                    if (ImageIterator.Index != next)
+                    {
+                        throw new TaskCanceledException();
+                    }
+
+                    if (x > 50)
+                    {
+                        await GetPreload();
+#if DEBUG
+                        Trace.WriteLine("Loading timeout");
+#endif
+                        break;
+                    }
+                }
+            }
+
+            if (preLoadValue is null)
+            {
+                await GetPreload();
+            }
+
+            var imageModel = preLoadValue.ImageModel;
+            SetImageModel(imageModel);
+            SetTitle(imageModel, ImageIterator);
+            await ImageIterator.Preload(ImageService);
+            return;
+
+            async Task GetPreload()
+            {
+                await ImageIterator.PreLoader.AddAsync(next, ImageService, ImageIterator.Pics).ConfigureAwait(false);
+                preLoadValue = ImageIterator.PreLoader.Get(next, ImageIterator.Pics);
+                if (ImageIterator.Index != next)
+                {
+                    throw new TaskCanceledException();
+                }
+
+                if (preLoadValue is null)
+                {
+                    throw new ArgumentNullException();
+                }
+            }
+        }
+        catch (Exception)
+        {
+            // TODO display exception to user
+        }
     }
 
     private async Task SetImageModelAsync(string path)
@@ -422,19 +497,21 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         {
             ArgumentNullException.ThrowIfNull(fileInfo);
 
-            CloseMenuCommand?.Execute(null);
             var imageModel = new ImageModel
             {
                 FileInfo = fileInfo
             };
-            ImageService = new ImageService();
-            await ImageModel.LoadImageAsync(imageModel).ConfigureAwait(false);
+
+            ImageService ??= new ImageService();
+            await ImageService.LoadImageAsync(imageModel).ConfigureAwait(false);
             SetImageModel(imageModel);
+
             ImageIterator = new ImageIterator(imageModel.FileInfo);
             ImageIterator.Index = ImageIterator.Pics.IndexOf(fileInfo.FullName);
             SetTitle(imageModel, ImageIterator);
-            await ImageIterator.AddAsync(ImageIterator.Index, imageModel);
-            await ImageIterator.Preload();
+            CloseMenuCommand?.Execute(null);
+            await ImageIterator.AddAsync(ImageIterator.Index, ImageService, imageModel);
+            await ImageIterator.Preload(ImageService);
         }
         catch (Exception)
         {
@@ -487,7 +564,7 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             {
                 return;
             }
-            await SetNextImageModelAsync(NavigateTo.Next).ConfigureAwait(false);
+            await SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
         });
 
         PreviousCommand = ReactiveCommand.Create(async () =>
@@ -496,7 +573,7 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             {
                 return;
             }
-            await SetNextImageModelAsync(NavigateTo.Previous).ConfigureAwait(false);
+            await SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
         });
 
         FirstCommand = ReactiveCommand.Create(async () =>
@@ -505,7 +582,7 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             {
                 return;
             }
-            await SetNextImageModelAsync(NavigateTo.First).ConfigureAwait(false);
+            await SetImageNavigation(NavigateTo.First).ConfigureAwait(false);
         });
 
         LastCommand = ReactiveCommand.Create(async () =>
@@ -514,7 +591,7 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             {
                 return;
             }
-            await SetNextImageModelAsync(NavigateTo.Last).ConfigureAwait(false);
+            await SetImageNavigation(NavigateTo.Last).ConfigureAwait(false);
         });
 
         CloseMenuCommand = ReactiveCommand.Create(() =>

@@ -3,29 +3,25 @@ using PicView.Avalonia.Models;
 using PicView.Core.ImageDecoding;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using PicView.Avalonia.Services;
 
 namespace PicView.Avalonia.Navigation;
 
-internal class PreLoader
+public class PreLoader
 {
     private static bool _isRunning;
 
-    internal class PreLoadValue
+    public class PreLoadValue(ImageModel? imageModel)
     {
-        internal ImageModel? ImageModel { get; set; }
+        public ImageModel? ImageModel { get; set; } = imageModel;
 
-        internal bool IsLoading = true;
-
-        internal PreLoadValue(ImageModel? imageModel)
-        {
-            ImageModel = imageModel;
-        }
+        public bool IsLoading = true;
     }
 
     private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
     private const int PositiveIterations = 8;
     private const int NegativeIterations = 4;
-    internal const int MaxCount = PositiveIterations + NegativeIterations + 2;
+    public const int MaxCount = PositiveIterations + NegativeIterations + 2;
 
 #if DEBUG
 
@@ -34,7 +30,7 @@ internal class PreLoader
 
 #endif
 
-    internal async Task<bool> AddAsync(int index, List<string> list, ImageModel? imageModel = null)
+    public async Task<bool> AddAsync(int index, ImageService imageService, List<string> list, ImageModel? imageModel = null)
     {
         if (list == null)
         {
@@ -63,7 +59,8 @@ internal class PreLoader
                 if (imageModel.Image is null)
                 {
                     preLoadValue.IsLoading = true;
-                    await ImageModel.LoadImageAsync(imageModel).ConfigureAwait(false);
+
+                    await imageService.LoadImageAsync(imageModel).ConfigureAwait(false);
                 }
 
                 if (imageModel.EXIFOrientation is null || imageModel is { EXIFOrientation: EXIFHelper.EXIFOrientation.None, Image: not null })
@@ -95,7 +92,7 @@ internal class PreLoader
         return false;
     }
 
-    internal async Task<bool> RefreshFileInfo(int index, List<string> list)
+    public async Task<bool> RefreshFileInfo(int index, ImageService imageService, List<string> list)
     {
         if (list == null)
         {
@@ -118,19 +115,19 @@ internal class PreLoader
             preLoadValue.ImageModel.FileInfo = null;
         }
 
-        await AddAsync(index, list, preLoadValue.ImageModel).ConfigureAwait(false);
+        await AddAsync(index, imageService, list, preLoadValue.ImageModel).ConfigureAwait(false);
         return removed;
     }
 
     /// <summary>
     /// Removes all keys from the cache.
     /// </summary>
-    internal void Clear()
+    public void Clear()
     {
         _preLoadList.Clear();
     }
 
-    internal PreLoadValue? Get(int key, List<string> list)
+    public PreLoadValue? Get(int key, List<string> list)
     {
         if (list == null)
         {
@@ -150,7 +147,7 @@ internal class PreLoader
         return !Contains(key, list) ? null : _preLoadList[key];
     }
 
-    internal bool Contains(int key, List<string> list)
+    public bool Contains(int key, List<string> list)
     {
         if (list == null)
         {
@@ -170,7 +167,7 @@ internal class PreLoader
         return !_preLoadList.IsEmpty && _preLoadList.ContainsKey(key);
     }
 
-    internal bool Remove(int key, List<string> list)
+    public bool Remove(int key, List<string> list)
     {
         if (list == null)
         {
@@ -212,7 +209,7 @@ internal class PreLoader
         }
     }
 
-    internal async Task PreLoadAsync(int currentIndex, int count, bool parallel, bool reverse, List<string> list)
+    public async Task PreLoadAsync(int currentIndex, int count, bool parallel, bool reverse, ImageService imageService, List<string> list)
     {
         if (list == null)
         {
@@ -292,7 +289,7 @@ internal class PreLoader
                         return;
                     }
                     var index = (nextStartingIndex + i) % list.Count;
-                    var isAdded = await AddAsync(index, list);
+                    var isAdded = await AddAsync(index, imageService, list);
                     if (isAdded)
                     {
                         array[i] = index;
@@ -309,7 +306,7 @@ internal class PreLoader
                         return;
                     }
                     var index = (nextStartingIndex + i) % list.Count;
-                    _ = AddAsync(index, list);
+                    _ = AddAsync(index, imageService, list);
                     array[i] = index;
                 }
             }
@@ -327,7 +324,7 @@ internal class PreLoader
                         return;
                     }
                     var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    var isAdded = await AddAsync(index, list);
+                    var isAdded = await AddAsync(index, imageService, list);
                     if (isAdded)
                     {
                         array[i] = index;
@@ -344,7 +341,7 @@ internal class PreLoader
                         return;
                     }
                     var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    _ = AddAsync(index, list);
+                    _ = AddAsync(index, imageService, list);
                     array[i] = index;
                 }
             }

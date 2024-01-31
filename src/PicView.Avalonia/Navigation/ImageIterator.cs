@@ -3,6 +3,7 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
+using PicView.Avalonia.Services;
 
 namespace PicView.Avalonia.Navigation
 {
@@ -12,70 +13,19 @@ namespace PicView.Avalonia.Navigation
         public List<string> Pics { get; } = FileListHelper.RetrieveFiles(fileInfo).ToList();
         public bool Reverse;
 
-        private PreLoader PreLoader { get; } = new();
+        public PreLoader PreLoader { get; } = new();
 
-        public async Task<ImageModel?> GetImageModelAsync(int index, NavigateTo navigateTo)
+        public async Task Preload(ImageService imageService)
         {
-            var next = GetIteration(index, navigateTo);
-            if (next < 0)
-                throw new InvalidOperationException("Invalid iteration");
-            Index = next;
-            var x = 0;
-
-            var preLoadValue = PreLoader.Get(next, Pics);
-            if (preLoadValue is null)
-            {
-                await GetPreload();
-            }
-
-            while (preLoadValue.IsLoading)
-            {
-                x++;
-                await Task.Delay(20);
-                if (Index != next)
-                {
-                    throw new TaskCanceledException();
-                }
-
-                if (x > 100)
-                {
-                    await GetPreload();
-#if DEBUG
-                    Trace.WriteLine("Loading timeout");
-#endif
-                    break;
-                }
-            }
-
-            return preLoadValue.ImageModel;
-
-            async Task GetPreload()
-            {
-                await PreLoader.AddAsync(next, Pics).ConfigureAwait(false);
-                preLoadValue = PreLoader.Get(next, Pics);
-                if (Index != next)
-                {
-                    throw new TaskCanceledException();
-                }
-
-                if (preLoadValue is null)
-                {
-                    throw new ArgumentNullException();
-                }
-            }
+            await PreLoader.PreLoadAsync(Index, Pics.Count, true, Reverse, imageService, Pics).ConfigureAwait(false);
         }
 
-        public async Task Preload()
+        public async Task AddAsync(int index, ImageService imageService, ImageModel imageModel)
         {
-            await PreLoader.PreLoadAsync(Index, Pics.Count, true, Reverse, Pics).ConfigureAwait(false);
+            await PreLoader.AddAsync(index, imageService, Pics, imageModel).ConfigureAwait(false);
         }
 
-        public async Task AddAsync(int index, ImageModel imageModel)
-        {
-            await PreLoader.AddAsync(index, Pics, imageModel).ConfigureAwait(false);
-        }
-
-        private int GetIteration(int index, NavigateTo navigateTo)
+        public int GetIteration(int index, NavigateTo navigateTo)
         {
             int next;
             var prev = Index;
