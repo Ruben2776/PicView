@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.MacOS.Views;
 
@@ -16,5 +17,6 @@ public partial class MacOSTitlebar : UserControl
 
         var hostWindow = (Window)VisualRoot;
         hostWindow?.BeginMoveDrag(e);
+        WindowHelper.UpdateWindowPosToSettings();
     }
 }

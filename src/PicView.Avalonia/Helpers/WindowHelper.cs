@@ -11,6 +11,8 @@ public static class WindowHelper
         desktop.MainWindow.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
         desktop.MainWindow.Width = SettingsHelper.Settings.WindowProperties.Width;
         desktop.MainWindow.Height = SettingsHelper.Settings.WindowProperties.Height;
+        
+        _ = SettingsHelper.SaveSettingsAsync();
     }
 
     public static void UpdateWindowPosToSettings()

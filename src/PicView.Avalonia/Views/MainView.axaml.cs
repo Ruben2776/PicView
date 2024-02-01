@@ -40,7 +40,7 @@ public partial class MainView : UserControl
                 {
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(220, 0, 0, 0),
+                    Margin = new Thickness(90, 0, 0, 0),
                     Opacity = 1
                 };
 
@@ -50,7 +50,7 @@ public partial class MainView : UserControl
                 {
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(240, 0, 0, 0),
+                    Margin = new Thickness(120, 0, 0, 0),
                     Opacity = 1
                 };
 
