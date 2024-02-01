@@ -3,6 +3,13 @@ using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Models;
 
+public enum ImageType
+{
+    Raster,
+    Vector,
+    Animated
+}
+
 public class ImageModel
 {
     public IImage? Image { get; set; }
@@ -10,8 +17,8 @@ public class ImageModel
     public int PixelWidth { get; set; }
     public int PixelHeight { get; set; }
     public EXIFHelper.EXIFOrientation? EXIFOrientation { get; set; }
-    public bool IsAnimated { get; set; }
     public bool IsFlipped { get; set; }
+    public ImageType ImageType { get; set; }
 
     private int _rotation;
 

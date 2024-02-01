@@ -249,6 +249,8 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         get => _currentView;
         set => this.RaiseAndSetIfChanged(ref _currentView, value);
     }
+    
+    #region Image
 
     private IImage? _image;
 
@@ -264,14 +266,6 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
     {
         get => _fileInfo;
         set => this.RaiseAndSetIfChanged(ref _fileInfo, value);
-    }
-
-    private bool _isAnimated;
-
-    public bool IsAnimated
-    {
-        get => _isAnimated;
-        set => this.RaiseAndSetIfChanged(ref _isAnimated, value);
     }
 
     private bool _isFlipped;
@@ -320,6 +314,29 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
     {
         get => _zoomValue;
         set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
+    }
+    
+    private ImageType _imageType;
+    public ImageType ImageType
+    {
+        get => _imageType;
+        set => this.RaiseAndSetIfChanged(ref _imageType, value);
+    }
+    
+    #endregion Image
+    
+    private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+    public bool isBottomGalleryShown
+    {
+        get => _isBottomGalleryShown;
+        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
+    }
+    
+    private bool _showBottomGalleryInHiddenUI = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+    public bool ShowBottomGalleryInHiddenUI
+    {
+        get => _showBottomGalleryInHiddenUI;
+        set => this.RaiseAndSetIfChanged(ref _showBottomGalleryInHiddenUI, value);
     }
 
     private bool _isFileMenuVisible;
@@ -385,7 +402,7 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         Width = imageModel.PixelWidth;
         Height = imageModel.PixelHeight;
         EXIFOrientation = imageModel.EXIFOrientation;
-        IsAnimated = imageModel.IsAnimated;
+        ImageType = imageModel.ImageType;
         IsFlipped = imageModel.IsFlipped;
         Rotation = imageModel.Rotation;
         ZoomValue = 1;
@@ -550,9 +567,16 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
                 await SetImageModelAsync(args[1]);
             });
         }
+        else if (SettingsHelper.Settings.StartUp.OpenLastFile)
+        {
+            CurrentView = new ImageViewer();
+            Task.Run(async () =>
+            {
+                await SetImageModelAsync(SettingsHelper.Settings.StartUp.LastFile);
+            });
+        }
         else
         {
-            // Otherwise, display the menu
             CurrentView = new StartUpMenu();
             ResetTitle();
         }
