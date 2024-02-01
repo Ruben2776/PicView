@@ -15,7 +15,9 @@ using PicView.Core.Navigation;
 using ReactiveUI;
 using System.Diagnostics;
 using System.Reactive.Disposables;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.ViewModels;
 
@@ -352,6 +354,14 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         set => this.RaiseAndSetIfChanged(ref _isToolsMenuVisible, value);
     }
 
+    private bool _isScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+
+    public bool IsScrollingEnabled
+    {
+        get => _isScrollingEnabled;
+        set => this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
+    }
+
     #endregion Fields
 
     #region Services
@@ -643,8 +653,16 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
                 return;
             }
             CurrentView = new ImageViewer();
-
-            await SetImageModelAsync(new FileInfo(file.Path.LocalPath));
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                var path = file.Path.AbsolutePath;
+                await SetImageModelAsync(new FileInfo(path));
+            }
+            else
+            {
+                await SetImageModelAsync(new FileInfo(file.Path.LocalPath));
+            }
+            
         });
 
         ShowInFolderCommand = ReactiveCommand.Create(() =>

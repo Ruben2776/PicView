@@ -9,11 +9,6 @@ public class ImageService
 {
     public async Task LoadImageAsync(ImageModel imageModel)
     {
-        if (imageModel?.FileInfo is not { Length: > 0 })
-        {
-            return;
-        }
-
         var extension = imageModel.FileInfo.Extension.ToLowerInvariant();
         var bytes = await FileHelper.GetBytesFromFile(imageModel.FileInfo.FullName).ConfigureAwait(false);
         using var memoryStream = new MemoryStream(bytes);

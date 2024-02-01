@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using PicView.Core.FileHandling;
@@ -21,7 +22,17 @@ public class FileService
                 AllowMultiple = false,
                 FileTypeFilter = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType }
             };
-            var files = await provider.OpenFilePickerAsync(options);
+            IReadOnlyList<IStorageFile> files;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                files  = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                });
+            }
+            else
+            {
+                files = await provider.OpenFilePickerAsync(options);
+            }
 
             return files?.Count >= 1 ? files[0] : null;
         }
@@ -37,7 +48,8 @@ public class FileService
     {
         Patterns = SupportedFiles.ConvertFilesToGlobFormat(),
         AppleUniformTypeIdentifiers = new[] { "public.image" },
-        MimeTypes = new[] { "image/*" }
+        MimeTypes = new[] { "image/*" },
+        
     };
 
     private static FilePickerFileType ArchiveFileType { get; } = new(TranslationHelper.GetTranslation("SupportedFiles"))
