@@ -16,24 +16,6 @@ public partial class ImageViewer : UserControl
         InitializeComponent();
         PointerWheelChanged += async (_, e) => await Main_OnPointerWheelChanged(e);
     }
-    
-    private bool _isControlDown;
-
-    private void OnKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.KeyModifiers == KeyModifiers.Control)
-        {
-            _isControlDown = true;
-        }
-    }
-
-    private void OnKeyUp(object sender, KeyEventArgs e)
-    {
-        if (e.Key is Key.LeftCtrl or Key.RightCtrl)
-        {
-            _isControlDown = false;
-        }
-    }
 
     private async Task Main_OnPointerWheelChanged(PointerWheelEventArgs e)
     {
@@ -44,50 +26,22 @@ public partial class ImageViewer : UserControl
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                if (_isControlDown)
-                {
-                    //zoom
-                }
-                else
-                {
-                    await mainViewModel.SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
-                }
+                await mainViewModel.SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
             }
             else
             {
-                if (_isControlDown)
-                {
-                    //zoom
-                }
-                else
-                {
-                    await mainViewModel.SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
-                }
+                await mainViewModel.SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
             }
         }
         else
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                if (_isControlDown)
-                {
-                    //zoom
-                }
-                else
-                {
-                    await mainViewModel.SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
-                }
+                await mainViewModel.SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
             }
             else
             {
-                if (_isControlDown)
-                {
-                    //zoom
-                }
-                else
-                {
-                    await mainViewModel.SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
-                }
+                await mainViewModel.SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
             }
         }
     }

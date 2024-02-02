@@ -331,14 +331,6 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
         }
 
-        private ImageType _imageType;
-
-        public ImageType ImageType
-        {
-            get => _imageType;
-            set => this.RaiseAndSetIfChanged(ref _imageType, value);
-        }
-
         #endregion Image
 
         private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
@@ -418,7 +410,6 @@ namespace PicView.Avalonia.ViewModels
             Width = imageModel.PixelWidth;
             Height = imageModel.PixelHeight;
             EXIFOrientation = imageModel.EXIFOrientation;
-            ImageType = imageModel.ImageType;
             IsFlipped = imageModel.IsFlipped;
             Rotation = imageModel.Rotation;
             ZoomValue = 1;
@@ -483,7 +474,7 @@ namespace PicView.Avalonia.ViewModels
                     var index = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
                     if (index < 0)
                     {
-                        throw new InvalidOperationException("Invalid iteration");
+                        return;
                     }
 
                     ImageIterator.Index = index;
@@ -515,6 +506,7 @@ namespace PicView.Avalonia.ViewModels
                             await Task.Delay(20);
                             if (ImageIterator.Index != index)
                             {
+                                await ImageIterator.Preload(ImageService);
                                 return;
                             }
 
@@ -538,6 +530,7 @@ namespace PicView.Avalonia.ViewModels
 
                     if (ImageIterator.Index != index)
                     {
+                        await ImageIterator.Preload(ImageService);
                         return;
                     }
 
@@ -554,7 +547,8 @@ namespace PicView.Avalonia.ViewModels
                         preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
                         if (ImageIterator.Index != index)
                         {
-                            throw new TaskCanceledException();
+                            await ImageIterator.Preload(ImageService);
+                            return;
                         }
 
                         if (preLoadValue is null)

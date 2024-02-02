@@ -20,38 +20,6 @@ public class ImageService
             case ".gif":
             case ".png":
             case ".webp":
-                using (var magick = new MagickImageCollection(imageModel.FileInfo))
-                {
-                    var isAnimated = magick.Count > 1;
-                    imageModel.ImageType = isAnimated ? ImageType.Animated : ImageType.Raster;
-                    var animBytes = await FileHelper.GetBytesFromFile(imageModel.FileInfo.FullName)
-                        .ConfigureAwait(false);
-                    using var animStream = new MemoryStream(animBytes);
-                    Add(animStream);
-                }
-
-                return;
-
-            case ".svg":
-                imageModel.ImageType = ImageType.Vector;
-
-                return;
-
-            case ".svgz":
-                imageModel.ImageType = ImageType.Vector;
-                return;
-
-            case ".b64":
-                {
-                    imageModel.ImageType = ImageType.Raster;
-                    var magickImage = await ImageDecoder.Base64ToMagickImage(imageModel.FileInfo).ConfigureAwait(false);
-                    using var b64Stream = new MemoryStream();
-                    await magickImage.WriteAsync(b64Stream);
-                    b64Stream.Position = 0;
-                    Add(b64Stream);
-                    return;
-                }
-
             case ".jpg":
             case ".jpeg":
             case ".jpe":
@@ -59,17 +27,31 @@ public class ImageService
             case ".jfif":
             case ".ico":
             case ".wbmp":
+            {
+                var bytes = await FileHelper.GetBytesFromFile(imageModel.FileInfo.FullName).ConfigureAwait(false);
+                using var memoryStream = new MemoryStream(bytes);
+                Add(memoryStream);
+                return;
+            }
+
+            case ".svg":
+                return;
+
+            case ".svgz":
+                return;
+
+            case ".b64":
                 {
-                    imageModel.ImageType = ImageType.Raster;
-                    var bytes = await FileHelper.GetBytesFromFile(imageModel.FileInfo.FullName).ConfigureAwait(false);
-                    using var memoryStream = new MemoryStream(bytes);
-                    Add(memoryStream);
+                    var magickImage = await ImageDecoder.Base64ToMagickImage(imageModel.FileInfo).ConfigureAwait(false);
+                    using var b64Stream = new MemoryStream();
+                    await magickImage.WriteAsync(b64Stream);
+                    b64Stream.Position = 0;
+                    Add(b64Stream);
                     return;
                 }
-
+            
             default:
                 {
-                    imageModel.ImageType = ImageType.Raster;
                     var magickImage = await ImageDecoder.GetMagickImageAsync(imageModel.FileInfo, extension).ConfigureAwait(false);
                     var byteArray = magickImage.ToByteArray(MagickFormat.WebP);
                     var memoryStream = new MemoryStream(byteArray);

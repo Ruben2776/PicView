@@ -67,8 +67,8 @@ namespace PicView.Avalonia.Navigation
                     else
                     {
                         var newIndex = index + indexChange;
-                        if (newIndex < 0 || newIndex >= Pics.Count)
-                            return 0;
+                        if (newIndex < 0 || newIndex >= Pics.Count - 1)
+                            return Pics.Count - 1;
                         next = newIndex;
                     }
 
