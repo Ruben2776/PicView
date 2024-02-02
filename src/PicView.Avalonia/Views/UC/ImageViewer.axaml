@@ -12,7 +12,7 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    <ScrollViewer VerticalScrollBarVisibility="Disabled">
+    <ScrollViewer PointerWheelChanged="InputElement_OnPointerWheelChanged" VerticalScrollBarVisibility="Disabled">
         <Image Source="{Binding Image}" />
     </ScrollViewer>
 </UserControl>

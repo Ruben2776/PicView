@@ -17,7 +17,9 @@ using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using Avalonia.Input;
 using PicView.Core.Config;
+using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.ViewModels;
 
@@ -198,17 +200,25 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
     public ICommand? OpenFileCommand { get; private set; }
     public ICommand? OpenLastFileCommand { get; private set; }
     public ICommand? PasteCommand { get; private set; }
-    public ICommand? CopyCommand { get; private set; }
+    public ICommand? CopyFileCommand { get; private set; }
+    public ICommand? CopyFilePathCommand { get; private set; }
     public ICommand? ReloadCommand { get; private set; }
     public ICommand? PrintCommand { get; private set; }
     public ICommand? DeleteFileCommand { get; private set; }
+    public ICommand? RecycleFileCommand { get; private set; }
     public ICommand? SaveCommand { get; private set; }
     public ICommand? CloseMenuCommand { get; }
     public ICommand? ToggleFileMenuCommand { get; }
     public ICommand? ToggleImageMenuCommand { get; }
     public ICommand? ToggleSettingsMenuCommand { get; }
     public ICommand? ToggleToolsMenuCommand { get; }
-    public ICommand? ShowInFolderCommand { get; }
+    
+    private ICommand? _showInFolderCommand;
+    public ICommand? ShowInFolderCommand
+    {
+        get => _showInFolderCommand;
+        set => this.RaiseAndSetIfChanged(ref _showInFolderCommand, value);
+    }
     public ICommand? OpenWithCommand { get; }
     public ICommand? RenameCommand { get; }
     public ICommand? NewWindowCommand { get; }
@@ -326,7 +336,7 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
     #endregion Image
     
     private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
-    public bool isBottomGalleryShown
+    public bool IsBottomGalleryShown
     {
         get => _isBottomGalleryShown;
         set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
@@ -426,27 +436,34 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         TitleTooltip = Title = TranslationHelper.GetTranslation("NoImage");
     }
 
+    public void SetLoadingTitle()
+    {
+        WindowTitle = TranslationHelper.GetTranslation("Loading") + " - PicView";
+        TitleTooltip = Title = TranslationHelper.GetTranslation("Loading");
+    }
+
     private async Task SetImageNavigation(NavigateTo navigateTo)
     {
         try
         {
             ArgumentNullException.ThrowIfNull(ImageIterator);
 
-            var next = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
-            if (next < 0)
+            var index = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
+            if (index < 0)
                 throw new InvalidOperationException("Invalid iteration");
-            ImageIterator.Index = next;
+            ImageIterator.Index = index;
             var x = 0;
 
-            var preLoadValue = ImageIterator.PreLoader.Get(next, ImageIterator.Pics);
+            var preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
             if (preLoadValue is not null)
             {
                 while (preLoadValue.IsLoading)
                 {
                     if (x == 0)
                     {
+                        SetLoadingTitle();
                         using var image = new MagickImage();
-                        image.Ping(ImageIterator.Pics[ImageIterator.Index]);
+                        image.Ping(ImageIterator.Pics[index]);
                         var thumb = image.GetExifProfile()?.CreateThumbnail();
                         if (thumb is not null)
                         {
@@ -460,7 +477,7 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
                     }
                     x++;
                     await Task.Delay(20);
-                    if (ImageIterator.Index != next)
+                    if (ImageIterator.Index != index)
                     {
                         throw new TaskCanceledException();
                     }
@@ -480,6 +497,11 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             {
                 await GetPreload();
             }
+            
+            if (ImageIterator.Index != index)
+            {
+                throw new TaskCanceledException();
+            }
 
             var imageModel = preLoadValue.ImageModel;
             SetImageModel(imageModel);
@@ -489,9 +511,9 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
 
             async Task GetPreload()
             {
-                await ImageIterator.PreLoader.AddAsync(next, ImageService, ImageIterator.Pics).ConfigureAwait(false);
-                preLoadValue = ImageIterator.PreLoader.Get(next, ImageIterator.Pics);
-                if (ImageIterator.Index != next)
+                await ImageIterator.PreLoader.AddAsync(index, ImageService, ImageIterator.Pics).ConfigureAwait(false);
+                preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
+                if (ImageIterator.Index != index)
                 {
                     throw new TaskCanceledException();
                 }
@@ -584,6 +606,8 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         WindowHelper.InitializeWindowSizeAndPosition(desktop);
         UpdateLanguage();
 
+        #region Window commands
+        
         ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
         MinimizeCommand = ReactiveCommand.Create(() =>
             desktop.MainWindow.WindowState = WindowState.Minimized);
@@ -591,7 +615,12 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
         {
             desktop.MainWindow.WindowState = desktop.MainWindow.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         });
+        
+        NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
+        #endregion
+
+        #region Navigation Commands
         NextCommand = ReactiveCommand.Create(async () =>
         {
             if (ImageIterator is null)
@@ -627,7 +656,22 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             }
             await SetImageNavigation(NavigateTo.Last).ConfigureAwait(false);
         });
+        
+        ReloadCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            if (FileInfo is null || ImageIterator is null)
+            {
+                return;
+            }
+            ImageIterator.PreLoader.Clear();
+            CurrentView = new ImageViewer();
+            Image = null;
+            await SetImageModelAsync(FileInfo.FullName);
+        });
+        
+        #endregion
 
+        #region Menus
         CloseMenuCommand = ReactiveCommand.Create(() =>
         {
             IsFileMenuVisible = false;
@@ -667,7 +711,10 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             IsSettingsMenuVisible = false;
             IsToolsMenuVisible = !IsToolsMenuVisible;
         });
+        #endregion Menus
 
+        #region File commands
+        
         OpenFileCommand = ReactiveCommand.CreateFromTask(async () =>
         {
             FileService ??= new FileService();
@@ -688,31 +735,39 @@ public class MainViewModel : ViewModelBase, IActivatableViewModel
             }
             
         });
-
-        ShowInFolderCommand = ReactiveCommand.Create(() =>
+        
+        CopyFileCommand = ReactiveCommand.Create(async () =>
         {
+            var clipboard = desktop.MainWindow.Clipboard;
+            var dataObject = new DataObject();
+            dataObject.Set(DataFormats.Files, new[] { FileInfo?.FullName });
+            await clipboard.SetDataObjectAsync(dataObject);
         });
-
+        
+        CopyFilePathCommand = ReactiveCommand.Create(async () =>
+        {
+            await desktop.MainWindow.Clipboard.SetTextAsync(FileInfo?.FullName);
+        });
+        
         PasteCommand = ReactiveCommand.Create(() =>
         {
         });
 
         OpenWithCommand = ReactiveCommand.Create(() =>
         {
+            ProcessHelper.OpenWith(FileInfo?.FullName);
         });
 
         RenameCommand = ReactiveCommand.Create(() =>
         {
         });
-
-        NewWindowCommand = ReactiveCommand.Create(() =>
-        {
-        });
-
+        
         DuplicateFileCommand = ReactiveCommand.Create(() =>
         {
         });
-
+        
+        #endregion
+        
         Activator = new ViewModelActivator();
         this.WhenActivated((disposables) =>
         {

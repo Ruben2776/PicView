@@ -28,7 +28,6 @@ namespace PicView.Avalonia.Navigation
         public int GetIteration(int index, NavigateTo navigateTo)
         {
             int next;
-            var prev = Index;
             switch (navigateTo)
             {
                 case NavigateTo.Next:
@@ -37,11 +36,11 @@ namespace PicView.Avalonia.Navigation
                     Reverse = navigateTo == NavigateTo.Previous;
                     if (SettingsHelper.Settings.UIProperties.Looping)
                     {
-                        next = (prev + indexChange + Pics.Count) % Pics.Count;
+                        next = (index + indexChange + Pics.Count) % Pics.Count;
                     }
                     else
                     {
-                        var newIndex = prev + indexChange;
+                        var newIndex = index + indexChange;
                         if (newIndex < 0 || newIndex >= Pics.Count)
                             return 0;
                         next = newIndex;

@@ -108,4 +108,18 @@ public static class ProcessHelper
             return false;
         }
     }
+
+    public static void OpenWith(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+        using var process = new Process();
+        process.StartInfo.FileName = "openwith";
+        process.StartInfo.Arguments = $"\"{path}\"";
+        process.StartInfo.ErrorDialog = true;
+
+        process.Start();
+    }
 }

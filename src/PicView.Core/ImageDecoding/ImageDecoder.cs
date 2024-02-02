@@ -29,6 +29,7 @@ public static class ImageDecoder
         {
             var magickImage = new MagickImage();
             MagickFormat format;
+            magickImage.Quality = 100;
 
             switch (extension)
             {
@@ -70,9 +71,12 @@ public static class ImageDecoder
 
             if (fileInfo.Length >= 2147483648)
             {
-                // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
-                // ReSharper disable once MethodHasAsyncOverload
-                magickImage.Read(fileInfo);
+                await Task.Run(() =>
+                {
+                    // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+                    // ReSharper disable once MethodHasAsyncOverload
+                    magickImage.Read(fileInfo);
+                });
             }
             else
             {

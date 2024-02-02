@@ -1,8 +1,6 @@
-﻿using System.IO;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace PicView.WPF.FileHandling;
-
+namespace PicView.Windows.FileHandling;
 public static class Shell32Wrapper
 {
     [DllImport("shell32.dll", SetLastError = true)]
@@ -14,7 +12,7 @@ public static class Shell32Wrapper
         IntPtr bindingContext, [Out] out IntPtr pidl, uint sfgaoIn, [Out] out uint psfgaoOut);
 }
 
-internal static class FileExplorer
+public static class FileExplorer
 {
     public static void OpenFolderAndSelectFile(string folderPath, string fileName)
     {

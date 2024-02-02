@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using PicView.Core.FileHandling;
+using PicView.Core.ProcessHandling;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.PicGallery.GalleryLoad;
@@ -97,7 +98,7 @@ internal static class OpenSave
             }
 
             Close_UserControls();
-            FileExplorer.OpenFolderAndSelectFile(directory, file); // https://stackoverflow.com/a/39427395
+            Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(directory, file);
         }
         catch (Exception e)
         {
@@ -147,17 +148,7 @@ internal static class OpenSave
 
         try
         {
-            using var process = new Process
-            {
-                StartInfo =
-                {
-                    FileName = "openwith",
-                    Arguments = $"\"{path}\"",
-                    ErrorDialog = true
-                }
-            };
-
-            process.Start();
+            ProcessHelper.OpenWith(path);
         }
         catch (Exception e)
         {
