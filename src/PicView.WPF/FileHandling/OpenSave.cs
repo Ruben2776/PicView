@@ -279,13 +279,14 @@ internal static class OpenSave
             return;
         }
 
-        using var process = new Process();
-        process.StartInfo = new ProcessStartInfo(path)
+        try
         {
-            Verb = "print",
-            UseShellExecute = true,
-        };
-        process.Start();
+            ProcessHelper.Print(path);
+        }
+        catch (Exception e)
+        {   
+            ShowTooltipMessage(e.Message);
+        }
     }
 
     internal static string? SelectAndReturnFolder()

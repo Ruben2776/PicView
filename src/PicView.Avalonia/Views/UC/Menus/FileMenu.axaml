@@ -53,6 +53,7 @@
                     BorderThickness="0,0,1,0"
                     Canvas.Left="45"
                     Classes="hover"
+                    Command="{Binding PrintCommand}"
                     Height="45"
                     ToolTip.Tip="{Binding Print}"
                     Width="45">
@@ -70,6 +71,7 @@
                     BorderThickness="0,0,1,0"
                     Canvas.Left="90"
                     Classes="hover"
+                    Command="{Binding RecycleFileCommand}"
                     Height="45"
                     ToolTip.Tip="{Binding DeleteFile}"
                     Width="45">
@@ -87,6 +89,7 @@
                     BorderThickness="0,0,1,0"
                     Canvas.Left="135"
                     Classes="hover"
+                    Command="{Binding SaveFileCommand}"
                     Height="45"
                     ToolTip.Tip="{Binding Save}"
                     Width="45">

@@ -122,4 +122,19 @@ public static class ProcessHelper
 
         process.Start();
     }
+
+    public static void Print(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+        using var process = new Process();
+        process.StartInfo = new ProcessStartInfo(path)
+        {
+            Verb = "print",
+            UseShellExecute = true,
+        };
+        process.Start();
+    }
 }

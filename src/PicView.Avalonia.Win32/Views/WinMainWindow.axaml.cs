@@ -18,7 +18,6 @@ public partial class WinMainWindow : Window
             {
                 return;
             }
-
             var wm = (MainViewModel)DataContext;
             wm.ShowInFolderCommand = ReactiveCommand.Create(() =>
             {

@@ -1,23 +1,29 @@
 <Window
-    x:Class="PicView.Avalonia.MacOS.Views.MacMainWindow"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
-    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
-    xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
-    xmlns:vm="using:PicView.Avalonia.ViewModels"
-    Title="PicView MacOS"
-    MinWidth="435"
-    MinHeight="400"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     BorderBrush="{StaticResource SecondaryBackgroundColor}"
     BorderThickness="1"
     ExtendClientAreaChromeHints="SystemChrome"
     ExtendClientAreaTitleBarHeightHint="28"
-    mc:Ignorable="d">
+    MinHeight="400"
+    MinWidth="435"
+    Title="{Binding WindowTitle}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.MacOS.Views.MacMainWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
+    xmlns:vm="using:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
     <DockPanel LastChildFill="True">
         <views1:MacOSTitlebar DockPanel.Dock="Top" />
         <uc:BottomBar DockPanel.Dock="Bottom" />

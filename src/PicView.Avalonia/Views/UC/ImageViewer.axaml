@@ -1,4 +1,6 @@
 <UserControl
+    KeyDown="OnKeyDown"
+    KeyUp="OnKeyUp"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -12,7 +14,7 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    <ScrollViewer PointerWheelChanged="InputElement_OnPointerWheelChanged" VerticalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Disabled" x:Name="ScrollViewer">
         <Image Source="{Binding Image}" />
     </ScrollViewer>
 </UserControl>
