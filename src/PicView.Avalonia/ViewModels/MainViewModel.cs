@@ -50,6 +50,10 @@ namespace PicView.Avalonia.ViewModels
             OpenWith = TranslationHelper.GetTranslation("OpenWith");
             RenameFile = TranslationHelper.GetTranslation("RenameFile");
             DuplicateFile = TranslationHelper.GetTranslation("DuplicateFile");
+            RotateLeft = TranslationHelper.GetTranslation("RotateLeft");
+            RotateRight = TranslationHelper.GetTranslation("RotateRight");
+            Flip = TranslationHelper.GetTranslation("Flip");
+            UnFlip = TranslationHelper.GetTranslation("UnFlip");
         }
 
         private string? _selectFile;
@@ -187,6 +191,35 @@ namespace PicView.Avalonia.ViewModels
             get => _duplicateFile;
             set => this.RaiseAndSetIfChanged(ref _duplicateFile, value);
         }
+        
+        private string? _rotateLeft;
+        public string? RotateLeft
+        {
+            get => _rotateLeft;
+            set => this.RaiseAndSetIfChanged(ref _rotateLeft, value);
+        }
+        
+        private string? _rotateRight;
+        public string? RotateRight
+        {
+            get => _rotateRight;
+            set => this.RaiseAndSetIfChanged(ref _rotateRight, value);
+        }
+        
+        private string? _flip;
+        public string? Flip
+        {
+            get => _flip;
+            set => this.RaiseAndSetIfChanged(ref _flip, value);
+        }
+        
+        private string? _unFlip;
+        public string? UnFlip
+        {
+            get => _unFlip;
+            set => this.RaiseAndSetIfChanged(ref _unFlip, value);
+        }
+        public string? GetFlipped => IsFlipped ? UnFlip : Flip;
 
         #endregion Localization
 
@@ -389,6 +422,12 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
         }
 
+        private int _getIndex;
+        public int GetIndex
+        {
+            get => _getIndex;
+            set => this.RaiseAndSetIfChanged(ref _getIndex, value);
+        }
         #endregion Fields
 
         #region Services
@@ -537,6 +576,7 @@ namespace PicView.Avalonia.ViewModels
                     var imageModel = preLoadValue.ImageModel;
                     SetImageModel(imageModel);
                     SetTitle(imageModel, ImageIterator);
+                    GetIndex = ImageIterator.Index + 1;
                     await ImageIterator.Preload(ImageService);
                     return;
 
@@ -595,15 +635,22 @@ namespace PicView.Avalonia.ViewModels
                     ImageIterator = new ImageIterator(imageModel.FileInfo);
                     ImageIterator.Index = ImageIterator.Pics.IndexOf(fileInfo.FullName);
                     SetTitle(imageModel, ImageIterator);
+                    GetIndex = ImageIterator.Index + 1;
                     CloseMenuCommand?.Execute(null);
                     await ImageIterator.AddAsync(ImageIterator.Index, ImageService, imageModel);
                     await ImageIterator.Preload(ImageService);
                     ImageIterator.FileAdded += (_, e) => { SetTitle(); };
                     ImageIterator.FileRenamed += (_, e) => { SetTitle(); };
-                    ImageIterator.FileDeleted += (_, e) =>
+                    ImageIterator.FileDeleted += async (_, e) =>
                     {
-                        // TODO error handling if deleting current file
-                        SetTitle();
+                        if (e) //change if deleting current file
+                        {
+                            await SetImageModelAsync(ImageIterator.Pics[ImageIterator.Index]);
+                        }
+                        else
+                        {
+                            SetTitle();
+                        }
                     };
                 }
                 catch (Exception)

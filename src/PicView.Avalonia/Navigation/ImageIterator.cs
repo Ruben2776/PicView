@@ -4,14 +4,13 @@ using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
 using PicView.Avalonia.Services;
-using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Navigation
 {
     public class ImageIterator
     {
         public event FileSystemEventHandler? FileAdded;
-        public event FileSystemEventHandler? FileDeleted;
+        public event EventHandler<bool>? FileDeleted;
         public event FileSystemEventHandler? FileRenamed;
         public int Index;
         public FileInfo FileInfo;
@@ -67,8 +66,14 @@ namespace PicView.Avalonia.Navigation
                     else
                     {
                         var newIndex = index + indexChange;
-                        if (newIndex < 0 || newIndex >= Pics.Count - 1)
+                        if (newIndex < 0)
+                        {
+                            return 0;
+                        }
+                        if (newIndex >= Pics.Count)
+                        {
                             return Pics.Count - 1;
+                        }
                         next = newIndex;
                     }
 
@@ -163,7 +168,7 @@ namespace PicView.Avalonia.Navigation
             _running = false;
 
             //FileHistoryNavigation.Remove(e.FullPath);
-            FileDeleted?.Invoke(this, e);
+            FileDeleted?.Invoke(this, sameFile);
         }
 
         private async Task OnFileAdded(FileSystemEventArgs e)
