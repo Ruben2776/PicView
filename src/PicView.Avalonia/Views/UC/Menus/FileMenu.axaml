@@ -214,14 +214,115 @@
                     Command="{Binding ShowInFolderCommand}"
                     ToolTip.Tip="{Binding ShowInFolder}">
                     <StackPanel Orientation="Horizontal">
-                        <Path
-                            Data="M384 480h48c11.4 0 21.9-6 27.6-15.9l112-192c5.8-9.9 5.8-22.1 .1-32.1S555.5 224 544 224H144c-11.4 0-21.9 6-27.6 15.9L48 357.1V96c0-8.8 7.2-16 16-16H181.5c4.2 0 8.3 1.7 11.3 4.7l26.5 26.5c21 21 49.5 32.8 79.2 32.8H416c8.8 0 16 7.2 16 16v32h48V160c0-35.3-28.7-64-64-64H298.5c-17 0-33.3-6.7-45.3-18.7L226.7 50.7c-12-12-28.3-18.7-45.3-18.7H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H87.7 384z"
-                            Fill="{StaticResource MainIconColor}"
-                            Height="14"
-                            Margin="7,0,6,0"
-                            Stretch="Fill"
-                            VerticalAlignment="Center"
-                            Width="17.51" />
+                        <Image
+                            Height="23"
+                            Margin="10,0,4,0"
+                            Width="23">
+                            <DrawingImage>
+                                <DrawingGroup>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1 M0 0L1080 0L1080 1080L0 1080L0 0Z" />
+                                    <DrawingGroup>
+                                        <DrawingGroup.Transform>
+                                            <MatrixTransform Matrix="1,0,0,1,540,540" />
+                                        </DrawingGroup.Transform>
+                                    </DrawingGroup>
+                                    <DrawingGroup>
+                                        <DrawingGroup.Transform>
+                                            <MatrixTransform Matrix="1,0,0,1,540,540" />
+                                        </DrawingGroup.Transform>
+                                    </DrawingGroup>
+                                    <DrawingGroup>
+                                        <DrawingGroup.Transform>
+                                            <MatrixTransform Matrix="2.23,0,0,2.23,549.12,511.86" />
+                                        </DrawingGroup.Transform>
+                                        <DrawingGroup>
+                                            <DrawingGroup.Transform>
+                                                <MatrixTransform Matrix="1,0,0,1,0,-119.99999" />
+                                            </DrawingGroup.Transform>
+                                            <DrawingGroup>
+                                                <DrawingGroup.Transform>
+                                                    <MatrixTransform Matrix="1,0,0,1,-256,-136" />
+                                                </DrawingGroup.Transform>
+                                                <GeometryDrawing Geometry="F1 M64 192L64 120C64 97.9086 81.9086 80 104 80L179.89 80C187.788 80.0002 195.509 82.3384 202.08 86.72L229.92 105.28C236.491 109.662 244.212 112 252.11 112L408 112C430.091 112 448 129.909 448 152L448 192">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            Brush="{StaticResource MainIconColor}"
+                                                            LineCap="Round"
+                                                            LineJoin="Round"
+                                                            MiterLimit="4"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                        <DrawingGroup>
+                                            <DrawingGroup.Transform>
+                                                <MatrixTransform Matrix="1,0,0,1,0,56.000015" />
+                                            </DrawingGroup.Transform>
+                                            <DrawingGroup>
+                                                <DrawingGroup.Transform>
+                                                    <MatrixTransform Matrix="1,0,0,1,-256,-312" />
+                                                </DrawingGroup.Transform>
+                                                <GeometryDrawing Geometry="F1 M479.9 226.55L463.68 392C463.68 414.064 445.814 431.961 423.75 432L88.25 432C66.186 431.961 48.32 414.064 48.32 392L32.1 226.55C31.3884 217.648 34.429 208.854 40.4871 202.292C46.5452 195.731 55.0696 192 64 192L448.1 192C457.013 192.027 465.511 195.771 471.547 202.329C477.583 208.887 480.61 217.665 479.9 226.55Z">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            Brush="{StaticResource MainIconColor}"
+                                                            LineCap="Round"
+                                                            LineJoin="Round"
+                                                            MiterLimit="4"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                    </DrawingGroup>
+                                    <DrawingGroup>
+                                        <DrawingGroup.Transform>
+                                            <MatrixTransform Matrix="1.41,0,0,1.41,540,540" />
+                                        </DrawingGroup.Transform>
+                                        <DrawingGroup>
+                                            <DrawingGroup.Transform>
+                                                <MatrixTransform Matrix="1,0,0,1,-34.909973,-34.909973" />
+                                            </DrawingGroup.Transform>
+                                            <DrawingGroup>
+                                                <DrawingGroup.Transform>
+                                                    <MatrixTransform Matrix="1,0,0,1,-221.09,-221.09" />
+                                                </DrawingGroup.Transform>
+                                                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M221.09 64C134.332 64 64 134.332 64 221.09C64 307.848 134.332 378.18 221.09 378.18C307.848 378.18 378.18 307.848 378.18 221.09C378.174 134.334 307.846 64.0055 221.09 64Z" />
+                                                <GeometryDrawing Geometry="F1 M221.09 64C134.332 64 64 134.332 64 221.09C64 307.848 134.332 378.18 221.09 378.18C307.848 378.18 378.18 307.848 378.18 221.09C378.174 134.334 307.846 64.0055 221.09 64Z">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            Brush="{StaticResource MainIconColor}"
+                                                            LineJoin="Miter"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                        <DrawingGroup>
+                                            <DrawingGroup.Transform>
+                                                <MatrixTransform Matrix="1,0,0,1,137.14005,137.14005" />
+                                            </DrawingGroup.Transform>
+                                            <DrawingGroup>
+                                                <DrawingGroup.Transform>
+                                                    <MatrixTransform Matrix="1,0,0,1,-393.14,-393.14" />
+                                                </DrawingGroup.Transform>
+                                                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M338.29 338.29L448 448" />
+                                                <GeometryDrawing Geometry="F1 M338.29 338.29L448 448">
+                                                    <GeometryDrawing.Pen>
+                                                        <Pen
+                                                            Brush="{StaticResource MainIconColor}"
+                                                            LineCap="Round"
+                                                            LineJoin="Miter"
+                                                            Thickness="32" />
+                                                    </GeometryDrawing.Pen>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingGroup>
+                                    </DrawingGroup>
+                                </DrawingGroup>
+                            </DrawingImage>
+                        </Image>
                         <TextBlock
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                             Text="{Binding ShowInFolder}"

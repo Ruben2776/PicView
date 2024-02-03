@@ -23,15 +23,16 @@
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 
             <ImageBrush
-                x:Key="NoisyTexture"
                 DestinationRect="0,0,100,100"
                 Opacity=".7"
                 Source="\DarkTheme\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 SourceRect="0,0,200,200"
                 Stretch="Fill"
-                TileMode="FlipXY" />
+                TileMode="FlipXY"
+                x:Key="NoisyTexture" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/ToggleButton.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Border.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/TextBlock.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/PathIcon.axaml" />
@@ -40,11 +41,11 @@
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <DropShadowEffect
-                x:Key="MenuShadowButtonBorder"
                 BlurRadius="5"
+                Color="#112e2e2e"
                 OffsetX="2"
                 OffsetY="2"
-                Color="#112e2e2e" />
+                x:Key="MenuShadowButtonBorder" />
         </ResourceDictionary>
     </Styles.Resources>
     <Style Selector="Window">
@@ -70,7 +71,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.ButtonBorder">
+    <Style Selector="Button.ButtonBorder, ToggleButton.ButtonBorder">
         <Setter Property="Height" Value="40" />
         <Setter Property="Width" Value="147" />
         <Setter Property="CornerRadius" Value="4" />

@@ -1,31 +1,28 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.PreviewWith>
-        <Button />
-    </Design.PreviewWith>
 
-    <ControlTheme x:Key="{x:Type Button}" TargetType="Button">
+    <ControlTheme TargetType="Button" x:Key="{x:Type Button}">
 
         <Setter Property="Button.Template">
             <ControlTemplate TargetType="Button">
                 <ContentPresenter
-                    Name="PART_ContentPresenter"
-                    Padding="{TemplateBinding Padding}"
-                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Content="{TemplateBinding Content}"
                     ContentTemplate="{TemplateBinding ContentTemplate}"
                     CornerRadius="{TemplateBinding CornerRadius}"
+                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    Name="PART_ContentPresenter"
+                    Padding="{TemplateBinding Padding}"
                     RecognizesAccessKey="True"
-                    TextElement.Foreground="{TemplateBinding Foreground}" />
+                    TextElement.Foreground="{TemplateBinding Foreground}"
+                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
             </ControlTemplate>
         </Setter>
 
         <Style Selector="^.hover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
-                <Animation IterationCount="1" Duration=".35">
+                <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
@@ -42,7 +39,7 @@
         </Style>
         <Style Selector="^.altHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
-                <Animation IterationCount="1" Duration=".35">
+                <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
@@ -59,7 +56,7 @@
         </Style>
         <Style Selector="^.alphaHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
-                <Animation IterationCount="1" Duration=".35">
+                <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="Transparent" />

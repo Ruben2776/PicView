@@ -54,6 +54,20 @@ namespace PicView.Avalonia.ViewModels
             RotateRight = TranslationHelper.GetTranslation("RotateRight");
             Flip = TranslationHelper.GetTranslation("Flip");
             UnFlip = TranslationHelper.GetTranslation("UnFlip");
+            ShowBottomGallery = TranslationHelper.GetTranslation("ShowBottomGallery");
+            HideBottomGallery = TranslationHelper.GetTranslation("HideBottomGallery");
+            AutoFitWindow = TranslationHelper.GetTranslation("AutoFitWindow");
+            Stretch = TranslationHelper.GetTranslation("Stretch");
+            Crop = TranslationHelper.GetTranslation("Crop");
+            ResizeImage = TranslationHelper.GetTranslation("ResizeImage");
+            GoToImageAtSpecifiedIndex = TranslationHelper.GetTranslation("GoToImageAtSpecifiedIndex");
+            ToggleScroll = TranslationHelper.GetTranslation("ToggleScroll");
+            ScrollEnabled = TranslationHelper.GetTranslation("ScrollEnabled");
+            ScrollDisabled = TranslationHelper.GetTranslation("ScrollDisabled");
+            Slideshow = TranslationHelper.GetTranslation("Slideshow");
+            Settings = TranslationHelper.GetTranslation("Settings");
+            InfoWinow = TranslationHelper.GetTranslation("InfoWindow");
+            ShowAllSettingsWindow = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
         }
 
         private string? _selectFile;
@@ -219,7 +233,103 @@ namespace PicView.Avalonia.ViewModels
             get => _unFlip;
             set => this.RaiseAndSetIfChanged(ref _unFlip, value);
         }
-        public string? GetFlipped => IsFlipped ? UnFlip : Flip;
+        
+        private string? _showBottomGallery;
+        public string? ShowBottomGallery
+        {
+            get => _showBottomGallery;
+            set => this.RaiseAndSetIfChanged(ref _showBottomGallery, value);
+        }
+        private string? _hideBottomGallery;
+        public string? HideBottomGallery
+        {
+            get => _hideBottomGallery;
+            set => this.RaiseAndSetIfChanged(ref _hideBottomGallery, value);
+        }
+
+        private string? _autoFitWindow;
+        public string? AutoFitWindow
+        {
+            get => _autoFitWindow;
+            set => this.RaiseAndSetIfChanged(ref _autoFitWindow, value);
+        }
+        
+        private string? _stretch;
+        public string? Stretch
+        {
+            get => _stretch;
+            set => this.RaiseAndSetIfChanged(ref _stretch, value);
+        }
+
+        private string? _crop;
+        public string? Crop
+        {
+            get => _crop;
+            set => this.RaiseAndSetIfChanged(ref _crop, value);
+        }
+
+        private string? _resizeImage;
+        public string? ResizeImage
+        {
+            get => _resizeImage;
+            set => this.RaiseAndSetIfChanged(ref _resizeImage, value);
+        }
+
+        private string? _goToImageAtSpecifiedIndex;
+        public string? GoToImageAtSpecifiedIndex
+        {
+            get => _goToImageAtSpecifiedIndex;
+            set => this.RaiseAndSetIfChanged(ref _goToImageAtSpecifiedIndex, value);
+        }
+
+        private string? _toggleScroll;
+        public string? ToggleScroll
+        {
+            get => _toggleScroll;
+            set => this.RaiseAndSetIfChanged(ref _toggleScroll, value);
+        }
+        
+        private string? _scrollEnabled;
+        public string? ScrollEnabled
+        {
+            get => _scrollEnabled;
+            set => this.RaiseAndSetIfChanged(ref _scrollEnabled, value);
+        }
+        
+        private string? _scrollDisabled;
+        public string? ScrollDisabled
+        {
+            get => _scrollDisabled;
+            set => this.RaiseAndSetIfChanged(ref _scrollDisabled, value);
+        }
+        
+        private string? _slideshow;
+        public string? Slideshow
+        {
+            get => _slideshow;
+            set => this.RaiseAndSetIfChanged(ref _slideshow, value);
+        }
+
+        private string? _settings;
+        public string? Settings
+        {
+            get => _settings;
+            set => this.RaiseAndSetIfChanged(ref _settings, value);
+        }
+        
+        private string? _infoWinow;
+        public string? InfoWinow
+        {
+            get => _infoWinow;
+            set => this.RaiseAndSetIfChanged(ref _infoWinow, value);
+        }
+        
+        private string? _showAllSettingsWindow;
+        public string? ShowAllSettingsWindow
+        {
+            get => _showAllSettingsWindow;
+            set => this.RaiseAndSetIfChanged(ref _showAllSettingsWindow, value);
+        }
 
         #endregion Localization
 
@@ -265,6 +375,9 @@ namespace PicView.Avalonia.ViewModels
         #endregion Commands
 
         #region Fields
+        
+        public string? GetFlipped => IsFlipped ? UnFlip : Flip;
+        public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
 
         private string? _title = "Loading...";
 
