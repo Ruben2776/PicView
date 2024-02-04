@@ -44,11 +44,11 @@ internal static class FileLists
                 var list = files.ToList();
                 if (SettingsHelper.Settings.Sorting.Ascending)
                 {
-                    list.Sort(NativeMethods.StrCmpLogicalW);
+                    list.Sort(PicView.Windows.NativeMethods.StrCmpLogicalW);
                 }
                 else
                 {
-                    list.Sort((x, y) => NativeMethods.StrCmpLogicalW(y, x));
+                    list.Sort((x, y) => PicView.Windows.NativeMethods.StrCmpLogicalW(y, x));
                 }
 
                 return list;

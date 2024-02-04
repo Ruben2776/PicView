@@ -1,7 +1,9 @@
 <Window
+    CanResize="{Binding CanResize}"
     Icon="/icon.ico"
     MinHeight="400"
     MinWidth="435"
+    SizeToContent="{Binding SizeToContent}"
     Title="{Binding WindowTitle}"
     TransparencyLevelHint="AcrylicBlur"
     d:DesignHeight="450"
@@ -24,7 +26,7 @@
     <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1,0,1,1">
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar DockPanel.Dock="Top" x:Name="TitleBar" />
-            <uc:BottomBar DockPanel.Dock="Bottom" />
+            <uc:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
             <views:MainView />
         </DockPanel>
     </Border>

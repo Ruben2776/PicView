@@ -37,12 +37,12 @@ namespace PicView.Avalonia.Navigation
             _watcher.Filter = "*.*";
             _watcher.IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
             _watcher.Created += async (_, e) => await OnFileAdded(e).ConfigureAwait(false);
-            _watcher.Deleted += async (_, e) => await OnFileDeleted(e).ConfigureAwait(false);
-            _watcher.Renamed += async (_, e) => await OnFileRenamed(e).ConfigureAwait(false);
+            _watcher.Deleted += (_, e) => OnFileDeleted(e);
+            _watcher.Renamed += (_, e) => OnFileRenamed(e);
         }
         public async Task Preload(ImageService imageService)
         {
-            await PreLoader.PreLoadAsync(Index, Pics.Count, false, Reverse, imageService, Pics).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(Index, Pics.Count, Reverse, imageService, Pics).ConfigureAwait(false);
         }
 
         public async Task AddAsync(int index, ImageService imageService, ImageModel imageModel)
@@ -91,7 +91,7 @@ namespace PicView.Avalonia.Navigation
             return next;
         }
         
-         private async Task OnFileRenamed(RenamedEventArgs e)
+         private void OnFileRenamed(RenamedEventArgs e)
          {
             if (e.FullPath.IsSupported() == false)
             {
@@ -134,7 +134,7 @@ namespace PicView.Avalonia.Navigation
             FileRenamed?.Invoke(this, e);
         }
 
-        private async Task OnFileDeleted(FileSystemEventArgs e)
+        private void OnFileDeleted(FileSystemEventArgs e)
         {
             if (e.FullPath.IsSupported() == false)
             {

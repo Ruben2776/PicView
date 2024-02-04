@@ -28,14 +28,7 @@ internal static partial class NativeMethods
         }
     }
 
-    // Alphanumeric sort
-    [LibraryImport("shlwapi.dll", StringMarshalling = StringMarshalling.Utf16)]
-    internal static partial int StrCmpLogicalW(string x, string y);
 
-    // Change cursor position
-    [LibraryImport("User32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    internal static partial bool SetCursorPos(int x, int y);
 
     #region Disable Screensaver and Power options
 

@@ -27,22 +27,22 @@ public partial class ImageViewer : UserControl
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                await mainViewModel.SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
+                await mainViewModel.SetImageNavigation(NavigateTo.Next);
             }
             else
             {
-                await mainViewModel.SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
+                await mainViewModel.SetImageNavigation(NavigateTo.Previous);
             }
         }
         else
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                await mainViewModel.SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
+                await mainViewModel.SetImageNavigation(NavigateTo.Previous);
             }
             else
             {
-                await mainViewModel.SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
+                await mainViewModel.SetImageNavigation(NavigateTo.Next);
             }
         }
     }

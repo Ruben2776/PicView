@@ -17,6 +17,7 @@ using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -30,6 +31,8 @@ namespace PicView.Avalonia.ViewModels
     public class MainViewModel : ViewModelBase, IActivatableViewModel
     {
         public ViewModelActivator? Activator { get; }
+
+        public event EventHandler ImageChanged;
 
         #region Localization
 
@@ -466,6 +469,13 @@ namespace PicView.Avalonia.ViewModels
             get => _height;
             set => this.RaiseAndSetIfChanged(ref _height, value);
         }
+        
+        private double _titleMaxWidth;
+        public double TitleMaxWidth
+        {
+            get => _titleMaxWidth;
+            set => this.RaiseAndSetIfChanged(ref _titleMaxWidth, value);
+        }
 
         private EXIFHelper.EXIFOrientation? _exifOrientation;
 
@@ -481,6 +491,43 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _zoomValue;
             set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
+        }
+        
+        private bool _isAutoFit;
+        
+        public bool IsAutoFit
+        {
+            get => _isAutoFit;
+            set
+            {
+                SettingsHelper.Settings.WindowProperties.AutoFit = value;
+                if (value)
+                {
+                    SizeToContent = SizeToContent.WidthAndHeight;
+                    CanResize = false;
+                }
+                else
+                {
+                    SizeToContent = SizeToContent.Manual;
+                    CanResize = true;
+                }
+                this.RaiseAndSetIfChanged(ref _isAutoFit, value);
+                _= SettingsHelper.SaveSettingsAsync();
+            } 
+        }
+        
+        private SizeToContent _sizeToContent;
+        public SizeToContent SizeToContent
+        {
+            get => _sizeToContent;
+            set => this.RaiseAndSetIfChanged(ref _sizeToContent, value);
+        }
+        
+        private bool _canResize;
+        public bool CanResize
+        {
+            get => _canResize;
+            set => this.RaiseAndSetIfChanged(ref _canResize, value);
         }
 
         #endregion Image
@@ -551,8 +598,22 @@ namespace PicView.Avalonia.ViewModels
                 this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
                 ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
                 SettingsHelper.Settings.Zoom.ScrollEnabled = value;
+                SetImageModel();
                 _= SettingsHelper.SaveSettingsAsync();
             }
+        }
+        
+        private bool _isStretched;
+        public bool IsStretched
+        {
+            get => _isStretched;
+            set  
+            {
+                this.RaiseAndSetIfChanged(ref _isStretched, value);
+                SettingsHelper.Settings.ImageScaling.StretchImage = value;
+                SetImageModel();
+                _= SettingsHelper.SaveSettingsAsync();
+            } 
         }
 
         private int _getIndex;
@@ -561,6 +622,8 @@ namespace PicView.Avalonia.ViewModels
             get => _getIndex;
             set => this.RaiseAndSetIfChanged(ref _getIndex, value);
         }
+        
+        
         #endregion Fields
 
         #region Services
@@ -575,12 +638,73 @@ namespace PicView.Avalonia.ViewModels
 
         #region Methods
 
-        public void SetImageModel(ImageModel? imageModel)
+        public void SetImageModel()
         {
+            var imageModel = new ImageModel
+            {
+                Image = Image,
+                FileInfo = FileInfo,
+                PixelWidth = (int)Width,
+                PixelHeight = (int)Height,
+                EXIFOrientation = EXIFOrientation,
+                IsFlipped = IsFlipped,
+                Rotation = Rotation
+            };
+            SetImageModel(imageModel);
+        }
+
+        public void SetImageModel(ImageModel imageModel)
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
+            double desktopMinWidth = 0, desktopMinHeight = 0;
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                desktopMinWidth = desktop.MainWindow.MinWidth;
+                desktopMinHeight = desktop.MainWindow.MinHeight;
+            }
+            else
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    desktopMinWidth = desktop.MainWindow.MinWidth;
+                    desktopMinHeight = desktop.MainWindow.MinHeight;
+                }, DispatcherPriority.Normal).Wait();
+            }
+            var size = ImageSizeCalculationHelper.GetImageSize(
+                imageModel.PixelWidth,
+                imageModel.PixelHeight,
+                monitor.Bounds.Width,
+                monitor.Bounds.Height,
+                desktopMinWidth,
+                desktopMinHeight,
+                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 195 : 225,
+                imageModel.Rotation,
+                IsStretched,
+                40,
+                monitor.Scaling,
+                SettingsHelper.Settings.WindowProperties.Fullscreen,
+                35,
+                35,
+                0,
+                IsAutoFit,
+                SettingsHelper.Settings.WindowProperties.Width,
+                SettingsHelper.Settings.WindowProperties.Height,
+                IsScrollingEnabled);
+            SetImageModel(imageModel, size.Width, size.Height, size.TitleMaxWidth);
+        }
+
+        public void SetImageModel(ImageModel? imageModel, double width, double height, double titleMaxWidth)
+        {
+            ArgumentNullException.ThrowIfNull(imageModel);
             Image = imageModel.Image;
             FileInfo = imageModel.FileInfo;
-            Width = imageModel.PixelWidth;
-            Height = imageModel.PixelHeight;
+            TitleMaxWidth = titleMaxWidth;
+            Width = width;
+            Height = height;
             EXIFOrientation = imageModel.EXIFOrientation;
             IsFlipped = imageModel.IsFlipped;
             Rotation = imageModel.Rotation;
@@ -706,11 +830,12 @@ namespace PicView.Avalonia.ViewModels
                         return;
                     }
 
-                    var imageModel = preLoadValue.ImageModel;
-                    SetImageModel(imageModel);
-                    SetTitle(imageModel, ImageIterator);
+                    SetImageModel(preLoadValue.ImageModel);
+                    SetTitle(preLoadValue.ImageModel, ImageIterator);
                     GetIndex = ImageIterator.Index + 1;
                     await ImageIterator.Preload(ImageService);
+                    await Task.Delay(100); // Need to delay to allow UI to render
+                    ImageChanged?.Invoke(this, EventArgs.Empty);
                     return;
 
                     async Task GetPreload()
@@ -822,9 +947,18 @@ namespace PicView.Avalonia.ViewModels
                 ResetTitle();
             }
 
-            WindowHelper.InitializeWindowSizeAndPosition(desktop);
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            else
+            {
+                WindowHelper.InitializeWindowSizeAndPosition(desktop);
+            }
             UpdateLanguage();
             IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+            IsStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
+            IsAutoFit = SettingsHelper.Settings.WindowProperties.AutoFit;
 
             #region Window commands
 

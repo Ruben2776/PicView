@@ -17,7 +17,7 @@ public partial class MainView : UserControl
         {
             RxApp.MainThreadScheduler.Schedule(() =>
             {
-                var fileMenu = new UC.Menus.FileMenu()
+                var fileMenu = new UC.Menus.FileMenu
                 {
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -31,7 +31,7 @@ public partial class MainView : UserControl
                 {
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(0, 0, 65, 0),
+                    Margin = new Thickness(0, 0, 64.5, 0),
                     Opacity = 1
                 };
 
@@ -47,7 +47,7 @@ public partial class MainView : UserControl
 
                 MainGrid.Children.Add(settingsMenu);
 
-                var toolsMenu = new UC.Menus.ToolsMenu()
+                var toolsMenu = new UC.Menus.ToolsMenu
                 {
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,

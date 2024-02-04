@@ -209,7 +209,7 @@ public class PreLoader
         }
     }
 
-    public async Task PreLoadAsync(int currentIndex, int count, bool parallel, bool reverse, ImageService imageService, List<string> list)
+    public async Task PreLoadAsync(int currentIndex, int count, bool reverse, ImageService imageService, List<string> list)
     {
         if (list == null)
         {
@@ -242,6 +242,7 @@ public class PreLoader
             Trace.WriteLine($"\nPreLoading started at {currentIndex}\n");
 #endif
 
+        var parallel = _preLoadList.IsEmpty;
         var options = parallel
             ? new ParallelOptions
             {

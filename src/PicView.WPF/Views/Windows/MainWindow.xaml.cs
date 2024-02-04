@@ -200,19 +200,19 @@ public partial class MainWindow
         if (Navigation.RightButtonClicked)
         {
             var p = RightButton.PointToScreen(new Point(50, 10)); //Points cursor to center of RightButton
-            NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+            PicView.Windows.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
             Navigation.RightButtonClicked = false;
         }
         else if (Navigation.LeftButtonClicked)
         {
             var p = LeftButton.PointToScreen(new Point(50, 10));
-            NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+            PicView.Windows.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
             Navigation.LeftButtonClicked = false;
         }
         else if (Navigation.ClickArrowRightClicked)
         {
             var p = GetClickArrowRight.PointToScreen(new Point(25, 30));
-            NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+            PicView.Windows.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
             Navigation.ClickArrowRightClicked = false;
 
             FadeControls.Fade(true);
@@ -220,7 +220,7 @@ public partial class MainWindow
         else if (Navigation.ClickArrowLeftClicked)
         {
             var p = GetClickArrowLeft.PointToScreen(new Point(25, 30));
-            NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+            PicView.Windows.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
             Navigation.ClickArrowLeftClicked = false;
 
             FadeControls.Fade(true);

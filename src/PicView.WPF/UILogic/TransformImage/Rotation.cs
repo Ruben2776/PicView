@@ -41,7 +41,7 @@ internal static class Rotation
         await Task.Delay(50)
             .ConfigureAwait(true); // Delay it, so that the move takes place after window has resized
         var p = uIElement.PointToScreen(new Point(25, 25));
-        NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
+        PicView.Windows.NativeMethods.SetCursorPos((int)p.X, (int)p.Y);
     }
 
     /// <summary>
