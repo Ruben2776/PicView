@@ -22,6 +22,7 @@ internal class Program
             .LogToTrace()
 #endif
             .UseReactiveUI()
+            .UseSkia()
             .UsePlatformDetect();
     }
 }

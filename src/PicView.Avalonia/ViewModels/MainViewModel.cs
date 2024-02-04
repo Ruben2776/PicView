@@ -966,7 +966,25 @@ namespace PicView.Avalonia.ViewModels
 
             PasteCommand = ReactiveCommand.Create(() => { });
 
-            OpenWithCommand = ReactiveCommand.Create(() => { ProcessHelper.OpenWith(FileInfo?.FullName); });
+            OpenWithCommand = ReactiveCommand.Create(() =>
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    // TODO: implement open with on mac
+                }
+                else
+                {
+                    ProcessHelper.OpenWith(FileInfo?.FullName);
+                }
+            });
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                ShowInFolderCommand = ReactiveCommand.Create(() =>
+                {
+                    Process.Start("open", $"-R \"{FileInfo?.FullName}\""); 
+                });
+            }
 
             RenameCommand = ReactiveCommand.Create(() => { });
 
