@@ -1,10 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -371,6 +373,10 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? RenameCommand { get; }
         public ICommand? NewWindowCommand { get; }
         public ICommand? DuplicateFileCommand { get; }
+        
+        public ICommand? RotateLeftCommand { get; }
+        public ICommand? RotateRightCommand { get; }
+        public ICommand? FlipCommand { get; }
 
         #endregion Commands
 
@@ -527,12 +533,26 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isToolsMenuVisible, value);
         }
 
-        private bool _isScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+        private ScrollBarVisibility _toggleScrollBarVisibility;
+
+        public ScrollBarVisibility ToggleScrollBarVisibility
+        {
+            get => _toggleScrollBarVisibility;
+            set => this.RaiseAndSetIfChanged(ref _toggleScrollBarVisibility, value);
+        }
+
+        private bool _isScrollingEnabled;
 
         public bool IsScrollingEnabled
         {
             get => _isScrollingEnabled;
-            set => this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
+                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
+                _= SettingsHelper.SaveSettingsAsync();
+            }
         }
 
         private int _getIndex;
@@ -804,6 +824,7 @@ namespace PicView.Avalonia.ViewModels
 
             WindowHelper.InitializeWindowSizeAndPosition(desktop);
             UpdateLanguage();
+            IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
 
             #region Window commands
 
@@ -921,6 +942,23 @@ namespace PicView.Avalonia.ViewModels
             });
 
             #endregion Menus
+            
+            #region Image commands
+            
+            RotateLeftCommand = ReactiveCommand.Create(() =>
+            {
+            });
+            
+            RotateRightCommand = ReactiveCommand.Create(() =>
+            {
+            });
+            
+            FlipCommand = ReactiveCommand.Create(() =>
+            {
+                IsFlipped = !IsFlipped;
+            });
+            
+            #endregion Image commands
 
             #region File commands
 

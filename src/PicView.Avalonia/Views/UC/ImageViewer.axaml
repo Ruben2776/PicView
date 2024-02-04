@@ -12,7 +12,7 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    <ScrollViewer VerticalScrollBarVisibility="Disabled" x:Name="ScrollViewer">
+    <ScrollViewer VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}" x:Name="ScrollViewer">
         <Image Source="{Binding Image}" />
     </ScrollViewer>
 </UserControl>

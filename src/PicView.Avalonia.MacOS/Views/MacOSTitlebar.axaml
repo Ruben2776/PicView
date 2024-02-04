@@ -1,14 +1,15 @@
 <UserControl
-    x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -16,16 +17,16 @@
         Background="{StaticResource MainBackgroundColor}"
         LastChildFill="True"
         PointerPressed="MoveWindow">
-        <Rectangle Width="70" DockPanel.Dock="Left" />
+        <Rectangle DockPanel.Dock="Left" Width="70" />
 
         <Button
-            Name="GalleryButton"
-            Width="30"
             Background="Transparent"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
             Classes="alphaHover"
-            DockPanel.Dock="Right">
+            DockPanel.Dock="Right"
+            Name="GalleryButton"
+            Width="30">
             <Image Width="17">
                 <DrawingImage>
                     <DrawingGroup>
@@ -36,51 +37,51 @@
         </Button>
 
         <Button
-            Width="30"
-            Margin="0"
             Background="Transparent"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
             Classes="alphaHover"
-            DockPanel.Dock="Right">
+            DockPanel.Dock="Right"
+            Margin="0"
+            Width="30">
             <Path
-                Width="12"
-                Height="12"
                 Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
                 Fill="{StaticResource MainIconColor}"
-                Stretch="Fill" />
+                Height="12"
+                Stretch="Fill"
+                Width="12" />
         </Button>
 
         <Button
-            Width="30"
-            Margin="0"
             Background="Transparent"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
             Classes="alphaHover"
-            DockPanel.Dock="Right">
+            DockPanel.Dock="Right"
+            Margin="0"
+            Width="30">
             <Path
-                Width="12"
-                Height="12"
                 Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
                 Fill="{StaticResource MainIconColor}"
-                Stretch="Fill" />
+                Height="12"
+                Stretch="Fill"
+                Width="12" />
         </Button>
 
-        <!-- <Button -->
-        <!--     Width="30" -->
-        <!--     Margin="0" -->
-        <!--     Background="Transparent" -->
-        <!--     BorderBrush="{StaticResource MainBorderColor}" -->
-        <!--     BorderThickness="0" -->
-        <!--     Classes="alphaHover" -->
-        <!--     DockPanel.Dock="Right"> -->
-        <!--     <Path -->
-        <!--         Width="12" -->
-        <!--         Height="12" -->
-        <!--         Data="M413.967,276.8c1.06-6.235,1.06-13.518,1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318   c4.26-3.118,5.319-8.317,2.13-13.518L418.215,115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186,20.801   c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098   c-5.318,0-9.577,4.164-10.637,8.318l-8.508,55.117c-12.767,5.2-24.464,12.482-36.171,20.801l-53.186-20.801   c-5.319-2.071-10.638,0-12.767,4.164l-42.549,71.765c-2.119,4.153-1.061,10.399,2.129,13.518L96.97,235.2   c0,7.282-1.06,13.518-1.06,20.8s1.06,13.518,1.06,20.8l-44.668,34.318c-4.26,3.118-5.318,8.317-2.13,13.518L92.721,396.4   c2.13,4.164,8.508,6.235,12.767,4.164l53.187-20.801c10.637,8.318,23.394,15.601,36.16,20.801l8.508,55.117   c1.069,5.2,5.318,8.318,10.637,8.318h85.098c5.319,0,9.578-4.164,10.638-8.318l8.518-55.117c12.757-5.2,24.464-12.482,36.16-20.801   l53.187,20.801c5.318,2.071,10.637,0,12.767-4.164l42.549-71.765c2.129-4.153,1.06-10.399-2.13-13.518L413.967,276.8z    M255.468,328.8c-41.489,0-74.46-32.235-74.46-72.8s32.971-72.8,74.46-72.8s74.461,32.235,74.461,72.8S296.957,328.8,255.468,328.8   z" -->
-        <!--         Fill="{StaticResource MainIconColor}" -->
-        <!--         Stretch="Fill" /> -->
+        <!--  <Button  -->
+        <!--  Width="30"  -->
+        <!--  Margin="0"  -->
+        <!--  Background="Transparent"  -->
+        <!--  BorderBrush="{StaticResource MainBorderColor}"  -->
+        <!--  BorderThickness="0"  -->
+        <!--  Classes="alphaHover"  -->
+        <!--  DockPanel.Dock="Right">  -->
+        <!--  <Path  -->
+        <!--  Width="12"  -->
+        <!--  Height="12"  -->
+        <!--  Data="M413.967,276.8c1.06-6.235,1.06-13.518,1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318   c4.26-3.118,5.319-8.317,2.13-13.518L418.215,115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186,20.801   c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098   c-5.318,0-9.577,4.164-10.637,8.318l-8.508,55.117c-12.767,5.2-24.464,12.482-36.171,20.801l-53.186-20.801   c-5.319-2.071-10.638,0-12.767,4.164l-42.549,71.765c-2.119,4.153-1.061,10.399,2.129,13.518L96.97,235.2   c0,7.282-1.06,13.518-1.06,20.8s1.06,13.518,1.06,20.8l-44.668,34.318c-4.26,3.118-5.318,8.317-2.13,13.518L92.721,396.4   c2.13,4.164,8.508,6.235,12.767,4.164l53.187-20.801c10.637,8.318,23.394,15.601,36.16,20.801l8.508,55.117   c1.069,5.2,5.318,8.318,10.637,8.318h85.098c5.319,0,9.578-4.164,10.638-8.318l8.518-55.117c12.757-5.2,24.464-12.482,36.16-20.801   l53.187,20.801c5.318,2.071,10.637,0,12.767-4.164l42.549-71.765c2.129-4.153,1.06-10.399-2.13-13.518L413.967,276.8z    M255.468,328.8c-41.489,0-74.46-32.235-74.46-72.8s32.971-72.8,74.46-72.8s74.461,32.235,74.461,72.8S296.957,328.8,255.468,328.8   z"  -->
+        <!--  Fill="{StaticResource MainIconColor}"  -->
+        <!--  Stretch="Fill" />  -->
         <!-- </Button> -->
 
         <!--<Button
@@ -135,6 +136,6 @@
             </Image>
         </Button>-->
 
-        <views:TitleTextBox Height="28" Background="Transparent" />
+        <uc:TitleTextBox Background="Transparent" Height="28" />
     </DockPanel>
 </UserControl>

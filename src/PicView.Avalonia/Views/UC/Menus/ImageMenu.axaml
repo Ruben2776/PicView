@@ -202,7 +202,7 @@
                     Canvas.Left="7"
                     Canvas.Top="53"
                     Classes="ButtonBorder hover"
-                    IsChecked="True"
+                    IsChecked="{Binding IsScrollingEnabled}"
                     ToolTip.Tip="{Binding ToggleScroll}">
                     <TextBlock
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"

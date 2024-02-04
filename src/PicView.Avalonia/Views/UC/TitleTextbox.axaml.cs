@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace PicView.Avalonia.Views;
+namespace PicView.Avalonia.Views.UC;
 
 public partial class TitleTextBox : UserControl
 {
