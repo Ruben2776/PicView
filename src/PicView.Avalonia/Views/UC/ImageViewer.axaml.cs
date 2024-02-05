@@ -1,14 +1,11 @@
-using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Platform;
-using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
+using System.Runtime.InteropServices;
+using Avalonia.Platform.Storage;
+using PicView.Avalonia.DragAndDrop;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -18,6 +15,31 @@ public partial class ImageViewer : UserControl
     {
         InitializeComponent();
         PointerWheelChanged += async (_, e) => await Main_OnPointerWheelChanged(e);
+        // TODO add visual feedback for drag and drop
+        //AddHandler(DragDrop.DragOverEvent, DragOver);
+        AddHandler(DragDrop.DropEvent, Drop);
+    }
+
+    private void Drop(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        var data = e.Data.GetFiles();
+        if (data == null)
+        {
+            // TODO Handle URL and folder drops
+            return;
+        }
+
+        var storageItems = data as IStorageItem[] ?? data.ToArray();
+        var firstFile = storageItems.FirstOrDefault();
+        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
+        _ = vm.LoadPicFromString(path).ConfigureAwait(false);
+        foreach (var file in storageItems.Skip(1))
+        {
+            // TODO Open each file in a new window if the setting to open in the same window is false
+        }
     }
 
     private async Task Main_OnPointerWheelChanged(PointerWheelEventArgs e)
@@ -29,7 +51,7 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
-        
+
         if (e.Delta.Y < 0)
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)

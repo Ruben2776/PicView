@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Avalonia.Models;
 using PicView.Core.FileHandling;
@@ -27,12 +24,12 @@ public class ImageService
             case ".jfif":
             case ".ico":
             case ".wbmp":
-            {
-                var bytes = await FileHelper.GetBytesFromFile(imageModel.FileInfo.FullName).ConfigureAwait(false);
-                using var memoryStream = new MemoryStream(bytes);
-                Add(memoryStream);
-                return;
-            }
+                {
+                    var bytes = await FileHelper.GetBytesFromFile(imageModel.FileInfo.FullName).ConfigureAwait(false);
+                    using var memoryStream = new MemoryStream(bytes);
+                    Add(memoryStream);
+                    return;
+                }
 
             case ".svg":
                 return;
@@ -49,7 +46,7 @@ public class ImageService
                     Add(b64Stream);
                     return;
                 }
-            
+
             default:
                 {
                     var magickImage = await ImageDecoder.GetMagickImageAsync(imageModel.FileInfo, extension).ConfigureAwait(false);

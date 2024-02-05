@@ -1,6 +1,4 @@
 <UserControl
-    Height="1024"
-    Width="750"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"

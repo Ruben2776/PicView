@@ -888,19 +888,20 @@ namespace PicView.Avalonia.ViewModels
             {
                 // TODO display exception to user
             }
-        });
+        }).ConfigureAwait(false);
 
-        private async Task LoadPicFromString(string path)
+        public async Task LoadPicFromString(string path)
         {
             if (!File.Exists(path))
             {
+                // TODO load from URL if not a file
                 throw new FileNotFoundException(path);
             }
 
             await LoadPicFromFile(new FileInfo(path)).ConfigureAwait(false);
         }
 
-        private async Task LoadPicFromFile(FileInfo fileInfo)
+        public async Task LoadPicFromFile(FileInfo fileInfo)
         {
             await Task.Run(async () =>
             {
@@ -914,16 +915,12 @@ namespace PicView.Avalonia.ViewModels
                     };
 
                     ImageService ??= new ImageService();
-                    await ImageService.LoadImageAsync(imageModel).ConfigureAwait(false);
+                    await ImageService.LoadImageAsync(imageModel);
                     SetImageModel(imageModel);
 
                     ImageIterator = new ImageIterator(imageModel.FileInfo);
                     ImageIterator.Index = ImageIterator.Pics.IndexOf(fileInfo.FullName);
-                    SetTitle(imageModel, ImageIterator);
-                    GetIndex = ImageIterator.Index + 1;
-                    CloseMenuCommand?.Execute(null);
-                    await ImageIterator.AddAsync(ImageIterator.Index, ImageService, imageModel);
-                    await ImageIterator.Preload(ImageService);
+                    await LoadPicAtIndex(ImageIterator.Index);
                     ImageIterator.FileAdded += (_, e) => { SetTitle(); };
                     ImageIterator.FileRenamed += (_, e) => { SetTitle(); };
                     ImageIterator.FileDeleted += async (_, e) =>
@@ -956,12 +953,12 @@ namespace PicView.Avalonia.ViewModels
             {
                 return;
             }
-            
+
             var args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
                 CurrentView = new ImageViewer();
-                Task.Run(async () => {  await LoadPicFromString(args[1]); });
+                Task.Run(async () => { await LoadPicFromString(args[1]); });
             }
             else if (SettingsHelper.Settings.StartUp.OpenLastFile)
             {
@@ -979,15 +976,17 @@ namespace PicView.Avalonia.ViewModels
                 desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 SizeToContent = SizeToContent.WidthAndHeight;
                 CanResize = false;
+                IsAutoFit = true;
             }
             else
             {
                 WindowHelper.InitializeWindowSizeAndPosition(desktop);
+                CanResize = true;
+                IsAutoFit = false;
             }
             UpdateLanguage();
             IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
             IsStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
-            IsAutoFit = SettingsHelper.Settings.WindowProperties.AutoFit;
 
             #region Window commands
 
