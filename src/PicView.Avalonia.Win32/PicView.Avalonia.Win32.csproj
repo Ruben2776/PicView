@@ -19,6 +19,7 @@
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <AssemblyName>PicView</AssemblyName>
     <StartupObject>PicView.Avalonia.Win32.Program</StartupObject>
+    <OptimizationPreference>Size</OptimizationPreference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>

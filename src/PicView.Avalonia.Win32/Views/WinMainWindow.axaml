@@ -3,6 +3,7 @@
     Icon="/icon.ico"
     MinHeight="400"
     MinWidth="435"
+    SizeChanged="Control_OnSizeChanged"
     SizeToContent="{Binding SizeToContent}"
     Title="{Binding WindowTitle}"
     TransparencyLevelHint="AcrylicBlur"

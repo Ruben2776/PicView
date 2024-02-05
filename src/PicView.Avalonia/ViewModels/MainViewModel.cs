@@ -210,42 +210,49 @@ namespace PicView.Avalonia.ViewModels
             get => _duplicateFile;
             set => this.RaiseAndSetIfChanged(ref _duplicateFile, value);
         }
-        
+
         private string? _rotateLeft;
+
         public string? RotateLeft
         {
             get => _rotateLeft;
             set => this.RaiseAndSetIfChanged(ref _rotateLeft, value);
         }
-        
+
         private string? _rotateRight;
+
         public string? RotateRight
         {
             get => _rotateRight;
             set => this.RaiseAndSetIfChanged(ref _rotateRight, value);
         }
-        
+
         private string? _flip;
+
         public string? Flip
         {
             get => _flip;
             set => this.RaiseAndSetIfChanged(ref _flip, value);
         }
-        
+
         private string? _unFlip;
+
         public string? UnFlip
         {
             get => _unFlip;
             set => this.RaiseAndSetIfChanged(ref _unFlip, value);
         }
-        
+
         private string? _showBottomGallery;
+
         public string? ShowBottomGallery
         {
             get => _showBottomGallery;
             set => this.RaiseAndSetIfChanged(ref _showBottomGallery, value);
         }
+
         private string? _hideBottomGallery;
+
         public string? HideBottomGallery
         {
             get => _hideBottomGallery;
@@ -253,13 +260,15 @@ namespace PicView.Avalonia.ViewModels
         }
 
         private string? _autoFitWindow;
+
         public string? AutoFitWindow
         {
             get => _autoFitWindow;
             set => this.RaiseAndSetIfChanged(ref _autoFitWindow, value);
         }
-        
+
         private string? _stretch;
+
         public string? Stretch
         {
             get => _stretch;
@@ -267,6 +276,7 @@ namespace PicView.Avalonia.ViewModels
         }
 
         private string? _crop;
+
         public string? Crop
         {
             get => _crop;
@@ -274,6 +284,7 @@ namespace PicView.Avalonia.ViewModels
         }
 
         private string? _resizeImage;
+
         public string? ResizeImage
         {
             get => _resizeImage;
@@ -281,6 +292,7 @@ namespace PicView.Avalonia.ViewModels
         }
 
         private string? _goToImageAtSpecifiedIndex;
+
         public string? GoToImageAtSpecifiedIndex
         {
             get => _goToImageAtSpecifiedIndex;
@@ -288,27 +300,31 @@ namespace PicView.Avalonia.ViewModels
         }
 
         private string? _toggleScroll;
+
         public string? ToggleScroll
         {
             get => _toggleScroll;
             set => this.RaiseAndSetIfChanged(ref _toggleScroll, value);
         }
-        
+
         private string? _scrollEnabled;
+
         public string? ScrollEnabled
         {
             get => _scrollEnabled;
             set => this.RaiseAndSetIfChanged(ref _scrollEnabled, value);
         }
-        
+
         private string? _scrollDisabled;
+
         public string? ScrollDisabled
         {
             get => _scrollDisabled;
             set => this.RaiseAndSetIfChanged(ref _scrollDisabled, value);
         }
-        
+
         private string? _slideshow;
+
         public string? Slideshow
         {
             get => _slideshow;
@@ -316,20 +332,23 @@ namespace PicView.Avalonia.ViewModels
         }
 
         private string? _settings;
+
         public string? Settings
         {
             get => _settings;
             set => this.RaiseAndSetIfChanged(ref _settings, value);
         }
-        
+
         private string? _infoWinow;
+
         public string? InfoWinow
         {
             get => _infoWinow;
             set => this.RaiseAndSetIfChanged(ref _infoWinow, value);
         }
-        
+
         private string? _showAllSettingsWindow;
+
         public string? ShowAllSettingsWindow
         {
             get => _showAllSettingsWindow;
@@ -376,15 +395,16 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? RenameCommand { get; }
         public ICommand? NewWindowCommand { get; }
         public ICommand? DuplicateFileCommand { get; }
-        
+
         public ICommand? RotateLeftCommand { get; }
         public ICommand? RotateRightCommand { get; }
         public ICommand? FlipCommand { get; }
+        public ICommand? ChangeAutoFitCommand { get; }
 
         #endregion Commands
 
         #region Fields
-        
+
         public string? GetFlipped => IsFlipped ? UnFlip : Flip;
         public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
 
@@ -469,8 +489,9 @@ namespace PicView.Avalonia.ViewModels
             get => _height;
             set => this.RaiseAndSetIfChanged(ref _height, value);
         }
-        
+
         private double _titleMaxWidth;
+
         public double TitleMaxWidth
         {
             get => _titleMaxWidth;
@@ -492,38 +513,30 @@ namespace PicView.Avalonia.ViewModels
             get => _zoomValue;
             set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
         }
-        
+
         private bool _isAutoFit;
-        
+
         public bool IsAutoFit
         {
             get => _isAutoFit;
             set
             {
                 SettingsHelper.Settings.WindowProperties.AutoFit = value;
-                if (value)
-                {
-                    SizeToContent = SizeToContent.WidthAndHeight;
-                    CanResize = false;
-                }
-                else
-                {
-                    SizeToContent = SizeToContent.Manual;
-                    CanResize = true;
-                }
                 this.RaiseAndSetIfChanged(ref _isAutoFit, value);
-                _= SettingsHelper.SaveSettingsAsync();
-            } 
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
         }
-        
+
         private SizeToContent _sizeToContent;
+
         public SizeToContent SizeToContent
         {
             get => _sizeToContent;
             set => this.RaiseAndSetIfChanged(ref _sizeToContent, value);
         }
-        
+
         private bool _canResize;
+
         public bool CanResize
         {
             get => _canResize;
@@ -599,31 +612,32 @@ namespace PicView.Avalonia.ViewModels
                 ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
                 SettingsHelper.Settings.Zoom.ScrollEnabled = value;
                 SetImageModel();
-                _= SettingsHelper.SaveSettingsAsync();
+                _ = SettingsHelper.SaveSettingsAsync();
             }
         }
-        
+
         private bool _isStretched;
+
         public bool IsStretched
         {
             get => _isStretched;
-            set  
+            set
             {
                 this.RaiseAndSetIfChanged(ref _isStretched, value);
                 SettingsHelper.Settings.ImageScaling.StretchImage = value;
                 SetImageModel();
-                _= SettingsHelper.SaveSettingsAsync();
-            } 
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
         }
 
         private int _getIndex;
+
         public int GetIndex
         {
             get => _getIndex;
             set => this.RaiseAndSetIfChanged(ref _getIndex, value);
         }
-        
-        
+
         #endregion Fields
 
         #region Services
@@ -640,12 +654,17 @@ namespace PicView.Avalonia.ViewModels
 
         public void SetImageModel()
         {
+            if (Image is null || FileInfo is null)
+            {
+                return;
+            }
+            var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, ImageIterator.Pics);
             var imageModel = new ImageModel
             {
                 Image = Image,
                 FileInfo = FileInfo,
-                PixelWidth = (int)Width,
-                PixelHeight = (int)Height,
+                PixelWidth = preloadValue?.ImageModel?.PixelWidth ?? (int)Width,
+                PixelHeight = preloadValue?.ImageModel?.PixelHeight ?? (int)Height,
                 EXIFOrientation = EXIFOrientation,
                 IsFlipped = IsFlipped,
                 Rotation = Rotation
@@ -660,11 +679,13 @@ namespace PicView.Avalonia.ViewModels
                 return;
             }
             var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
-            double desktopMinWidth = 0, desktopMinHeight = 0;
+            double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
             if (Dispatcher.UIThread.CheckAccess())
             {
                 desktopMinWidth = desktop.MainWindow.MinWidth;
                 desktopMinHeight = desktop.MainWindow.MinHeight;
+                containerWidth = desktop.MainWindow.Width;
+                containerHeight = desktop.MainWindow.Height;
             }
             else
             {
@@ -672,6 +693,8 @@ namespace PicView.Avalonia.ViewModels
                 {
                     desktopMinWidth = desktop.MainWindow.MinWidth;
                     desktopMinHeight = desktop.MainWindow.MinHeight;
+                    containerWidth = desktop.MainWindow.Width;
+                    containerHeight = desktop.MainWindow.Height;
                 }, DispatcherPriority.Normal).Wait();
             }
             var size = ImageSizeCalculationHelper.GetImageSize(
@@ -691,8 +714,8 @@ namespace PicView.Avalonia.ViewModels
                 35,
                 0,
                 IsAutoFit,
-                SettingsHelper.Settings.WindowProperties.Width,
-                SettingsHelper.Settings.WindowProperties.Height,
+                containerWidth,
+                containerHeight,
                 IsScrollingEnabled);
             SetImageModel(imageModel, size.Width, size.Height, size.TitleMaxWidth);
         }
@@ -755,125 +778,129 @@ namespace PicView.Avalonia.ViewModels
             TitleTooltip = Title = TranslationHelper.GetTranslation("Loading");
         }
 
-        public async Task SetImageNavigation(NavigateTo navigateTo)
+        public async Task LoadNextPic(NavigateTo navigateTo)
         {
             if (ImageIterator is null)
             {
                 return;
             }
-            
-            await Task.Run(async () =>
+            var index = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
+            if (index < 0)
             {
-                try
+                return;
+            }
+            await LoadPicAtIndex(index);
+        }
+
+        public async Task LoadPicAtIndex(int index) => await Task.Run(async () =>
+        {
+            if (ImageIterator is null)
+            {
+                return;
+            }
+
+            try
+            {
+                ImageIterator.Index = index;
+                var x = 0;
+
+                var preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
+                if (preLoadValue is not null)
                 {
-
-                    var index = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
-                    if (index < 0)
+                    while (preLoadValue.IsLoading)
                     {
-                        return;
-                    }
-
-                    ImageIterator.Index = index;
-                    var x = 0;
-
-                    var preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
-                    if (preLoadValue is not null)
-                    {
-                        while (preLoadValue.IsLoading)
+                        if (x == 0)
                         {
-                            if (x == 0)
+                            SetLoadingTitle();
+                            using var image = new MagickImage();
+                            image.Ping(ImageIterator.Pics[index]);
+                            var thumb = image.GetExifProfile()?.CreateThumbnail();
+                            if (thumb is not null)
                             {
-                                SetLoadingTitle();
-                                using var image = new MagickImage();
-                                image.Ping(ImageIterator.Pics[index]);
-                                var thumb = image.GetExifProfile()?.CreateThumbnail();
-                                if (thumb is not null)
-                                {
-                                    var stream = new MemoryStream(thumb?.ToByteArray());
-                                    Image = new Bitmap(stream);
-                                }
-                                else
-                                {
-                                    Image = null;
-                                }
+                                var stream = new MemoryStream(thumb?.ToByteArray());
+                                Image = new Bitmap(stream);
                             }
-
-                            x++;
-                            await Task.Delay(20);
-                            if (ImageIterator.Index != index)
+                            else
                             {
-                                await ImageIterator.Preload(ImageService);
-                                return;
+                                Image = null;
                             }
-
-                            if (x <= 50)
-                            {
-                                continue;
-                            }
-
-                            await GetPreload();
-#if DEBUG
-                            Trace.WriteLine("Loading timeout");
-#endif
-                            break;
                         }
-                    }
 
-                    if (preLoadValue is null)
-                    {
-                        await GetPreload();
-                    }
-
-                    if (ImageIterator.Index != index)
-                    {
-                        await ImageIterator.Preload(ImageService);
-                        return;
-                    }
-
-                    SetImageModel(preLoadValue.ImageModel);
-                    SetTitle(preLoadValue.ImageModel, ImageIterator);
-                    GetIndex = ImageIterator.Index + 1;
-                    await ImageIterator.Preload(ImageService);
-                    await Task.Delay(100); // Need to delay to allow UI to render
-                    ImageChanged?.Invoke(this, EventArgs.Empty);
-                    return;
-
-                    async Task GetPreload()
-                    {
-                        await ImageIterator.PreLoader.AddAsync(index, ImageService, ImageIterator.Pics)
-                            .ConfigureAwait(false);
-                        preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
+                        x++;
+                        await Task.Delay(20);
                         if (ImageIterator.Index != index)
                         {
                             await ImageIterator.Preload(ImageService);
                             return;
                         }
 
-                        if (preLoadValue is null)
+                        if (x <= 50)
                         {
-                            throw new ArgumentNullException(nameof(SetImageNavigation),
-                                nameof(preLoadValue) + " is null");
+                            continue;
                         }
+
+                        await GetPreload();
+#if DEBUG
+                        Trace.WriteLine("Loading timeout");
+#endif
+                        break;
                     }
                 }
-                catch (Exception)
-                {
-                    // TODO display exception to user
-                }
-            });
-        }
 
-        private async Task SetImageModelAsync(string path)
+                if (preLoadValue is null)
+                {
+                    await GetPreload();
+                }
+
+                if (ImageIterator.Index != index)
+                {
+                    await ImageIterator.Preload(ImageService);
+                    return;
+                }
+
+                SetImageModel(preLoadValue.ImageModel);
+                SetTitle(preLoadValue.ImageModel, ImageIterator);
+                GetIndex = ImageIterator.Index + 1;
+                await ImageIterator.Preload(ImageService);
+                await Task.Delay(100); // Need to delay to allow UI to render
+                ImageChanged?.Invoke(this, EventArgs.Empty);
+                return;
+
+                async Task GetPreload()
+                {
+                    await ImageIterator.PreLoader.AddAsync(index, ImageService, ImageIterator.Pics)
+                        .ConfigureAwait(false);
+                    preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
+                    if (ImageIterator.Index != index)
+                    {
+                        await ImageIterator.Preload(ImageService);
+                        return;
+                    }
+
+                    if (preLoadValue is null)
+                    {
+                        throw new ArgumentNullException(nameof(LoadNextPic),
+                            nameof(preLoadValue) + " is null");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // TODO display exception to user
+            }
+        });
+
+        private async Task LoadPicFromString(string path)
         {
             if (!File.Exists(path))
             {
                 throw new FileNotFoundException(path);
             }
 
-            await SetImageModelAsync(new FileInfo(path)).ConfigureAwait(false);
+            await LoadPicFromFile(new FileInfo(path)).ConfigureAwait(false);
         }
 
-        private async Task SetImageModelAsync(FileInfo fileInfo)
+        private async Task LoadPicFromFile(FileInfo fileInfo)
         {
             await Task.Run(async () =>
             {
@@ -903,7 +930,7 @@ namespace PicView.Avalonia.ViewModels
                     {
                         if (e) //change if deleting current file
                         {
-                            await SetImageModelAsync(ImageIterator.Pics[ImageIterator.Index]);
+                            await LoadPicFromString(ImageIterator.Pics[ImageIterator.Index]);
                         }
                         else
                         {
@@ -929,17 +956,17 @@ namespace PicView.Avalonia.ViewModels
             {
                 return;
             }
-
+            
             var args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
                 CurrentView = new ImageViewer();
-                Task.Run(async () => { await SetImageModelAsync(args[1]); });
+                Task.Run(async () => {  await LoadPicFromString(args[1]); });
             }
             else if (SettingsHelper.Settings.StartUp.OpenLastFile)
             {
                 CurrentView = new ImageViewer();
-                Task.Run(async () => { await SetImageModelAsync(SettingsHelper.Settings.StartUp.LastFile); });
+                Task.Run(async () => { await LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile); });
             }
             else
             {
@@ -950,6 +977,8 @@ namespace PicView.Avalonia.ViewModels
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                SizeToContent = SizeToContent.WidthAndHeight;
+                CanResize = false;
             }
             else
             {
@@ -974,7 +1003,22 @@ namespace PicView.Avalonia.ViewModels
 
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
-            #endregion
+            ChangeAutoFitCommand = ReactiveCommand.Create(() =>
+            {
+                if (SettingsHelper.Settings.WindowProperties.AutoFit)
+                {
+                    SizeToContent = SizeToContent.WidthAndHeight;
+                    CanResize = false;
+                }
+                else
+                {
+                    SizeToContent = SizeToContent.Manual;
+                    CanResize = true;
+                }
+                SetImageModel();
+            });
+
+            #endregion Window commands
 
             #region Navigation Commands
 
@@ -985,7 +1029,7 @@ namespace PicView.Avalonia.ViewModels
                     return;
                 }
 
-                await SetImageNavigation(NavigateTo.Next).ConfigureAwait(false);
+                await LoadNextPic(NavigateTo.Next).ConfigureAwait(false);
             });
 
             PreviousCommand = ReactiveCommand.Create(async () =>
@@ -995,7 +1039,7 @@ namespace PicView.Avalonia.ViewModels
                     return;
                 }
 
-                await SetImageNavigation(NavigateTo.Previous).ConfigureAwait(false);
+                await LoadNextPic(NavigateTo.Previous).ConfigureAwait(false);
             });
 
             FirstCommand = ReactiveCommand.Create(async () =>
@@ -1005,7 +1049,7 @@ namespace PicView.Avalonia.ViewModels
                     return;
                 }
 
-                await SetImageNavigation(NavigateTo.First).ConfigureAwait(false);
+                await LoadNextPic(NavigateTo.First).ConfigureAwait(false);
             });
 
             LastCommand = ReactiveCommand.Create(async () =>
@@ -1015,7 +1059,7 @@ namespace PicView.Avalonia.ViewModels
                     return;
                 }
 
-                await SetImageNavigation(NavigateTo.Last).ConfigureAwait(false);
+                await LoadNextPic(NavigateTo.Last).ConfigureAwait(false);
             });
 
             ReloadCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -1028,10 +1072,10 @@ namespace PicView.Avalonia.ViewModels
                 ImageIterator.PreLoader.Clear();
                 CurrentView = new ImageViewer();
                 Image = null;
-                await SetImageModelAsync(FileInfo.FullName);
+                await LoadPicFromString(FileInfo.FullName);
             });
 
-            #endregion
+            #endregion Navigation Commands
 
             #region Menus
 
@@ -1076,22 +1120,22 @@ namespace PicView.Avalonia.ViewModels
             });
 
             #endregion Menus
-            
+
             #region Image commands
-            
+
             RotateLeftCommand = ReactiveCommand.Create(() =>
             {
             });
-            
+
             RotateRightCommand = ReactiveCommand.Create(() =>
             {
             });
-            
+
             FlipCommand = ReactiveCommand.Create(() =>
             {
                 IsFlipped = !IsFlipped;
             });
-            
+
             #endregion Image commands
 
             #region File commands
@@ -1109,11 +1153,11 @@ namespace PicView.Avalonia.ViewModels
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
                     var path = file.Path.AbsolutePath;
-                    await SetImageModelAsync(new FileInfo(path));
+                    await LoadPicFromFile(new FileInfo(path));
                 }
                 else
                 {
-                    await SetImageModelAsync(new FileInfo(file.Path.LocalPath));
+                    await LoadPicFromFile(new FileInfo(file.Path.LocalPath));
                 }
             });
 
@@ -1154,7 +1198,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 ShowInFolderCommand = ReactiveCommand.Create(() =>
                 {
-                    Process.Start("open", $"-R \"{FileInfo?.FullName}\""); 
+                    Process.Start("open", $"-R \"{FileInfo?.FullName}\"");
                 });
             }
 
@@ -1177,7 +1221,7 @@ namespace PicView.Avalonia.ViewModels
                 FileDeletionHelper.DeleteFileWithErrorMsg(FileInfo?.FullName, true);
             });
 
-            #endregion
+            #endregion File commands
 
             Activator = new ViewModelActivator();
             this.WhenActivated(disposables =>

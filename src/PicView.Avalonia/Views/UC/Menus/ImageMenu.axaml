@@ -215,6 +215,7 @@
                     Canvas.Left="7"
                     Canvas.Top="99"
                     Classes="ButtonBorder hover"
+                    Command="{Binding ChangeAutoFitCommand}"
                     IsChecked="{Binding IsAutoFit}"
                     ToolTip.Tip="{Binding AutoFitWindow}">
                     <TextBlock
