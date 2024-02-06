@@ -1,11 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
 using System.Runtime.InteropServices;
-using Avalonia.Platform.Storage;
-using PicView.Avalonia.DragAndDrop;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -18,6 +18,22 @@ public partial class ImageViewer : UserControl
         // TODO add visual feedback for drag and drop
         //AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
+
+        Loaded += delegate
+        {
+            if (DataContext is not MainViewModel vm)
+                return;
+            vm.ImageChanged += (s, e) =>
+            {
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+                {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        ScrollViewer.ScrollToHome();
+                    }, DispatcherPriority.Normal);
+                }
+            };
+        };
     }
 
     private void Drop(object? sender, DragEventArgs e)

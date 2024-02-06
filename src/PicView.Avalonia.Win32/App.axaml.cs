@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Views;
+using ReactiveUI;
 
 namespace PicView.Avalonia.Win32;
 

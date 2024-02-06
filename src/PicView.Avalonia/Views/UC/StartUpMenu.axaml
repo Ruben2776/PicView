@@ -1,14 +1,14 @@
 <UserControl
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.StartUpMenu"
-    x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:MainViewModel"
+    mc:Ignorable="d">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
@@ -40,29 +40,33 @@
                 </DrawingGroup>
             </DrawingImage.Drawing>
         </DrawingImage>
+
+        <SolidColorBrush x:Key="SelectFileBrush" Color="{StaticResource MainTextColor}" />
+        <SolidColorBrush x:Key="OpenLastFileBrush" Color="{StaticResource MainTextColor}" />
+        <SolidColorBrush x:Key="PasteBrush" Color="{StaticResource MainTextColor}" />
     </UserControl.Resources>
     <Grid>
         <Viewbox
-            HorizontalAlignment="Center"
+            x:Name="LogoViewbox"
             Margin="15,20"
-            VerticalAlignment="Center"
-            x:Name="LogoViewbox">
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
             <Image
+                x:Name="Logo"
                 HorizontalAlignment="Center"
-                Source="{StaticResource Logo}"
-                Stretch="Fill"
                 VerticalAlignment="Center"
-                x:Name="Logo" />
+                Source="{StaticResource Logo}"
+                Stretch="Fill" />
         </Viewbox>
         <StackPanel
+            x:Name="Buttons"
             Height="30"
-            HorizontalAlignment="Center"
             Margin="0,220,25,16"
-            Orientation="Horizontal"
+            HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            x:Name="Buttons">
+            Orientation="Horizontal">
 
-            <Button Command="{Binding OpenFileCommand}" x:Name="SelectFileButton">
+            <Button x:Name="SelectFileButton" Command="{Binding OpenFileCommand}">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="20.091">
                         <Image.Source>
@@ -72,7 +76,7 @@
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M64,192L64,120A40,40,0,0,1,104,80L179.89,80A40,40,0,0,1,202.08,86.72L229.92,105.28A40,40,0,0,0,252.11,112L408,112A40,40,0,0,1,448,152L448,192">
                                             <GeometryDrawing.Pen>
                                                 <Pen
-                                                    Brush="{StaticResource MainIconColor}"
+                                                    Brush="{StaticResource SelectFileBrush}"
                                                     LineJoin="Round"
                                                     MiterLimit="1"
                                                     Thickness="32" />
@@ -81,7 +85,7 @@
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M479.9,226.55L463.68,392A40,40,0,0,1,423.75,432L88.25,432A40,40,0,0,1,48.32,392L32.1,226.55A32,32,0,0,1,64,192L448.1,192A32,32,0,0,1,479.9,226.55z">
                                             <GeometryDrawing.Pen>
                                                 <Pen
-                                                    Brush="{StaticResource MainIconColor}"
+                                                    Brush="{StaticResource SelectFileBrush}"
                                                     LineJoin="Round"
                                                     MiterLimit="1"
                                                     Thickness="32" />
@@ -93,14 +97,14 @@
                         </Image.Source>
                     </Image>
                     <Label
-                        Content="{Binding SelectFile}"
-                        Foreground="{StaticResource MainTextColor}"
+                        x:Name="OpenFileDialogLabel"
                         Padding="8,8,15,5"
-                        x:Name="OpenFileDialogLabel" />
+                        Content="{Binding SelectFile}"
+                        Foreground="{StaticResource SelectFileBrush}" />
                 </StackPanel>
             </Button>
 
-            <Button Command="{Binding OpenLastFileCommand}" x:Name="OpenLastFileButton">
+            <Button x:Name="OpenLastFileButton" Command="{Binding OpenLastFileCommand}">
                 <StackPanel Height="30" Orientation="Horizontal">
                     <Image Height="20.091">
                         <Image.Source>
@@ -110,7 +114,7 @@
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
                                             <GeometryDrawing.Pen>
                                                 <Pen
-                                                    Brush="{StaticResource MainIconColor}"
+                                                    Brush="{StaticResource OpenLastFileBrush}"
                                                     LineJoin="Miter"
                                                     MiterLimit="1"
                                                     Thickness="32" />
@@ -119,7 +123,7 @@
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M400,80L400,432">
                                             <GeometryDrawing.Pen>
                                                 <Pen
-                                                    Brush="{StaticResource MainIconColor}"
+                                                    Brush="{StaticResource OpenLastFileBrush}"
                                                     LineJoin="Miter"
                                                     MiterLimit="1"
                                                     Thickness="32" />
@@ -131,26 +135,26 @@
                         </Image.Source>
                     </Image>
                     <Label
-                        Content="{Binding OpenLastFile}"
-                        Foreground="{StaticResource MainTextColor}"
+                        x:Name="OpenLastFileLabel"
                         Padding="8,8,15,2"
-                        x:Name="OpenLastFileLabel" />
+                        Content="{Binding OpenLastFile}"
+                        Foreground="{StaticResource OpenLastFileBrush}" />
                 </StackPanel>
             </Button>
 
-            <Button Command="{Binding PasteCommand}" x:Name="PasteButton">
+            <Button x:Name="PasteButton" Command="{Binding PasteCommand}">
                 <StackPanel Height="30" Orientation="Horizontal">
                     <Path
-                        Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
-                        Fill="{StaticResource MainIconColor}"
+                        Width="20"
                         Height="20"
-                        Stretch="Fill"
-                        Width="20" />
+                        Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
+                        Fill="{StaticResource PasteBrush}"
+                        Stretch="Fill" />
                     <Label
-                        Content="{Binding FilePaste}"
-                        Foreground="{StaticResource MainTextColor}"
+                        x:Name="FilePasteLabel"
                         Padding="8,8,15,5"
-                        x:Name="FilePasteLabel" />
+                        Content="{Binding FilePaste}"
+                        Foreground="{StaticResource PasteBrush}" />
                 </StackPanel>
             </Button>
         </StackPanel>

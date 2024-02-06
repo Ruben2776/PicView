@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using ReactiveUI;
 using System.Reactive.Concurrency;
-using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Views;
 
@@ -41,7 +40,7 @@ public partial class MainView : UserControl
                 {
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(90, 0, 0, 0),
+                    Margin = new Thickness(127, 0, 0, 0),
                     Opacity = 1
                 };
 

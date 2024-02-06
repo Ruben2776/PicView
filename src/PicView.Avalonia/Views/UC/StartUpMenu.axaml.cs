@@ -1,5 +1,7 @@
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -13,6 +15,87 @@ public partial class StartUpMenu : UserControl
     {
         InitializeComponent();
         SizeChanged += (_, e) => ResponsiveSize(e.NewSize.Width);
+        Loaded += StartUpMenu_Loaded;
+    }
+
+    private void StartUpMenu_Loaded(object? sender, RoutedEventArgs e)
+    {
+        SelectFileButton.PointerEntered += (_, _) =>
+        {
+            if (!this.TryFindResource("SelectFileBrush", ThemeVariant.Default, out var brush))
+                return;
+
+            if (!this.TryFindResource("AccentColor", ThemeVariant.Default, out var color))
+                return;
+
+            var selectFileBrush = brush as SolidColorBrush;
+            selectFileBrush.Color = color as Color? ?? default;
+        };
+
+        SelectFileButton.PointerExited += (_, _) =>
+        {
+            if (!this.TryFindResource("SelectFileBrush", ThemeVariant.Default, out var brush))
+                return;
+
+            if (!this.TryFindResource("MainTextColor", ThemeVariant.Default, out var color))
+                return;
+
+            var selectFileBrush = brush as SolidColorBrush;
+            selectFileBrush.Color = color as Color? ?? default;
+        };
+
+        OpenLastFileButton.PointerEntered += (_, _) =>
+        {
+            if (!this.TryFindResource("OpenLastFileBrush", ThemeVariant.Default, out var brush))
+                return;
+
+            if (!this.TryFindResource("AccentColor", ThemeVariant.Default, out var color))
+                return;
+
+            var selectFileBrush = brush as SolidColorBrush;
+            selectFileBrush.Color = color as Color? ?? default;
+        };
+
+        OpenLastFileButton.PointerExited += (_, _) =>
+        {
+            if (!this.TryFindResource("OpenLastFileBrush", ThemeVariant.Default, out var brush))
+                return;
+
+            if (!this.TryFindResource("MainTextColor", ThemeVariant.Default, out var color))
+                return;
+
+            var selectFileBrush = brush as SolidColorBrush;
+            selectFileBrush.Color = color as Color? ?? default;
+        };
+
+        PasteButton.PointerEntered += (_, _) =>
+        {
+            if (!this.TryFindResource("PasteBrush", ThemeVariant.Default, out var brush))
+                return;
+
+            if (!this.TryFindResource("AccentColor", ThemeVariant.Default, out var color))
+                return;
+
+            var selectFileBrush = brush as SolidColorBrush;
+            selectFileBrush.Color = color as Color? ?? default;
+        };
+
+        PasteButton.PointerExited += (_, _) =>
+        {
+            if (!this.TryFindResource("PasteBrush", ThemeVariant.Default, out var brush))
+                return;
+
+            if (!this.TryFindResource("MainTextColor", ThemeVariant.Default, out var color))
+                return;
+
+            var selectFileBrush = brush as SolidColorBrush;
+            selectFileBrush.Color = color as Color? ?? default;
+        };
+
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        vm.ResetTitle();
     }
 
     public void ResponsiveSize(double width)

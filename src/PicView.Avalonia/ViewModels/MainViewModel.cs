@@ -1,9 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -25,6 +20,10 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
+using System.Diagnostics;
+using System.Reactive.Disposables;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
 
 namespace PicView.Avalonia.ViewModels
 {
@@ -32,7 +31,7 @@ namespace PicView.Avalonia.ViewModels
     {
         public ViewModelActivator? Activator { get; }
 
-        public event EventHandler ImageChanged;
+        public event EventHandler? ImageChanged;
 
         #region Localization
 
@@ -72,7 +71,11 @@ namespace PicView.Avalonia.ViewModels
             Slideshow = TranslationHelper.GetTranslation("Slideshow");
             Settings = TranslationHelper.GetTranslation("Settings");
             InfoWinow = TranslationHelper.GetTranslation("InfoWindow");
+            About = TranslationHelper.GetTranslation("About");
             ShowAllSettingsWindow = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
+            StayTopMost = TranslationHelper.GetTranslation("StayTopMost");
+            SearchSubdirectory = TranslationHelper.GetTranslation("SearchSubdirectory");
+            ToggleLooping = TranslationHelper.GetTranslation("ToggleLooping");
         }
 
         private string? _selectFile;
@@ -347,12 +350,44 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _infoWinow, value);
         }
 
+        private string? _about;
+
+        public string? About
+        {
+            get => _about;
+            set => this.RaiseAndSetIfChanged(ref _about, value);
+        }
+
         private string? _showAllSettingsWindow;
 
         public string? ShowAllSettingsWindow
         {
             get => _showAllSettingsWindow;
             set => this.RaiseAndSetIfChanged(ref _showAllSettingsWindow, value);
+        }
+
+        private string? _stayTopMost;
+
+        public string? StayTopMost
+        {
+            get => _stayTopMost;
+            set => this.RaiseAndSetIfChanged(ref _stayTopMost, value);
+        }
+
+        private string? _searchSubdirectory;
+
+        public string? SearchSubdirectory
+        {
+            get => _searchSubdirectory;
+            set => this.RaiseAndSetIfChanged(ref _searchSubdirectory, value);
+        }
+
+        private string? _toggleLooping;
+
+        public string? ToggleLooping
+        {
+            get => _toggleLooping;
+            set => this.RaiseAndSetIfChanged(ref _toggleLooping, value);
         }
 
         #endregion Localization
@@ -376,7 +411,6 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? PrintCommand { get; private set; }
         public ICommand? DeleteFileCommand { get; private set; }
         public ICommand? RecycleFileCommand { get; private set; }
-        public ICommand? SaveCommand { get; }
         public ICommand? CloseMenuCommand { get; }
         public ICommand? ToggleFileMenuCommand { get; }
         public ICommand? ToggleImageMenuCommand { get; }
@@ -543,6 +577,56 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _canResize, value);
         }
 
+        private ScrollBarVisibility _toggleScrollBarVisibility;
+
+        public ScrollBarVisibility ToggleScrollBarVisibility
+        {
+            get => _toggleScrollBarVisibility;
+            set => this.RaiseAndSetIfChanged(ref _toggleScrollBarVisibility, value);
+        }
+
+        private bool _isScrollingEnabled;
+
+        public bool IsScrollingEnabled
+        {
+            get => _isScrollingEnabled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
+                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
+                SetSize();
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isStretched;
+
+        public bool IsStretched
+        {
+            get => _isStretched;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isStretched, value);
+                SettingsHelper.Settings.ImageScaling.StretchImage = value;
+                SetSize();
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isLooping;
+
+        public bool IsLooping
+        {
+            get => _isLooping;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isLooping, value);
+                SettingsHelper.Settings.UIProperties.Looping = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
         #endregion Image
 
         private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
@@ -593,49 +677,38 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isToolsMenuVisible, value);
         }
 
-        private ScrollBarVisibility _toggleScrollBarVisibility;
-
-        public ScrollBarVisibility ToggleScrollBarVisibility
-        {
-            get => _toggleScrollBarVisibility;
-            set => this.RaiseAndSetIfChanged(ref _toggleScrollBarVisibility, value);
-        }
-
-        private bool _isScrollingEnabled;
-
-        public bool IsScrollingEnabled
-        {
-            get => _isScrollingEnabled;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
-                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
-                SetImageModel();
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _isStretched;
-
-        public bool IsStretched
-        {
-            get => _isStretched;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isStretched, value);
-                SettingsHelper.Settings.ImageScaling.StretchImage = value;
-                SetImageModel();
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
         private int _getIndex;
 
         public int GetIndex
         {
             get => _getIndex;
             set => this.RaiseAndSetIfChanged(ref _getIndex, value);
+        }
+
+        private bool _isTopMost;
+
+        public bool IsTopMost
+        {
+            get => _isTopMost;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isTopMost, value);
+                SettingsHelper.Settings.WindowProperties.TopMost = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _includeSubdirectories;
+
+        public bool IncludeSubdirectories
+        {
+            get => _includeSubdirectories;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _includeSubdirectories, value);
+                SettingsHelper.Settings.Sorting.IncludeSubDirectories = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
         }
 
         #endregion Fields
@@ -651,6 +724,72 @@ namespace PicView.Avalonia.ViewModels
         #endregion Services
 
         #region Methods
+
+        public void SetSize()
+        {
+            if (Image is null)
+            {
+                return;
+            }
+            var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, ImageIterator.Pics);
+            SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)Width, preloadValue?.ImageModel?.PixelHeight ?? (int)Height, Rotation);
+        }
+
+        public void SetSize(double width, double height, double rotation)
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
+            double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
+            var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? 32 : 0; // Height of the titlebar, TODO get actual size
+            var uiBottomSize =
+                SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
+                    ? 26 : 0;
+            var galleryHeight = IsBottomGalleryShown ? 100 : 0;
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                desktopMinWidth = desktop.MainWindow.MinWidth;
+                desktopMinHeight = desktop.MainWindow.MinHeight;
+                containerWidth = desktop.MainWindow.Width;
+                containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+            }
+            else
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    desktopMinWidth = desktop.MainWindow.MinWidth;
+                    desktopMinHeight = desktop.MainWindow.MinHeight;
+                    containerWidth = desktop.MainWindow.Width;
+                    containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+                }, DispatcherPriority.Normal).Wait();
+            }
+            var size = ImageSizeCalculationHelper.GetImageSize(
+                width,
+                height,
+                monitor.Bounds.Width,
+                monitor.Bounds.Height,
+                desktopMinWidth,
+                desktopMinHeight,
+                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 195 : 225,
+                rotation,
+                IsStretched,
+                40,
+                monitor.Scaling,
+                SettingsHelper.Settings.WindowProperties.Fullscreen,
+                uiTopSize,
+                uiBottomSize,
+                galleryHeight,
+                IsAutoFit,
+                containerWidth,
+                containerHeight,
+                IsScrollingEnabled);
+
+            TitleMaxWidth = size.TitleMaxWidth;
+            Width = size.Width;
+            Height = size.Height;
+        }
 
         public void SetImageModel()
         {
@@ -674,60 +813,9 @@ namespace PicView.Avalonia.ViewModels
 
         public void SetImageModel(ImageModel imageModel)
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-            var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
-            double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
-            if (Dispatcher.UIThread.CheckAccess())
-            {
-                desktopMinWidth = desktop.MainWindow.MinWidth;
-                desktopMinHeight = desktop.MainWindow.MinHeight;
-                containerWidth = desktop.MainWindow.Width;
-                containerHeight = desktop.MainWindow.Height;
-            }
-            else
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    desktopMinWidth = desktop.MainWindow.MinWidth;
-                    desktopMinHeight = desktop.MainWindow.MinHeight;
-                    containerWidth = desktop.MainWindow.Width;
-                    containerHeight = desktop.MainWindow.Height;
-                }, DispatcherPriority.Normal).Wait();
-            }
-            var size = ImageSizeCalculationHelper.GetImageSize(
-                imageModel.PixelWidth,
-                imageModel.PixelHeight,
-                monitor.Bounds.Width,
-                monitor.Bounds.Height,
-                desktopMinWidth,
-                desktopMinHeight,
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 195 : 225,
-                imageModel.Rotation,
-                IsStretched,
-                40,
-                monitor.Scaling,
-                SettingsHelper.Settings.WindowProperties.Fullscreen,
-                35,
-                35,
-                0,
-                IsAutoFit,
-                containerWidth,
-                containerHeight,
-                IsScrollingEnabled);
-            SetImageModel(imageModel, size.Width, size.Height, size.TitleMaxWidth);
-        }
-
-        public void SetImageModel(ImageModel? imageModel, double width, double height, double titleMaxWidth)
-        {
             ArgumentNullException.ThrowIfNull(imageModel);
             Image = imageModel.Image;
             FileInfo = imageModel.FileInfo;
-            TitleMaxWidth = titleMaxWidth;
-            Width = width;
-            Height = height;
             EXIFOrientation = imageModel.EXIFOrientation;
             IsFlipped = imageModel.IsFlipped;
             Rotation = imageModel.Rotation;
@@ -859,11 +947,11 @@ namespace PicView.Avalonia.ViewModels
                 }
 
                 SetImageModel(preLoadValue.ImageModel);
+                SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0);
                 SetTitle(preLoadValue.ImageModel, ImageIterator);
                 GetIndex = ImageIterator.Index + 1;
-                await ImageIterator.Preload(ImageService);
-                await Task.Delay(100); // Need to delay to allow UI to render
                 ImageChanged?.Invoke(this, EventArgs.Empty);
+                await ImageIterator.Preload(ImageService);
                 return;
 
                 async Task GetPreload()
@@ -954,6 +1042,8 @@ namespace PicView.Avalonia.ViewModels
                 return;
             }
 
+            SetLoadingTitle();
+
             var args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
@@ -968,7 +1058,6 @@ namespace PicView.Avalonia.ViewModels
             else
             {
                 CurrentView = new StartUpMenu();
-                ResetTitle();
             }
 
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
@@ -980,13 +1069,16 @@ namespace PicView.Avalonia.ViewModels
             }
             else
             {
-                WindowHelper.InitializeWindowSizeAndPosition(desktop);
                 CanResize = true;
                 IsAutoFit = false;
+                WindowHelper.InitializeWindowSizeAndPosition(desktop);
             }
             UpdateLanguage();
             IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
             IsStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
+            IsTopMost = SettingsHelper.Settings.WindowProperties.TopMost;
+            IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+            IsLooping = SettingsHelper.Settings.UIProperties.Looping;
 
             #region Window commands
 
@@ -1014,7 +1106,7 @@ namespace PicView.Avalonia.ViewModels
                     SizeToContent = SizeToContent.Manual;
                     CanResize = true;
                 }
-                SetImageModel();
+                SetSize();
             });
 
             #endregion Window commands
@@ -1158,6 +1250,17 @@ namespace PicView.Avalonia.ViewModels
                 {
                     await LoadPicFromFile(new FileInfo(file.Path.LocalPath));
                 }
+            });
+
+            OpenLastFileCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var lastFile = SettingsHelper.Settings.StartUp.LastFile;
+                if (string.IsNullOrEmpty(lastFile))
+                {
+                    return;
+                }
+
+                await LoadPicFromString(lastFile);
             });
 
             SaveFileCommand = ReactiveCommand.CreateFromTask(async () =>

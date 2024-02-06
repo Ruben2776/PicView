@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using ReactiveUI;
 
 namespace PicView.Avalonia.Win32.Views;
@@ -107,7 +108,10 @@ public partial class WinMainWindow : Window
         e.Cancel = true;
         Hide();
 
-        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        await SettingsHelper.SaveSettingsAsync();
+        FileDeletionHelper.DeleteTempFiles();
+        base.OnClosing(e);
+
         Environment.Exit(0);
     }
 
@@ -117,7 +121,12 @@ public partial class WinMainWindow : Window
         {
             return;
         }
+
+        if (e is { HeightChanged: false, WidthChanged: false })
+        {
+            return;
+        }
         var wm = (MainViewModel)DataContext;
-        wm.SetImageModel();
+        wm.SetSize();
     }
 }

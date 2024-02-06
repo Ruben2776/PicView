@@ -8,7 +8,7 @@ public static class ImageSizeCalculationHelper
         public double Width { get; private set; } = width;
         public double Height { get; private set; } = height;
     }
-    
+
     public static ImageSize GetImageSize(double width,
         double height,
         double monitorWidth,
@@ -16,7 +16,7 @@ public static class ImageSizeCalculationHelper
         double monitorMinWidth,
         double monitorMinHeight,
         double interfaceSize,
-        int rotationAngle,
+        double rotationAngle,
         bool stretch,
         double padding,
         double dpiScaling,
@@ -85,11 +85,11 @@ public static class ImageSizeCalculationHelper
                 aspectRatio = Math.Min(maxWidth / newWidth, maxHeight / newHeight);
                 break;
         }
-        
+
         var titleMaxWidth = 0d;
         var xWidth = width * aspectRatio;
         var xHeight = height * aspectRatio;
-            
+
         if (autoFit)
         {
             titleMaxWidth = rotationAngle is 0 or 180
@@ -98,9 +98,9 @@ public static class ImageSizeCalculationHelper
 
             if (scrollEnabled)
             {
-                return new ImageSize(width * aspectRatio, height * aspectRatio, titleMaxWidth);
+                return new ImageSize(xWidth, xHeight, titleMaxWidth);
             }
-            
+
             titleMaxWidth = titleMaxWidth - interfaceSize < interfaceSize
                 ? interfaceSize
                 : titleMaxWidth - interfaceSize;
@@ -111,6 +111,6 @@ public static class ImageSizeCalculationHelper
             titleMaxWidth = containerWidth - interfaceSize <= 0 ? 0 : containerWidth - interfaceSize;
         }
 
-        return new ImageSize(width * aspectRatio, height * aspectRatio, titleMaxWidth);
+        return new ImageSize(xWidth, xHeight, titleMaxWidth);
     }
 }
