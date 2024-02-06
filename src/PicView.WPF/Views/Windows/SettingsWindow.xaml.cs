@@ -235,6 +235,14 @@ public partial class SettingsWindow
                         ConfigureWindows.GetImageInfoWindow?.UpdateLanguage();
                     });
                 }
+
+                await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
+                {
+                    UC.GetFileMenu.UpdateLanguage();
+                    UC.GetImageSettingsMenu.UpdateLanguage();
+                    UC.GetQuickSettingsMenu.UpdateLanguage();
+                    UC.GetToolsAndEffectsMenu.UpdateLanguage();
+                });
             };
 
             // ScrollDirection

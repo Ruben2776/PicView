@@ -269,8 +269,8 @@ internal static class LoadContextMenus
             SettingsWindow();
             MainContextMenu.IsOpen = false;
         };
-        SettingsMenu.ToolTip = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
-        SettingsMenu.Header = TranslationHelper.GetTranslation("SettingsWindow");
+        SettingsMenu.ToolTip = TranslationHelper.GetTranslation("Settings");
+        SettingsMenu.Header = TranslationHelper.GetTranslation("Settings");
 
         // 8 = seperator
 

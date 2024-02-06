@@ -21,32 +21,26 @@ public partial class ImageSettings
         RotateLeftButton.Click += async (_, _) =>
             await Rotation.RotateAndMoveCursor(true, RotateLeftButton).ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(RotateLeftButton, RotateLeftButtonBrush, RotateLeftIconBrush);
-        RotateLeftButton.ToolTip = TranslationHelper.GetTranslation("RotateLeft");
 
         // RotateRightButton
         RotateRightButton.Click += async (_, _) =>
             await Rotation.RotateAndMoveCursor(false, RotateRightButton).ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(RotateRightButton, RotateRightButtonBrush, RotateRightIconBrush);
-        RotateRightButton.ToolTip = TranslationHelper.GetTranslation("RotateRight");
 
         // FlipButton
         FlipButton.Click += (_, _) => Rotation.Flip();
         SetButtonIconMouseOverAnimations(FlipButton, FlipButtonBrush, FlipIconBrush);
-        FlipButton.ToolTip = TranslationHelper.GetTranslation("Flip");
 
         // ResizeButton
         SetButtonIconMouseOverAnimations(ResizeButtonBorder, ResizeBorderBrush,
             (SolidColorBrush)Resources["ResizeIcon"]);
         ResizeButton.Click += (_, _) => UpdateUIValues.ToggleQuickResize();
         ResizeButtonBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.ToggleQuickResize();
-        ResizeButtonBorder.ToolTip = TranslationHelper.GetTranslation("ResizeImage");
-        ResizeButtonTextBlock.Text = TranslationHelper.GetTranslation("Resize");
 
         // CropButton
         SetButtonIconMouseOverAnimations(CropButtonBorder, CropBorderBrush, (SolidColorBrush)Resources["CropIcon"]);
         CropButton.Click += (_, _) => CropFunctions.StartCrop();
         CropButtonBorder.MouseLeftButtonDown += (_, _) => CropFunctions.StartCrop();
-        CropButtonTextBlock.Text = TranslationHelper.GetTranslation("Crop");
 
         // OptimizeButton
         SetButtonIconMouseOverAnimations(OptimizeBorder, BgBorderBrush, (SolidColorBrush)Resources["OptimizeIcon"]);
@@ -54,8 +48,6 @@ public partial class ImageSettings
             await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
         OptimizeBorder.MouseLeftButtonDown += async (_, _) =>
             await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
-        OptimizeBorder.ToolTip = TranslationHelper.GetTranslation("OptimizeImage");
-        OptimizeButtonTextBlock.Text = TranslationHelper.GetTranslation("OptimizeImage");
 
         // SlideShowBorder
         SetButtonIconMouseOverAnimations(SlideShowBorder, SlideShowBorderBrush,
@@ -70,8 +62,6 @@ public partial class ImageSettings
             UC.Close_UserControls();
             Slideshow.StartSlideshow();
         };
-        SlideShowBorder.ToolTip = TranslationHelper.GetTranslation("StartSlideshow");
-        SlideShowButtonTextBlock.Text = TranslationHelper.GetTranslation("Slideshow");
 
         // BottomGalleryBorder
         SetButtonIconMouseOverAnimations(BottomGalleryButton, BottomGalleryBrush,
@@ -79,10 +69,26 @@ public partial class ImageSettings
         BottomGalleryBorder.MouseLeftButtonDown +=
             async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
         BottomGalleryButton.Click += async (_, _) => await ContainedGalleryClick().ConfigureAwait(false);
+
+        UpdateLanguage();
+    }
+
+    internal void UpdateLanguage()
+    {
         var showHideGallery = SettingsHelper.Settings.Gallery.IsBottomGalleryShown
             ? "ShowBottomGallery"
             : "HideBottomGallery";
         ShowBottomGalleryText.Text = showHideGallery;
+        SlideShowBorder.ToolTip = TranslationHelper.GetTranslation("StartSlideshow");
+        SlideShowButtonTextBlock.Text = TranslationHelper.GetTranslation("Slideshow");
+        OptimizeBorder.ToolTip = TranslationHelper.GetTranslation("OptimizeImage");
+        OptimizeButtonTextBlock.Text = TranslationHelper.GetTranslation("OptimizeImage");
+        CropButtonTextBlock.Text = TranslationHelper.GetTranslation("Crop");
+        ResizeButtonBorder.ToolTip = TranslationHelper.GetTranslation("ResizeImage");
+        ResizeButtonTextBlock.Text = TranslationHelper.GetTranslation("Resize");
+        FlipButton.ToolTip = TranslationHelper.GetTranslation("Flip");
+        RotateRightButton.ToolTip = TranslationHelper.GetTranslation("RotateRight");
+        RotateLeftButton.ToolTip = TranslationHelper.GetTranslation("RotateLeft");
     }
 
     private static async Task ContainedGalleryClick()

@@ -22,9 +22,6 @@ public partial class QuickSettingsMenu
         };
         SetButtonIconMouseOverAnimations(
             SettingsButtonBorder, SettingsButtonBrush, (SolidColorBrush)Resources["SettingsIcon"]);
-        SettingsButton.ToolTip = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
-        SettingsButtonTextBlock.ToolTip = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
-        SettingsButtonTextBlock.Text = TranslationHelper.GetTranslation("Settings");
 
         // InfoButton
         InfoButton.Click += delegate
@@ -34,8 +31,6 @@ public partial class QuickSettingsMenu
         };
         SetButtonIconMouseOverAnimations(
             InfoButton, InfoButtonBrush, (SolidColorBrush)Resources["AboutIcon"]);
-        InfoButton.ToolTip = TranslationHelper.GetTranslation("ShowInfoWindow");
-        InfoButtonTextBlock.Text = TranslationHelper.GetTranslation("About");
 
         // Toggle Scroll
         ToggleScroll.IsChecked = SettingsHelper.Settings.Zoom.ScrollEnabled;
@@ -43,35 +38,30 @@ public partial class QuickSettingsMenu
         ToggleScrollBorder.MouseLeftButtonDown +=
             (_, _) => UpdateUIValues.SetScrolling(SettingsHelper.Settings.Zoom.ScrollEnabled);
         SetButtonIconMouseOverAnimations(ToggleScrollBorder, ToggleScrollBrush, ToggleScrollFill);
-        ToggleScrollTextBlock.Text = TranslationHelper.GetTranslation("ToggleScroll");
 
         // Toggle Fill
         ToggleFill.IsChecked = SettingsHelper.Settings.ImageScaling.StretchImage;
         ToggleFill.Click += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
         ToggleFillBorder.MouseLeftButtonDown += async (_, _) => await UpdateUIValues.SetAutoFill().ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(ToggleFillBorder, ToggleFillBrush, ToggleFillFill);
-        ToggleFillTextBlock.Text = TranslationHelper.GetTranslation("StretchImage");
 
         // Toggle Looping
         ToggleLooping.IsChecked = SettingsHelper.Settings.UIProperties.Looping;
         ToggleLooping.Click += (_, _) => UpdateUIValues.SetLooping();
         ToggleLoopingBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetLooping();
         SetButtonIconMouseOverAnimations(ToggleLoopingBorder, ToggleLoopBrush, ToggleLoopFill);
-        ToggleLoopingTextBlock.Text = TranslationHelper.GetTranslation("ToggleLooping");
 
         // Set Fit
         SetFit.IsChecked = SettingsHelper.Settings.WindowProperties.AutoFit;
         SetFit.Click += async (_, _) => await UpdateUIValues.SetAutoFit().ConfigureAwait(false);
         SetFitBorder.MouseLeftButtonDown += async (_, _) => await UpdateUIValues.SetAutoFit().ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(SetFitBorder, SetFitBrush, SetFitFill);
-        SetFitTextBlock.Text = TranslationHelper.GetTranslation("AutoFitWindow");
 
         // Stay on top
         StayOnTop.IsChecked = SettingsHelper.Settings.WindowProperties.TopMost;
         StayOnTop.Click += (_, _) => UpdateUIValues.SetTopMost();
         StayOnTopBorder.MouseLeftButtonDown += (_, _) => UpdateUIValues.SetTopMost();
         SetButtonIconMouseOverAnimations(StayOnTopBorder, StayOnTopBrush, StayOnTopFill);
-        StayOnTopBorderTextBlock.Text = TranslationHelper.GetTranslation("StayTopMost");
 
         // Search subdirectories
         SearchSubDir.IsChecked = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
@@ -80,6 +70,22 @@ public partial class QuickSettingsMenu
         SearchSubDirBorder.MouseLeftButtonDown += async (_, _) =>
             await UpdateUIValues.ToggleIncludeSubdirectoriesAsync().ConfigureAwait(false);
         SetButtonIconMouseOverAnimations(SearchSubDirBorder, SearchSubDirBrush, SearchSubDirFill);
+
+        UpdateLanguage();
+    }
+
+    internal void UpdateLanguage()
+    {
+        SettingsButton.ToolTip = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
+        SettingsButtonTextBlock.ToolTip = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
+        SettingsButtonTextBlock.Text = TranslationHelper.GetTranslation("Settings");
         SearchSubDirBorderTextBlock.Text = TranslationHelper.GetTranslation("SearchSubdirectory");
+        StayOnTopBorderTextBlock.Text = TranslationHelper.GetTranslation("StayTopMost");
+        SetFitTextBlock.Text = TranslationHelper.GetTranslation("AutoFitWindow");
+        ToggleLoopingTextBlock.Text = TranslationHelper.GetTranslation("ToggleLooping");
+        ToggleFillTextBlock.Text = TranslationHelper.GetTranslation("StretchImage");
+        ToggleScrollTextBlock.Text = TranslationHelper.GetTranslation("ToggleScroll");
+        InfoButton.ToolTip = TranslationHelper.GetTranslation("ShowInfoWindow");
+        InfoButtonTextBlock.Text = TranslationHelper.GetTranslation("About");
     }
 }

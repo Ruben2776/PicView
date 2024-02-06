@@ -18,7 +18,6 @@ public partial class ToolsAndEffectsMenu
         var resizeIconBrush = (SolidColorBrush)Resources["ResizeIconBrush"];
         SetButtonIconMouseOverAnimations(ResizeButton, ResizeButtonBrush, resizeIconBrush);
         ResizeButton.Click += (_, _) => ConfigureWindows.ResizeWindow();
-        ResizeTextBlock.Text = TranslationHelper.GetTranslation("BatchResize");
 
         // EffectsButton
         var effectsIconBrush = (SolidColorBrush)Resources["EffectsIconBrush"];
@@ -28,8 +27,6 @@ public partial class ToolsAndEffectsMenu
             UC.Close_UserControls();
             ConfigureWindows.EffectsWindow();
         };
-        EffectsButton.ToolTip = TranslationHelper.GetTranslation("EffectsTooltip");
-        EffectsTextBlock.Text = TranslationHelper.GetTranslation("Effects");
 
         // ColorPickerButton
         var colorIconBrush = (SolidColorBrush)Resources["ColorIconBrush"];
@@ -45,8 +42,6 @@ public partial class ToolsAndEffectsMenu
             ColorPicking.IsRunning = true;
             ColorPicking.Start();
         };
-        ColorPickerButton.ToolTip = TranslationHelper.GetTranslation("ColorPickerToolTooltip");
-        ColorPickerTextBlock.Text = TranslationHelper.GetTranslation("ColorPickerTool");
 
         // ImageInfoButton
         var infoIconBrush = (SolidColorBrush)Resources["InfoIconBrush"];
@@ -56,21 +51,32 @@ public partial class ToolsAndEffectsMenu
             UC.Close_UserControls();
             ConfigureWindows.ImageInfoWindow();
         };
-        ImageInfoButton.ToolTip = TranslationHelper.GetTranslation("ShowImageInfo");
-        ImageInfoTextBlock.Text = TranslationHelper.GetTranslation("ImageInfo");
 
         // OptimizeImageButton
         var optimizeIconBrush = (SolidColorBrush)Resources["OptimizeIconBrush"];
         SetButtonIconMouseOverAnimations(OptimizeImageButton, OptimizeImageBrush, optimizeIconBrush);
         OptimizeImageButton.Click += async (_, _) =>
             await ImageFunctions.OptimizeImageAsyncWithErrorChecking().ConfigureAwait(false);
-        OptimizeImageTextBlock.Text = TranslationHelper.GetTranslation("OptimizeImage");
 
         // Change background
         var changeIconBrush = (SolidColorBrush)Resources["ChangeIconBrush"];
         SetButtonIconMouseOverAnimations(BgButton, BgBrush, changeIconBrush);
-        BgTextBlock.Text = TranslationHelper.GetTranslation("ChangeBackground");
 
         BgButton.Click += (_, _) => ConfigColors.ChangeBackground();
+
+        UpdateLanguage();
+    }
+
+    internal void UpdateLanguage()
+    {
+        ResizeTextBlock.Text = TranslationHelper.GetTranslation("BatchResize");
+        EffectsTextBlock.Text = TranslationHelper.GetTranslation("Effects");
+        ColorPickerTextBlock.Text = TranslationHelper.GetTranslation("ColorPickerTool");
+        ImageInfoTextBlock.Text = TranslationHelper.GetTranslation("ImageInfo");
+        OptimizeImageTextBlock.Text = TranslationHelper.GetTranslation("OptimizeImage");
+        BgTextBlock.Text = TranslationHelper.GetTranslation("ChangeBackground");
+        ImageInfoButton.ToolTip = TranslationHelper.GetTranslation("ShowImageInfo");
+        ColorPickerButton.ToolTip = TranslationHelper.GetTranslation("ColorPickerToolTooltip");
+        EffectsButton.ToolTip = TranslationHelper.GetTranslation("EffectsTooltip");
     }
 }
