@@ -1,13 +1,13 @@
 <UserControl
+    IsVisible="{Binding IsImageMenuVisible}"
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.Menus.ImageMenu"
+    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
-    x:DataType="viewModels:MainViewModel"
-    IsVisible="{Binding IsImageMenuVisible}"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -19,26 +19,26 @@
             BorderThickness="1"
             CornerRadius="8"
             Effect="{StaticResource MenuShadowButtonBorder}">
-            <Canvas Width="315" Height="193">
+            <Canvas Height="193" Width="315">
 
                 <Border
-                    Width="315"
-                    Height="47"
                     Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="1"
-                    CornerRadius="8,8,0,0" />
+                    CornerRadius="8,8,0,0"
+                    Height="47"
+                    Width="315" />
 
                 <Button
-                    Width="45"
-                    Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     CornerRadius="8,0,0,0"
-                    ToolTip.Tip="{Binding ResizeImage}">
-                    <Canvas Width="45" Height="54">
+                    Height="45"
+                    ToolTip.Tip="{Binding ResizeImage}"
+                    Width="45">
+                    <Canvas Height="54" Width="45">
                         <Image
                             Canvas.Left="7"
                             Canvas.Top="16"
@@ -72,32 +72,32 @@
                 </Button>
 
                 <Button
-                    Canvas.Left="45"
-                    Width="45"
-                    Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
+                    Canvas.Left="45"
                     Classes="hover"
-                    ToolTip.Tip="{Binding Crop}">
+                    Height="45"
+                    ToolTip.Tip="{Binding Crop}"
+                    Width="45">
                     <Path
-                        Width="17"
-                        Height="17"
                         Data="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
                         Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
                 </Button>
 
                 <Button
-                    Canvas.Left="90"
-                    Width="45"
-                    Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
+                    Canvas.Left="90"
                     Classes="hover"
-                    ToolTip.Tip="{Binding GetFlipped}">
-                    <Image Width="17" Height="17">
+                    Height="45"
+                    ToolTip.Tip="{Binding GetFlipped}"
+                    Width="45">
+                    <Image Height="17" Width="17">
                         <DrawingImage>
                             <DrawingGroup>
                                 <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M142.9 142.9C205.1 80.7 305.6 80.4 368.2 141.9L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224L463.5 224C463.5 224 463.5 224 463.5 224L472 224C485.3 224 496 213.3 496 200L496 72C496 62.3 490.2 53.5 481.2 49.8C472.2 46.1 461.9 48.1 455 55L413.4 96.6C325.8 10.1 184.7 10.4 97.6 97.6C73.2 122 55.6 150.7 44.8 181.4C38.9 198.1 47.7 216.3 64.3 222.2C80.9 228.1 99.2 219.3 105.1 202.7C112.8 180.9 125.3 160.4 142.9 142.9L142.9 142.9ZM16 312L16 319.6L16 320.3L16 440C16 449.7 21.8 458.5 30.8 462.2C39.8 465.9 50.1 463.9 57 457L98.6 415.4C186.2 501.9 327.3 501.6 414.4 414.4C438.8 390 456.5 361.3 467.3 330.7C473.2 314 464.4 295.8 447.8 289.9C431.2 284 412.9 292.8 407 309.4C399.3 331.2 386.8 351.7 369.2 369.2C307 431.4 206.5 431.7 143.9 370.2L185 329C191.9 322.1 193.9 311.8 190.2 302.8C186.5 293.8 177.7 288 168 288L48.4 288L47.7 288L40 288C26.7 288 16 298.7 16 312Z" />
@@ -107,33 +107,33 @@
                 </Button>
 
                 <Button
-                    Canvas.Left="135"
-                    Width="45"
-                    Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
+                    Canvas.Left="135"
                     Classes="hover"
-                    ToolTip.Tip="{Binding Slideshow}">
+                    Height="45"
+                    ToolTip.Tip="{Binding Slideshow}"
+                    Width="45">
                     <Path
-                        Width="17"
-                        Height="17"
                         Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
                         Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
                 </Button>
 
                 <Button
-                    Canvas.Left="180"
-                    Width="90"
-                    Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
+                    Canvas.Left="180"
                     Classes="altHover"
-                    ToolTip.Tip="{Binding GoToImageAtSpecifiedIndex}">
+                    Height="45"
+                    ToolTip.Tip="{Binding GoToImageAtSpecifiedIndex}"
+                    Width="90">
                     <StackPanel Margin="5,0" Orientation="Horizontal">
-                        <Image Width="17" Height="17">
+                        <Image Height="17" Width="17">
                             <DrawingImage>
                                 <DrawingGroup>
                                     <GeometryDrawing Geometry="F1 M112 111L112 401C112 418.44 129 429.52 143 421.16L390.9 272.79C403.02 265.54 403.02 246.46 390.9 239.21L143 90.84C129 82.48 112 93.56 112 111Z">
@@ -157,45 +157,45 @@
                             </DrawingImage>
                         </Image>
                         <AutoCompleteBox
-                            x:Name="GoToPicBox"
-                            Width="55"
-                            Height="26"
-                            Margin="5,0,0,0"
-                            Padding="5,4,0,2"
-                            VerticalAlignment="Center"
                             BorderBrush="{StaticResource MainBorderColor}"
                             FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                             Foreground="{StaticResource MainIconColor}"
+                            Height="26"
                             IsEnabled="True"
                             IsTabStop="False"
-                            Text="{Binding GetIndex}" />
+                            Margin="5,0,0,0"
+                            Padding="5,4,0,2"
+                            Text="{Binding GetIndex}"
+                            VerticalAlignment="Center"
+                            Width="55"
+                            x:Name="GoToPicBox" />
                     </StackPanel>
                 </Button>
 
                 <Button
-                    Canvas.Left="270"
-                    Width="45"
-                    Height="45"
                     Background="Transparent"
+                    Canvas.Left="270"
                     Classes="hover"
                     Command="{Binding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
-                    ToolTip.Tip="{Binding Close}">
+                    Height="45"
+                    ToolTip.Tip="{Binding Close}"
+                    Width="45">
                     <Path
-                        Width="10"
-                        Height="10"
                         Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
                         Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
+                        Height="10"
+                        Stretch="Fill"
+                        Width="10" />
                 </Button>
 
                 <Rectangle
                     Canvas.Left="1"
                     Canvas.Top="46"
-                    Width="275"
                     Height="1"
                     Stroke="{StaticResource MainBorderColor}"
                     StrokeThickness="1"
+                    Width="275"
                     ZIndex="1" />
 
                 <ToggleButton
@@ -205,10 +205,10 @@
                     IsChecked="{Binding IsScrollingEnabled}"
                     ToolTip.Tip="{Binding ToggleScroll}">
                     <TextBlock
-                        VerticalAlignment="Center"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         Text="{Binding ToggleScroll}"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        VerticalAlignment="Center" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -217,12 +217,13 @@
                     Classes="ButtonBorder hover"
                     Command="{Binding ChangeAutoFitCommand}"
                     IsChecked="{Binding IsAutoFit}"
+                    ToolTip.Placement="Top"
                     ToolTip.Tip="{Binding AutoFitWindow}">
                     <TextBlock
-                        VerticalAlignment="Center"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         Text="{Binding AutoFitWindow}"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        VerticalAlignment="Center" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -232,10 +233,10 @@
                     IsChecked="{Binding IsStretched}"
                     ToolTip.Tip="{Binding Stretch}">
                     <TextBlock
-                        VerticalAlignment="Center"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         Text="{Binding Stretch}"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        VerticalAlignment="Center" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -244,23 +245,23 @@
                     Classes="ButtonBorder hover"
                     ToolTip.Tip="Double page">
                     <TextBlock
-                        VerticalAlignment="Center"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         Text="Double page"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        VerticalAlignment="Center" />
                 </ToggleButton>
 
                 <ToggleButton
                     Canvas.Left="7"
                     Canvas.Top="145"
-                    Width="300"
                     Classes="ButtonBorder hover"
-                    ToolTip.Tip="{Binding GetBottomGallery}">
+                    ToolTip.Tip="{Binding GetBottomGallery}"
+                    Width="300">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <Image
-                            Width="17"
                             Height="17"
-                            Margin="3,0,0,0">
+                            Margin="3,0,0,0"
+                            Width="17">
                             <DrawingImage>
                                 <DrawingImage.Drawing>
                                     <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
@@ -271,25 +272,25 @@
                             </DrawingImage>
                         </Image>
                         <TextBlock
-                            MaxWidth="175"
-                            Margin="9,0,6,0"
-                            VerticalAlignment="Center"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Margin="9,0,6,0"
+                            MaxWidth="175"
                             Text="{Binding GetBottomGallery}"
-                            TextTrimming="CharacterEllipsis" />
+                            TextTrimming="CharacterEllipsis"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </ToggleButton>
             </Canvas>
         </Border>
         <Rectangle
-            Width="26"
+            Fill="{StaticResource SecondaryBackgroundColor}"
             Height="1.5"
-            Margin="57,0,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource SecondaryBackgroundColor}" />
+            Margin="57,0,0,0"
+            Width="26" />
         <Polygon
-            Margin="54,-3.5,0,0"
             Fill="{StaticResource MainBackgroundColor}"
+            Margin="54,-3.5,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource MainBorderColor}"
             StrokeThickness="1" />

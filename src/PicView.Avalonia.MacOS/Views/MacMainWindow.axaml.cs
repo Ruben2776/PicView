@@ -1,6 +1,7 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;

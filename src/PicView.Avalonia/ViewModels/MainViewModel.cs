@@ -772,10 +772,10 @@ namespace PicView.Avalonia.ViewModels
                 monitor.Bounds.Height,
                 desktopMinWidth,
                 desktopMinHeight,
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 195 : 225,
+                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 225,
                 rotation,
                 IsStretched,
-                40,
+                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 75 : 40,
                 monitor.Scaling,
                 SettingsHelper.Settings.WindowProperties.Fullscreen,
                 uiTopSize,
@@ -1058,6 +1058,7 @@ namespace PicView.Avalonia.ViewModels
             else
             {
                 CurrentView = new StartUpMenu();
+                TitleMaxWidth = double.NaN;
             }
 
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
