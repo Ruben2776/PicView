@@ -1,10 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using ReactiveUI;
+using System.Text.Json.Serialization;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -100,6 +102,10 @@ public partial class WinMainWindow : Window
                     _prevButtonClicked = false;
                 }
             };
+
+            // TODO figure out how to use KeyBindings via json config file
+            KeyBindings.Add(new KeyBinding { Command = wm.NextCommand, Gesture = new KeyGesture(Key.D) });
+            KeyBindings.Add(new KeyBinding { Command = wm.PreviousCommand, Gesture = new KeyGesture(Key.A) });
         };
     }
 

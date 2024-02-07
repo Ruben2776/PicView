@@ -19,6 +19,7 @@
             <Image
                 Width="{Binding Width}"
                 Height="{Binding Height}"
+                RenderOptions.BitmapInterpolationMode="HighQuality"
                 Source="{Binding Image}"
                 Stretch="Fill" />
         </Border>
