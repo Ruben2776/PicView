@@ -17,7 +17,7 @@ internal partial class LanguageSourceGenerationContext : JsonSerializerContext
 /// </summary>
 public static class TranslationHelper
 {
-    public static string? GetTranslation(string key)
+    public static string GetTranslation(string key)
     {
         if (Language == null)
         {
