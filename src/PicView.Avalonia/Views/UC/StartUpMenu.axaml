@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
+    MinWidth="435"
+    MinHeight="400"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
@@ -48,6 +50,8 @@
     <Grid>
         <Viewbox
             x:Name="LogoViewbox"
+            Width="435"
+            Height="400"
             Margin="15,20"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">

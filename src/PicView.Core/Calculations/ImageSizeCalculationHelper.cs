@@ -1,4 +1,6 @@
-﻿namespace PicView.Core.Calculations;
+﻿using System.Runtime.InteropServices;
+
+namespace PicView.Core.Calculations;
 
 public static class ImageSizeCalculationHelper
 {
@@ -7,6 +9,11 @@ public static class ImageSizeCalculationHelper
         public double TitleMaxWidth { get; private set; } = titleMaxWidth;
         public double Width { get; private set; } = width;
         public double Height { get; private set; } = height;
+    }
+
+    public static double GetInterfaceSize()
+    {
+        return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 225;
     }
 
     public static ImageSize GetImageSize(double width,
@@ -86,19 +93,28 @@ public static class ImageSizeCalculationHelper
                 break;
         }
 
-        var titleMaxWidth = 0d;
         var xWidth = width * aspectRatio;
         var xHeight = height * aspectRatio;
+        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, width, height, monitorMinWidth, monitorMinHeight,
+            monitorWidth, monitorHeight, interfaceSize, autoFit, containerWidth, scrollEnabled);
 
+        return new ImageSize(xWidth, xHeight, titleMaxWidth);
+    }
+
+    public static double GetTitleMaxWidth(double rotationAngle, double width, double height, double monitorMinWidth,
+        double monitorMinHeight, double monitorWidth, double monitorHeight, double interfaceSize, bool autoFit,
+        double containerWidth, bool scrollEnabled)
+    {
+        double titleMaxWidth;
         if (autoFit)
         {
             titleMaxWidth = rotationAngle is 0 or 180
-                ? Math.Max(xWidth, monitorMinWidth)
-                : Math.Max(xHeight, monitorMinHeight);
+                ? Math.Max(width, monitorMinWidth)
+                : Math.Max(height, monitorMinHeight);
 
             if (scrollEnabled)
             {
-                return new ImageSize(xWidth, xHeight, titleMaxWidth);
+                return titleMaxWidth;
             }
 
             titleMaxWidth = titleMaxWidth - interfaceSize < interfaceSize
@@ -111,6 +127,6 @@ public static class ImageSizeCalculationHelper
             titleMaxWidth = containerWidth - interfaceSize <= 0 ? 0 : containerWidth - interfaceSize;
         }
 
-        return new ImageSize(xWidth, xHeight, titleMaxWidth);
+        return titleMaxWidth;
     }
 }

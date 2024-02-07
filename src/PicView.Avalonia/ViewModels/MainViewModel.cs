@@ -500,9 +500,9 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isFlipped, value);
         }
 
-        private int _rotation;
+        private double _rotation;
 
-        public int Rotation
+        public double Rotation
         {
             get => _rotation;
             set => this.RaiseAndSetIfChanged(ref _rotation, value);
@@ -772,7 +772,7 @@ namespace PicView.Avalonia.ViewModels
                 monitor.Bounds.Height,
                 desktopMinWidth,
                 desktopMinHeight,
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 225,
+                ImageSizeCalculationHelper.GetInterfaceSize(),
                 rotation,
                 IsStretched,
                 RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 75 : 40,
@@ -1058,7 +1058,6 @@ namespace PicView.Avalonia.ViewModels
             else
             {
                 CurrentView = new StartUpMenu();
-                TitleMaxWidth = double.NaN;
             }
 
             if (SettingsHelper.Settings.WindowProperties.AutoFit)

@@ -1,11 +1,16 @@
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Calculations;
+using System.Runtime.InteropServices;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -14,7 +19,7 @@ public partial class StartUpMenu : UserControl
     public StartUpMenu()
     {
         InitializeComponent();
-        SizeChanged += (_, e) => ResponsiveSize(e.NewSize.Width);
+        SizeChanged += (_, e) => ResponsiveSize(e.NewSize.Width, e.NewSize.Height);
         Loaded += StartUpMenu_Loaded;
     }
 
@@ -98,7 +103,7 @@ public partial class StartUpMenu : UserControl
         vm.ResetTitle();
     }
 
-    public void ResponsiveSize(double width)
+    public void ResponsiveSize(double width, double height)
     {
         const int breakPoint = 900;
         const int bottomMargin = 16;
@@ -120,5 +125,19 @@ public partial class StartUpMenu : UserControl
                 Buttons.VerticalAlignment = VerticalAlignment.Center;
                 break;
         }
+        LogoViewbox.Height = double.NaN;
+
+        if (DataContext is not MainViewModel vm)
+            return;
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
+
+        vm.TitleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(vm.Rotation, width, height, desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight,
+            monitor.Bounds.Width, monitor.Bounds.Height, ImageSizeCalculationHelper.GetInterfaceSize(), SettingsHelper.Settings.WindowProperties.AutoFit, desktop.MainWindow.Width,
+            SettingsHelper.Settings.Zoom.ScrollEnabled);
     }
 }

@@ -12,9 +12,9 @@ public class ImageModel
     public EXIFHelper.EXIFOrientation? EXIFOrientation { get; set; }
     public bool IsFlipped { get; set; }
 
-    private int _rotation;
+    private double _rotation;
 
-    public int Rotation
+    public double Rotation
     {
         get
         {
