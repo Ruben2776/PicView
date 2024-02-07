@@ -8,11 +8,11 @@ using PicView.WPF.ProcessHandling;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
+using PicView.WPF.UILogic.Loading;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -242,6 +242,7 @@ public partial class SettingsWindow
                     UC.GetImageSettingsMenu.UpdateLanguage();
                     UC.GetQuickSettingsMenu.UpdateLanguage();
                     UC.GetToolsAndEffectsMenu.UpdateLanguage();
+                    LoadContextMenus.AddContextMenus();
                 });
             };
 
