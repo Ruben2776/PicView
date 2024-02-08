@@ -293,8 +293,33 @@ internal static class WindowSizing
     {
         window?.Dispatcher.Invoke(() =>
         {
-            window.Top = SettingsHelper.Settings.WindowProperties.Top;
-            window.Left = SettingsHelper.Settings.WindowProperties.Left;
+            var top = SettingsHelper.Settings.WindowProperties.Top;
+            if (top < SystemParameters.VirtualScreenTop)
+            {
+                top = SystemParameters.VirtualScreenTop;
+            }
+            if (window.Top + window.Height > SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight)
+            {
+                top = SystemParameters.VirtualScreenHeight + SystemParameters.VirtualScreenTop - window.Height;
+            }
+
+            var left = SettingsHelper.Settings.WindowProperties.Left;
+            if (left < 0)
+            {
+                left = MonitorInfo.WorkArea.Left;
+            }
+
+            if (left < SystemParameters.VirtualScreenLeft)
+            {
+                left = SystemParameters.VirtualScreenLeft;
+            }
+
+            if (left + window.Width > SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth)
+            {
+                left = SystemParameters.VirtualScreenWidth + SystemParameters.VirtualScreenLeft - window.Width;
+            }
+            window.Top = top;
+            window.Left = left;
             window.Width = double.IsNaN(SettingsHelper.Settings.WindowProperties.Width) ? window.Width :
                 double.IsNaN(SettingsHelper.Settings.WindowProperties.Width) ? window.ActualWidth : SettingsHelper.Settings.WindowProperties.Width;
             window.Height = double.IsNaN(SettingsHelper.Settings.WindowProperties.Height) ? window.Height :

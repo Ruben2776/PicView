@@ -88,18 +88,15 @@ internal static class StartLoading
             ConfigureWindows.GetMainWindow = mainWindow;
             GetSpinWaiter = GetSpinWaiter;
 
-            if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
-            {
-                SetLastWindowSize(mainWindow);
-            }
-
             // Set min size to DPI scaling
             mainWindow.MinWidth *= MonitorInfo.DpiScaling;
             mainWindow.MinHeight *= MonitorInfo.DpiScaling;
 
             SetWindowBehavior();
             if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
-                SetLastWindowSize(ConfigureWindows.GetMainWindow);
+            {
+                SetLastWindowSize(mainWindow);
+            }
 
             mainWindow.Scroller.VerticalScrollBarVisibility = SettingsHelper.Settings.Zoom.ScrollEnabled
                 ? ScrollBarVisibility.Auto
