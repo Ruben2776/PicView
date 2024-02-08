@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using PicView.WPF.UILogic;
 using Application = System.Windows.Application;
 
 namespace PicView.WPF.SystemIntegration;
