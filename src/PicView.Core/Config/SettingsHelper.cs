@@ -7,9 +7,7 @@ namespace PicView.Core.Config;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(AppSettings))]
-internal partial class SourceGenerationContext : JsonSerializerContext
-{
-}
+internal partial class SourceGenerationContext : JsonSerializerContext;
 
 public static class SettingsHelper
 {
@@ -34,9 +32,21 @@ public static class SettingsHelper
             }
             else
             {
-                SetDefaults();
-                // Get the default culture from the OS
-                Settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
+                var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+                if (File.Exists(appData))
+                {
+                    var jsonString = await File.ReadAllTextAsync(appData).ConfigureAwait(false);
+                    var settings = JsonSerializer.Deserialize(
+                            jsonString, typeof(AppSettings), SourceGenerationContext.Default)
+                        as AppSettings;
+                    Settings = await UpgradeSettings(settings).ConfigureAwait(false);
+                }
+                else
+                {
+                    SetDefaults();
+                    // Get the default culture from the OS
+                    Settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
+                }
             }
         }
         catch (Exception ex)
@@ -72,6 +82,14 @@ public static class SettingsHelper
         };
     }
 
+    private static async Task PerformSave(string path)
+    {
+        var updatedJson = JsonSerializer.Serialize(
+            Settings, typeof(AppSettings), SourceGenerationContext.Default);
+        await using var writer = new StreamWriter(path);
+        await writer.WriteAsync(updatedJson).ConfigureAwait(false);
+    }
+
     public static async Task SaveSettingsAsync()
     {
         InitiateJson();
@@ -82,6 +100,18 @@ public static class SettingsHelper
                 Settings, typeof(AppSettings), SourceGenerationContext.Default);
             await using var writer = new StreamWriter(path);
             await writer.WriteAsync(updatedJson).ConfigureAwait(false);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+            try
+            {
+                await PerformSave(path).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
+            }
         }
         catch (Exception ex)
         {
