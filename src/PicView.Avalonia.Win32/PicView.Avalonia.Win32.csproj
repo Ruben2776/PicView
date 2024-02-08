@@ -31,8 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.7" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.8" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.8" />
   </ItemGroup>
 
   <ItemGroup>

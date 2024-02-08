@@ -6,7 +6,6 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using ReactiveUI;
-using System.Text.Json.Serialization;
 
 namespace PicView.Avalonia.Win32.Views;
 

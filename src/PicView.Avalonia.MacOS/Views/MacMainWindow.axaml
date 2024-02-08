@@ -1,20 +1,7 @@
 <Window
-    BorderBrush="{StaticResource SecondaryBackgroundColor}"
-    BorderThickness="1"
-    CanResize="{Binding CanResize}"
-    ExtendClientAreaChromeHints="SystemChrome"
-    ExtendClientAreaTitleBarHeightHint="28"
-    MinHeight="400"
-    MinWidth="435"
-    SizeChanged="Control_OnSizeChanged"
-    SizeToContent="{Binding SizeToContent}"
-    Title="{Binding WindowTitle}"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.MacOS.Views.MacMainWindow"
-    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
@@ -22,7 +9,20 @@
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
     xmlns:vm="using:PicView.Avalonia.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Title="{Binding WindowTitle}"
+    MinWidth="435"
+    MinHeight="400"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="viewModels:MainViewModel"
+    BorderBrush="{StaticResource SecondaryBackgroundColor}"
+    BorderThickness="1"
+    CanResize="{Binding CanResize}"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="28"
+    SizeChanged="Control_OnSizeChanged"
+    SizeToContent="{Binding SizeToContent}"
+    mc:Ignorable="d">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>

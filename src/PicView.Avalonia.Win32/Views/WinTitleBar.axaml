@@ -141,7 +141,7 @@
                         Stretch="Fill" />
                 </Viewbox>
             </Button>
-            <uc:TitleTextBox MaxWidth="{Binding TitleMaxWidth}" />
+            <uc:TitleTextBox />
         </DockPanel>
     </Border>
 </UserControl>

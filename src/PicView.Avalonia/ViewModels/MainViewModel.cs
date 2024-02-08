@@ -442,6 +442,40 @@ namespace PicView.Avalonia.ViewModels
         public string? GetFlipped => IsFlipped ? UnFlip : Flip;
         public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
 
+        private UserControl? _currentView;
+
+        public UserControl? CurrentView
+        {
+            get => _currentView;
+            set => this.RaiseAndSetIfChanged(ref _currentView, value);
+        }
+
+        private IImage? _image;
+
+        public IImage? Image
+        {
+            get => _image;
+            set => this.RaiseAndSetIfChanged(ref _image, value);
+        }
+
+        private FileInfo? _fileInfo;
+
+        public FileInfo? FileInfo
+        {
+            get => _fileInfo;
+            set => this.RaiseAndSetIfChanged(ref _fileInfo, value);
+        }
+
+        private int _getIndex;
+
+        public int GetIndex
+        {
+            get => _getIndex;
+            set => this.RaiseAndSetIfChanged(ref _getIndex, value);
+        }
+
+        #region Window Properties
+
         private string? _title = "Loading...";
 
         public string? Title
@@ -466,47 +500,25 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _windowTitle, value);
         }
 
-        private UserControl? _currentView;
+        private SizeToContent _sizeToContent;
 
-        public UserControl? CurrentView
+        public SizeToContent SizeToContent
         {
-            get => _currentView;
-            set => this.RaiseAndSetIfChanged(ref _currentView, value);
+            get => _sizeToContent;
+            set => this.RaiseAndSetIfChanged(ref _sizeToContent, value);
         }
 
-        #region Image
+        private bool _canResize;
 
-        private IImage? _image;
-
-        public IImage? Image
+        public bool CanResize
         {
-            get => _image;
-            set => this.RaiseAndSetIfChanged(ref _image, value);
+            get => _canResize;
+            set => this.RaiseAndSetIfChanged(ref _canResize, value);
         }
 
-        private FileInfo? _fileInfo;
+        #endregion Window Properties
 
-        public FileInfo? FileInfo
-        {
-            get => _fileInfo;
-            set => this.RaiseAndSetIfChanged(ref _fileInfo, value);
-        }
-
-        private bool _isFlipped;
-
-        public bool IsFlipped
-        {
-            get => _isFlipped;
-            set => this.RaiseAndSetIfChanged(ref _isFlipped, value);
-        }
-
-        private double _rotation;
-
-        public double Rotation
-        {
-            get => _rotation;
-            set => this.RaiseAndSetIfChanged(ref _rotation, value);
-        }
+        #region Size
 
         private double _width;
 
@@ -532,6 +544,26 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _titleMaxWidth, value);
         }
 
+        #endregion Size
+
+        #region Zoom
+
+        private bool _isFlipped;
+
+        public bool IsFlipped
+        {
+            get => _isFlipped;
+            set => this.RaiseAndSetIfChanged(ref _isFlipped, value);
+        }
+
+        private double _rotation;
+
+        public double Rotation
+        {
+            get => _rotation;
+            set => this.RaiseAndSetIfChanged(ref _rotation, value);
+        }
+
         private EXIFHelper.EXIFOrientation? _exifOrientation;
 
         public EXIFHelper.EXIFOrientation? EXIFOrientation
@@ -548,35 +580,6 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
         }
 
-        private bool _isAutoFit;
-
-        public bool IsAutoFit
-        {
-            get => _isAutoFit;
-            set
-            {
-                SettingsHelper.Settings.WindowProperties.AutoFit = value;
-                this.RaiseAndSetIfChanged(ref _isAutoFit, value);
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private SizeToContent _sizeToContent;
-
-        public SizeToContent SizeToContent
-        {
-            get => _sizeToContent;
-            set => this.RaiseAndSetIfChanged(ref _sizeToContent, value);
-        }
-
-        private bool _canResize;
-
-        public bool CanResize
-        {
-            get => _canResize;
-            set => this.RaiseAndSetIfChanged(ref _canResize, value);
-        }
-
         private ScrollBarVisibility _toggleScrollBarVisibility;
 
         public ScrollBarVisibility ToggleScrollBarVisibility
@@ -585,49 +588,9 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _toggleScrollBarVisibility, value);
         }
 
-        private bool _isScrollingEnabled;
+        #endregion Zoom
 
-        public bool IsScrollingEnabled
-        {
-            get => _isScrollingEnabled;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
-                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
-                SetSize();
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _isStretched;
-
-        public bool IsStretched
-        {
-            get => _isStretched;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isStretched, value);
-                SettingsHelper.Settings.ImageScaling.StretchImage = value;
-                SetSize();
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _isLooping;
-
-        public bool IsLooping
-        {
-            get => _isLooping;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isLooping, value);
-                SettingsHelper.Settings.UIProperties.Looping = value;
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        #endregion Image
+        #region Settings
 
         private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
 
@@ -644,6 +607,91 @@ namespace PicView.Avalonia.ViewModels
             get => _showBottomGalleryInHiddenUI;
             set => this.RaiseAndSetIfChanged(ref _showBottomGalleryInHiddenUI, value);
         }
+
+        private bool _isTopMost = SettingsHelper.Settings.WindowProperties.TopMost;
+
+        public bool IsTopMost
+        {
+            get => _isTopMost;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isTopMost, value);
+                SettingsHelper.Settings.WindowProperties.TopMost = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _includeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+
+        public bool IncludeSubdirectories
+        {
+            get => _includeSubdirectories;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _includeSubdirectories, value);
+                SettingsHelper.Settings.Sorting.IncludeSubDirectories = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+
+        public bool IsScrollingEnabled
+        {
+            get => _isScrollingEnabled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
+                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
+                SetSize();
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
+
+        public bool IsStretched
+        {
+            get => _isStretched;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isStretched, value);
+                SettingsHelper.Settings.ImageScaling.StretchImage = value;
+                SetSize();
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isLooping = SettingsHelper.Settings.UIProperties.Looping;
+
+        public bool IsLooping
+        {
+            get => _isLooping;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isLooping, value);
+                SettingsHelper.Settings.UIProperties.Looping = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isAutoFit = SettingsHelper.Settings.WindowProperties.AutoFit;
+
+        public bool IsAutoFit
+        {
+            get => _isAutoFit;
+            set
+            {
+                SettingsHelper.Settings.WindowProperties.AutoFit = value;
+                this.RaiseAndSetIfChanged(ref _isAutoFit, value);
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        #endregion Settings
+
+        #region Menus
 
         private bool _isFileMenuVisible;
 
@@ -677,39 +725,7 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isToolsMenuVisible, value);
         }
 
-        private int _getIndex;
-
-        public int GetIndex
-        {
-            get => _getIndex;
-            set => this.RaiseAndSetIfChanged(ref _getIndex, value);
-        }
-
-        private bool _isTopMost;
-
-        public bool IsTopMost
-        {
-            get => _isTopMost;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isTopMost, value);
-                SettingsHelper.Settings.WindowProperties.TopMost = value;
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _includeSubdirectories;
-
-        public bool IncludeSubdirectories
-        {
-            get => _includeSubdirectories;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _includeSubdirectories, value);
-                SettingsHelper.Settings.Sorting.IncludeSubDirectories = value;
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
+        #endregion Menus
 
         #endregion Fields
 
@@ -775,7 +791,7 @@ namespace PicView.Avalonia.ViewModels
                 ImageSizeCalculationHelper.GetInterfaceSize(),
                 rotation,
                 IsStretched,
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 75 : 40,
+                75,
                 monitor.Scaling,
                 SettingsHelper.Settings.WindowProperties.Fullscreen,
                 uiTopSize,
@@ -789,26 +805,6 @@ namespace PicView.Avalonia.ViewModels
             TitleMaxWidth = size.TitleMaxWidth;
             Width = size.Width;
             Height = size.Height;
-        }
-
-        public void SetImageModel()
-        {
-            if (Image is null || FileInfo is null)
-            {
-                return;
-            }
-            var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, ImageIterator.Pics);
-            var imageModel = new ImageModel
-            {
-                Image = Image,
-                FileInfo = FileInfo,
-                PixelWidth = preloadValue?.ImageModel?.PixelWidth ?? (int)Width,
-                PixelHeight = preloadValue?.ImageModel?.PixelHeight ?? (int)Height,
-                EXIFOrientation = EXIFOrientation,
-                IsFlipped = IsFlipped,
-                Rotation = Rotation
-            };
-            SetImageModel(imageModel);
         }
 
         public void SetImageModel(ImageModel imageModel)
@@ -951,6 +947,7 @@ namespace PicView.Avalonia.ViewModels
                 SetTitle(preLoadValue.ImageModel, ImageIterator);
                 GetIndex = ImageIterator.Index + 1;
                 ImageChanged?.Invoke(this, EventArgs.Empty);
+                await ImageIterator.AddAsync(ImageIterator.Index, ImageService, preLoadValue?.ImageModel);
                 await ImageIterator.Preload(ImageService);
                 return;
 
@@ -991,6 +988,8 @@ namespace PicView.Avalonia.ViewModels
 
         public async Task LoadPicFromFile(FileInfo fileInfo)
         {
+            SetLoadingTitle();
+
             await Task.Run(async () =>
             {
                 try
@@ -1005,6 +1004,7 @@ namespace PicView.Avalonia.ViewModels
                     ImageService ??= new ImageService();
                     await ImageService.LoadImageAsync(imageModel);
                     SetImageModel(imageModel);
+                    SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation);
 
                     ImageIterator = new ImageIterator(imageModel.FileInfo);
                     ImageIterator.Index = ImageIterator.Pics.IndexOf(fileInfo.FullName);
@@ -1074,11 +1074,6 @@ namespace PicView.Avalonia.ViewModels
                 WindowHelper.InitializeWindowSizeAndPosition(desktop);
             }
             UpdateLanguage();
-            IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
-            IsStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
-            IsTopMost = SettingsHelper.Settings.WindowProperties.TopMost;
-            IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
-            IsLooping = SettingsHelper.Settings.UIProperties.Looping;
 
             #region Window commands
 

@@ -24,7 +24,7 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
 
-    <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1,0,1,1">
+    <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
             <uc:BottomBar x:Name="BottomBar" DockPanel.Dock="Bottom" />
