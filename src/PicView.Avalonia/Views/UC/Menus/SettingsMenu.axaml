@@ -143,6 +143,7 @@
                     Width="169"
                     Height="45"
                     Classes="ButtonBorder hover"
+                    Command="{Binding ChangeTopMostCommand}"
                     IsChecked="{Binding IsTopMost}"
                     ToolTip.Tip="{Binding StayTopMost}">
                     <TextBlock
@@ -160,6 +161,7 @@
                     Width="169"
                     Height="45"
                     Classes="ButtonBorder hover"
+                    Command="{Binding ChangeIncludeSubdirectoriesCommand}"
                     IsChecked="{Binding IncludeSubdirectories}"
                     ToolTip.Tip="{Binding SearchSubdirectory}">
                     <TextBlock
@@ -187,34 +189,43 @@
                         TextWrapping="Wrap" />
                 </ToggleButton>
 
-                <ToggleButton
+                <Button
                     Canvas.Left="182"
                     Canvas.Top="104"
                     Width="169"
                     Classes="ButtonBorder hover"
-                    Command="{Binding ChangeAutoFitCommand}"
-                    IsChecked="{Binding IsAutoFit}"
-                    ToolTip.Tip="{Binding AutoFitWindow}">
-                    <TextBlock
-                        MaxWidth="150"
-                        VerticalAlignment="Center"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        Text="{Binding StayTopMost}"
-                        TextTrimming="CharacterEllipsis"
-                        TextWrapping="Wrap" />
-                </ToggleButton>
+                    ToolTip.Tip="{Binding ApplicationShortcuts}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path
+                            Width="17"
+                            Height="17"
+                            Margin="9,0,6,0"
+                            Data="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm16 64h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm16 80h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V336c0-8.8 7.2-16 16-16zm80-176c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V144zm16 80h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zM160 336c0-8.8 7.2-16 16-16H400c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V336zM272 128h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16zM256 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM368 128h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H368c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16zM352 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H368c-8.8 0-16-7.2-16-16V240zM464 128h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H464c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16zM448 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H464c-8.8 0-16-7.2-16-16V240zm16 80h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H464c-8.8 0-16-7.2-16-16V336c0-8.8 7.2-16 16-16z"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                        <TextBlock
+                            MaxWidth="150"
+                            VerticalAlignment="Center"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            FontSize="12"
+                            Text="{Binding ApplicationShortcuts}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Button>
 
                 <ToggleButton
                     Canvas.Left="7"
                     Canvas.Top="150"
                     Width="169"
                     Classes="ButtonBorder hover"
-                    IsChecked="{Binding IsStretched}"
-                    ToolTip.Tip="{Binding Stretch}">
+                    Command="{Binding ToggleUICommand}"
+                    IsChecked="{Binding IsInterfaceShown}"
+                    ToolTip.Tip="{Binding HideShowInterface}">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        Text="{Binding Stretch}"
+                        Text="{Binding HideShowInterface}"
                         TextTrimming="CharacterEllipsis" />
                 </ToggleButton>
 

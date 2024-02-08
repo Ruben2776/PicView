@@ -76,6 +76,16 @@ namespace PicView.Avalonia.ViewModels
             StayTopMost = TranslationHelper.GetTranslation("StayTopMost");
             SearchSubdirectory = TranslationHelper.GetTranslation("SearchSubdirectory");
             ToggleLooping = TranslationHelper.GetTranslation("ToggleLooping");
+            HideShowInterface = TranslationHelper.GetTranslation("HideShowInterface");
+            ApplicationShortcuts = TranslationHelper.GetTranslation("ApplicationShortcuts");
+        }
+
+        private string? _applicationShortcuts;
+
+        public string? ApplicationShortcuts
+        {
+            get => _applicationShortcuts;
+            set => this.RaiseAndSetIfChanged(ref _applicationShortcuts, value);
         }
 
         private string? _selectFile;
@@ -390,6 +400,14 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _toggleLooping, value);
         }
 
+        private string? _hideShowInterface;
+
+        public string? HideShowInterface
+        {
+            get => _hideShowInterface;
+            set => this.RaiseAndSetIfChanged(ref _hideShowInterface, value);
+        }
+
         #endregion Localization
 
         #region Commands
@@ -434,6 +452,14 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? RotateRightCommand { get; }
         public ICommand? FlipCommand { get; }
         public ICommand? ChangeAutoFitCommand { get; }
+
+        public ICommand? ChangeStretchCommand { get; }
+
+        public ICommand? ChangeTopMostCommand { get; }
+
+        public ICommand? ChangeIncludeSubdirectoriesCommand { get; }
+
+        public ICommand? ToggleUICommand { get; }
 
         #endregion Commands
 
@@ -613,12 +639,7 @@ namespace PicView.Avalonia.ViewModels
         public bool IsTopMost
         {
             get => _isTopMost;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isTopMost, value);
-                SettingsHelper.Settings.WindowProperties.TopMost = value;
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
+            set => this.RaiseAndSetIfChanged(ref _isTopMost, value);
         }
 
         private bool _includeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
@@ -681,12 +702,15 @@ namespace PicView.Avalonia.ViewModels
         public bool IsAutoFit
         {
             get => _isAutoFit;
-            set
-            {
-                SettingsHelper.Settings.WindowProperties.AutoFit = value;
-                this.RaiseAndSetIfChanged(ref _isAutoFit, value);
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
+            set => this.RaiseAndSetIfChanged(ref _isAutoFit, value);
+        }
+
+        private bool _isInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+
+        public bool IsInterfaceShown
+        {
+            get => _isInterfaceShown;
+            set => this.RaiseAndSetIfChanged(ref _isInterfaceShown, value);
         }
 
         #endregion Settings
@@ -1011,9 +1035,9 @@ namespace PicView.Avalonia.ViewModels
                     await LoadPicAtIndex(ImageIterator.Index);
                     ImageIterator.FileAdded += (_, e) => { SetTitle(); };
                     ImageIterator.FileRenamed += (_, e) => { SetTitle(); };
-                    ImageIterator.FileDeleted += async (_, e) =>
+                    ImageIterator.FileDeleted += async (_, isSameFile) =>
                     {
-                        if (e) //change if deleting current file
+                        if (isSameFile) //change if deleting current file
                         {
                             await LoadPicFromString(ImageIterator.Pics[ImageIterator.Index]);
                         }
@@ -1089,19 +1113,68 @@ namespace PicView.Avalonia.ViewModels
 
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
-            ChangeAutoFitCommand = ReactiveCommand.Create(() =>
+            ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (SettingsHelper.Settings.WindowProperties.AutoFit)
                 {
-                    SizeToContent = SizeToContent.WidthAndHeight;
-                    CanResize = false;
+                    SizeToContent = SizeToContent.Manual;
+                    CanResize = true;
+                    SettingsHelper.Settings.WindowProperties.AutoFit = false;
+                    IsAutoFit = false;
                 }
                 else
                 {
-                    SizeToContent = SizeToContent.Manual;
-                    CanResize = true;
+                    SizeToContent = SizeToContent.WidthAndHeight;
+                    CanResize = false;
+                    SettingsHelper.Settings.WindowProperties.AutoFit = true;
+                    IsAutoFit = true;
                 }
                 SetSize();
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+
+            ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.WindowProperties.TopMost)
+                {
+                    IsTopMost = false;
+                    desktop.MainWindow.Topmost = false;
+                    SettingsHelper.Settings.WindowProperties.TopMost = false;
+                }
+                else
+                {
+                    IsTopMost = true;
+                    desktop.MainWindow.Topmost = true;
+                    SettingsHelper.Settings.WindowProperties.TopMost = true;
+                }
+
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+            if (SettingsHelper.Settings.WindowProperties.TopMost)
+            {
+                desktop.MainWindow.Topmost = true;
+            }
+
+            ChangeIncludeSubdirectoriesCommand = ReactiveCommand.Create(() =>
+            {
+                IncludeSubdirectories = !IncludeSubdirectories;
+                SetTitle();
+            });
+
+            ToggleUICommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.UIProperties.ShowInterface)
+                {
+                    IsInterfaceShown = false;
+                    SettingsHelper.Settings.UIProperties.ShowInterface = false;
+                }
+                else
+                {
+                    IsInterfaceShown = true;
+                    SettingsHelper.Settings.UIProperties.ShowInterface = true;
+                }
+                CloseMenuCommand.Execute(null);
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 
             #endregion Window commands

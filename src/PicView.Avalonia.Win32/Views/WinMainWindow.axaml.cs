@@ -105,6 +105,7 @@ public partial class WinMainWindow : Window
             // TODO figure out how to use KeyBindings via json config file
             KeyBindings.Add(new KeyBinding { Command = wm.NextCommand, Gesture = new KeyGesture(Key.D) });
             KeyBindings.Add(new KeyBinding { Command = wm.PreviousCommand, Gesture = new KeyGesture(Key.A) });
+            KeyBindings.Add(new KeyBinding { Command = wm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
         };
     }
 

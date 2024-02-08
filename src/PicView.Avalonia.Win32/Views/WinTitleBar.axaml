@@ -1,16 +1,17 @@
 <UserControl
-    Height="32"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Win32.Views.WinTitleBar"
-    x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Height="32"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:MainViewModel"
+    IsVisible="{Binding IsInterfaceShown}"
+    mc:Ignorable="d">
 
     <Design.DataContext>
         <vm:MainViewModel />
@@ -25,10 +26,10 @@
 
             <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="0,0,1,0">
                 <Image
-                    DockPanel.Dock="Left"
+                    Width="30"
                     Height="25"
                     Margin="7,1,7,1"
-                    Width="30">
+                    DockPanel.Dock="Left">
                     <Image.Source>
                         <DrawingImage>
                             <DrawingImage.Drawing>
@@ -45,13 +46,13 @@
             </Border>
 
             <Button
+                Name="GalleryButton"
+                Width="30"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                DockPanel.Dock="Left"
-                Name="GalleryButton"
-                Width="30">
+                DockPanel.Dock="Left">
                 <Image Width="17">
                     <DrawingImage>
                         <DrawingGroup>
@@ -62,79 +63,79 @@
             </Button>
 
             <Button
+                Width="30"
+                Margin="0"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                DockPanel.Dock="Left"
-                Margin="0"
-                Width="30">
+                DockPanel.Dock="Left">
                 <Path
+                    Width="12"
+                    Height="12"
                     Data="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
                     Fill="{StaticResource MainIconColor}"
-                    Height="12"
-                    Stretch="Fill"
-                    Width="12" />
+                    Stretch="Fill" />
             </Button>
 
             <Button
+                Width="30"
+                Margin="0"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                DockPanel.Dock="Left"
-                Margin="0"
-                Width="30">
+                DockPanel.Dock="Left">
                 <Path
+                    Width="12"
+                    Height="12"
                     Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
                     Fill="{StaticResource MainIconColor}"
-                    Height="12"
-                    Stretch="Fill"
-                    Width="12" />
+                    Stretch="Fill" />
             </Button>
 
             <Button
+                Width="30"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{Binding ExitCommand}"
-                DockPanel.Dock="Right"
-                Width="30">
+                DockPanel.Dock="Right">
                 <Path
+                    Width="10"
+                    Height="10"
                     Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
                     Fill="{StaticResource MainIconColor}"
-                    Height="10"
-                    Stretch="Fill"
-                    Width="10" />
+                    Stretch="Fill" />
             </Button>
 
             <Button
+                Name="RestoreButton"
+                Width="30"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{Binding MaximizeCommand}"
-                DockPanel.Dock="Right"
-                Name="RestoreButton"
-                Width="30">
+                DockPanel.Dock="Right">
                 <Path
+                    Width="12"
+                    Height="12"
                     Data="M405.34 405.332H106.66V106.668H240V64H106.66C83.191 64 64 83.197 64 106.668v298.664C64 428.803 83.191 448 106.66 448h298.68c23.469 0 42.66-19.197 42.66-42.668V272h-42.66v133.332zM288 64v42.668h87.474L159.999 322.133l29.866 29.866 215.476-215.47V224H448V64H288z"
                     Fill="{StaticResource MainIconColor}"
-                    Height="12"
-                    Stretch="Fill"
-                    Width="12" />
+                    Stretch="Fill" />
             </Button>
 
             <Button
+                Width="30"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="hover"
                 Command="{Binding MinimizeCommand}"
-                DockPanel.Dock="Right"
-                Width="30">
-                <Viewbox Height="12" Width="12">
+                DockPanel.Dock="Right">
+                <Viewbox Width="12" Height="12">
                     <Path
                         Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z"
                         Fill="{StaticResource MainIconColor}"
