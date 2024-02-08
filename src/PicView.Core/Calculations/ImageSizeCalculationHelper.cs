@@ -52,8 +52,8 @@ public static class ImageSizeCalculationHelper
 
         if (autoFit)
         {
-            maxWidth = stretch ? workAreaWidth : Math.Min(workAreaWidth - padding, width);
-            maxHeight = stretch ? workAreaHeight : Math.Min(workAreaHeight - padding, height);
+            maxWidth = stretch ? workAreaWidth - padding : Math.Min(workAreaWidth - padding, width);
+            maxHeight = stretch ? workAreaHeight - padding : Math.Min(workAreaHeight - padding, height);
         }
         else
         {
@@ -95,7 +95,7 @@ public static class ImageSizeCalculationHelper
 
         var xWidth = width * aspectRatio;
         var xHeight = height * aspectRatio;
-        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, width, height, monitorMinWidth, monitorMinHeight,
+        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight,
             monitorWidth, monitorHeight, interfaceSize, autoFit, containerWidth, scrollEnabled);
 
         return new ImageSize(xWidth, xHeight, titleMaxWidth);
