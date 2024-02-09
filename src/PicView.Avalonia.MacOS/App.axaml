@@ -1,11 +1,16 @@
 <Application
+    Name="PicView"
+    RequestedThemeVariant="Default"
     x:Class="PicView.Avalonia.MacOS.App"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:CompileBindings="True"
-    RequestedThemeVariant="Default">
-    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
-
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="About PicView" />
+            <NativeMenuItem Header="Check for updates" />
+        </NativeMenu>
+    </NativeMenu.Menu>
     <Application.Styles>
         <SimpleTheme />
         <StyleInclude Source="avares://PicView.Avalonia/DarkTheme/Main.axaml" />

@@ -4,6 +4,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using System;
+using Avalonia.Input;
 
 namespace PicView.Avalonia.MacOS.Views;
 
