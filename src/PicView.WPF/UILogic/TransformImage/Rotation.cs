@@ -54,7 +54,6 @@ internal static class Rotation
         if (keyDown)
         {
             Rotate(up ? RotationAngle + 1 : RotationAngle - 1);
-            Tooltip.ShowTooltipMessage(RotationAngle);
         }
         else
         {
