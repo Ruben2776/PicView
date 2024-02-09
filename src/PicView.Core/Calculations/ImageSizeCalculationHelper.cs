@@ -13,7 +13,7 @@ public static class ImageSizeCalculationHelper
 
     public static double GetInterfaceSize()
     {
-        return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 225;
+        return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 228;
     }
 
     public static ImageSize GetImageSize(double width,

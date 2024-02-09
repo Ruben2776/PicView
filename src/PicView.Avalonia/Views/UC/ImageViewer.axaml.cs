@@ -29,7 +29,7 @@ public partial class ImageViewer : UserControl
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        ScrollViewer.ScrollToHome();
+                        ImageScrollViewer.ScrollToHome();
                     }, DispatcherPriority.Normal);
                 }
             };

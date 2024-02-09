@@ -14,14 +14,24 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <ScrollViewer x:Name="ScrollViewer" VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
+    <ScrollViewer x:Name="ImageScrollViewer" VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
         <Border>
             <Image
                 Width="{Binding Width}"
                 Height="{Binding Height}"
                 RenderOptions.BitmapInterpolationMode="HighQuality"
                 Source="{Binding Image}"
-                Stretch="Fill" />
+                Stretch="Fill">
+                <Image.RenderTransform>
+                    <RotateTransform Angle="{Binding RotationAngle}">
+                        <RotateTransform.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="RotateTransform.Angle" Duration="0:0:0.45" />
+                            </Transitions>
+                        </RotateTransform.Transitions>
+                    </RotateTransform>
+                </Image.RenderTransform>
+            </Image>
         </Border>
     </ScrollViewer>
 </UserControl>

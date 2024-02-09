@@ -26,7 +26,7 @@
 
             <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="0,0,1,0">
                 <Image
-                    Width="30"
+                    Width="20"
                     Height="25"
                     Margin="7,1,7,1"
                     DockPanel.Dock="Left">
@@ -69,6 +69,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
+                Command="{Binding RotateLeftCommand}"
                 DockPanel.Dock="Left">
                 <Path
                     Width="12"
@@ -85,6 +86,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
+                Command="{Binding FlipCommand}"
                 DockPanel.Dock="Left">
                 <Path
                     Width="12"
@@ -95,7 +97,7 @@
             </Button>
 
             <Button
-                Width="30"
+                Width="35"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
@@ -112,7 +114,7 @@
 
             <Button
                 Name="RestoreButton"
-                Width="30"
+                Width="35"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
@@ -128,7 +130,7 @@
             </Button>
 
             <Button
-                Width="30"
+                Width="35"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"

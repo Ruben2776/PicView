@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using PicView.Core.ImageTransformations;
 
 namespace PicView.Avalonia.ViewModels
 {
@@ -542,6 +543,14 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _canResize, value);
         }
 
+        private bool _isRotationAnimationEnabled;
+
+        public bool IsRotationAnimationEnabled
+        {
+            get => _isRotationAnimationEnabled;
+            set => this.RaiseAndSetIfChanged(ref _isRotationAnimationEnabled, value);
+        }
+
         #endregion Window Properties
 
         #region Size
@@ -582,12 +591,12 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isFlipped, value);
         }
 
-        private double _rotation;
+        private double _rotationAngle;
 
-        public double Rotation
+        public double RotationAngle
         {
-            get => _rotation;
-            set => this.RaiseAndSetIfChanged(ref _rotation, value);
+            get => _rotationAngle;
+            set => this.RaiseAndSetIfChanged(ref _rotationAngle, value);
         }
 
         private EXIFHelper.EXIFOrientation? _exifOrientation;
@@ -772,7 +781,7 @@ namespace PicView.Avalonia.ViewModels
                 return;
             }
             var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, ImageIterator.Pics);
-            SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)Width, preloadValue?.ImageModel?.PixelHeight ?? (int)Height, Rotation);
+            SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)Width, preloadValue?.ImageModel?.PixelHeight ?? (int)Height, RotationAngle);
         }
 
         public void SetSize(double width, double height, double rotation)
@@ -838,7 +847,7 @@ namespace PicView.Avalonia.ViewModels
             FileInfo = imageModel.FileInfo;
             EXIFOrientation = imageModel.EXIFOrientation;
             IsFlipped = imageModel.IsFlipped;
-            Rotation = imageModel.Rotation;
+            RotationAngle = imageModel.Rotation;
             ZoomValue = 1;
         }
 
@@ -1282,12 +1291,30 @@ namespace PicView.Avalonia.ViewModels
 
             #region Image commands
 
-            RotateLeftCommand = ReactiveCommand.Create(() =>
+            RotateLeftCommand = ReactiveCommand.CreateFromTask(async () =>
             {
+                if (RotationHelper.IsValidRotation(RotationAngle))
+                {
+                    RotationAngle = RotationHelper.Rotate(RotationAngle, true);
+                }
+                else
+                {
+                    RotationAngle = RotationHelper.NextRotationAngle(RotationAngle, true);
+                }
+                SetSize();
             });
 
             RotateRightCommand = ReactiveCommand.Create(() =>
             {
+                if (RotationHelper.IsValidRotation(RotationAngle))
+                {
+                    RotationAngle = RotationHelper.Rotate(RotationAngle, false);
+                }
+                else
+                {
+                    RotationAngle = RotationHelper.NextRotationAngle(RotationAngle, false);
+                }
+                SetSize();
             });
 
             FlipCommand = ReactiveCommand.Create(() =>

@@ -24,28 +24,19 @@ public static class SettingsHelper
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
             if (File.Exists(path))
             {
-                var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                var settings = JsonSerializer.Deserialize(
-                        jsonString, typeof(AppSettings), SourceGenerationContext.Default)
-                    as AppSettings;
-                Settings = await UpgradeSettings(settings).ConfigureAwait(false);
+                await PerformRead(path).ConfigureAwait(false);
             }
             else
             {
+                // TODO test saving location for macOS https://johnkoerner.com/csharp/special-folder-values-on-windows-versus-mac/
                 var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
                 if (File.Exists(appData))
                 {
-                    var jsonString = await File.ReadAllTextAsync(appData).ConfigureAwait(false);
-                    var settings = JsonSerializer.Deserialize(
-                            jsonString, typeof(AppSettings), SourceGenerationContext.Default)
-                        as AppSettings;
-                    Settings = await UpgradeSettings(settings).ConfigureAwait(false);
+                    await PerformRead(appData).ConfigureAwait(false);
                 }
                 else
                 {
                     SetDefaults();
-                    // Get the default culture from the OS
-                    Settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
                 }
             }
         }
@@ -71,6 +62,8 @@ public static class SettingsHelper
             Zoom = new Zoom(),
             StartUp = new StartUp()
         };
+        // Get the default culture from the OS
+        Settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
     }
 
     private static void InitiateJson()
@@ -84,22 +77,28 @@ public static class SettingsHelper
 
     private static async Task PerformSave(string path)
     {
+        InitiateJson();
         var updatedJson = JsonSerializer.Serialize(
             Settings, typeof(AppSettings), SourceGenerationContext.Default);
         await using var writer = new StreamWriter(path);
         await writer.WriteAsync(updatedJson).ConfigureAwait(false);
     }
 
+    private static async Task PerformRead(string path)
+    {
+        var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+        var settings = JsonSerializer.Deserialize(
+                jsonString, typeof(AppSettings), SourceGenerationContext.Default)
+            as AppSettings;
+        Settings = await UpgradeSettings(settings);
+    }
+
     public static async Task SaveSettingsAsync()
     {
-        InitiateJson();
         try
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
-            var updatedJson = JsonSerializer.Serialize(
-                Settings, typeof(AppSettings), SourceGenerationContext.Default);
-            await using var writer = new StreamWriter(path);
-            await writer.WriteAsync(updatedJson).ConfigureAwait(false);
+            await PerformSave(path).ConfigureAwait(false);
         }
         catch (UnauthorizedAccessException ex)
         {
