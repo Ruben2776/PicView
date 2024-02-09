@@ -23,13 +23,13 @@
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 
             <ImageBrush
+                x:Key="NoisyTexture"
                 DestinationRect="0,0,100,100"
                 Opacity=".7"
                 Source="\DarkTheme\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 SourceRect="0,0,200,200"
                 Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="NoisyTexture" />
+                TileMode="FlipXY" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ToggleButton.axaml" />
@@ -39,13 +39,14 @@
                 <ResourceInclude Source="/DarkTheme/Controls/Scrollbar.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/MenuFlyoutPresenter.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <DropShadowEffect
+                x:Key="MenuShadowButtonBorder"
                 BlurRadius="5"
-                Color="#112e2e2e"
                 OffsetX="2"
                 OffsetY="2"
-                x:Key="MenuShadowButtonBorder" />
+                Color="#112e2e2e" />
         </ResourceDictionary>
     </Styles.Resources>
     <Style Selector="Window">

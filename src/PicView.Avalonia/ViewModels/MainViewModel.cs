@@ -461,6 +461,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ChangeIncludeSubdirectoriesCommand { get; }
 
         public ICommand? ToggleUICommand { get; }
+        public ICommand? ToggleIsRotationTransformOpenCommand { get; }
 
         #endregion Commands
 
@@ -468,6 +469,14 @@ namespace PicView.Avalonia.ViewModels
 
         public string? GetFlipped => IsFlipped ? UnFlip : Flip;
         public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
+
+        private bool _isRotationTransformOpen;
+
+        public bool IsRotationTransformOpen
+        {
+            get => _isRotationTransformOpen;
+            set => this.RaiseAndSetIfChanged(ref _isRotationTransformOpen, value);
+        }
 
         private UserControl? _currentView;
 
@@ -1287,12 +1296,21 @@ namespace PicView.Avalonia.ViewModels
                 IsToolsMenuVisible = !IsToolsMenuVisible;
             });
 
+            ToggleIsRotationTransformOpenCommand = ReactiveCommand.Create(() =>
+            {
+                IsRotationTransformOpen = !IsRotationTransformOpen;
+            });
+
             #endregion Menus
 
             #region Image commands
 
-            RotateLeftCommand = ReactiveCommand.CreateFromTask(async () =>
+            RotateLeftCommand = ReactiveCommand.Create(() =>
             {
+                if (Image is null)
+                {
+                    return;
+                }
                 if (RotationHelper.IsValidRotation(RotationAngle))
                 {
                     RotationAngle = RotationHelper.Rotate(RotationAngle, true);
@@ -1306,6 +1324,10 @@ namespace PicView.Avalonia.ViewModels
 
             RotateRightCommand = ReactiveCommand.Create(() =>
             {
+                if (Image is null)
+                {
+                    return;
+                }
                 if (RotationHelper.IsValidRotation(RotationAngle))
                 {
                     RotationAngle = RotationHelper.Rotate(RotationAngle, false);
@@ -1319,6 +1341,10 @@ namespace PicView.Avalonia.ViewModels
 
             FlipCommand = ReactiveCommand.Create(() =>
             {
+                if (Image is null)
+                {
+                    return;
+                }
                 IsFlipped = !IsFlipped;
             });
 

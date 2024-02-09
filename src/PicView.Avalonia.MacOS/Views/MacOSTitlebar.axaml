@@ -6,8 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     x:DataType="viewModels:MainViewModel"
     IsVisible="{Binding IsInterfaceShown}"
     mc:Ignorable="d">
