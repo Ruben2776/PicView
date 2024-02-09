@@ -42,4 +42,23 @@ public static class RotationHelper
             _ => 270
         };
     }
+
+    public static double Rotate(double currentDegrees, bool clockWise)
+    {
+        if (clockWise)
+        {
+            currentDegrees += 90;
+        }
+        else
+        {
+            currentDegrees -= 90;
+        }
+
+        if (Math.Abs(currentDegrees - 450) < 10)
+        {
+            currentDegrees = 0;
+        }
+
+        return currentDegrees;
+    }
 }

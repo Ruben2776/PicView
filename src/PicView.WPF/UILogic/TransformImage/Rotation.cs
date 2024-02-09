@@ -54,44 +54,19 @@ internal static class Rotation
         if (keyDown)
         {
             Rotate(up ? RotationAngle + 1 : RotationAngle - 1);
+            Tooltip.ShowTooltipMessage(RotationAngle);
         }
         else
         {
             if (RotationHelper.IsValidRotation(RotationAngle))
             {
-                Rotate(up);
+                Rotate(RotationHelper.Rotate(RotationAngle, up));
             }
             else
             {
-                Rotate(RotationHelper.NextRotationAngle(RotationAngle, up), true);
+                Rotate(RotationHelper.NextRotationAngle(RotationAngle, up));
             }
         }
-    }
-
-    /// <summary>
-    /// Rotates the image by 90 degrees.
-    /// </summary>
-    /// <param name="up">If true, rotates the image up (clockwise); otherwise, rotates it down (counterclockwise).</param>
-    private static void Rotate(bool up)
-    {
-        if (up)
-        {
-            RotationAngle += 90;
-            if (RotationAngle >= 360)
-            {
-                RotationAngle -= 360;
-            }
-        }
-        else
-        {
-            RotationAngle -= 90;
-            if (RotationAngle < 0)
-            {
-                RotationAngle += 360;
-            }
-        }
-
-        Rotate(RotationAngle);
     }
 
     /// <summary>
