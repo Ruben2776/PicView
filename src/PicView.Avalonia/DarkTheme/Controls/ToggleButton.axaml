@@ -1,8 +1,8 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type ToggleButton}" TargetType="ToggleButton">
         <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
@@ -13,81 +13,79 @@
         <Setter Property="Template">
             <ControlTemplate TargetType="{x:Type ToggleButton}">
                 <Border
+                    Name="PART_ContentPresenter"
+                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    Name="PART_ContentPresenter"
-                    Padding="{TemplateBinding Padding}">
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <StackPanel Orientation="Horizontal">
                         <Decorator
-                            HorizontalAlignment="Center"
                             Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                            <Canvas Height="20" Width="20">
+                            <Canvas Width="20" Height="20">
                                 <!--  Define size of the Bullet  -->
-                                <Path
-                                    Data="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
-                                    Fill="{StaticResource MainIconColor}"
-                                    Height="16"
-                                    IsVisible="False"
-                                    Margin="1,2,4,0"
-                                    Stretch="Fill"
-                                    Stroke="#FF088530"
-                                    StrokeThickness="1"
-                                    Width="16"
-                                    x:Name="TickMark" />
                                 <Border
+                                    x:Name="TickMark"
+                                    Width="16"
+                                    Height="16"
+                                    Margin="1,2,4,0"
                                     Background="#fff"
                                     CornerRadius="9"
-                                    Height="16"
-                                    IsVisible="True"
-                                    Margin="1,2,4,0"
-                                    UseLayoutRounding="True"
-                                    Width="16"
-                                    x:Name="CrossMark">
+                                    IsVisible="False"
+                                    UseLayoutRounding="True">
                                     <Path
-                                        Data="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"
-                                        Fill="#FFB00927"
+                                        Data="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
+                                        Fill="{DynamicResource AccentColor}"
                                         Stretch="Fill" />
                                 </Border>
+
+                                <Path
+                                    x:Name="CrossMark"
+                                    Width="11"
+                                    Height="11"
+                                    Margin="2,5,3,0"
+                                    Data="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
+                                    Fill="{StaticResource MainIconColor}"
+                                    IsVisible="True"
+                                    Stretch="Fill" />
                             </Canvas>
                         </Decorator>
                         <ContentPresenter
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             RecognizesAccessKey="True"
-                            TextElement.Foreground="{TemplateBinding Foreground}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
                     </StackPanel>
                 </Border>
-
             </ControlTemplate>
         </Setter>
 
         <Style Selector="^:checked">
-            <Style Selector="^ /template/ Path#TickMark">
+            <Style Selector="^ /template/ Border#TickMark">
                 <Setter Property="IsVisible" Value="True" />
             </Style>
-            <Style Selector="^ /template/ Border#CrossMark">
+            <Style Selector="^ /template/ Path#CrossMark">
                 <Setter Property="IsVisible" Value="False" />
             </Style>
         </Style>
 
         <Style Selector="^:unchecked">
-            <Style Selector="^ /template/ Path#TickMark">
+            <Style Selector="^ /template/ Border#TickMark">
                 <Setter Property="IsVisible" Value="False" />
             </Style>
-            <Style Selector="^ /template/ Border#CrossMark">
+            <Style Selector="^ /template/ Path#CrossMark">
                 <Setter Property="IsVisible" Value="True" />
             </Style>
         </Style>
 
         <Style Selector="^.hover:pointerover /template/ Border#PART_ContentPresenter">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation IterationCount="1" Duration=".35">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
@@ -104,7 +102,7 @@
         </Style>
         <Style Selector="^.altHover:pointerover /template/ Border#PART_ContentPresenter">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation IterationCount="1" Duration=".35">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
@@ -121,7 +119,7 @@
         </Style>
         <Style Selector="^.alphaHover:pointerover /template/ Border#PART_ContentPresenter">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation IterationCount="1" Duration=".35">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="Transparent" />

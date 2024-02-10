@@ -28,7 +28,7 @@
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
             <uc:BottomBar x:Name="BottomBar" DockPanel.Dock="Bottom" />
-            <views:MainView />
+            <views:MainView Background="{StaticResource NoisyTexture}" />
         </DockPanel>
     </Border>
 </Window>

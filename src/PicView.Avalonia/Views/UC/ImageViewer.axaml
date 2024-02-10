@@ -23,13 +23,22 @@
                 Source="{Binding Image}"
                 Stretch="Fill">
                 <Image.RenderTransform>
-                    <RotateTransform Angle="{Binding RotationAngle}">
-                        <RotateTransform.Transitions>
-                            <Transitions>
-                                <DoubleTransition Property="RotateTransform.Angle" Duration="0:0:0.45" />
-                            </Transitions>
-                        </RotateTransform.Transitions>
-                    </RotateTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding ScaleX}">
+                            <ScaleTransform.Transitions>
+                                <Transitions>
+                                    <DoubleTransition Property="ScaleTransform.ScaleX" Duration="0:0:0.30" />
+                                </Transitions>
+                            </ScaleTransform.Transitions>
+                        </ScaleTransform>
+                        <RotateTransform Angle="{Binding RotationAngle}">
+                            <RotateTransform.Transitions>
+                                <Transitions>
+                                    <DoubleTransition Property="RotateTransform.Angle" Duration="0:0:0.45" />
+                                </Transitions>
+                            </RotateTransform.Transitions>
+                        </RotateTransform>
+                    </TransformGroup>
                 </Image.RenderTransform>
             </Image>
         </Border>

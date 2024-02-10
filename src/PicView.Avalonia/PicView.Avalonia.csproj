@@ -33,6 +33,16 @@
     <None Remove="Themes\**" />
   </ItemGroup>
 
+  
+  <ItemGroup>
+    <None Remove="DarkTheme\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <AvaloniaResource Include="DarkTheme\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.9" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.9" />

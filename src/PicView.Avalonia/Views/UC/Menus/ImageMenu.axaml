@@ -89,121 +89,23 @@
                 </Button>
 
                 <Button
-                    x:Name="RotationButton"
                     Canvas.Left="90"
                     Width="45"
                     Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="hover"
-                    Click="RotationButton_OnClick">
-                    <Grid>
-                        <Popup
-                            x:Name="RotationPopup"
-                            IsLightDismissEnabled="True"
-                            Placement="Top">
-                            <StackPanel>
-                                <ToggleButton
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1"
-                                    Classes="altHover"
-                                    CornerRadius="8,8,1,1"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="0°"
-                                        TextTrimming="CharacterEllipsis" />
-                                </ToggleButton>
-                                <ToggleButton
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="90°"
-                                        TextTrimming="CharacterEllipsis" />
-                                </ToggleButton>
-                                <ToggleButton
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="180°"
-                                        TextTrimming="CharacterEllipsis" />
-                                </ToggleButton>
-                                <ToggleButton
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="270°"
-                                        TextTrimming="CharacterEllipsis" />
-                                </ToggleButton>
-                                <Button
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    CornerRadius="0,0,8,8"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="{Binding GetFlipped}"
-                                        TextAlignment="Center"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Button>
-                                <Rectangle
-                                    Width="26"
-                                    Height="1.5"
-                                    Margin="57,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    Fill="{StaticResource SecondaryBackgroundColor}" />
-                                <Polygon
-                                    Margin="54,-3.5,0,0"
-                                    Fill="{StaticResource MainBackgroundColor}"
-                                    Points="0,0 15,30, 30,0"
-                                    Stroke="{StaticResource MainBorderColor}"
-                                    StrokeThickness="1" />
-                            </StackPanel>
-                        </Popup>
-
-                        <Image Width="17" Height="17">
-                            <DrawingImage>
-                                <DrawingGroup>
-                                    <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M142.9 142.9C205.1 80.7 305.6 80.4 368.2 141.9L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224L463.5 224C463.5 224 463.5 224 463.5 224L472 224C485.3 224 496 213.3 496 200L496 72C496 62.3 490.2 53.5 481.2 49.8C472.2 46.1 461.9 48.1 455 55L413.4 96.6C325.8 10.1 184.7 10.4 97.6 97.6C73.2 122 55.6 150.7 44.8 181.4C38.9 198.1 47.7 216.3 64.3 222.2C80.9 228.1 99.2 219.3 105.1 202.7C112.8 180.9 125.3 160.4 142.9 142.9L142.9 142.9ZM16 312L16 319.6L16 320.3L16 440C16 449.7 21.8 458.5 30.8 462.2C39.8 465.9 50.1 463.9 57 457L98.6 415.4C186.2 501.9 327.3 501.6 414.4 414.4C438.8 390 456.5 361.3 467.3 330.7C473.2 314 464.4 295.8 447.8 289.9C431.2 284 412.9 292.8 407 309.4C399.3 331.2 386.8 351.7 369.2 369.2C307 431.4 206.5 431.7 143.9 370.2L185 329C191.9 322.1 193.9 311.8 190.2 302.8C186.5 293.8 177.7 288 168 288L48.4 288L47.7 288L40 288C26.7 288 16 298.7 16 312Z" />
-                                </DrawingGroup>
-                            </DrawingImage>
-                        </Image>
-                    </Grid>
+                    Classes="hover">
+                    <Image Width="17" Height="17">
+                        <DrawingImage>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M142.9 142.9C205.1 80.7 305.6 80.4 368.2 141.9L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224L463.5 224C463.5 224 463.5 224 463.5 224L472 224C485.3 224 496 213.3 496 200L496 72C496 62.3 490.2 53.5 481.2 49.8C472.2 46.1 461.9 48.1 455 55L413.4 96.6C325.8 10.1 184.7 10.4 97.6 97.6C73.2 122 55.6 150.7 44.8 181.4C38.9 198.1 47.7 216.3 64.3 222.2C80.9 228.1 99.2 219.3 105.1 202.7C112.8 180.9 125.3 160.4 142.9 142.9L142.9 142.9ZM16 312L16 319.6L16 320.3L16 440C16 449.7 21.8 458.5 30.8 462.2C39.8 465.9 50.1 463.9 57 457L98.6 415.4C186.2 501.9 327.3 501.6 414.4 414.4C438.8 390 456.5 361.3 467.3 330.7C473.2 314 464.4 295.8 447.8 289.9C431.2 284 412.9 292.8 407 309.4C399.3 331.2 386.8 351.7 369.2 369.2C307 431.4 206.5 431.7 143.9 370.2L185 329C191.9 322.1 193.9 311.8 190.2 302.8C186.5 293.8 177.7 288 168 288L48.4 288L47.7 288L40 288C26.7 288 16 298.7 16 312Z" />
+                            </DrawingGroup>
+                        </DrawingImage>
+                    </Image>
                 </Button>
 
                 <Button
-                    x:Name="SlideShowButton"
                     Canvas.Left="135"
                     Width="45"
                     Height="45"
@@ -211,112 +113,13 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
-                    Click="SlideShowButton_OnClick"
                     ToolTip.Tip="{Binding Slideshow}">
-                    <Grid>
-                        <Popup
-                            x:Name="SlideShowPopup"
-                            IsLightDismissEnabled="True"
-                            Placement="Top">
-                            <StackPanel>
-                                <Button
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1"
-                                    Classes="altHover"
-                                    CornerRadius="8,8,1,1"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="5 seconds"
-                                        TextAlignment="Center"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Button>
-                                <Button
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="3 seconds"
-                                        TextAlignment="Center"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Button>
-                                <Button
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="2 seconds"
-                                        TextAlignment="Center"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Button>
-                                <Button
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="1 second"
-                                        TextAlignment="Center"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Button>
-                                <Button
-                                    Width="135"
-                                    Height="45"
-                                    Background="{StaticResource MainBackgroundColor}"
-                                    BorderBrush="{StaticResource MainBorderColor}"
-                                    BorderThickness="1,0,1,1"
-                                    Classes="altHover"
-                                    CornerRadius="0,0,8,8"
-                                    Effect="{StaticResource MenuShadowButtonBorder}">
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                        Text="Start slideshow"
-                                        TextAlignment="Center"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Button>
-                                <Rectangle
-                                    Width="26"
-                                    Height="1.5"
-                                    Margin="57,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    Fill="{StaticResource SecondaryBackgroundColor}" />
-                                <Polygon
-                                    Margin="54,-3.5,0,0"
-                                    Fill="{StaticResource MainBackgroundColor}"
-                                    Points="0,0 15,30, 30,0"
-                                    Stroke="{StaticResource MainBorderColor}"
-                                    StrokeThickness="1" />
-                            </StackPanel>
-                        </Popup>
-                        <Path
-                            Width="17"
-                            Height="17"
-                            Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
-                            Fill="{StaticResource MainIconColor}"
-                            Stretch="Fill" />
-                    </Grid>
+                    <Path
+                        Width="17"
+                        Height="17"
+                        Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
+                        Fill="{StaticResource MainIconColor}"
+                        Stretch="Fill" />
                 </Button>
 
                 <Button
@@ -397,7 +200,7 @@
                 <ToggleButton
                     Canvas.Left="7"
                     Canvas.Top="53"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder"
                     IsChecked="{Binding IsScrollingEnabled}"
                     ToolTip.Tip="{Binding ToggleScroll}">
                     <TextBlock
@@ -410,7 +213,7 @@
                 <ToggleButton
                     Canvas.Left="7"
                     Canvas.Top="99"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder"
                     Command="{Binding ChangeAutoFitCommand}"
                     IsChecked="{Binding IsAutoFit}"
                     ToolTip.Placement="Top"
@@ -425,7 +228,7 @@
                 <ToggleButton
                     Canvas.Left="160"
                     Canvas.Top="53"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder"
                     IsChecked="{Binding IsStretched}"
                     ToolTip.Tip="{Binding Stretch}">
                     <TextBlock
@@ -438,7 +241,7 @@
                 <ToggleButton
                     Canvas.Left="160"
                     Canvas.Top="99"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder"
                     ToolTip.Tip="Double page">
                     <TextBlock
                         VerticalAlignment="Center"
@@ -451,7 +254,7 @@
                     Canvas.Left="7"
                     Canvas.Top="145"
                     Width="300"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder"
                     ToolTip.Tip="{Binding GetBottomGallery}">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <Image

@@ -79,6 +79,9 @@ namespace PicView.Avalonia.ViewModels
             ToggleLooping = TranslationHelper.GetTranslation("ToggleLooping");
             HideShowInterface = TranslationHelper.GetTranslation("HideShowInterface");
             ApplicationShortcuts = TranslationHelper.GetTranslation("ApplicationShortcuts");
+            BatchResize = TranslationHelper.GetTranslation("BatchResize");
+            Effects = TranslationHelper.GetTranslation("Effects");
+            EffectsTooltip = TranslationHelper.GetTranslation("EffectsTooltip");
         }
 
         private string? _applicationShortcuts;
@@ -87,6 +90,30 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _applicationShortcuts;
             set => this.RaiseAndSetIfChanged(ref _applicationShortcuts, value);
+        }
+
+        private string? _batchResize;
+
+        public string? BatchResize
+        {
+            get => _batchResize;
+            set => this.RaiseAndSetIfChanged(ref _batchResize, value);
+        }
+
+        private string? _effects;
+
+        public string? Effects
+        {
+            get => _effects;
+            set => this.RaiseAndSetIfChanged(ref _effects, value);
+        }
+
+        private string? _effectsTooltip;
+
+        public string? EffectsTooltip
+        {
+            get => _effectsTooltip;
+            set => this.RaiseAndSetIfChanged(ref _effectsTooltip, value);
         }
 
         private string? _selectFile;
@@ -470,12 +497,12 @@ namespace PicView.Avalonia.ViewModels
         public string? GetFlipped => IsFlipped ? UnFlip : Flip;
         public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
 
-        private bool _isRotationTransformOpen;
+        private int _scaleX = 1;
 
-        public bool IsRotationTransformOpen
+        public int ScaleX
         {
-            get => _isRotationTransformOpen;
-            set => this.RaiseAndSetIfChanged(ref _isRotationTransformOpen, value);
+            get => _scaleX;
+            set => this.RaiseAndSetIfChanged(ref _scaleX, value);
         }
 
         private UserControl? _currentView;
@@ -1296,11 +1323,6 @@ namespace PicView.Avalonia.ViewModels
                 IsToolsMenuVisible = !IsToolsMenuVisible;
             });
 
-            ToggleIsRotationTransformOpenCommand = ReactiveCommand.Create(() =>
-            {
-                IsRotationTransformOpen = !IsRotationTransformOpen;
-            });
-
             #endregion Menus
 
             #region Image commands
@@ -1346,6 +1368,14 @@ namespace PicView.Avalonia.ViewModels
                     return;
                 }
                 IsFlipped = !IsFlipped;
+                if (IsFlipped)
+                {
+                    ScaleX = -1;
+                }
+                else
+                {
+                    ScaleX = 1;
+                }
             });
 
             #endregion Image commands

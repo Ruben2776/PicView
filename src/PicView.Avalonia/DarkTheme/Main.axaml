@@ -25,8 +25,8 @@
             <ImageBrush
                 x:Key="NoisyTexture"
                 DestinationRect="0,0,100,100"
-                Opacity=".7"
-                Source="\DarkTheme\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                Opacity=".6"
+                Source="/DarkTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 SourceRect="0,0,200,200"
                 Stretch="Fill"
                 TileMode="FlipXY" />
@@ -39,7 +39,6 @@
                 <ResourceInclude Source="/DarkTheme/Controls/Scrollbar.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/MenuFlyoutPresenter.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <DropShadowEffect
                 x:Key="MenuShadowButtonBorder"
@@ -81,5 +80,8 @@
         <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
         <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
         <Setter Property="Background" Value="{StaticResource MainBackgroundColor}" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
+        </Style>
     </Style>
 </Styles>
