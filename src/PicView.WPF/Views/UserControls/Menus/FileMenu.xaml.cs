@@ -55,8 +55,7 @@ public partial class FileMenu
         // RecycleButton
         SetButtonIconMouseOverAnimations(RecycleButton, RecycleButtonBrush,
             (SolidColorBrush)Resources["RecycleButtonIconBrush"]);
-        RecycleButton.Click += async (_, _) =>
-            await DeleteFiles.DeleteCurrentFileAsync(true).ConfigureAwait(false);
+        RecycleButton.Click += (_, _) => DeleteFiles.DeleteCurrentFile(true);
 
         // OpenWithBorder
         SetButtonIconMouseOverAnimations(OpenWithBorder, OpenWithBorderBrush,

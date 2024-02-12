@@ -212,11 +212,11 @@ internal static class UIHelper
                 return true;
 
             case Key.Delete when ShiftDown:
-                await DeleteFiles.DeleteCurrentFileAsync(false).ConfigureAwait(false);
+                DeleteFiles.DeleteCurrentFile(false);
                 return true;
 
             case Key.Delete:
-                await DeleteFiles.DeleteCurrentFileAsync(true).ConfigureAwait(false);
+                DeleteFiles.DeleteCurrentFile(true);
                 return true;
         }
 
@@ -692,7 +692,7 @@ internal static class UIHelper
         {
             return;
         }
-        await DeleteFiles.DeleteCurrentFileAsync(ShiftDown).ConfigureAwait(false);
+        DeleteFiles.DeleteCurrentFile(ShiftDown);
     }
 
     internal static async Task DuplicateFile()

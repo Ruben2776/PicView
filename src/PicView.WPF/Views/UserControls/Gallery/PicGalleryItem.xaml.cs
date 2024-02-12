@@ -251,8 +251,7 @@ public partial class PicGalleryItem
                 Stretch = Stretch.Fill
             }
         };
-        deleteFileMenu.Click += async (_, _) =>
-            await DeleteFiles.DeleteFileAsync(true, FilePath).ConfigureAwait(false);
+        deleteFileMenu.Click += (_, _) => DeleteFiles.DeleteFile(true, FilePath);
         cm.Items.Add(deleteFileMenu);
 
         ContextMenu = cm;

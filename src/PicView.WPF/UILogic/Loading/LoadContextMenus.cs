@@ -420,10 +420,8 @@ internal static class LoadContextMenus
         ///   Delete File       \\\\
         ///////////////////////////
         var Deletecm = (MenuItem)MainContextMenu.Items[18];
-        Deletecm.Click += async (_, _) =>
-            await DeleteFiles
-                .DeleteCurrentFileAsync(
-                    Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)).ConfigureAwait(false);
+        Deletecm.Click += (_, _) => DeleteFiles.DeleteCurrentFile(
+                    Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift));
         Deletecm.ToolTip = TranslationHelper.GetTranslation("SendCurrentImageToRecycleBin");
         Deletecm.Header = TranslationHelper.GetTranslation("DeleteFile");
 

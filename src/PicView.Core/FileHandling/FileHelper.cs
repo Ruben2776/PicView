@@ -128,7 +128,7 @@ public static partial class FileHelper
         var i = 1;
 
         // Check if the original filename already contains parentheses
-        if (fileNameWithoutExtension.Contains("(") && fileNameWithoutExtension.EndsWith(")"))
+        if (fileNameWithoutExtension.Contains('(') && fileNameWithoutExtension.EndsWith(')'))
         {
             // Extract the number from the existing parentheses
             var lastParenIndex = fileNameWithoutExtension.LastIndexOf("(", StringComparison.Ordinal);

@@ -198,17 +198,29 @@ internal static class FileUpdateNavigation
         {
             return;
         }
+        var preloadValue = PreLoader.Get(Navigation.FolderIndex);
         Navigation.FolderIndex--;
 
-        PreLoader.Remove(Navigation.FolderIndex);
+        if (Navigation.FolderIndex < 0)
+        {
+            ErrorHandling.Unload(true);
+            return;
+        }
+
+        PreLoader.Clear();
+        if (!sameFile)
+        {
+            await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue.FileInfo, preloadValue.BitmapSource);
+        }
 
         if (sameFile)
         {
-            await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
+            await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex).ConfigureAwait(false);
         }
         else
         {
             await UpdateTitle(Navigation.FolderIndex);
+            await PreLoader.PreLoadAsync(Navigation.FolderIndex, Navigation.Pics.Count, true).ConfigureAwait(false);
         }
         _running = false;
 
