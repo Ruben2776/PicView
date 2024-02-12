@@ -72,6 +72,7 @@ namespace PicView.Avalonia.ViewModels
             Slideshow = TranslationHelper.GetTranslation("Slideshow");
             Settings = TranslationHelper.GetTranslation("Settings");
             InfoWinow = TranslationHelper.GetTranslation("InfoWindow");
+            ImageInfo = TranslationHelper.GetTranslation("ImageInfo");
             About = TranslationHelper.GetTranslation("About");
             ShowAllSettingsWindow = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
             StayTopMost = TranslationHelper.GetTranslation("StayTopMost");
@@ -82,6 +83,14 @@ namespace PicView.Avalonia.ViewModels
             BatchResize = TranslationHelper.GetTranslation("BatchResize");
             Effects = TranslationHelper.GetTranslation("Effects");
             EffectsTooltip = TranslationHelper.GetTranslation("EffectsTooltip");
+        }
+
+        private string? _imageInfo;
+
+        public string? ImageInfo
+        {
+            get => _imageInfo;
+            set => this.RaiseAndSetIfChanged(ref _imageInfo, value);
         }
 
         private string? _applicationShortcuts;
@@ -490,6 +499,14 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleUICommand { get; }
         public ICommand? ToggleIsRotationTransformOpenCommand { get; }
 
+        private ICommand? _showExifWindowCommand;
+
+        public ICommand? ShowExifWindowCommand
+        {
+            get => _showExifWindowCommand;
+            set => this.RaiseAndSetIfChanged(ref _showExifWindowCommand, value);
+        }
+
         #endregion Commands
 
         #region Fields
@@ -879,44 +896,59 @@ namespace PicView.Avalonia.ViewModels
         public void SetImageModel(ImageModel imageModel)
         {
             ArgumentNullException.ThrowIfNull(imageModel);
-            Image = imageModel.Image;
-            FileInfo = imageModel.FileInfo;
-            EXIFOrientation = imageModel.EXIFOrientation;
-            IsFlipped = imageModel.IsFlipped;
-            RotationAngle = imageModel.Rotation;
+            Image = imageModel?.Image ?? null; // TODO replace with broken image graphic if it is null
+            FileInfo = imageModel?.FileInfo;
+            EXIFOrientation = imageModel?.EXIFOrientation;
+            IsFlipped = imageModel?.IsFlipped ?? false;
+            RotationAngle = imageModel?.Rotation ?? 0;
             ZoomValue = 1;
         }
 
         public void SetTitle(ImageModel? imageModel, ImageIterator imageIterator)
         {
-            ArgumentNullException.ThrowIfNull(imageModel);
-            ArgumentNullException.ThrowIfNull(imageIterator);
+            if (imageModel is null || ImageIterator is null)
+            {
+                ReturnError();
+                return;
+            }
+
+            if (imageModel.FileInfo is null)
+            {
+                ReturnError();
+                return;
+            }
 
             var titleString = TitleHelper.GetTitle(imageModel.PixelWidth, imageModel.PixelHeight, imageIterator.Index,
                 imageModel.FileInfo, ZoomValue, imageIterator.Pics);
             WindowTitle = titleString[0];
             Title = titleString[1];
             TitleTooltip = titleString[2];
+
+            return;
+
+            void ReturnError()
+            {
+                WindowTitle =
+                Title =
+                TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
+            }
         }
 
         public void SetTitle()
         {
-            try
+            if (ImageIterator is null)
             {
-                ArgumentNullException.ThrowIfNull(ImageIterator);
+                WindowTitle =
+                    Title =
+                        TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
+                return;
+            }
 
-                var titleString = TitleHelper.GetTitle((int)Width, (int)Height, ImageIterator.Index,
+            var titleString = TitleHelper.GetTitle((int)Width, (int)Height, ImageIterator.Index,
                     FileInfo, ZoomValue, ImageIterator.Pics);
-                WindowTitle = titleString[0];
-                Title = titleString[1];
-                TitleTooltip = titleString[2];
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Trace.WriteLine(e);
-#endif
-            }
+            WindowTitle = titleString[0];
+            Title = titleString[1];
+            TitleTooltip = titleString[2];
         }
 
         public void ResetTitle()
@@ -1084,6 +1116,10 @@ namespace PicView.Avalonia.ViewModels
                     {
                         if (isSameFile) //change if deleting current file
                         {
+                            if (ImageIterator?.Index < 0 || ImageIterator?.Index >= ImageIterator?.Pics.Count)
+                            {
+                                return;
+                            }
                             await LoadPicFromString(ImageIterator.Pics[ImageIterator.Index]);
                         }
                         else
@@ -1220,6 +1256,10 @@ namespace PicView.Avalonia.ViewModels
                 }
                 CloseMenuCommand.Execute(null);
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+
+            ShowExifWindowCommand = ReactiveCommand.Create(() =>
+            {
             });
 
             #endregion Window commands

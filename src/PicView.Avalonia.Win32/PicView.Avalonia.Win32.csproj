@@ -52,4 +52,8 @@
       <DependentUpon>WinTitleBar.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\ExifWindow.axaml" />
+  </ItemGroup>
 </Project>

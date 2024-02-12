@@ -2,6 +2,6 @@
 
 namespace PicView.Avalonia.ViewModels;
 
-public class ViewModelBase : ReactiveObject
+public class ExifViewModel : ViewModelBase
 {
 }

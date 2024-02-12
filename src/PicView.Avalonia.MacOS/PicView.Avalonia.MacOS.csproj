@@ -25,8 +25,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Update="Views\ExifWindow.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="App.axaml.cs">
       <DependentUpon>App.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ExifWindow.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

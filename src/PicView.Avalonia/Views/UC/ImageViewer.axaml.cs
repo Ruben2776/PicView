@@ -65,6 +65,7 @@ public partial class ImageViewer : UserControl
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
+            // TODO figure out how to do image navigation with gestures
             return;
         }
 

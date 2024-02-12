@@ -51,6 +51,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\ExifView.axaml.cs">
+      <DependentUpon>ExifView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\UC\ImageViewer.axaml.cs">
       <DependentUpon>ImageViewer.axaml</DependentUpon>
     </Compile>

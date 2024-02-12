@@ -1,10 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Win32;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using ReactiveUI;
 using System;
-using Avalonia.Input;
+using System.Reactive.Concurrency;
 
 namespace PicView.Avalonia.MacOS.Views;
 
@@ -16,28 +18,46 @@ public partial class MacMainWindow : Window
 
         Loaded += delegate
         {
-            ClientSizeProperty.Changed.Subscribe(size =>
+            RxApp.MainThreadScheduler.Schedule(() =>
             {
-                if (!SettingsHelper.Settings.WindowProperties.AutoFit)
+                if (DataContext is null)
                 {
                     return;
                 }
 
-                if (!size.OldValue.HasValue || !size.NewValue.HasValue)
+                var wm = (MainViewModel)DataContext;
+                ClientSizeProperty.Changed.Subscribe(size =>
                 {
-                    return;
-                }
+                    if (!SettingsHelper.Settings.WindowProperties.AutoFit)
+                    {
+                        return;
+                    }
 
-                if (size.OldValue.Value.Width == 0 || size.OldValue.Value.Height == 0 ||
-                    size.NewValue.Value.Width == 0 || size.NewValue.Value.Height == 0)
+                    if (!size.OldValue.HasValue || !size.NewValue.HasValue)
+                    {
+                        return;
+                    }
+
+                    if (size.OldValue.Value.Width == 0 || size.OldValue.Value.Height == 0 ||
+                        size.NewValue.Value.Width == 0 || size.NewValue.Value.Height == 0)
+                    {
+                        return;
+                    }
+
+                    var x = (size.OldValue.Value.Width - size.NewValue.Value.Width) / 2;
+                    var y = (size.OldValue.Value.Height - size.NewValue.Value.Height) / 2;
+
+                    Position = new PixelPoint(Position.X + (int)x, Position.Y + (int)y);
+                });
+
+                wm.ShowExifWindowCommand = ReactiveCommand.Create(() =>
                 {
-                    return;
-                }
-
-                var x = (size.OldValue.Value.Width - size.NewValue.Value.Width) / 2;
-                var y = (size.OldValue.Value.Height - size.NewValue.Value.Height) / 2;
-
-                Position = new PixelPoint(Position.X + (int)x, Position.Y + (int)y);
+                    var exifWindow = new ExifWindow
+                    {
+                        DataContext = new ExifViewModel()
+                    };
+                    exifWindow.Show();
+                });
             });
         };
     }
