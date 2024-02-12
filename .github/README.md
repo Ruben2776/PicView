@@ -272,17 +272,6 @@ Pull requests are welcome. Check current issues and assign yourself or create yo
 
 Improvements to the current code or bug fixes are also welcome!
 
-## Contributors
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
 
 ## Translators/Languages
 Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a>, <a href="https://github.com/wcxu21">wcxu21</a><br>
