@@ -9,8 +9,20 @@ public partial class App
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
-        ProfileOptimization.StartProfile("ProfileOptimization");
+        Task.Run((() =>
+        {
+            try
+            {
+                ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
+                ProfileOptimization.StartProfile("ProfileOptimization");
+            }
+            catch (Exception)
+            {
+                ProfileOptimization.SetProfileRoot(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/"));
+                ProfileOptimization.StartProfile("ProfileOptimization");
+            }
+        }));
+
         DispatcherUnhandledException += App_DispatcherUnhandledException;
     }
 

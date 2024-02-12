@@ -1,7 +1,6 @@
 ﻿using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
-using PicView.Core.Navigation;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;

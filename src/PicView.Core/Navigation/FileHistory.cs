@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime;
 
 namespace PicView.Core.Navigation;
 
@@ -28,6 +29,14 @@ public class FileHistory
         }
         catch (Exception e)
         {
+            try
+            {
+                _fileLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/recent.txt");
+            }
+            catch (Exception)
+            {
+                Trace.WriteLine($"{nameof(FileHistory)} exception, \n{e.Message}");
+            }
 #if DEBUG
             Trace.WriteLine($"{nameof(FileHistory)} exception, \n{e.Message}");
 #endif

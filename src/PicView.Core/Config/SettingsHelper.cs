@@ -24,20 +24,18 @@ public static class SettingsHelper
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
             if (File.Exists(path))
             {
-                await PerformRead(path).ConfigureAwait(false);
+                try
+                {
+                    await PerformRead(path).ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    await Retry().ConfigureAwait(false);
+                }
             }
             else
             {
-                // TODO test saving location for macOS https://johnkoerner.com/csharp/special-folder-values-on-windows-versus-mac/
-                var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
-                if (File.Exists(appData))
-                {
-                    await PerformRead(appData).ConfigureAwait(false);
-                }
-                else
-                {
-                    SetDefaults();
-                }
+                await Retry().ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -46,6 +44,28 @@ public static class SettingsHelper
             Trace.WriteLine($"{nameof(LoadSettingsAsync)} error loading settings:\n {ex.Message}");
 #endif
             SetDefaults();
+        }
+        return;
+
+        async Task Retry()
+        {
+            // TODO test saving location for macOS https://johnkoerner.com/csharp/special-folder-values-on-windows-versus-mac/
+            var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+            if (File.Exists(appData))
+            {
+                try
+                {
+                    await PerformRead(appData).ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    SetDefaults();
+                }
+            }
+            else
+            {
+                SetDefaults();
+            }
         }
     }
 

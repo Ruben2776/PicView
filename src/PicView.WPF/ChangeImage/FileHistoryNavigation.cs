@@ -52,7 +52,10 @@ internal static class FileHistoryNavigation
     {
         if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/recent.txt")) == false)
         {
-            return;
+            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/recent.txt")) == false)
+            {
+                return;
+            }
         }
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
