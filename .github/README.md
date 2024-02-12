@@ -264,12 +264,27 @@ You can also view and change shortcuts by opening the `About` window `F1`
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/bf0fd0f740f9486ba306bdec7fe8bde7)](https://www.codacy.com/manual/ruben_8/PicView?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ruben2776/PicView&amp;utm_campaign=Badge_Grade)
 
+** Building ** 
+Open and run the solution in Visual Studio or Rider. 
+If you're not using x64 hardware, make sure to change the platform target to your CPU architecture in the project properties, as well as changing the the Magick.NET Nuget packages to match.
+
 Pull requests are welcome. Check current issues and assign yourself or create your own issue. 
 
 Improvements to the current code or bug fixes are also welcome!
 
+## Contributors
 
-# Translators/Languages
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+## Translators/Languages
 Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a>, <a href="https://github.com/wcxu21">wcxu21</a><br>
 Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a> <i>(needs updates)</i><br>
 Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
