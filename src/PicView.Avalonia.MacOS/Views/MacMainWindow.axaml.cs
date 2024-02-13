@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Win32;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using ReactiveUI;
@@ -54,7 +53,7 @@ public partial class MacMainWindow : Window
                 {
                     var exifWindow = new ExifWindow
                     {
-                        DataContext = new ExifViewModel()
+                        DataContext = wm,
                     };
                     exifWindow.Show();
                 });

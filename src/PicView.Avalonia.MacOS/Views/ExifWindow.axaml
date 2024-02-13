@@ -1,9 +1,107 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="PicView.Avalonia.Win32.ExifWindow"
-        Title="ExifWindow">
-  Welcome to Avalonia!
+<Window
+    x:Class="PicView.Avalonia.MacOS.Views.ExifWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:menus="clr-namespace:PicView.Avalonia.Views.UC.Menus;assembly=PicView.Avalonia"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:vm="using:PicView.Avalonia.ViewModels"
+    Title="ExifWindow"
+    Width="875"
+    Height="385"
+    x:DataType="viewModels:MainViewModel"
+    CanResize="False"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+    <DockPanel PointerPressed="MoveWindow">
+        <StackPanel
+            Height="28"
+            Background="{StaticResource SecondaryBackgroundColor}"
+            DockPanel.Dock="Top"
+            Orientation="Horizontal">
+            <Rectangle Width="70" DockPanel.Dock="Left" />
+
+            <Button
+                Width="130"
+                Height="28"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="1,0,1,0"
+                Classes="alphaHover">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="txt"
+                    Foreground="{StaticResource MainTextColor}"
+                    Text="{Binding FileProperties}" />
+            </Button>
+
+            <Button
+                Width="130"
+                Height="28"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="0,0,1,0"
+                Classes="alphaHover">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="txt"
+                    Foreground="{StaticResource MainTextColor}"
+                    Text="{Binding DeleteFile}" />
+            </Button>
+
+            <Button
+                Width="130"
+                Height="28"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="0,0,1,0"
+                Classes="alphaHover">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="txt"
+                    Foreground="{StaticResource MainTextColor}"
+                    Text="{Binding OptimizeImage}" />
+            </Button>
+
+            <Button
+                Width="130"
+                Height="28"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="0,0,1,0"
+                Classes="alphaHover">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="txt"
+                    Foreground="{StaticResource MainTextColor}"
+                    Text="{Binding OpenWith}" />
+            </Button>
+
+            <Button
+                Width="130"
+                Height="28"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="0,0,1,0"
+                Classes="alphaHover">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="txt"
+                    Foreground="{StaticResource MainTextColor}"
+                    Text="{Binding ShowInFolder}" />
+            </Button>
+            <menus:StarOutlineButton Padding="5,0,0,0" Background="{StaticResource FadedBackgroundColor}" />
+            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" />
+            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" />
+            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" />
+            <menus:StarOutlineButton Padding="0,0,5,0" Background="{StaticResource FadedBackgroundColor}" />
+        </StackPanel>
+        <views:ExifView Background="#22000000" PointerPressed="MoveWindow" />
+    </DockPanel>
 </Window>

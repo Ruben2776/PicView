@@ -31,13 +31,7 @@
                                 </Transitions>
                             </ScaleTransform.Transitions>
                         </ScaleTransform>
-                        <RotateTransform Angle="{Binding RotationAngle}">
-                            <RotateTransform.Transitions>
-                                <Transitions>
-                                    <DoubleTransition Property="RotateTransform.Angle" Duration="0:0:0.45" />
-                                </Transitions>
-                            </RotateTransform.Transitions>
-                        </RotateTransform>
+                        <RotateTransform Angle="{Binding RotationAngle}" />
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>

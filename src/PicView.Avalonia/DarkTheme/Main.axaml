@@ -13,6 +13,7 @@
 
             <Color x:Key="MainBackgroundColor">#FF2b2b2b</Color>
             <Color x:Key="SecondaryBackgroundColor">#F2252525</Color>
+            <Color x:Key="FadedBackgroundColor">#FF2f2f2f</Color>
             <Color x:Key="BackgroundHoverColor">#FF4B4B4B</Color>
             <Color x:Key="AltBackgroundHoverColor">#22FFFFFF</Color>
 
@@ -60,9 +61,10 @@
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
     </Style>
     <Style Selector="TextBlock.txt">
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
-        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
     </Style>
 
     <Style Selector="Button.hover">

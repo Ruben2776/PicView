@@ -83,6 +83,24 @@ namespace PicView.Avalonia.ViewModels
             BatchResize = TranslationHelper.GetTranslation("BatchResize");
             Effects = TranslationHelper.GetTranslation("Effects");
             EffectsTooltip = TranslationHelper.GetTranslation("EffectsTooltip");
+            FileProperties = TranslationHelper.GetTranslation("FileProperties");
+            OptimizeImage = TranslationHelper.GetTranslation("OptimizeImage");
+        }
+
+        private string? _optimizeImage;
+
+        public string? OptimizeImage
+        {
+            get => _optimizeImage;
+            set => this.RaiseAndSetIfChanged(ref _optimizeImage, value);
+        }
+
+        private string? _fileProperties;
+
+        public string? FileProperties
+        {
+            get => _fileProperties;
+            set => this.RaiseAndSetIfChanged(ref _fileProperties, value);
         }
 
         private string? _imageInfo;
@@ -1178,7 +1196,8 @@ namespace PicView.Avalonia.ViewModels
                 IsAutoFit = false;
                 WindowHelper.InitializeWindowSizeAndPosition(desktop);
             }
-            UpdateLanguage();
+
+            Task.Run(UpdateLanguage);
 
             #region Window commands
 
@@ -1375,7 +1394,15 @@ namespace PicView.Avalonia.ViewModels
                 }
                 if (RotationHelper.IsValidRotation(RotationAngle))
                 {
-                    RotationAngle = RotationHelper.Rotate(RotationAngle, true);
+                    var nextAngle = RotationHelper.Rotate(RotationAngle, true);
+                    if (nextAngle == 360)
+                    {
+                        RotationAngle = 0;
+                    }
+                    else
+                    {
+                        RotationAngle = nextAngle;
+                    }
                 }
                 else
                 {
@@ -1392,12 +1419,21 @@ namespace PicView.Avalonia.ViewModels
                 }
                 if (RotationHelper.IsValidRotation(RotationAngle))
                 {
-                    RotationAngle = RotationHelper.Rotate(RotationAngle, false);
+                    var nextAngle = RotationHelper.Rotate(RotationAngle, false);
+                    if (nextAngle == -90)
+                    {
+                        RotationAngle = 270;
+                    }
+                    else
+                    {
+                        RotationAngle = nextAngle;
+                    }
                 }
                 else
                 {
                     RotationAngle = RotationHelper.NextRotationAngle(RotationAngle, false);
                 }
+
                 SetSize();
             });
 
