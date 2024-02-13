@@ -56,6 +56,7 @@ public partial class MacMainWindow : Window
                         DataContext = wm,
                     };
                     exifWindow.Show();
+                    wm.CloseMenuCommand.Execute(null);
                 });
             });
         };
