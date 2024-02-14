@@ -70,7 +70,8 @@
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{Binding RotateRightCommand}"
-                DockPanel.Dock="Left">
+                DockPanel.Dock="Left"
+                ToolTip.Tip="{Binding RotateLeft}">
                 <Path
                     Width="13"
                     Height="13"
@@ -87,13 +88,17 @@
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{Binding FlipCommand}"
-                DockPanel.Dock="Left">
+                DockPanel.Dock="Left"
+                ToolTip.Tip="{Binding GetFlipped}">
                 <Path
                     Width="13"
                     Height="13"
                     Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
                     Fill="{StaticResource MainIconColor}"
                     Stretch="Fill" />
+                <Button.RenderTransform>
+                    <ScaleTransform ScaleX="{Binding ScaleX}" />
+                </Button.RenderTransform>
             </Button>
 
             <Button

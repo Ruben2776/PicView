@@ -51,7 +51,7 @@ public static class EXIFHelper
     }
 
     // ReSharper disable once InconsistentNaming
-    public static bool SetEXIFRating(string filePath, ushort rating)
+    public static async Task<bool> SetEXIFRating(string filePath, ushort rating)
     {
         using var image = new MagickImage(filePath);
         var profile = image?.GetExifProfile();
@@ -68,7 +68,7 @@ public static class EXIFHelper
         profile.SetValue(ExifTag.Rating, rating);
         image.SetProfile(profile);
 
-        image.Write(filePath);
+        await image.WriteAsync(filePath);
         return true;
     }
 }

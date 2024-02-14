@@ -13,7 +13,7 @@
 
             <Color x:Key="MainBackgroundColor">#FF2b2b2b</Color>
             <Color x:Key="SecondaryBackgroundColor">#F2252525</Color>
-            <Color x:Key="FadedBackgroundColor">#FF2f2f2f</Color>
+            <Color x:Key="FadedBackgroundColor">#FF333333</Color>
             <Color x:Key="BackgroundHoverColor">#FF4B4B4B</Color>
             <Color x:Key="AltBackgroundHoverColor">#22FFFFFF</Color>
 
@@ -22,6 +22,8 @@
             <Color x:Key="MainBorderColor">#FF3A3A3A</Color>
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
+
+            <Color x:Key="BackgroundAlpha">#442e2e2e</Color>
 
             <ImageBrush
                 x:Key="NoisyTexture"
@@ -85,5 +87,15 @@
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
         </Style>
+    </Style>
+
+    <Style Selector="Button.BorderStyle">
+        <Setter Property="Width" Value="37" />
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Margin" Value="7,0,0,0" />
+        <Setter Property="Background" Value="{StaticResource BackgroundAlpha}" />
+        <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="2" />
     </Style>
 </Styles>

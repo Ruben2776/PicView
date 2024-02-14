@@ -1,109 +1,105 @@
 <Window
-    CanResize="False"
-    ExtendClientAreaChromeHints="SystemChrome"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    Height="385"
-    Title="ExifWindow"
-    Width="875"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.MacOS.Views.ExifWindow"
-    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons;assembly=PicView.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:menus="clr-namespace:PicView.Avalonia.Views.UC.Menus;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:vm="using:PicView.Avalonia.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Title="ExifWindow"
+    Width="875"
+    Height="385"
+    x:DataType="viewModels:MainViewModel"
+    CanResize="False"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    mc:Ignorable="d">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
     <DockPanel PointerPressed="MoveWindow">
         <StackPanel
+            Height="28"
             Background="{StaticResource SecondaryBackgroundColor}"
             DockPanel.Dock="Top"
-            Height="28"
             Orientation="Horizontal">
-            <Rectangle DockPanel.Dock="Left" Width="70" />
+            <Rectangle Width="70" DockPanel.Dock="Left" />
 
             <Button
+                Width="130"
+                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
-                Classes="alphaHover"
-                Height="28"
-                Width="130">
+                Classes="alphaHover">
                 <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    HorizontalAlignment="Center"
-                    Text="{Binding FileProperties}"
-                    VerticalAlignment="Center" />
+                    Text="{Binding FileProperties}" />
             </Button>
 
             <Button
+                Width="130"
+                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="alphaHover"
-                Command="{Binding RecycleFileCommand}"
-                Height="28"
-                Width="130">
+                Command="{Binding RecycleFileCommand}">
                 <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    HorizontalAlignment="Center"
-                    Text="{Binding DeleteFile}"
-                    VerticalAlignment="Center" />
+                    Text="{Binding DeleteFile}" />
             </Button>
 
             <Button
+                Width="130"
+                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="alphaHover"
-                Height="28"
-                Width="130">
+                Classes="alphaHover">
                 <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    HorizontalAlignment="Center"
-                    Text="{Binding OptimizeImage}"
-                    VerticalAlignment="Center" />
+                    Text="{Binding OptimizeImage}" />
             </Button>
 
             <Button
+                Width="130"
+                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="alphaHover"
-                Command="{Binding OpenWithCommand}"
-                Height="28"
-                Width="130">
+                Command="{Binding OpenWithCommand}">
                 <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    HorizontalAlignment="Center"
-                    Text="{Binding OpenWith}"
-                    VerticalAlignment="Center" />
+                    Text="{Binding OpenWith}" />
             </Button>
 
             <Button
+                Width="130"
+                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="alphaHover"
-                Command="{Binding ShowInFolderCommand}"
-                Height="28"
-                Width="130">
+                Command="{Binding ShowInFolderCommand}">
                 <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    HorizontalAlignment="Center"
-                    Text="{Binding ShowInFolder}"
-                    VerticalAlignment="Center" />
+                    Text="{Binding ShowInFolder}" />
             </Button>
-            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" Padding="5,0,0,0" />
-            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" />
-            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" />
-            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" />
-            <menus:StarOutlineButton Background="{StaticResource FadedBackgroundColor}" Padding="0,0,5,0" />
+            <buttons:StarOutlineButtons />
         </StackPanel>
         <views:ExifView Background="#22000000" PointerPressed="MoveWindow" />
     </DockPanel>

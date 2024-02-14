@@ -116,7 +116,9 @@ public partial class WinMainWindow : Window
                 {
                     var exifWindow = new ExifWindow
                     {
-                        DataContext = new ExifViewModel()
+                        DataContext = wm,
+                        WindowStartupLocation = WindowStartupLocation.Manual,
+                        Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
                     };
                     exifWindow.Show();
                 });
