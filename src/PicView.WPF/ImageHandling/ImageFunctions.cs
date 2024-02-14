@@ -29,7 +29,7 @@ internal static class ImageFunctions
     /// </summary>
     /// <param name="rating">The rating value to set. Must be a value between 0 and 5.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the operation succeeded or failed.</returns>
-    internal static async Task<bool> SetRating(ushort rating) => await Task.Run(() =>
+    internal static async Task<bool> SetRating(ushort rating)
     {
         if (ErrorHandling.CheckOutOfRange())
         {
@@ -38,7 +38,7 @@ internal static class ImageFunctions
 
         try
         {
-            return EXIFHelper.SetEXIFRating(Navigation.Pics[Navigation.FolderIndex], rating);
+            return await EXIFHelper.SetEXIFRating(Navigation.Pics[Navigation.FolderIndex], rating);
         }
         catch (MagickException exception)
         {
@@ -48,7 +48,7 @@ internal static class ImageFunctions
             Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
             return false;
         }
-    });
+    }
 
     internal static async Task OptimizeImageAsyncWithErrorChecking()
     {
