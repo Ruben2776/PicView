@@ -65,7 +65,8 @@ public class PreLoader
 
                 if (imageModel.EXIFOrientation is null || imageModel is { EXIFOrientation: EXIFHelper.EXIFOrientation.None, Image: not null })
                 {
-                    using var magickImage = new MagickImage(imageModel.FileInfo);
+                    using var magickImage = new MagickImage();
+                    magickImage.Ping(imageModel.FileInfo);
                     preLoadValue.ImageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(magickImage);
                 }
                 else

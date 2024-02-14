@@ -83,7 +83,7 @@
         <Setter Property="Focusable" Value="False" />
         <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
         <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
-        <Setter Property="Background" Value="{StaticResource MainBackgroundColor}" />
+        <Setter Property="Background" Value="{StaticResource MainButtonBackgroundColor}" />
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
         </Style>

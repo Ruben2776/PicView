@@ -166,7 +166,7 @@
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="53"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder alphaHover"
                     Command="{Binding OpenFileCommand}"
                     ToolTip.Tip="{Binding OpenFileDialog}">
                     <StackPanel Orientation="Horizontal">
@@ -188,7 +188,7 @@
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="99"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder alphaHover"
                     Command="{Binding OpenWithCommand}"
                     ToolTip.Tip="{Binding OpenWith}">
                     <StackPanel Orientation="Horizontal">
@@ -210,7 +210,7 @@
                 <Button
                     Canvas.Left="160"
                     Canvas.Top="53"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder alphaHover"
                     Command="{Binding ShowInFolderCommand}"
                     ToolTip.Tip="{Binding ShowInFolder}">
                     <StackPanel Orientation="Horizontal">
@@ -235,7 +235,7 @@
                 <Button
                     Canvas.Left="160"
                     Canvas.Top="99"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder alphaHover"
                     Command="{Binding RenameCommand}"
                     ToolTip.Tip="{Binding RenameFile}">
                     <StackPanel Orientation="Horizontal">
@@ -261,7 +261,7 @@
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="144"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder alphaHover"
                     Command="{Binding PasteCommand}"
                     ToolTip.Tip="{Binding FilePaste}">
                     <StackPanel Orientation="Horizontal">
@@ -287,7 +287,7 @@
                 <Button
                     Canvas.Left="160"
                     Canvas.Top="144"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder alphaHover"
                     Command="{Binding NewWindowCommand}"
                     ToolTip.Tip="{Binding NewWindow}">
                     <StackPanel Orientation="Horizontal">

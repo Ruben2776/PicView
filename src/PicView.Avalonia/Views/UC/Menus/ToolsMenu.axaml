@@ -155,7 +155,7 @@
                     Canvas.Top="53"
                     Width="169"
                     Height="45"
-                    Classes="ButtonBorder hover"
+                    Classes="ButtonBorder alphaHover"
                     Command="{Binding ShowExifWindowCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -179,31 +179,31 @@
                     Canvas.Top="53"
                     Width="169"
                     Height="45"
-                    Classes="ButtonBorder hover" />
+                    Classes="ButtonBorder alphaHover" />
 
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Width="169"
-                    Classes="ButtonBorder hover" />
+                    Classes="ButtonBorder alphaHover" />
 
                 <Button
                     Canvas.Left="182"
                     Canvas.Top="104"
                     Width="169"
-                    Classes="ButtonBorder hover" />
+                    Classes="ButtonBorder alphaHover" />
 
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="150"
                     Width="169"
-                    Classes="ButtonBorder hover" />
+                    Classes="ButtonBorder alphaHover" />
 
                 <Button
                     Canvas.Left="182"
                     Canvas.Top="150"
                     Width="169"
-                    Classes="ButtonBorder hover" />
+                    Classes="ButtonBorder alphaHover" />
             </Canvas>
         </Border>
 

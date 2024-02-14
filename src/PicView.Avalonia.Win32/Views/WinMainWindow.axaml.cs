@@ -61,6 +61,8 @@ public partial class WinMainWindow : Window
                     if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
                     {
                         // TODO: Add taskbar progress for Win32. using Microsoft.WindowsAPICodePack.Taskbar is not AOT compatible
+                        // check if https://github.com/microsoft/CsWin32 AOT compatible
+
                         //TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, TryGetPlatformHandle().Handle);
                         //TaskbarManager.Instance.SetProgressValue(wm.GetIndex, wm.ImageIterator.Pics.Count, TryGetPlatformHandle().Handle);
                     }
@@ -80,7 +82,7 @@ public partial class WinMainWindow : Window
                             }, DispatcherPriority.Normal).Wait();
                         }
 
-                        Windows.NativeMethods.SetCursorPos(p.X, p.Y);
+                        Windows.NativeMethods.SetCursorPos(p.X, p.Y); // TODO check if https://github.com/microsoft/CsWin32 will work in AOT
                         _nextButtonClicked = false;
                     }
                     else if (_prevButtonClicked)
@@ -121,6 +123,7 @@ public partial class WinMainWindow : Window
                         Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
                     };
                     exifWindow.Show();
+                    wm.CloseMenuCommand.Execute(null);
                 });
             });
         };

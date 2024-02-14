@@ -278,14 +278,6 @@ namespace PicView.Avalonia.ViewModels
 
         #region Zoom
 
-        private bool _isFlipped;
-
-        public bool IsFlipped
-        {
-            get => _isFlipped;
-            set => this.RaiseAndSetIfChanged(ref _isFlipped, value);
-        }
-
         private double _rotationAngle;
 
         public double RotationAngle
@@ -537,12 +529,58 @@ namespace PicView.Avalonia.ViewModels
 
         public void SetImageModel(ImageModel imageModel)
         {
-            ArgumentNullException.ThrowIfNull(imageModel);
             Image = imageModel?.Image ?? null; // TODO replace with broken image graphic if it is null
-            FileInfo = imageModel?.FileInfo;
-            EXIFOrientation = imageModel?.EXIFOrientation;
-            IsFlipped = imageModel?.IsFlipped ?? false;
-            RotationAngle = imageModel?.Rotation ?? 0;
+            FileInfo = imageModel?.FileInfo ?? null;
+            if (imageModel?.EXIFOrientation.HasValue ?? false)
+            {
+                switch (imageModel.EXIFOrientation.Value)
+                {
+                    default:
+                        ScaleX = 1;
+                        RotationAngle = 0;
+                        break;
+
+                    case EXIFHelper.EXIFOrientation.Flipped:
+                        ScaleX = -1;
+                        RotationAngle = 0;
+                        break;
+
+                    case EXIFHelper.EXIFOrientation.Rotated180:
+                        RotationAngle = 180;
+                        ScaleX = 1;
+                        break;
+
+                    case EXIFHelper.EXIFOrientation.Rotated180Flipped:
+                        RotationAngle = 180;
+                        ScaleX = -1;
+                        break;
+
+                    case EXIFHelper.EXIFOrientation.Rotated270Flipped:
+                        RotationAngle = 270;
+                        ScaleX = -1;
+                        break;
+
+                    case EXIFHelper.EXIFOrientation.Rotated90:
+                        RotationAngle = 90;
+                        ScaleX = 1;
+                        break;
+
+                    case EXIFHelper.EXIFOrientation.Rotated90Flipped:
+                        RotationAngle = 90;
+                        ScaleX = -1;
+                        break;
+
+                    case EXIFHelper.EXIFOrientation.Rotated270:
+                        RotationAngle = 270;
+                        ScaleX = 1;
+                        break;
+                }
+            }
+            else
+            {
+                ScaleX = 1;
+                RotationAngle = 0;
+            }
             ZoomValue = 1;
         }
 
@@ -688,7 +726,6 @@ namespace PicView.Avalonia.ViewModels
                 SetImageModel(preLoadValue.ImageModel);
                 SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0);
                 SetTitle(preLoadValue.ImageModel, ImageIterator);
-                ScaleX = 1;
                 GetIndex = ImageIterator.Index + 1;
                 ImageChanged?.Invoke(this, EventArgs.Empty);
                 await ImageIterator.AddAsync(ImageIterator.Index, ImageService, preLoadValue?.ImageModel);
@@ -1069,8 +1106,7 @@ namespace PicView.Avalonia.ViewModels
                 {
                     return;
                 }
-                IsFlipped = !IsFlipped;
-                if (IsFlipped)
+                if (ScaleX == 1)
                 {
                     ScaleX = -1;
                     GetFlipped = UnFlip;
