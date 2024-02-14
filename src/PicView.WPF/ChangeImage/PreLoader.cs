@@ -115,7 +115,8 @@ internal static class PreLoader
                 preLoadValue.FileInfo = fileInfo;
                 if (orientation is 0 && bitmapSource is not null)
                 {
-                    using var magickImage = new MagickImage(fileInfo);
+                    using var magickImage = new MagickImage();
+                    magickImage.Ping(fileInfo);
                     preLoadValue.Orientation = EXIFHelper.GetImageOrientation(magickImage);
                 }
                 else
