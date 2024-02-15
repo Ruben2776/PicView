@@ -27,13 +27,13 @@
                 <StackPanel Margin="15,10" Orientation="Horizontal">
                     <TextBlock
                         Width="100"
-                        Margin="0,8,0,0"
+                        Margin="0,8,2,0"
                         Classes="txt"
                         FontSize="14"
                         Text="{Binding FileName}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -58,7 +58,7 @@
                         Text="{Binding Folder}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -83,7 +83,7 @@
                         Text="{Binding FullPath}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -108,7 +108,7 @@
                         Text="{Binding Created}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -134,7 +134,7 @@
                         Text="{Binding Modified}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -160,13 +160,39 @@
                         Text="{Binding LastAccessTime}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
                         IsReadOnly="True"
                         SelectionBrush="{DynamicResource AccentColor}"
                         Text="{Binding FileInfo.LastAccessTime}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding BitDepth}" />
+                    <TextBox
+                        Width="180"
+                        Padding="5,7,0,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -189,7 +215,7 @@
                         Text="{Binding FileName}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -214,7 +240,7 @@
                         Text="{Binding Folder}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -239,7 +265,7 @@
                         Text="{Binding FullPath}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -264,7 +290,7 @@
                         Text="{Binding Created}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -290,7 +316,7 @@
                         Text="{Binding Modified}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -316,7 +342,7 @@
                         Text="{Binding LastAccessTime}" />
                     <TextBox
                         Width="180"
-                        Padding="3,7"
+                        Padding="5,7,0,7"
                         Background="{StaticResource BackgroundAlpha}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
@@ -332,33 +358,75 @@
                             Stretch="Fill" />
                     </Button>
                 </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding AspectRatio}" />
+                    <TextBox
+                        Width="180"
+                        Padding="5,7,0,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
             </StackPanel>
 
-            <StackPanel Width="150" Margin="15,10">
+            <StackPanel Width="130" Margin="15,10">
                 <TextBlock
-                    Margin="0,10"
+                    Margin="0,25,0,10"
                     Classes="txt"
-                    FontSize="14"
+                    FontSize="16"
                     Text="{Binding ConvertTo}"
                     TextAlignment="Center" />
                 <ComboBox
                     Width="130"
-                    Margin="0"
+                    Padding="5,7,0,7"
+                    Background="{StaticResource BackgroundAlpha}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="1"
+                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                    FontSize="14"
                     SelectedIndex="0">
-                    <ComboBoxItem Content="NoConversion" IsSelected="True" />
+                    <ComboBoxItem Content="{Binding NoConversion}" />
                     <ComboBoxItem Content=".webp" />
                     <ComboBoxItem Content=".jpg" />
                     <ComboBoxItem Content=".png" />
                 </ComboBox>
-                <Button Content="{Binding Apply}" />
+                <Button
+                    Margin="0,12"
+                    HorizontalAlignment="Center"
+                    Content="{Binding Apply}" />
 
                 <TextBlock
-                    Margin="0,10"
+                    Margin="0,25,0,10"
                     Classes="txt"
-                    FontSize="14"
+                    FontSize="16"
                     Text="{Binding Resize}"
                     TextAlignment="Center" />
-                <ComboBox Width="130" SelectedIndex="0">
+                <ComboBox
+                    Width="130"
+                    Padding="5,7,0,7"
+                    Background="{StaticResource BackgroundAlpha}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="1"
+                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                    FontSize="14"
+                    SelectedIndex="0">
                     <ComboBoxItem Content="{Binding NoResize}" />
                     <ComboBoxItem Content="95%" />
                     <ComboBoxItem Content="90%" />
@@ -374,7 +442,11 @@
                     <ComboBoxItem Content="35%" />
                     <ComboBoxItem Content="30%" />
                 </ComboBox>
-                <Button Content="{Binding Apply}" />
+                <Button
+                    Margin="0,12"
+                    HorizontalAlignment="Center"
+                    Content="{Binding Apply}"
+                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

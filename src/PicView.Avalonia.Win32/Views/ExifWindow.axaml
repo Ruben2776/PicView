@@ -9,7 +9,7 @@
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     Title="ExifWindow"
     Width="901"
-    Height="385"
+    Height="427"
     x:DataType="viewModels:MainViewModel"
     BorderBrush="{StaticResource MainBorderColor}"
     BorderThickness="1"

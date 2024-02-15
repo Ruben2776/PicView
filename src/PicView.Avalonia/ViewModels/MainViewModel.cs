@@ -92,9 +92,13 @@ namespace PicView.Avalonia.ViewModels
             Modified = TranslationHelper.GetTranslation("Modified");
             LastAccessTime = TranslationHelper.GetTranslation("LastAccessTime");
             ConvertTo = TranslationHelper.GetTranslation("ConvertTo");
+            NoConversion = TranslationHelper.GetTranslation("NoConversion");
             Resize = TranslationHelper.GetTranslation("Resize");
             NoResize = TranslationHelper.GetTranslation("NoResize");
             Apply = TranslationHelper.GetTranslation("Apply");
+            Cancel = TranslationHelper.GetTranslation("Cancel");
+            BitDepth = TranslationHelper.GetTranslation("BitDepth");
+            AspectRatio = TranslationHelper.GetTranslation("AspectRatio");
         }
 
         #region Commands

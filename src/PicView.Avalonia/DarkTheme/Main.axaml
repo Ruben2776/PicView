@@ -20,6 +20,7 @@
             <Color x:Key="MainButtonBackgroundColor">#FF2e2e2e</Color>
 
             <Color x:Key="MainBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="SecondaryBorderColor">#666</Color>
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 
@@ -37,6 +38,9 @@
                 <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ToggleButton.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Border.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/RadioButton.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/ComboBox.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/ComboBoxItem.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/TextBlock.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/PathIcon.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Scrollbar.axaml" />

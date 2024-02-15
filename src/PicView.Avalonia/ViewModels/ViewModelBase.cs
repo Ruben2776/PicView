@@ -478,5 +478,37 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _apply, value);
     }
 
+    private string? _cancel;
+
+    public string? Cancel
+    {
+        get => _cancel;
+        set => this.RaiseAndSetIfChanged(ref _cancel, value);
+    }
+
+    private string? _bitDepth;
+
+    public string? BitDepth
+    {
+        get => _bitDepth;
+        set => this.RaiseAndSetIfChanged(ref _bitDepth, value);
+    }
+
+    private string? _aspectRatio;
+
+    public string? AspectRatio
+    {
+        get => _aspectRatio;
+        set => this.RaiseAndSetIfChanged(ref _aspectRatio, value);
+    }
+
+    private string? _noConversion;
+
+    public string? NoConversion
+    {
+        get => _noConversion;
+        set => this.RaiseAndSetIfChanged(ref _noConversion, value);
+    }
+
     #endregion Localization
 }
