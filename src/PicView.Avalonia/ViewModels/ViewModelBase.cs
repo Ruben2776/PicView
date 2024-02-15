@@ -14,6 +14,38 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _fileInfo, value);
     }
 
+    private string? _created;
+
+    public string? Created
+    {
+        get => _created;
+        set => this.RaiseAndSetIfChanged(ref _created, value);
+    }
+
+    private string? _modified;
+
+    public string? Modified
+    {
+        get => _modified;
+        set => this.RaiseAndSetIfChanged(ref _modified, value);
+    }
+
+    private string? _lastAccessTime;
+
+    public string? LastAccessTime
+    {
+        get => _lastAccessTime;
+        set => this.RaiseAndSetIfChanged(ref _lastAccessTime, value);
+    }
+
+    private string? _convertTo;
+
+    public string? ConvertTo
+    {
+        get => _convertTo;
+        set => this.RaiseAndSetIfChanged(ref _convertTo, value);
+    }
+
     private string? _copy;
 
     public string? Copy
@@ -420,6 +452,30 @@ public class ViewModelBase : ReactiveObject
     {
         get => _fullPath;
         set => this.RaiseAndSetIfChanged(ref _fullPath, value);
+    }
+
+    private string? _resize;
+
+    public string? Resize
+    {
+        get => _resize;
+        set => this.RaiseAndSetIfChanged(ref _resize, value);
+    }
+
+    private string? _noResize;
+
+    public string? NoResize
+    {
+        get => _noResize;
+        set => this.RaiseAndSetIfChanged(ref _noResize, value);
+    }
+
+    private string? _apply;
+
+    public string? Apply
+    {
+        get => _apply;
+        set => this.RaiseAndSetIfChanged(ref _apply, value);
     }
 
     #endregion Localization

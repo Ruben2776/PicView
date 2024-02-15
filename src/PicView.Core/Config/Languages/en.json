@@ -173,7 +173,7 @@
   "FileSize": "File size",
   "CreationTime": "Creation time",
   "FileExtension": "File extension",
-  "LastAccessTime": "Last access time",
+  "LastAccessTime": "Created",
   "LastWriteTime": "Last write time",
   "Random": "Random",
   "Ascending": "Ascending",

@@ -5,8 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     x:DataType="vm:ExifViewModel"
     mc:Ignorable="d">
     <Design.DataContext>
@@ -15,70 +13,369 @@
     <UserControl.Resources>
         <StreamGeometry x:Key="CopyGeometry">M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z</StreamGeometry>
     </UserControl.Resources>
-    <StackPanel Margin="5">
 
-        <StackPanel Margin="15,10" Orientation="Horizontal">
-            <TextBlock
-                Width="100"
-                Margin="0,8,0,0"
-                Classes="txt"
-                FontSize="14"
-                Text="{Binding FileName}" />
-            <TextBox
-                Width="150"
-                Background="{StaticResource BackgroundAlpha}"
-                BorderBrush="{StaticResource MainBorderColor}"
-                Classes="hover" />
-            <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
-                <Path
-                    Width="16"
-                    Height="16"
-                    Data="{StaticResource CopyGeometry}"
-                    Fill="{StaticResource MainIconColor}"
-                    Stretch="Fill" />
-            </Button>
-        </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Visible">
 
-        <StackPanel Margin="15,10" Orientation="Horizontal">
-            <TextBlock
-                Width="100"
-                Margin="0,8,0,0"
-                Classes="txt"
-                FontSize="14"
-                Text="{Binding Folder}" />
-            <TextBox
-                Width="150"
-                Background="{StaticResource BackgroundAlpha}"
-                BorderBrush="{StaticResource MainBorderColor}" />
-            <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
-                <Path
-                    Width="16"
-                    Height="16"
-                    Data="{StaticResource CopyGeometry}"
-                    Fill="{StaticResource MainIconColor}"
-                    Stretch="Fill" />
-            </Button>
-        </StackPanel>
+        <StackPanel
+            Margin="5"
+            Background="Transparent"
+            Focusable="True"
+            Orientation="Horizontal">
 
-        <StackPanel Margin="15,10" Orientation="Horizontal">
-            <TextBlock
-                Width="100"
-                Margin="0,8,0,0"
-                Classes="txt"
-                FontSize="14"
-                Text="{Binding FullPath}" />
-            <TextBox
-                Width="150"
-                Background="{StaticResource BackgroundAlpha}"
-                BorderBrush="{StaticResource MainBorderColor}" />
-            <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
-                <Path
-                    Width="16"
-                    Height="16"
-                    Data="{StaticResource CopyGeometry}"
-                    Fill="{StaticResource MainIconColor}"
-                    Stretch="Fill" />
-            </Button>
+            <StackPanel Width="347">
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding FileName}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.Name}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding Folder}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.DirectoryName}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding FullPath}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.FullName}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding Created}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.CreationTime}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding Modified}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.LastWriteTime}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding LastAccessTime}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.LastAccessTime}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Width="347">
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding FileName}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.Name}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding Folder}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.DirectoryName}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding FullPath}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.FullName}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding Created}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.CreationTime}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding Modified}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.LastWriteTime}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,0,0"
+                        Classes="txt"
+                        FontSize="14"
+                        Text="{Binding LastAccessTime}" />
+                    <TextBox
+                        Width="180"
+                        Padding="3,7"
+                        Background="{StaticResource BackgroundAlpha}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        Classes="hover"
+                        IsReadOnly="True"
+                        SelectionBrush="{DynamicResource AccentColor}"
+                        Text="{Binding FileInfo.LastAccessTime}" />
+                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Width="150" Margin="15,10">
+                <TextBlock
+                    Margin="0,10"
+                    Classes="txt"
+                    FontSize="14"
+                    Text="{Binding ConvertTo}"
+                    TextAlignment="Center" />
+                <ComboBox
+                    Width="130"
+                    Margin="0"
+                    SelectedIndex="0">
+                    <ComboBoxItem Content="NoConversion" IsSelected="True" />
+                    <ComboBoxItem Content=".webp" />
+                    <ComboBoxItem Content=".jpg" />
+                    <ComboBoxItem Content=".png" />
+                </ComboBox>
+                <Button Content="{Binding Apply}" />
+
+                <TextBlock
+                    Margin="0,10"
+                    Classes="txt"
+                    FontSize="14"
+                    Text="{Binding Resize}"
+                    TextAlignment="Center" />
+                <ComboBox Width="130" SelectedIndex="0">
+                    <ComboBoxItem Content="{Binding NoResize}" />
+                    <ComboBoxItem Content="95%" />
+                    <ComboBoxItem Content="90%" />
+                    <ComboBoxItem Content="80%" />
+                    <ComboBoxItem Content="75%" />
+                    <ComboBoxItem Content="70%" />
+                    <ComboBoxItem Content="65%" />
+                    <ComboBoxItem Content="60%" />
+                    <ComboBoxItem Content="55%" />
+                    <ComboBoxItem Content="50%" />
+                    <ComboBoxItem Content="45%" />
+                    <ComboBoxItem Content="40%" />
+                    <ComboBoxItem Content="35%" />
+                    <ComboBoxItem Content="30%" />
+                </ComboBox>
+                <Button Content="{Binding Apply}" />
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using ReactiveUI;
 using System.Reactive.Concurrency;
+using Avalonia.Input;
 
 namespace PicView.Avalonia.Views;
 

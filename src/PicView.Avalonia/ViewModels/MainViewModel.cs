@@ -88,6 +88,13 @@ namespace PicView.Avalonia.ViewModels
             FileSize = TranslationHelper.GetTranslation("FileSize");
             Folder = TranslationHelper.GetTranslation("Folder");
             FullPath = TranslationHelper.GetTranslation("FullPath");
+            Created = TranslationHelper.GetTranslation("Created");
+            Modified = TranslationHelper.GetTranslation("Modified");
+            LastAccessTime = TranslationHelper.GetTranslation("LastAccessTime");
+            ConvertTo = TranslationHelper.GetTranslation("ConvertTo");
+            Resize = TranslationHelper.GetTranslation("Resize");
+            NoResize = TranslationHelper.GetTranslation("NoResize");
+            Apply = TranslationHelper.GetTranslation("Apply");
         }
 
         #region Commands
@@ -284,14 +291,6 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _rotationAngle;
             set => this.RaiseAndSetIfChanged(ref _rotationAngle, value);
-        }
-
-        private EXIFHelper.EXIFOrientation? _exifOrientation;
-
-        public EXIFHelper.EXIFOrientation? EXIFOrientation
-        {
-            get => _exifOrientation;
-            set => this.RaiseAndSetIfChanged(ref _exifOrientation, value);
         }
 
         private double _zoomValue;

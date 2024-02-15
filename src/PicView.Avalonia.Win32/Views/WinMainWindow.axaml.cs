@@ -47,6 +47,11 @@ public partial class WinMainWindow : Window
                     {
                         return;
                     }
+
+                    if (size.Sender != this)
+                    {
+                        return;
+                    }
                     var x = (size.OldValue.Value.Width - size.NewValue.Value.Width) / 2;
                     var y = (size.OldValue.Value.Height - size.NewValue.Value.Height) / 2;
 
