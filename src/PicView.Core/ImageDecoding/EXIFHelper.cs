@@ -71,4 +71,18 @@ public static class EXIFHelper
         await image.WriteAsync(filePath);
         return true;
     }
+
+    public static IExifProfile? GetExifProfile(string path)
+    {
+        using var magick = new MagickImage();
+        try
+        {
+            magick.Ping(path);
+            return magick.GetExifProfile();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 }

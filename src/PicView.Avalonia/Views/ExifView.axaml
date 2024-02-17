@@ -5,10 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
-    x:DataType="vm:ExifViewModel"
+    x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
     <Design.DataContext>
-        <vm:ExifViewModel />
+        <vm:MainViewModel />
     </Design.DataContext>
     <UserControl.Resources>
         <StreamGeometry x:Key="CopyGeometry">M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z</StreamGeometry>
@@ -192,7 +192,7 @@
                         Classes="hover"
                         IsReadOnly="True"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="" />
+                        Text="{Binding GetBitDepth}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -212,7 +212,7 @@
                         Margin="0,8,0,0"
                         Classes="txt"
                         FontSize="14"
-                        Text="{Binding FileName}" />
+                        Text="{Binding Width}" />
                     <TextBox
                         Width="180"
                         Padding="5,7,0,7"
@@ -220,7 +220,7 @@
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.Name}" />
+                        Text="{Binding PixelWidth}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -237,7 +237,7 @@
                         Margin="0,8,0,0"
                         Classes="txt"
                         FontSize="14"
-                        Text="{Binding Folder}" />
+                        Text="{Binding Height}" />
                     <TextBox
                         Width="180"
                         Padding="5,7,0,7"
@@ -245,7 +245,7 @@
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.DirectoryName}" />
+                        Text="{Binding PixelHeight}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -262,7 +262,7 @@
                         Margin="0,8,0,0"
                         Classes="txt"
                         FontSize="14"
-                        Text="{Binding FullPath}" />
+                        Text="{Binding SizeMp}" />
                     <TextBox
                         Width="180"
                         Padding="5,7,0,7"
@@ -270,7 +270,7 @@
                         BorderBrush="{StaticResource MainBorderColor}"
                         Classes="hover"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.FullName}" />
+                        Text="{Binding GetSizeMp}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -287,7 +287,7 @@
                         Margin="0,8,0,0"
                         Classes="txt"
                         FontSize="14"
-                        Text="{Binding Created}" />
+                        Text="{Binding Resolution}" />
                     <TextBox
                         Width="180"
                         Padding="5,7,0,7"
@@ -296,7 +296,7 @@
                         Classes="hover"
                         IsReadOnly="True"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.CreationTime}" />
+                        Text="{Binding GetResolution}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -313,7 +313,7 @@
                         Margin="0,8,0,0"
                         Classes="txt"
                         FontSize="14"
-                        Text="{Binding Modified}" />
+                        Text="{Binding PrintSizeCm}" />
                     <TextBox
                         Width="180"
                         Padding="5,7,0,7"
@@ -322,7 +322,7 @@
                         Classes="hover"
                         IsReadOnly="True"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.LastWriteTime}" />
+                        Text="{Binding GetPrintSizeCm}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -339,7 +339,7 @@
                         Margin="0,8,0,0"
                         Classes="txt"
                         FontSize="14"
-                        Text="{Binding LastAccessTime}" />
+                        Text="{Binding PrintSizeIn}" />
                     <TextBox
                         Width="180"
                         Padding="5,7,0,7"
@@ -348,7 +348,7 @@
                         Classes="hover"
                         IsReadOnly="True"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.LastAccessTime}" />
+                        Text="{Binding GetPrintSizeInch}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -374,7 +374,7 @@
                         Classes="hover"
                         IsReadOnly="True"
                         SelectionBrush="{DynamicResource AccentColor}"
-                        Text="" />
+                        Text="{Binding GetAspectRatio}" />
                     <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
@@ -403,9 +403,11 @@
                     FontSize="14"
                     SelectedIndex="0">
                     <ComboBoxItem Content="{Binding NoConversion}" />
-                    <ComboBoxItem Content=".webp" />
-                    <ComboBoxItem Content=".jpg" />
-                    <ComboBoxItem Content=".png" />
+                    <ComboBoxItem Name="png" Content=".png" />
+                    <ComboBoxItem Name="jpg" Content=".jpg" />
+                    <ComboBoxItem Name="webp" Content=".webp" />
+                    <ComboBoxItem Name="avif" Content=".avif" />
+                    <ComboBoxItem Name="heic" Content=".heic" />
                 </ComboBox>
                 <Button
                     Margin="0,12"

@@ -7,10 +7,10 @@
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    x:DataType="viewModels:ExifViewModel"
+    x:DataType="viewModels:MainViewModel"
     mc:Ignorable="d">
     <Design.DataContext>
-        <viewModels:ExifViewModel />
+        <viewModels:MainViewModel />
     </Design.DataContext>
     <UserControl.Resources>
         <!--  ReSharper disable once Xaml.RedundantResource  -->
@@ -44,6 +44,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Click="OneStarCLick"
                 Command="{Binding SetExifRating1Command}"
                 PointerEntered="Star1_OnPointerEntered"
                 PointerExited="Stars_OnPointerExited">
@@ -58,6 +59,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Click="TwoStarCLick"
                 Command="{Binding SetExifRating2Command}"
                 PointerEntered="Star2_OnPointerEntered"
                 PointerExited="Stars_OnPointerExited">
@@ -72,6 +74,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Click="ThreeStarCLick"
                 Command="{Binding SetExifRating3Command}"
                 PointerEntered="Star3_OnPointerEntered"
                 PointerExited="Stars_OnPointerExited">
@@ -86,6 +89,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Click="FourStarCLick"
                 Command="{Binding SetExifRating4Command}"
                 PointerEntered="Star4_OnPointerEntered"
                 PointerExited="Stars_OnPointerExited">
@@ -100,6 +104,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Click="FiveStarCLick"
                 Command="{Binding SetExifRating5Command}"
                 PointerEntered="Star5_OnPointerEntered"
                 PointerExited="Stars_OnPointerExited">

@@ -17,8 +17,8 @@
     <ScrollViewer x:Name="ImageScrollViewer" VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
         <Border>
             <Image
-                Width="{Binding Width}"
-                Height="{Binding Height}"
+                Width="{Binding ImageWidth}"
+                Height="{Binding ImageHeight}"
                 RenderOptions.BitmapInterpolationMode="HighQuality"
                 Source="{Binding Image}"
                 Stretch="Fill">

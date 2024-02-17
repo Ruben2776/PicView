@@ -1,10 +1,87 @@
-﻿using ReactiveUI;
+﻿using PicView.Core.Localization;
+using ReactiveUI;
 
 namespace PicView.Avalonia.ViewModels;
 
 public class ViewModelBase : ReactiveObject
 {
     #region Localization
+
+    public void UpdateLanguage()
+    {
+        SelectFile = TranslationHelper.GetTranslation("OpenFileDialog");
+        OpenLastFile = TranslationHelper.GetTranslation("OpenLastFile");
+        FilePaste = TranslationHelper.GetTranslation("FilePaste");
+        Copy = TranslationHelper.GetTranslation("Copy");
+        Reload = TranslationHelper.GetTranslation("Reload");
+        Print = TranslationHelper.GetTranslation("Print");
+        DeleteFile = TranslationHelper.GetTranslation("DeleteFile");
+        Save = TranslationHelper.GetTranslation("Save");
+        CopyFile = TranslationHelper.GetTranslation("CopyFile");
+        NewWindow = TranslationHelper.GetTranslation("NewWindow");
+        Close = TranslationHelper.GetTranslation("Close");
+        Open = TranslationHelper.GetTranslation("Open");
+        OpenFileDialog = TranslationHelper.GetTranslation("OpenFileDialog");
+        ShowInFolder = TranslationHelper.GetTranslation("ShowInFolder");
+        OpenWith = TranslationHelper.GetTranslation("OpenWith");
+        RenameFile = TranslationHelper.GetTranslation("RenameFile");
+        DuplicateFile = TranslationHelper.GetTranslation("DuplicateFile");
+        RotateLeft = TranslationHelper.GetTranslation("RotateLeft");
+        RotateRight = TranslationHelper.GetTranslation("RotateRight");
+        Flip = TranslationHelper.GetTranslation("Flip");
+        UnFlip = TranslationHelper.GetTranslation("Unflip");
+        ShowBottomGallery = TranslationHelper.GetTranslation("ShowBottomGallery");
+        HideBottomGallery = TranslationHelper.GetTranslation("HideBottomGallery");
+        AutoFitWindow = TranslationHelper.GetTranslation("AutoFitWindow");
+        Stretch = TranslationHelper.GetTranslation("Stretch");
+        Crop = TranslationHelper.GetTranslation("Crop");
+        ResizeImage = TranslationHelper.GetTranslation("ResizeImage");
+        GoToImageAtSpecifiedIndex = TranslationHelper.GetTranslation("GoToImageAtSpecifiedIndex");
+        ToggleScroll = TranslationHelper.GetTranslation("ToggleScroll");
+        ScrollEnabled = TranslationHelper.GetTranslation("ScrollEnabled");
+        ScrollDisabled = TranslationHelper.GetTranslation("ScrollDisabled");
+        Slideshow = TranslationHelper.GetTranslation("Slideshow");
+        Settings = TranslationHelper.GetTranslation("Settings");
+        InfoWinow = TranslationHelper.GetTranslation("InfoWindow");
+        ImageInfo = TranslationHelper.GetTranslation("ImageInfo");
+        About = TranslationHelper.GetTranslation("About");
+        ShowAllSettingsWindow = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
+        StayTopMost = TranslationHelper.GetTranslation("StayTopMost");
+        SearchSubdirectory = TranslationHelper.GetTranslation("SearchSubdirectory");
+        ToggleLooping = TranslationHelper.GetTranslation("ToggleLooping");
+        HideShowInterface = TranslationHelper.GetTranslation("HideShowInterface");
+        ApplicationShortcuts = TranslationHelper.GetTranslation("ApplicationShortcuts");
+        BatchResize = TranslationHelper.GetTranslation("BatchResize");
+        Effects = TranslationHelper.GetTranslation("Effects");
+        EffectsTooltip = TranslationHelper.GetTranslation("EffectsTooltip");
+        FileProperties = TranslationHelper.GetTranslation("FileProperties");
+        OptimizeImage = TranslationHelper.GetTranslation("OptimizeImage");
+        ImageInfo = TranslationHelper.GetTranslation("ImageInfo");
+        FileName = TranslationHelper.GetTranslation("FileName");
+        FileSize = TranslationHelper.GetTranslation("FileSize");
+        Folder = TranslationHelper.GetTranslation("Folder");
+        FullPath = TranslationHelper.GetTranslation("FullPath");
+        Created = TranslationHelper.GetTranslation("Created");
+        Modified = TranslationHelper.GetTranslation("Modified");
+        LastAccessTime = TranslationHelper.GetTranslation("LastAccessTime");
+        ConvertTo = TranslationHelper.GetTranslation("ConvertTo");
+        NoConversion = TranslationHelper.GetTranslation("NoConversion");
+        Resize = TranslationHelper.GetTranslation("Resize");
+        NoResize = TranslationHelper.GetTranslation("NoResize");
+        Apply = TranslationHelper.GetTranslation("Apply");
+        Cancel = TranslationHelper.GetTranslation("Cancel");
+        BitDepth = TranslationHelper.GetTranslation("BitDepth");
+        AspectRatio = TranslationHelper.GetTranslation("AspectRatio");
+        Width = TranslationHelper.GetTranslation("Width");
+        Height = TranslationHelper.GetTranslation("Height");
+        SizeMp = TranslationHelper.GetTranslation("SizeMp");
+        Resolution = TranslationHelper.GetTranslation("Resolution");
+        PrintSizeIn = TranslationHelper.GetTranslation("PrintSizeIn");
+        PrintSizeCm = TranslationHelper.GetTranslation("PrintSizeCm");
+        Centimeters = TranslationHelper.GetTranslation("Centimeters");
+        Inches = TranslationHelper.GetTranslation("Inches");
+        SizeTooltip = TranslationHelper.GetTranslation("SizeTooltip");
+    }
 
     private FileInfo? _fileInfo;
 
@@ -510,5 +587,113 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _noConversion, value);
     }
 
+    private string? _width;
+
+    public string? Width
+    {
+        get => _width;
+        set => this.RaiseAndSetIfChanged(ref _width, value);
+    }
+
+    private string? _height;
+
+    public string? Height
+    {
+        get => _height;
+        set => this.RaiseAndSetIfChanged(ref _height, value);
+    }
+
+    private string? _sizeMp;
+
+    public string? SizeMp
+    {
+        get => _sizeMp;
+        set => this.RaiseAndSetIfChanged(ref _sizeMp, value);
+    }
+
+    private string? _resolution;
+
+    public string? Resolution
+    {
+        get => _resolution;
+        set => this.RaiseAndSetIfChanged(ref _resolution, value);
+    }
+
+    private string? _printSizeIn;
+
+    public string? PrintSizeIn
+    {
+        get => _printSizeIn;
+        set => this.RaiseAndSetIfChanged(ref _printSizeIn, value);
+    }
+
+    private string? _printSizeCm;
+
+    public string? PrintSizeCm
+    {
+        get => _printSizeCm;
+        set => this.RaiseAndSetIfChanged(ref _printSizeCm, value);
+    }
+
+    private string? _centimeters;
+
+    public string? Centimeters
+    {
+        get => _centimeters;
+        set => this.RaiseAndSetIfChanged(ref _centimeters, value);
+    }
+
+    private string? _inches;
+
+    public string? Inches
+    {
+        get => _inches;
+        set => this.RaiseAndSetIfChanged(ref _inches, value);
+    }
+
+    private string? _sizeTooltip;
+
+    public string? SizeTooltip
+    {
+        get => _sizeTooltip;
+        set => this.RaiseAndSetIfChanged(ref _sizeTooltip, value);
+    }
+
     #endregion Localization
+
+    #region Image
+
+    private int _pixelWidth;
+
+    public int PixelWidth
+    {
+        get => _pixelWidth;
+        set => this.RaiseAndSetIfChanged(ref _pixelWidth, value);
+    }
+
+    private int _pixelHeight;
+
+    public int PixelHeight
+    {
+        get => _pixelHeight;
+        set => this.RaiseAndSetIfChanged(ref _pixelHeight, value);
+    }
+
+    private double _dpiX;
+
+    public double DpiX
+    {
+        get => _dpiX;
+        set => this.RaiseAndSetIfChanged(ref _dpiX, value);
+    }
+
+    private double _dpiY;
+
+    public double DpiY
+    {
+        get => _dpiY;
+        set => this.RaiseAndSetIfChanged(ref _dpiY, value);
+    }
+
+    #endregion Image
 }

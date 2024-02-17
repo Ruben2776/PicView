@@ -1,4 +1,9 @@
-﻿using Avalonia;
+﻿using System.Diagnostics;
+using System.Globalization;
+using System.Reactive.Disposables;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -16,15 +21,11 @@ using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
+using PicView.Core.ImageTransformations;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
-using System.Diagnostics;
-using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
-using PicView.Core.ImageTransformations;
 
 namespace PicView.Avalonia.ViewModels
 {
@@ -32,74 +33,7 @@ namespace PicView.Avalonia.ViewModels
     {
         public ViewModelActivator? Activator { get; }
 
-        public event EventHandler? ImageChanged;
-
-        private void UpdateLanguage()
-        {
-            SelectFile = TranslationHelper.GetTranslation("OpenFileDialog");
-            OpenLastFile = TranslationHelper.GetTranslation("OpenLastFile");
-            FilePaste = TranslationHelper.GetTranslation("FilePaste");
-            Copy = TranslationHelper.GetTranslation("Copy");
-            Reload = TranslationHelper.GetTranslation("Reload");
-            Print = TranslationHelper.GetTranslation("Print");
-            DeleteFile = TranslationHelper.GetTranslation("DeleteFile");
-            Save = TranslationHelper.GetTranslation("Save");
-            CopyFile = TranslationHelper.GetTranslation("CopyFile");
-            NewWindow = TranslationHelper.GetTranslation("NewWindow");
-            Close = TranslationHelper.GetTranslation("Close");
-            Open = TranslationHelper.GetTranslation("Open");
-            OpenFileDialog = TranslationHelper.GetTranslation("OpenFileDialog");
-            ShowInFolder = TranslationHelper.GetTranslation("ShowInFolder");
-            OpenWith = TranslationHelper.GetTranslation("OpenWith");
-            RenameFile = TranslationHelper.GetTranslation("RenameFile");
-            DuplicateFile = TranslationHelper.GetTranslation("DuplicateFile");
-            RotateLeft = TranslationHelper.GetTranslation("RotateLeft");
-            RotateRight = TranslationHelper.GetTranslation("RotateRight");
-            Flip = TranslationHelper.GetTranslation("Flip");
-            UnFlip = TranslationHelper.GetTranslation("Unflip");
-            ShowBottomGallery = TranslationHelper.GetTranslation("ShowBottomGallery");
-            HideBottomGallery = TranslationHelper.GetTranslation("HideBottomGallery");
-            AutoFitWindow = TranslationHelper.GetTranslation("AutoFitWindow");
-            Stretch = TranslationHelper.GetTranslation("Stretch");
-            Crop = TranslationHelper.GetTranslation("Crop");
-            ResizeImage = TranslationHelper.GetTranslation("ResizeImage");
-            GoToImageAtSpecifiedIndex = TranslationHelper.GetTranslation("GoToImageAtSpecifiedIndex");
-            ToggleScroll = TranslationHelper.GetTranslation("ToggleScroll");
-            ScrollEnabled = TranslationHelper.GetTranslation("ScrollEnabled");
-            ScrollDisabled = TranslationHelper.GetTranslation("ScrollDisabled");
-            Slideshow = TranslationHelper.GetTranslation("Slideshow");
-            Settings = TranslationHelper.GetTranslation("Settings");
-            InfoWinow = TranslationHelper.GetTranslation("InfoWindow");
-            ImageInfo = TranslationHelper.GetTranslation("ImageInfo");
-            About = TranslationHelper.GetTranslation("About");
-            ShowAllSettingsWindow = TranslationHelper.GetTranslation("ShowAllSettingsWindow");
-            StayTopMost = TranslationHelper.GetTranslation("StayTopMost");
-            SearchSubdirectory = TranslationHelper.GetTranslation("SearchSubdirectory");
-            ToggleLooping = TranslationHelper.GetTranslation("ToggleLooping");
-            HideShowInterface = TranslationHelper.GetTranslation("HideShowInterface");
-            ApplicationShortcuts = TranslationHelper.GetTranslation("ApplicationShortcuts");
-            BatchResize = TranslationHelper.GetTranslation("BatchResize");
-            Effects = TranslationHelper.GetTranslation("Effects");
-            EffectsTooltip = TranslationHelper.GetTranslation("EffectsTooltip");
-            FileProperties = TranslationHelper.GetTranslation("FileProperties");
-            OptimizeImage = TranslationHelper.GetTranslation("OptimizeImage");
-            ImageInfo = TranslationHelper.GetTranslation("ImageInfo");
-            FileName = TranslationHelper.GetTranslation("FileName");
-            FileSize = TranslationHelper.GetTranslation("FileSize");
-            Folder = TranslationHelper.GetTranslation("Folder");
-            FullPath = TranslationHelper.GetTranslation("FullPath");
-            Created = TranslationHelper.GetTranslation("Created");
-            Modified = TranslationHelper.GetTranslation("Modified");
-            LastAccessTime = TranslationHelper.GetTranslation("LastAccessTime");
-            ConvertTo = TranslationHelper.GetTranslation("ConvertTo");
-            NoConversion = TranslationHelper.GetTranslation("NoConversion");
-            Resize = TranslationHelper.GetTranslation("Resize");
-            NoResize = TranslationHelper.GetTranslation("NoResize");
-            Apply = TranslationHelper.GetTranslation("Apply");
-            Cancel = TranslationHelper.GetTranslation("Cancel");
-            BitDepth = TranslationHelper.GetTranslation("BitDepth");
-            AspectRatio = TranslationHelper.GetTranslation("AspectRatio");
-        }
+        public event EventHandler<ImageModel>? ImageChanged;
 
         #region Commands
 
@@ -144,14 +78,11 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? FlipCommand { get; }
         public ICommand? ChangeAutoFitCommand { get; }
 
-        public ICommand? ChangeStretchCommand { get; }
-
         public ICommand? ChangeTopMostCommand { get; }
 
         public ICommand? ChangeIncludeSubdirectoriesCommand { get; }
 
         public ICommand? ToggleUICommand { get; }
-        public ICommand? ToggleIsRotationTransformOpenCommand { get; }
 
         private ICommand? _showExifWindowCommand;
 
@@ -160,6 +91,12 @@ namespace PicView.Avalonia.ViewModels
             get => _showExifWindowCommand;
             set => this.RaiseAndSetIfChanged(ref _showExifWindowCommand, value);
         }
+
+        public ICommand? SetExifRating1Command { get; }
+        public ICommand? SetExifRating2Command { get; }
+        public ICommand? SetExifRating3Command { get; }
+        public ICommand? SetExifRating4Command { get; }
+        public ICommand? SetExifRating5Command { get; }
 
         #endregion Commands
 
@@ -199,12 +136,68 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _image, value);
         }
 
+        private uint _exifRating;
+
+        public uint EXIFRating
+        {
+            get => _exifRating;
+            set => this.RaiseAndSetIfChanged(ref _exifRating, value);
+        }
+
         private int _getIndex;
 
         public int GetIndex
         {
             get => _getIndex;
             set => this.RaiseAndSetIfChanged(ref _getIndex, value);
+        }
+
+        private string? _getPrintSizeInch;
+
+        public string? GetPrintSizeInch
+        {
+            get => _getPrintSizeInch;
+            set => this.RaiseAndSetIfChanged(ref _getPrintSizeInch, value);
+        }
+
+        private string? _getPrintSizeCm;
+
+        public string? GetPrintSizeCm
+        {
+            get => _getPrintSizeCm;
+            set => this.RaiseAndSetIfChanged(ref _getPrintSizeCm, value);
+        }
+
+        private string? _getSizeMp;
+
+        public string? GetSizeMp
+        {
+            get => _getSizeMp;
+            set => this.RaiseAndSetIfChanged(ref _getSizeMp, value);
+        }
+
+        private string? _getResolution;
+
+        public string? GetResolution
+        {
+            get => _getResolution;
+            set => this.RaiseAndSetIfChanged(ref _getResolution, value);
+        }
+
+        private string? _getBitDepth;
+
+        public string? GetBitDepth
+        {
+            get => _getBitDepth;
+            set => this.RaiseAndSetIfChanged(ref _getBitDepth, value);
+        }
+
+        private string? _getAspectRatio;
+
+        public string? GetAspectRatio
+        {
+            get => _getAspectRatio;
+            set => this.RaiseAndSetIfChanged(ref _getAspectRatio, value);
         }
 
         #region Window Properties
@@ -261,20 +254,20 @@ namespace PicView.Avalonia.ViewModels
 
         #region Size
 
-        private double _width;
+        private double _imageWidth;
 
-        public double Width
+        public double ImageWidth
         {
-            get => _width;
-            set => this.RaiseAndSetIfChanged(ref _width, value);
+            get => _imageWidth;
+            set => this.RaiseAndSetIfChanged(ref _imageWidth, value);
         }
 
-        private double _height;
+        private double _imageHeight;
 
-        public double Height
+        public double ImageHeight
         {
-            get => _height;
-            set => this.RaiseAndSetIfChanged(ref _height, value);
+            get => _imageHeight;
+            set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
         }
 
         private double _titleMaxWidth;
@@ -471,7 +464,7 @@ namespace PicView.Avalonia.ViewModels
                 return;
             }
             var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, ImageIterator.Pics);
-            SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)Width, preloadValue?.ImageModel?.PixelHeight ?? (int)Height, RotationAngle);
+            SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? (int)ImageHeight, RotationAngle);
         }
 
         public void SetSize(double width, double height, double rotation)
@@ -526,8 +519,8 @@ namespace PicView.Avalonia.ViewModels
                 IsScrollingEnabled);
 
             TitleMaxWidth = size.TitleMaxWidth;
-            Width = size.Width;
-            Height = size.Height;
+            ImageWidth = size.Width;
+            ImageHeight = size.Height;
         }
 
         public void SetImageModel(ImageModel imageModel)
@@ -584,7 +577,92 @@ namespace PicView.Avalonia.ViewModels
                 ScaleX = 1;
                 RotationAngle = 0;
             }
+
             ZoomValue = 1;
+            PixelWidth = imageModel?.PixelWidth ?? 0;
+            PixelHeight = imageModel?.PixelHeight ?? 0;
+
+            if (FileInfo is null)
+            {
+                return;
+            }
+
+            Task.Run(() =>
+            {
+                using var magick = new MagickImage();
+                try
+                {
+                    magick.Ping(FileInfo);
+                    var profile = magick.GetExifProfile();
+
+                    if (profile != null)
+                    {
+                        DpiY = profile?.GetValue(ExifTag.YResolution)?.Value.ToDouble() ?? 0;
+                        DpiX = profile?.GetValue(ExifTag.XResolution)?.Value.ToDouble() ?? 0;
+                        var depth = profile?.GetValue(ExifTag.BitsPerSample)?.Value;
+                        if (depth is not null)
+                        {
+                            var x = depth.Aggregate(0, (current, value) => current + value);
+                            GetBitDepth = x.ToString();
+                        }
+                        else
+                        {
+                            GetBitDepth = (magick.Depth * 3).ToString();
+                        }
+                    }
+                    if (DpiX is 0)
+                    {
+                        var bmp = Image as Bitmap;
+                        DpiX = bmp?.Dpi.X ?? 0;
+                        DpiY = bmp?.Dpi.Y ?? 0;
+                    }
+
+                    if (string.IsNullOrEmpty(GetBitDepth))
+                    {
+                        GetBitDepth = (magick.Depth * 3).ToString();
+                    }
+
+                    if (DpiX == 0)
+                    {
+                        GetPrintSizeCm = GetPrintSizeInch = GetSizeMp = GetResolution = string.Empty;
+                    }
+                    else
+                    {
+                        var inchesWidth = PixelWidth / DpiX;
+                        var inchesHeight = PixelHeight / DpiY;
+                        GetPrintSizeInch = $"{inchesWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Inches")}";
+
+                        var cmWidth = PixelWidth / DpiX * 2.54;
+                        var cmHeight = PixelHeight / DpiY * 2.54;
+                        GetPrintSizeCm = $"{cmWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {cmHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Centimeters")}";
+                        GetSizeMp = $"{((float)PixelHeight * PixelWidth / 1000000).ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("MegaPixels")}";
+
+                        GetResolution = $"{DpiX} x {DpiY} {TranslationHelper.GetTranslation("Dpi")}";
+                    }
+
+                    var firstRatio = PixelWidth / TitleHelper.GCD(PixelWidth, PixelHeight);
+                    var secondRatio = PixelHeight / TitleHelper.GCD(PixelWidth, PixelHeight);
+
+                    if (firstRatio == secondRatio)
+                    {
+                        GetAspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Square")})";
+                    }
+                    else if (firstRatio > secondRatio)
+                    {
+                        GetAspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Landscape")})";
+                    }
+                    else
+                    {
+                        GetAspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Portrait")})";
+                    }
+
+                    EXIFRating = profile?.GetValue(ExifTag.Rating)?.Value ?? 0;
+                }
+                catch (Exception)
+                {
+                    // TODO display exception to user
+                }
+            });
         }
 
         public void SetTitle(ImageModel? imageModel, ImageIterator imageIterator)
@@ -627,7 +705,7 @@ namespace PicView.Avalonia.ViewModels
                 return;
             }
 
-            var titleString = TitleHelper.GetTitle((int)Width, (int)Height, ImageIterator.Index,
+            var titleString = TitleHelper.GetTitle((int)ImageWidth, (int)ImageHeight, ImageIterator.Index,
                     FileInfo, ZoomValue, ImageIterator.Pics);
             WindowTitle = titleString[0];
             Title = titleString[1];
@@ -675,7 +753,7 @@ namespace PicView.Avalonia.ViewModels
                 var preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
                 if (preLoadValue is not null)
                 {
-                    while (preLoadValue.IsLoading)
+                    while (preLoadValue.IsLoading && ImageIterator.Index == index)
                     {
                         if (x == 0)
                         {
@@ -693,25 +771,12 @@ namespace PicView.Avalonia.ViewModels
                                 Image = null;
                             }
                         }
-
-                        x++;
                         await Task.Delay(20);
                         if (ImageIterator.Index != index)
                         {
                             await ImageIterator.Preload(ImageService);
                             return;
                         }
-
-                        if (x <= 50)
-                        {
-                            continue;
-                        }
-
-                        await GetPreload();
-#if DEBUG
-                        Trace.WriteLine("Loading timeout");
-#endif
-                        break;
                     }
                 }
 
@@ -730,7 +795,7 @@ namespace PicView.Avalonia.ViewModels
                 SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0);
                 SetTitle(preLoadValue.ImageModel, ImageIterator);
                 GetIndex = ImageIterator.Index + 1;
-                ImageChanged?.Invoke(this, EventArgs.Empty);
+                ImageChanged?.Invoke(this, preLoadValue.ImageModel);
                 await ImageIterator.AddAsync(ImageIterator.Index, ImageService, preLoadValue?.ImageModel);
                 await ImageIterator.Preload(ImageService);
                 return;
@@ -1218,6 +1283,36 @@ namespace PicView.Avalonia.ViewModels
             });
 
             #endregion File commands
+
+            #region Rating
+
+            SetExifRating1Command = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 1);
+                EXIFRating = 1;
+            });
+            SetExifRating2Command = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 2);
+                EXIFRating = 2;
+            });
+            SetExifRating3Command = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 3);
+                EXIFRating = 3;
+            });
+            SetExifRating4Command = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 4);
+                EXIFRating = 4;
+            });
+            SetExifRating5Command = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 5);
+                EXIFRating = 5;
+            });
+
+            #endregion Rating
 
             Activator = new ViewModelActivator();
             this.WhenActivated(disposables =>

@@ -7,9 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
-    Title="ExifWindow"
+    Title="Loading..."
     Width="901"
-    Height="427"
+    Height="430"
     x:DataType="viewModels:MainViewModel"
     BorderBrush="{StaticResource MainBorderColor}"
     BorderThickness="1"
@@ -119,8 +119,7 @@
             <buttons:StarOutlineButtons
                 x:Name="StarOutlineButtons"
                 Padding="5,0,0,3"
-                Background="{StaticResource FadedBackgroundColor}"
-                DataContext="viewModels:ExifViewModel" />
+                Background="{StaticResource FadedBackgroundColor}" />
 
             <Button
                 Width="30"
@@ -159,6 +158,9 @@
             Height="1"
             DockPanel.Dock="Top"
             Fill="{StaticResource MainBorderColor}" />
-        <views:ExifView Background="{StaticResource NoisyTexture}" PointerPressed="MoveWindow" />
+        <views:ExifView
+            x:Name="ExifView"
+            Background="{StaticResource NoisyTexture}"
+            PointerPressed="MoveWindow" />
     </DockPanel>
 </Window>

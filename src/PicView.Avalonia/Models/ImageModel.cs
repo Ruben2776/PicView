@@ -10,9 +10,6 @@ public class ImageModel
     public int PixelWidth { get; set; }
     public int PixelHeight { get; set; }
     public EXIFHelper.EXIFOrientation? EXIFOrientation { get; set; }
-    public bool IsFlipped { get; set; }
-
-    private double _rotation;
 
     public double Rotation
     {
@@ -44,6 +41,5 @@ public class ImageModel
             }
             return 0;
         }
-        set { _rotation = value; }
     }
 }

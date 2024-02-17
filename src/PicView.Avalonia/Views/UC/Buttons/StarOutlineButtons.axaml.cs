@@ -1,7 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.Threading;
+using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Views.UC.Buttons;
 
@@ -10,6 +13,56 @@ public partial class StarOutlineButtons : UserControl
     public StarOutlineButtons()
     {
         InitializeComponent();
+        Loaded += delegate
+        {
+            if (DataContext == null)
+            {
+                return;
+            }
+            var vm = (MainViewModel)DataContext;
+            vm.PropertyChanged += (_, x) =>
+            {
+                if (x.PropertyName != nameof(MainViewModel.EXIFRating))
+                {
+                    return;
+                }
+                SetStars(vm.EXIFRating);
+            };
+            SetStars(vm.EXIFRating);
+        };
+    }
+
+    public void SetStars(uint stars)
+    {
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            switch (stars)
+            {
+                case 1:
+                    FillStar1();
+                    break;
+
+                case 2:
+                    FillStar2();
+                    break;
+
+                case 3:
+                    FillStar3();
+                    break;
+
+                case 4:
+                    FillStar4();
+                    break;
+
+                case 5:
+                    FillStar5();
+                    break;
+
+                default:
+                    OutlineStars();
+                    break;
+            }
+        });
     }
 
     public void FillStar1()
@@ -123,7 +176,13 @@ public partial class StarOutlineButtons : UserControl
 
     private void Stars_OnPointerExited(object? sender, PointerEventArgs e)
     {
-        OutlineStars();
+        if (DataContext is null)
+        {
+            OutlineStars();
+            return;
+        }
+        var vm = (MainViewModel)DataContext;
+        SetStars(vm.EXIFRating);
     }
 
     private void Star2_OnPointerEntered(object? sender, PointerEventArgs e)
@@ -144,5 +203,30 @@ public partial class StarOutlineButtons : UserControl
     private void Star5_OnPointerEntered(object? sender, PointerEventArgs e)
     {
         FillStar5();
+    }
+
+    private void FiveStarCLick(object? sender, RoutedEventArgs e)
+    {
+        FillStar5();
+    }
+
+    private void FourStarCLick(object? sender, RoutedEventArgs e)
+    {
+        FillStar4();
+    }
+
+    private void ThreeStarCLick(object? sender, RoutedEventArgs e)
+    {
+        FillStar3();
+    }
+
+    private void TwoStarCLick(object? sender, RoutedEventArgs e)
+    {
+        FillStar2();
+    }
+
+    private void OneStarCLick(object? sender, RoutedEventArgs e)
+    {
+        FillStar1();
     }
 }
