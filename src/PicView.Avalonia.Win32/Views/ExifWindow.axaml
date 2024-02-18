@@ -51,7 +51,7 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
-                Classes="alphaHover">
+                Classes="noBorderHover">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -65,7 +65,7 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="alphaHover"
+                Classes="noBorderHover"
                 Command="{Binding RecycleFileCommand}">
                 <TextBlock
                     HorizontalAlignment="Center"
@@ -80,7 +80,7 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="alphaHover">
+                Classes="noBorderHover">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -94,7 +94,7 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="alphaHover">
+                Classes="noBorderHover">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -108,7 +108,7 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="alphaHover">
+                Classes="noBorderHover">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

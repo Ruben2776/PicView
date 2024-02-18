@@ -3,6 +3,7 @@ using ImageMagick;
 using PicView.Avalonia.Models;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
+using System.IO;
 
 namespace PicView.Avalonia.Services;
 
@@ -49,9 +50,24 @@ public class ImageService
 
             default:
                 {
-                    var magickImage = await ImageDecoder.GetMagickImageAsync(imageModel.FileInfo, extension).ConfigureAwait(false);
-                    var byteArray = magickImage.ToByteArray(MagickFormat.WebP);
-                    var memoryStream = new MemoryStream(byteArray);
+                    var magickImage = new MagickImage();
+                    if (imageModel.FileInfo.Length >= 2147483648)
+                    {
+                        await Task.Run(() =>
+                        {
+                            // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+                            // ReSharper disable once MethodHasAsyncOverload
+                            magickImage.Read(imageModel.FileInfo);
+                        }).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await magickImage.ReadAsync(imageModel.FileInfo).ConfigureAwait(false);
+                    }
+                    magickImage.Format = MagickFormat.Png;
+                    await using var memoryStream = new MemoryStream();
+                    await magickImage.WriteAsync(memoryStream);
+                    memoryStream.Position = 0;
                     Add(memoryStream);
                 }
                 return;

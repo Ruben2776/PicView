@@ -44,6 +44,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Background="Transparent"
                 Click="OneStarCLick"
                 Command="{Binding SetExifRating1Command}"
                 PointerEntered="Star1_OnPointerEntered"
@@ -59,6 +60,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Background="Transparent"
                 Click="TwoStarCLick"
                 Command="{Binding SetExifRating2Command}"
                 PointerEntered="Star2_OnPointerEntered"
@@ -74,6 +76,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Background="Transparent"
                 Click="ThreeStarCLick"
                 Command="{Binding SetExifRating3Command}"
                 PointerEntered="Star3_OnPointerEntered"
@@ -89,6 +92,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Background="Transparent"
                 Click="FourStarCLick"
                 Command="{Binding SetExifRating4Command}"
                 PointerEntered="Star4_OnPointerEntered"
@@ -104,6 +108,7 @@
             <Button
                 Canvas.Left="3"
                 Canvas.Top="5"
+                Background="Transparent"
                 Click="FiveStarCLick"
                 Command="{Binding SetExifRating5Command}"
                 PointerEntered="Star5_OnPointerEntered"

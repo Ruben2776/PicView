@@ -14,7 +14,7 @@
     <StackPanel>
 
         <Border
-            Background="{StaticResource MainBackgroundColor}"
+            Background="{StaticResource MenuBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="1"
             CornerRadius="8"
@@ -95,7 +95,7 @@
 
                 <Button
                     Canvas.Left="179"
-                    Width="134"
+                    Width="136"
                     Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
@@ -125,7 +125,8 @@
                 </Button>
 
                 <Button
-                    Canvas.Left="312"
+                    Canvas.Left="315"
+                    Canvas.Top="-1"
                     Width="45"
                     Height="45"
                     Background="Transparent"
@@ -155,7 +156,7 @@
                     Canvas.Top="53"
                     Width="169"
                     Height="45"
-                    Classes="ButtonBorder alphaHover"
+                    Classes="ButtonBorder altHover"
                     Command="{Binding ShowExifWindowCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -179,31 +180,31 @@
                     Canvas.Top="53"
                     Width="169"
                     Height="45"
-                    Classes="ButtonBorder alphaHover" />
+                    Classes="ButtonBorder altHover" />
 
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Width="169"
-                    Classes="ButtonBorder alphaHover" />
+                    Classes="ButtonBorder altHover" />
 
                 <Button
                     Canvas.Left="182"
                     Canvas.Top="104"
                     Width="169"
-                    Classes="ButtonBorder alphaHover" />
+                    Classes="ButtonBorder altHover" />
 
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="150"
                     Width="169"
-                    Classes="ButtonBorder alphaHover" />
+                    Classes="ButtonBorder altHover" />
 
                 <Button
                     Canvas.Left="182"
                     Canvas.Top="150"
                     Width="169"
-                    Classes="ButtonBorder alphaHover" />
+                    Classes="ButtonBorder altHover" />
             </Canvas>
         </Border>
 

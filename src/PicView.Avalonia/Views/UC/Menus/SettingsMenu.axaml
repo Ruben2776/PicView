@@ -14,7 +14,7 @@
     <StackPanel>
 
         <Border
-            Background="{StaticResource MainBackgroundColor}"
+            Background="{StaticResource MenuBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="1"
             CornerRadius="8"
@@ -35,11 +35,10 @@
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="hover"
+                    Classes="noBorderHover"
                     CornerRadius="8,0,0,0"
                     ToolTip.Tip="{Binding ShowAllSettingsWindow}">
                     <StackPanel Orientation="Horizontal">
-
                         <Path
                             Width="17"
                             Height="17"
@@ -58,12 +57,12 @@
 
                 <Button
                     Canvas.Left="179"
-                    Width="134"
+                    Width="135"
                     Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="hover"
+                    Classes="noBorderHover"
                     ToolTip.Tip="{Binding InfoWinow}">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -113,9 +112,10 @@
                 </Button>
 
                 <Button
-                    Canvas.Left="312"
+                    Canvas.Left="315"
+                    Canvas.Top="-1"
                     Width="45"
-                    Height="45"
+                    Height="46"
                     Background="Transparent"
                     Classes="hover"
                     Command="{Binding CloseMenuCommand}"
@@ -143,7 +143,7 @@
                     Canvas.Top="53"
                     Width="169"
                     Height="45"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     Command="{Binding ChangeTopMostCommand}"
                     IsChecked="{Binding IsTopMost}"
                     ToolTip.Tip="{Binding StayTopMost}">
@@ -161,7 +161,7 @@
                     Canvas.Top="53"
                     Width="169"
                     Height="45"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     Command="{Binding ChangeIncludeSubdirectoriesCommand}"
                     IsChecked="{Binding IncludeSubdirectories}"
                     ToolTip.Tip="{Binding SearchSubdirectory}">
@@ -178,7 +178,7 @@
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Width="169"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     IsChecked="{Binding IsLooping}"
                     ToolTip.Tip="{Binding ToggleLooping}">
                     <TextBlock
@@ -194,7 +194,7 @@
                     Canvas.Left="182"
                     Canvas.Top="104"
                     Width="169"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     ToolTip.Tip="{Binding ApplicationShortcuts}">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -235,7 +235,7 @@
                     Canvas.Left="7"
                     Canvas.Top="150"
                     Width="169"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     Command="{Binding ToggleUICommand}"
                     ToolTip.Tip="Hide interface">
                     <StackPanel Orientation="Horizontal">
@@ -294,7 +294,7 @@
                     Canvas.Left="182"
                     Canvas.Top="150"
                     Width="169"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     ToolTip.Tip="Double page">
                     <TextBlock
                         MaxWidth="150"

@@ -117,7 +117,7 @@
             </Style.Animations>
             <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
         </Style>
-        <Style Selector="^.alphaHover:pointerover /template/ Border#PART_ContentPresenter">
+        <Style Selector="^.noBorderHover:pointerover /template/ Border#PART_ContentPresenter">
             <Style.Animations>
                 <Animation IterationCount="1" Duration=".35">
                     <KeyFrame>
@@ -137,7 +137,7 @@
         <Style Selector="^.hover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
-        <Style Selector="^.alphaHover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="^.noBorderHover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
         <Style Selector="^:disabled">

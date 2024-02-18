@@ -14,7 +14,7 @@
     <StackPanel>
 
         <Border
-            Background="{StaticResource MainBackgroundColor}"
+            Background="{StaticResource MenuBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="1"
             CornerRadius="8"
@@ -129,7 +129,7 @@
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="altHover"
+                    Classes="noBorderHover"
                     ToolTip.Tip="{Binding GoToImageAtSpecifiedIndex}">
                     <StackPanel Margin="5,0" Orientation="Horizontal">
                         <Image Width="17" Height="17">
@@ -200,7 +200,7 @@
                 <ToggleButton
                     Canvas.Left="7"
                     Canvas.Top="53"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     IsChecked="{Binding IsScrollingEnabled}"
                     ToolTip.Tip="{Binding ToggleScroll}">
                     <TextBlock
@@ -213,7 +213,7 @@
                 <ToggleButton
                     Canvas.Left="7"
                     Canvas.Top="99"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     Command="{Binding ChangeAutoFitCommand}"
                     IsChecked="{Binding IsAutoFit}"
                     ToolTip.Placement="Top"
@@ -228,7 +228,7 @@
                 <ToggleButton
                     Canvas.Left="160"
                     Canvas.Top="53"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     IsChecked="{Binding IsStretched}"
                     ToolTip.Tip="{Binding Stretch}">
                     <TextBlock
@@ -241,7 +241,7 @@
                 <ToggleButton
                     Canvas.Left="160"
                     Canvas.Top="99"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     ToolTip.Tip="Double page">
                     <TextBlock
                         VerticalAlignment="Center"
@@ -254,7 +254,7 @@
                     Canvas.Left="7"
                     Canvas.Top="145"
                     Width="300"
-                    Classes="ButtonBorder"
+                    Classes="ButtonBorder altHover"
                     ToolTip.Tip="{Binding GetBottomGallery}">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <Image

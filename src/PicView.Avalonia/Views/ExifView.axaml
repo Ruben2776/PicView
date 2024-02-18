@@ -31,15 +31,8 @@
                         Classes="txt"
                         FontSize="14"
                         Text="{Binding FileName}" />
-                    <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.Name}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <TextBox Classes="hover TStyle" Text="{Binding FileInfo.Name}" />
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -56,15 +49,8 @@
                         Classes="txt"
                         FontSize="14"
                         Text="{Binding Folder}" />
-                    <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.DirectoryName}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <TextBox Classes="hover TStyle" Text="{Binding FileInfo.DirectoryName}" />
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -81,15 +67,8 @@
                         Classes="txt"
                         FontSize="14"
                         Text="{Binding FullPath}" />
-                    <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding FileInfo.FullName}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <TextBox Classes="hover TStyle" Text="{Binding FileInfo.FullName}" />
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -107,15 +86,10 @@
                         FontSize="14"
                         Text="{Binding Created}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding FileInfo.CreationTime}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -133,15 +107,10 @@
                         FontSize="14"
                         Text="{Binding Modified}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding FileInfo.LastWriteTime}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -159,15 +128,10 @@
                         FontSize="14"
                         Text="{Binding LastAccessTime}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding FileInfo.LastAccessTime}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -185,15 +149,10 @@
                         FontSize="14"
                         Text="{Binding BitDepth}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding GetBitDepth}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -213,15 +172,8 @@
                         Classes="txt"
                         FontSize="14"
                         Text="{Binding Width}" />
-                    <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding PixelWidth}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <TextBox Classes="hover TStyle" Text="{Binding PixelWidth}" />
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -238,15 +190,8 @@
                         Classes="txt"
                         FontSize="14"
                         Text="{Binding Height}" />
-                    <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        SelectionBrush="{DynamicResource AccentColor}"
-                        Text="{Binding PixelHeight}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <TextBox Classes="hover TStyle" Text="{Binding PixelHeight}" />
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -264,14 +209,10 @@
                         FontSize="14"
                         Text="{Binding SizeMp}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding GetSizeMp}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -289,15 +230,10 @@
                         FontSize="14"
                         Text="{Binding Resolution}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding GetResolution}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -315,15 +251,10 @@
                         FontSize="14"
                         Text="{Binding PrintSizeCm}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding GetPrintSizeCm}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -341,15 +272,10 @@
                         FontSize="14"
                         Text="{Binding PrintSizeIn}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding GetPrintSizeInch}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -367,15 +293,10 @@
                         FontSize="14"
                         Text="{Binding AspectRatio}" />
                     <TextBox
-                        Width="180"
-                        Padding="5,7,0,7"
-                        Background="{StaticResource BackgroundAlpha}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        Classes="hover"
-                        IsReadOnly="True"
-                        SelectionBrush="{DynamicResource AccentColor}"
+                        Classes="hover TStyle"
+                        IsEnabled="False"
                         Text="{Binding GetAspectRatio}" />
-                    <Button Classes="alphaHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                         <Path
                             Width="16"
                             Height="16"
@@ -396,7 +317,7 @@
                 <ComboBox
                     Width="130"
                     Padding="5,7,0,7"
-                    Background="{StaticResource BackgroundAlpha}"
+                    Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -423,7 +344,7 @@
                 <ComboBox
                     Width="130"
                     Padding="5,7,0,7"
-                    Background="{StaticResource BackgroundAlpha}"
+                    Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
