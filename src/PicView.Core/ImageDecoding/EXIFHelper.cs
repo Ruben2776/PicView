@@ -1,4 +1,6 @@
-﻿using ImageMagick;
+﻿using System.Globalization;
+using ImageMagick;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -83,6 +85,54 @@ public static class EXIFHelper
         catch (Exception)
         {
             return null;
+        }
+    }
+
+    public static string?[]? GetGPSValues(IExifProfile profile)
+    {
+        if (profile is null)
+        {
+            return null;
+        }
+        var gpsLong = profile.GetValue(ExifTag.GPSLongitude);
+        var gpsLongRef = profile.GetValue(ExifTag.GPSLongitudeRef);
+        var gpsLatitude = profile.GetValue(ExifTag.GPSLatitude);
+        var gpsLatitudeRef = profile.GetValue(ExifTag.GPSLatitudeRef);
+
+        if (gpsLong is null || gpsLongRef is null || gpsLatitude is null ||
+            gpsLatitudeRef is null)
+        {
+            return null;
+        }
+
+        var latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString(CultureInfo.InvariantCulture);
+        var longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString(CultureInfo.InvariantCulture);
+
+        var googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," +
+                         longitudeValue;
+        var bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue +
+                       "&style=o&lvl=1&dir=0&scene=1140291";
+
+        var latitudeString = $"{gpsLatitude.Value[0]}\u00b0{gpsLatitude.Value[1]}'{gpsLatitude.Value[2].ToDouble():0.##}\"{gpsLatitudeRef}";
+        var longitudeString = $"{gpsLong.Value[0]}\u00b0{gpsLong.Value[1]}'{gpsLong.Value[2].ToDouble():0.##}\"{gpsLongRef}";
+
+        return [latitudeString, longitudeString, googleLink, bingLink];
+
+        double GetCoordinates(string gpsRef, IReadOnlyList<Rational> rationals)
+        {
+            if (rationals[0].Denominator == 0 || rationals[1].Denominator == 0 || rationals[2].Denominator == 0)
+            {
+                return 0;
+            }
+
+            double degrees = rationals[0].Numerator / rationals[0].Denominator;
+            double minutes = rationals[1].Numerator / rationals[1].Denominator;
+            double seconds = rationals[2].Numerator / rationals[2].Denominator;
+
+            var coordinate = degrees + minutes / 60d + seconds / 3600d;
+            if (gpsRef is "S" or "W")
+                coordinate *= -1;
+            return coordinate;
         }
     }
 }

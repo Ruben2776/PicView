@@ -200,6 +200,46 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _getAspectRatio, value);
         }
 
+        private string? _getLatitude;
+
+        public string? GetLatitude
+        {
+            get => _getLatitude;
+            set => this.RaiseAndSetIfChanged(ref _getLatitude, value);
+        }
+
+        private string? _getLongitude;
+
+        public string? GetLongitude
+        {
+            get => _getLongitude;
+            set => this.RaiseAndSetIfChanged(ref _getLongitude, value);
+        }
+
+        private string? _getAltitude;
+
+        public string? GetAltitude
+        {
+            get => _getAltitude;
+            set => this.RaiseAndSetIfChanged(ref _getAltitude, value);
+        }
+
+        private string? _googleLink;
+
+        public string? GoogleLink
+        {
+            get => _googleLink;
+            set => this.RaiseAndSetIfChanged(ref _googleLink, value);
+        }
+
+        private string? _bingLink;
+
+        public string? BingLink
+        {
+            get => _bingLink;
+            set => this.RaiseAndSetIfChanged(ref _bingLink, value);
+        }
+
         #region Window Properties
 
         private string? _title = "Loading...";
@@ -657,6 +697,24 @@ namespace PicView.Avalonia.ViewModels
                     }
 
                     EXIFRating = profile?.GetValue(ExifTag.Rating)?.Value ?? 0;
+
+                    var gpsValues = EXIFHelper.GetGPSValues(profile);
+
+                    if (gpsValues is not null)
+                    {
+                        GetLatitude = gpsValues[0];
+                        GetLongitude = gpsValues[1];
+
+                        GoogleLink = gpsValues[2];
+                        BingLink = gpsValues[3];
+                    }
+                    else
+                    {
+                        GetLatitude = GetLongitude = GoogleLink = BingLink = string.Empty;
+                    }
+
+                    var altitude = profile?.GetValue(ExifTag.GPSAltitude)?.Value;
+                    GetAltitude = altitude.HasValue ? $"{altitude.Value.ToDouble()} {TranslationHelper.GetTranslation("Meters")}" : string.Empty;
                 }
                 catch (Exception)
                 {

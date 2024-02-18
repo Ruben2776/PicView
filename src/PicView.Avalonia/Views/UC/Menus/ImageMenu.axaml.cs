@@ -33,6 +33,10 @@ public partial class ImageMenu : UserControl
             {
                 number = vm.ImageIterator.Pics.Count - 1;
             }
+            else
+            {
+                number--;
+            }
 
             await vm.LoadPicAtIndex(number).ConfigureAwait(false);
         }
