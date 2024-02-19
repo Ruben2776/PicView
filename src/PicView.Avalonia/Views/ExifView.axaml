@@ -1,12 +1,12 @@
 <UserControl
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.ExifView"
-    x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="vm:MainViewModel"
+    mc:Ignorable="d">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
@@ -17,70 +17,70 @@
     <ScrollViewer VerticalScrollBarVisibility="Visible">
 
         <StackPanel
+            Margin="5"
             Background="Transparent"
-            Focusable="True"
-            Margin="5">
+            Focusable="True">
             <StackPanel Orientation="Horizontal">
 
                 <StackPanel Width="347">
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,2,0"
-                            Text="{Binding FileName}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding FileName}" />
                         <TextBox Classes="hover TStyle" Text="{Binding FileInfo.Name}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding Folder}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding Folder}" />
                         <TextBox Classes="hover TStyle" Text="{Binding FileInfo.DirectoryName}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding FullPath}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding FullPath}" />
                         <TextBox Classes="hover TStyle" Text="{Binding FileInfo.FullName}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding Created}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding Created}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -88,20 +88,20 @@
                             Text="{Binding FileInfo.CreationTime}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding Modified}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding Modified}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -109,20 +109,20 @@
                             Text="{Binding FileInfo.LastWriteTime}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding LastAccessTime}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding LastAccessTime}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -130,20 +130,20 @@
                             Text="{Binding FileInfo.LastAccessTime}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding BitDepth}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding BitDepth}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes="TStyle"
@@ -151,11 +151,11 @@
                             Text="{Binding GetBitDepth}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
                 </StackPanel>
@@ -164,44 +164,44 @@
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding Width}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding Width}" />
                         <TextBox Classes="hover TStyle" Text="{Binding PixelWidth}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding Height}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding Height}" />
                         <TextBox Classes="hover TStyle" Text="{Binding PixelHeight}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding SizeMp}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding SizeMp}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -209,20 +209,20 @@
                             Text="{Binding GetSizeMp}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding Resolution}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding Resolution}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -230,20 +230,20 @@
                             Text="{Binding GetResolution}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding PrintSizeCm}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding PrintSizeCm}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -251,20 +251,20 @@
                             Text="{Binding GetPrintSizeCm}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding PrintSizeIn}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding PrintSizeIn}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -272,20 +272,20 @@
                             Text="{Binding GetPrintSizeInch}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,0,0"
-                            Text="{Binding AspectRatio}"
-                            Width="100" />
+                            Classes="txt"
+                            Text="{Binding AspectRatio}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -293,57 +293,64 @@
                             Text="{Binding GetAspectRatio}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Margin="15,10" Width="130">
+                <StackPanel Width="130" Margin="15,10">
                     <TextBlock
+                        Margin="0,25,0,10"
                         Classes="txt"
                         FontSize="16"
-                        Margin="0,25,0,10"
                         Text="{Binding ConvertTo}"
                         TextAlignment="Center" />
                     <ComboBox
+                        Width="130"
+                        Padding="5,7,0,7"
                         Background="{StaticResource SecondaryBackgroundColor}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         BorderThickness="1"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        Padding="5,7,0,7"
-                        SelectedIndex="0"
-                        Width="130">
+                        SelectedIndex="0">
                         <ComboBoxItem Content="{Binding NoConversion}" />
-                        <ComboBoxItem Content=".png" Name="png" />
-                        <ComboBoxItem Content=".jpg" Name="jpg" />
-                        <ComboBoxItem Content=".webp" Name="webp" />
-                        <ComboBoxItem Content=".avif" Name="avif" />
-                        <ComboBoxItem Content=".heic" Name="heic" />
+                        <ComboBoxItem Name="png" Content=".png" />
+                        <ComboBoxItem Name="jpg" Content=".jpg" />
+                        <ComboBoxItem Name="webp" Content=".webp" />
+                        <ComboBoxItem Name="avif" Content=".avif" />
+                        <ComboBoxItem Name="heic" Content=".heic" />
                     </ComboBox>
                     <Button
-                        Classes="foregroundHover"
-                        Content="{Binding Apply}"
+                        Width="130"
+                        Margin="0,12"
                         HorizontalAlignment="Center"
-                        Margin="0,12" />
+                        Background="{StaticResource SecondaryBackgroundColor}"
+                        Classes="altHover BorderStyle">
+                        <TextBlock
+                            Padding="5,7,5,2"
+                            Classes="txt"
+                            Text="{Binding Apply}"
+                            TextAlignment="Center" />
+                    </Button>
 
                     <TextBlock
+                        Margin="0,25,0,10"
                         Classes="txt"
                         FontSize="16"
-                        Margin="0,25,0,10"
                         Text="{Binding Resize}"
                         TextAlignment="Center" />
                     <ComboBox
+                        Width="130"
+                        Padding="5,7,0,7"
                         Background="{StaticResource SecondaryBackgroundColor}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         BorderThickness="1"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        Padding="5,7,0,7"
-                        SelectedIndex="0"
-                        Width="130">
+                        SelectedIndex="0">
                         <ComboBoxItem Content="{Binding NoResize}" />
                         <ComboBoxItem Content="95%" />
                         <ComboBoxItem Content="90%" />
@@ -360,12 +367,38 @@
                         <ComboBoxItem Content="30%" />
                     </ComboBox>
                     <Button
-                        Classes="foregroundHover"
-                        Content="{Binding Apply}"
-                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        Width="130"
+                        Margin="0,12"
                         HorizontalAlignment="Center"
-                        Margin="0,12" />
+                        Background="{StaticResource SecondaryBackgroundColor}"
+                        Classes="altHover BorderStyle">
+                        <TextBlock
+                            Padding="5,7,5,2"
+                            Classes="txt"
+                            Text="{Binding Apply}"
+                            TextAlignment="Center" />
+                    </Button>
                 </StackPanel>
+            </StackPanel>
+
+            <StackPanel
+                Height="20"
+                Margin="15,15,15,10"
+                Orientation="Horizontal">
+                <Rectangle
+                    Width="370"
+                    Height="1"
+                    Margin="0,0,7,0"
+                    Fill="{StaticResource MainBorderColor}" />
+                <Path
+                    Data="M256 8C118.941 8 8 118.919 8 256c0 137.059 110.919 248 248 248 48.154 0 95.342-14.14 135.408-40.223 12.005-7.815 14.625-24.288 5.552-35.372l-10.177-12.433c-7.671-9.371-21.179-11.667-31.373-5.129C325.92 429.757 291.314 440 256 440c-101.458 0-184-82.542-184-184S154.542 72 256 72c100.139 0 184 57.619 184 160 0 38.786-21.093 79.742-58.17 83.693-17.349-.454-16.91-12.857-13.476-30.024l23.433-121.11C394.653 149.75 383.308 136 368.225 136h-44.981a13.518 13.518 0 0 0-13.432 11.993l-.01.092c-14.697-17.901-40.448-21.775-59.971-21.775-74.58 0-137.831 62.234-137.831 151.46 0 65.303 36.785 105.87 96 105.87 26.984 0 57.369-15.637 74.991-38.333 9.522 34.104 40.613 34.103 70.71 34.103C462.609 379.41 504 307.798 504 232 504 95.653 394.023 8 256 8zm-21.68 304.43c-22.249 0-36.07-15.623-36.07-40.771 0-44.993 30.779-72.729 58.63-72.729 22.292 0 35.601 15.241 35.601 40.77 0 45.061-33.875 72.73-58.161 72.73z"
+                    Fill="{StaticResource MainIconColor}"
+                    Stretch="Uniform" />
+                <Rectangle
+                    Width="425"
+                    Height="1"
+                    Margin="7,0,0,0"
+                    Fill="{StaticResource MainBorderColor}" />
             </StackPanel>
 
             <StackPanel Margin="0,10,0,0">
@@ -373,10 +406,122 @@
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,2,0"
-                            Text="Latitude"
-                            Width="100" />
+                            Classes="txt"
+                            Text="Date taken" />
+                        <TextBox
+                            Background="{StaticResource BackgroundAlpha}"
+                            Classes=" TStyle"
+                            IsReadOnly="True"
+                            Text="" />
+                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            <Path
+                                Width="16"
+                                Height="16"
+                                Data="{StaticResource CopyGeometry}"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,10" Orientation="Horizontal">
+                        <TextBlock
+                            Width="100"
+                            Margin="0,8,2,0"
+                            Classes="txt"
+                            Text="Copyright" />
+                        <TextBox
+                            Background="{StaticResource BackgroundAlpha}"
+                            Classes=" TStyle"
+                            IsReadOnly="True"
+                            Text="" />
+                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            <Path
+                                Width="16"
+                                Height="16"
+                                Data="{StaticResource CopyGeometry}"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Width="100"
+                                Margin="0,8,2,0"
+                                Classes="txt"
+                                Text="Authors" />
+                            <TextBox
+                                Background="{StaticResource BackgroundAlpha}"
+                                Classes=" TStyle"
+                                IsReadOnly="True"
+                                Text="" />
+                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                <Path
+                                    Width="16"
+                                    Height="16"
+                                    Data="{StaticResource CopyGeometry}"
+                                    Fill="{StaticResource MainIconColor}"
+                                    Stretch="Fill" />
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel Margin="5,10" Orientation="Horizontal">
+                            <TextBlock
+                                Width="100"
+                                Margin="0,8,2,0"
+                                Classes="txt"
+                                Text="Program name" />
+                            <TextBox
+                                Background="{StaticResource BackgroundAlpha}"
+                                Classes=" TStyle"
+                                IsReadOnly="True"
+                                Text="" />
+                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                <Path
+                                    Width="16"
+                                    Height="16"
+                                    Data="{StaticResource CopyGeometry}"
+                                    Fill="{StaticResource MainIconColor}"
+                                    Stretch="Fill" />
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel
+                Height="20"
+                Margin="15,15,15,10"
+                Orientation="Horizontal">
+                <Rectangle
+                    Width="370"
+                    Height="1"
+                    Margin="0,0,7,0"
+                    Fill="{StaticResource MainBorderColor}" />
+                <Path
+                    Data="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"
+                    Fill="{StaticResource MainIconColor}"
+                    Stretch="Uniform" />
+                <Rectangle
+                    Width="425"
+                    Height="1"
+                    Margin="7,0,0,0"
+                    Fill="{StaticResource MainBorderColor}" />
+            </StackPanel>
+
+            <StackPanel Margin="0,10,0,0">
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Margin="15,10" Orientation="Horizontal">
+                        <TextBlock
+                            Width="100"
+                            Margin="0,8,2,0"
+                            Classes="txt"
+                            Text="Latitude" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -384,20 +529,20 @@
                             Text="{Binding GetLatitude}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
 
                     <StackPanel Margin="5,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,2,0"
-                            Text="Longitude"
-                            Width="100" />
+                            Classes="txt"
+                            Text="Longitude" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -405,11 +550,33 @@
                             Text="{Binding GetLongitude}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Margin="30,0,15,0"
+                            Classes="altHover BorderStyle"
+                            Command="{Binding OpenGoogleLinkCommand}">
+                            <Path
+                                Width="20"
+                                Height="20"
+                                Data="M473.16 221.48l-2.26-9.59H262.46v88.22H387c-12.93 61.4-72.93 93.72-121.94 93.72-35.66 0-73.25-15-98.13-39.11a140.08 140.08 0 01-41.8-98.88c0-37.16 16.7-74.33 41-98.78s61-38.13 97.49-38.13c41.79 0 71.74 22.19 82.94 32.31l62.69-62.36C390.86 72.72 340.34 32 261.6 32c-60.75 0-119 23.27-161.58 65.71C58 139.5 36.25 199.93 36.25 256s20.58 113.48 61.3 155.6c43.51 44.92 105.13 68.4 168.58 68.4 57.73 0 112.45-22.62 151.45-63.66 38.34-40.4 58.17-96.3 58.17-154.9 0-24.67-2.48-39.32-2.59-39.96z"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
+                        </Button>
+                        <Button Classes="altHover BorderStyle" Command="{Binding OpenBingLinkCommand}">
+                            <Path
+                                Width="20"
+                                Height="20"
+                                Data="M31.87 30.58H244.7v212.81H31.87zM266.89 30.58H479.7v212.81H266.89zM31.87 265.61H244.7v212.8H31.87zM266.89 265.61H479.7v212.8H266.89z"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
                 </StackPanel>
@@ -417,10 +584,10 @@
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="15,10" Orientation="Horizontal">
                         <TextBlock
-                            Classes="txt"
+                            Width="100"
                             Margin="0,8,2,0"
-                            Text="Altitude"
-                            Width="100" />
+                            Classes="txt"
+                            Text="Altitude" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -428,37 +595,15 @@
                             Text="{Binding GetAltitude}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
+                                Width="16"
+                                Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
-                        </Button>
-                    </StackPanel>
-
-                    <StackPanel Margin="5,10" Orientation="Horizontal">
-                        <TextBlock
-                            Classes="txt"
-                            Margin="0,8,2,0"
-                            Text="GoogleLink"
-                            Width="100" />
-                        <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
-                            Classes=" TStyle"
-                            IsReadOnly="True"
-                            Text="{Binding GoogleLink}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
-                            <Path
-                                Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="16"
-                                Stretch="Fill"
-                                Width="16" />
+                                Stretch="Fill" />
                         </Button>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-
     </ScrollViewer>
 </UserControl>

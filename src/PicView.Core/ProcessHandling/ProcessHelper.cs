@@ -137,4 +137,18 @@ public static class ProcessHelper
         };
         process.Start();
     }
+
+    public static void OpenLink(string link)
+    {
+        if (string.IsNullOrWhiteSpace(link))
+        {
+            return;
+        }
+        var ps = new ProcessStartInfo(link)
+        {
+            UseShellExecute = true,
+            Verb = "open"
+        };
+        Process.Start(ps);
+    }
 }

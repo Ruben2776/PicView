@@ -98,6 +98,9 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? SetExifRating4Command { get; }
         public ICommand? SetExifRating5Command { get; }
 
+        public ICommand? OpenGoogleLinkCommand { get; }
+        public ICommand? OpenBingLinkCommand { get; }
+
         #endregion Commands
 
         #region Fields
@@ -1342,7 +1345,7 @@ namespace PicView.Avalonia.ViewModels
 
             #endregion File commands
 
-            #region Rating
+            #region EXIF commands
 
             SetExifRating1Command = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -1370,7 +1373,25 @@ namespace PicView.Avalonia.ViewModels
                 EXIFRating = 5;
             });
 
-            #endregion Rating
+            OpenGoogleLinkCommand = ReactiveCommand.Create(() =>
+            {
+                if (string.IsNullOrEmpty(GoogleLink))
+                {
+                    return;
+                }
+                ProcessHelper.OpenLink(GoogleLink);
+            });
+
+            OpenBingLinkCommand = ReactiveCommand.Create(() =>
+            {
+                if (string.IsNullOrEmpty(BingLink))
+                {
+                    return;
+                }
+                ProcessHelper.OpenLink(BingLink);
+            });
+
+            #endregion EXIF commands
 
             Activator = new ViewModelActivator();
             this.WhenActivated(disposables =>
