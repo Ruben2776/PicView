@@ -32,8 +32,13 @@ Latest releases at https://picview.org/download
 
 
 Winget:
-```powershell
-Powershell $> winget install picview
+```cmd
+cmd $> winget install picview
+```
+
+Chocolatey:
+```cmd
+cmd $> choco install picview
 ```
 
 # Features and screenshots
