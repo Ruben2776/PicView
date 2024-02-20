@@ -315,5 +315,8 @@
   "Altitute": "海拔",
   "Authors": "作者",
   "DateTaken": "拍摄日期",
-  "Copyright": "版权"
+  "Copyright": "版权",
+  "Title": "标题",
+  "Subject": "主题",
+  "Software": "软件"
 }

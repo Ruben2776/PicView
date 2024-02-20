@@ -315,5 +315,8 @@
   "Altitude": "고도",
   "Authors": "저자",
   "DateTaken": "촬영 날짜",
-  "Copyright": "저작권"
+  "Copyright": "저작권",
+  "Title": "제목",
+  "Subject": "주제",
+  "Software": "소프트웨어"
 }

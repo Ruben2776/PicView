@@ -315,5 +315,8 @@
   "Altitude": "Altitudine",
   "Authors": "Autori",
   "DateTaken": "Data di scatto",
-  "Copyright": "Diritti d'autore"
+  "Copyright": "Diritti d'autore",
+  "Title": "Titolo",
+  "Subject": "Soggetto",
+  "Software": "Software"
 }

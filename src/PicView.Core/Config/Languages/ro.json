@@ -315,5 +315,8 @@
   "Altitude": "Altitudine",
   "Authors": "Autori",
   "DateTaken": "Dată capturată",
-  "Copyright": "Drepturi de autor"
+  "Copyright": "Drepturi de autor",
+  "Title": "Titlu",
+  "Subject": "Subiect",
+  "Software": "Software"
 }

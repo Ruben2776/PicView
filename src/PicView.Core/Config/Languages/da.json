@@ -315,5 +315,8 @@
   "Altitude": "Højde",
   "Authors": "Forfattere",
   "DateTaken": "Dato fotograferet",
-  "Copyright": "Ophavsret"
+  "Copyright": "Ophavsret",
+  "Title": "Titel",
+  "Subject": "Emne",
+  "Software": "Program"
 }

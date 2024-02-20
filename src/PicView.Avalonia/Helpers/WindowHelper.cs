@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using PicView.Core.Config;
 
@@ -11,7 +12,7 @@ public static class WindowHelper
         desktop.MainWindow.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
         desktop.MainWindow.Width = SettingsHelper.Settings.WindowProperties.Width;
         desktop.MainWindow.Height = SettingsHelper.Settings.WindowProperties.Height;
-        
+
         _ = SettingsHelper.SaveSettingsAsync();
     }
 
@@ -28,5 +29,34 @@ public static class WindowHelper
         SettingsHelper.Settings.WindowProperties.Height = desktop.MainWindow.Height;
 
         _ = SettingsHelper.SaveSettingsAsync();
+    }
+
+    public static void HandleWindowResize(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
+    {
+        if (!SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            return;
+        }
+
+        if (!size.OldValue.HasValue || !size.NewValue.HasValue)
+        {
+            return;
+        }
+
+        if (size.OldValue.Value.Width == 0 || size.OldValue.Value.Height == 0 ||
+            size.NewValue.Value.Width == 0 || size.NewValue.Value.Height == 0)
+        {
+            return;
+        }
+
+        if (size.Sender != window)
+        {
+            return;
+        }
+
+        var x = (size.OldValue.Value.Width - size.NewValue.Value.Width) / 2;
+        var y = (size.OldValue.Value.Height - size.NewValue.Value.Height) / 2;
+
+        window.Position = new PixelPoint(window.Position.X + (int)x, window.Position.Y + (int)y);
     }
 }

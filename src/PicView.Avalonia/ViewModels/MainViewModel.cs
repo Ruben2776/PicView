@@ -267,6 +267,30 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _getCopyright, value);
         }
 
+        private string? _getTitle;
+
+        public string? GetTitle
+        {
+            get => _getTitle;
+            set => this.RaiseAndSetIfChanged(ref _getTitle, value);
+        }
+
+        private string? _getSubject;
+
+        public string? GetSubject
+        {
+            get => _getSubject;
+            set => this.RaiseAndSetIfChanged(ref _getSubject, value);
+        }
+
+        private string? _getSoftware;
+
+        public string? GetSoftware
+        {
+            get => _getSoftware;
+            set => this.RaiseAndSetIfChanged(ref _getSoftware, value);
+        }
+
         #region Window Properties
 
         private string? _title = "Loading...";
@@ -753,6 +777,9 @@ namespace PicView.Avalonia.ViewModels
                     GetAuthors = getAuthors ?? string.Empty;
                     GetDateTaken = EXIFHelper.GetDateTaken(profile);
                     GetCopyright = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
+                    GetTitle = profile?.GetValue(ExifTag.XPTitle)?.Value.ToString() ?? string.Empty;
+                    GetSubject = profile?.GetValue(ExifTag.XPSubject)?.Value.ToString() ?? string.Empty;
+                    GetSoftware = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
                 }
                 catch (Exception)
                 {
@@ -922,7 +949,7 @@ namespace PicView.Avalonia.ViewModels
 
         public async Task LoadPicFromString(string path)
         {
-            if (!File.Exists(path))
+            if (!Path.Exists(path))
             {
                 // TODO load from URL if not a file
                 throw new FileNotFoundException(path);

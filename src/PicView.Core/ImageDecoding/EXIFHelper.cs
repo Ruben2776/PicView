@@ -123,10 +123,9 @@ public static class EXIFHelper
         var latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString(CultureInfo.InvariantCulture);
         var longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString(CultureInfo.InvariantCulture);
 
-        var googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," +
+        var googleLink = "https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," +
                          longitudeValue;
-        var bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue +
-                       "&style=o&lvl=1&dir=0&scene=1140291";
+        var bingLink = "https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue;
 
         var latitudeString = $"{gpsLatitude.Value[0]}\u00b0{gpsLatitude.Value[1]}'{gpsLatitude.Value[2].ToDouble():0.##}\"{gpsLatitudeRef}";
         var longitudeString = $"{gpsLong.Value[0]}\u00b0{gpsLong.Value[1]}'{gpsLong.Value[2].ToDouble():0.##}\"{gpsLongRef}";

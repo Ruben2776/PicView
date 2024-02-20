@@ -319,4 +319,12 @@ internal class LanguageModel
     public string? Authors { get; set; }
     public string? DateTaken { get; set; }
     public string? Copyright { get; set; }
+    public string? CameraModel { get; set; }
+    public string? ResolutionUnit { get; set; }
+    public string? ColorRepresentation { get; set; }
+    public string? CompressedBitsPixel { get; set; }
+    public string? ExposureTime { get; set; }
+    public string? Title { get; set; }
+    public string? Subject { get; set; }
+    public string? Software { get; set; }
 }

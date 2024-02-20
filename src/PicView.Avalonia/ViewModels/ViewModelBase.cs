@@ -9,6 +9,7 @@ public class ViewModelBase : ReactiveObject
 
     public void UpdateLanguage()
     {
+        File = TranslationHelper.GetTranslation("File");
         SelectFile = TranslationHelper.GetTranslation("OpenFileDialog");
         OpenLastFile = TranslationHelper.GetTranslation("OpenLastFile");
         FilePaste = TranslationHelper.GetTranslation("FilePaste");
@@ -87,14 +88,38 @@ public class ViewModelBase : ReactiveObject
         Authors = TranslationHelper.GetTranslation("Authors");
         DateTaken = TranslationHelper.GetTranslation("DateTaken");
         Copyright = TranslationHelper.GetTranslation("Copyright");
+        ResolutionUnit = TranslationHelper.GetTranslation("ResolutionUnit");
+        ColorRepresentation = TranslationHelper.GetTranslation("ColorRepresentation");
+        CompressedBitsPixel = TranslationHelper.GetTranslation("CompressedBitsPixel");
+        Compression = TranslationHelper.GetTranslation("Compression");
+        ExposureTime = TranslationHelper.GetTranslation("ExposureTime");
+        XPTitle = TranslationHelper.GetTranslation("Title");
+        Subject = TranslationHelper.GetTranslation("Subject");
+        Software = TranslationHelper.GetTranslation("Software");
     }
 
-    private FileInfo? _fileInfo;
+    private string? _software;
 
-    public FileInfo? FileInfo
+    public string? Software
     {
-        get => _fileInfo;
-        set => this.RaiseAndSetIfChanged(ref _fileInfo, value);
+        get => _software;
+        set => this.RaiseAndSetIfChanged(ref _software, value);
+    }
+
+    private string? _xptitle;
+
+    public string? XPTitle
+    {
+        get => _xptitle;
+        set => this.RaiseAndSetIfChanged(ref _xptitle, value);
+    }
+
+    private string? _subject;
+
+    public string? Subject
+    {
+        get => _subject;
+        set => this.RaiseAndSetIfChanged(ref _subject, value);
     }
 
     private string? _created;
@@ -191,6 +216,14 @@ public class ViewModelBase : ReactiveObject
     {
         get => _effectsTooltip;
         set => this.RaiseAndSetIfChanged(ref _effectsTooltip, value);
+    }
+
+    private string? _file;
+
+    public string? File
+    {
+        get => _file;
+        set => this.RaiseAndSetIfChanged(ref _file, value);
     }
 
     private string? _selectFile;
@@ -713,9 +746,57 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _copyright, value);
     }
 
+    private string? _resolutionUnit;
+
+    public string? ResolutionUnit
+    {
+        get => _resolutionUnit;
+        set => this.RaiseAndSetIfChanged(ref _resolutionUnit, value);
+    }
+
+    private string? _colorRepresentation;
+
+    public string? ColorRepresentation
+    {
+        get => _colorRepresentation;
+        set => this.RaiseAndSetIfChanged(ref _colorRepresentation, value);
+    }
+
+    private string? _compressedBitsPixel;
+
+    public string? CompressedBitsPixel
+    {
+        get => _compressedBitsPixel;
+        set => this.RaiseAndSetIfChanged(ref _compressedBitsPixel, value);
+    }
+
+    private string? _compression;
+
+    public string? Compression
+    {
+        get => _compression;
+        set => this.RaiseAndSetIfChanged(ref _compression, value);
+    }
+
+    private string? _exposureTime;
+
+    public string? ExposureTime
+    {
+        get => _exposureTime;
+        set => this.RaiseAndSetIfChanged(ref _exposureTime, value);
+    }
+
     #endregion Localization
 
     #region Image
+
+    private FileInfo? _fileInfo;
+
+    public FileInfo? FileInfo
+    {
+        get => _fileInfo;
+        set => this.RaiseAndSetIfChanged(ref _fileInfo, value);
+    }
 
     private int _pixelWidth;
 

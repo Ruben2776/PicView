@@ -1,16 +1,20 @@
 using Avalonia;
 using Avalonia.Controls;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using ReactiveUI;
 using System;
 using System.Reactive.Concurrency;
+using System.Reflection.PortableExecutable;
 
 namespace PicView.Avalonia.MacOS.Views;
 
 public partial class MacMainWindow : Window
 {
+    private ExifWindow? _exifWindow;
+
     public MacMainWindow()
     {
         InitializeComponent();
@@ -25,37 +29,30 @@ public partial class MacMainWindow : Window
                 }
 
                 var wm = (MainViewModel)DataContext;
+
+                // Keep window position when resizing
                 ClientSizeProperty.Changed.Subscribe(size =>
                 {
-                    if (!SettingsHelper.Settings.WindowProperties.AutoFit)
-                    {
-                        return;
-                    }
-
-                    if (!size.OldValue.HasValue || !size.NewValue.HasValue)
-                    {
-                        return;
-                    }
-
-                    if (size.OldValue.Value.Width == 0 || size.OldValue.Value.Height == 0 ||
-                        size.NewValue.Value.Width == 0 || size.NewValue.Value.Height == 0)
-                    {
-                        return;
-                    }
-
-                    var x = (size.OldValue.Value.Width - size.NewValue.Value.Width) / 2;
-                    var y = (size.OldValue.Value.Height - size.NewValue.Value.Height) / 2;
-
-                    Position = new PixelPoint(Position.X + (int)x, Position.Y + (int)y);
+                    WindowHelper.HandleWindowResize(this, size);
                 });
 
                 wm.ShowExifWindowCommand = ReactiveCommand.Create(() =>
                 {
-                    var exifWindow = new ExifWindow
+                    if (_exifWindow is null)
                     {
-                        DataContext = wm,
-                    };
-                    exifWindow.Show();
+                        _exifWindow = new ExifWindow
+                        {
+                            DataContext = wm,
+                            WindowStartupLocation = WindowStartupLocation.Manual,
+                            Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
+                        };
+                        _exifWindow.Show();
+                        _exifWindow.Closing += (s, e) => _exifWindow = null;
+                    }
+                    else
+                    {
+                        _exifWindow.Activate();
+                    }
                     wm.CloseMenuCommand.Execute(null);
                 });
             });

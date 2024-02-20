@@ -14,12 +14,12 @@
         <StreamGeometry x:Key="CopyGeometry">M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z</StreamGeometry>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Visible">
+    <ScrollViewer
+        Background="Transparent"
+        Focusable="True"
+        VerticalScrollBarVisibility="Visible">
 
-        <StackPanel
-            Margin="5"
-            Background="Transparent"
-            Focusable="True">
+        <StackPanel Margin="5">
             <StackPanel Orientation="Horizontal">
 
                 <StackPanel Width="347">
@@ -333,6 +333,7 @@
                         <TextBlock
                             Padding="5,7,5,2"
                             Classes="txt"
+                            FontSize="14"
                             Text="{Binding Apply}"
                             TextAlignment="Center" />
                     </Button>
@@ -375,6 +376,7 @@
                         <TextBlock
                             Padding="5,7,5,2"
                             Classes="txt"
+                            FontSize="14"
                             Text="{Binding Apply}"
                             TextAlignment="Center" />
                     </Button>
@@ -430,12 +432,56 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
+                            Text="{Binding Authors}" />
+                        <TextBox
+                            Background="{StaticResource BackgroundAlpha}"
+                            Classes=" TStyle"
+                            IsReadOnly="True"
+                            Text="{Binding GetAuthors}" />
+                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            <Path
+                                Width="16"
+                                Height="16"
+                                Data="{StaticResource CopyGeometry}"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Margin="15,10" Orientation="Horizontal">
+                        <TextBlock
+                            Width="100"
+                            Margin="0,8,2,0"
+                            Classes="txt"
                             Text="{Binding Copyright}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetCopyright}" />
+                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            <Path
+                                Width="16"
+                                Height="16"
+                                Data="{StaticResource CopyGeometry}"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Margin="5,10" Orientation="Horizontal">
+                        <TextBlock
+                            Width="100"
+                            Margin="0,8,2,0"
+                            Classes="txt"
+                            Text="{Binding Software}" />
+                        <TextBox
+                            Background="{StaticResource BackgroundAlpha}"
+                            Classes=" TStyle"
+                            IsReadOnly="True"
+                            Text="{Binding GetSoftware}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -454,12 +500,12 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Authors}" />
+                                Text="{Binding XPTitle}" />
                             <TextBox
                                 Background="{StaticResource BackgroundAlpha}"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetAuthors}" />
+                                Text="{Binding GetTitle}" />
                             <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                 <Path
                                     Width="16"
@@ -475,12 +521,12 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="Program name" />
+                                Text="{Binding Subject}" />
                             <TextBox
                                 Background="{StaticResource BackgroundAlpha}"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="" />
+                                Text="{Binding GetSubject}" />
                             <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                 <Path
                                     Width="16"
@@ -601,6 +647,119 @@
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
                         </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel
+                    Height="20"
+                    Margin="15,15,15,10"
+                    Orientation="Horizontal">
+                    <Rectangle
+                        Width="370"
+                        Height="1"
+                        Margin="0,0,7,0"
+                        Fill="{StaticResource MainBorderColor}" />
+                    <Path
+                        Data="M384 121.941V128H256V0h6.059a24 24 0 0 1 16.97 7.029l97.941 97.941a24.002 24.002 0 0 1 7.03 16.971zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zm-135.455 16c26.51 0 48 21.49 48 48s-21.49 48-48 48-48-21.49-48-48 21.491-48 48-48zm208 240h-256l.485-48.485L104.545 328c4.686-4.686 11.799-4.201 16.485.485L160.545 368 264.06 264.485c4.686-4.686 12.284-4.686 16.971 0L320.545 304v112z"
+                        Fill="{StaticResource MainIconColor}"
+                        Stretch="Uniform" />
+                    <Rectangle
+                        Width="425"
+                        Height="1"
+                        Margin="7,0,0,0"
+                        Fill="{StaticResource MainBorderColor}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,10,0,0">
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Width="100"
+                                Margin="0,8,2,0"
+                                Classes="txt"
+                                Text="{Binding DateTaken}" />
+                            <TextBox
+                                Background="{StaticResource BackgroundAlpha}"
+                                Classes=" TStyle"
+                                IsReadOnly="True"
+                                Text="{Binding GetDateTaken}" />
+                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                <Path
+                                    Width="16"
+                                    Height="16"
+                                    Data="{StaticResource CopyGeometry}"
+                                    Fill="{StaticResource MainIconColor}"
+                                    Stretch="Fill" />
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel Margin="5,10" Orientation="Horizontal">
+                            <TextBlock
+                                Width="100"
+                                Margin="0,8,2,0"
+                                Classes="txt"
+                                Text="{Binding Copyright}" />
+                            <TextBox
+                                Background="{StaticResource BackgroundAlpha}"
+                                Classes=" TStyle"
+                                IsReadOnly="True"
+                                Text="{Binding GetCopyright}" />
+                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                <Path
+                                    Width="16"
+                                    Height="16"
+                                    Data="{StaticResource CopyGeometry}"
+                                    Fill="{StaticResource MainIconColor}"
+                                    Stretch="Fill" />
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="15,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding Authors}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetAuthors}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Margin="5,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="Program name" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

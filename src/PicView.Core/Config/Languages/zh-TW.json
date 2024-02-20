@@ -315,5 +315,8 @@
   "Altitude": "海拔",
   "Authors": "作者",
   "DateTaken": "拍攝日期",
-  "Copyright": "版權"
+  "Copyright": "版權",
+  "Title": "標題",
+  "Subject": "主題",
+  "Software": "軟體"
 }
