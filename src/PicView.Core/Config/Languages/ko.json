@@ -308,5 +308,12 @@
   "None": "없음",
   "ApplicationStartup": "응용 프로그램 시작",
   "OpenInSameWindow": "동일한 창에서 파일 열기",
-  "NoChange": "변경 없음"
+  "NoChange": "변경 없음",
+  "Meter": "미터",
+  "Latitude": "위도",
+  "Longitude": "경도",
+  "Altitude": "고도",
+  "Authors": "저자",
+  "DateTaken": "촬영 날짜",
+  "Copyright": "저작권"
 }

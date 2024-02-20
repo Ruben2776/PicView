@@ -409,12 +409,12 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="Date taken" />
+                            Text="{Binding DateTaken}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="" />
+                            Text="{Binding GetDateTaken}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -430,12 +430,12 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="Copyright" />
+                            Text="{Binding Copyright}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="" />
+                            Text="{Binding GetCopyright}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -454,12 +454,12 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="Authors" />
+                                Text="{Binding Authors}" />
                             <TextBox
                                 Background="{StaticResource BackgroundAlpha}"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="" />
+                                Text="{Binding GetAuthors}" />
                             <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                 <Path
                                     Width="16"
@@ -521,7 +521,7 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="Latitude" />
+                            Text="{Binding Latitude}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -542,7 +542,7 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="Longitude" />
+                            Text="{Binding Longitude}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
@@ -587,7 +587,7 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="Altitude" />
+                            Text="{Binding Altitude}" />
                         <TextBox
                             Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"

@@ -308,5 +308,12 @@
   "None": "Ingen",
   "ApplicationStartup": "Opstart af programmet",
   "OpenInSameWindow": "Åbn filer i det samme vindue",
-  "NoChange": "Ingen ændring"
+  "NoChange": "Ingen ændring",
+  "Meter": "Meter",
+  "Latitude": "Breddegrad",
+  "Longitude": "Længdegrad",
+  "Altitude": "Højde",
+  "Authors": "Forfattere",
+  "DateTaken": "Dato fotograferet",
+  "Copyright": "Ophavsret"
 }

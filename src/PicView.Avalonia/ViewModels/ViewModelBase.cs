@@ -81,6 +81,12 @@ public class ViewModelBase : ReactiveObject
         Centimeters = TranslationHelper.GetTranslation("Centimeters");
         Inches = TranslationHelper.GetTranslation("Inches");
         SizeTooltip = TranslationHelper.GetTranslation("SizeTooltip");
+        Latitude = TranslationHelper.GetTranslation("Latitude");
+        Longitude = TranslationHelper.GetTranslation("Longitude");
+        Altitude = TranslationHelper.GetTranslation("Altitude");
+        Authors = TranslationHelper.GetTranslation("Authors");
+        DateTaken = TranslationHelper.GetTranslation("DateTaken");
+        Copyright = TranslationHelper.GetTranslation("Copyright");
     }
 
     private FileInfo? _fileInfo;
@@ -657,6 +663,54 @@ public class ViewModelBase : ReactiveObject
     {
         get => _sizeTooltip;
         set => this.RaiseAndSetIfChanged(ref _sizeTooltip, value);
+    }
+
+    private string? _latitude;
+
+    public string? Latitude
+    {
+        get => _latitude;
+        set => this.RaiseAndSetIfChanged(ref _latitude, value);
+    }
+
+    private string? _longitude;
+
+    public string? Longitude
+    {
+        get => _longitude;
+        set => this.RaiseAndSetIfChanged(ref _longitude, value);
+    }
+
+    private string? _altitude;
+
+    public string? Altitude
+    {
+        get => _altitude;
+        set => this.RaiseAndSetIfChanged(ref _altitude, value);
+    }
+
+    private string? _authors;
+
+    public string? Authors
+    {
+        get => _authors;
+        set => this.RaiseAndSetIfChanged(ref _authors, value);
+    }
+
+    private string? _dateTaken;
+
+    public string? DateTaken
+    {
+        get => _dateTaken;
+        set => this.RaiseAndSetIfChanged(ref _dateTaken, value);
+    }
+
+    private string? _copyright;
+
+    public string? Copyright
+    {
+        get => _copyright;
+        set => this.RaiseAndSetIfChanged(ref _copyright, value);
     }
 
     #endregion Localization
