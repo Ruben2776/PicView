@@ -30,4 +30,14 @@ public partial class App : Application
 
         base.OnFrameworkInitializationCompleted();
     }
+
+    private void NativeMenuItem_OnClick(object? sender, EventArgs e)
+    {
+        if (DataContext == null)
+        {
+            return;
+        }
+        var vm = (MainViewModel)DataContext;
+        vm.OpenFileCommand.Execute(null);
+    }
 }

@@ -24,6 +24,21 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="File">
+                <NativeMenu>
+                    <NativeMenuItem Command="{Binding OpenFileCommand}" Header="Open" />
+                    <NativeMenuItem Command="{Binding SaveFileCommand}" Header="Save" />
+                </NativeMenu>
+            </NativeMenuItem>
+            <NativeMenuItem Header="View">
+                <NativeMenu>
+                    <NativeMenuItem Command="{Binding ToggleUICommand}" Header="Toggle UI" />
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
     <Window.KeyBindings>
         <KeyBinding Command="{Binding NextCommand}" Gesture="Right" />
         <KeyBinding Command="{Binding PreviousCommand}" Gesture="Left" />
@@ -35,6 +50,6 @@
     <DockPanel LastChildFill="True">
         <views1:MacOSTitlebar DockPanel.Dock="Top" />
         <uc:BottomBar DockPanel.Dock="Bottom" />
-        <views:MainView Background="#22000000" />
+        <views:MainView Background="#66000000" />
     </DockPanel>
 </Window>

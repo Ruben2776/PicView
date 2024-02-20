@@ -101,6 +101,6 @@
             </Button>
             <buttons:StarOutlineButtons Margin="10,0,0,0" />
         </StackPanel>
-        <views:ExifView Background="#22000000" PointerPressed="MoveWindow" />
+        <views:ExifView Background="#66000000" PointerPressed="MoveWindow" />
     </DockPanel>
 </Window>
