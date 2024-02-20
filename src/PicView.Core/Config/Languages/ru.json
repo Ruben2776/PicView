@@ -308,5 +308,12 @@
   "None": "Никто",
   "ApplicationStartup": "Запуск приложения",
   "OpenInSameWindow": "Открывать файлы в том же окне",
-  "NoChange": "Без изменений"
+  "NoChange": "Без изменений",
+  "Meter": "Метр",
+  "Latitude": "Широта",
+  "Longitude": "Долгота",
+  "Altitude": "Высота",
+  "Authors": "Авторы",
+  "DateTaken": "Дата съемки",
+  "Copyright": "Авторское право"
 }

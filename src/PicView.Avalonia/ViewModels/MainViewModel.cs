@@ -243,6 +243,30 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _bingLink, value);
         }
 
+        private string? _getAuthors;
+
+        public string? GetAuthors
+        {
+            get => _getAuthors;
+            set => this.RaiseAndSetIfChanged(ref _getAuthors, value);
+        }
+
+        private string? _getDateTaken;
+
+        public string? GetDateTaken
+        {
+            get => _getDateTaken;
+            set => this.RaiseAndSetIfChanged(ref _getDateTaken, value);
+        }
+
+        private string? _getCopyright;
+
+        public string? GetCopyright
+        {
+            get => _getCopyright;
+            set => this.RaiseAndSetIfChanged(ref _getCopyright, value);
+        }
+
         #region Window Properties
 
         private string? _title = "Loading...";
@@ -653,6 +677,7 @@ namespace PicView.Avalonia.ViewModels
                             GetBitDepth = (magick.Depth * 3).ToString();
                         }
                     }
+
                     if (DpiX is 0)
                     {
                         var bmp = Image as Bitmap;
@@ -673,12 +698,15 @@ namespace PicView.Avalonia.ViewModels
                     {
                         var inchesWidth = PixelWidth / DpiX;
                         var inchesHeight = PixelHeight / DpiY;
-                        GetPrintSizeInch = $"{inchesWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Inches")}";
+                        GetPrintSizeInch =
+                            $"{inchesWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Inches")}";
 
                         var cmWidth = PixelWidth / DpiX * 2.54;
                         var cmHeight = PixelHeight / DpiY * 2.54;
-                        GetPrintSizeCm = $"{cmWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {cmHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Centimeters")}";
-                        GetSizeMp = $"{((float)PixelHeight * PixelWidth / 1000000).ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("MegaPixels")}";
+                        GetPrintSizeCm =
+                            $"{cmWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {cmHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Centimeters")}";
+                        GetSizeMp =
+                            $"{((float)PixelHeight * PixelWidth / 1000000).ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("MegaPixels")}";
 
                         GetResolution = $"{DpiX} x {DpiY} {TranslationHelper.GetTranslation("Dpi")}";
                     }
@@ -692,7 +720,8 @@ namespace PicView.Avalonia.ViewModels
                     }
                     else if (firstRatio > secondRatio)
                     {
-                        GetAspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Landscape")})";
+                        GetAspectRatio =
+                            $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Landscape")})";
                     }
                     else
                     {
@@ -717,7 +746,13 @@ namespace PicView.Avalonia.ViewModels
                     }
 
                     var altitude = profile?.GetValue(ExifTag.GPSAltitude)?.Value;
-                    GetAltitude = altitude.HasValue ? $"{altitude.Value.ToDouble()} {TranslationHelper.GetTranslation("Meters")}" : string.Empty;
+                    GetAltitude = altitude.HasValue
+                        ? $"{altitude.Value.ToDouble()} {TranslationHelper.GetTranslation("Meters")}"
+                        : string.Empty;
+                    var getAuthors = profile?.GetValue(ExifTag.Artist)?.Value;
+                    GetAuthors = getAuthors ?? string.Empty;
+                    GetDateTaken = EXIFHelper.GetDateTaken(profile);
+                    GetCopyright = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
                 }
                 catch (Exception)
                 {

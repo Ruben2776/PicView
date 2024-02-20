@@ -308,5 +308,12 @@
   "None": "没有任何",
   "ApplicationStartup": "应用程序启动",
   "OpenInSameWindow": "在同一窗口中打开文件",
-  "NoChange": "无变化"
+  "NoChange": "无变化",
+  "Meter": "米",
+  "Latitude": "纬度",
+  "Longitude": "经度",
+  "Altitute": "海拔",
+  "Authors": "作者",
+  "DateTaken": "拍摄日期",
+  "Copyright": "版权"
 }

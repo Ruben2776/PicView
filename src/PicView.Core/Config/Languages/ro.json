@@ -308,5 +308,12 @@
   "None": "Nici unul",
   "ApplicationStartup": "Pornirea aplicației",
   "OpenInSameWindow": "Deschideți fișierele în aceeași fereastră",
-  "NoChange": "Nicio schimbare"
+  "NoChange": "Nicio schimbare",
+  "Meter": "Metru",
+  "Latitude": "Latitudine",
+  "Longitude": "Longitudine",
+  "Altitude": "Altitudine",
+  "Authors": "Autori",
+  "DateTaken": "Dată capturată",
+  "Copyright": "Drepturi de autor"
 }

@@ -88,6 +88,21 @@ public static class EXIFHelper
         }
     }
 
+    public static string GetDateTaken(IExifProfile profile)
+    {
+        var getDateTaken =
+            profile?.GetValue(ExifTag.DateTime)?.Value ??
+            profile?.GetValue(ExifTag.DateTimeOriginal)?.Value ??
+            profile?.GetValue(ExifTag.DateTimeDigitized)?.Value ?? string.Empty;
+        if (!string.IsNullOrEmpty(getDateTaken) &&
+            DateTime.TryParseExact(getDateTaken, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var formattedDateTime))
+        {
+            return formattedDateTime.ToString(CultureInfo.CurrentCulture);
+        }
+
+        return string.Empty;
+    }
+
     public static string?[]? GetGPSValues(IExifProfile profile)
     {
         if (profile is null)

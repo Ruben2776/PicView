@@ -9,16 +9,72 @@ public static class SupportedFiles
     /// List of supported file extensions.
     /// </summary>
     public static readonly string[] FileExtensions =
-    {
-        ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".gif", ".jfif", ".ico", ".webp", ".wbmp", ".avif",
-        ".psd", ".psb",
-        ".tif", ".tiff", ".dds", ".tga", ".heic", ".heif", ".hdr", ".xcf", ".jxl", ".jp2", ".qoi", ".thm",
+    [
+        ".jpg",
+        ".jpeg",
+        ".jpe",
+        ".png",
+        ".bmp",
+        ".gif",
+        ".jfif",
+        ".ico",
+        ".webp",
+        ".wbmp",
+        ".avif",
+        ".psd",
+        ".psb",
+        ".tif",
+        ".tiff",
+        ".dds",
+        ".tga",
+        ".heic",
+        ".heif",
+        ".hdr",
+        ".xcf",
+        ".jxl",
+        ".jp2",
+        ".qoi",
+        ".thm",
         ".b64",
-        ".svg", ".svgz",
-        ".3fr", ".arw", ".cr2", ".cr3", ".crw", ".dcr", ".dng", ".erf", ".kdc", ".mdc", ".mef", ".mos", ".mrw",
-        ".nef", ".nrw", ".orf", ".pef", ".raf", ".raw", ".rw2", ".srf", ".x3f", ".fpx", ".pcd", ".flif",
-        ".pgm", ".ppm", ".cut", ".exr", ".dib", ".emf", ".wmf", ".wpg", ".pcx", ".xbm", ".xpm",
-    };
+        ".svg",
+        ".svgz",
+        ".3fr",
+        ".arw",
+        ".cr2",
+        ".cr3",
+        ".crw",
+        ".dcr",
+        ".dng",
+        ".erf",
+        ".kdc",
+        ".mdc",
+        ".mef",
+        ".mos",
+        ".mrw",
+        ".nef",
+        ".nrw",
+        ".orf",
+        ".pef",
+        ".raf",
+        ".raw",
+        ".rw2",
+        ".srf",
+        ".x3f",
+        ".fpx",
+        ".pcd",
+        ".flif",
+        ".pgm",
+        ".ppm",
+        ".cut",
+        ".exr",
+        ".dib",
+        ".emf",
+        ".wmf",
+        ".wpg",
+        ".pcx",
+        ".xbm",
+        ".xpm"
+    ];
 
     public static List<string> ConvertFilesToGlobFormat()
     {
@@ -29,10 +85,23 @@ public static class SupportedFiles
     /// List of supported archive file extensions.
     /// </summary>
     public static readonly string[] FileExtensionsArchives =
-    {
-        ".zip", ".7zip", ".7z", ".rar", ".cbr", ".cb7", ".cbt", ".cbz", ".xz", ".bzip2",
-        ".gzip", ".tar", ".wim", ".iso", ".cab"
-    };
+    [
+        ".zip",
+        ".7zip",
+        ".7z",
+        ".rar",
+        ".cbr",
+        ".cb7",
+        ".cbt",
+        ".cbz",
+        ".xz",
+        ".bzip2",
+        ".gzip",
+        ".tar",
+        ".wim",
+        ".iso",
+        ".cab"
+    ];
 
     public static List<string> ConvertArchivesToGlobFormat()
     {

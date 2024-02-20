@@ -308,5 +308,12 @@
   "None": "Ninguna",
   "ApplicationStartup": "Inicio de la aplicación",
   "OpenInSameWindow": "Abrir archivos en la misma ventana",
-  "NoChange": "Sin cambios"
+  "NoChange": "Sin cambios",
+  "Meter": "Medidor",
+  "Latitude": "Latitud",
+  "Longitude": "Longitud",
+  "Altitude": "Altitud",
+  "Authors": "Autores",
+  "DateTaken": "Fecha de toma",
+  "Copyright": "Derechos de autor"
 }

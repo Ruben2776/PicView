@@ -312,4 +312,11 @@ internal class LanguageModel
     public string? ApplicationStartup { get; set; }
     public string? OpenInSameWindow { get; set; }
     public string? NoChange { get; set; }
+    public string? Meter { get; set; }
+    public string? Latitude { get; set; }
+    public string? Longitude { get; set; }
+    public string? Altitude { get; set; }
+    public string? Authors { get; set; }
+    public string? DateTaken { get; set; }
+    public string? Copyright { get; set; }
 }
