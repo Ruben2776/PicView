@@ -181,7 +181,7 @@
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.5" />
     <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.6.0" />
     <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.2.2" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5">
