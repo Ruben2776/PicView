@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace PicView.Core.Config;
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions(AllowTrailingCommas = true)]
 [JsonSerializable(typeof(AppSettings))]
 internal partial class SourceGenerationContext : JsonSerializerContext;
 
@@ -14,11 +14,9 @@ public static class SettingsHelper
     private const double CurrentSettingsVersion = 1;
 
     public static AppSettings? Settings { get; private set; }
-    private static JsonSerializerOptions? _jsonSerializerOptions;
 
     public static async Task LoadSettingsAsync()
     {
-        InitiateJson();
         try
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
@@ -86,18 +84,8 @@ public static class SettingsHelper
         Settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
     }
 
-    private static void InitiateJson()
-    {
-        _jsonSerializerOptions ??= new JsonSerializerOptions
-        {
-            TypeInfoResolver = SourceGenerationContext.Default,
-            AllowTrailingCommas = true
-        };
-    }
-
     private static async Task PerformSave(string path)
     {
-        InitiateJson();
         var updatedJson = JsonSerializer.Serialize(
             Settings, typeof(AppSettings), SourceGenerationContext.Default);
         await using var writer = new StreamWriter(path);
@@ -184,7 +172,6 @@ public static class SettingsHelper
             }
 
             // Save the synchronized settings back to the JSON file
-            InitiateJson();
             var updatedJson = JsonSerializer.Serialize(
                 existingSettings, typeof(AppSettings), SourceGenerationContext.Default);
             await File.WriteAllTextAsync(path, updatedJson).ConfigureAwait(false);

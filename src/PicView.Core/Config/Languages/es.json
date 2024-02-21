@@ -318,5 +318,11 @@
   "Copyright": "Derechos de autor",
   "Title": "Título",
   "Subject": "Asunto",
-  "Software": "Software"
+  "Software": "Software",
+  "ResolutionUnit": "Unidad de resolución",
+  "ColorRepresentation": "Representación de color",
+  "ExifVersion": "Versión Exif",
+  "ExposureTime": "Tiempo de exposición",
+  "Uncalibrated": "Sin calibrar",
+  "CompressedBitsPixel": "Bits por píxel comprimidos",
 }

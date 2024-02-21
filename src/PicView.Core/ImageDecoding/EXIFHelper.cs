@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using ImageMagick;
+using PicView.Core.Localization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PicView.Core.ImageDecoding;
@@ -148,5 +149,21 @@ public static class EXIFHelper
                 coordinate *= -1;
             return coordinate;
         }
+    }
+
+    public static string GetColorSpace(IExifProfile profile)
+    {
+        var colorSpace = profile?.GetValue(ExifTag.ColorSpace)?.Value;
+        if (colorSpace == null)
+        {
+            return string.Empty;
+        }
+        return colorSpace switch
+        {
+            1 => "sRGB",
+            2 => "Adobe RGB",
+            65535 => TranslationHelper.GetTranslation("Uncalibrated"),
+            _ => string.Empty
+        };
     }
 }

@@ -318,5 +318,11 @@
   "Copyright": "版权",
   "Title": "标题",
   "Subject": "主题",
-  "Software": "软件"
+  "Software": "软件",
+  "ResolutionUnit": "分辨率单位",
+  "ColorRepresentation": "颜色表示",
+  "ExposureTime": "曝光时间",
+  "ExifVersion": "Exif 版本",
+  "Uncalibrated": "未校准",
+  "CompressedBitsPixel": "压缩位像素",
 }

@@ -678,12 +678,12 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding DateTaken}" />
+                                Text="{Binding ResolutionUnit}" />
                             <TextBox
                                 Background="{StaticResource BackgroundAlpha}"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetDateTaken}" />
+                                Text="{Binding GetResolutionUnit}" />
                             <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                 <Path
                                     Width="16"
@@ -699,12 +699,12 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Copyright}" />
+                                Text="{Binding ColorRepresentation}" />
                             <TextBox
                                 Background="{StaticResource BackgroundAlpha}"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetCopyright}" />
+                                Text="{Binding GetColorRepresentation}" />
                             <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                 <Path
                                     Width="16"
@@ -723,12 +723,12 @@
                                     Width="100"
                                     Margin="0,8,2,0"
                                     Classes="txt"
-                                    Text="{Binding Authors}" />
+                                    Text="{Binding Compression}" />
                                 <TextBox
                                     Background="{StaticResource BackgroundAlpha}"
                                     Classes=" TStyle"
                                     IsReadOnly="True"
-                                    Text="{Binding GetAuthors}" />
+                                    Text="{Binding GetCompression}" />
                                 <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                     <Path
                                         Width="16"
@@ -744,12 +744,12 @@
                                     Width="100"
                                     Margin="0,8,2,0"
                                     Classes="txt"
-                                    Text="Program name" />
+                                    Text="{Binding CompressedBitsPixel}" />
                                 <TextBox
                                     Background="{StaticResource BackgroundAlpha}"
                                     Classes=" TStyle"
                                     IsReadOnly="True"
-                                    Text="" />
+                                    Text="{Binding GetCompressedBitsPixel}" />
                                 <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                     <Path
                                         Width="16"

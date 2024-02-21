@@ -131,6 +131,10 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentView, value);
         }
 
+        private readonly SpinWaiter? _spinWaiter;
+
+        private readonly ImageViewer? _imageViewer;
+
         private IImage? _image;
 
         public IImage? Image
@@ -289,6 +293,38 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _getSoftware;
             set => this.RaiseAndSetIfChanged(ref _getSoftware, value);
+        }
+
+        private string? _getResolutionUnit;
+
+        public string? GetResolutionUnit
+        {
+            get => _getResolutionUnit;
+            set => this.RaiseAndSetIfChanged(ref _getResolutionUnit, value);
+        }
+
+        private string? _getColorRepresentation;
+
+        public string? GetColorRepresentation
+        {
+            get => _getColorRepresentation;
+            set => this.RaiseAndSetIfChanged(ref _getColorRepresentation, value);
+        }
+
+        private string? _getCompression;
+
+        public string? GetCompression
+        {
+            get => _getCompression;
+            set => this.RaiseAndSetIfChanged(ref _getCompression, value);
+        }
+
+        private string? _getCompressedBitsPixel;
+
+        public string? GetCompressedBitsPixel
+        {
+            get => _getCompressedBitsPixel;
+            set => this.RaiseAndSetIfChanged(ref _getCompressedBitsPixel, value);
         }
 
         #region Window Properties
@@ -780,6 +816,10 @@ namespace PicView.Avalonia.ViewModels
                     GetTitle = profile?.GetValue(ExifTag.XPTitle)?.Value.ToString() ?? string.Empty;
                     GetSubject = profile?.GetValue(ExifTag.XPSubject)?.Value.ToString() ?? string.Empty;
                     GetSoftware = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
+                    GetResolutionUnit = profile?.GetValue(ExifTag.ResolutionUnit)?.Value.ToString() ?? string.Empty;
+                    GetColorRepresentation = EXIFHelper.GetColorSpace(profile);
+                    GetCompression = profile?.GetValue(ExifTag.Compression)?.Value.ToString() ?? string.Empty;
+                    GetCompressedBitsPixel = profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
                 }
                 catch (Exception)
                 {
@@ -871,29 +911,29 @@ namespace PicView.Avalonia.ViewModels
             try
             {
                 ImageIterator.Index = index;
-                var x = 0;
 
                 var preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
+                var viewChanged = false;
                 if (preLoadValue is not null)
                 {
                     while (preLoadValue.IsLoading && ImageIterator.Index == index)
                     {
-                        if (x == 0)
+                        SetLoadingTitle();
+
+                        using var image = new MagickImage();
+                        image.Ping(ImageIterator.Pics[index]);
+                        var thumb = image.GetExifProfile()?.CreateThumbnail();
+                        if (thumb is not null)
                         {
-                            SetLoadingTitle();
-                            using var image = new MagickImage();
-                            image.Ping(ImageIterator.Pics[index]);
-                            var thumb = image.GetExifProfile()?.CreateThumbnail();
-                            if (thumb is not null)
-                            {
-                                var stream = new MemoryStream(thumb?.ToByteArray());
-                                Image = new Bitmap(stream);
-                            }
-                            else
-                            {
-                                Image = null;
-                            }
+                            var stream = new MemoryStream(thumb?.ToByteArray());
+                            Image = new Bitmap(stream);
                         }
+                        else if (!viewChanged)
+                        {
+                            CurrentView = _spinWaiter;
+                            viewChanged = true;
+                        }
+
                         await Task.Delay(20);
                         if (ImageIterator.Index != index)
                         {
@@ -905,7 +945,17 @@ namespace PicView.Avalonia.ViewModels
 
                 if (preLoadValue is null)
                 {
+                    if (!viewChanged)
+                    {
+                        CurrentView = _spinWaiter;
+                        viewChanged = true;
+                    }
                     await GetPreload();
+                }
+
+                if (viewChanged)
+                {
+                    CurrentView = _imageViewer;
                 }
 
                 if (ImageIterator.Index != index)
@@ -1023,16 +1073,19 @@ namespace PicView.Avalonia.ViewModels
             var args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
-                CurrentView = new ImageViewer();
+                _imageViewer = new ImageViewer();
+                CurrentView = _imageViewer;
                 Task.Run(async () => { await LoadPicFromString(args[1]); });
             }
             else if (SettingsHelper.Settings.StartUp.OpenLastFile)
             {
-                CurrentView = new ImageViewer();
+                _imageViewer = new ImageViewer();
+                CurrentView = _imageViewer;
                 Task.Run(async () => { await LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile); });
             }
             else
             {
+                _imageViewer = new ImageViewer();
                 CurrentView = new StartUpMenu();
             }
 
@@ -1049,6 +1102,8 @@ namespace PicView.Avalonia.ViewModels
                 IsAutoFit = false;
                 WindowHelper.InitializeWindowSizeAndPosition(desktop);
             }
+
+            _spinWaiter = new SpinWaiter();
 
             Task.Run(UpdateLanguage);
 

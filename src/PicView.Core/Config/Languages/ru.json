@@ -318,5 +318,11 @@
   "Copyright": "Авторское право",
   "Title": "Заголовок",
   "Subject": "Тема",
-  "Software": "Программное обеспечение"
+  "Software": "Программное обеспечение",
+  "ResolutionUnit": "Единица разрешения",
+  "ColorRepresentation": "Цветовое представление",
+  "ExposureTime": "Время экспозиции",
+  "ExifVersion": "Версия Exif",
+  "Uncalibrated": "Некалиброванный",
+  "CompressedBitsPixel": "Сжатые биты на пиксель",
 }

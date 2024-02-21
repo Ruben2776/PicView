@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace PicView.Core.Localization;
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions(AllowTrailingCommas = true)]
 [JsonSerializable(typeof(LanguageModel))]
 internal partial class LanguageSourceGenerationContext : JsonSerializerContext
 {

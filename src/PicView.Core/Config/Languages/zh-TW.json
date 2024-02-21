@@ -309,7 +309,7 @@
   "ApplicationStartup": "應用程式啟動",
   "OpenInSameWindow": "在同一視窗中開啟檔案",
   "NoChange": "無變化",
-  "Meter": "米"
+  "Meter": "米",
   "Latitude": "緯度",
   "Longitude": "經度",
   "Altitude": "海拔",
@@ -318,5 +318,11 @@
   "Copyright": "版權",
   "Title": "標題",
   "Subject": "主題",
-  "Software": "軟體"
+  "Software": "軟體",
+  "ResolutionUnit": "解析度單位",
+  "ColorRepresentation": "色彩表示",
+  "ExposureTime": "曝光時間",
+  "ExifVersion": "Exif 版本",
+  "Uncalibrated": "未校準",
+  "CompressedBitsPixel": "壓縮位元像素",
 }

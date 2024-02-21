@@ -318,5 +318,11 @@
   "Copyright": "저작권",
   "Title": "제목",
   "Subject": "주제",
-  "Software": "소프트웨어"
+  "Software": "소프트웨어",
+  "ResolutionUnit": "해상도 단위",
+  "ColorRepresentation": "색상 표현",
+  "ExifVersion": "Exif 버전",
+  "ExposureTime": "노출 시간",
+  "Uncalibrated": "보정되지 않음",
+  "CompressedBitsPixel": "압축된 비트 픽셀",
 }

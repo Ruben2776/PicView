@@ -318,5 +318,11 @@
   "Copyright": "Drepturi de autor",
   "Title": "Titlu",
   "Subject": "Subiect",
-  "Software": "Software"
+  "Software": "Software",
+  "ResolutionUnit": "Unitate de rezoluție",
+  "ColorRepresentation": "Reprezentare color",
+  "ExposureTime": "Timp de expunere",
+  "ExifVersion": "Versiune Exif",
+  "Uncalibrated": "Necalibrat",
+  "CompressedBitsPixel": "Biți compresați pe pixel",
 }

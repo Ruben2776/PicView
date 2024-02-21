@@ -318,5 +318,11 @@
   "Copyright": "Ophavsret",
   "Title": "Titel",
   "Subject": "Emne",
-  "Software": "Program"
+  "Software": "Program",
+  "ResolutionUnit": "Opløsningsenhed",
+  "ColorRepresentation": "Farve repræsentation",
+  "ExifVersion": "Exif version",
+  "ExposureTime": "Eksponeringstid",
+  "Uncalibrated": "Ikke kalibreret",
+  "CompressedBitsPixel": "Komprimerede bits pr. pixel",
 }

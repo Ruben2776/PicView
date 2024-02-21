@@ -327,4 +327,5 @@ internal class LanguageModel
     public string? Title { get; set; }
     public string? Subject { get; set; }
     public string? Software { get; set; }
+    public string? Uncalibrated { get; set; }
 }
