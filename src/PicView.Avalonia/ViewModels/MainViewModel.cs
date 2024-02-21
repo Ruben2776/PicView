@@ -327,6 +327,86 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _getCompressedBitsPixel, value);
         }
 
+        private string? _getCameraMaker;
+
+        public string? GetCameraMaker
+        {
+            get => _getCameraMaker;
+            set => this.RaiseAndSetIfChanged(ref _getCameraMaker, value);
+        }
+
+        private string? _getCameraModel;
+
+        public string? GetCameraModel
+        {
+            get => _getCameraModel;
+            set => this.RaiseAndSetIfChanged(ref _getCameraModel, value);
+        }
+
+        private string? _GetExposureProgram;
+
+        public string? GetExposureProgram
+        {
+            get => _GetExposureProgram;
+            set => this.RaiseAndSetIfChanged(ref _GetExposureProgram, value);
+        }
+
+        private string? _getExposureTime;
+
+        public string? GetExposureTime
+        {
+            get => _getExposureTime;
+            set => this.RaiseAndSetIfChanged(ref _getExposureTime, value);
+        }
+
+        private string? _GetExposureBias;
+
+        public string? GetExposureBias
+        {
+            get => _GetExposureBias;
+            set => this.RaiseAndSetIfChanged(ref _GetExposureBias, value);
+        }
+
+        private string? _GetFNumber;
+
+        public string? GetFNumber
+        {
+            get => _GetFNumber;
+            set => this.RaiseAndSetIfChanged(ref _GetFNumber, value);
+        }
+
+        private string? _getMaxAperture;
+
+        public string? GetMaxAperture
+        {
+            get => _getMaxAperture;
+            set => this.RaiseAndSetIfChanged(ref _getMaxAperture, value);
+        }
+
+        private string? _getDigitalZoom;
+
+        public string? GetDigitalZoom
+        {
+            get => _getDigitalZoom;
+            set => this.RaiseAndSetIfChanged(ref _getDigitalZoom, value);
+        }
+
+        private string? _getFocalLength35mm;
+
+        public string? GetFocalLength35mm
+        {
+            get => _getFocalLength35mm;
+            set => this.RaiseAndSetIfChanged(ref _getFocalLength35mm, value);
+        }
+
+        private string? _getFocalLength;
+
+        public string? GetFocalLength
+        {
+            get => _getFocalLength;
+            set => this.RaiseAndSetIfChanged(ref _getFocalLength, value);
+        }
+
         #region Window Properties
 
         private string? _title = "Loading...";
@@ -584,6 +664,8 @@ namespace PicView.Avalonia.ViewModels
 
         #region Methods
 
+        #region Size
+
         public void SetSize()
         {
             if (Image is null)
@@ -649,6 +731,8 @@ namespace PicView.Avalonia.ViewModels
             ImageWidth = size.Width;
             ImageHeight = size.Height;
         }
+
+        #endregion Size
 
         public void SetImageModel(ImageModel imageModel)
         {
@@ -820,6 +904,16 @@ namespace PicView.Avalonia.ViewModels
                     GetColorRepresentation = EXIFHelper.GetColorSpace(profile);
                     GetCompression = profile?.GetValue(ExifTag.Compression)?.Value.ToString() ?? string.Empty;
                     GetCompressedBitsPixel = profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
+                    GetCameraMaker = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
+                    GetCameraModel = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
+                    GetExposureProgram = EXIFHelper.GetExposureProgram(profile);
+                    GetExposureTime = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString() ?? string.Empty;
+                    GetFNumber = profile?.GetValue(ExifTag.FNumber)?.Value.ToString() ?? string.Empty;
+                    GetMaxAperture = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString() ?? string.Empty;
+                    GetExposureBias = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString() ?? string.Empty;
+                    GetDigitalZoom = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
+                    GetFocalLength35mm = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
+                    GetFocalLength = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
                 }
                 catch (Exception)
                 {

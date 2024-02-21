@@ -260,10 +260,6 @@ internal class LanguageModel
     public string? SentFileToRecycleBin { get; set; }
     public string? DeletedFile { get; set; }
     public string? AnErrorOccuredWhenDeleting { get; set; }
-    public string? AutoFitWindowMessage { get; set; }
-    public string? AutoFitWindowFillHeight { get; set; }
-    public string? NormalWindowBehavior { get; set; }
-    public string? NormalWindowBehaviorFillHeight { get; set; }
     public string? ScrollingEnabled { get; set; }
     public string? ScrollingDisabled { get; set; }
     public string? ConvertedToBase64 { get; set; }
@@ -302,7 +298,7 @@ internal class LanguageModel
     public string? Compression { get; set; }
     public string? Lossless { get; set; }
     public string? Lossy { get; set; }
-    public string? Qaulity { get; set; }
+    public string? Quality { get; set; }
     public string? Percentage { get; set; }
     public string? GenerateThumbnails { get; set; }
     public string? Thumbnail { get; set; }
@@ -324,8 +320,24 @@ internal class LanguageModel
     public string? ColorRepresentation { get; set; }
     public string? CompressedBitsPixel { get; set; }
     public string? ExposureTime { get; set; }
+    public string? ExposureBias { get; set; }
+    public string? ExposureProgram { get; set; }
     public string? Title { get; set; }
     public string? Subject { get; set; }
     public string? Software { get; set; }
     public string? Uncalibrated { get; set; }
+    public string? CameraMaker { get; set; }
+    public string? FNumber { get; set; }
+    public string? Fstop { get; set; }
+    public string? FocalLength { get; set; }
+    public string? MaxAperture { get; set; }
+    public string? DigitalZoom { get; set; }
+    public string? ISOSpeed { get; set; }
+    public string? NotDefined { get; set; }
+    public string? Manual { get; set; }
+    public string? Normal { get; set; }
+    public string? AperturePriority { get; set; }
+    public string? ShutterPriority { get; set; }
+    public string? CreativeProgram { get; set; }
+    public string? FocalLength35mm { get; set; }
 }

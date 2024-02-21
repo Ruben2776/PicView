@@ -96,6 +96,105 @@ public class ViewModelBase : ReactiveObject
         XPTitle = TranslationHelper.GetTranslation("Title");
         Subject = TranslationHelper.GetTranslation("Subject");
         Software = TranslationHelper.GetTranslation("Software");
+        CameraMaker = TranslationHelper.GetTranslation("CameraMaker");
+        CameraModel = TranslationHelper.GetTranslation("CameraModel");
+        FocalLength = TranslationHelper.GetTranslation("FocalLength");
+        Fnumber = TranslationHelper.GetTranslation("Fnumber");
+        Fstop = TranslationHelper.GetTranslation("Fstop");
+        MaxAperture = TranslationHelper.GetTranslation("MaxAperture");
+        ExposureBias = TranslationHelper.GetTranslation("ExposureBias");
+        ExposureProgram = TranslationHelper.GetTranslation("ExposureProgram");
+        DigitalZoom = TranslationHelper.GetTranslation("DigitalZoom");
+        ISOSpeed = TranslationHelper.GetTranslation("ISOSpeed");
+        FocalLength35mm = TranslationHelper.GetTranslation("FocalLength35mm");
+    }
+
+    private string? _focalLength35mm;
+
+    public string? FocalLength35mm
+    {
+        get => _focalLength35mm;
+        set => this.RaiseAndSetIfChanged(ref _focalLength35mm, value);
+    }
+
+    private string? _isoSpeed;
+
+    public string? ISOSpeed
+    {
+        get => _isoSpeed;
+        set => this.RaiseAndSetIfChanged(ref _isoSpeed, value);
+    }
+
+    private string? _digitalZoom;
+
+    public string? DigitalZoom
+    {
+        get => _digitalZoom;
+        set => this.RaiseAndSetIfChanged(ref _digitalZoom, value);
+    }
+
+    private string? _exposureProgram;
+
+    public string? ExposureProgram
+    {
+        get => _exposureProgram;
+        set => this.RaiseAndSetIfChanged(ref _exposureProgram, value);
+    }
+
+    private string? _exposureBias;
+
+    public string? ExposureBias
+    {
+        get => _exposureBias;
+        set => this.RaiseAndSetIfChanged(ref _exposureBias, value);
+    }
+
+    private string? _maxAperture;
+
+    public string? MaxAperture
+    {
+        get => _maxAperture;
+        set => this.RaiseAndSetIfChanged(ref _maxAperture, value);
+    }
+
+    private string? _fstop;
+
+    public string? Fstop
+    {
+        get => _fstop;
+        set => this.RaiseAndSetIfChanged(ref _fstop, value);
+    }
+
+    private string? _fnumber;
+
+    public string? Fnumber
+    {
+        get => _fnumber;
+        set => this.RaiseAndSetIfChanged(ref _fnumber, value);
+    }
+
+    private string? _focalLength;
+
+    public string? FocalLength
+    {
+        get => _focalLength;
+        set => this.RaiseAndSetIfChanged(ref _focalLength, value);
+    }
+
+    private string? _cameraModel;
+
+    public string? CameraModel
+    {
+        get => _cameraModel;
+        set => this.RaiseAndSetIfChanged(ref _cameraModel, value);
+    }
+
+    private string? _cameraMaker;
+
+    public string? CameraMaker
+    {
+        get => _cameraMaker;
+        set => this.RaiseAndSetIfChanged(ref _cameraMaker, value);
     }
 
     private string? _software;

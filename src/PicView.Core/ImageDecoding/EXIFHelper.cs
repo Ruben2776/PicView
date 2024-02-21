@@ -1,7 +1,6 @@
-﻿using System.Globalization;
-using ImageMagick;
+﻿using ImageMagick;
 using PicView.Core.Localization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Globalization;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -104,6 +103,11 @@ public static class EXIFHelper
         return string.Empty;
     }
 
+    /// <summary>
+    /// Gets the GPS values from the provided EXIF profile.
+    /// </summary>
+    /// <param name="profile">The EXIF profile.</param>
+    /// <returns>An array containing the latitude, longitude, Google Maps link, and Bing Maps link.</returns>
     public static string?[]? GetGPSValues(IExifProfile profile)
     {
         if (profile is null)
@@ -124,9 +128,8 @@ public static class EXIFHelper
         var latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString(CultureInfo.InvariantCulture);
         var longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString(CultureInfo.InvariantCulture);
 
-        var googleLink = "https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," +
-                         longitudeValue;
-        var bingLink = "https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue;
+        var googleLink = $"https://www.google.com/maps/search/?api=1&query={latitudeValue},{longitudeValue}";
+        var bingLink = $"https://bing.com/maps/default.aspx?cp={latitudeValue}~{longitudeValue}&lvl=16.0&sty=c";
 
         var latitudeString = $"{gpsLatitude.Value[0]}\u00b0{gpsLatitude.Value[1]}'{gpsLatitude.Value[2].ToDouble():0.##}\"{gpsLatitudeRef}";
         var longitudeString = $"{gpsLong.Value[0]}\u00b0{gpsLong.Value[1]}'{gpsLong.Value[2].ToDouble():0.##}\"{gpsLongRef}";
@@ -163,6 +166,28 @@ public static class EXIFHelper
             1 => "sRGB",
             2 => "Adobe RGB",
             65535 => TranslationHelper.GetTranslation("Uncalibrated"),
+            _ => string.Empty
+        };
+    }
+
+    public static string GetExposureProgram(IExifProfile? profile)
+    {
+        var exposureProgram = profile?.GetValue(ExifTag.ExposureProgram)?.Value;
+        if (exposureProgram is null)
+        {
+            return string.Empty;
+        }
+        return exposureProgram switch
+        {
+            0 => TranslationHelper.GetTranslation("NotDefined"),
+            1 => TranslationHelper.GetTranslation("Manual"),
+            2 => TranslationHelper.GetTranslation("Normal"),
+            3 => TranslationHelper.GetTranslation("AperturePriority"),
+            4 => TranslationHelper.GetTranslation("ShutterPriority"),
+            5 => TranslationHelper.GetTranslation("CreativeProgram"),
+            6 => TranslationHelper.GetTranslation("ActionProgram"),
+            7 => TranslationHelper.GetTranslation("Portrait"),
+            8 => TranslationHelper.GetTranslation("Landscape"),
             _ => string.Empty
         };
     }
