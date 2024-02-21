@@ -188,10 +188,10 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
-    <PackageReference Include="SkiaSharp" Version="3.0.0-preview.1.8">
+    <PackageReference Include="SkiaSharp" Version="3.0.0-preview.2.1">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="3.0.0-preview.1.8" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="3.0.0-preview.2.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\UserControls\Buttons\LinkButton.xaml.cs">
