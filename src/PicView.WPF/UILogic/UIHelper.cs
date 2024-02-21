@@ -1069,7 +1069,6 @@ internal static class UIHelper
         }
 
         await UpdateUIValues.SetScalingBehaviour(true, false).ConfigureAwait(false);
-        Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AutoFitWindowMessage"));
     }
 
     internal static async Task AutoFitWindowAndStretch()
@@ -1084,7 +1083,6 @@ internal static class UIHelper
             return;
         }
         await UpdateUIValues.SetScalingBehaviour(true, true).ConfigureAwait(false);
-        Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("AutoFitWindowFillHeight"));
     }
 
     internal static async Task NormalWindow()
@@ -1099,7 +1097,6 @@ internal static class UIHelper
             return;
         }
         await UpdateUIValues.SetScalingBehaviour(false, false).ConfigureAwait(false);
-        Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("NormalWindowBehavior"));
     }
 
     internal static async Task NormalWindowAndStretch()
@@ -1114,7 +1111,6 @@ internal static class UIHelper
             return;
         }
         await UpdateUIValues.SetScalingBehaviour(false, true).ConfigureAwait(false);
-        Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("NormalWindowBehaviorFillHeight"));
     }
 
     internal static async Task Fullscreen()
