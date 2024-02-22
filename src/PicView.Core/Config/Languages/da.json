@@ -338,4 +338,17 @@
   "CreativeProgram": "Kreativt program",
   "ActionProgram": "Action program",
   "FocalLength35mm": "Brændvidde 35mm",
+  "ISOSpeed": "ISO hastighed",
+  "MeteringMode": "Målemetode",
+  "Contrast": "Kontrast",
+  "Saturation": "Farvemætning",
+  "High": "Høj",
+  "Low": "Lav",
+  "Sharpness": "Skarphed",
+  "WhiteBalance": "Hvidbalance",
+  "Soft": "Blød",
+  "Hard": "Hård",
+  "Auto": "Auto",
+  "Flash": "Flash",
+  "
 }

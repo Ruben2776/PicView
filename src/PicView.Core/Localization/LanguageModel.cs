@@ -340,4 +340,15 @@ internal class LanguageModel
     public string? ShutterPriority { get; set; }
     public string? CreativeProgram { get; set; }
     public string? FocalLength35mm { get; set; }
+    public string? MeteringMode { get; set; }
+    public string? Contrast { get; set; }
+    public string? Saturation { get; set; }
+    public string? Sharpness { get; set; }
+    public string? WhiteBalance { get; set; }
+    public string? LensModel { get; set; }
+    public string? High { get; set; }
+    public string? Low { get; set; }
+    public string? Soft { get; set; }
+    public string? Hard { get; set; }
+    public string? Auto { get; set; }
 }

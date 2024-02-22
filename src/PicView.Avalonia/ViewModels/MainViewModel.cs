@@ -407,6 +407,62 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _getFocalLength, value);
         }
 
+        private string? _getISOSpeed;
+
+        public string? GetISOSpeed
+        {
+            get => _getISOSpeed;
+            set => this.RaiseAndSetIfChanged(ref _getISOSpeed, value);
+        }
+
+        private string? _getMeteringMode;
+
+        public string? GetMeteringMode
+        {
+            get => _getMeteringMode;
+            set => this.RaiseAndSetIfChanged(ref _getMeteringMode, value);
+        }
+
+        private string? _getContrast;
+
+        public string? GetContrast
+        {
+            get => _getContrast;
+            set => this.RaiseAndSetIfChanged(ref _getContrast, value);
+        }
+
+        private string? _getSaturation;
+
+        public string? GetSaturation
+        {
+            get => _getSaturation;
+            set => this.RaiseAndSetIfChanged(ref _getSaturation, value);
+        }
+
+        private string? _getSharpness;
+
+        public string? GetSharpness
+        {
+            get => _getSharpness;
+            set => this.RaiseAndSetIfChanged(ref _getSharpness, value);
+        }
+
+        private string? _getWhiteBalance;
+
+        public string? GetWhiteBalance
+        {
+            get => _getWhiteBalance;
+            set => this.RaiseAndSetIfChanged(ref _getWhiteBalance, value);
+        }
+
+        private string? _getFlash;
+
+        public string? GetFlash
+        {
+            get => _getFlash;
+            set => this.RaiseAndSetIfChanged(ref _getFlash, value);
+        }
+
         #region Window Properties
 
         private string? _title = "Loading...";
@@ -900,7 +956,7 @@ namespace PicView.Avalonia.ViewModels
                     GetTitle = profile?.GetValue(ExifTag.XPTitle)?.Value.ToString() ?? string.Empty;
                     GetSubject = profile?.GetValue(ExifTag.XPSubject)?.Value.ToString() ?? string.Empty;
                     GetSoftware = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
-                    GetResolutionUnit = profile?.GetValue(ExifTag.ResolutionUnit)?.Value.ToString() ?? string.Empty;
+                    GetResolutionUnit = EXIFHelper.GetResolutionUnit(profile);
                     GetColorRepresentation = EXIFHelper.GetColorSpace(profile);
                     GetCompression = profile?.GetValue(ExifTag.Compression)?.Value.ToString() ?? string.Empty;
                     GetCompressedBitsPixel = profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
@@ -914,6 +970,13 @@ namespace PicView.Avalonia.ViewModels
                     GetDigitalZoom = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
                     GetFocalLength35mm = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
                     GetFocalLength = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
+                    GetISOSpeed = EXIFHelper.GetISOSpeed(profile);
+                    GetMeteringMode = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
+                    GetContrast = EXIFHelper.GetContrast(profile);
+                    GetSaturation = EXIFHelper.GetSaturation(profile);
+                    GetSharpness = EXIFHelper.GetSharpness(profile);
+                    GetWhiteBalance = EXIFHelper.GetWhiteBalance(profile);
+                    GetFlash = EXIFHelper.GetFlash(profile);
                 }
                 catch (Exception)
                 {

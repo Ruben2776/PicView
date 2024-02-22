@@ -627,27 +627,25 @@
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Margin="15,10" Orientation="Horizontal">
-                        <TextBlock
-                            Width="100"
-                            Margin="0,8,2,0"
-                            Classes="txt"
-                            Text="{Binding Altitude}" />
-                        <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
-                            Classes=" TStyle"
-                            IsReadOnly="True"
-                            Text="{Binding GetAltitude}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
-                            <Path
-                                Width="16"
-                                Height="16"
-                                Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
-                                Stretch="Fill" />
-                        </Button>
-                    </StackPanel>
+                <StackPanel Margin="15,10" Orientation="Horizontal">
+                    <TextBlock
+                        Width="100"
+                        Margin="0,8,2,0"
+                        Classes="txt"
+                        Text="{Binding Altitude}" />
+                    <TextBox
+                        Background="{StaticResource BackgroundAlpha}"
+                        Classes=" TStyle"
+                        IsReadOnly="True"
+                        Text="{Binding GetAltitude}" />
+                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <Path
+                            Width="16"
+                            Height="16"
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Button>
                 </StackPanel>
 
                 <StackPanel
@@ -1008,6 +1006,144 @@
                                     Classes=" TStyle"
                                     IsReadOnly="True"
                                     Text="{Binding GetFocalLength35mm}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="15,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding ISOSpeed}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetISOSpeed}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Margin="5,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding MeteringMode}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetMeteringMode}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="15,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding Contrast}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetContrast}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Margin="5,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding Saturation}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetSaturation}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="15,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding Sharpness}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetSharpness}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Margin="5,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding WhiteBalance}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetWhiteBalance}" />
                                 <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                                     <Path
                                         Width="16"
