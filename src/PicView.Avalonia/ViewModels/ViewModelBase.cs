@@ -107,6 +107,51 @@ public class ViewModelBase : ReactiveObject
         DigitalZoom = TranslationHelper.GetTranslation("DigitalZoom");
         ISOSpeed = TranslationHelper.GetTranslation("ISOSpeed");
         FocalLength35mm = TranslationHelper.GetTranslation("FocalLength35mm");
+        MeteringMode = TranslationHelper.GetTranslation("MeteringMode");
+        Contrast = TranslationHelper.GetTranslation("Contrast");
+        Saturation = TranslationHelper.GetTranslation("Saturation");
+        Sharpness = TranslationHelper.GetTranslation("Sharpness");
+        WhiteBalance = TranslationHelper.GetTranslation("WhiteBalance");
+    }
+
+    private string? _whiteBalance;
+
+    public string? WhiteBalance
+    {
+        get => _whiteBalance;
+        set => this.RaiseAndSetIfChanged(ref _whiteBalance, value);
+    }
+
+    private string? _sharpness;
+
+    public string? Sharpness
+    {
+        get => _sharpness;
+        set => this.RaiseAndSetIfChanged(ref _sharpness, value);
+    }
+
+    private string? _saturation;
+
+    public string? Saturation
+    {
+        get => _saturation;
+        set => this.RaiseAndSetIfChanged(ref _saturation, value);
+    }
+
+    private string? _contrast;
+
+    public string? Contrast
+    {
+        get => _contrast;
+        set => this.RaiseAndSetIfChanged(ref _contrast, value);
+    }
+
+    private string? _meteringMode;
+
+    public string? MeteringMode
+    {
+        get => _meteringMode;
+        set => this.RaiseAndSetIfChanged(ref _meteringMode, value);
     }
 
     private string? _focalLength35mm;

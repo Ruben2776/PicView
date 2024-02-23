@@ -191,4 +191,144 @@ public static class EXIFHelper
             _ => string.Empty
         };
     }
+
+    public static string GetISOSpeed(IExifProfile? profile)
+    {
+        if (profile is null)
+        {
+            return string.Empty;
+        }
+
+        var isoSpeedRating = profile.GetValue(ExifTag.ISOSpeedRatings)?.Value;
+        if (isoSpeedRating is not null)
+        {
+            return isoSpeedRating.GetValue(0)?.ToString() ?? string.Empty;
+        }
+
+        var isoSpeed = profile.GetValue(ExifTag.ISOSpeed)?.Value;
+        if (isoSpeed is null)
+        {
+            return string.Empty;
+        }
+        return isoSpeed.ToString() ?? string.Empty;
+    }
+
+    public static string GetSaturation(IExifProfile? profile)
+    {
+        var saturation = profile?.GetValue(ExifTag.Saturation)?.Value;
+        if (saturation is null)
+        {
+            return string.Empty;
+        }
+        return saturation switch
+        {
+            0 => TranslationHelper.GetTranslation("Normal"),
+            1 => TranslationHelper.GetTranslation("Low"),
+            2 => TranslationHelper.GetTranslation("High"),
+            _ => string.Empty
+        };
+    }
+
+    public static string GetContrast(IExifProfile profile)
+    {
+        var contrast = profile?.GetValue(ExifTag.Contrast)?.Value;
+        if (contrast is null)
+        {
+            return string.Empty;
+        }
+        return contrast switch
+        {
+            0 => TranslationHelper.GetTranslation("Normal"),
+            1 => TranslationHelper.GetTranslation("Soft"),
+            2 => TranslationHelper.GetTranslation("Hard"),
+            _ => string.Empty
+        };
+    }
+
+    public static string GetSharpness(IExifProfile profile)
+    {
+        var sharpness = profile?.GetValue(ExifTag.Sharpness)?.Value;
+        if (sharpness is null)
+        {
+            return string.Empty;
+        }
+        return sharpness switch
+        {
+            0 => TranslationHelper.GetTranslation("Normal"),
+            1 => TranslationHelper.GetTranslation("Soft"),
+            2 => TranslationHelper.GetTranslation("Hard"),
+            _ => string.Empty
+        };
+    }
+
+    public static string GetWhiteBalance(IExifProfile profile)
+    {
+        var whiteBalance = profile?.GetValue(ExifTag.WhiteBalance)?.Value;
+        if (whiteBalance is null)
+        {
+            return string.Empty;
+        }
+        return whiteBalance switch
+        {
+            0 => TranslationHelper.GetTranslation("Auto"),
+            1 => TranslationHelper.GetTranslation("Manual"),
+            _ => string.Empty
+        };
+    }
+
+    public static string GetResolutionUnit(IExifProfile? profile)
+    {
+        var resolutionUnit = profile?.GetValue(ExifTag.ResolutionUnit)?.Value;
+        if (resolutionUnit is null)
+        {
+            return string.Empty;
+        }
+        return resolutionUnit switch
+        {
+            1 => TranslationHelper.GetTranslation("None"),
+            2 => TranslationHelper.GetTranslation("Inches"),
+            3 => TranslationHelper.GetTranslation("Centimeters"),
+            _ => string.Empty
+        };
+    }
+
+    public static string GetFlash(IExifProfile profile)
+    {
+        var flash = profile?.GetValue(ExifTag.Flash)?.Value;
+        if (flash is null)
+        {
+            return string.Empty;
+        }
+
+        return flash.ToString() ?? string.Empty;
+
+        // Maybe another time?
+        return flash switch
+        {
+            0 => TranslationHelper.GetTranslation("NoFlash"),
+            1 => TranslationHelper.GetTranslation("Fired"),
+            5 => TranslationHelper.GetTranslation("FiredStrobeReturnLightDetected"),
+            7 => TranslationHelper.GetTranslation("FiredStrobeReturnLightNotDetected"),
+            9 => TranslationHelper.GetTranslation("OnDidNotFire"),
+            13 => TranslationHelper.GetTranslation("OnFired"),
+            15 => TranslationHelper.GetTranslation("OnFiredStrobeReturnLightDetected"),
+            16 => TranslationHelper.GetTranslation("OnFiredStrobeReturnLightNotDetected"),
+            24 => TranslationHelper.GetTranslation("AutoDidNotFire"),
+            25 => TranslationHelper.GetTranslation("AutoFired"),
+            29 => TranslationHelper.GetTranslation("AutoFiredStrobeReturnLightDetected"),
+            31 => TranslationHelper.GetTranslation("AutoFiredStrobeReturnLightNotDetected"),
+            32 => TranslationHelper.GetTranslation("NoFlashFunction"),
+            65 => TranslationHelper.GetTranslation("FiredRedEyeReduction"),
+            69 => TranslationHelper.GetTranslation("FiredRedEyeReductionStrobeReturnLightDetected"),
+            71 => TranslationHelper.GetTranslation("FiredRedEyeReductionStrobeReturnLightNotDetected"),
+            73 => TranslationHelper.GetTranslation("OnRedEyeReduction"),
+            77 => TranslationHelper.GetTranslation("OnRedEyeReductionStrobeReturnLightDetected"),
+            79 => TranslationHelper.GetTranslation("OnRedEyeReductionStrobeReturnLightNotDetected"),
+            89 => TranslationHelper.GetTranslation("AutoDidNotFireRedEyeReduction"),
+            93 => TranslationHelper.GetTranslation("AutoFiredRedEyeReduction"),
+            95 => TranslationHelper.GetTranslation("AutoFiredRedEyeReductionStrobeReturnLightDetected"),
+            97 => TranslationHelper.GetTranslation("AutoFiredRedEyeReductionStrobeReturnLightNotDetected"),
+            _ => string.Empty
+        };
+    }
 }
