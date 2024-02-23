@@ -678,6 +678,8 @@ namespace PicView.Avalonia.ViewModels
 
         public void SetSize(double width, double height, double rotation)
         {
+            width = width == 0 ? ImageWidth : width;
+            height = height == 0 ? ImageHeight : height;
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             {
                 return;

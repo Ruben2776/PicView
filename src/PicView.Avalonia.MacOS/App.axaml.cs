@@ -1,12 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Markup.Xaml;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.ViewModels;
 using System.Runtime;
 using System;
 using System.IO;
+using System.Threading.Tasks;
+using PicView.Core.Config;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.MacOS;
 
@@ -16,28 +17,27 @@ public partial class App : Application
     {
         ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
         ProfileOptimization.StartProfile("ProfileOptimization");
-        StartUpHelper.InitializeSettings();
-        AvaloniaXamlLoader.Load(this);
-    }
-
-    public override void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            var w = desktop.MainWindow = new MacMainWindow();
-            w.DataContext = new MainViewModel();
-        }
-
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void NativeMenuItem_OnClick(object? sender, EventArgs e)
+    public override async void OnFrameworkInitializationCompleted()
     {
-        if (DataContext == null)
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            return;
+            try
+            {
+                await SettingsHelper.LoadSettingsAsync();
+                _ = Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
+            var w = desktop.MainWindow = new MacMainWindow();
+            w.DataContext = new MainViewModel();
+            w.Show();
         }
-        var vm = (MainViewModel)DataContext;
-        vm.OpenFileCommand.Execute(null);
+
+        base.OnFrameworkInitializationCompleted();
     }
 }
