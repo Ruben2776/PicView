@@ -112,6 +112,42 @@ public class ViewModelBase : ReactiveObject
         Saturation = TranslationHelper.GetTranslation("Saturation");
         Sharpness = TranslationHelper.GetTranslation("Sharpness");
         WhiteBalance = TranslationHelper.GetTranslation("WhiteBalance");
+        FlashEnergy = TranslationHelper.GetTranslation("FlashEnergy");
+        FlashMode = TranslationHelper.GetTranslation("FlashMode");
+        LightSource = TranslationHelper.GetTranslation("LightSource");
+        Brightness = TranslationHelper.GetTranslation("Brightness");
+    }
+
+    private string? _brightness;
+
+    public string? Brightness
+    {
+        get => _brightness;
+        set => this.RaiseAndSetIfChanged(ref _brightness, value);
+    }
+
+    private string? _lightSource;
+
+    public string? LightSource
+    {
+        get => _lightSource;
+        set => this.RaiseAndSetIfChanged(ref _lightSource, value);
+    }
+
+    private string? _flashMode;
+
+    public string? FlashMode
+    {
+        get => _flashMode;
+        set => this.RaiseAndSetIfChanged(ref _flashMode, value);
+    }
+
+    private string? _flashEnergy;
+
+    public string? FlashEnergy
+    {
+        get => _flashEnergy;
+        set => this.RaiseAndSetIfChanged(ref _flashEnergy, value);
     }
 
     private string? _whiteBalance;

@@ -455,12 +455,36 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _getWhiteBalance, value);
         }
 
-        private string? _getFlash;
+        private string? _getFlashMode;
 
-        public string? GetFlash
+        public string? GetFlashMode
         {
-            get => _getFlash;
-            set => this.RaiseAndSetIfChanged(ref _getFlash, value);
+            get => _getFlashMode;
+            set => this.RaiseAndSetIfChanged(ref _getFlashMode, value);
+        }
+
+        private string? _getFlashEnergy;
+
+        public string? GetFlashEnergy
+        {
+            get => _getFlashEnergy;
+            set => this.RaiseAndSetIfChanged(ref _getFlashEnergy, value);
+        }
+
+        private string? _getLightSource;
+
+        public string? GetLightSource
+        {
+            get => _getLightSource;
+            set => this.RaiseAndSetIfChanged(ref _getLightSource, value);
+        }
+
+        private string? _getBrightness;
+
+        public string? GetBrightness
+        {
+            get => _getBrightness;
+            set => this.RaiseAndSetIfChanged(ref _getBrightness, value);
         }
 
         #region Window Properties
@@ -978,7 +1002,10 @@ namespace PicView.Avalonia.ViewModels
                     GetSaturation = EXIFHelper.GetSaturation(profile);
                     GetSharpness = EXIFHelper.GetSharpness(profile);
                     GetWhiteBalance = EXIFHelper.GetWhiteBalance(profile);
-                    GetFlash = EXIFHelper.GetFlash(profile);
+                    GetFlashMode = EXIFHelper.GetFlashMode(profile);
+                    GetFlashEnergy = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString() ?? string.Empty;
+                    GetLightSource = EXIFHelper.GetLightSource(profile);
+                    GetBrightness = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString() ?? string.Empty;
                 }
                 catch (Exception)
                 {

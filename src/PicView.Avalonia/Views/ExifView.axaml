@@ -1155,6 +1155,98 @@
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="15,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding FlashEnergy}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetFlashEnergy}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Margin="5,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding FlashMode}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetFlashMode}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="15,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding LightSource}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetLightSource}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Margin="5,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="100"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{Binding Brightness}" />
+                                <TextBox
+                                    Background="{StaticResource BackgroundAlpha}"
+                                    Classes=" TStyle"
+                                    IsReadOnly="True"
+                                    Text="{Binding GetBrightness}" />
+                                <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                    <Path
+                                        Width="16"
+                                        Height="16"
+                                        Data="{StaticResource CopyGeometry}"
+                                        Fill="{StaticResource MainIconColor}"
+                                        Stretch="Fill" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

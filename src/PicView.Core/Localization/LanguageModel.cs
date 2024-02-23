@@ -351,4 +351,25 @@ internal class LanguageModel
     public string? Soft { get; set; }
     public string? Hard { get; set; }
     public string? Auto { get; set; }
+    public string? Flash { get; set; }
+    public string? FlashMode { get; set; }
+    public string? FlashEnergy { get; set; }
+    public string? FlashFired { get; set; }
+    public string? FlashDidNotFire { get; set; }
+    public string? StrobeReturnLightDetected { get; set; }
+    public string? StrobeReturnLightNotDetected { get; set; }
+    public string? RedEyeReduction { get; set; }
+    public string? Brightness { get; set; }
+    public string? LightSource { get; set; }
+    public string? Unknown { get; set; }
+    public string? Other { get; set; }
+    public string? Daylight { get; set; }
+    public string? Fluorescent { get; set; }
+    public string? FineWeather { get; set; }
+    public string? CloudyWeather { get; set; }
+    public string? Shade { get; set; }
+    public string? DaylightFluorescent { get; set; }
+    public string? DayWhiteFluorescent { get; set; }
+    public string? CoolWhiteFluorescent { get; set; }
+    public string? WhiteFluorescent { get; set; }
 }

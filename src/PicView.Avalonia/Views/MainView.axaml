@@ -16,6 +16,18 @@
         -->
         <vm:MainViewModel />
     </Design.DataContext>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Command="{Binding OpenFileCommand}" Header="{Binding Open}" />
+            <MenuItem Command="{Binding SaveFileCommand}" Header="{Binding Save}" />
+            <MenuItem Command="{Binding PrintCommand}" Header="{Binding Print}" />
+            <MenuItem Command="{Binding OpenWithCommand}" Header="{Binding OpenWith}" />
+            <Separator />
+            <MenuItem Header="{Binding Settings}">
+                <MenuItem Command="{Binding ToggleUICommand}" Header="{Binding HideShowInterface}" />
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Grid x:Name="MainGrid">
         <ContentControl Content="{Binding CurrentView}" />
     </Grid>

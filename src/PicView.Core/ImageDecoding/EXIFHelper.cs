@@ -292,7 +292,8 @@ public static class EXIFHelper
         };
     }
 
-    public static string GetFlash(IExifProfile profile)
+    // https://exiftool.org/TagNames/EXIF.html
+    public static string GetFlashMode(IExifProfile profile)
     {
         var flash = profile?.GetValue(ExifTag.Flash)?.Value;
         if (flash is null)
@@ -300,34 +301,101 @@ public static class EXIFHelper
             return string.Empty;
         }
 
-        return flash.ToString() ?? string.Empty;
-
-        // Maybe another time?
-        return flash switch
+        switch (flash)
         {
-            0 => TranslationHelper.GetTranslation("NoFlash"),
-            1 => TranslationHelper.GetTranslation("Fired"),
-            5 => TranslationHelper.GetTranslation("FiredStrobeReturnLightDetected"),
-            7 => TranslationHelper.GetTranslation("FiredStrobeReturnLightNotDetected"),
-            9 => TranslationHelper.GetTranslation("OnDidNotFire"),
-            13 => TranslationHelper.GetTranslation("OnFired"),
-            15 => TranslationHelper.GetTranslation("OnFiredStrobeReturnLightDetected"),
-            16 => TranslationHelper.GetTranslation("OnFiredStrobeReturnLightNotDetected"),
-            24 => TranslationHelper.GetTranslation("AutoDidNotFire"),
-            25 => TranslationHelper.GetTranslation("AutoFired"),
-            29 => TranslationHelper.GetTranslation("AutoFiredStrobeReturnLightDetected"),
-            31 => TranslationHelper.GetTranslation("AutoFiredStrobeReturnLightNotDetected"),
-            32 => TranslationHelper.GetTranslation("NoFlashFunction"),
-            65 => TranslationHelper.GetTranslation("FiredRedEyeReduction"),
-            69 => TranslationHelper.GetTranslation("FiredRedEyeReductionStrobeReturnLightDetected"),
-            71 => TranslationHelper.GetTranslation("FiredRedEyeReductionStrobeReturnLightNotDetected"),
-            73 => TranslationHelper.GetTranslation("OnRedEyeReduction"),
-            77 => TranslationHelper.GetTranslation("OnRedEyeReductionStrobeReturnLightDetected"),
-            79 => TranslationHelper.GetTranslation("OnRedEyeReductionStrobeReturnLightNotDetected"),
-            89 => TranslationHelper.GetTranslation("AutoDidNotFireRedEyeReduction"),
-            93 => TranslationHelper.GetTranslation("AutoFiredRedEyeReduction"),
-            95 => TranslationHelper.GetTranslation("AutoFiredRedEyeReductionStrobeReturnLightDetected"),
-            97 => TranslationHelper.GetTranslation("AutoFiredRedEyeReductionStrobeReturnLightNotDetected"),
+            case 0:
+            case 9:
+            case 24:
+            case 32:
+                return TranslationHelper.GetTranslation("FlashDidNotFire");
+
+            case 1:
+            case 13:
+            case 25:
+                return TranslationHelper.GetTranslation("FlashFired");
+
+            case 5:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightDetected");
+
+            case 7:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightNotDetected");
+
+            case 15:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightDetected");
+
+            case 16:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightNotDetected");
+
+            case 29:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightDetected");
+
+            case 31:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightNotDetected");
+
+            case 65:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction");
+
+            case 69:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightDetected");
+
+            case 71:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightNotDetected");
+
+            case 73:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction");
+
+            case 77:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightDetected");
+
+            case 79:
+                return TranslationHelper.GetTranslation("Unknown") + ", " + TranslationHelper.GetTranslation("RedEyeReduction") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightNotDetected");
+
+            case 89:
+                return TranslationHelper.GetTranslation("FlashDidNotFire") + ", " + TranslationHelper.GetTranslation("RedEyeReduction");
+
+            case 93:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction");
+
+            case 95:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightDetected");
+
+            case 97:
+                return TranslationHelper.GetTranslation("FlashFired") + ", " + TranslationHelper.GetTranslation("RedEyeReduction") + ", " + TranslationHelper.GetTranslation("StrobeReturnLightNotDetected");
+
+            default: return string.Empty;
+        }
+    }
+
+    public static string GetLightSource(IExifProfile? profile)
+    {
+        var lightSource = profile?.GetValue(ExifTag.LightSource)?.Value;
+        if (lightSource is null)
+        {
+            return string.Empty;
+        }
+        return lightSource switch
+        {
+            0 => TranslationHelper.GetTranslation("Unknown"),
+            1 => TranslationHelper.GetTranslation("Daylight"),
+            2 => TranslationHelper.GetTranslation("Fluorescent"),
+            3 => "Tungsten",
+            4 => TranslationHelper.GetTranslation("Flash"),
+            9 => TranslationHelper.GetTranslation("FineWeather"),
+            10 => TranslationHelper.GetTranslation("CloudyWeather"),
+            11 => TranslationHelper.GetTranslation("Shade"),
+            12 => TranslationHelper.GetTranslation("DaylightFluorescent"),
+            13 => TranslationHelper.GetTranslation("DayWhiteFluorescent"),
+            14 => TranslationHelper.GetTranslation("CoolWhiteFluorescent"),
+            15 => TranslationHelper.GetTranslation("WhiteFluorescent"),
+            17 => "Illuminants A",
+            18 => "Illuminants B",
+            19 => "Illuminants C",
+            20 => "D55",
+            21 => "D65",
+            22 => "D75",
+            23 => "D50",
+            24 => "ISO Studio Tungsten",
+            255 => TranslationHelper.GetTranslation("NotDefined"),
             _ => string.Empty
         };
     }

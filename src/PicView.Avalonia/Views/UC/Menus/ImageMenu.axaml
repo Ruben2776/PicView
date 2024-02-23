@@ -286,7 +286,7 @@
             Height="1.5"
             Margin="57,0,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource SecondaryBackgroundColor}" />
+            Fill="{StaticResource MenuBackgroundColor}" />
         <Polygon
             Margin="54,-3.5,0,0"
             Fill="{StaticResource MainBackgroundColor}"
