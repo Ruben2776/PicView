@@ -250,8 +250,11 @@
   "Crop": "Przytnij",
   "RotateRight": "Obróć w prawo",
   "RotateLeft": "Obróć w lewo",
+  "Rotated": "Obrócone",
   "Flip": "Przeróć poziomo",
+  "Flipped": "Przerócone",
   "Unflip": "Cofnij przewracanie",
+  "Orientation": "Orientacja",
   "BadArchive": "Archiwum nie mogło być przetworzone",
   "PasswordArchive": "Archiwa chronione hasłem nie są wspierane",
   "SentFileToRecycleBin": "Przenieś plik do kosza",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Dzienny biały - świetlówka",
   "CoolWhiteFluorescent": "Zimny biały - świetlówka",
   "WhiteFluorescent": "Biały - świetlówka",
+  "PhotometricInterpretation": "Interpretacja fotometryczna"
 }

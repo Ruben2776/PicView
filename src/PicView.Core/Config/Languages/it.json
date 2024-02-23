@@ -250,8 +250,11 @@
   "Crop": "Ritaglia",
   "RotateRight": "Ruota a destra",
   "RotateLeft": "Ruota a sinistra",
+  "Rotated": "Ruotato",
   "Flip": "Capovolgi orizzontalmente",
+  "Flipped": "Capovolto",
   "Unflip": "Srotolare",
+  "Orientation": "Orientamento",
   "BadArchive": "Impossibile elaborare l'archivio",
   "PasswordArchive": "Archivio protetto da password non supportato",
   "SentFileToRecycleBin": "File inviato al cestino",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Fluorescente bianco diurno",
   "CoolWhiteFluorescent": "Fluorescente bianco freddo",
   "WhiteFluorescent": "Fluorescente bianco",
+  "PhotometricInterpretation": "Interpretazione fotometrica"
 }

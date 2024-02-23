@@ -487,6 +487,30 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _getBrightness, value);
         }
 
+        private string? _getPhotometricInterpretation;
+
+        public string? GetPhotometricInterpretation
+        {
+            get => _getPhotometricInterpretation;
+            set => this.RaiseAndSetIfChanged(ref _getPhotometricInterpretation, value);
+        }
+
+        private string? _getOrientation;
+
+        public string? GetOrientation
+        {
+            get => _getOrientation;
+            set => this.RaiseAndSetIfChanged(ref _getOrientation, value);
+        }
+
+        private string? _getExifVersion;
+
+        public string? GetExifVersion
+        {
+            get => _getExifVersion;
+            set => this.RaiseAndSetIfChanged(ref _getExifVersion, value);
+        }
+
         #region Window Properties
 
         private string? _title = "Loading...";
@@ -827,41 +851,49 @@ namespace PicView.Avalonia.ViewModels
                     default:
                         ScaleX = 1;
                         RotationAngle = 0;
+                        GetOrientation = TranslationHelper.GetTranslation("Normal");
                         break;
 
                     case EXIFHelper.EXIFOrientation.Flipped:
                         ScaleX = -1;
                         RotationAngle = 0;
+                        GetOrientation = TranslationHelper.GetTranslation("Flipped");
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated180:
                         RotationAngle = 180;
                         ScaleX = 1;
+                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 180\u00b0";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated180Flipped:
                         RotationAngle = 180;
                         ScaleX = -1;
+                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 180\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated270Flipped:
                         RotationAngle = 270;
                         ScaleX = -1;
+                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 270\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated90:
                         RotationAngle = 90;
                         ScaleX = 1;
+                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 90\u00b0";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated90Flipped:
                         RotationAngle = 90;
                         ScaleX = -1;
+                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 90\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated270:
                         RotationAngle = 270;
                         ScaleX = 1;
+                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 270\u00b0";
                         break;
                 }
             }
@@ -869,6 +901,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 ScaleX = 1;
                 RotationAngle = 0;
+                GetOrientation = string.Empty;
             }
 
             ZoomValue = 1;
@@ -1006,6 +1039,8 @@ namespace PicView.Avalonia.ViewModels
                     GetFlashEnergy = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString() ?? string.Empty;
                     GetLightSource = EXIFHelper.GetLightSource(profile);
                     GetBrightness = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString() ?? string.Empty;
+                    GetPhotometricInterpretation = EXIFHelper.GetPhotometricInterpretation(profile);
+                    GetExifVersion = EXIFHelper.GetExifVersion(profile);
                 }
                 catch (Exception)
                 {

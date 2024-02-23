@@ -250,8 +250,11 @@
   "Crop": "Beskær",
   "RotateRight": "Roter til højre",
   "RotateLeft": "Roter til venstre",
+  "Rotated": "Roteret",
   "Flip": "Spejlvend",
+  "Flipped": "Spejlvendt",
   "Unflip": "Spejlvend tilbage",
+  "Orientation": "Orientering",
   "BadArchive": "Arkivet kunne ikke behandles",
   "PasswordArchive": "Adgangskodebeskyttet arkiv understøttes ikke",
   "SentFileToRecycleBin": "Sendt fil til papirkurven",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Dag hvid fluorescerende",
   "CoolWhiteFluorescent": "Kold hvid fluorescerende",
   "WhiteFluorescent": "Hvid fluorescerende",
+  "PhotometricInterpretation": "Fotometrisk fortolkning",
 }

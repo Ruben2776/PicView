@@ -251,7 +251,10 @@
   "RotateRight": "Pivoter à droite",
   "RotateLeft": "Rotation vers la gauche",
   "Flip": "Retourner horizontalement",
+  "Flipped": "Retourné",
+  "Rotated": "Tourné",
   "Unflip": "Annuler le retournement",
+  "Orientation": "Orientation",
   "BadArchive": "L'archive n'a pas pu être traitée",
   "PasswordArchive": "Archive protégée par mot de passe non supportée",
   "SentFileToRecycleBin": "Fichier envoyé dans la corbeille",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Fluorescent blanc de jour",
   "CoolWhiteFluorescent": "Fluorescent blanc froid",
   "WhiteFluorescent": "Fluorescent blanc",
+  "PhotometricInterpretation": "Interprétation photométrique"
 }

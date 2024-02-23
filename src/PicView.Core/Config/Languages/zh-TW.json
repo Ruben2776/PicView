@@ -250,8 +250,11 @@
   "Crop": "裁剪",
   "RotateRight": "向右旋轉",
   "RotateLeft": "向左旋轉",
+  "Rotated": "已旋轉",
   "Flip": "水平翻轉",
+  "Flipped": "已翻轉",
   "Unflip": "取消水平翻轉",
+  "Orientation": "方向",
   "BadArchive": "無法處理壓縮檔案",
   "PasswordArchive": "暫不支援加密的壓縮檔案",
   "SentFileToRecycleBin": "將檔案移至回收筒",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "日白螢光",
   "CoolWhiteFluorescent": "冷白螢光",
   "WhiteFluorescent": "白螢光",
+  "PhotometricInterpretation": "光度解釋"
 }

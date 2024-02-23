@@ -250,8 +250,11 @@
   "Crop": "Обрезать",
   "RotateRight": "Повернуть вправо",
   "RotateLeft": "Повернуть налево",
+  "Rotated": "Повернуто",
   "Flip": "Отразить по горизонталиy",
+  "Flipped": "Отражено",
   "Unflip": "Развернуть",
+  "Orientation": "Ориентация",
   "BadArchive": "Архив не может быть обработан",
   "PasswordArchive": "Архив, защищенный паролем, не поддерживается",
   "SentFileToRecycleBin": "Файл отправлен в корзину",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Дневной белый флуоресцентный",
   "CoolWhiteFluorescent": "Холодный белый флуоресцентный",
   "WhiteFluorescent": "Белый флуоресцентный",
+  "PhotometricInterpretation": "Фотометрическая интерпретация"
 }

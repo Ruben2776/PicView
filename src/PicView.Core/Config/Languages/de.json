@@ -250,8 +250,11 @@
   "Crop": "Zuschneiden",
   "RotateRight": "Nach rechts drehen",
   "RotateLeft": "Nach links drehen",
+  "Rotated": "Gedreht",
   "Flip": "Horizontal spiegeln",
+  "Flipped": "Gespiegelt",
   "Unflip": "Zurückdrehen",
+  "Orientation": "Orientierung",
   "BadArchive": "Das Archiv konnte nicht entpackt werden",
   "PasswordArchive": "Passwort geschützte Archive werden nicht unterstützt",
   "SentFileToRecycleBin": "Datei in den Papierkorb verschieben",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Tagesweiß-Fluoreszierend",
   "CoolWhiteFluorescent": "Kaltweiß-Fluoreszierend",
   "WhiteFluorescent": "Weiß-Fluoreszierend",
+  "PhotometricInterpretation": "Photometrische Interpretation"
 }

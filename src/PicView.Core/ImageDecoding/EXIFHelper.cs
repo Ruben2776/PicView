@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using PicView.Core.Localization;
 using System.Globalization;
+using System.Text;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -398,5 +399,40 @@ public static class EXIFHelper
             255 => TranslationHelper.GetTranslation("NotDefined"),
             _ => string.Empty
         };
+    }
+
+    public static string GetPhotometricInterpretation(IExifProfile? profile)
+    {
+        var photometricInterpretation = profile?.GetValue(ExifTag.PhotometricInterpretation)?.Value;
+        if (photometricInterpretation is null)
+        {
+            return string.Empty;
+        }
+        return photometricInterpretation switch
+        {
+            0 => "WhiteIsZero",
+            1 => "BlackIsZero",
+            2 => "RGB",
+            3 => "RGBPalette",
+            4 => "TransparencyMask",
+            5 => "CMYK",
+            6 => "YCbCr",
+            8 => "CIELab",
+            9 => "ICCLab",
+            10 => "ITULab",
+            32803 => "ColorFilterArray",
+            32844 => "PixarLogL",
+            32845 => "PixarLogLuv",
+            32892 => "LinearRaw",
+            34892 => "LinearRaw",
+            65535 => "Undefined",
+            _ => string.Empty
+        };
+    }
+
+    public static string GetExifVersion(IExifProfile? profile)
+    {
+        var exifVersion = profile?.GetValue(ExifTag.ExifVersion)?.Value;
+        return exifVersion is null ? string.Empty : Encoding.ASCII.GetString(exifVersion);
     }
 }

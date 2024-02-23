@@ -250,8 +250,11 @@
   "Crop": "裁剪",
   "RotateRight": "向右旋转",
   "RotateLeft": "向左旋转",
+  "Rotated": "已旋转",
   "Flip": "水平翻转",
+  "Flipped": "已水平翻转",
   "Unflip": "取消水平翻转",
+  "Orientation": "方向",
   "BadArchive": "无法处理压缩文件",
   "PasswordArchive": "暂不支持带密码的压缩文件",
   "SentFileToRecycleBin": "将文件移至回收站",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "白天白光",
   "CoolWhiteFluorescent": "冷白荧光",
   "WhiteFluorescent": "白光荧光",
+  "PhotometricInterpretation": "光度学解释"
 }

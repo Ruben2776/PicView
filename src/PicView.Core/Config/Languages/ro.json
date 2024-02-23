@@ -250,8 +250,11 @@
   "Crop": "Decupare",
   "RotateRight": "Rotire la dreapta",
   "RotateLeft": "Rotire la stânga",
+  "Rotated": "Rotită",
   "Flip": "Răsturnare orizontală",
+  "Flipped": "Răsturnată",
   "Unflip": "Anulare răsturnare",
+  "Orientation": "Orientare",
   "BadArchive": "Arhiva nu a putut fi procesată",
   "PasswordArchive": "Arhiva protejată cu parolă nu este acceptată",
   "SentFileToRecycleBin": "Fișier trimis la coșul de reciclare",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Fluorescent alb de zi",
   "CoolWhiteFluorescent": "Fluorescent alb rece",
   "WhiteFluorescent": "Fluorescent alb",
+  "PhotometricInterpretation": "Interpretare fotometrică"
 }

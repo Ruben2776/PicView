@@ -250,8 +250,11 @@
   "Crop": "Crop",
   "RotateRight": "Rotate right",
   "RotateLeft": "Rotate left",
+  "Rotated": "Rotated",
   "Flip": "Flip horizontally",
+  "Flipped": "Flipped horizontally",
   "Unflip": "Unflip",
+  "Orientation": "Orientation",
   "BadArchive": "Archive could not be processed",
   "PasswordArchive": "Password protected archive not supported",
   "SentFileToRecycleBin": "Sent file to the recycle bin",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "Day white fluorescent",
   "CoolWhiteFluorescent": "Cool white fluorescent",
   "WhiteFluorescent": "White fluorescent",
+  "PhotometricInterpretation": "Photometric interpretation"
 }

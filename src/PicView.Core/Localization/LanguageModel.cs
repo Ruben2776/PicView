@@ -253,8 +253,11 @@ internal class LanguageModel
     public string? Crop { get; set; }
     public string? RotateRight { get; set; }
     public string? RotateLeft { get; set; }
+    public string? Rotated { get; set; }
     public string? Flip { get; set; }
+    public string? Flipped { get; set; }
     public string? Unflip { get; set; }
+    public string? Orientation { get; set; }
     public string? BadArchive { get; set; }
     public string? PasswordArchive { get; set; }
     public string? SentFileToRecycleBin { get; set; }
@@ -372,4 +375,6 @@ internal class LanguageModel
     public string? DayWhiteFluorescent { get; set; }
     public string? CoolWhiteFluorescent { get; set; }
     public string? WhiteFluorescent { get; set; }
+    public string? PhotometricInterpretation { get; set; }
+    public string? ExifVersion { get; set; }
 }

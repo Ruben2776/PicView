@@ -116,6 +116,33 @@ public class ViewModelBase : ReactiveObject
         FlashMode = TranslationHelper.GetTranslation("FlashMode");
         LightSource = TranslationHelper.GetTranslation("LightSource");
         Brightness = TranslationHelper.GetTranslation("Brightness");
+        PhotometricInterpretation = TranslationHelper.GetTranslation("PhotometricInterpretation");
+        Orientation = TranslationHelper.GetTranslation("Orientation");
+        ExifVersion = TranslationHelper.GetTranslation("ExifVersion");
+    }
+
+    private string? _exifVersion;
+
+    public string? ExifVersion
+    {
+        get => _exifVersion;
+        set => this.RaiseAndSetIfChanged(ref _exifVersion, value);
+    }
+
+    private string? _orientation;
+
+    public string? Orientation
+    {
+        get => _orientation;
+        set => this.RaiseAndSetIfChanged(ref _orientation, value);
+    }
+
+    private string? _photometricInterpretation;
+
+    public string? PhotometricInterpretation
+    {
+        get => _photometricInterpretation;
+        set => this.RaiseAndSetIfChanged(ref _photometricInterpretation, value);
     }
 
     private string? _brightness;

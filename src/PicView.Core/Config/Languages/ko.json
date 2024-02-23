@@ -250,8 +250,11 @@
   "Crop": "자르기",
   "RotateRight": "오른쪽으로 회전",
   "RotateLeft": "왼쪽으로 회전",
+  "Rotated": "회전됨",
   "Flip": "수평 뒤집기",
+  "Flipped": "뒤집힘",
   "Unflip": "뒤집기 취소",
+  "Orientation": "방향",
   "BadArchive": "압축파일을 처리할 수 없습니다",
   "PasswordArchive": "암호로 보호된 압축파일은 지원되지 않습니다",
   "SentFileToRecycleBin": "파일을 휴지통으로 보냈습니다",
@@ -369,4 +372,5 @@
   "DayWhiteFluorescent": "낮 흰색 형광등",
   "CoolWhiteFluorescent": "차가운 흰색 형광등",
   "WhiteFluorescent": "흰색 형광등",
+  "PhotometricInterpretation": "광도 해석"
 }
