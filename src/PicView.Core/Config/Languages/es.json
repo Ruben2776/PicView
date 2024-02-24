@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "Fluorescente blanco de luz del día",
   "CoolWhiteFluorescent": "Fluorescente blanco frío",
   "WhiteFluorescent": "Fluorescente blanco",
-  "PhotometricInterpretation": "Interpretación fotométrica"
+  "PhotometricInterpretation": "Interpretación fotométrica",
+  "LensModel": "Modelo de lente",
+  "LensMaker": "Fabricante de lente",
 }

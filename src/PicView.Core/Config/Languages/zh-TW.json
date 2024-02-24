@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "日白螢光",
   "CoolWhiteFluorescent": "冷白螢光",
   "WhiteFluorescent": "白螢光",
-  "PhotometricInterpretation": "光度解釋"
+  "PhotometricInterpretation": "光度解釋",
+  "LensModel": "鏡頭型號",
+  "LensMaker": "鏡頭製造商",
 }

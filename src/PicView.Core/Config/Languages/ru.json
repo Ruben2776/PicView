@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "Дневной белый флуоресцентный",
   "CoolWhiteFluorescent": "Холодный белый флуоресцентный",
   "WhiteFluorescent": "Белый флуоресцентный",
-  "PhotometricInterpretation": "Фотометрическая интерпретация"
+  "PhotometricInterpretation": "Фотометрическая интерпретация",
+  "LensModel": "Модель объектива",
+  "LensMaker": "Производитель объектива",
 }

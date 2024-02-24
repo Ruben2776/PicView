@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "낮 흰색 형광등",
   "CoolWhiteFluorescent": "차가운 흰색 형광등",
   "WhiteFluorescent": "흰색 형광등",
-  "PhotometricInterpretation": "광도 해석"
+  "PhotometricInterpretation": "광도 해석",
+  "LensModel": "렌즈 모델",
+  "LensMaker": "렌즈 제조사",
 }

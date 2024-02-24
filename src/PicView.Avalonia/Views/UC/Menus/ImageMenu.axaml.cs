@@ -29,9 +29,9 @@ public partial class ImageMenu : UserControl
             {
                 number = 0;
             }
-            else if (number > vm.ImageIterator.Pics.Count)
+            else if (number > vm.Pics.Count)
             {
-                number = vm.ImageIterator.Pics.Count - 1;
+                number = vm.Pics.Count - 1;
             }
             else
             {

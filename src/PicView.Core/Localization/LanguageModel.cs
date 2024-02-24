@@ -377,4 +377,5 @@ internal class LanguageModel
     public string? WhiteFluorescent { get; set; }
     public string? PhotometricInterpretation { get; set; }
     public string? ExifVersion { get; set; }
+    public string? LensMaker { get; set; }
 }

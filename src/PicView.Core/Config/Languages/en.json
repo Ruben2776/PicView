@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "Day white fluorescent",
   "CoolWhiteFluorescent": "Cool white fluorescent",
   "WhiteFluorescent": "White fluorescent",
-  "PhotometricInterpretation": "Photometric interpretation"
+  "PhotometricInterpretation": "Photometric interpretation",
+  "LensModel": "Lens model",
+  "LensMaker": "Lens maker",
 }

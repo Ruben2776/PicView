@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.Helpers;
@@ -9,9 +10,21 @@ public static class WindowHelper
 {
     public static void InitializeWindowSizeAndPosition(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        desktop.MainWindow.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
-        desktop.MainWindow.Width = SettingsHelper.Settings.WindowProperties.Width;
-        desktop.MainWindow.Height = SettingsHelper.Settings.WindowProperties.Height;
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            desktop.MainWindow.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
+            desktop.MainWindow.Width = SettingsHelper.Settings.WindowProperties.Width;
+            desktop.MainWindow.Height = SettingsHelper.Settings.WindowProperties.Height;
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                desktop.MainWindow.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
+                desktop.MainWindow.Width = SettingsHelper.Settings.WindowProperties.Width;
+                desktop.MainWindow.Height = SettingsHelper.Settings.WindowProperties.Height;
+            }, DispatcherPriority.Normal).Wait();
+        }
 
         _ = SettingsHelper.SaveSettingsAsync();
     }

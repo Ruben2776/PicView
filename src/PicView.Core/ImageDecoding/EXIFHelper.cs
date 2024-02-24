@@ -56,23 +56,31 @@ public static class EXIFHelper
     // ReSharper disable once InconsistentNaming
     public static async Task<bool> SetEXIFRating(string filePath, ushort rating)
     {
-        using var image = new MagickImage(filePath);
-        var profile = image?.GetExifProfile();
-        if (profile is null)
+        try
         {
-            profile = new ExifProfile(filePath);
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (profile is null || image is null)
+            using var image = new MagickImage();
+            image.Ping(filePath);
+            var profile = image?.GetExifProfile();
+            if (profile is null)
+            {
+                profile = new ExifProfile(filePath);
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (profile is null || image is null)
+                    return false;
+            }
+            else if (image is null)
                 return false;
+
+            profile.SetValue(ExifTag.Rating, rating);
+            image.SetProfile(profile);
+
+            await image.WriteAsync(filePath);
+            return true;
         }
-        else if (image is null)
+        catch (Exception)
+        {
             return false;
-
-        profile.SetValue(ExifTag.Rating, rating);
-        image.SetProfile(profile);
-
-        await image.WriteAsync(filePath);
-        return true;
+        }
     }
 
     public static IExifProfile? GetExifProfile(string path)

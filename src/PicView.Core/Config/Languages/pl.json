@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "Dzienny biały - świetlówka",
   "CoolWhiteFluorescent": "Zimny biały - świetlówka",
   "WhiteFluorescent": "Biały - świetlówka",
-  "PhotometricInterpretation": "Interpretacja fotometryczna"
+  "PhotometricInterpretation": "Interpretacja fotometryczna",
+  "LensModel": "Model obiektywu",
+  "LensMaker": "Producent obiektywu",
 }

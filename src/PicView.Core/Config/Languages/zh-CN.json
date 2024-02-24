@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "白天白光",
   "CoolWhiteFluorescent": "冷白荧光",
   "WhiteFluorescent": "白光荧光",
-  "PhotometricInterpretation": "光度学解释"
+  "PhotometricInterpretation": "光度学解释",
+  "LensModel": "镜头型号",
+  "LensMaker": "镜头制造商",
 }

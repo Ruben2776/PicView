@@ -119,6 +119,24 @@ public class ViewModelBase : ReactiveObject
         PhotometricInterpretation = TranslationHelper.GetTranslation("PhotometricInterpretation");
         Orientation = TranslationHelper.GetTranslation("Orientation");
         ExifVersion = TranslationHelper.GetTranslation("ExifVersion");
+        LensMaker = TranslationHelper.GetTranslation("LensMaker");
+        LensModel = TranslationHelper.GetTranslation("LensModel");
+    }
+
+    private string? _lensModel;
+
+    public string? LensModel
+    {
+        get => _lensModel;
+        set => this.RaiseAndSetIfChanged(ref _lensModel, value);
+    }
+
+    private string? _lensMaker;
+
+    public string? LensMaker
+    {
+        get => _lensMaker;
+        set => this.RaiseAndSetIfChanged(ref _lensMaker, value);
     }
 
     private string? _exifVersion;

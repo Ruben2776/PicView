@@ -372,5 +372,7 @@
   "DayWhiteFluorescent": "Fluorescent alb de zi",
   "CoolWhiteFluorescent": "Fluorescent alb rece",
   "WhiteFluorescent": "Fluorescent alb",
-  "PhotometricInterpretation": "Interpretare fotometrică"
+  "PhotometricInterpretation": "Interpretare fotometrică",
+  "LensModel": "Model obiectiv",
+  "LensMaker": "Producător obiectiv",
 }
