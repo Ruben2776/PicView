@@ -813,7 +813,7 @@ namespace PicView.Avalonia.ViewModels
             var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? 32 : 0; // Height of the titlebar, TODO get actual size
             var uiBottomSize =
                 SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
-                    ? 26 : 0;
+                    ? 28 : 0;
             var galleryHeight = IsBottomGalleryShown ? 100 : 0;
             if (Dispatcher.UIThread.CheckAccess())
             {

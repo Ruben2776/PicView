@@ -189,7 +189,7 @@ namespace PicView.Avalonia.Navigation
             if (_running) { return; }
             _running = true;
 
-            var newList = await Task.FromResult(FileListHelper.RetrieveFiles(fileInfo).ToList());
+            var newList = await Task.FromResult(FileListHelper.RetrieveFiles(fileInfo).ToList()); // TODO update to sync with platform
             if (newList.Count == 0) { return; }
             if (newList.Count == pics.Count) { return; }
 

@@ -29,13 +29,13 @@
             <Color x:Key="MenuBackgroundColor">#292929</Color>
 
             <ImageBrush
+                x:Key="NoisyTexture"
                 DestinationRect="0,0,100,100"
                 Opacity=".6"
                 Source="/DarkTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 SourceRect="0,0,200,200"
                 Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="NoisyTexture" />
+                TileMode="FlipXY" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ToggleButton.axaml" />
@@ -51,11 +51,11 @@
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <DropShadowEffect
+                x:Key="MenuShadowButtonBorder"
                 BlurRadius="5"
-                Color="#112e2e2e"
                 OffsetX="2"
                 OffsetY="2"
-                x:Key="MenuShadowButtonBorder" />
+                Color="#112e2e2e" />
         </ResourceDictionary>
     </Styles.Resources>
     <Style Selector="Window">
@@ -72,6 +72,7 @@
     <Style Selector="TextBlock.txt">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="TextWrapping" Value="Wrap" />
