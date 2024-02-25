@@ -17,6 +17,7 @@ using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Sizing.ScaleImage;
 using static PicView.WPF.UILogic.TransformImage.Rotation;
 using static PicView.WPF.UILogic.UC;
+using PicView.Core.FileHandling;
 
 namespace PicView.WPF.Editing.Crop;
 
@@ -72,7 +73,19 @@ internal static class CropFunctions
 
     internal static void CloseCrop()
     {
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(SetTitle.SetTitleString);
+        var width = ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
+        var height = ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
+        if (Pics.Count < 0)
+        {
+            var path = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
+            path = string.IsNullOrWhiteSpace(path) ? TranslationHelper.GetTranslation("Image") : path;
+
+            SetTitle.SetTitleString((int)width, (int)height, path);
+        }
+        else
+        {
+            SetTitle.SetTitleString((int)width, (int)height, FolderIndex, null);
+        }
 
         ConfigureWindows.GetMainWindow.ParentContainer.Children.Remove(GetCroppingTool);
     }

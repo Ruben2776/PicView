@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PicView.Core.Localization;
 using PicView.WPF.UILogic;
 
 namespace PicView.WPF.Editing.Crop;
@@ -24,8 +25,8 @@ internal class CropContextMenu
 
         var cropCm = new MenuItem
         {
-            Header = Application.Current.Resources["CropPicture"] as string,
-            InputGestureText = Application.Current.Resources["Enter"] as string,
+            Header = TranslationHelper.GetTranslation("CropPicture"),
+            InputGestureText = TranslationHelper.GetTranslation("Enter"),
             Icon = cropIcon
         };
         cropCm.Click += async (_, _) => await CropFunctions.PerformCropAsync().ConfigureAwait(false);
@@ -34,8 +35,8 @@ internal class CropContextMenu
 
         var copyCm = new MenuItem
         {
-            Header = Application.Current.Resources["CopyImage"] as string,
-            InputGestureText = Application.Current.Resources["Ctrl"] as string + " + C",
+            Header = TranslationHelper.GetTranslation("CopyImage"),
+            InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + C",
             Icon = new Path
             {
                 Data = Geometry.Parse(
@@ -62,8 +63,8 @@ internal class CropContextMenu
 
         var closeCm = new MenuItem
         {
-            Header = Application.Current.Resources["Close"] as string,
-            InputGestureText = Application.Current.Resources["Esc"] as string,
+            Header = TranslationHelper.GetTranslation("Close"),
+            InputGestureText = TranslationHelper.GetTranslation("Esc"),
             Icon = closeIcon
         };
         closeCm.Click += (_, _) =>
