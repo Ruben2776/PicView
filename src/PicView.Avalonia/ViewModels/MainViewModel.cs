@@ -35,11 +35,9 @@ namespace PicView.Avalonia.ViewModels
 
         public event EventHandler<ImageModel>? ImageChanged;
 
-        public List<string>? Pics { get; set; }
+        private readonly IPlatformSpecificService _platformService;
 
         #region Commands
-
-        public ICommand? RetrieveFilesCommand;
 
         public ICommand? ExitCommand { get; }
         public ICommand? MinimizeCommand { get; }
@@ -796,7 +794,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 return;
             }
-            var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, Pics);
+            var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, ImageIterator.Pics);
             SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? (int)ImageHeight, RotationAngle);
         }
 
@@ -1086,7 +1084,7 @@ namespace PicView.Avalonia.ViewModels
             }
 
             var titleString = TitleHelper.GetTitle(imageModel.PixelWidth, imageModel.PixelHeight, imageIterator.Index,
-                imageModel.FileInfo, ZoomValue, Pics);
+                imageModel.FileInfo, ZoomValue, imageIterator.Pics);
             WindowTitle = titleString[0];
             Title = titleString[1];
             TitleTooltip = titleString[2];
@@ -1112,7 +1110,7 @@ namespace PicView.Avalonia.ViewModels
             }
 
             var titleString = TitleHelper.GetTitle((int)ImageWidth, (int)ImageHeight, ImageIterator.Index,
-                    FileInfo, ZoomValue, Pics);
+                    FileInfo, ZoomValue, ImageIterator.Pics);
             WindowTitle = titleString[0];
             Title = titleString[1];
             TitleTooltip = titleString[2];
@@ -1136,7 +1134,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 return;
             }
-            var index = ImageIterator.GetIteration(ImageIterator.Index, navigateTo, Pics);
+            var index = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
             if (index < 0)
             {
                 return;
@@ -1155,7 +1153,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 ImageIterator.Index = index;
 
-                var preLoadValue = ImageIterator.PreLoader.Get(index, Pics);
+                var preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
                 var viewChanged = false;
                 var x = 0;
                 if (preLoadValue is not null)
@@ -1164,7 +1162,7 @@ namespace PicView.Avalonia.ViewModels
                     {
                         SetLoadingTitle();
                         using var image = new MagickImage();
-                        image.Ping(Pics[index]);
+                        image.Ping(ImageIterator.Pics[index]);
                         var thumb = image.GetExifProfile()?.CreateThumbnail();
                         if (thumb is not null)
                         {
@@ -1184,7 +1182,7 @@ namespace PicView.Avalonia.ViewModels
                         await Task.Delay(20);
                         if (ImageIterator.Index != index)
                         {
-                            await ImageIterator.Preload(ImageService, Pics);
+                            await ImageIterator.Preload(ImageService);
                             CurrentView = ImageViewer;
                             return;
                         }
@@ -1210,7 +1208,7 @@ namespace PicView.Avalonia.ViewModels
 
                 if (ImageIterator.Index != index)
                 {
-                    await ImageIterator.Preload(ImageService, Pics);
+                    await ImageIterator.Preload(ImageService);
                     return;
                 }
 
@@ -1219,18 +1217,18 @@ namespace PicView.Avalonia.ViewModels
                 SetTitle(preLoadValue.ImageModel, ImageIterator);
                 GetIndex = ImageIterator.Index + 1;
                 ImageChanged?.Invoke(this, preLoadValue.ImageModel);
-                await ImageIterator.AddAsync(ImageIterator.Index, ImageService, preLoadValue?.ImageModel, Pics);
-                await ImageIterator.Preload(ImageService, Pics);
+                await ImageIterator.AddAsync(ImageIterator.Index, ImageService, preLoadValue?.ImageModel);
+                await ImageIterator.Preload(ImageService);
                 return;
 
                 async Task GetPreload()
                 {
-                    await ImageIterator.PreLoader.AddAsync(index, ImageService, Pics)
+                    await ImageIterator.PreLoader.AddAsync(index, ImageService, ImageIterator.Pics)
                         .ConfigureAwait(false);
-                    preLoadValue = ImageIterator.PreLoader.Get(index, Pics);
+                    preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
                     if (ImageIterator.Index != index)
                     {
-                        await ImageIterator.Preload(ImageService, Pics);
+                        await ImageIterator.Preload(ImageService);
                         return;
                     }
 
@@ -1274,12 +1272,8 @@ namespace PicView.Avalonia.ViewModels
                 await ImageService.LoadImageAsync(imageModel);
                 SetImageModel(imageModel);
                 SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation);
-                RetrieveFilesCommand?.Execute(null);
-                ImageIterator = new ImageIterator(imageModel.FileInfo, Pics)
-                {
-                    Index = Pics.IndexOf(fileInfo.FullName),
-                };
-                await ImageIterator.AddAsync(ImageIterator.Index, ImageService, imageModel, Pics);
+                ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
+                await ImageIterator.AddAsync(ImageIterator.Index, ImageService, imageModel);
                 await LoadPicAtIndex(ImageIterator.Index);
                 ImageIterator.FileAdded += (_, e) => { SetTitle(); };
                 ImageIterator.FileRenamed += (_, e) => { SetTitle(); };
@@ -1287,11 +1281,11 @@ namespace PicView.Avalonia.ViewModels
                 {
                     if (isSameFile) //change if deleting current file
                     {
-                        if (ImageIterator?.Index < 0 || ImageIterator?.Index >= Pics.Count)
+                        if (ImageIterator?.Index < 0 || ImageIterator?.Index >= ImageIterator?.Pics.Count)
                         {
                             return;
                         }
-                        await LoadPicFromString(Pics[ImageIterator.Index]);
+                        await LoadPicFromString(ImageIterator?.Pics[ImageIterator.Index]);
                     }
                     else
                     {
@@ -1333,7 +1327,7 @@ namespace PicView.Avalonia.ViewModels
 
         #endregion Methods
 
-        public MainViewModel()
+        public MainViewModel(IPlatformSpecificService platformSpecificService)
         {
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -1750,6 +1744,7 @@ namespace PicView.Avalonia.ViewModels
 
             #endregion EXIF commands
 
+            _platformService = platformSpecificService;
             Activator = new ViewModelActivator();
             this.WhenActivated(disposables =>
             {

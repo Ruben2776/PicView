@@ -15,6 +15,8 @@ namespace PicView.Avalonia.Navigation
 
         public event FileSystemEventHandler? FileRenamed;
 
+        public List<string> Pics { get; set; }
+
         public int Index;
         public FileInfo FileInfo;
         public bool Reverse;
@@ -22,37 +24,41 @@ namespace PicView.Avalonia.Navigation
 
         private static FileSystemWatcher? _watcher;
         private static bool _running;
+        private readonly IPlatformSpecificService _platformService;
 
-        public ImageIterator(FileInfo fileInfo, List<string> pics)
+        public ImageIterator(FileInfo fileInfo, IPlatformSpecificService platformService)
         {
             ArgumentNullException.ThrowIfNull(fileInfo);
 
             FileInfo = fileInfo;
-            Index = pics.IndexOf(fileInfo.FullName);
-            _watcher ??= new FileSystemWatcher();
+
+            _platformService = platformService;
+            Pics = _platformService.GetFiles(fileInfo);
+            Index = Pics.IndexOf(fileInfo.FullName);
 #if DEBUG
             Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
 #endif
+            _watcher ??= new FileSystemWatcher();
             _watcher.Path = fileInfo.DirectoryName;
             _watcher.EnableRaisingEvents = true;
             _watcher.Filter = "*.*";
             _watcher.IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
-            _watcher.Created += async (_, e) => await OnFileAdded(e, pics).ConfigureAwait(false);
-            _watcher.Deleted += (_, e) => OnFileDeleted(e, pics);
-            _watcher.Renamed += (_, e) => OnFileRenamed(e, pics);
+            _watcher.Created += async (_, e) => await OnFileAdded(e).ConfigureAwait(false);
+            _watcher.Deleted += (_, e) => OnFileDeleted(e);
+            _watcher.Renamed += (_, e) => OnFileRenamed(e);
         }
 
-        public async Task Preload(ImageService imageService, List<string> pics)
+        public async Task Preload(ImageService imageService)
         {
-            await PreLoader.PreLoadAsync(Index, pics.Count, Reverse, imageService, pics).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(Index, Pics.Count, Reverse, imageService, Pics).ConfigureAwait(false);
         }
 
-        public async Task AddAsync(int index, ImageService imageService, ImageModel imageModel, List<string> pics)
+        public async Task AddAsync(int index, ImageService imageService, ImageModel imageModel)
         {
-            await PreLoader.AddAsync(index, imageService, pics, imageModel).ConfigureAwait(false);
+            await PreLoader.AddAsync(index, imageService, Pics, imageModel).ConfigureAwait(false);
         }
 
-        public int GetIteration(int index, NavigateTo navigateTo, List<string> pics)
+        public int GetIteration(int index, NavigateTo navigateTo)
         {
             int next;
             switch (navigateTo)
@@ -63,7 +69,7 @@ namespace PicView.Avalonia.Navigation
                     Reverse = navigateTo == NavigateTo.Previous;
                     if (SettingsHelper.Settings.UIProperties.Looping)
                     {
-                        next = (index + indexChange + pics.Count) % pics.Count;
+                        next = (index + indexChange + Pics.Count) % Pics.Count;
                     }
                     else
                     {
@@ -72,9 +78,9 @@ namespace PicView.Avalonia.Navigation
                         {
                             return 0;
                         }
-                        if (newIndex >= pics.Count)
+                        if (newIndex >= Pics.Count)
                         {
-                            return pics.Count - 1;
+                            return Pics.Count - 1;
                         }
                         next = newIndex;
                     }
@@ -83,9 +89,9 @@ namespace PicView.Avalonia.Navigation
 
                 case NavigateTo.First:
                 case NavigateTo.Last:
-                    if (pics.Count > PreLoader.MaxCount)
+                    if (Pics.Count > PreLoader.MaxCount)
                         PreLoader.Clear();
-                    next = navigateTo == NavigateTo.First ? 0 : pics.Count - 1;
+                    next = navigateTo == NavigateTo.First ? 0 : Pics.Count - 1;
                     break;
 
                 default: return -1;
@@ -93,21 +99,21 @@ namespace PicView.Avalonia.Navigation
             return next;
         }
 
-        private void OnFileRenamed(RenamedEventArgs e, List<string> pics)
+        private void OnFileRenamed(RenamedEventArgs e)
         {
             if (e.FullPath.IsSupported() == false)
             {
-                if (pics.Contains(e.OldFullPath))
+                if (Pics.Contains(e.OldFullPath))
                 {
-                    pics.Remove(e.OldFullPath);
+                    Pics.Remove(e.OldFullPath);
                 }
                 return;
             }
             if (_running) { return; }
             _running = true;
 
-            var oldIndex = pics.IndexOf(e.OldFullPath);
-            var sameFile = Index == pics.IndexOf(e.OldFullPath);
+            var oldIndex = Pics.IndexOf(e.OldFullPath);
+            var sameFile = Index == Pics.IndexOf(e.OldFullPath);
 
             var fileInfo = new FileInfo(e.FullPath);
             if (fileInfo.Exists == false) { return; }
@@ -117,9 +123,9 @@ namespace PicView.Avalonia.Navigation
 
             if (fileInfo.Exists == false) { return; }
 
-            pics = newList;
+            Pics = newList;
 
-            var index = pics.IndexOf(e.FullPath);
+            var index = Pics.IndexOf(e.FullPath);
             if (index < 0) { return; }
 
             if (fileInfo.Exists == false)
@@ -127,7 +133,7 @@ namespace PicView.Avalonia.Navigation
                 return;
             }
 
-            PreLoader.Remove(index, pics);
+            PreLoader.Remove(index, Pics);
 
             _running = false;
             //FileHistoryNavigation.Rename(e.OldFullPath, e.FullPath);
@@ -136,46 +142,37 @@ namespace PicView.Avalonia.Navigation
             FileRenamed?.Invoke(this, e);
         }
 
-        private void OnFileDeleted(FileSystemEventArgs e, List<string> pics)
+        private void OnFileDeleted(FileSystemEventArgs e)
         {
             if (e.FullPath.IsSupported() == false)
             {
                 return;
             }
 
-            if (pics.Contains(e.FullPath) == false)
+            if (Pics.Contains(e.FullPath) == false)
             {
                 return;
             }
 
             if (_running) { return; }
             _running = true;
-            var sameFile = Index == pics.IndexOf(e.FullPath);
-            if (!pics.Remove(e.FullPath))
+            var sameFile = Index == Pics.IndexOf(e.FullPath);
+            if (!Pics.Remove(e.FullPath))
             {
                 return;
             }
             Index--;
 
-            PreLoader.Remove(Index, pics);
-
-            if (sameFile)
-            {
-                //await Navigation.GoToNextImage(NavigateTo.Previous).ConfigureAwait(false);
-            }
-            else
-            {
-                //await UpdateTitle(Navigation.FolderIndex);
-            }
+            PreLoader.Remove(Index, Pics);
             _running = false;
 
             //FileHistoryNavigation.Remove(e.FullPath);
             FileDeleted?.Invoke(this, sameFile);
         }
 
-        private async Task OnFileAdded(FileSystemEventArgs e, List<string> pics)
+        private async Task OnFileAdded(FileSystemEventArgs e)
         {
-            if (pics.Contains(e.FullPath))
+            if (Pics.Contains(e.FullPath))
             {
                 return;
             }
@@ -189,30 +186,30 @@ namespace PicView.Avalonia.Navigation
             if (_running) { return; }
             _running = true;
 
-            var newList = await Task.FromResult(FileListHelper.RetrieveFiles(fileInfo).ToList()); // TODO update to sync with platform
+            var newList = await Task.FromResult(_platformService.GetFiles(fileInfo));
             if (newList.Count == 0) { return; }
-            if (newList.Count == pics.Count) { return; }
+            if (newList.Count == Pics.Count) { return; }
 
             if (fileInfo.Exists == false) { return; }
 
-            pics = newList;
+            Pics = newList;
 
             _running = false;
 
-            var index = pics.IndexOf(e.FullPath);
+            var index = Pics.IndexOf(e.FullPath);
             if (index < 0) { return; }
 
             var nextIndex = index + 1;
-            if (index >= pics.Count)
+            if (index >= Pics.Count)
             {
                 nextIndex = 0;
             }
             var prevIndex = index - 1;
             if (prevIndex < 0)
             {
-                prevIndex = pics.Count - 1;
+                prevIndex = Pics.Count - 1;
             }
-            if (PreLoader.Contains(index, pics) || PreLoader.Contains(nextIndex, pics) || PreLoader.Contains(prevIndex, pics))
+            if (PreLoader.Contains(index, Pics) || PreLoader.Contains(nextIndex, Pics) || PreLoader.Contains(prevIndex, Pics))
             {
                 PreLoader.Clear();
             }

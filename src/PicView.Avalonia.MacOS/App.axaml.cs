@@ -1,22 +1,23 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.MacOS.Views;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
-using System.Runtime;
+using PicView.Core.Config;
+using PicView.Core.FileHandling;
+using PicView.Core.Localization;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Threading.Tasks;
-using PicView.Core.Config;
-using PicView.Core.Localization;
-using Avalonia.Controls;
-using PicView.Avalonia.Helpers;
-using PicView.Core.FileHandling;
-using ReactiveUI;
 
 namespace PicView.Avalonia.MacOS;
 
-public partial class App : Application
+public partial class App : Application, IPlatformSpecificService
 {
     public override void Initialize()
     {
@@ -42,11 +43,7 @@ public partial class App : Application
             return;
         }
         var w = desktop.MainWindow = new MacMainWindow();
-        var vm = new MainViewModel();
-        vm.RetrieveFilesCommand = ReactiveCommand.Create(() =>
-        {
-            vm.Pics = FileListHelper.RetrieveFiles(vm.FileInfo).ToList();
-        });
+        var vm = new MainViewModel(this);
         w.DataContext = vm;
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
@@ -64,5 +61,21 @@ public partial class App : Application
         w.Show();
         await vm.StartUpTask();
         base.OnFrameworkInitializationCompleted();
+    }
+
+    public void SetCursorPos(int x, int y)
+    {
+        // TODO: Implement SetCursorPos
+    }
+
+    public List<string> GetFiles(FileInfo fileInfo)
+    {
+        var files = FileListHelper.RetrieveFiles(fileInfo);
+        return SortHelper.SortIEnumerable(files, this);
+    }
+
+    public int CompareStrings(string str1, string str2)
+    {
+        return string.CompareOrdinal(str1, str2);
     }
 }

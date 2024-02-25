@@ -1,16 +1,13 @@
-﻿using PicView.Core.Config;
+﻿using PicView.Avalonia.Services;
+using PicView.Core.Config;
 using PicView.Core.FileHandling;
 
-namespace PicView.Windows.FileHandling;
+namespace PicView.Avalonia.Helpers;
 
-public static class GetFileList
+public static class SortHelper
 {
-    public static List<string> Get(FileInfo fileInfo)
+    public static List<string> SortIEnumerable(IEnumerable<string> files, IPlatformSpecificService platformService)
     {
-        if (fileInfo == null)
-            return [];
-
-        var files = FileListHelper.RetrieveFiles(fileInfo);
         var sortFilesBy = FileListHelper.GetSortOrder();
 
         switch (sortFilesBy)
@@ -20,11 +17,11 @@ public static class GetFileList
                 var list = files.ToList();
                 if (SettingsHelper.Settings.Sorting.Ascending)
                 {
-                    list.Sort(NativeMethods.StrCmpLogicalW);
+                    list.Sort(platformService.CompareStrings);
                 }
                 else
                 {
-                    list.Sort((x, y) => NativeMethods.StrCmpLogicalW(y, x));
+                    list.Sort((x, y) => platformService.CompareStrings(y, x));
                 }
 
                 return list;

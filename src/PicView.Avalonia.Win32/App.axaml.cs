@@ -3,18 +3,23 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Views;
 using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.Core.Localization;
-using ReactiveUI;
+using System.Runtime;
+using SortHelper = PicView.Avalonia.Helpers.SortHelper;
 
 namespace PicView.Avalonia.Win32;
 
-public class App : Application
+public class App : Application, IPlatformSpecificService
 {
     public override void Initialize()
     {
+        ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
+        ProfileOptimization.StartProfile("ProfileOptimization");
         AvaloniaXamlLoader.Load(this);
     }
 
@@ -35,11 +40,7 @@ public class App : Application
             return;
         }
         var w = desktop.MainWindow = new WinMainWindow();
-        var vm = new MainViewModel();
-        vm.RetrieveFilesCommand = ReactiveCommand.Create(() =>
-        {
-            vm.Pics = Windows.FileHandling.GetFileList.Get(vm.FileInfo);
-        });
+        var vm = new MainViewModel(this);
         w.DataContext = vm;
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
@@ -57,5 +58,21 @@ public class App : Application
         w.Show();
         await vm.StartUpTask();
         base.OnFrameworkInitializationCompleted();
+    }
+
+    public void SetCursorPos(int x, int y)
+    {
+        Windows.NativeMethods.SetCursorPos(x, y);
+    }
+
+    public List<string> GetFiles(FileInfo fileInfo)
+    {
+        var files = FileListHelper.RetrieveFiles(fileInfo);
+        return SortHelper.SortIEnumerable(files, this);
+    }
+
+    public int CompareStrings(string str1, string str2)
+    {
+        return Windows.NativeMethods.StrCmpLogicalW(str1, str2);
     }
 }
