@@ -32,7 +32,7 @@ internal static class LoadContextMenus
         //     Open              \\
         ///////////////////////////
         var openCm = (MenuItem)MainContextMenu.Items[0];
-        openCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " O";
+        openCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + O";
         openCm.Click += async (_, _) => await OpenAsync().ConfigureAwait(false);
         openCm.Header = TranslationHelper.GetTranslation("Open");
 
@@ -40,7 +40,7 @@ internal static class LoadContextMenus
         //     Save             \\
         ///////////////////////////
         var saveCm = (MenuItem)MainContextMenu.Items[1];
-        saveCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " S";
+        saveCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + S";
         saveCm.Click += async (s, x) =>
             await SaveFilesAsync(SettingsHelper.Settings.UIProperties.ShowFileSavingDialog).ConfigureAwait(false);
         saveCm.Header = TranslationHelper.GetTranslation("Save");
@@ -49,7 +49,7 @@ internal static class LoadContextMenus
         //       Print          \\\
         ///////////////////////////
         var printCm = (MenuItem)MainContextMenu.Items[2];
-        printCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " P";
+        printCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + P";
         printCm.Click += (s, x) => Print(Pics[FolderIndex]);
         printCm.Header = TranslationHelper.GetTranslation("Print");
 
@@ -57,7 +57,7 @@ internal static class LoadContextMenus
         //     Open With        \\\
         ///////////////////////////
         var openWcm = (MenuItem)MainContextMenu.Items[3];
-        openWcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " E";
+        openWcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + E";
         openWcm.Click += (_, _) => OpenWith();
         openWcm.Header = TranslationHelper.GetTranslation("OpenWith");
 
@@ -210,7 +210,7 @@ internal static class LoadContextMenus
 
         // ToogleUI
         var ToogleUIMenu = (MenuItem)settingsCm.Items[2];
-        ToogleUIMenu.InputGestureText = TranslationHelper.GetTranslation("Alt") + " Z";
+        ToogleUIMenu.InputGestureText = TranslationHelper.GetTranslation("Alt") + " + Z";
         var ToogleUIHeader = (CheckBox)ToogleUIMenu.Header;
         ToogleUIHeader.IsChecked = SettingsHelper.Settings.UIProperties.ShowInterface;
         ToogleUIHeader.Click += (_, _) => HideInterfaceLogic.ToggleInterface();
@@ -320,7 +320,7 @@ internal static class LoadContextMenus
 
         var FileProps = (MenuItem)ImageChoices.Items[1];
         FileProps.Click += (_, _) => FileProperties.ShowFileProperties();
-        FileProps.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " I";
+        FileProps.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + I";
         FileProps.Header = TranslationHelper.GetTranslation("FileProperties");
 
         // 2 = seperator
@@ -349,7 +349,7 @@ internal static class LoadContextMenus
 
         // Copy file
         var copyFileCm = (MenuItem)CopyCm.Items[0];
-        copyFileCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " C";
+        copyFileCm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + C";
         copyFileCm.Click += (_, _) => CopyPaste.CopyFile();
         copyFileCm.Header = TranslationHelper.GetTranslation("CopyFile");
 
@@ -394,7 +394,7 @@ internal static class LoadContextMenus
         ///   Cut File         \\\\
         ///////////////////////////
         var Cutcm = (MenuItem)MainContextMenu.Items[15];
-        Cutcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " X";
+        Cutcm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + X";
         Cutcm.Click += (_, _) =>
         {
             MainContextMenu.IsOpen = false;
@@ -406,7 +406,7 @@ internal static class LoadContextMenus
         ///   Paste File       \\\\
         ///////////////////////////
         var pastecm = (MenuItem)MainContextMenu.Items[16];
-        pastecm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " V";
+        pastecm.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + V";
         pastecm.Click += async delegate
         {
             MainContextMenu.IsOpen = false;
