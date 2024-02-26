@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
@@ -105,6 +106,7 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? OptimizeImageCommand { get; }
         public ReactiveCommand<int, Unit>? ResizeCommand { get; }
+        public ReactiveCommand<int, Unit>? ConvertCommand { get; }
 
         #endregion Commands
 
@@ -1314,8 +1316,39 @@ namespace PicView.Avalonia.ViewModels
 
         private async Task ResizeImageByPercentage(int percentage)
         {
-            await ImageFileHelper.ResizeImageByPercentage(FileInfo, percentage);
-            RefreshTitle();
+            SetLoadingTitle();
+            var success = await ConversionHelper.ResizeImageByPercentage(FileInfo, percentage);
+            if (success)
+            {
+                ImageIterator?.PreLoader.Remove(ImageIterator.Index, ImageIterator.Pics);
+                await LoadPicAtIndex(ImageIterator.Index);
+            }
+            else
+            {
+                SetTitle();
+            }
+        }
+
+        private async Task ConvertFileExtension(int index)
+        {
+            if (FileInfo is null)
+            {
+                return;
+            }
+
+            if (ImageIterator is not null)
+            {
+                ImageIterator.IsFileBeingRenamed = true;
+            }
+            var newPath = await ConversionHelper.ConvertTask(FileInfo, index);
+            if (!string.IsNullOrWhiteSpace(newPath))
+            {
+                await LoadPicFromString(newPath);
+            }
+            if (ImageIterator is not null)
+            {
+                ImageIterator.IsFileBeingRenamed = false;
+            }
         }
 
         public async Task StartUpTask()
@@ -1633,7 +1666,6 @@ namespace PicView.Avalonia.ViewModels
                     catch (Exception e)
                     {
                         Trace.WriteLine(e);
-                        throw;
                     }
                 });
                 RefreshTitle();
@@ -1721,6 +1753,7 @@ namespace PicView.Avalonia.ViewModels
             });
 
             ResizeCommand = ReactiveCommand.CreateFromTask<int>(ResizeImageByPercentage);
+            ConvertCommand = ReactiveCommand.CreateFromTask<int>(ConvertFileExtension);
 
             DuplicateFileCommand = ReactiveCommand.Create(() =>
             {

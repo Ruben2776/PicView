@@ -58,12 +58,29 @@ public static class SaveImageFileHelper
                         magickImage.Format = MagickFormat.WebP;
                         break;
 
+                    case ".jpeg":
                     case ".jpg":
                         magickImage.Format = MagickFormat.Jpeg;
                         break;
 
                     case ".png":
                         magickImage.Format = MagickFormat.Png;
+                        break;
+
+                    case ".jxl":
+                        magickImage.Format = MagickFormat.Jxl;
+                        break;
+
+                    case ".avif":
+                        magickImage.Format = MagickFormat.Avif;
+                        break;
+
+                    case ".heic":
+                        magickImage.Format = MagickFormat.Heic;
+                        break;
+
+                    case ".heif":
+                        magickImage.Format = MagickFormat.Heif;
                         break;
                 }
             }
@@ -245,11 +262,5 @@ public static class SaveImageFileHelper
         }
 
         return true;
-    }
-
-    public static async Task ResizeImageByPercentage(FileInfo fileInfo, int percentage, string? destination = null)
-    {
-        var magickPercentage = new Percentage(percentage);
-        await ResizeImageAsync(fileInfo, 0, 0, 100, magickPercentage, destination).ConfigureAwait(false);
     }
 }

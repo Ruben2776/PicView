@@ -310,6 +310,7 @@
                         Text="{Binding ConvertTo}"
                         TextAlignment="Center" />
                     <ComboBox
+                        x:Name="ConversionComboBox"
                         Width="130"
                         Padding="5,7,0,7"
                         Background="{StaticResource SecondaryBackgroundColor}"
@@ -318,18 +319,21 @@
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         SelectedIndex="0">
                         <ComboBoxItem Content="{Binding NoConversion}" />
-                        <ComboBoxItem Name="png" Content=".png" />
-                        <ComboBoxItem Name="jpg" Content=".jpg" />
-                        <ComboBoxItem Name="webp" Content=".webp" />
-                        <ComboBoxItem Name="avif" Content=".avif" />
-                        <ComboBoxItem Name="heic" Content=".heic" />
+                        <ComboBoxItem Content=".png" />
+                        <ComboBoxItem Content=".jpg" />
+                        <ComboBoxItem Content=".webp" />
+                        <ComboBoxItem Content=".avif" />
+                        <ComboBoxItem Content=".heic" />
+                        <ComboBoxItem Content=".jxl" />
                     </ComboBox>
                     <Button
                         Width="130"
                         Margin="0,12"
                         HorizontalAlignment="Center"
                         Background="{StaticResource SecondaryBackgroundColor}"
-                        Classes="altHover BorderStyle">
+                        Classes="altHover BorderStyle"
+                        Command="{Binding ConvertCommand}"
+                        CommandParameter="{Binding Path=SelectedIndex, ElementName=ConversionComboBox}">
                         <TextBlock
                             Padding="5,7,5,2"
                             Classes="txt"

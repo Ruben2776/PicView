@@ -17,6 +17,8 @@ namespace PicView.Avalonia.Navigation
 
         public List<string> Pics { get; set; }
 
+        public bool IsFileBeingRenamed { get; set; }
+
         public int Index;
         public FileInfo FileInfo;
         public bool Reverse;
@@ -101,6 +103,10 @@ namespace PicView.Avalonia.Navigation
 
         private void OnFileRenamed(RenamedEventArgs e)
         {
+            if (IsFileBeingRenamed)
+            {
+                return;
+            }
             if (e.FullPath.IsSupported() == false)
             {
                 if (Pics.Contains(e.OldFullPath))
@@ -144,6 +150,10 @@ namespace PicView.Avalonia.Navigation
 
         private void OnFileDeleted(FileSystemEventArgs e)
         {
+            if (IsFileBeingRenamed)
+            {
+                return;
+            }
             if (e.FullPath.IsSupported() == false)
             {
                 return;
@@ -172,6 +182,10 @@ namespace PicView.Avalonia.Navigation
 
         private async Task OnFileAdded(FileSystemEventArgs e)
         {
+            if (IsFileBeingRenamed)
+            {
+                return;
+            }
             if (Pics.Contains(e.FullPath))
             {
                 return;
