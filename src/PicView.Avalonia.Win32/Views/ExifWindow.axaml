@@ -51,13 +51,14 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
-                Classes="noBorderHover">
+                Classes="noBorderHover"
+                Command="{Binding DuplicateFileCommand}">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding FileProperties}" />
+                    Text="{Binding DuplicateFile}" />
             </Button>
 
             <Button

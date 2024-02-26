@@ -1835,5 +1835,10 @@ namespace PicView.Avalonia.ViewModels
                     .DisposeWith(disposables);
             });
         }
+
+        public MainViewModel()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

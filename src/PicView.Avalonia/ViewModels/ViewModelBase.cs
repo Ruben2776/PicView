@@ -121,6 +121,15 @@ public class ViewModelBase : ReactiveObject
         ExifVersion = TranslationHelper.GetTranslation("ExifVersion");
         LensMaker = TranslationHelper.GetTranslation("LensMaker");
         LensModel = TranslationHelper.GetTranslation("LensModel");
+        SortFilesBy = TranslationHelper.GetTranslation("SortFilesBy");
+    }
+
+    private string? _sortFilesBy;
+
+    public string? SortFilesBy
+    {
+        get => _sortFilesBy;
+        set => this.RaiseAndSetIfChanged(ref _sortFilesBy, value);
     }
 
     private string? _lensModel;

@@ -25,6 +25,8 @@ public class App : Application, IPlatformSpecificService
 
     public override async void OnFrameworkInitializationCompleted()
     {
+        base.OnFrameworkInitializationCompleted();
+
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -56,8 +58,8 @@ public class App : Application, IPlatformSpecificService
             WindowHelper.InitializeWindowSizeAndPosition(desktop);
         }
         w.Show();
+
         await vm.StartUpTask();
-        base.OnFrameworkInitializationCompleted();
     }
 
     public void SetCursorPos(int x, int y)
