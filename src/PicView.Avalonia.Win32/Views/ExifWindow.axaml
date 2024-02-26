@@ -80,7 +80,8 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover">
+                Classes="noBorderHover"
+                Command="{Binding OptimizeImageCommand}">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -94,7 +95,8 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover">
+                Classes="noBorderHover"
+                Command="{Binding OpenWithCommand}">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -108,7 +110,8 @@
                 Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover">
+                Classes="noBorderHover"
+                Command="{Binding ShowInFolderCommand}">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

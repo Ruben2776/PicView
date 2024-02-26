@@ -24,9 +24,9 @@ namespace PicView.Avalonia.Navigation
 
         private static FileSystemWatcher? _watcher;
         private static bool _running;
-        private readonly IPlatformSpecificService _platformService;
+        private readonly IPlatformSpecificService? _platformService;
 
-        public ImageIterator(FileInfo fileInfo, IPlatformSpecificService platformService)
+        public ImageIterator(FileInfo fileInfo, IPlatformSpecificService? platformService)
         {
             ArgumentNullException.ThrowIfNull(fileInfo);
 

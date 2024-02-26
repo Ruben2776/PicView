@@ -9,6 +9,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.WPF.Shortcuts;
 
@@ -178,7 +179,7 @@ internal static partial class QuickResizeShortcuts
         PreLoader.Remove(Navigation.FolderIndex);
         if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
         {
-            var resize = await ImageSizeFunctions.ResizeImageAsync(fileInfo, width, height, 0)
+            var resize = await SaveImageFileHelper.ResizeImageAsync(fileInfo, width, height, 0)
                 .ConfigureAwait(false);
             if (resize)
             {
@@ -223,7 +224,7 @@ internal static partial class QuickResizeShortcuts
             return false;
         }
 
-        var resize = await ImageSizeFunctions.ResizeImageAsync(fileInfo, 0, 0, 0, new Percentage(percentage))
+        var resize = await SaveImageFileHelper.ResizeImageAsync(fileInfo, 0, 0, 0, new Percentage(percentage))
             .ConfigureAwait(false);
         if (resize)
         {

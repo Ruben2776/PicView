@@ -345,6 +345,7 @@
                         Text="{Binding Resize}"
                         TextAlignment="Center" />
                     <ComboBox
+                        x:Name="PercentageComboBox"
                         Width="130"
                         Padding="5,7,0,7"
                         Background="{StaticResource SecondaryBackgroundColor}"
@@ -355,6 +356,7 @@
                         <ComboBoxItem Content="{Binding NoResize}" />
                         <ComboBoxItem Content="95%" />
                         <ComboBoxItem Content="90%" />
+                        <ComboBoxItem Content="85%" />
                         <ComboBoxItem Content="80%" />
                         <ComboBoxItem Content="75%" />
                         <ComboBoxItem Content="70%" />
@@ -366,13 +368,20 @@
                         <ComboBoxItem Content="40%" />
                         <ComboBoxItem Content="35%" />
                         <ComboBoxItem Content="30%" />
+                        <ComboBoxItem Content="25%" />
+                        <ComboBoxItem Content="20%" />
+                        <ComboBoxItem Content="15%" />
+                        <ComboBoxItem Content="10%" />
+                        <ComboBoxItem Content="5%" />
                     </ComboBox>
                     <Button
                         Width="130"
                         Margin="0,12"
                         HorizontalAlignment="Center"
                         Background="{StaticResource SecondaryBackgroundColor}"
-                        Classes="altHover BorderStyle">
+                        Classes="altHover BorderStyle"
+                        Command="{Binding ResizeCommand}"
+                        CommandParameter="{Binding Path=SelectedIndex, ElementName=PercentageComboBox}">
                         <TextBlock
                             Padding="5,7,5,2"
                             Classes="txt"

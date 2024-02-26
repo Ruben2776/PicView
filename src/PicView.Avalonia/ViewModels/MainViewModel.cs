@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
@@ -35,7 +36,7 @@ namespace PicView.Avalonia.ViewModels
 
         public event EventHandler<ImageModel>? ImageChanged;
 
-        private readonly IPlatformSpecificService _platformService;
+        private readonly IPlatformSpecificService? _platformService;
 
         #region Commands
 
@@ -99,9 +100,11 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? SetExifRating3Command { get; }
         public ICommand? SetExifRating4Command { get; }
         public ICommand? SetExifRating5Command { get; }
-
         public ICommand? OpenGoogleLinkCommand { get; }
         public ICommand? OpenBingLinkCommand { get; }
+
+        public ICommand? OptimizeImageCommand { get; }
+        public ReactiveCommand<int, Unit>? ResizeCommand { get; }
 
         #endregion Commands
 
@@ -1116,6 +1119,13 @@ namespace PicView.Avalonia.ViewModels
             TitleTooltip = titleString[2];
         }
 
+        public void RefreshTitle()
+        {
+            var path = FileInfo.FullName;
+            FileInfo = new FileInfo(path);
+            SetTitle();
+        }
+
         public void ResetTitle()
         {
             WindowTitle = TranslationHelper.GetTranslation("NoImage") + " - PicView";
@@ -1302,6 +1312,12 @@ namespace PicView.Avalonia.ViewModels
             }
         }
 
+        private async Task ResizeImageByPercentage(int percentage)
+        {
+            await ImageFileHelper.ResizeImageByPercentage(FileInfo, percentage);
+            RefreshTitle();
+        }
+
         public async Task StartUpTask()
         {
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -1327,7 +1343,7 @@ namespace PicView.Avalonia.ViewModels
 
         #endregion Methods
 
-        public MainViewModel(IPlatformSpecificService platformSpecificService)
+        public MainViewModel(IPlatformSpecificService? platformSpecificService)
         {
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -1598,6 +1614,31 @@ namespace PicView.Avalonia.ViewModels
                 }
             });
 
+            OptimizeImageCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (FileInfo is null)
+                {
+                    return;
+                }
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        ImageOptimizer imageOptimizer = new()
+                        {
+                            OptimalCompression = true
+                        };
+                        imageOptimizer.LosslessCompress(FileInfo.FullName);
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.WriteLine(e);
+                        throw;
+                    }
+                });
+                RefreshTitle();
+            });
+
             #endregion Image commands
 
             #region File commands
@@ -1675,7 +1716,11 @@ namespace PicView.Avalonia.ViewModels
                 });
             }
 
-            RenameCommand = ReactiveCommand.Create(() => { });
+            RenameCommand = ReactiveCommand.Create(() =>
+            {
+            });
+
+            ResizeCommand = ReactiveCommand.CreateFromTask<int>(ResizeImageByPercentage);
 
             DuplicateFileCommand = ReactiveCommand.Create(() =>
             {
