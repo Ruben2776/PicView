@@ -135,6 +135,15 @@ public class ViewModelBase : ReactiveObject
         CopyImage = TranslationHelper.GetTranslation("CopyImage");
         FileCopyPath = TranslationHelper.GetTranslation("FileCopyPath");
         FileCut = TranslationHelper.GetTranslation("FileCut");
+        CtrlToZoom = TranslationHelper.GetTranslation("CtrlToZoom");
+    }
+
+    private string? _ctrlToZoom;
+
+    public string? CtrlToZoom
+    {
+        get => _ctrlToZoom;
+        set => this.RaiseAndSetIfChanged(ref _ctrlToZoom, value);
     }
 
     private string? _fileCut;

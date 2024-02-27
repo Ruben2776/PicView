@@ -168,7 +168,10 @@
                             Margin="0,8,0,0"
                             Classes="txt"
                             Text="{Binding Width}" />
-                        <TextBox Classes="hover TStyle" Text="{Binding PixelWidth}" />
+                        <TextBox
+                            x:Name="PixelWidthTextBox"
+                            Classes="hover TStyle"
+                            Text="{Binding PixelWidth}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -185,7 +188,10 @@
                             Margin="0,8,0,0"
                             Classes="txt"
                             Text="{Binding Height}" />
-                        <TextBox Classes="hover TStyle" Text="{Binding PixelHeight}" />
+                        <TextBox
+                            x:Name="PixelHeightTextBox"
+                            Classes="hover TStyle"
+                            Text="{Binding PixelHeight}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"

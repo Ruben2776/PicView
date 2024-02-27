@@ -19,6 +19,26 @@ internal static class ConversionHelper
         return await SaveImageFileHelper.ResizeImageAsync(fileInfo, 0, 0, 100, magickPercentage).ConfigureAwait(false);
     }
 
+    internal static async Task<bool> ResizeByWidth(FileInfo fileInfo, double width)
+    {
+        if (width <= 0)
+        {
+            return false;
+        }
+
+        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, (int)width, 0).ConfigureAwait(false);
+    }
+
+    internal static async Task<bool> ResizeByHeight(FileInfo fileInfo, double height)
+    {
+        if (height <= 0)
+        {
+            return false;
+        }
+
+        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, 0, (int)height).ConfigureAwait(false);
+    }
+
     internal static async Task<string> ConvertTask(FileInfo fileInfo, int selectedIndex)
     {
         var currentExtension = fileInfo.Extension;
