@@ -1,4 +1,5 @@
-﻿using PicView.Core.Localization;
+﻿using Avalonia.Controls;
+using PicView.Core.Localization;
 using ReactiveUI;
 
 namespace PicView.Avalonia.ViewModels;
@@ -122,6 +123,114 @@ public class ViewModelBase : ReactiveObject
         LensMaker = TranslationHelper.GetTranslation("LensMaker");
         LensModel = TranslationHelper.GetTranslation("LensModel");
         SortFilesBy = TranslationHelper.GetTranslation("SortFilesBy");
+        FileExtension = TranslationHelper.GetTranslation("FileExtension");
+        CreationTime = TranslationHelper.GetTranslation("CreationTime");
+        Random = TranslationHelper.GetTranslation("Random");
+        Ascending = TranslationHelper.GetTranslation("Ascending");
+        Descending = TranslationHelper.GetTranslation("Descending");
+        RecentFiles = TranslationHelper.GetTranslation("RecentFiles");
+        SetAsWallpaper = TranslationHelper.GetTranslation("SetAsWallpaper");
+        SetAsLockScreenImage = TranslationHelper.GetTranslation("SetAsLockScreenImage");
+        ImageTxt = TranslationHelper.GetTranslation("Image");
+        CopyImage = TranslationHelper.GetTranslation("CopyImage");
+        FileCopyPath = TranslationHelper.GetTranslation("FileCopyPath");
+        FileCut = TranslationHelper.GetTranslation("FileCut");
+    }
+
+    private string? _fileCut;
+
+    public string? FileCut
+    {
+        get => _fileCut;
+        set => this.RaiseAndSetIfChanged(ref _fileCut, value);
+    }
+
+    private string? _fileCopyPath;
+
+    public string? FileCopyPath
+    {
+        get => _fileCopyPath;
+        set => this.RaiseAndSetIfChanged(ref _fileCopyPath, value);
+    }
+
+    private string? _copyImage;
+
+    public string? CopyImage
+    {
+        get => _copyImage;
+        set => this.RaiseAndSetIfChanged(ref _copyImage, value);
+    }
+
+    private string? _imageTxt;
+
+    public string? ImageTxt
+    {
+        get => _imageTxt;
+        set => this.RaiseAndSetIfChanged(ref _imageTxt, value);
+    }
+
+    private string? _setAsLockScreenImage;
+
+    public string? SetAsLockScreenImage
+    {
+        get => _setAsLockScreenImage;
+        set => this.RaiseAndSetIfChanged(ref _setAsLockScreenImage, value);
+    }
+
+    private string? _setAsWallpaper;
+
+    public string? SetAsWallpaper
+    {
+        get => _setAsWallpaper;
+        set => this.RaiseAndSetIfChanged(ref _setAsWallpaper, value);
+    }
+
+    private string? _recentFiles;
+
+    public string? RecentFiles
+    {
+        get => _recentFiles;
+        set => this.RaiseAndSetIfChanged(ref _recentFiles, value);
+    }
+
+    private string? _ascending;
+
+    public string? Ascending
+    {
+        get => _ascending;
+        set => this.RaiseAndSetIfChanged(ref _ascending, value);
+    }
+
+    private string? _descending;
+
+    public string? Descending
+    {
+        get => _descending;
+        set => this.RaiseAndSetIfChanged(ref _descending, value);
+    }
+
+    private string? _random;
+
+    public string? Random
+    {
+        get => _random;
+        set => this.RaiseAndSetIfChanged(ref _random, value);
+    }
+
+    private string? _creationTime;
+
+    public string? CreationTime
+    {
+        get => _creationTime;
+        set => this.RaiseAndSetIfChanged(ref _creationTime, value);
+    }
+
+    private string? _fileExtension;
+
+    public string? FileExtension
+    {
+        get => _fileExtension;
+        set => this.RaiseAndSetIfChanged(ref _fileExtension, value);
     }
 
     private string? _sortFilesBy;

@@ -85,10 +85,13 @@
                         <Path
                             Name="rightArrow"
                             Grid.Column="4"
-                            Margin="10,0,0,0"
+                            Width="8"
+                            Height="8"
+                            Margin="6,0,4,0"
                             VerticalAlignment="Center"
-                            Data="M0,0L4,3.5 0,7z"
-                            Fill="{StaticResource MainIconColor}" />
+                            Data="F1M0.002,31.062L0,0 27.01,15.534z"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
                         <Popup
                             Name="PART_Popup"
                             IsLightDismissEnabled="False"

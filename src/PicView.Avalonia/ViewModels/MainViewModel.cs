@@ -54,6 +54,8 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? PasteCommand { get; private set; }
         public ICommand? CopyFileCommand { get; private set; }
         public ICommand? CopyFilePathCommand { get; private set; }
+        public ICommand? CopyImageCommand { get; private set; }
+        public ICommand? CutCommand { get; private set; }
         public ICommand? ReloadCommand { get; private set; }
         public ICommand? PrintCommand { get; private set; }
         public ICommand? DeleteFileCommand { get; private set; }
@@ -1725,6 +1727,10 @@ namespace PicView.Avalonia.ViewModels
             {
                 await desktop.MainWindow.Clipboard.SetTextAsync(FileInfo?.FullName);
             });
+
+            CopyImageCommand = ReactiveCommand.Create(() => { });
+
+            CutCommand = ReactiveCommand.Create(() => { });
 
             PasteCommand = ReactiveCommand.Create(() => { });
 
