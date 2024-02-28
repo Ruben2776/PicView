@@ -56,4 +56,8 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\ExifWindow.axaml" />
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\SettingsWindow.axaml" />
+  </ItemGroup>
 </Project>

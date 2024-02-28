@@ -36,6 +36,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
+                    Command="{Binding ShowSettingsWindowCommand}"
                     CornerRadius="8,0,0,0"
                     ToolTip.Tip="{Binding ShowAllSettingsWindow}">
                     <StackPanel Orientation="Horizontal">

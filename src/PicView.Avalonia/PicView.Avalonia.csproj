@@ -54,6 +54,9 @@
     <Compile Update="Views\ExifView.axaml.cs">
       <DependentUpon>ExifView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\GeneralSettingsView.axaml.cs">
+      <DependentUpon>GeneralSettingsView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\UC\Buttons\StarOutlineButtons.axaml.cs">
       <DependentUpon>StarOutlineButtons.axaml</DependentUpon>
     </Compile>

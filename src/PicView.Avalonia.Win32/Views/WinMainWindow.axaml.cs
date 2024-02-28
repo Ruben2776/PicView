@@ -16,6 +16,7 @@ public partial class WinMainWindow : Window
     private bool _nextButtonClicked;
     private bool _prevButtonClicked;
     private ExifWindow? _exifWindow;
+    private SettingsWindow? _settingsWindow;
 
     public WinMainWindow()
     {
@@ -114,6 +115,26 @@ public partial class WinMainWindow : Window
                     else
                     {
                         _exifWindow.Activate();
+                    }
+                    wm.CloseMenuCommand.Execute(null);
+                });
+
+                wm.ShowSettingsWindowCommand = ReactiveCommand.Create(() =>
+                {
+                    if (_settingsWindow is null)
+                    {
+                        _settingsWindow = new SettingsWindow
+                        {
+                            DataContext = wm,
+                            WindowStartupLocation = WindowStartupLocation.Manual,
+                            Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
+                        };
+                        _settingsWindow.Show();
+                        _settingsWindow.Closing += (s, e) => _settingsWindow = null;
+                    }
+                    else
+                    {
+                        _settingsWindow.Activate();
                     }
                     wm.CloseMenuCommand.Execute(null);
                 });

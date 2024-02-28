@@ -1,11 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Reactive;
-using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -28,6 +21,12 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
 
 namespace PicView.Avalonia.ViewModels
 {
@@ -96,6 +95,14 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _showExifWindowCommand;
             set => this.RaiseAndSetIfChanged(ref _showExifWindowCommand, value);
+        }
+
+        private ICommand? _showSettingsWindowCommand;
+
+        public ICommand? ShowSettingsWindowCommand
+        {
+            get => _showSettingsWindowCommand;
+            set => this.RaiseAndSetIfChanged(ref _showSettingsWindowCommand, value);
         }
 
         public ICommand? SetExifRating1Command { get; }

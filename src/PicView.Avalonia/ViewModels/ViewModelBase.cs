@@ -136,6 +136,33 @@ public class ViewModelBase : ReactiveObject
         FileCopyPath = TranslationHelper.GetTranslation("FileCopyPath");
         FileCut = TranslationHelper.GetTranslation("FileCut");
         CtrlToZoom = TranslationHelper.GetTranslation("CtrlToZoom");
+        GeneralSettings = TranslationHelper.GetTranslation("GeneralSettings");
+        UISettings = TranslationHelper.GetTranslation("UISettings");
+        Language = TranslationHelper.GetTranslation("Language");
+    }
+
+    private string? _language;
+
+    public string? Language
+    {
+        get => _language;
+        set => this.RaiseAndSetIfChanged(ref _language, value);
+    }
+
+    private string? _UISettings;
+
+    public string? UISettings
+    {
+        get => _UISettings;
+        set => this.RaiseAndSetIfChanged(ref _UISettings, value);
+    }
+
+    private string? _generalSettings;
+
+    public string? GeneralSettings
+    {
+        get => _generalSettings;
+        set => this.RaiseAndSetIfChanged(ref _generalSettings, value);
     }
 
     private string? _ctrlToZoom;
