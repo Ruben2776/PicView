@@ -13,29 +13,31 @@
     BorderThickness="1"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
-    SizeToContent="Width"
+    SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <StackPanel>
+    <Grid>
 
         <Border
+            VerticalAlignment="Top"
             Background="{StaticResource SecondaryBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
-            BorderThickness="0,0,1,1">
-            <DockPanel
-                Height="28"
-                LastChildFill="True"
-                PointerPressed="MoveWindow">
+            BorderThickness="0,0,1,1"
+            DoubleTapped="OnDoubleTapped"
+            PointerPressed="MoveWindow">
+            <Grid Height="28">
 
-                <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="0,0,1,0">
+                <Border
+                    HorizontalAlignment="Left"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0">
                     <Image
                         Width="20"
                         Height="25"
-                        Margin="7,1,7,1"
-                        DockPanel.Dock="Left">
+                        Margin="7,1,7,1">
                         <Image.Source>
                             <DrawingImage>
                                 <DrawingImage.Drawing>
@@ -51,56 +53,14 @@
                     </Image>
                 </Border>
 
-                <Button
-                    Width="35"
-                    Background="{StaticResource MainButtonBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="hover"
-                    Click="Close"
-                    DockPanel.Dock="Right">
-                    <Path
-                        Width="10"
-                        Height="10"
-                        Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
-                        Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
-                </Button>
-
-                <Button
-                    Name="RestoreButton"
-                    Width="35"
-                    Background="{StaticResource MainButtonBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="hover"
-                    Click="Maximize"
-                    DockPanel.Dock="Right">
-                    <Path
-                        Width="12"
-                        Height="12"
-                        Data="M405.34 405.332H106.66V106.668H240V64H106.66C83.191 64 64 83.197 64 106.668v298.664C64 428.803 83.191 448 106.66 448h298.68c23.469 0 42.66-19.197 42.66-42.668V272h-42.66v133.332zM288 64v42.668h87.474L159.999 322.133l29.866 29.866 215.476-215.47V224H448V64H288z"
-                        Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
-                </Button>
-
-                <Button
-                    Width="35"
-                    Background="{StaticResource MainButtonBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="1,0,1,0"
-                    Classes="hover"
-                    Click="Minimize"
-                    DockPanel.Dock="Right">
-                    <Viewbox Width="12" Height="12">
-                        <Path
-                            Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z"
-                            Fill="{StaticResource MainIconColor}"
-                            Stretch="Fill" />
-                    </Viewbox>
-                </Button>
-                <TabControl Margin="0" Padding="0">
-                    <TabItem x:Name="GeneralSettingsTabItem" PointerPressed="MoveWindow">
+                <TabControl
+                    Margin="28,0,97,0"
+                    Padding="0"
+                    HorizontalAlignment="Center">
+                    <TabItem
+                        x:Name="GeneralSettingsTabItem"
+                        DoubleTapped="OnDoubleTapped"
+                        PointerPressed="MoveWindow">
 
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -118,7 +78,7 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem>
+                    <TabItem x:Name="UISettingsTabItem" PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -133,7 +93,7 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem PointerPressed="MoveWindow">
+                    <TabItem x:Name="LanguageTabItem" PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -148,7 +108,7 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem PointerPressed="MoveWindow">
+                    <TabItem x:Name="ShortcutsTabItem" PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -164,15 +124,79 @@
                         </TabItem.Header>
                     </TabItem>
                 </TabControl>
-            </DockPanel>
+
+                <Button
+                    Width="35"
+                    Margin="0,0,70,0"
+                    HorizontalAlignment="Right"
+                    Background="{StaticResource MainButtonBackgroundColor}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="1,0,1,0"
+                    Classes="hover"
+                    Click="Minimize">
+                    <Viewbox Width="12" Height="12">
+                        <Path
+                            Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z"
+                            Fill="{StaticResource MainIconColor}"
+                            Stretch="Fill" />
+                    </Viewbox>
+                </Button>
+
+                <Button
+                    Name="RestoreButton"
+                    Width="35"
+                    Margin="0,0,35,0"
+                    HorizontalAlignment="Right"
+                    Background="{StaticResource MainButtonBackgroundColor}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Classes="hover"
+                    Click="Maximize">
+                    <Path
+                        Width="12"
+                        Height="12"
+                        Data="M405.34 405.332H106.66V106.668H240V64H106.66C83.191 64 64 83.197 64 106.668v298.664C64 428.803 83.191 448 106.66 448h298.68c23.469 0 42.66-19.197 42.66-42.668V272h-42.66v133.332zM288 64v42.668h87.474L159.999 322.133l29.866 29.866 215.476-215.47V224H448V64H288z"
+                        Fill="{StaticResource MainIconColor}"
+                        Stretch="Fill" />
+                </Button>
+
+                <Button
+                    Width="35"
+                    HorizontalAlignment="Right"
+                    Background="{StaticResource MainButtonBackgroundColor}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Classes="hover"
+                    Click="Close">
+                    <Path
+                        Width="10"
+                        Height="10"
+                        Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                        Fill="{StaticResource MainIconColor}"
+                        Stretch="Fill" />
+                </Button>
+            </Grid>
         </Border>
-        <Grid PointerPressed="MoveWindow">
-            <ScrollViewer
-                Height="{Binding $parent[StackPanel].Bounds.Height}"
-                Background="{StaticResource NoisyTexture}"
-                IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
-                <views:GeneralSettingsView />
-            </ScrollViewer>
-        </Grid>
-    </StackPanel>
+
+        <ScrollViewer
+            Margin="0,29,0,0"
+            Background="{StaticResource NoisyTexture}"
+            IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
+            <views:GeneralSettingsView />
+        </ScrollViewer>
+
+        <ScrollViewer
+            Margin="0,29,0,0"
+            Background="{StaticResource NoisyTexture}"
+            IsVisible="{Binding Path=IsSelected, ElementName=UISettingsTabItem}">
+            <views:UISettingsView />
+        </ScrollViewer>
+
+        <ScrollViewer
+            Margin="0,29,0,0"
+            Background="{StaticResource NoisyTexture}"
+            IsVisible="{Binding Path=IsSelected, ElementName=ShortcutsTabItem}">
+            <views:ShortcutsView />
+        </ScrollViewer>
+    </Grid>
 </Window>

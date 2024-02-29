@@ -9,6 +9,10 @@ public partial class SettingsWindow : Window
     public SettingsWindow()
     {
         InitializeComponent();
+        Loaded += (sender, e) =>
+        {
+            MinWidth = Width;
+        };
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)
@@ -32,5 +36,10 @@ public partial class SettingsWindow : Window
     private void Maximize(object? sender, RoutedEventArgs e)
     {
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    }
+
+    private void OnDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        Maximize(sender, e);
     }
 }
