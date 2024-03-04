@@ -27,6 +27,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
 {

@@ -66,7 +66,7 @@
     <Compile Update="Views\UC\Buttons\StarOutlineButtons.axaml.cs">
       <DependentUpon>StarOutlineButtons.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\UC\ImageViewer.axaml.cs">
+    <Compile Update="Views\ImageViewer.axaml.cs">
       <DependentUpon>ImageViewer.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\UC\Menus\ToolsMenu.axaml.cs">

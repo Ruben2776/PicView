@@ -3,10 +3,9 @@
         <Window />
     </Design.PreviewWith>
     <ControlTheme x:Key="{x:Type Window}" TargetType="Window">
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-        <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="TransparencyBackgroundFallback" Value="{DynamicResource HighlightForegroundColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}" />
         <Setter Property="Template">
             <ControlTemplate>

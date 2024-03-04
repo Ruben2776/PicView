@@ -26,7 +26,7 @@
                     Height="47"
                     Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="1"
+                    BorderThickness="0,0,0,1"
                     CornerRadius="8,8,0,0" />
 
                 <Button
@@ -153,15 +153,6 @@
                         Fill="{StaticResource MainIconColor}"
                         Stretch="Fill" />
                 </Button>
-
-                <Rectangle
-                    Canvas.Left="1"
-                    Canvas.Top="46"
-                    Width="275"
-                    Height="1"
-                    Stroke="{StaticResource MainBorderColor}"
-                    StrokeThickness="1"
-                    ZIndex="1" />
 
                 <Button
                     Canvas.Left="7"

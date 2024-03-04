@@ -20,6 +20,7 @@
         Background="{StaticResource SecondaryBackgroundColor}"
         BorderBrush="{StaticResource MainBorderColor}"
         BorderThickness="0,1,0,0"
+        CornerRadius="0,0,8,8"
         PointerPressed="MoveWindow">
         <Grid>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">

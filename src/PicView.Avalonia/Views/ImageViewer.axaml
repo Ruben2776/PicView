@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="PicView.Avalonia.Views.UC.ImageViewer"
+    x:Class="PicView.Avalonia.Views.ImageViewer"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,19 +9,26 @@
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
     DragDrop.AllowDrop="True"
+    PointerPressed="InputElement_OnPointerPressed"
     mc:Ignorable="d">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <ScrollViewer x:Name="ImageScrollViewer" VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
-        <Border>
+    <ScrollViewer
+        x:Name="ImageScrollViewer"
+        Focusable="False"
+        ScrollChanged="ImageScrollViewer_OnScrollChanged"
+        VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
+        <Border
+            x:Name="ImageZoomBorder"
+            MaxWidth="{Binding ImageWidth}"
+            MaxHeight="{Binding ImageHeight}">
             <Image
-                Width="{Binding ImageWidth}"
-                Height="{Binding ImageHeight}"
+                x:Name="MainImage"
                 RenderOptions.BitmapInterpolationMode="HighQuality"
                 Source="{Binding Image}"
-                Stretch="Fill">
+                Stretch="Uniform">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleX="{Binding ScaleX}">

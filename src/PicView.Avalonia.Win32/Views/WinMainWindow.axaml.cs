@@ -8,6 +8,7 @@ using PicView.Core.FileHandling;
 using ReactiveUI;
 using System.Reactive.Concurrency;
 using PicView.Avalonia.Helpers;
+using PicView.Core.Calculations;
 
 namespace PicView.Avalonia.Win32.Views;
 

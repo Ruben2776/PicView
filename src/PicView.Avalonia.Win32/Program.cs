@@ -22,7 +22,17 @@ internal class Program
             .LogToTrace()
 #endif
             .UseReactiveUI()
+            .With(new SkiaOptions { MaxGpuResourceSizeBytes = 256_000_000 })
             .UseWin32()
+            .With(new Win32PlatformOptions
+            {
+                CompositionMode = new[]
+                    {
+                        Win32CompositionMode.WinUIComposition
+                    },
+                OverlayPopups = true,
+                WinUICompositionBackdropCornerRadius = 8
+            })
             .UseSkia();
     }
 }

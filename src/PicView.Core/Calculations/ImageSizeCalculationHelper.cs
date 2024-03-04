@@ -47,8 +47,8 @@ public static class ImageSizeCalculationHelper
         var borderSpaceHeight = fullscreen ? 0 : uiTopSize + uiBottomSize + galleryHeight;
         var borderSpaceWidth = fullscreen ? 0 : padding;
 
-        var workAreaWidth = (monitorWidth * dpiScaling) - borderSpaceWidth;
-        var workAreaHeight = (monitorHeight * dpiScaling) - borderSpaceHeight;
+        var workAreaWidth = monitorWidth * dpiScaling - borderSpaceWidth;
+        var workAreaHeight = monitorHeight * dpiScaling - borderSpaceHeight;
 
         if (autoFit)
         {

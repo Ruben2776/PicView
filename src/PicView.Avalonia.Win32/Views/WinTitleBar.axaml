@@ -20,11 +20,15 @@
     <Border
         Background="{StaticResource MainButtonBackgroundColor}"
         BorderBrush="{StaticResource MainBorderColor}"
-        BorderThickness="0,1,0,1"
+        BorderThickness="0,0,0,1"
+        CornerRadius="8,8,0,0"
         PointerPressed="MoveWindow">
         <DockPanel LastChildFill="True">
 
-            <Border BorderBrush="{StaticResource MainBorderColor}" BorderThickness="0,0,1,0">
+            <Border
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="0,0,1,0"
+                CornerRadius="8,0,0,0">
                 <Image
                     Width="20"
                     Height="25"
@@ -108,6 +112,7 @@
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{Binding ExitCommand}"
+                CornerRadius="0,8,0,0"
                 DockPanel.Dock="Right">
                 <Path
                     Width="10"
