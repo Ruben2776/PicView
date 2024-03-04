@@ -226,7 +226,7 @@
             Fill="{StaticResource MenuBackgroundColor}" />
         <Polygon
             Margin="217,-3.5,0,0"
-            Fill="{StaticResource MainBackgroundColor}"
+            Fill="{StaticResource MenuBackgroundColor}"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource MainBorderColor}"
             StrokeThickness="1" />

@@ -1,16 +1,17 @@
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Media.Transformation;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
-using PicView.Core.ImageTransformations;
 using PicView.Core.Navigation;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 using Point = Avalonia.Point;
 
 namespace PicView.Avalonia.Views;
@@ -20,8 +21,10 @@ public partial class ImageViewer : UserControl
     private static ScaleTransform? _scaleTransform;
     private static TranslateTransform? _translateTransform;
 
-    private static Point _origin;
     private static Point _start;
+    private static Point _origin;
+
+    private bool _captured;
 
     public ImageViewer()
     {
@@ -100,9 +103,6 @@ public partial class ImageViewer : UserControl
         {
             if (ctrl)
             {
-                //ImageZoomBorder.Zoom(e);
-                //return;
-                SetPointerPosition();
                 if (reverse)
                 {
                     ZoomOut(e);
@@ -125,7 +125,6 @@ public partial class ImageViewer : UserControl
             }
             else
             {
-                SetPointerPosition();
                 if (reverse)
                 {
                     ZoomOut(e);
@@ -136,17 +135,7 @@ public partial class ImageViewer : UserControl
                 }
             }
         }
-
         return;
-
-        void SetPointerPosition()
-        {
-            e.Pointer.Capture(this);
-            _start = e.GetPosition(this);
-            var x = _translateTransform?.X ?? 0;
-            var y = _translateTransform?.Y ?? 0;
-            _origin = new Point(x, y);
-        }
 
         async Task ScrollOrNavigate()
         {
@@ -200,6 +189,59 @@ public partial class ImageViewer : UserControl
 
         _translateTransform = (TranslateTransform)((TransformGroup)ImageZoomBorder.RenderTransform)
             .Children.First(tr => tr is TranslateTransform);
+        ImageZoomBorder.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
+    }
+
+    internal void PanImage(object sender, PointerEventArgs e)
+    {
+        //if (_scaleTransform.ScaleX is 1)
+        //{
+        //    return;
+        //}
+
+        //// Drag image by modifying X,Y coordinates
+        //var dragMousePosition = _start - e.GetPosition(this);
+
+        //var newXproperty = _origin.X - dragMousePosition.X;
+        //var newYproperty = _origin.Y - dragMousePosition.Y;
+
+        //// Keep panning it in bounds
+
+        //var actualScrollWidth = Bounds.Width;
+        //var actualBorderWidth = ImageZoomBorder.Width;
+        //var actualScrollHeight = Bounds.Height;
+        //var actualBorderHeight = ImageZoomBorder.Height;
+
+        //var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
+        //var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
+        //var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
+        //var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
+
+        //if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
+        //{
+        //    newXproperty = maxX;
+        //}
+
+        //if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
+        //{
+        //    newYproperty = maxY;
+        //}
+
+        //if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
+        //{
+        //    newXproperty = 0;
+        //}
+
+        //if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+        //{
+        //    newYproperty = 0;
+        //}
+
+        //// TODO Don't pan image out of screen border
+        //_translateTransform.X = newXproperty;
+        //_translateTransform.Y = newYproperty;
+
+        //e.Handled = true;
     }
 
     public void ZoomIn(PointerWheelEventArgs e)
@@ -210,47 +252,6 @@ public partial class ImageViewer : UserControl
     public void ZoomOut(PointerWheelEventArgs e)
     {
         ZoomTo(e, false);
-    }
-
-    public void ZoomTo(double zoomValue)
-    {
-        var absoluteX = _start.X * _scaleTransform.ScaleX + _translateTransform.X;
-        var absoluteY = _start.Y * _scaleTransform.ScaleY + _translateTransform.Y;
-
-        var newTranslateValueX = Math.Abs(zoomValue - 1) > .1 ? absoluteX - _start.X * zoomValue : 0;
-        var newTranslateValueY = Math.Abs(zoomValue - 1) > .1 ? absoluteY - _start.Y * zoomValue : 0;
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _scaleTransform.ScaleX = zoomValue;
-            _scaleTransform.ScaleY = zoomValue;
-            _translateTransform.X = newTranslateValueX;
-            _translateTransform.Y = newTranslateValueY;
-        }, DispatcherPriority.Normal);
-
-        //var duration = TimeSpan.FromSeconds(.25);
-
-        //var anim = new Animation
-        //{
-        //    Duration = duration,
-        //    Children =
-        //    {
-        //        new KeyFrame
-        //        {
-        //            Cue = Cue.Parse(zoomValue.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture),
-        //            Setters =
-        //            {
-        //                new Setter { Property = ScaleTransform.ScaleXProperty, Value = zoomValue },
-        //                new Setter { Property = ScaleTransform.ScaleYProperty, Value = zoomValue },
-        //                new Setter { Property = TranslateTransform.XProperty, Value = newTranslateValueX },
-        //                new Setter { Property = TranslateTransform.YProperty, Value = newTranslateValueY },
-        //            },
-        //        }
-        //    }
-        //};
-        //anim.RunAsync(ImageZoomBorder);
-        //while (anim.IsAnimating(ScaleTransform.ScaleXProperty))
-        //{
-        //}
     }
 
     public void ZoomTo(PointerWheelEventArgs e, bool isZoomIn)
@@ -284,43 +285,112 @@ public partial class ImageViewer : UserControl
 
         currentZoom += zoomSpeed;
         currentZoom = Math.Max(0.09, currentZoom);
-        ZoomTo(currentZoom);
+        ZoomTo(e, currentZoom, true);
     }
 
-    public void ResetZoom(bool animate)
+    public void ZoomTo(PointerWheelEventArgs e, double zoomValue, bool enableAnimations)
     {
-        if (animate)
+        if (_scaleTransform == null || _translateTransform == null)
         {
-            if (Dispatcher.UIThread.CheckAccess())
-            {
-                Set();
-            }
-            else
-            {
-                Dispatcher.UIThread.InvokeAsync(Set, DispatcherPriority.Normal);
-            }
+            return;
+        }
+
+        if (enableAnimations)
+        {
+            _scaleTransform.Transitions ??=
+            [
+                new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.25) },
+                new DoubleTransition { Property = ScaleTransform.ScaleYProperty, Duration = TimeSpan.FromSeconds(.25) }
+            ];
+            _translateTransform.Transitions ??=
+            [
+                new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.25) },
+                new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.25) }
+            ];
         }
         else
         {
-            if (Dispatcher.UIThread.CheckAccess())
+            _scaleTransform.Transitions = null;
+            _translateTransform.Transitions = null;
+        }
+
+        var point = e.GetPosition(this);
+
+        var absoluteX = point.X * _scaleTransform.ScaleX + _translateTransform.X;
+        var absoluteY = point.Y * _scaleTransform.ScaleY + _translateTransform.Y;
+
+        var newTranslateValueX = Math.Abs(zoomValue - 1) > .1 ? absoluteX - point.X * zoomValue : 0;
+        var newTranslateValueY = Math.Abs(zoomValue - 1) > .1 ? absoluteY - point.Y * zoomValue : 0;
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _scaleTransform.ScaleX = zoomValue;
+            _scaleTransform.ScaleY = zoomValue;
+            _translateTransform.X = newTranslateValueX;
+            _translateTransform.Y = newTranslateValueY;
+        }, DispatcherPriority.Normal);
+    }
+
+    public void ResetZoom(bool enableAnimations)
+    {
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (enableAnimations)
             {
-                Set();
+                _scaleTransform.Transitions ??=
+                [
+                    new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.25) },
+                    new DoubleTransition { Property = ScaleTransform.ScaleYProperty, Duration = TimeSpan.FromSeconds(.25) }
+                ];
+                _translateTransform.Transitions ??=
+                [
+                    new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.25) },
+                    new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.25) }
+                ];
             }
             else
             {
-                Dispatcher.UIThread.InvokeAsync(Set, DispatcherPriority.Normal);
+                _scaleTransform.Transitions = null;
+                _translateTransform.Transitions = null;
             }
-        }
 
-        return;
-
-        void Set()
-        {
             _scaleTransform.ScaleX = 1;
             _scaleTransform.ScaleY = 1;
             _translateTransform.X = 0;
             _translateTransform.Y = 0;
+        }, DispatcherPriority.Normal);
+    }
+
+    public void Pan(PointerEventArgs e, bool enableAnimations)
+    {
+        if (!_captured || _scaleTransform == null)
+        {
+            return;
         }
+
+        if (_translateTransform.X is 0)
+        {
+            return;
+        }
+
+        var v = _start - e.GetPosition(ImageZoomBorder);
+
+        if (enableAnimations)
+        {
+            _translateTransform.Transitions ??=
+            [
+                new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.20) },
+                new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.20) }
+            ];
+        }
+        else
+        {
+            _translateTransform.Transitions = null;
+        }
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _translateTransform.X = _origin.X - v.X;
+            _translateTransform.Y = _origin.Y - v.Y;
+        }, DispatcherPriority.Normal);
     }
 
     #endregion Zoom
@@ -329,7 +399,41 @@ public partial class ImageViewer : UserControl
     {
         if (e.ClickCount == 2)
         {
-            ResetZoom(false);
+            ResetZoom(true);
         }
+    }
+
+    private void ImageZoomBorder_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.ClickCount == 2)
+        {
+            ResetZoom(true);
+        }
+        else
+        {
+            Pressed(e);
+        }
+    }
+
+    private void ImageZoomBorder_OnPointerMoved(object? sender, PointerEventArgs e)
+    {
+        Pan(e, true);
+    }
+
+    private void Pressed(PointerPressedEventArgs e)
+    {
+        _start = e.GetPosition(ImageZoomBorder);
+        _origin = new Point(_translateTransform.X, _translateTransform.Y);
+        _captured = true;
+    }
+
+    private void ImageZoomBorder_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (!_captured)
+        {
+            return;
+        }
+
+        _captured = false;
     }
 }

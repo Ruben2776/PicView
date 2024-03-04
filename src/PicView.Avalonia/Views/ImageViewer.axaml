@@ -23,7 +23,10 @@
         <Border
             x:Name="ImageZoomBorder"
             MaxWidth="{Binding ImageWidth}"
-            MaxHeight="{Binding ImageHeight}">
+            MaxHeight="{Binding ImageHeight}"
+            PointerMoved="ImageZoomBorder_OnPointerMoved"
+            PointerPressed="ImageZoomBorder_OnPointerPressed"
+            PointerReleased="ImageZoomBorder_OnPointerReleased">
             <Image
                 x:Name="MainImage"
                 RenderOptions.BitmapInterpolationMode="HighQuality"

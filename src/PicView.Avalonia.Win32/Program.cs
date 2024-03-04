@@ -28,7 +28,8 @@ internal class Program
             {
                 CompositionMode = new[]
                     {
-                        Win32CompositionMode.WinUIComposition
+                        Win32CompositionMode.WinUIComposition,
+                        Win32CompositionMode.RedirectionSurface
                     },
                 OverlayPopups = true,
                 WinUICompositionBackdropCornerRadius = 8
