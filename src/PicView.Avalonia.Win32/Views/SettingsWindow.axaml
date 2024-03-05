@@ -9,31 +9,32 @@
     Title="Loading..."
     Height="300"
     x:DataType="viewModels:MainViewModel"
-    BorderBrush="{StaticResource MainBorderColor}"
-    BorderThickness="1"
+    CornerRadius="8"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
     SizeToContent="WidthAndHeight"
+    TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Grid>
+    <Border
+        BorderBrush="{StaticResource MainBorderColor}"
+        BorderThickness="1"
+        CornerRadius="8">
+        <Grid>
 
-        <Border
-            VerticalAlignment="Top"
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
-            BorderThickness="0,0,1,1"
-            DoubleTapped="OnDoubleTapped"
-            PointerPressed="MoveWindow">
-            <Grid Height="28">
+            <Grid Height="28" VerticalAlignment="Top">
 
                 <Border
                     HorizontalAlignment="Left"
+                    Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,1,0">
+                    BorderThickness="0,0,1,0"
+                    CornerRadius="8,0,0,0"
+                    DoubleTapped="OnDoubleTapped"
+                    PointerPressed="MoveWindow">
                     <Image
                         Width="20"
                         Height="25"
@@ -54,9 +55,12 @@
                 </Border>
 
                 <TabControl
-                    Margin="28,0,97,0"
+                    Margin="27,0,97,0"
                     Padding="0"
-                    HorizontalAlignment="Center">
+                    HorizontalAlignment="Center"
+                    Background="{StaticResource SecondaryBackgroundColor}"
+                    DoubleTapped="OnDoubleTapped"
+                    PointerPressed="MoveWindow">
                     <TabItem
                         x:Name="GeneralSettingsTabItem"
                         DoubleTapped="OnDoubleTapped"
@@ -167,7 +171,8 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
-                    Click="Close">
+                    Click="Close"
+                    CornerRadius="0,8,0,0">
                     <Path
                         Width="10"
                         Height="10"
@@ -176,27 +181,27 @@
                         Stretch="Fill" />
                 </Button>
             </Grid>
-        </Border>
 
-        <ScrollViewer
-            Margin="0,29,0,0"
-            Background="{StaticResource NoisyTexture}"
-            IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
-            <views:GeneralSettingsView />
-        </ScrollViewer>
+            <ScrollViewer
+                Margin="0,28,0,0"
+                Background="{StaticResource NoisyTexture}"
+                IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
+                <views:GeneralSettingsView />
+            </ScrollViewer>
 
-        <ScrollViewer
-            Margin="0,29,0,0"
-            Background="{StaticResource NoisyTexture}"
-            IsVisible="{Binding Path=IsSelected, ElementName=UISettingsTabItem}">
-            <views:UISettingsView />
-        </ScrollViewer>
+            <ScrollViewer
+                Margin="0,28,0,0"
+                Background="{StaticResource NoisyTexture}"
+                IsVisible="{Binding Path=IsSelected, ElementName=UISettingsTabItem}">
+                <views:UISettingsView />
+            </ScrollViewer>
 
-        <ScrollViewer
-            Margin="0,29,0,0"
-            Background="{StaticResource NoisyTexture}"
-            IsVisible="{Binding Path=IsSelected, ElementName=ShortcutsTabItem}">
-            <views:ShortcutsView />
-        </ScrollViewer>
-    </Grid>
+            <ScrollViewer
+                Margin="0,28,0,0"
+                Background="{StaticResource NoisyTexture}"
+                IsVisible="{Binding Path=IsSelected, ElementName=ShortcutsTabItem}">
+                <views:ShortcutsView />
+            </ScrollViewer>
+        </Grid>
+    </Border>
 </Window>

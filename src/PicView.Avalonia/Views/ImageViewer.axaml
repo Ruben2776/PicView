@@ -5,8 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
     DragDrop.AllowDrop="True"
     PointerPressed="InputElement_OnPointerPressed"
@@ -22,13 +20,13 @@
         VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
         <Border
             x:Name="ImageZoomBorder"
-            MaxWidth="{Binding ImageWidth}"
-            MaxHeight="{Binding ImageHeight}"
             PointerMoved="ImageZoomBorder_OnPointerMoved"
             PointerPressed="ImageZoomBorder_OnPointerPressed"
             PointerReleased="ImageZoomBorder_OnPointerReleased">
             <Image
                 x:Name="MainImage"
+                Width="{Binding ImageWidth}"
+                Height="{Binding ImageHeight}"
                 RenderOptions.BitmapInterpolationMode="HighQuality"
                 Source="{Binding Image}"
                 Stretch="Uniform">

@@ -9,9 +9,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
 using Point = Avalonia.Point;
 
 namespace PicView.Avalonia.Views;
@@ -192,56 +190,11 @@ public partial class ImageViewer : UserControl
         ImageZoomBorder.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
     }
 
-    internal void PanImage(object sender, PointerEventArgs e)
+    private void Capture(PointerEventArgs e)
     {
-        //if (_scaleTransform.ScaleX is 1)
-        //{
-        //    return;
-        //}
-
-        //// Drag image by modifying X,Y coordinates
-        //var dragMousePosition = _start - e.GetPosition(this);
-
-        //var newXproperty = _origin.X - dragMousePosition.X;
-        //var newYproperty = _origin.Y - dragMousePosition.Y;
-
-        //// Keep panning it in bounds
-
-        //var actualScrollWidth = Bounds.Width;
-        //var actualBorderWidth = ImageZoomBorder.Width;
-        //var actualScrollHeight = Bounds.Height;
-        //var actualBorderHeight = ImageZoomBorder.Height;
-
-        //var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
-        //var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
-        //var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
-        //var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
-
-        //if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
-        //{
-        //    newXproperty = maxX;
-        //}
-
-        //if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
-        //{
-        //    newYproperty = maxY;
-        //}
-
-        //if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
-        //{
-        //    newXproperty = 0;
-        //}
-
-        //if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
-        //{
-        //    newYproperty = 0;
-        //}
-
-        //// TODO Don't pan image out of screen border
-        //_translateTransform.X = newXproperty;
-        //_translateTransform.Y = newYproperty;
-
-        //e.Handled = true;
+        _start = e.GetPosition(ImageZoomBorder);
+        _origin = new Point(_translateTransform.X, _translateTransform.Y);
+        _captured = true;
     }
 
     public void ZoomIn(PointerWheelEventArgs e)
@@ -386,11 +339,8 @@ public partial class ImageViewer : UserControl
         {
             _translateTransform.Transitions = null;
         }
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _translateTransform.X = _origin.X - v.X;
-            _translateTransform.Y = _origin.Y - v.Y;
-        }, DispatcherPriority.Normal);
+        _translateTransform.X = _origin.X - v.X;
+        _translateTransform.Y = _origin.Y - v.Y;
     }
 
     #endregion Zoom
@@ -417,14 +367,12 @@ public partial class ImageViewer : UserControl
 
     private void ImageZoomBorder_OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        Pan(e, true);
+        Pan(e, false);
     }
 
     private void Pressed(PointerPressedEventArgs e)
     {
-        _start = e.GetPosition(ImageZoomBorder);
-        _origin = new Point(_translateTransform.X, _translateTransform.Y);
-        _captured = true;
+        Capture(e);
     }
 
     private void ImageZoomBorder_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
