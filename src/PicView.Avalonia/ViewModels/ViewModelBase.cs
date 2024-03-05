@@ -136,9 +136,63 @@ public class ViewModelBase : ReactiveObject
         FileCopyPath = TranslationHelper.GetTranslation("FileCopyPath");
         FileCut = TranslationHelper.GetTranslation("FileCut");
         CtrlToZoom = TranslationHelper.GetTranslation("CtrlToZoom");
+        ScrollToZoom = TranslationHelper.GetTranslation("ScrollToZoom");
         GeneralSettings = TranslationHelper.GetTranslation("GeneralSettings");
         UISettings = TranslationHelper.GetTranslation("UISettings");
         Language = TranslationHelper.GetTranslation("Language");
+        MouseWheel = TranslationHelper.GetTranslation("MouseWheel");
+        MiscSettings = TranslationHelper.GetTranslation("MiscSettings");
+        StayCentered = TranslationHelper.GetTranslation("StayCentered");
+        ShowFileSavingDialog = TranslationHelper.GetTranslation("ShowFileSavingDialog");
+        OpenInSameWindow = TranslationHelper.GetTranslation("OpenInSameWindow");
+    }
+
+    private string? _openInSameWindow;
+
+    public string? OpenInSameWindow
+    {
+        get => _openInSameWindow;
+        set => this.RaiseAndSetIfChanged(ref _openInSameWindow, value);
+    }
+
+    private string? _showFileSavingDialog;
+
+    public string? ShowFileSavingDialog
+    {
+        get => _showFileSavingDialog;
+        set => this.RaiseAndSetIfChanged(ref _showFileSavingDialog, value);
+    }
+
+    private string? _stayCentered;
+
+    public string? StayCentered
+    {
+        get => _stayCentered;
+        set => this.RaiseAndSetIfChanged(ref _stayCentered, value);
+    }
+
+    private string? _miscSettings;
+
+    public string? MiscSettings
+    {
+        get => _miscSettings;
+        set => this.RaiseAndSetIfChanged(ref _miscSettings, value);
+    }
+
+    private string? _scrollToZoom;
+
+    public string? ScrollToZoom
+    {
+        get => _scrollToZoom;
+        set => this.RaiseAndSetIfChanged(ref _scrollToZoom, value);
+    }
+
+    private string? _mouseWheel;
+
+    public string? MouseWheel
+    {
+        get => _mouseWheel;
+        set => this.RaiseAndSetIfChanged(ref _mouseWheel, value);
     }
 
     private string? _language;

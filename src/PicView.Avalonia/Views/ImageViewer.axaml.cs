@@ -49,6 +49,10 @@ public partial class ImageViewer : UserControl
                 }
                 ResetZoom(false);
             };
+            LostFocus += (s, e) =>
+            {
+                _captured = false;
+            };
         };
     }
 
@@ -238,7 +242,14 @@ public partial class ImageViewer : UserControl
 
         currentZoom += zoomSpeed;
         currentZoom = Math.Max(0.09, currentZoom);
-        ZoomTo(e, currentZoom, true);
+        if (SettingsHelper.Settings.Zoom.AvoidZoomingOut && currentZoom < 1.0)
+        {
+            ResetZoom(true);
+        }
+        else
+        {
+            ZoomTo(e, currentZoom, true);
+        }
     }
 
     public void ZoomTo(PointerWheelEventArgs e, double zoomValue, bool enableAnimations)
@@ -272,8 +283,8 @@ public partial class ImageViewer : UserControl
         var absoluteX = point.X * _scaleTransform.ScaleX + _translateTransform.X;
         var absoluteY = point.Y * _scaleTransform.ScaleY + _translateTransform.Y;
 
-        var newTranslateValueX = Math.Abs(zoomValue - 1) > .1 ? absoluteX - point.X * zoomValue : 0;
-        var newTranslateValueY = Math.Abs(zoomValue - 1) > .1 ? absoluteY - point.Y * zoomValue : 0;
+        var newTranslateValueX = Math.Abs(zoomValue - 1) > .2 ? absoluteX - point.X * zoomValue : 0;
+        var newTranslateValueY = Math.Abs(zoomValue - 1) > .2 ? absoluteY - point.Y * zoomValue : 0;
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             _scaleTransform.ScaleX = zoomValue;
@@ -320,27 +331,32 @@ public partial class ImageViewer : UserControl
             return;
         }
 
-        if (_translateTransform.X is 0)
+        if (_translateTransform.X == 0)
         {
             return;
         }
 
-        var v = _start - e.GetPosition(ImageZoomBorder);
-
-        if (enableAnimations)
+        if (enableAnimations || _translateTransform.X < -0)
         {
             _translateTransform.Transitions ??=
             [
-                new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.20) },
-                new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.20) }
+                new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.15) },
+                new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.15) }
             ];
         }
         else
         {
             _translateTransform.Transitions = null;
         }
-        _translateTransform.X = _origin.X - v.X;
-        _translateTransform.Y = _origin.Y - v.Y;
+
+        var position = _start - e.GetPosition(ImageZoomBorder);
+        var speed = _translateTransform.X < -200 ? 7 : 3;
+        speed = _translateTransform.X < -350 ? 11 : speed;
+        speed = _translateTransform.X < -500 ? 15 : speed;
+        var x = _origin.X - (position.X + speed);
+        var y = _origin.Y - (position.Y + speed);
+        _translateTransform.X = x;
+        _translateTransform.Y = y;
     }
 
     #endregion Zoom
@@ -367,7 +383,7 @@ public partial class ImageViewer : UserControl
 
     private void ImageZoomBorder_OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        Pan(e, false);
+        Pan(e, true);
     }
 
     private void Pressed(PointerPressedEventArgs e)

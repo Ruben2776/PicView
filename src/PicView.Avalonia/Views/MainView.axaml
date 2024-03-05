@@ -111,7 +111,7 @@
                 <MenuItem Header="{Binding ToggleScroll}" />
                 <MenuItem Command="{Binding ChangeTopMostCommand}" Header="{Binding StayTopMost}" />
                 <MenuItem Header="{Binding Stretch}" />
-                <MenuItem Header="{Binding CtrlToZoom}" />
+                <MenuItem Command="{Binding ChangeCtrlZoomCommand}" Header="{Binding CtrlToZoom}" />
                 <MenuItem Command="{Binding ToggleUICommand}" Header="{Binding HideShowInterface}">
                     <MenuItem.Icon>
                         <Image Width="12" Height="12">

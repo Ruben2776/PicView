@@ -86,6 +86,10 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ChangeTopMostCommand { get; }
 
+        public ICommand? ChangeCtrlZoomCommand { get; }
+
+        public ICommand? ToggleBottomGalleryCommand { get; }
+
         public ICommand? ChangeIncludeSubdirectoriesCommand { get; }
 
         public ICommand? ToggleUICommand { get; }
@@ -121,6 +125,147 @@ namespace PicView.Avalonia.ViewModels
         #endregion Commands
 
         #region Fields
+
+        #region Booleans
+
+        private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+
+        public bool IsBottomGalleryShown
+        {
+            get => _isBottomGalleryShown;
+            set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
+        }
+
+        private bool _isBottomGalleryShownInHiddenUi = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+
+        public bool IsBottomGalleryShownInHiddenUI
+        {
+            get => _isBottomGalleryShownInHiddenUi;
+            set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
+        }
+
+        private bool _isTopMost = SettingsHelper.Settings.WindowProperties.TopMost;
+
+        public bool IsTopMost
+        {
+            get => _isTopMost;
+            set => this.RaiseAndSetIfChanged(ref _isTopMost, value);
+        }
+
+        private bool _isIncludingSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+
+        public bool IsIncludingSubdirectories
+        {
+            get => _isIncludingSubdirectories;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isIncludingSubdirectories, value);
+                SettingsHelper.Settings.Sorting.IncludeSubDirectories = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+
+        public bool IsScrollingEnabled
+        {
+            get => _isScrollingEnabled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
+                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
+                SetSize();
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
+
+        public bool IsStretched
+        {
+            get => _isStretched;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isStretched, value);
+                SettingsHelper.Settings.ImageScaling.StretchImage = value;
+                SetSize();
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isLooping = SettingsHelper.Settings.UIProperties.Looping;
+
+        public bool IsLooping
+        {
+            get => _isLooping;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isLooping, value);
+                SettingsHelper.Settings.UIProperties.Looping = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isAutoFit = SettingsHelper.Settings.WindowProperties.AutoFit;
+
+        public bool IsAutoFit
+        {
+            get => _isAutoFit;
+            set => this.RaiseAndSetIfChanged(ref _isAutoFit, value);
+        }
+
+        private bool _isInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+
+        public bool IsInterfaceShown
+        {
+            get => _isInterfaceShown;
+            set => this.RaiseAndSetIfChanged(ref _isInterfaceShown, value);
+        }
+
+        private bool _isCtrlToZoomEnabled = SettingsHelper.Settings.Zoom.CtrlZoom;
+
+        public bool IsCtrlToZoomEnabled
+        {
+            get => _isCtrlToZoomEnabled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isCtrlToZoomEnabled, value);
+                SettingsHelper.Settings.Zoom.CtrlZoom = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isStayingCentered = SettingsHelper.Settings.WindowProperties.KeepCentered;
+
+        public bool IsStayingCentered
+        {
+            get => _isStayingCentered;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isStayingCentered, value);
+                SettingsHelper.Settings.WindowProperties.KeepCentered = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isFileSavingDialogShown;
+
+        public bool IsFileSavingDialogShown
+        {
+            get => _isFileSavingDialogShown;
+            set => this.RaiseAndSetIfChanged(ref _isFileSavingDialogShown, value);
+        }
+
+        private bool _isOpeningInSameWindow;
+
+        public bool IsOpeningInSameWindow
+        {
+            get => _isOpeningInSameWindow;
+            set => this.RaiseAndSetIfChanged(ref _isOpeningInSameWindow, value);
+        }
+
+        #endregion Booleans
 
         private string? _getFlipped;
 
@@ -651,105 +796,6 @@ namespace PicView.Avalonia.ViewModels
         }
 
         #endregion Zoom
-
-        #region Settings
-
-        private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
-
-        public bool IsBottomGalleryShown
-        {
-            get => _isBottomGalleryShown;
-            set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
-        }
-
-        private bool _showBottomGalleryInHiddenUI = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
-
-        public bool ShowBottomGalleryInHiddenUI
-        {
-            get => _showBottomGalleryInHiddenUI;
-            set => this.RaiseAndSetIfChanged(ref _showBottomGalleryInHiddenUI, value);
-        }
-
-        private bool _isTopMost = SettingsHelper.Settings.WindowProperties.TopMost;
-
-        public bool IsTopMost
-        {
-            get => _isTopMost;
-            set => this.RaiseAndSetIfChanged(ref _isTopMost, value);
-        }
-
-        private bool _includeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
-
-        public bool IncludeSubdirectories
-        {
-            get => _includeSubdirectories;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _includeSubdirectories, value);
-                SettingsHelper.Settings.Sorting.IncludeSubDirectories = value;
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _isScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
-
-        public bool IsScrollingEnabled
-        {
-            get => _isScrollingEnabled;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
-                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
-                SetSize();
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _isStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
-
-        public bool IsStretched
-        {
-            get => _isStretched;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isStretched, value);
-                SettingsHelper.Settings.ImageScaling.StretchImage = value;
-                SetSize();
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _isLooping = SettingsHelper.Settings.UIProperties.Looping;
-
-        public bool IsLooping
-        {
-            get => _isLooping;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isLooping, value);
-                SettingsHelper.Settings.UIProperties.Looping = value;
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
-        }
-
-        private bool _isAutoFit = SettingsHelper.Settings.WindowProperties.AutoFit;
-
-        public bool IsAutoFit
-        {
-            get => _isAutoFit;
-            set => this.RaiseAndSetIfChanged(ref _isAutoFit, value);
-        }
-
-        private bool _isInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
-
-        public bool IsInterfaceShown
-        {
-            get => _isInterfaceShown;
-            set => this.RaiseAndSetIfChanged(ref _isInterfaceShown, value);
-        }
-
-        #endregion Settings
 
         #region Menus
 
@@ -1458,8 +1504,24 @@ namespace PicView.Avalonia.ViewModels
 
             ChangeIncludeSubdirectoriesCommand = ReactiveCommand.Create(() =>
             {
-                IncludeSubdirectories = !IncludeSubdirectories;
+                IsIncludingSubdirectories = !IsIncludingSubdirectories;
                 SetTitle();
+            });
+
+            ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                {
+                    IsBottomGalleryShown = false;
+                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
+                }
+                else
+                {
+                    IsBottomGalleryShown = true;
+                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
+                }
+                SetSize();
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 
             ToggleUICommand = ReactiveCommand.CreateFromTask(async () =>
@@ -1480,6 +1542,19 @@ namespace PicView.Avalonia.ViewModels
 
             ShowExifWindowCommand = ReactiveCommand.Create(() =>
             {
+            });
+
+            ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.Zoom.CtrlZoom)
+                {
+                    SettingsHelper.Settings.Zoom.CtrlZoom = false;
+                }
+                else
+                {
+                    SettingsHelper.Settings.Zoom.CtrlZoom = true;
+                }
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 
             #endregion Window commands

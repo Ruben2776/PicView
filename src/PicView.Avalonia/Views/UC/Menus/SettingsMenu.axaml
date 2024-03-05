@@ -209,7 +209,7 @@
                     Height="45"
                     Classes="ButtonBorder altHover"
                     Command="{Binding ChangeIncludeSubdirectoriesCommand}"
-                    IsChecked="{Binding IncludeSubdirectories}"
+                    IsChecked="{Binding IsIncludingSubdirectories}"
                     ToolTip.Tip="{Binding SearchSubdirectory}">
                     <TextBlock
                         MaxWidth="150"

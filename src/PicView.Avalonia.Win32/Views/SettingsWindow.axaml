@@ -25,16 +25,18 @@
         CornerRadius="8">
         <Grid>
 
-            <Grid Height="28" VerticalAlignment="Top">
+            <Grid
+                Height="28"
+                VerticalAlignment="Top"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                DoubleTapped="OnDoubleTapped"
+                PointerPressed="MoveWindow">
 
                 <Border
                     HorizontalAlignment="Left"
-                    Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    CornerRadius="8,0,0,0"
-                    DoubleTapped="OnDoubleTapped"
-                    PointerPressed="MoveWindow">
+                    CornerRadius="8,0,0,0">
                     <Image
                         Width="20"
                         Height="25"
@@ -53,6 +55,7 @@
                         </Image.Source>
                     </Image>
                 </Border>
+
 
                 <TabControl
                     Margin="27,0,97,0"
@@ -82,7 +85,10 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem x:Name="UISettingsTabItem" PointerPressed="MoveWindow">
+                    <TabItem
+                        x:Name="UISettingsTabItem"
+                        DoubleTapped="OnDoubleTapped"
+                        PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -97,7 +103,10 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem x:Name="LanguageTabItem" PointerPressed="MoveWindow">
+                    <TabItem
+                        x:Name="LanguageTabItem"
+                        DoubleTapped="OnDoubleTapped"
+                        PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -112,7 +121,10 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem x:Name="ShortcutsTabItem" PointerPressed="MoveWindow">
+                    <TabItem
+                        x:Name="ShortcutsTabItem"
+                        DoubleTapped="OnDoubleTapped"
+                        PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -186,21 +198,21 @@
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
-                <views:GeneralSettingsView />
+                <views:GeneralSettingsView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=UISettingsTabItem}">
-                <views:UISettingsView />
+                <views:UISettingsView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=ShortcutsTabItem}">
-                <views:ShortcutsView />
+                <views:ShortcutsView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
         </Grid>
     </Border>

@@ -12,8 +12,44 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Rectangle
-        Width="300"
-        Height="300"
-        Fill="Yellow" />
+    <WrapPanel Orientation="Vertical">
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding MiscSettings}" />
+
+        <ToggleButton IsChecked="{Binding IsIncludingSubdirectories}">
+            <TextBlock Classes="txt" Text="{Binding SearchSubdirectory}" />
+        </ToggleButton>
+
+        <ToggleButton Command="{Binding ChangeTopMostCommand}" IsChecked="{Binding IsTopMost}">
+            <TextBlock Classes="txt" Text="{Binding StayTopMost}" />
+        </ToggleButton>
+
+        <ToggleButton IsChecked="{Binding IsStayingCentered}">
+            <TextBlock Classes="txt" Text="{Binding StayCentered}" />
+        </ToggleButton>
+
+        <ToggleButton IsChecked="{Binding IsFileSavingDialogShown}">
+            <TextBlock Classes="txt" Text="{Binding ShowFileSavingDialog}" />
+        </ToggleButton>
+
+        <ToggleButton IsChecked="{Binding IsOpeningInSameWindow}">
+            <TextBlock Classes="txt" Text="{Binding OpenInSameWindow}" />
+        </ToggleButton>
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding MouseWheel}" />
+        <RadioButton GroupName="ctrl" IsChecked="{Binding IsCtrlToZoomEnabled}">
+            <TextBlock Classes="txt" Text="{Binding CtrlToZoom}" />
+        </RadioButton>
+        <RadioButton GroupName="ctrl" IsChecked="{Binding IsCtrlToZoomEnabled}">
+            <TextBlock Classes="txt" Text="{Binding ScrollToZoom}" />
+        </RadioButton>
+    </WrapPanel>
 </UserControl>

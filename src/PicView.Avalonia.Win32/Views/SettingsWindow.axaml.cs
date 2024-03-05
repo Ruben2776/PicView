@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -12,6 +13,7 @@ public partial class SettingsWindow : Window
         Loaded += (sender, e) =>
         {
             MinWidth = Width;
+            Title = TranslationHelper.GetTranslation("Settings") + " - PicView";
         };
     }
 
