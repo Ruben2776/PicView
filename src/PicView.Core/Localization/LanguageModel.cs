@@ -86,7 +86,7 @@ internal class LanguageModel
     public string? Language { get; set; }
     public string? CtrlToZoom { get; set; }
     public string? ScrollToZoom { get; set; }
-    public string? HorizontalScroll { get; set; }
+    public string? ScrollDirection { get; set; }
     public string? Reverse { get; set; }
     public string? Forward { get; set; }
     public string? GeneralSettings { get; set; }

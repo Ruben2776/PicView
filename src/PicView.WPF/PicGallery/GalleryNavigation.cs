@@ -178,7 +178,10 @@ internal static class GalleryNavigation
         }
 
         // Select next item
-        var nextItem = GetPicGallery.Container.Children[x] as PicGalleryItem;
+        if (GetPicGallery?.Container?.Children[x] is not PicGalleryItem nextItem)
+        {
+            return;
+        }
 
         if (selected)
         {
