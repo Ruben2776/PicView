@@ -12,5 +12,36 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <WrapPanel Orientation="Vertical" />
+    <Grid Margin="20">
+
+        <StackPanel
+            Height="35"
+            Margin="5,5,5,5"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+            <Image
+                Width="14"
+                Height="14"
+                Margin="0,0,5,0"
+                Source="{StaticResource LanguageImage}" />
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                FontSize="14"
+                Text="{Binding Language}" />
+            <ComboBox
+                x:Name="LanguageBox"
+                Width="130"
+                Padding="5,7,0,7"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="1"
+                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                SelectedIndex="0">
+                <ComboBoxItem Content="test" />
+                <ComboBoxItem Content="95%" />
+            </ComboBox>
+        </StackPanel>
+    </Grid>
 </UserControl>

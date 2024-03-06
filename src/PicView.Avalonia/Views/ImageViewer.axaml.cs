@@ -10,6 +10,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
 using System.Runtime.InteropServices;
+using Avalonia.Controls.Primitives;
 using Point = Avalonia.Point;
 
 namespace PicView.Avalonia.Views;
@@ -23,6 +24,7 @@ public partial class ImageViewer : UserControl
     private static Point _origin;
 
     private bool _captured;
+    private bool _isZoomed;
 
     public ImageViewer()
     {
@@ -141,19 +143,26 @@ public partial class ImageViewer : UserControl
 
         async Task ScrollOrNavigate()
         {
-            if (!SettingsHelper.Settings.Zoom.ScrollEnabled)
+            if (!SettingsHelper.Settings.Zoom.ScrollEnabled || e.KeyModifiers == KeyModifiers.Shift)
             {
                 await LoadNextPic();
             }
             else
             {
-                if (reverse)
+                if (ImageScrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto)
                 {
-                    ImageScrollViewer.LineUp();
+                    if (reverse)
+                    {
+                        ImageScrollViewer.LineDown();
+                    }
+                    else
+                    {
+                        ImageScrollViewer.LineUp();
+                    }
                 }
                 else
                 {
-                    ImageScrollViewer.LineDown();
+                    await LoadNextPic();
                 }
             }
         }
@@ -292,6 +301,7 @@ public partial class ImageViewer : UserControl
             _translateTransform.X = newTranslateValueX;
             _translateTransform.Y = newTranslateValueY;
         }, DispatcherPriority.Normal);
+        _isZoomed = zoomValue != 0;
     }
 
     public void ResetZoom(bool enableAnimations)
@@ -322,16 +332,12 @@ public partial class ImageViewer : UserControl
             _translateTransform.X = 0;
             _translateTransform.Y = 0;
         }, DispatcherPriority.Normal);
+        _isZoomed = false;
     }
 
     public void Pan(PointerEventArgs e, bool enableAnimations)
     {
-        if (!_captured || _scaleTransform == null)
-        {
-            return;
-        }
-
-        if (_translateTransform.X == 0)
+        if (!_captured || _scaleTransform == null || !_isZoomed)
         {
             return;
         }
@@ -353,10 +359,17 @@ public partial class ImageViewer : UserControl
         var speed = _translateTransform.X < -200 ? 7 : 3;
         speed = _translateTransform.X < -350 ? 11 : speed;
         speed = _translateTransform.X < -500 ? 15 : speed;
+        speed = _translateTransform.X < -750 ? 20 : speed;
+        speed = _translateTransform.X < -1000 ? 25 : speed;
+        speed = _translateTransform.X < -1200 ? -35 : speed;
         var x = _origin.X - (position.X + speed);
         var y = _origin.Y - (position.Y + speed);
-        _translateTransform.X = x;
-        _translateTransform.Y = y;
+
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _translateTransform.X = x;
+            _translateTransform.Y = y;
+        }, DispatcherPriority.Normal);
     }
 
     #endregion Zoom
@@ -371,6 +384,10 @@ public partial class ImageViewer : UserControl
 
     private void ImageZoomBorder_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
         if (e.ClickCount == 2)
         {
             ResetZoom(true);
@@ -388,6 +405,10 @@ public partial class ImageViewer : UserControl
 
     private void Pressed(PointerPressedEventArgs e)
     {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
         Capture(e);
     }
 

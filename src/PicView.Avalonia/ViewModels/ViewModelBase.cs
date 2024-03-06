@@ -42,6 +42,9 @@ public class ViewModelBase : ReactiveObject
         ToggleScroll = TranslationHelper.GetTranslation("ToggleScroll");
         ScrollEnabled = TranslationHelper.GetTranslation("ScrollEnabled");
         ScrollDisabled = TranslationHelper.GetTranslation("ScrollDisabled");
+        ScrollDirection = TranslationHelper.GetTranslation("ScrollDirection");
+        Reverse = TranslationHelper.GetTranslation("Reverse");
+        Forward = TranslationHelper.GetTranslation("Forward");
         Slideshow = TranslationHelper.GetTranslation("Slideshow");
         Settings = TranslationHelper.GetTranslation("Settings");
         InfoWinow = TranslationHelper.GetTranslation("InfoWindow");
@@ -145,6 +148,30 @@ public class ViewModelBase : ReactiveObject
         StayCentered = TranslationHelper.GetTranslation("StayCentered");
         ShowFileSavingDialog = TranslationHelper.GetTranslation("ShowFileSavingDialog");
         OpenInSameWindow = TranslationHelper.GetTranslation("OpenInSameWindow");
+    }
+
+    private string? _forward;
+
+    public string? Forward
+    {
+        get => _forward;
+        set => this.RaiseAndSetIfChanged(ref _forward, value);
+    }
+
+    private string? _reverse;
+
+    public string? Reverse
+    {
+        get => _reverse;
+        set => this.RaiseAndSetIfChanged(ref _reverse, value);
+    }
+
+    private string? _scrollDirection;
+
+    public string? ScrollDirection
+    {
+        get => _scrollDirection;
+        set => this.RaiseAndSetIfChanged(ref _scrollDirection, value);
     }
 
     private string? _openInSameWindow;

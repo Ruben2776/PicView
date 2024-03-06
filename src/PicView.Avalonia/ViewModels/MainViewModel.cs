@@ -173,7 +173,7 @@ namespace PicView.Avalonia.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
-                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
                 SettingsHelper.Settings.Zoom.ScrollEnabled = value;
                 SetSize();
                 _ = SettingsHelper.SaveSettingsAsync();
@@ -232,6 +232,19 @@ namespace PicView.Avalonia.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _isCtrlToZoomEnabled, value);
                 SettingsHelper.Settings.Zoom.CtrlZoom = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
+        private bool _isNavigatingInReverse = SettingsHelper.Settings.Zoom.HorizontalReverseScroll;
+
+        public bool IsNavigatingInReverse
+        {
+            get => _isNavigatingInReverse;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isNavigatingInReverse, value);
+                SettingsHelper.Settings.Zoom.HorizontalReverseScroll = value;
                 _ = SettingsHelper.SaveSettingsAsync();
             }
         }
@@ -1443,6 +1456,7 @@ namespace PicView.Avalonia.ViewModels
 
             _spinWaiter = new SpinWaiter();
             CurrentView = _spinWaiter;
+            IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
 
             Task.Run(UpdateLanguage);
 

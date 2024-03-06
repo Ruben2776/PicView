@@ -48,8 +48,20 @@
         <RadioButton GroupName="ctrl" IsChecked="{Binding IsCtrlToZoomEnabled}">
             <TextBlock Classes="txt" Text="{Binding CtrlToZoom}" />
         </RadioButton>
-        <RadioButton GroupName="ctrl" IsChecked="{Binding IsCtrlToZoomEnabled}">
+        <RadioButton GroupName="ctrl">
             <TextBlock Classes="txt" Text="{Binding ScrollToZoom}" />
+        </RadioButton>
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding ScrollDirection}" />
+        <RadioButton GroupName="scroll" IsChecked="{Binding IsNavigatingInReverse}">
+            <TextBlock Classes="txt" Text="{Binding Reverse}" />
+        </RadioButton>
+        <RadioButton GroupName="scroll">
+            <TextBlock Classes="txt" Text="{Binding Forward}" />
         </RadioButton>
     </WrapPanel>
 </UserControl>

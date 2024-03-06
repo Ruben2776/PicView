@@ -19,14 +19,14 @@ public class PreLoader
     }
 
     private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
-    private const int PositiveIterations = 8;
-    private const int NegativeIterations = 4;
+    private const int PositiveIterations = 5;
+    private const int NegativeIterations = 2;
     public const int MaxCount = PositiveIterations + NegativeIterations + 2;
 
 #if DEBUG
 
     // ReSharper disable once ConvertToConstant.Local
-    private static readonly bool ShowAddRemove = false;
+    private static readonly bool ShowAddRemove = true;
 
 #endif
 

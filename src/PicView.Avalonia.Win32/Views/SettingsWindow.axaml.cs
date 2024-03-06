@@ -39,9 +39,4 @@ public partial class SettingsWindow : Window
     {
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
     }
-
-    private void OnDoubleTapped(object? sender, TappedEventArgs e)
-    {
-        Maximize(sender, e);
-    }
 }

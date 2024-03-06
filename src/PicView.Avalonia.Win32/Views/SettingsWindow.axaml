@@ -8,6 +8,7 @@
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     Title="Loading..."
     Height="300"
+    MinHeight="260"
     x:DataType="viewModels:MainViewModel"
     CornerRadius="8"
     ExtendClientAreaChromeHints="NoChrome"
@@ -29,7 +30,6 @@
                 Height="28"
                 VerticalAlignment="Top"
                 Background="{StaticResource SecondaryBackgroundColor}"
-                DoubleTapped="OnDoubleTapped"
                 PointerPressed="MoveWindow">
 
                 <Border
@@ -56,18 +56,15 @@
                     </Image>
                 </Border>
 
-
                 <TabControl
-                    Margin="27,0,97,0"
+                    Margin="27,0,62,0"
                     Padding="0"
                     HorizontalAlignment="Center"
                     Background="{StaticResource SecondaryBackgroundColor}"
-                    DoubleTapped="OnDoubleTapped"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="1,0,0,0"
                     PointerPressed="MoveWindow">
-                    <TabItem
-                        x:Name="GeneralSettingsTabItem"
-                        DoubleTapped="OnDoubleTapped"
-                        PointerPressed="MoveWindow">
+                    <TabItem x:Name="GeneralSettingsTabItem" PointerPressed="MoveWindow">
 
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -85,10 +82,7 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem
-                        x:Name="UISettingsTabItem"
-                        DoubleTapped="OnDoubleTapped"
-                        PointerPressed="MoveWindow">
+                    <TabItem x:Name="UISettingsTabItem" PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -103,28 +97,7 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem
-                        x:Name="LanguageTabItem"
-                        DoubleTapped="OnDoubleTapped"
-                        PointerPressed="MoveWindow">
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <Image
-                                    Width="14"
-                                    Height="14"
-                                    Margin="0,0,5,0"
-                                    Source="{StaticResource LanguageImage}" />
-                                <TextBlock
-                                    Classes="txt"
-                                    Text="{Binding Language}"
-                                    TextAlignment="Center" />
-                            </StackPanel>
-                        </TabItem.Header>
-                    </TabItem>
-                    <TabItem
-                        x:Name="ShortcutsTabItem"
-                        DoubleTapped="OnDoubleTapped"
-                        PointerPressed="MoveWindow">
+                    <TabItem x:Name="ShortcutsTabItem" PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -143,7 +116,7 @@
 
                 <Button
                     Width="35"
-                    Margin="0,0,70,0"
+                    Margin="0,0,35,0"
                     HorizontalAlignment="Right"
                     Background="{StaticResource MainButtonBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
@@ -156,24 +129,6 @@
                             Fill="{StaticResource MainIconColor}"
                             Stretch="Fill" />
                     </Viewbox>
-                </Button>
-
-                <Button
-                    Name="RestoreButton"
-                    Width="35"
-                    Margin="0,0,35,0"
-                    HorizontalAlignment="Right"
-                    Background="{StaticResource MainButtonBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="hover"
-                    Click="Maximize">
-                    <Path
-                        Width="12"
-                        Height="12"
-                        Data="M405.34 405.332H106.66V106.668H240V64H106.66C83.191 64 64 83.197 64 106.668v298.664C64 428.803 83.191 448 106.66 448h298.68c23.469 0 42.66-19.197 42.66-42.668V272h-42.66v133.332zM288 64v42.668h87.474L159.999 322.133l29.866 29.866 215.476-215.47V224H448V64H288z"
-                        Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
                 </Button>
 
                 <Button
