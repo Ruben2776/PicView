@@ -83,7 +83,7 @@
   "Language": "Langue",
   "CtrlToZoom": "Ctrl pour zoomer, défiler pour naviguer",
   "ScrollToZoom": "Faites défiler pour zoomer, Ctrl pour naviguer",
-  "HorizontalScroll": "Défilement horizontal",
+  "ScrollDirection": "Direction du défilement",
   "Reverse": "Inverser",
   "Forward": "Suivant",
   "GeneralSettings": "Paramètres généraux",

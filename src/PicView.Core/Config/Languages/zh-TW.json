@@ -83,7 +83,7 @@
   "Language": "語言",
   "CtrlToZoom": "Ctrl + 滑鼠滾輪縮放，滑鼠滾輪導航",
   "ScrollToZoom": "滑鼠滾輪縮放，Ctrl + 滑鼠滾輪導航",
-  "HorizontalScroll": "水平卷軸",
+  "ScrollDirection": "滑鼠滾輪方向",
   "Reverse": "逆轉",
   "Forward": "向前",
   "GeneralSettings": "常規設定",

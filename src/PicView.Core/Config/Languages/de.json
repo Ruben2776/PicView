@@ -83,7 +83,7 @@
   "Language": "Sprache",
   "CtrlToZoom": "Strg zum zoomen, Scrollen zum navigieren",
   "ScrollToZoom": "Scrollen zum zoomen, Strg zum navigieren",
-  "HorizontalScroll": "horizontaler Scrolling",
+  "ScrollDirection": "Scrollrichtung",
   "Reverse": "Umkehren",
   "Forward": "Vordere",
   "GeneralSettings": "Allgemeine Einstellungen",

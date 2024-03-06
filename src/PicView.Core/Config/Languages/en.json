@@ -83,7 +83,7 @@
   "Language": "Language",
   "CtrlToZoom": "Ctrl to zoom, scroll to navigate",
   "ScrollToZoom": "Zoom with mousewheel, navigate with Ctrl",
-  "HorizontalScroll": "Horizontal scroll",
+  "ScrollDirection": "Scroll direction",
   "Reverse": "Reverse",
   "Forward": "Forward",
   "GeneralSettings": "General Settings",

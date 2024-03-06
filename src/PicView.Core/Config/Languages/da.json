@@ -83,7 +83,7 @@
   "Language": "Sprog",
   "CtrlToZoom": "Zoom med Ctrl, naviger med musehjulet",
   "ScrollToZoom": "Zoom med musehjulet, naviger med Ctrl",
-  "HorizontalScroll": "Vandret scrolling",
+  "ScrollDirection": "Scroll retning",
   "Reverse": "Baglæns",
   "Forward": "Fremad",
   "GeneralSettings": "Generale Indstillinger",

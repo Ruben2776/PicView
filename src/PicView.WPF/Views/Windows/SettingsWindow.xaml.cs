@@ -435,7 +435,7 @@ public partial class SettingsWindow
         MouseWheelLabel.Content = TranslationHelper.GetTranslation("MouseWheel");
         CtrlToZoomTextBlock.Text = TranslationHelper.GetTranslation("CtrlToZoom");
         ScrollToZoomTextBlock.Text = TranslationHelper.GetTranslation("ScrollToZoom");
-        HorizontalScrollLabel.Content = TranslationHelper.GetTranslation("HorizontalScroll");
+        ScrollDirectionLabel.Content = TranslationHelper.GetTranslation("ScrollDirection");
         Reverse.Content = TranslationHelper.GetTranslation("Reverse");
         Forward.Content = TranslationHelper.GetTranslation("Forward");
         AdjustTimingForSlideshowLabel.Text = TranslationHelper.GetTranslation("AdjustTimingForSlideshow");

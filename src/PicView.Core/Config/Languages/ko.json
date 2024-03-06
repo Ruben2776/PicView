@@ -83,7 +83,7 @@
   "Language": "언어",
   "CtrlToZoom": "확대/축소하려면 Ctrl, 탐색하려면 스크롤",
   "ScrollToZoom": "마우스 휠로 확대/축소, Ctrl로 탐색",
-  "HorizontalScroll": "가로 스크롤",
+  "ScrollDirection": "스크롤 방향",
   "Reverse": "역방향",
   "Forward": "앞으로",
   "GeneralSettings": "일반 설정",

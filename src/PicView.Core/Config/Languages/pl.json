@@ -83,7 +83,7 @@
   "Language": "Język",
   "CtrlToZoom": "Wciśnij Ctrl aby przybliżyć: użyj kółka myszy aby się poruszać",
   "ScrollToZoom": "Użyj kółka myszy: aby przybliżyć: wciśnij Ctrl: aby się poruszać",
-  "HorizontalScroll": "Przewijanie w poziomie",
+  "ScrollDirection": "Kierunek przewijania",
   "Reverse": "Odwrócić",
   "Forward": "Do przodu",
   "GeneralSettings": "Ustawienia ogólne",

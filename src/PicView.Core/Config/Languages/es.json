@@ -83,7 +83,7 @@
   "Language": "Lenguaje",
   "CtrlToZoom": "Ctrl para zoom, rueda para navegar",
   "ScrollToZoom": "Rueda para zoom, Ctrl para navegar",
-  "HorizontalScroll": "Desplazamiento horizontal",
+  "ScrollDirection": "Dirección de desplazamiento",
   "Reverse": "Marcha atrás",
   "Forward": "Hacia adelante",
   "GeneralSettings": "Opciones Generales",

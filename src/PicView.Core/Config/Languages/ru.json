@@ -83,7 +83,7 @@
   "Language": "Язык",
   "CtrlToZoom": "Ctrl для увеличения, прокрутка для навигации",
   "ScrollToZoom": "Масштабирование с помощью колесика мыши, перемещение с помощью Ctrl",
-  "HorizontalScroll": "Горизонтальная прокрутка",
+  "ScrollDirection": "Направление прокрутки",
   "Reverse": "Назад",
   "Forward": "Вперед",
   "GeneralSettings": "Общие настройки",

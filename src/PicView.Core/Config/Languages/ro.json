@@ -83,7 +83,7 @@
   "Language": "Limbă",
   "CtrlToZoom": "Ctrl pentru a transfoca, defilare pentru a naviga",
   "ScrollToZoom": "Transfocare cu rotița mausului, navigare cu Ctrl",
-  "HorizontalScroll": "Defilare orizontală",
+  "ScrollDirection": "Direcție de defilare",
   "Reverse": "Inversă",
   "Forward": "Înainte",
   "GeneralSettings": "Setări generale",

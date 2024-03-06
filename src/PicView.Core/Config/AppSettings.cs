@@ -74,6 +74,12 @@ public class Zoom
 public class Sorting
 {
     public bool Name { get; set; } = true;
+    public bool Size { get; set; } = false;
+    public bool CreationTime { get; set; } = false;
+    public bool LastAccessTime { get; set; } = false;
+    public bool LastWriteTime { get; set; } = false;
+    public bool Random { get; set; } = false;
+
     public bool Ascending { get; set; } = true;
     public int SortPreference { get; set; } = 0;
     public bool IncludeSubDirectories { get; set; } = false;

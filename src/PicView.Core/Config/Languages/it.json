@@ -83,7 +83,7 @@
   "Language": "Linguaggio",
   "CtrlToZoom": "Ctrl per ingrandire, scorri per navigare",
   "ScrollToZoom": "Scorri per ingrandire, Ctrl per navigare",
-  "HorizontalScroll": "Horizontal scroll",
+  "ScrollDirection": "Direzione dello scorrimento",
   "Reverse": "Inversione",
   "Forward": "Inoltrare",
   "GeneralSettings": "Impostazioni generali",
