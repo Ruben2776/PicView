@@ -26,13 +26,12 @@
                             VerticalAlignment="Center">
 
                             <Canvas Width="20" Height="20">
-                                <!--  Define size of the Bullet  -->
                                 <Border
                                     x:Name="TickMark"
                                     Width="16"
                                     Height="16"
                                     Margin="1,2.2,4,0"
-                                    Background="#fff"
+                                    Background="{StaticResource MainIconColor}"
                                     CornerRadius="9"
                                     IsVisible="False"
                                     UseLayoutRounding="True">

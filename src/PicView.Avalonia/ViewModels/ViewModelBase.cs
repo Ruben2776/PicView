@@ -148,6 +148,51 @@ public class ViewModelBase : ReactiveObject
         StayCentered = TranslationHelper.GetTranslation("StayCentered");
         ShowFileSavingDialog = TranslationHelper.GetTranslation("ShowFileSavingDialog");
         OpenInSameWindow = TranslationHelper.GetTranslation("OpenInSameWindow");
+        ApplicationStartup = TranslationHelper.GetTranslation("ApplicationStartup");
+        None = TranslationHelper.GetTranslation("None");
+        AdjustTimingForSlideshow = TranslationHelper.GetTranslation("AdjustTimingForSlideshow");
+        AdjustTimingForZoom = TranslationHelper.GetTranslation("AdjustTimingForZoom");
+        AdjustNavSpeed = TranslationHelper.GetTranslation("AdjustNavSpeed");
+    }
+
+    private string? _adjustNavSpeed;
+
+    public string? AdjustNavSpeed
+    {
+        get => _adjustNavSpeed;
+        set => this.RaiseAndSetIfChanged(ref _adjustNavSpeed, value);
+    }
+
+    private string? _adjustTimingForZoom;
+
+    public string? AdjustTimingForZoom
+    {
+        get => _adjustTimingForZoom;
+        set => this.RaiseAndSetIfChanged(ref _adjustTimingForZoom, value);
+    }
+
+    private string? _adjustTimingForSlideshow;
+
+    public string? AdjustTimingForSlideshow
+    {
+        get => _adjustTimingForSlideshow;
+        set => this.RaiseAndSetIfChanged(ref _adjustTimingForSlideshow, value);
+    }
+
+    private string? _none;
+
+    public string? None
+    {
+        get => _none;
+        set => this.RaiseAndSetIfChanged(ref _none, value);
+    }
+
+    private string? _applicationStartup;
+
+    public string? ApplicationStartup
+    {
+        get => _applicationStartup;
+        set => this.RaiseAndSetIfChanged(ref _applicationStartup, value);
     }
 
     private string? _forward;

@@ -100,11 +100,13 @@
                     <TabItem x:Name="ShortcutsTabItem" PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <Image
-                                    Width="14"
-                                    Height="14"
+                                <Path
+                                    Width="13"
+                                    Height="13"
                                     Margin="0,0,5,0"
-                                    Source="{StaticResource ShortcutsImage}" />
+                                    Data="{StaticResource KeyboardCapsGeometry}"
+                                    Fill="{StaticResource MainIconColor}"
+                                    Stretch="Fill" />
                                 <TextBlock
                                     Classes="txt"
                                     Text="{Binding ApplicationShortcuts}"
@@ -153,21 +155,30 @@
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
-                <views:GeneralSettingsView Background="Transparent" PointerPressed="MoveWindow" />
+                <views:GeneralSettingsView
+                    Margin="20"
+                    Background="Transparent"
+                    PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}">
-                <views:AppearanceView Background="Transparent" PointerPressed="MoveWindow" />
+                <views:AppearanceView
+                    Margin="20"
+                    Background="Transparent"
+                    PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=ShortcutsTabItem}">
-                <views:ShortcutsView Background="Transparent" PointerPressed="MoveWindow" />
+                <views:ShortcutsView
+                    Margin="20"
+                    Background="Transparent"
+                    PointerPressed="MoveWindow" />
             </ScrollViewer>
         </Grid>
     </Border>

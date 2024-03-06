@@ -12,7 +12,7 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Grid Margin="20">
+    <Grid>
 
         <StackPanel
             Height="35"

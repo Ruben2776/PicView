@@ -12,32 +12,67 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <WrapPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical">
 
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Text="{Binding MiscSettings}" />
-
-        <ToggleButton IsChecked="{Binding IsIncludingSubdirectories}">
-            <TextBlock Classes="txt" Text="{Binding SearchSubdirectory}" />
+        <ToggleButton
+            Width="250"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            IsChecked="{Binding IsIncludingSubdirectories}">
+            <TextBlock
+                Padding="4,1,0,0"
+                Classes="txt"
+                Text="{Binding SearchSubdirectory}" />
         </ToggleButton>
 
-        <ToggleButton Command="{Binding ChangeTopMostCommand}" IsChecked="{Binding IsTopMost}">
-            <TextBlock Classes="txt" Text="{Binding StayTopMost}" />
+        <ToggleButton
+            Width="250"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            Command="{Binding ChangeTopMostCommand}"
+            IsChecked="{Binding IsTopMost}">
+            <TextBlock
+                Padding="4,1,0,0"
+                Classes="txt"
+                Text="{Binding StayTopMost}" />
         </ToggleButton>
 
-        <ToggleButton IsChecked="{Binding IsStayingCentered}">
-            <TextBlock Classes="txt" Text="{Binding StayCentered}" />
+        <ToggleButton
+            Width="250"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            IsChecked="{Binding IsStayingCentered}">
+            <TextBlock
+                Padding="4,1,0,0"
+                Classes="txt"
+                Text="{Binding StayCentered}" />
         </ToggleButton>
 
-        <ToggleButton IsChecked="{Binding IsFileSavingDialogShown}">
-            <TextBlock Classes="txt" Text="{Binding ShowFileSavingDialog}" />
+        <ToggleButton
+            Width="250"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            IsChecked="{Binding IsFileSavingDialogShown}">
+            <TextBlock
+                Padding="4,1,0,0"
+                Classes="txt"
+                Text="{Binding ShowFileSavingDialog}" />
         </ToggleButton>
 
-        <ToggleButton IsChecked="{Binding IsOpeningInSameWindow}">
-            <TextBlock Classes="txt" Text="{Binding OpenInSameWindow}" />
+        <ToggleButton
+            Width="250"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            IsChecked="{Binding IsOpeningInSameWindow}">
+            <TextBlock
+                Padding="4,1,0,0"
+                Classes="txt"
+                Text="{Binding OpenInSameWindow}" />
         </ToggleButton>
 
         <TextBlock
@@ -45,29 +80,101 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Text="{Binding MouseWheel}" />
-        <RadioButton GroupName="ctrl" IsChecked="{Binding IsCtrlToZoomEnabled}">
-            <TextBlock Classes="txt" Text="{Binding CtrlToZoom}" />
-        </RadioButton>
-        <RadioButton GroupName="ctrl">
-            <TextBlock Classes="txt" Text="{Binding ScrollToZoom}" />
-        </RadioButton>
+        <ComboBox
+            x:Name="MouseWheelBox"
+            Width="250"
+            Padding="5,7,0,7"
+            Background="{StaticResource SecondaryBackgroundColor}"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto">
+            <ComboBoxItem Content="{Binding CtrlToZoom}" IsSelected="{Binding IsCtrlToZoomEnabled}" />
+            <ComboBoxItem Content="{Binding ScrollToZoom}" />
+        </ComboBox>
 
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Text="{Binding ScrollDirection}" />
-        <RadioButton GroupName="scroll" IsChecked="{Binding IsNavigatingInReverse}">
-            <TextBlock Classes="txt" Text="{Binding Reverse}" />
-        </RadioButton>
-        <RadioButton GroupName="scroll">
-            <TextBlock Classes="txt" Text="{Binding Forward}" />
-        </RadioButton>
+        <ComboBox
+            x:Name="ScrollDirectionBox"
+            Width="250"
+            Padding="5,7,0,7"
+            Background="{StaticResource SecondaryBackgroundColor}"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto">
+            <ComboBoxItem Content="{Binding Reverse}" IsSelected="{Binding IsNavigatingInReverse}" />
+            <ComboBoxItem Content="{Binding Forward}" />
+        </ComboBox>
 
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
-            Text="{Binding ScrollDirection}" />
-    </WrapPanel>
+            Text="{Binding ApplicationStartup}" />
+        <ComboBox
+            x:Name="ApplicationStartupBox"
+            Width="250"
+            Padding="5,7,0,7"
+            Background="{StaticResource SecondaryBackgroundColor}"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto">
+            <ComboBoxItem Content="{Binding None}" />
+            <ComboBoxItem Content="{Binding OpenLastFile}" IsSelected="{Binding IsOpeningLastFileOnStartup}" />
+        </ComboBox>
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding AdjustTimingForSlideshow}" />
+
+        <Slider
+            Width="250"
+            Height="30"
+            HorizontalAlignment="Center"
+            IsSnapToTickEnabled="True"
+            Maximum="15"
+            Minimum="1"
+            TickFrequency=".5"
+            TickPlacement="BottomRight"
+            Value="5" />
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding AdjustTimingForZoom}" />
+
+        <Slider
+            Width="250"
+            Height="30"
+            HorizontalAlignment="Center"
+            IsSnapToTickEnabled="True"
+            Maximum="1.5"
+            Minimum=".1"
+            TickFrequency=".1"
+            TickPlacement="BottomRight"
+            Value="5" />
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding AdjustNavSpeed}" />
+
+        <Slider
+            Width="250"
+            Height="30"
+            HorizontalAlignment="Center"
+            IsSnapToTickEnabled="True"
+            Maximum="1.5"
+            Minimum=".1"
+            TickFrequency=".1"
+            TickPlacement="BottomRight"
+            Value="5" />
+    </StackPanel>
 </UserControl>

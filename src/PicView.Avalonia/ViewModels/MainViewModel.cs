@@ -249,6 +249,19 @@ namespace PicView.Avalonia.ViewModels
             }
         }
 
+        private bool _isOpeningLastFileOnStartup = SettingsHelper.Settings.StartUp.OpenLastFile;
+
+        public bool IsOpeningLastFileOnStartup
+        {
+            get => _isOpeningLastFileOnStartup;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isOpeningLastFileOnStartup, value);
+                SettingsHelper.Settings.StartUp.OpenLastFile = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
+        }
+
         private bool _isStayingCentered = SettingsHelper.Settings.WindowProperties.KeepCentered;
 
         public bool IsStayingCentered
