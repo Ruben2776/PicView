@@ -63,5 +63,11 @@
         <RadioButton GroupName="scroll">
             <TextBlock Classes="txt" Text="{Binding Forward}" />
         </RadioButton>
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding ScrollDirection}" />
     </WrapPanel>
 </UserControl>

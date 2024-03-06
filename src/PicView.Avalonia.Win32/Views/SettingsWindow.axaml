@@ -82,7 +82,7 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem x:Name="UISettingsTabItem" PointerPressed="MoveWindow">
+                    <TabItem x:Name="AppearanceTabItem" PointerPressed="MoveWindow">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
@@ -92,7 +92,7 @@
                                     Source="{StaticResource DisplayImage}" />
                                 <TextBlock
                                     Classes="txt"
-                                    Text="{Binding UISettings}"
+                                    Text="{Binding Appearance}"
                                     TextAlignment="Center" />
                             </StackPanel>
                         </TabItem.Header>
@@ -159,8 +159,8 @@
             <ScrollViewer
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
-                IsVisible="{Binding Path=IsSelected, ElementName=UISettingsTabItem}">
-                <views:UISettingsView Background="Transparent" PointerPressed="MoveWindow" />
+                IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}">
+                <views:AppearanceView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer

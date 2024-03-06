@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace PicView.Avalonia.Views;
 
-public partial class UISettingsView : UserControl
+public partial class AppearanceView : UserControl
 {
-    public UISettingsView()
+    public AppearanceView()
     {
         InitializeComponent();
     }

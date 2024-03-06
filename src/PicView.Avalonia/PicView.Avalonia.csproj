@@ -54,8 +54,8 @@
     <Compile Update="Views\ExifView.axaml.cs">
       <DependentUpon>ExifView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\UISettingsView.axaml.cs">
-      <DependentUpon>UISettingsView.axaml</DependentUpon>
+    <Compile Update="Views\AppearanceView.axaml.cs">
+      <DependentUpon>AppearanceView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\ShortcutsView.axaml.cs">
       <DependentUpon>ShortcutsView.axaml</DependentUpon>
@@ -83,6 +83,9 @@
     </Compile>
     <Compile Update="Views\UC\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\AppearanceView.axaml.cs">
+      <DependentUpon>AppearanceView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

@@ -534,7 +534,7 @@
             <TabItem>
                 <TabItem.Header>
                     <TextBlock
-                        x:Name="UiSettingsTextBlock"
+                        x:Name="AppearanceTextBlock"
                         MaxWidth="155"
                         FocusVisualStyle="{x:Null}"
                         FontSize="13"

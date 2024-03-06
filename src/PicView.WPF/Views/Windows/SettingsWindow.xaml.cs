@@ -443,7 +443,7 @@ public partial class SettingsWindow
             TranslationHelper.GetTranslation("SecAbbreviation");
         AdjustTimingForZoomLabel.Text = TranslationHelper.GetTranslation("AdjustTimingForZoom");
         AdjustNavSpeedLabel.Text = TranslationHelper.GetTranslation("AdjustNavSpeed");
-        UiSettingsTextBlock.Text = TranslationHelper.GetTranslation("UISettings");
+        AppearanceTextBlock.Text = TranslationHelper.GetTranslation("Appearance");
         ShowButtonsInHiddenUiTextBlock.Text = TranslationHelper.GetTranslation("ShowButtonsInHiddenUI");
         ToggleTaskbarProgressTextBlock.Text = TranslationHelper.GetTranslation("ToggleTaskbarProgress");
         ShowBottomToolbarTextBlock.Text = TranslationHelper.GetTranslation("ShowBottomToolbar");

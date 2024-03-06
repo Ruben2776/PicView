@@ -90,7 +90,7 @@ internal class LanguageModel
     public string? Reverse { get; set; }
     public string? Forward { get; set; }
     public string? GeneralSettings { get; set; }
-    public string? UISettings { get; set; }
+    public string? Appearance { get; set; }
     public string? MiscSettings { get; set; }
     public string? SearchSubdirectory { get; set; }
     public string? StayTopMost { get; set; }

@@ -141,7 +141,7 @@ public class ViewModelBase : ReactiveObject
         CtrlToZoom = TranslationHelper.GetTranslation("CtrlToZoom");
         ScrollToZoom = TranslationHelper.GetTranslation("ScrollToZoom");
         GeneralSettings = TranslationHelper.GetTranslation("GeneralSettings");
-        UISettings = TranslationHelper.GetTranslation("UISettings");
+        Appearance = TranslationHelper.GetTranslation("Appearance");
         Language = TranslationHelper.GetTranslation("Language");
         MouseWheel = TranslationHelper.GetTranslation("MouseWheel");
         MiscSettings = TranslationHelper.GetTranslation("MiscSettings");
@@ -230,12 +230,12 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _language, value);
     }
 
-    private string? _UISettings;
+    private string? _Appearance;
 
-    public string? UISettings
+    public string? Appearance
     {
-        get => _UISettings;
-        set => this.RaiseAndSetIfChanged(ref _UISettings, value);
+        get => _Appearance;
+        set => this.RaiseAndSetIfChanged(ref _Appearance, value);
     }
 
     private string? _generalSettings;
