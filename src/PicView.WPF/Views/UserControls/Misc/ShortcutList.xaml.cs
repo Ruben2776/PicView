@@ -820,23 +820,23 @@ public partial class ShortcutList
 
         SetStarRatingLabel.Content = TranslationHelper.GetTranslation("SetStarRating");
 
-        SetStar1TextBlock.Text = TranslationHelper.GetTranslation("1Star");
+        SetStar1TextBlock.Text = TranslationHelper.GetTranslation("_1Star");
         SetStar1Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
         SetStar1Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
 
-        SetStar2TextBlock.Text = TranslationHelper.GetTranslation("2Star");
+        SetStar2TextBlock.Text = TranslationHelper.GetTranslation("_2Star");
         SetStar2Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
         SetStar2Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
 
-        SetStar3TextBlock.Text = TranslationHelper.GetTranslation("3Star");
+        SetStar3TextBlock.Text = TranslationHelper.GetTranslation("_3Star");
         SetStar3Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
         SetStar3Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
 
-        SetStar4TextBlock.Text = TranslationHelper.GetTranslation("4Star");
+        SetStar4TextBlock.Text = TranslationHelper.GetTranslation("_4Star");
         SetStar4Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
         SetStar4Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
 
-        SetStar5TextBlock.Text = TranslationHelper.GetTranslation("5Star");
+        SetStar5TextBlock.Text = TranslationHelper.GetTranslation("_5Star");
         SetStar5Box1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
         SetStar5Box2.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
 
