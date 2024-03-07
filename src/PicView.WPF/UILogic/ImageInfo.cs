@@ -60,7 +60,7 @@ internal static class ImageInfo
             return;
         }
 
-        var data = await GetImageData.RetrieveData(fileInfo).ConfigureAwait(false);
+        var data = GetImageData.RetrieveData(fileInfo);
 
         await ConfigureWindows.GetImageInfoWindow.Dispatcher.InvokeAsync(() =>
         {
@@ -75,310 +75,299 @@ internal static class ImageInfo
                 return;
             }
 
-            ConfigureWindows.GetImageInfoWindow.FilenameBox.Text = data[0];
+            ConfigureWindows.GetImageInfoWindow.FilenameBox.Text = data.Value.FileName;
 
-            ConfigureWindows.GetImageInfoWindow.FolderBox.Text = data[1];
+            ConfigureWindows.GetImageInfoWindow.FolderBox.Text = data.Value.DirectoryName;
 
-            ConfigureWindows.GetImageInfoWindow.FullPathBox.Text = data[2];
+            ConfigureWindows.GetImageInfoWindow.FullPathBox.Text = data.Value.Path;
 
-            ConfigureWindows.GetImageInfoWindow.CreatedBox.Text = data[3];
+            ConfigureWindows.GetImageInfoWindow.CreatedBox.Text = data.Value.CreationTime;
 
-            ConfigureWindows.GetImageInfoWindow.ModifiedBox.Text = data[4];
+            ConfigureWindows.GetImageInfoWindow.ModifiedBox.Text = data.Value.LastWriteTime;
 
-            ConfigureWindows.GetImageInfoWindow.AccessedBox.Text = data[5];
+            ConfigureWindows.GetImageInfoWindow.AccessedBox.Text = data.Value.LastAccessTime;
 
-            ConfigureWindows.GetImageInfoWindow.BitDepthBox.Text = data[6];
+            ConfigureWindows.GetImageInfoWindow.BitDepthBox.Text = data.Value.BitDepth;
 
-            ConfigureWindows.GetImageInfoWindow.WidthBox.Text = data[7];
+            ConfigureWindows.GetImageInfoWindow.WidthBox.Text = data.Value.PixelWidth;
 
-            ConfigureWindows.GetImageInfoWindow.HeightBox.Text = data[8];
+            ConfigureWindows.GetImageInfoWindow.HeightBox.Text = data.Value.PixelHeight;
 
-            ConfigureWindows.GetImageInfoWindow.ResolutionBox.Text = data[9];
+            ConfigureWindows.GetImageInfoWindow.ResolutionBox.Text = data.Value.ResolutionUnit;
 
-            ConfigureWindows.GetImageInfoWindow.SizeMpBox.Text = data[10];
+            ConfigureWindows.GetImageInfoWindow.SizeMpBox.Text = data.Value.MegaPixels;
 
-            ConfigureWindows.GetImageInfoWindow.PrintSizeCmBox.Text = data[11];
+            ConfigureWindows.GetImageInfoWindow.PrintSizeCmBox.Text = data.Value.PrintSizeCm;
 
-            ConfigureWindows.GetImageInfoWindow.PrintSizeInBox.Text = data[12];
+            ConfigureWindows.GetImageInfoWindow.PrintSizeInBox.Text = data.Value.PrintSizeInch;
 
-            ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = data[13];
+            ConfigureWindows.GetImageInfoWindow.AspectRatioBox.Text = data.Value.AspectRatio;
 
-            _rating = data[14];
+            _rating = data.Value.ExifRating;
 
-            if (data.Length > 15)
+            if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
             {
-                if (ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Count > 0)
-                {
-                    // 0 == GPS
-                    var latitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
-                    latitudeBox.SetValues(data[15], data[16], true);
-                    var longitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
-                    longitudeBox.SetValues(data[17], data[18], true);
-
-                    var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
-                    linkX.SetURL(data[19], "Bing");
-                    var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[4];
-                    linkY.SetURL(data[20], "Google");
-
-                    var latitude = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[5];
-                    latitude.SetValues(data[21], data[22], true);
-
-                    // 6 == Origin
-                    var title = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
-                    title.SetValues(data[23], data[24], true);
-                    var dateTakenBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
-                    dateTakenBox.SetValues(data[25], data[26], true);
-
-                    var authorBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
-                    authorBox.SetValues(data[27], data[28], true);
-                    var subject = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[10];
-                    subject.SetValues(data[29], data[30], true);
-
-                    var program = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[11];
-                    program.SetValues(data[31], data[32], true);
-                    var copyright = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[12];
-                    copyright.SetValues(data[33], data[34], true);
-
-                    // 13 == Image
-                    var resolutionUnit = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[14];
-                    resolutionUnit.SetValues(data[35], data[36], true);
-                    var colorRepresentation =
-                        (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[15];
-                    colorRepresentation.SetValues(data[37], data[38], true);
-
-                    var compression = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[16];
-                    compression.SetValues(data[39], data[40], true);
-                    var compressionBits = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[17];
-                    compressionBits.SetValues(data[41], data[42], true);
-
-                    // 18 == Camera
-                    var cameraMaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[19];
-                    cameraMaker.SetValues(data[43], data[44], true);
-                    var cameraModel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[20];
-                    cameraModel.SetValues(data[45], data[46], true);
-
-                    var fstop = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[21];
-                    fstop.SetValues(data[47], data[48], true);
-                    var exposure = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[22];
-                    exposure.SetValues(data[49], data[50], true);
-
-                    var isoSpeed = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[23];
-                    isoSpeed.SetValues(data[51], data[52], true);
-                    var exposureBias = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[24];
-                    exposureBias.SetValues(data[53], data[54], true);
-
-                    var maxAperture = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[25];
-                    maxAperture.SetValues(data[55], data[56], true);
-
-                    var focal = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[26];
-                    focal.SetValues(data[57], data[58], true);
-                    var flength35 = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[27];
-                    flength35.SetValues(data[59], data[60], true);
-
-                    var flashMode = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[28];
-                    flashMode.SetValues(data[61], data[62], true);
-                    var flashEnergy = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[29];
-                    flashEnergy.SetValues(data[63], data[64], true);
-
-                    var meteringMode = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[30];
-                    meteringMode.SetValues(data[65], data[66], true);
-
-                    // 31 == Film
-                    var lensmaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[32];
-                    lensmaker.SetValues(data[67], data[68], true);
-                    var lensmodel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[33];
-                    lensmodel.SetValues(data[69], data[70], true);
+                // 0 == GPS
+                var latitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[1];
+                latitudeBox.SetValues(TranslationHelper.GetTranslation("Latitude"), data.Value.Latitude, true);
 
-                    var flashManufacturer =
-                        (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[34];
-                    flashManufacturer.SetValues(data[71], data[72], true);
-                    var flashModel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[35];
-                    flashModel.SetValues(data[73], data[74], true);
+                var longitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[2];
+                longitudeBox.SetValues(TranslationHelper.GetTranslation("Longitude"), data.Value.Longitude, true);
 
-                    var camSerialNumber = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[36];
-                    camSerialNumber.SetValues(data[75], data[76], true);
+                var linkX = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[3];
+                linkX.SetURL(data.Value.BingLink, "Bing");
 
-                    var contrast = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[37];
-                    contrast.SetValues(data[77], data[78], true);
-                    var brightness = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[38];
-                    brightness.SetValues(data[79], data[80], true);
+                var linkY = (LinkTextBox)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[4];
+                linkY.SetURL(data.Value.GoogleLink, "Google");
 
-                    var lightSource = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[39];
-                    lightSource.SetValues(data[81], data[82], true);
+                var altitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[5];
+                altitudeBox.SetValues(TranslationHelper.GetTranslation("Altitude"), data.Value.Altitude, true);
 
-                    var exposureProgram = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[40];
-                    exposureProgram.SetValues(data[83], data[84], true);
+                var title = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
+                title.SetValues(TranslationHelper.GetTranslation("Title"), data.Value.Title, true);
 
-                    var saturation = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[41];
-                    saturation.SetValues(data[85], data[86], true);
-                    var sharpness = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[42];
-                    sharpness.SetValues(data[87], data[88], true);
+                var dateTakenBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
+                dateTakenBox.SetValues(TranslationHelper.GetTranslation("DateTaken"), data.Value.DateTaken, true);
 
-                    var whiteBalance = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[43];
-                    whiteBalance.SetValues(data[89], data[90], true);
-                    var photometricInterpolation =
-                        (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[44];
-                    photometricInterpolation.SetValues(data[91], data[92], true);
+                var authorBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
+                authorBox.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Authors")), data.Value.Authors, true);
 
-                    var digitalZoom = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[45];
-                    digitalZoom.SetValues(data[93], data[94], true);
+                var subject = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[10];
+                subject.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Subject")), data.Value.Subject, true);
 
-                    var exifversion = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[46];
-                    exifversion.SetValues(data[95], data[96], true);
-                }
-                else
-                {
-                    var latitudeBox = new TextBoxInfo(data[15], data[16], true);
-                    var longitudeBox = new TextBoxInfo(data[17], data[18], true);
+                var program = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[11];
+                program.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Software")), data.Value.Software, true);
 
-                    var linkX = new LinkTextBox(data[19], "Bing");
-                    var linkY = new LinkTextBox(data[20], "Google");
+                var copyright = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[12];
+                copyright.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Copyright")), data.Value.Copyright, true);
 
-                    var altitude = new TextBoxInfo(data[21], data[22], true);
+                var resolutionUnit = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[14];
+                resolutionUnit.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ResolutionUnit")), data.Value.ResolutionUnit, true);
 
-                    var title = new TextBoxInfo(data[23], data[24], true);
-                    var subject = new TextBoxInfo(data[25], data[26], true);
+                var colorRepresentation = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[15];
+                colorRepresentation.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ColorRepresentation")), data.Value.ColorRepresentation, true);
 
-                    var authorBox = new TextBoxInfo(data[27], data[28], true);
-                    var dateTakenBox = new TextBoxInfo(data[29], data[30], true);
+                var compression = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[16];
+                compression.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Compression")), data.Value.Compression, true);
 
-                    var program = new TextBoxInfo(data[31], data[32], true);
-                    var copyright = new TextBoxInfo(data[33], data[34], true);
+                var compressionBits = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[17];
+                compressionBits.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("CompressedBitsPixel")), data.Value.CompressedBitsPixel, true);
 
-                    var resolutionUnit = new TextBoxInfo(data[35], data[36], true);
-                    var colorRepresentation = new TextBoxInfo(data[37], data[38], true);
+                var cameraMaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[19];
+                cameraMaker.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("CameraMaker")), data.Value.CameraMaker, true);
 
-                    var compression = new TextBoxInfo(data[39], data[40], true);
-                    var compressionBits = new TextBoxInfo(data[41], data[42], true);
+                var cameraModel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[20];
+                cameraModel.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("CameraModel")), data.Value.CameraModel, true);
 
-                    var cameraMaker = new TextBoxInfo(data[43], data[44], true);
-                    var cameraModel = new TextBoxInfo(data[45], data[46], true);
+                var fstop = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[21];
+                fstop.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Fstop")), data.Value.Fstop, true);
 
-                    var fstop = new TextBoxInfo(data[47], data[48], true);
-                    var exposure = new TextBoxInfo(data[49], data[50], true);
+                var exposure = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[22];
+                exposure.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ExposureTime")), data.Value.ExposureTime, true);
 
-                    var isoSpeed = new TextBoxInfo(data[51], data[52], true);
-                    var exposureBias = new TextBoxInfo(data[53], data[54], true);
+                var isoSpeed = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[23];
+                isoSpeed.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ISOSpeed")), data.Value.ISOSpeed, true);
 
-                    var maxAperture = new TextBoxInfo(data[55], data[56], true);
+                var exposureBias = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[24];
+                exposureBias.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ExposureBias")), data.Value.ExposureBias, true);
 
-                    var focal = new TextBoxInfo(data[57], data[58], true);
-                    var flength35 = new TextBoxInfo(data[59], data[60], true);
+                var maxAperture = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[25];
+                maxAperture.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("MaxAperture")), data.Value.MaxAperture, true);
 
-                    var flashMode = new TextBoxInfo(data[61], data[62], true);
-                    var flashEnergy = new TextBoxInfo(data[63], data[64], true);
+                var focal = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[26];
+                focal.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("FocalLength")), data.Value.FocalLength, true);
 
-                    var metering = new TextBoxInfo(data[65], data[66], true);
+                var flength35 = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[27];
+                flength35.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("FocalLength35mm")), data.Value.FocalLength35mm, true);
 
-                    var lensmaker = new TextBoxInfo(data[67], data[68], true);
-                    var lensmodel = new TextBoxInfo(data[69], data[70], true);
+                var flashMode = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[28];
+                flashMode.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("FlashMode")), data.Value.FlashMode, true);
 
-                    var flashManufacturer = new TextBoxInfo(data[71], data[72], true);
-                    var flashModel = new TextBoxInfo(data[73], data[74], true);
+                var flashEnergy = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[29];
+                flashEnergy.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("FlashEnergy")), data.Value.FlashEnergy, true);
 
-                    var camSerialNumber = new TextBoxInfo(data[75], data[76], true);
+                var meteringMode = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[30];
+                meteringMode.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("MeteringMode")), data.Value.MeteringMode, true);
 
-                    var contrast = new TextBoxInfo(data[77], data[78], true);
-                    var brightness = new TextBoxInfo(data[79], data[80], true);
+                var lensmaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[32];
+                lensmaker.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("LensMaker")), data.Value.LensMaker, true);
 
-                    var lightSource = new TextBoxInfo(data[81], data[82], true);
+                var lensmodel = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[33];
+                lensmodel.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("LensModel")), data.Value.LensModel, true);
 
-                    var exposureProgram = new TextBoxInfo(data[83], data[84], true);
+                var contrast = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[34];
+                contrast.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Contrast")), data.Value.Contrast, true);
 
-                    var saturation = new TextBoxInfo(data[85], data[86], true);
-                    var sharpness = new TextBoxInfo(data[87], data[88], true);
+                var brightness = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[35];
+                brightness.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Brightness")), data.Value.Brightness, true);
 
-                    var whiteBalance = new TextBoxInfo(data[89], data[90], true);
+                var lightSource = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[36];
+                lightSource.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("LightSource")), data.Value.LightSource, true);
 
-                    var photometricInterpolation = new TextBoxInfo(data[91], data[92], true);
+                var exposureProgram = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[37];
+                exposureProgram.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ExposureProgram")), data.Value.ExposureProgram, true);
 
-                    var digitalZoom = new TextBoxInfo(data[93], data[94], true);
+                var saturation = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[38];
+                saturation.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Saturation")), data.Value.Saturation, true);
 
-                    var exifversion = new TextBoxInfo(data[95], data[96], true);
+                var sharpness = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[39];
+                sharpness.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Sharpness")), data.Value.Sharpness, true);
 
-                    var gps = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["GPS"];
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(gps);
+                var whiteBalance = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[40];
+                whiteBalance.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("WhiteBalance")), data.Value.WhiteBalance, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
+                var photometricInterpolation =
+                    (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[41];
+                photometricInterpolation.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("PhotometricInterpretation")), data.Value.PhotometricInterpretation, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkX);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkY);
+                var digitalZoom = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[42];
+                digitalZoom.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("DigitalZoom")), data.Value.DigitalZoom, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(altitude);
+                var exifversion = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[43];
+                exifversion.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ExifVersion")), data.Value.ExifVersion, true);
+            }
+            else
+            {
+                var latitudeBox = new TextBoxInfo(TranslationHelper.GetTranslation("Latitude"), data.Value.Latitude, true);
+                var longitudeBox = new TextBoxInfo(TranslationHelper.GetTranslation("Longitude"), data.Value.Longitude, true);
 
-                    var origin = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Origin"];
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(origin);
+                var altitude = new TextBoxInfo(TranslationHelper.GetTranslation("Altitude"), data.Value.Altitude, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(title);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(subject);
+                var linkX = new LinkTextBox(data.Value.BingLink, "Bing");
+                var linkY = new LinkTextBox(data.Value.GoogleLink, "Google");
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(authorBox);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(dateTakenBox);
+                var title = new TextBoxInfo(TranslationHelper.GetTranslation("Title"), data.Value.Title, true);
+                var subject = new TextBoxInfo(TranslationHelper.GetTranslation("Subject"), data.Value.Subject, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(program);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(copyright);
+                var authorBox = new TextBoxInfo(TranslationHelper.GetTranslation("Authors"), data.Value.Authors, true);
+                var dateTakenBox = new TextBoxInfo(TranslationHelper.GetTranslation("DateTaken"), data.Value.DateTaken, true);
 
-                    var image = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Image"];
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(image);
+                var program = new TextBoxInfo(TranslationHelper.GetTranslation("Software"), data.Value.Software, true);
+                var copyright = new TextBoxInfo(TranslationHelper.GetTranslation("Copyright"), data.Value.Copyright, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(resolutionUnit);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(colorRepresentation);
+                var resolutionUnit = new TextBoxInfo(TranslationHelper.GetTranslation("ResolutionUnit"), data.Value.ResolutionUnit, true);
+                var colorRepresentation = new TextBoxInfo(TranslationHelper.GetTranslation("ColorRepresentation"), data.Value.ColorRepresentation, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(compression);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(compressionBits);
+                var compression = new TextBoxInfo(TranslationHelper.GetTranslation("Compression"), data.Value.Compression, true);
+                var compressionBits = new TextBoxInfo(TranslationHelper.GetTranslation("CompressedBitsPixel"), data.Value.CompressedBitsPixel, true);
 
-                    var camera = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Camera"];
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(camera);
+                var cameraMaker = new TextBoxInfo(TranslationHelper.GetTranslation("CameraMaker"), data.Value.CameraMaker, true);
+                var cameraModel = new TextBoxInfo(TranslationHelper.GetTranslation("CameraModel"), data.Value.CameraModel, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(cameraMaker);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(cameraModel);
+                var fstop = new TextBoxInfo(TranslationHelper.GetTranslation("Fstop"), data.Value.Fstop, true);
+                var exposure = new TextBoxInfo(TranslationHelper.GetTranslation("ExposureProgram"), data.Value.ExposureProgram, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(fstop);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposure);
+                var isoSpeed = new TextBoxInfo(TranslationHelper.GetTranslation("ISOSpeed"), data.Value.ISOSpeed, true);
+                var exposureBias = new TextBoxInfo(TranslationHelper.GetTranslation("ExposureBias"), data.Value.ExposureBias, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(isoSpeed);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposureBias);
+                var maxAperture = new TextBoxInfo(TranslationHelper.GetTranslation("MaxAperture"), data.Value.MaxAperture, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(maxAperture);
+                var focal = new TextBoxInfo(TranslationHelper.GetTranslation("FocalLength"), data.Value.FocalLength, true);
+                var flength35 = new TextBoxInfo(TranslationHelper.GetTranslation("FocalLength35mm"), data.Value.FocalLength35mm, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(focal);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flength35);
+                var flashMode = new TextBoxInfo(TranslationHelper.GetTranslation("FlashMode"), data.Value.FlashMode, true);
+                var flashEnergy = new TextBoxInfo(TranslationHelper.GetTranslation("FlashEnergy"), data.Value.FlashEnergy, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashMode);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashEnergy);
+                var metering = new TextBoxInfo(TranslationHelper.GetTranslation("MeteringMode"), data.Value.MeteringMode, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(metering);
+                var lensmaker = new TextBoxInfo(TranslationHelper.GetTranslation("LensMaker"), data.Value.LensMaker, true);
+                var lensmodel = new TextBoxInfo(TranslationHelper.GetTranslation("LensModel"), data.Value.LensModel, true);
 
-                    var film = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Film"];
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(film);
+                var contrast = new TextBoxInfo(TranslationHelper.GetTranslation("Contrast"), data.Value.Contrast, true);
+                var brightness = new TextBoxInfo(TranslationHelper.GetTranslation("Brightness"), data.Value.Brightness, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lensmaker);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lensmodel);
+                var lightSource = new TextBoxInfo(TranslationHelper.GetTranslation("LightSource"), data.Value.LightSource, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashManufacturer);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashModel);
+                var exposureProgram = new TextBoxInfo(TranslationHelper.GetTranslation("ExposureProgram"), data.Value.ExposureProgram, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(camSerialNumber);
+                var saturation = new TextBoxInfo(TranslationHelper.GetTranslation("Saturation"), data.Value.Saturation, true);
+                var sharpness = new TextBoxInfo(TranslationHelper.GetTranslation("Sharpness"), data.Value.Sharpness, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(contrast);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(brightness);
+                var whiteBalance = new TextBoxInfo(TranslationHelper.GetTranslation("WhiteBalance"), data.Value.WhiteBalance, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lightSource);
+                var photometricInterpolation = new TextBoxInfo(TranslationHelper.GetTranslation("PhotometricInterpretation"), data.Value.PhotometricInterpretation, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposureProgram);
+                var digitalZoom = new TextBoxInfo(TranslationHelper.GetTranslation("DigitalZoom"), data.Value.DigitalZoom, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(saturation);
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(sharpness);
+                var exifversion = new TextBoxInfo(TranslationHelper.GetTranslation("ExifVersion"), data.Value.ExifVersion, true);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(whiteBalance);
+                var gps = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["GPS"];
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(gps);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(photometricInterpolation);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(latitudeBox);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(longitudeBox);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(digitalZoom);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkX);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(linkY);
 
-                    ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exifversion);
-                }
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(altitude);
+
+                var origin = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Origin"];
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(origin);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(title);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(subject);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(authorBox);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(dateTakenBox);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(program);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(copyright);
+
+                var image = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Image"];
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(image);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(resolutionUnit);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(colorRepresentation);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(compression);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(compressionBits);
+
+                var camera = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Camera"];
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(camera);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(cameraMaker);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(cameraModel);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(fstop);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposure);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(isoSpeed);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposureBias);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(maxAperture);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(focal);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flength35);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashMode);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(flashEnergy);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(metering);
+
+                var film = (StackPanel)ConfigureWindows.GetImageInfoWindow.Resources["Film"];
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(film);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lensmaker);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lensmodel);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(contrast);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(brightness);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(lightSource);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exposureProgram);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(saturation);
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(sharpness);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(whiteBalance);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(photometricInterpolation);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(digitalZoom);
+
+                ConfigureWindows.GetImageInfoWindow.ExifParent.Children.Add(exifversion);
             }
 
             UpdateStars();
@@ -423,15 +412,38 @@ internal static class ImageInfo
         }
 
         var castRating = _rating.GetType();
-        if (castRating == typeof(int)) // Try and convert to int to avoid exception
+        if (castRating == typeof(uint))
         {
-            var intRating = (int)_rating;
-            intRating = intRating is >= 0 and <= 5 ? intRating : 0;
-            UpdateStars((intRating));
+            var uintRating = (uint)_rating;
+            if (uintRating <= int.MaxValue)
+            {
+                var intRating = (int)uintRating;
+                intRating = intRating is >= 0 and <= 5 ? intRating : 0;
+                UpdateStars(intRating);
+                return;
+            }
+
+            UpdateStars(0);
             return;
         }
 
-        if ((string)_rating == string.Empty || (string)_rating == "0")
+        if (castRating == typeof(int))
+        {
+            var intRating = (int)_rating;
+            intRating = intRating is >= 0 and <= 5 ? intRating : 0;
+            UpdateStars(intRating);
+            return;
+        }
+
+        try
+        {
+            if ((string)_rating == string.Empty || (string)_rating == "0")
+            {
+                UpdateStars(0);
+                return;
+            }
+        }
+        catch (Exception)
         {
             UpdateStars(0);
             return;

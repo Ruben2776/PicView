@@ -252,7 +252,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         FontSize="14"
-                        Text="2017 - 2023 © Ruben Hyldgaard Negendahl" />
+                        Text="2017 - 2024 © Ruben Hyldgaard Negendahl" />
 
                     <TextBlock
                         Margin="0,8,0,2"

@@ -1,812 +1,272 @@
 ﻿using ImageMagick;
-using Microsoft.WindowsAPICodePack.Shell;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
 using System.Globalization;
 using System.IO;
-using System.Text;
+using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace PicView.WPF.ImageHandling;
 
 internal static class GetImageData
 {
-    internal static async Task<string[]?> RetrieveData(FileInfo? fileInfo)
+    public struct ImageData
     {
-        if (fileInfo is null)
+        public string FileName { get; set; }
+        public string DirectoryName { get; set; }
+        public string Path { get; set; }
+        public string CreationTime { get; set; }
+        public string LastWriteTime { get; set; }
+        public string LastAccessTime { get; set; }
+        public string BitDepth { get; set; }
+        public string PixelWidth { get; set; }
+        public string PixelHeight { get; set; }
+        public string Dpi { get; set; }
+        public string MegaPixels { get; set; }
+        public string PrintSizeCm { get; set; }
+        public string PrintSizeInch { get; set; }
+        public string AspectRatio { get; set; }
+        public uint ExifRating { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
+        public string BingLink { get; set; }
+        public string GoogleLink { get; set; }
+        public string Altitude { get; set; }
+        public string Title { get; set; }
+        public string Subject { get; set; }
+        public string Authors { get; set; }
+        public string DateTaken { get; set; }
+        public string Software { get; set; }
+        public string Copyright { get; set; }
+        public string ResolutionUnit { get; set; }
+        public string ColorRepresentation { get; set; }
+        public string Compression { get; set; }
+        public string CompressedBitsPixel { get; set; }
+        public string CameraMaker { get; set; }
+        public string CameraModel { get; set; }
+        public string Fstop { get; set; }
+        public string ExposureTime { get; set; }
+        public string ISOSpeed { get; set; }
+        public string ExposureBias { get; set; }
+        public string MaxAperture { get; set; }
+        public string FocalLength { get; set; }
+        public string FocalLength35mm { get; set; }
+        public string FlashMode { get; set; }
+        public string FlashEnergy { get; set; }
+        public string MeteringMode { get; set; }
+        public string LensMaker { get; set; }
+        public string LensModel { get; set; }
+        public string CamSerialNumber { get; set; }
+        public string Contrast { get; set; }
+        public string Brightness { get; set; }
+        public string LightSource { get; set; }
+        public string ExposureProgram { get; set; }
+        public string Saturation { get; set; }
+        public string Sharpness { get; set; }
+        public string WhiteBalance { get; set; }
+        public string PhotometricInterpretation { get; set; }
+        public string DigitalZoom { get; set; }
+        public string ExifVersion { get; set; }
+    }
+
+    internal static ImageData? RetrieveData(FileInfo? fileInfo)
+    {
+        BitmapSource? img = null;
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            img = ConfigureWindows.GetMainWindow.MainImage.Source as BitmapSource;
+        });
+
+        if (img is null)
         {
             return null;
+        }
+
+        var imageData = new ImageData
+        {
+            PixelWidth = img.PixelWidth.ToString(CultureInfo.CurrentCulture),
+            PixelHeight = img.PixelHeight.ToString(CultureInfo.CurrentCulture),
+            Dpi = $"{img.DpiX} x {img.DpiY}",
+        };
+
+        if (fileInfo is null)
+        {
+            return imageData;
         }
 
         if (!fileInfo.Exists)
         {
-            return null;
+            return imageData;
         }
+
         if (ErrorHandling.CheckOutOfRange() == false)
         {
             if (Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
-                return null;
-        }
-
-        string name, directoryName, fullname, creationTime, lastWriteTime, lastAccessTime;
-
-        if (fileInfo is null)
-        {
-            name = string.Empty;
-            directoryName = string.Empty;
-            fullname = string.Empty;
-            creationTime = string.Empty;
-            lastWriteTime = string.Empty;
-            lastAccessTime = string.Empty;
+            {
+                return imageData;
+            }
         }
         else
         {
-            try
-            {
-                name = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                directoryName = fileInfo.DirectoryName ?? "";
-                fullname = fileInfo.FullName;
-                creationTime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
-                lastWriteTime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
-                lastAccessTime = fileInfo.LastAccessTime.ToString(CultureInfo.CurrentCulture);
-            }
-            catch (Exception)
-            {
-                name = string.Empty;
-                directoryName = string.Empty;
-                fullname = string.Empty;
-                creationTime = string.Empty;
-                lastWriteTime = string.Empty;
-                lastAccessTime = string.Empty;
-            }
+            return imageData;
         }
 
-        BitmapSource? bitmapSource = null;
-
-        if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex)
-        {
-            var preloadValue = PreLoader.Get(Navigation.FolderIndex);
-            if (preloadValue is null)
-            {
-                await PreLoader.AddAsync(Navigation.FolderIndex).ConfigureAwait(false);
-                preloadValue = new PreLoader.PreLoadValue(null, fileInfo, null);
-                if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
-                {
-                    return null;
-                }
-            }
-
-            while (preloadValue.BitmapSource is null)
-            {
-                await Task.Delay(50).ConfigureAwait(false);
-                if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
-                {
-                    return null;
-                }
-            }
-
-            bitmapSource = preloadValue.BitmapSource;
-        }
-        else
-        {
-            await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                () => { bitmapSource = Image2BitmapSource.GetRenderedBitmapFrame(); });
-        }
-
-        if (fileInfo is not null && Navigation.Pics[Navigation.FolderIndex] != fileInfo.FullName)
-        {
-            return null;
-        }
-
-        if (bitmapSource is null)
-        {
-            return null;
-        }
-
-        var inchesWidth = bitmapSource.PixelWidth / bitmapSource.DpiX;
-        var inchesHeight = bitmapSource.PixelHeight / bitmapSource.DpiY;
-        var cmWidth = inchesWidth * 2.54;
-        var cmHeight = inchesHeight * 2.54;
-
-        var firstRatio = bitmapSource.PixelWidth / TitleHelper.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-        var secondRatio = bitmapSource.PixelHeight /
-                          TitleHelper.GCD(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-        string ratioText;
-        if (firstRatio == secondRatio)
-        {
-            ratioText = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Square")})";
-        }
-        else if (firstRatio > secondRatio)
-        {
-            ratioText = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Landscape")})";
-        }
-        else
-        {
-            ratioText = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Portrait")})";
-        }
-
-        var megaPixels = ((float)bitmapSource.PixelHeight * bitmapSource.PixelWidth / 1000000)
-            .ToString("0.##", CultureInfo.CurrentCulture) + " " + TranslationHelper.GetTranslation("MegaPixels");
-
-        var printSizeCm = cmWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " +
-                          cmHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                          + " " + TranslationHelper.GetTranslation("Centimeters");
-
-        var printSizeInch = inchesWidth.ToString("0.##", CultureInfo.CurrentCulture) + " x " +
-                            inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)
-                            + " " + TranslationHelper.GetTranslation("Inches");
-
-        var dpi = string.Empty;
-
-        if (fileInfo is null)
-        {
-            return new[]
-            {
-                name,
-                directoryName,
-                fullname,
-                creationTime,
-                lastWriteTime,
-                lastAccessTime,
-
-                "",
-
-                bitmapSource.PixelWidth.ToString(),
-                bitmapSource.PixelHeight.ToString(),
-
-                dpi,
-
-                megaPixels,
-
-                printSizeCm,
-                printSizeInch,
-
-                ratioText,
-
-                "0",
-            };
-        }
-
-        // exif
-        var gps = string.Empty;
-
-        var latitude = string.Empty;
-        var latitudeValue = string.Empty;
-
-        var longitude = string.Empty;
-        var longitudeValue = string.Empty;
-
-        var altitude = string.Empty;
-        var altitudeValue = string.Empty;
-
-        var googleLink = string.Empty;
-        var bingLink = string.Empty;
-
-        var title = string.Empty;
-        var titleValue = string.Empty;
-
-        var subject = string.Empty;
-        var subjectValue = string.Empty;
-
-        var authors = string.Empty;
-        var authorsValue = string.Empty;
-
-        var dateTaken = string.Empty;
-        var dateTakenValue = string.Empty;
-
-        var programName = string.Empty;
-        var programNameValue = string.Empty;
-
-        var copyrightName = string.Empty;
-        var copyrightValue = string.Empty;
-
-        var resolutionUnit = string.Empty;
-        var resolutionUnitValue = string.Empty;
-
-        var colorRepresentation = string.Empty;
-        var colorRepresentationValue = string.Empty;
-
-        var compression = string.Empty;
-        var compressionValue = string.Empty;
-
-        var compressionBits = string.Empty;
-        var compressionBitsValue = string.Empty;
-
-        var cameraMaker = string.Empty;
-        var cameroMakerValue = string.Empty;
-
-        var cameraModel = string.Empty;
-        var cameroModelValue = string.Empty;
-
-        var fstop = string.Empty;
-        var fstopValue = string.Empty;
-
-        var exposure = string.Empty;
-        var exposureValue = string.Empty;
-
-        var isoSpeed = string.Empty;
-        var isoSpeedValue = string.Empty;
-
-        var exposureBias = string.Empty;
-        var exposureBiasValue = string.Empty;
-
-        var focal = string.Empty;
-        var focalValue = string.Empty;
-
-        var maxAperture = string.Empty;
-        var maxApertureValue = string.Empty;
-
-        var flashMode = string.Empty;
-        var flashModeValue = string.Empty;
-
-        var flashEnergy = string.Empty;
-        var flashEnergyValue = string.Empty;
-
-        var flength35 = string.Empty;
-        var flength35Value = string.Empty;
-
-        var meteringMode = string.Empty;
-        var meteringModeValue = string.Empty;
-
-        var lensManufacturer = string.Empty;
-        var lensManufacturerValue = string.Empty;
-
-        var lensmodel = string.Empty;
-        var lensmodelValue = string.Empty;
-
-        var flashManufacturer = string.Empty;
-        var flashManufacturerValue = string.Empty;
-
-        var flashModel = string.Empty;
-        var flashModelValue = string.Empty;
-
-        var camSerialNumber = string.Empty;
-        var camSerialNumberValue = string.Empty;
-
-        var contrast = string.Empty;
-        var contrastValue = string.Empty;
-
-        var brightness = string.Empty;
-        var brightnessValue = string.Empty;
-
-        var lightSource = string.Empty;
-        var lightSourceValue = string.Empty;
-
-        var exposureProgram = string.Empty;
-        var exposureProgramValue = string.Empty;
-
-        var saturation = string.Empty;
-        var saturationValue = string.Empty;
-
-        var sharpness = string.Empty;
-        var sharpnessValue = string.Empty;
-
-        var whiteBalance = string.Empty;
-        var whiteBalanceValue = string.Empty;
-
-        var photometricInterpolation = string.Empty;
-        var photometricInterpolationValue = string.Empty;
-
-        var digitalZoom = string.Empty;
-        var digitalZoomValue = string.Empty;
-
-        var exifversion = string.Empty;
-        var exifversionValue = string.Empty;
-
-        var so = ShellObject.FromParsingName(fileInfo.FullName);
-        var bitDepth = so.Properties.GetProperty(SystemProperties.System.Image.BitDepth).ValueAsObject;
-        var stars = so.Properties.GetProperty(SystemProperties.System.Rating).ValueAsObject;
-
-        var dpiX = so.Properties.GetProperty(SystemProperties.System.Image.HorizontalResolution).ValueAsObject;
-        var dpiY = so.Properties.GetProperty(SystemProperties.System.Image.VerticalResolution).ValueAsObject;
-        if (dpiX is not null && dpiY is not null)
-        {
-            dpi = Math.Round((double)dpiX) + " x " + Math.Round((double)dpiY) + " " +
-                  TranslationHelper.GetTranslation("Dpi");
-        }
-
-        bitDepth ??= string.Empty;
-        stars ??= string.Empty;
-
-        var magickImage = new MagickImage();
         try
         {
-            if (fileInfo.Length < 214783648)
-                await magickImage.ReadAsync(fileInfo).ConfigureAwait(false);
-            else
-                // ReSharper disable once MethodHasAsyncOverload
-                magickImage.Read(fileInfo);
+            imageData.FileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+            imageData.DirectoryName = fileInfo.DirectoryName ?? "";
+            imageData.Path = fileInfo.FullName;
+            imageData.CreationTime = fileInfo.CreationTime.ToString(CultureInfo.CurrentCulture);
+            imageData.LastWriteTime = fileInfo.LastWriteTime.ToString(CultureInfo.CurrentCulture);
+            imageData.LastAccessTime = fileInfo.LastAccessTime.ToString(CultureInfo.CurrentCulture);
         }
         catch (Exception)
         {
-            return new[]
+            imageData.FileName = string.Empty;
+            imageData.DirectoryName = string.Empty;
+            imageData.Path = string.Empty;
+            imageData.CreationTime = string.Empty;
+            imageData.LastWriteTime = string.Empty;
+            imageData.LastAccessTime = string.Empty;
+        }
+
+        using var magick = new MagickImage();
+        try
+        {
+            magick.Ping(Navigation.Pics[Navigation.FolderIndex]);
+            var profile = magick.GetExifProfile();
+            double dpiX = 0, dpiY = 0;
+
+            if (profile != null)
             {
-                name,
-                directoryName,
-                fullname,
-                creationTime,
-                lastWriteTime,
-                lastAccessTime,
-
-                bitDepth.ToString() ?? "",
-
-                bitmapSource.PixelWidth.ToString() ?? "",
-                bitmapSource.PixelHeight.ToString() ?? "",
-
-                dpi,
-
-                megaPixels,
-
-                printSizeCm,
-                printSizeInch,
-
-                ratioText,
-
-                stars.ToString() ?? "",
-            };
-        }
-
-        var exifData = magickImage.GetExifProfile();
-        magickImage.Dispose();
-
-        latitude = so.Properties.GetProperty(SystemProperties.System.GPS.Latitude).Description.DisplayName;
-        longitude = so.Properties.GetProperty(SystemProperties.System.GPS.Longitude).Description.DisplayName;
-        altitude = so.Properties.GetProperty(SystemProperties.System.GPS.Altitude).Description.DisplayName;
-
-        var _title = so.Properties.GetProperty(SystemProperties.System.Title);
-        title = _title.Description.DisplayName;
-        if (_title.ValueAsObject is not null)
-        {
-            titleValue = _title.ValueAsObject.ToString() ?? "";
-        }
-
-        var _subject = so.Properties.GetProperty(SystemProperties.System.Subject);
-        subject = _subject.Description.DisplayName;
-        if (_subject.ValueAsObject is not null)
-        {
-            subjectValue = _subject.ValueAsObject.ToString() ?? "";
-        }
-
-        var _author = so.Properties.GetProperty(SystemProperties.System.Author);
-        authors = _author.Description.DisplayName;
-        if (_author.ValueAsObject is not null)
-        {
-            var authorsArray = (string[])_author.ValueAsObject;
-
-            switch (authorsArray.Length)
-            {
-                case 1:
-                    authorsValue = authorsArray[0];
-                    break;
-
-                case >= 2:
-                    {
-                        var sb = new StringBuilder();
-                        for (var i = 0; i < authorsArray.Length; i++)
-                        {
-                            if (i == 0)
-                            {
-                                sb.Append(authorsArray[0]);
-                            }
-                            else
-                            {
-                                sb.Append(", " + authorsArray[i]);
-                            }
-                        }
-
-                        authorsValue = sb.ToString();
-                        break;
-                    }
-            }
-        }
-
-        var _dateTaken = so.Properties.GetProperty(SystemProperties.System.Photo.DateTaken);
-        dateTaken = _dateTaken.Description.DisplayName;
-        if (_dateTaken.ValueAsObject is not null)
-        {
-            dateTakenValue = _dateTaken.ValueAsObject.ToString() ?? "";
-        }
-
-        var _program = so.Properties.GetProperty(SystemProperties.System.ApplicationName);
-        programName = _program.Description.DisplayName;
-        if (_program.ValueAsObject is not null)
-        {
-            programNameValue = _program.ValueAsObject.ToString() ?? "";
-        }
-
-        var _copyright = so.Properties.GetProperty(SystemProperties.System.Copyright);
-        copyrightName = _copyright.Description.DisplayName;
-        if (_copyright.ValueAsObject is not null)
-        {
-            copyrightValue = _copyright.ValueAsObject.ToString() ?? "";
-        }
-
-        var _resolutionUnit = so.Properties.GetProperty(SystemProperties.System.Image.ResolutionUnit);
-        resolutionUnit = _resolutionUnit.Description.DisplayName;
-        if (_resolutionUnit.ValueAsObject is not null)
-        {
-            resolutionUnitValue = _resolutionUnit.ValueAsObject.ToString() ?? "";
-        }
-
-        colorRepresentation = so.Properties.GetProperty(SystemProperties.System.Image.ColorSpace).Description
-            .DisplayName;
-
-        compression = so.Properties.GetProperty(SystemProperties.System.Image.Compression).Description.DisplayName;
-        compressionBits = so.Properties.GetProperty(SystemProperties.System.Image.CompressedBitsPerPixel)
-            .Description.DisplayName;
-
-        var camManu = so.Properties.GetProperty(SystemProperties.System.Photo.CameraManufacturer);
-        cameraMaker = camManu.Description.DisplayName;
-        if (camManu.ValueAsObject is not null)
-        {
-            cameroMakerValue = camManu.ValueAsObject.ToString() ?? "";
-        }
-
-        var cam = so.Properties.GetProperty(SystemProperties.System.Photo.CameraModel);
-        cameraModel = cam.Description.DisplayName;
-        if (cam.ValueAsObject is not null)
-        {
-            cameroModelValue = cam.ValueAsObject.ToString() ?? "";
-        }
-
-        var flashManu = so.Properties.GetProperty(SystemProperties.System.Photo.FlashManufacturer);
-        flashManufacturer = flashManu.Description.DisplayName;
-        if (flashManu.ValueAsObject is not null)
-        {
-            flashManufacturerValue = flashManu.ValueAsObject.ToString() ?? "";
-        }
-
-        var flashM = so.Properties.GetProperty(SystemProperties.System.Photo.FlashModel);
-        flashModel = flashM.Description.DisplayName;
-        if (flashM.ValueAsObject is not null)
-        {
-            flashModelValue = flashManu.ValueAsObject.ToString() ?? "";
-        }
-
-        fstop = so.Properties.GetProperty(SystemProperties.System.Photo.FNumber).Description.DisplayName;
-
-        var expo = so.Properties.GetProperty(SystemProperties.System.Photo.ExposureTime);
-        exposure = expo.Description.DisplayName;
-        if (expo.ValueAsObject is not null)
-        {
-            exposureValue = expo.ValueAsObject.ToString() ?? "";
-        }
-
-        var iso = so.Properties.GetProperty(SystemProperties.System.Photo.ISOSpeed);
-        isoSpeed = iso.Description.DisplayName;
-        if (iso.ValueAsObject is not null)
-        {
-            isoSpeedValue = iso.ValueAsObject.ToString() ?? "";
-        }
-
-        meteringMode = so.Properties.GetProperty(SystemProperties.System.Photo.MeteringMode).Description
-            .DisplayName;
-
-        exposureBias = so.Properties.GetProperty(SystemProperties.System.Photo.ExposureBias).Description
-            .DisplayName;
-
-        maxAperture = so.Properties.GetProperty(SystemProperties.System.Photo.MaxAperture).Description.DisplayName;
-
-        focal = so.Properties.GetProperty(SystemProperties.System.Photo.FocalLength).Description.DisplayName;
-
-        flashMode = so.Properties.GetProperty(SystemProperties.System.Photo.Flash).Description.DisplayName;
-
-        flashEnergy = so.Properties.GetProperty(SystemProperties.System.Photo.FlashEnergy).Description.DisplayName;
-
-        var f35 = so.Properties.GetProperty(SystemProperties.System.Photo.FocalLengthInFilm);
-
-        var serial = so.Properties.GetProperty(SystemProperties.System.Photo.CameraSerialNumber);
-        camSerialNumber = serial.Description.DisplayName;
-        if (serial.ValueAsObject is not null)
-        {
-            camSerialNumberValue = serial.ValueAsObject.ToString() ?? "";
-        }
-
-        flength35 = f35.Description.DisplayName;
-        if (f35.ValueAsObject is not null)
-        {
-            flength35Value = f35.ValueAsObject.ToString() ?? "";
-        }
-
-        var lensm = so.Properties.GetProperty(SystemProperties.System.Photo.LensManufacturer);
-        lensManufacturer = lensm.Description.DisplayName;
-        if (lensm.ValueAsObject is not null)
-        {
-            lensManufacturerValue = lensm.ValueAsObject.ToString() ?? "";
-        }
-
-        var _lensmodel = so.Properties.GetProperty(SystemProperties.System.Photo.LensModel);
-        lensmodel = _lensmodel.Description.DisplayName;
-        if (_lensmodel.ValueAsObject is not null)
-        {
-            lensmodelValue = _lensmodel.ValueAsObject.ToString() ?? "";
-        }
-
-        contrast = so.Properties.GetProperty(SystemProperties.System.Photo.Contrast).Description.DisplayName;
-
-        var bright = so.Properties.GetProperty(SystemProperties.System.Photo.Brightness);
-        brightness = bright.Description.DisplayName;
-        if (bright.ValueAsObject is not null)
-        {
-            brightnessValue = bright.ValueAsObject.ToString() ?? "";
-        }
-
-        lightSource = so.Properties.GetProperty(SystemProperties.System.Photo.LightSource).Description.DisplayName;
-
-        exposureProgram = so.Properties.GetProperty(SystemProperties.System.Photo.ExposureProgram).Description
-            .DisplayName;
-
-        saturation = so.Properties.GetProperty(SystemProperties.System.Photo.Saturation).Description.DisplayName;
-
-        sharpness = so.Properties.GetProperty(SystemProperties.System.Photo.Sharpness).Description.DisplayName;
-
-        whiteBalance = so.Properties.GetProperty(SystemProperties.System.Photo.WhiteBalance).Description
-            .DisplayName;
-
-        photometricInterpolation = so.Properties
-            .GetProperty(SystemProperties.System.Photo.PhotometricInterpretation).Description.DisplayName;
-
-        digitalZoom = so.Properties.GetProperty(SystemProperties.System.Photo.DigitalZoom).Description.DisplayName;
-
-        var exifv = so.Properties.GetProperty(SystemProperties.System.Photo.EXIFVersion);
-        exifversion = exifv.Description.DisplayName;
-        if (exifv.ValueAsObject is not null)
-        {
-            exifversionValue = exifv.ValueAsObject.ToString() ?? "";
-        }
-
-        if (exifData is not null)
-        {
-            var gpsLong = exifData.GetValue(ExifTag.GPSLongitude);
-            var gpsLongRef = exifData.GetValue(ExifTag.GPSLongitudeRef);
-            var gpsLatitude = exifData.GetValue(ExifTag.GPSLatitude);
-            var gpsLatitudeRef = exifData.GetValue(ExifTag.GPSLatitudeRef);
-
-            if (gpsLong is not null && gpsLongRef is not null && gpsLatitude is not null &&
-                gpsLatitudeRef is not null)
-            {
-                latitudeValue = GetCoordinates(gpsLatitudeRef.ToString(), gpsLatitude.Value).ToString();
-                longitudeValue = GetCoordinates(gpsLongRef.ToString(), gpsLong.Value).ToString();
-
-                googleLink = @"https://www.google.com/maps/search/?api=1&query=" + latitudeValue + "," +
-                             longitudeValue;
-                bingLink = @"https://bing.com/maps/default.aspx?cp=" + latitudeValue + "~" + longitudeValue +
-                           "&style=o&lvl=1&dir=0&scene=1140291";
-            }
-
-            var gpsAltitude = exifData?.GetValue(ExifTag.GPSAltitude);
-            if (gpsAltitude is not null)
-            {
-                altitudeValue = gpsAltitude.Value.ToString();
-            }
-
-            var colorSpace = exifData.GetValue(ExifTag.ColorSpace);
-            if (colorSpace is not null)
-            {
-                colorRepresentationValue = colorSpace.Value switch
+                dpiY = profile?.GetValue(ExifTag.YResolution)?.Value.ToDouble() ?? 0;
+                dpiX = profile?.GetValue(ExifTag.XResolution)?.Value.ToDouble() ?? 0;
+                var depth = profile?.GetValue(ExifTag.BitsPerSample)?.Value;
+                if (depth is not null)
                 {
-                    1 => "sRGB",
-                    2 => "Adobe RGB",
-                    65535 => "Uncalibrated",
-                    _ => "Unknown"
-                };
+                    var x = depth.Aggregate(0, (current, value) => current + value);
+                    imageData.BitDepth = x.ToString();
+                }
+                else
+                {
+                    imageData.BitDepth = (magick.Depth * 3).ToString();
+                }
             }
 
-            var compr = exifData.GetValue(ExifTag.Compression);
-            if (compr is not null)
+            if (dpiX is 0)
             {
-                compressionValue = compr.Value.ToString();
+                dpiX = img?.DpiX ?? 0;
+                dpiY = img?.DpiX ?? 0;
             }
 
-            var comprBits = exifData.GetValue(ExifTag.CompressedBitsPerPixel);
-            if (comprBits is not null)
+            if (string.IsNullOrEmpty(imageData.BitDepth))
             {
-                compressionBitsValue = comprBits.Value.ToString();
+                imageData.BitDepth = (magick.Depth * 3).ToString();
             }
 
-            var fNumber = exifData?.GetValue(ExifTag.FNumber);
-            if (fNumber is not null)
+            if (dpiX == 0)
             {
-                fstopValue = fNumber.Value.ToString();
+                imageData.PrintSizeCm = imageData.PrintSizeInch = imageData.MegaPixels = imageData.ResolutionUnit = string.Empty;
+            }
+            else
+            {
+                var inchesWidth = img.PixelWidth / dpiX;
+                var inchesHeight = img.PixelHeight / dpiY;
+                imageData.PrintSizeInch =
+                    $"{inchesWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Inches")}";
+
+                var cmWidth = img.PixelWidth / dpiX * 2.54;
+                var cmHeight = img.PixelHeight / dpiY * 2.54;
+                imageData.PrintSizeCm =
+                    $"{cmWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {cmHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Centimeters")}";
+                imageData.MegaPixels =
+                    $"{((float)img.PixelHeight * img.PixelWidth / 1000000).ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("MegaPixels")}";
+
+                imageData.ResolutionUnit = $"{dpiX} x {dpiY} {TranslationHelper.GetTranslation("Dpi")}";
             }
 
-            var bias = exifData.GetValue(ExifTag.ExposureBiasValue);
-            if (bias is not null)
+            var firstRatio = img.PixelWidth / TitleHelper.GCD(img.PixelWidth, img.PixelHeight);
+            var secondRatio = img.PixelHeight / TitleHelper.GCD(img.PixelWidth, img.PixelHeight);
+
+            if (firstRatio == secondRatio)
             {
-                exposureBiasValue = bias.Value.ToString();
+                imageData.AspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Square")})";
+            }
+            else if (firstRatio > secondRatio)
+            {
+                imageData.AspectRatio =
+                    $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Landscape")})";
+            }
+            else
+            {
+                imageData.AspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Portrait")})";
             }
 
-            var maxApart = exifData.GetValue(ExifTag.MaxApertureValue);
-            if (maxApart is not null)
+            imageData.ExifRating = profile?.GetValue(ExifTag.Rating)?.Value ?? 0;
+
+            var gpsValues = EXIFHelper.GetGPSValues(profile);
+
+            if (gpsValues is not null)
             {
-                maxApertureValue = maxApart.Value.ToString();
+                imageData.Latitude = gpsValues[0] ?? "";
+                imageData.Longitude = gpsValues[1] ?? "";
+
+                imageData.GoogleLink = gpsValues[2] ?? "";
+                imageData.BingLink = gpsValues[3] ?? "";
+            }
+            else
+            {
+                imageData.Latitude = imageData.Longitude = imageData.GoogleLink = imageData.BingLink = string.Empty;
             }
 
-            var fcal = exifData.GetValue(ExifTag.FocalLength);
-            if (fcal is not null)
-            {
-                focalValue = fcal.Value.ToString();
-            }
-
-            var flash = exifData.GetValue(ExifTag.Flash);
-            if (flash is not null)
-            {
-                flashModeValue = flash.Value.ToString();
-            }
-
-            var fenergy = exifData.GetValue(ExifTag.FlashEnergy);
-            if (fenergy is not null)
-            {
-                flashEnergyValue = fenergy.Value.ToString();
-            }
-
-            var metering = exifData.GetValue(ExifTag.MeteringMode);
-            if (metering is not null)
-            {
-                meteringModeValue = metering.Value.ToString();
-            }
-
-            var _contrast = exifData.GetValue(ExifTag.Contrast);
-            if (_contrast is not null)
-            {
-                contrastValue = _contrast.Value.ToString();
-            }
-
-            var light = exifData.GetValue(ExifTag.LightSource);
-            if (light is not null)
-            {
-                lightSourceValue = light.Value.ToString();
-            }
-
-            var expoPro = exifData.GetValue(ExifTag.ExposureProgram);
-            if (expoPro is not null)
-            {
-                exposureProgramValue = expoPro.Value.ToString();
-            }
-
-            var satu = exifData.GetValue(ExifTag.Saturation);
-            if (satu is not null)
-            {
-                saturationValue = satu.Value.ToString();
-            }
-
-            var sharp = exifData.GetValue(ExifTag.Sharpness);
-            if (sharp is not null)
-            {
-                sharpnessValue = sharp.Value.ToString();
-            }
-
-            var whiteB = exifData.GetValue(ExifTag.WhiteBalance);
-            if (whiteB is not null)
-            {
-                whiteBalanceValue = whiteB.Value.ToString();
-            }
-
-            var photometric = exifData.GetValue(ExifTag.PhotometricInterpretation);
-            if (photometric is not null)
-            {
-                photometricInterpolationValue = photometric.Value.ToString();
-            }
-
-            var digizoom = exifData.GetValue(ExifTag.DigitalZoomRatio);
-            if (digizoom is not null)
-            {
-                digitalZoomValue = digizoom.Value.ToString();
-            }
+            var altitude = profile?.GetValue(ExifTag.GPSAltitude)?.Value;
+            imageData.Altitude = altitude.HasValue
+                ? $"{altitude.Value.ToDouble()} {TranslationHelper.GetTranslation("Meters")}"
+                : string.Empty;
+            var getAuthors = profile?.GetValue(ExifTag.Artist)?.Value;
+            imageData.Authors = getAuthors ?? string.Empty;
+            imageData.DateTaken = EXIFHelper.GetDateTaken(profile);
+            imageData.Copyright = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
+            imageData.Title = profile?.GetValue(ExifTag.XPTitle)?.Value.ToString() ?? string.Empty;
+            imageData.Subject = profile?.GetValue(ExifTag.XPSubject)?.Value.ToString() ?? string.Empty;
+            imageData.Software = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
+            imageData.ResolutionUnit = EXIFHelper.GetResolutionUnit(profile);
+            imageData.ColorRepresentation = EXIFHelper.GetColorSpace(profile);
+            imageData.Compression = profile?.GetValue(ExifTag.Compression)?.Value.ToString() ?? string.Empty;
+            imageData.CompressedBitsPixel = profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
+            imageData.CameraMaker = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
+            imageData.CameraModel = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
+            imageData.ExposureProgram = EXIFHelper.GetExposureProgram(profile);
+            imageData.ExposureTime = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString() ?? string.Empty;
+            imageData.Fstop = profile?.GetValue(ExifTag.FNumber)?.Value.ToString() ?? string.Empty;
+            imageData.MaxAperture = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString() ?? string.Empty;
+            imageData.ExposureBias = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString() ?? string.Empty;
+            imageData.DigitalZoom = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
+            imageData.FocalLength35mm = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
+            imageData.FocalLength = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
+            imageData.ISOSpeed = EXIFHelper.GetISOSpeed(profile);
+            imageData.MeteringMode = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
+            imageData.Contrast = EXIFHelper.GetContrast(profile);
+            imageData.Saturation = EXIFHelper.GetSaturation(profile);
+            imageData.Sharpness = EXIFHelper.GetSharpness(profile);
+            imageData.WhiteBalance = EXIFHelper.GetWhiteBalance(profile);
+            imageData.FlashMode = EXIFHelper.GetFlashMode(profile);
+            imageData.FlashEnergy = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString() ?? string.Empty;
+            imageData.LightSource = EXIFHelper.GetLightSource(profile);
+            imageData.Brightness = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString() ?? string.Empty;
+            imageData.PhotometricInterpretation = EXIFHelper.GetPhotometricInterpretation(profile);
+            imageData.ExifVersion = EXIFHelper.GetExifVersion(profile);
+            imageData.LensModel = profile?.GetValue(ExifTag.LensModel)?.Value ?? string.Empty;
+            imageData.LensMaker = profile?.GetValue(ExifTag.LensMake)?.Value ?? string.Empty;
+        }
+        catch
+        {
+            return imageData;
         }
 
-        so.Dispose();
-
-        return new[]
-        {
-            // Fileinfo
-            name,
-            directoryName,
-            fullname,
-            creationTime,
-            lastWriteTime,
-            lastAccessTime,
-
-            bitDepth.ToString() ?? "",
-
-            bitmapSource.PixelWidth.ToString() ?? "",
-            bitmapSource.PixelHeight.ToString() ?? "",
-
-            dpi,
-
-            megaPixels,
-
-            printSizeCm,
-            printSizeInch,
-
-            ratioText,
-
-            stars.ToString() ?? "",
-
-            latitude, latitudeValue,
-            longitude, longitudeValue,
-            bingLink, googleLink,
-            altitude, altitudeValue,
-
-            title, titleValue,
-            subject, subjectValue,
-
-            authors, authorsValue,
-            dateTaken, dateTakenValue,
-
-            programName, programNameValue,
-            copyrightName, copyrightValue,
-
-            resolutionUnit, resolutionUnitValue,
-            colorRepresentation, colorRepresentationValue,
-
-            compression, compressionValue,
-            compressionBits, compressionBitsValue,
-
-            cameraMaker, cameroMakerValue,
-            cameraModel, cameroModelValue,
-
-            fstop, fstopValue,
-            exposure, exposureValue,
-
-            isoSpeed, isoSpeedValue,
-            exposureBias, exposureBiasValue,
-
-            maxAperture, maxApertureValue,
-
-            focal, focalValue,
-            flength35, flength35Value,
-
-            flashMode, flashModeValue,
-            flashEnergy, flashEnergyValue,
-
-            meteringMode, meteringModeValue,
-
-            lensManufacturer, lensManufacturerValue,
-            lensmodel, lensmodelValue,
-
-            flashManufacturer, flashManufacturerValue,
-            flashModel, flashModelValue,
-
-            camSerialNumber, camSerialNumberValue,
-
-            contrast, contrastValue,
-            brightness, brightnessValue,
-
-            lightSource, lightSourceValue,
-
-            exposureProgram, exposureProgramValue,
-
-            saturation, saturationValue,
-            sharpness, sharpnessValue,
-
-            whiteBalance, whiteBalanceValue,
-            photometricInterpolation, photometricInterpolationValue,
-
-            digitalZoom, digitalZoomValue,
-
-            exifversion, exifversionValue,
-        };
-    }
-
-    private static double GetCoordinates(string gpsRef, Rational[] rationals)
-    {
-        if (rationals[0].Denominator == 0 || rationals[1].Denominator == 0 || rationals[2].Denominator == 0)
-        {
-            return 0;
-        }
-
-        double degrees = rationals[0].Numerator / rationals[0].Denominator;
-        double minutes = rationals[1].Numerator / rationals[1].Denominator;
-        double seconds = rationals[2].Numerator / rationals[2].Denominator;
-
-        var coordinate = degrees + (minutes / 60d) + (seconds / 3600d);
-        if (gpsRef is "S" or "W")
-            coordinate *= -1;
-        return coordinate;
+        return imageData;
     }
 }

@@ -16,8 +16,16 @@ public partial class TextBoxInfo
 
     public void SetValues(string valueDesc, string value, bool readOnly)
     {
-        ValueName.Text = string.IsNullOrEmpty(valueDesc) ? "?" : valueDesc;
-        ValueBox.Text = string.IsNullOrEmpty(value) ? "" : value;
+        if (!string.IsNullOrEmpty(valueDesc))
+        {
+            ValueName.Text = valueDesc;
+        }
+
+        if (!string.IsNullOrEmpty(value))
+        {
+            ValueBox.Text = value;
+        }
+
         ValueBox.IsReadOnly = readOnly;
     }
 

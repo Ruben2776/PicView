@@ -186,7 +186,7 @@ public partial class ImageInfoWindow
 
         TitleBar.MouseLeave += (_, _) => UpdateStars();
 
-        // Stars
+        // ExifRating
         Star1.MouseLeftButtonDown += async delegate
         {
             if (ErrorHandling.CheckOutOfRange()) return;
