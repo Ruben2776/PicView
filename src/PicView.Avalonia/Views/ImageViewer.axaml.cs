@@ -169,10 +169,10 @@ public partial class ImageViewer : UserControl
 
         async Task LoadNextPic()
         {
-            var navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Next : NavigateTo.Previous;
+            var navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Previous : NavigateTo.Next;
             if (reverse)
             {
-                navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Previous : NavigateTo.Next;
+                navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Next : NavigateTo.Previous;
             }
             await mainViewModel.LoadNextPic(navigateTo);
         }
@@ -344,15 +344,21 @@ public partial class ImageViewer : UserControl
 
         if (enableAnimations || _translateTransform.X < -0)
         {
-            _translateTransform.Transitions ??=
-            [
-                new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.15) },
-                new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.15) }
-            ];
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _translateTransform.Transitions ??=
+                [
+                    new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.15) },
+                    new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.15) }
+                ];
+            });
         }
         else
         {
-            _translateTransform.Transitions = null;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _translateTransform.Transitions = null;
+            });
         }
 
         var position = _start - e.GetPosition(ImageZoomBorder);
@@ -369,7 +375,7 @@ public partial class ImageViewer : UserControl
         {
             _translateTransform.X = x;
             _translateTransform.Y = y;
-        }, DispatcherPriority.Normal);
+        });
     }
 
     #endregion Zoom
