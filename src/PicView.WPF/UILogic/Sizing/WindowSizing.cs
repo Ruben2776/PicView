@@ -279,13 +279,11 @@ internal static class WindowSizing
     {
         window?.Dispatcher.Invoke(() =>
         {
-            window.Top =
-                ((MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling) - window.ActualHeight) / 2 +
-                MonitorInfo.WorkArea.Top;
+            var width = window.ActualWidth == 0 ? window.Width : window.ActualWidth;
+            width = double.IsNaN(width) ? window.MinWidth : width;
+            window.Top = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling - width) / 2 + MonitorInfo.WorkArea.Top;
             if (horizontal)
-                window.Left =
-                    ((MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling) - window.ActualWidth) / 2 +
-                    MonitorInfo.WorkArea.Left;
+                window.Left = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling - width) / 2 + MonitorInfo.WorkArea.Left;
         });
     }
 

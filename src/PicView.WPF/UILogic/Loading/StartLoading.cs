@@ -30,10 +30,17 @@ internal static class StartLoading
 
         // Load sizing properties
         MonitorInfo = MonitorSize.GetMonitorSize(startupWindow);
-        await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
-        if (SettingsHelper.Settings.WindowProperties.AutoFit == false && SettingsHelper.Settings.WindowProperties.Fullscreen == false)
+        var settingsExist = await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
+        if (settingsExist)
         {
-            SetLastWindowSize(startupWindow);
+            if (SettingsHelper.Settings.WindowProperties.AutoFit == false && SettingsHelper.Settings.WindowProperties.Fullscreen == false)
+            {
+                SetLastWindowSize(startupWindow);
+            }
+            else
+            {
+                CenterWindowOnScreen(startupWindow);
+            }
         }
         else
         {
@@ -95,7 +102,14 @@ internal static class StartLoading
             SetWindowBehavior();
             if (SettingsHelper.Settings.WindowProperties.AutoFit == false)
             {
-                SetLastWindowSize(mainWindow);
+                if (!settingsExist)
+                {
+                    CenterWindowOnScreen(mainWindow);
+                }
+                else
+                {
+                    SetLastWindowSize(mainWindow);
+                }
             }
 
             mainWindow.Scroller.VerticalScrollBarVisibility = SettingsHelper.Settings.Zoom.ScrollEnabled
