@@ -30,7 +30,11 @@
                             Margin="0,8,2,0"
                             Classes="txt"
                             Text="{Binding FileName}" />
-                        <TextBox Classes="hover TStyle" Text="{Binding FileInfo.Name}" />
+                        <TextBox
+                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Classes="hover TStyle"
+                            Foreground="{StaticResource MainTextColor}"
+                            Text="{Binding FileInfo.Name}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -47,7 +51,11 @@
                             Margin="0,8,0,0"
                             Classes="txt"
                             Text="{Binding Folder}" />
-                        <TextBox Classes="hover TStyle" Text="{Binding FileInfo.DirectoryName}" />
+                        <TextBox
+                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Classes="hover TStyle"
+                            Foreground="{StaticResource MainTextColor}"
+                            Text="{Binding FileInfo.DirectoryName}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -64,7 +72,11 @@
                             Margin="0,8,0,0"
                             Classes="txt"
                             Text="{Binding FullPath}" />
-                        <TextBox Classes="hover TStyle" Text="{Binding FileInfo.FullName}" />
+                        <TextBox
+                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Classes="hover TStyle"
+                            Foreground="{StaticResource MainTextColor}"
+                            Text="{Binding FileInfo.FullName}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -82,7 +94,6 @@
                             Classes="txt"
                             Text="{Binding Created}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding FileInfo.CreationTime}" />
@@ -103,7 +114,6 @@
                             Classes="txt"
                             Text="{Binding Modified}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding FileInfo.LastWriteTime}" />
@@ -124,7 +134,6 @@
                             Classes="txt"
                             Text="{Binding LastAccessTime}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding FileInfo.LastAccessTime}" />
@@ -145,7 +154,6 @@
                             Classes="txt"
                             Text="{Binding BitDepth}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes="TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetBitDepth}" />
@@ -170,7 +178,9 @@
                             Text="{Binding Width}" />
                         <TextBox
                             x:Name="PixelWidthTextBox"
+                            Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
+                            Foreground="{StaticResource MainTextColor}"
                             Text="{Binding PixelWidth}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
@@ -190,7 +200,9 @@
                             Text="{Binding Height}" />
                         <TextBox
                             x:Name="PixelHeightTextBox"
+                            Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
+                            Foreground="{StaticResource MainTextColor}"
                             Text="{Binding PixelHeight}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
@@ -209,7 +221,6 @@
                             Classes="txt"
                             Text="{Binding SizeMp}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetSizeMp}" />
@@ -230,7 +241,6 @@
                             Classes="txt"
                             Text="{Binding Resolution}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetResolution}" />
@@ -251,7 +261,6 @@
                             Classes="txt"
                             Text="{Binding PrintSizeCm}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetPrintSizeCm}" />
@@ -272,7 +281,6 @@
                             Classes="txt"
                             Text="{Binding PrintSizeIn}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetPrintSizeInch}" />
@@ -293,7 +301,6 @@
                             Classes="txt"
                             Text="{Binding AspectRatio}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetAspectRatio}" />
@@ -432,7 +439,7 @@
                             Classes="txt"
                             Text="{Binding DateTaken}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetDateTaken}" />
@@ -453,7 +460,7 @@
                             Classes="txt"
                             Text="{Binding Authors}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetAuthors}" />
@@ -476,7 +483,7 @@
                             Classes="txt"
                             Text="{Binding Copyright}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetCopyright}" />
@@ -497,7 +504,7 @@
                             Classes="txt"
                             Text="{Binding Software}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetSoftware}" />
@@ -521,7 +528,7 @@
                                 Classes="txt"
                                 Text="{Binding XPTitle}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetTitle}" />
@@ -542,7 +549,7 @@
                                 Classes="txt"
                                 Text="{Binding Subject}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetSubject}" />
@@ -589,7 +596,7 @@
                             Classes="txt"
                             Text="{Binding Latitude}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetLatitude}" />
@@ -610,7 +617,7 @@
                             Classes="txt"
                             Text="{Binding Longitude}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetLongitude}" />
@@ -632,7 +639,7 @@
                         Classes="txt"
                         Text="{Binding Altitude}" />
                     <TextBox
-                        Background="{StaticResource BackgroundAlpha}"
+                        Width="230"
                         Classes=" TStyle"
                         IsReadOnly="True"
                         Text="{Binding GetAltitude}" />
@@ -699,7 +706,7 @@
                             Classes="txt"
                             Text="{Binding ResolutionUnit}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetResolutionUnit}" />
@@ -720,7 +727,7 @@
                             Classes="txt"
                             Text="{Binding ColorRepresentation}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetColorRepresentation}" />
@@ -744,7 +751,7 @@
                                 Classes="txt"
                                 Text="{Binding Compression}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetCompression}" />
@@ -765,7 +772,7 @@
                                 Classes="txt"
                                 Text="{Binding CompressedBitsPixel}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetCompressedBitsPixel}" />
@@ -819,7 +826,7 @@
                             Classes="txt"
                             Text="{Binding CameraMaker}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetCameraMaker}" />
@@ -840,7 +847,7 @@
                             Classes="txt"
                             Text="{Binding CameraModel}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetCameraModel}" />
@@ -864,7 +871,7 @@
                                 Classes="txt"
                                 Text="{Binding Fstop}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetFNumber}" />
@@ -885,7 +892,7 @@
                                 Classes="txt"
                                 Text="{Binding MaxAperture}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetMaxAperture}" />
@@ -910,7 +917,7 @@
                                 Classes="txt"
                                 Text="{Binding ExposureBias}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetExposureBias}" />
@@ -931,7 +938,7 @@
                                 Classes="txt"
                                 Text="{Binding ExposureTime}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetExposureTime}" />
@@ -956,7 +963,7 @@
                                 Classes="txt"
                                 Text="{Binding ExposureProgram}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetExposureProgram}" />
@@ -977,7 +984,7 @@
                                 Classes="txt"
                                 Text="{Binding DigitalZoom}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetDigitalZoom}" />
@@ -1002,7 +1009,7 @@
                                 Classes="txt"
                                 Text="{Binding FocalLength}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetFocalLength}" />
@@ -1023,7 +1030,7 @@
                                 Classes="txt"
                                 Text="{Binding FocalLength35mm}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetFocalLength35mm}" />
@@ -1048,7 +1055,7 @@
                                 Classes="txt"
                                 Text="{Binding ISOSpeed}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetISOSpeed}" />
@@ -1069,7 +1076,7 @@
                                 Classes="txt"
                                 Text="{Binding MeteringMode}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetMeteringMode}" />
@@ -1094,7 +1101,7 @@
                                 Classes="txt"
                                 Text="{Binding Contrast}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetContrast}" />
@@ -1115,7 +1122,7 @@
                                 Classes="txt"
                                 Text="{Binding Saturation}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetSaturation}" />
@@ -1140,7 +1147,7 @@
                                 Classes="txt"
                                 Text="{Binding Sharpness}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetSharpness}" />
@@ -1161,7 +1168,7 @@
                                 Classes="txt"
                                 Text="{Binding WhiteBalance}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetWhiteBalance}" />
@@ -1186,7 +1193,7 @@
                                 Classes="txt"
                                 Text="{Binding FlashEnergy}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetFlashEnergy}" />
@@ -1207,7 +1214,7 @@
                                 Classes="txt"
                                 Text="{Binding FlashMode}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetFlashMode}" />
@@ -1232,7 +1239,7 @@
                                 Classes="txt"
                                 Text="{Binding LightSource}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetLightSource}" />
@@ -1253,7 +1260,7 @@
                                 Classes="txt"
                                 Text="{Binding Brightness}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetBrightness}" />
@@ -1278,7 +1285,7 @@
                                 Classes="txt"
                                 Text="{Binding PhotometricInterpretation}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetPhotometricInterpretation}" />
@@ -1299,7 +1306,7 @@
                                 Classes="txt"
                                 Text="{Binding Orientation}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetOrientation}" />
@@ -1324,7 +1331,7 @@
                                 Classes="txt"
                                 Text="{Binding LensMaker}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetLensMaker}" />
@@ -1345,7 +1352,7 @@
                                 Classes="txt"
                                 Text="{Binding LensModel}" />
                             <TextBox
-                                Background="{StaticResource BackgroundAlpha}"
+                                Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{Binding GetLensModel}" />
@@ -1369,7 +1376,7 @@
                             Classes="txt"
                             Text="{Binding ExifVersion}" />
                         <TextBox
-                            Background="{StaticResource BackgroundAlpha}"
+                            Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{Binding GetExifVersion}" />

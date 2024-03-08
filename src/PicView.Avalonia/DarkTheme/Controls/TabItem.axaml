@@ -4,8 +4,8 @@
     x:ClassModifier="internal">
     <ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontSize" Value="{DynamicResource FontSizeLarge}" />
-        <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundLowBrush}" />
+        <Setter Property="FontSize" Value="{TemplateBinding FontSize}" />
+        <Setter Property="Foreground" Value="{StaticResource MainTextColorFaded}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Padding" Value="14,9" />
         <Setter Property="Template">
@@ -20,7 +20,8 @@
                     BorderThickness="0,0,1,0"
                     Content="{TemplateBinding Header}"
                     ContentTemplate="{TemplateBinding HeaderTemplate}"
-                    CornerRadius="{TemplateBinding CornerRadius}" />
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Opacity="0.88" />
             </ControlTemplate>
         </Setter>
         <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
@@ -31,6 +32,7 @@
         </Style>
         <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+            <Setter Property="Opacity" Value="1" />
         </Style>
         <Style Selector="^:selected:focus /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />

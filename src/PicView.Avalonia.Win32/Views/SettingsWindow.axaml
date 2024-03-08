@@ -11,10 +11,7 @@
     MinHeight="260"
     x:DataType="viewModels:MainViewModel"
     CornerRadius="8"
-    ExtendClientAreaChromeHints="NoChrome"
-    ExtendClientAreaTitleBarHeightHint="-1"
     SizeToContent="WidthAndHeight"
-    TransparencyLevelHint="AcrylicBlur"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Design.DataContext>
