@@ -89,6 +89,8 @@ public partial class ImageInfoWindow
 
         WidthBox.ToolTip = TranslationHelper.GetTranslation("SizeTooltip");
         HeightBox.ToolTip = TranslationHelper.GetTranslation("SizeTooltip");
+
+        _ = UpdateValuesAsync(Pics.Count > FolderIndex ? new FileInfo(Pics?[FolderIndex]) : null);
     }
 
     private void Window_ContentRendered()
