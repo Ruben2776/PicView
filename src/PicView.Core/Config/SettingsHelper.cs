@@ -15,25 +15,24 @@ public static class SettingsHelper
 
     public static AppSettings? Settings { get; private set; }
 
-    public static async Task LoadSettingsAsync()
+    public static async Task<bool> LoadSettingsAsync()
     {
         try
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
-            if (File.Exists(path))
+            var path = GetUserSettingsPath();
+            if (string.IsNullOrEmpty(path))
             {
-                try
-                {
-                    await PerformRead(path).ConfigureAwait(false);
-                }
-                catch (Exception)
-                {
-                    await Retry().ConfigureAwait(false);
-                }
+                SetDefaults();
+                return false;
             }
-            else
+
+            try
             {
-                await Retry().ConfigureAwait(false);
+                await PerformRead(path).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                return await Retry().ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -42,10 +41,11 @@ public static class SettingsHelper
             Trace.WriteLine($"{nameof(LoadSettingsAsync)} error loading settings:\n {ex.Message}");
 #endif
             SetDefaults();
+            return false;
         }
-        return;
+        return true;
 
-        async Task Retry()
+        async Task<bool> Retry()
         {
             // TODO test saving location for macOS https://johnkoerner.com/csharp/special-folder-values-on-windows-versus-mac/
             var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
@@ -58,13 +58,27 @@ public static class SettingsHelper
                 catch (Exception)
                 {
                     SetDefaults();
+                    return false;
                 }
             }
             else
             {
                 SetDefaults();
+                return false;
             }
+            return true;
         }
+    }
+
+    public static string GetUserSettingsPath()
+    {
+        var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+        if (File.Exists(appData))
+        {
+            return appData;
+        }
+        var baseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
+        return File.Exists(baseDirectory) ? baseDirectory : string.Empty;
     }
 
     private static void SetDefaults()
