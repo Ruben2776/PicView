@@ -123,17 +123,18 @@ internal static class ImageInfo
                 var altitudeBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[5];
                 altitudeBox.SetValues(TranslationHelper.GetTranslation("Altitude"), data.Value.Altitude, true);
 
+                // 6 == Origin
                 var title = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[7];
                 title.SetValues(TranslationHelper.GetTranslation("Title"), data.Value.Title, true);
 
-                var dateTakenBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
-                dateTakenBox.SetValues(TranslationHelper.GetTranslation("DateTaken"), data.Value.DateTaken, true);
+                var subject = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[8];
+                subject.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Subject")), data.Value.Subject, true);
 
                 var authorBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[9];
                 authorBox.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Authors")), data.Value.Authors, true);
 
-                var subject = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[10];
-                subject.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Subject")), data.Value.Subject, true);
+                var dateTakenBox = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[19];
+                dateTakenBox.SetValues(TranslationHelper.GetTranslation("DateTaken"), data.Value.DateTaken, true);
 
                 var program = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[11];
                 program.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Software")), data.Value.Software, true);
@@ -141,6 +142,7 @@ internal static class ImageInfo
                 var copyright = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[12];
                 copyright.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("Copyright")), data.Value.Copyright, true);
 
+                // 13 == Image
                 var resolutionUnit = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[14];
                 resolutionUnit.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("ResolutionUnit")), data.Value.ResolutionUnit, true);
 
@@ -153,6 +155,7 @@ internal static class ImageInfo
                 var compressionBits = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[17];
                 compressionBits.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("CompressedBitsPixel")), data.Value.CompressedBitsPixel, true);
 
+                // 18 == Camera
                 var cameraMaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[19];
                 cameraMaker.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("CameraMaker")), data.Value.CameraMaker, true);
 
@@ -189,6 +192,7 @@ internal static class ImageInfo
                 var meteringMode = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[30];
                 meteringMode.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("MeteringMode")), data.Value.MeteringMode, true);
 
+                // 31 == Film
                 var lensmaker = (TextBoxInfo)ConfigureWindows.GetImageInfoWindow.ExifParent.Children[32];
                 lensmaker.SetValues(TranslationHelper.GetTranslation(TranslationHelper.GetTranslation("LensMaker")), data.Value.LensMaker, true);
 

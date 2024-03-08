@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+﻿using System.Diagnostics.CodeAnalysis;
+using ImageMagick;
 using PicView.Core.Localization;
 using System.Globalization;
 using System.Text;
@@ -117,6 +118,7 @@ public static class EXIFHelper
     /// </summary>
     /// <param name="profile">The EXIF profile.</param>
     /// <returns>An array containing the latitude, longitude, Google Maps link, and Bing Maps link.</returns>
+    [SuppressMessage("ReSharper", "PossibleLossOfFraction")]
     public static string?[]? GetGPSValues(IExifProfile profile)
     {
         if (profile is null)

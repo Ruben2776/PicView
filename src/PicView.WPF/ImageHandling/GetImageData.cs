@@ -59,7 +59,6 @@ internal static class GetImageData
         public string MeteringMode { get; set; }
         public string LensMaker { get; set; }
         public string LensModel { get; set; }
-        public string CamSerialNumber { get; set; }
         public string Contrast { get; set; }
         public string Brightness { get; set; }
         public string LightSource { get; set; }
