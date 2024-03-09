@@ -181,7 +181,8 @@
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{Binding PixelWidth}" />
+                            Text="{Binding PixelWidth}"
+                            ToolTip.Tip="{Binding SizeTooltip}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"
@@ -203,7 +204,8 @@
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{Binding PixelHeight}" />
+                            Text="{Binding PixelHeight}"
+                            ToolTip.Tip="{Binding SizeTooltip}" />
                         <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
                             <Path
                                 Width="16"

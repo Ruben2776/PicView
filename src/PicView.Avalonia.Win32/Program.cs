@@ -22,7 +22,11 @@ internal class Program
             .LogToTrace()
 #endif
             .UseReactiveUI()
-            .With(new SkiaOptions { MaxGpuResourceSizeBytes = 256_000_000 })
+            .With(new SkiaOptions
+            {
+                MaxGpuResourceSizeBytes = 256_000_000,
+                UseOpacitySaveLayer = true
+            })
             .UseWin32()
             .With(new Win32PlatformOptions
             {

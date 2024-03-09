@@ -52,6 +52,7 @@
                 <ResourceInclude Source="/DarkTheme/Controls/TextBlock.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/PathIcon.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Scrollbar.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/Slider.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Menu.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />

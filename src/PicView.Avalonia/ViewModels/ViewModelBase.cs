@@ -153,6 +153,15 @@ public class ViewModelBase : ReactiveObject
         AdjustTimingForSlideshow = TranslationHelper.GetTranslation("AdjustTimingForSlideshow");
         AdjustTimingForZoom = TranslationHelper.GetTranslation("AdjustTimingForZoom");
         AdjustNavSpeed = TranslationHelper.GetTranslation("AdjustNavSpeed");
+        SecAbbreviation = TranslationHelper.GetTranslation("SecAbbreviation");
+    }
+
+    private string? _secAbbreviation;
+
+    public string? SecAbbreviation
+    {
+        get => _secAbbreviation;
+        set => this.RaiseAndSetIfChanged(ref _secAbbreviation, value);
     }
 
     private string? _adjustNavSpeed;

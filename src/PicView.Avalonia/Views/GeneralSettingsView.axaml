@@ -12,7 +12,14 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Vertical">
+    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+
+        <TextBlock
+            Margin="0,3,0,10"
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding MiscSettings}" />
 
         <ToggleButton
             Width="250"
@@ -21,7 +28,8 @@
             BorderThickness="0"
             IsChecked="{Binding IsIncludingSubdirectories}">
             <TextBlock
-                Padding="4,1,0,0"
+                Margin="0"
+                Padding="0,1,0,0"
                 Classes="txt"
                 Text="{Binding SearchSubdirectory}" />
         </ToggleButton>
@@ -34,7 +42,8 @@
             Command="{Binding ChangeTopMostCommand}"
             IsChecked="{Binding IsTopMost}">
             <TextBlock
-                Padding="4,1,0,0"
+                Margin="0"
+                Padding="0,1,0,0"
                 Classes="txt"
                 Text="{Binding StayTopMost}" />
         </ToggleButton>
@@ -46,7 +55,8 @@
             BorderThickness="0"
             IsChecked="{Binding IsStayingCentered}">
             <TextBlock
-                Padding="4,1,0,0"
+                Margin="0"
+                Padding="0,1,0,0"
                 Classes="txt"
                 Text="{Binding StayCentered}" />
         </ToggleButton>
@@ -58,7 +68,8 @@
             BorderThickness="0"
             IsChecked="{Binding IsFileSavingDialogShown}">
             <TextBlock
-                Padding="4,1,0,0"
+                Margin="0"
+                Padding="0,1,0,0"
                 Classes="txt"
                 Text="{Binding ShowFileSavingDialog}" />
         </ToggleButton>
@@ -70,12 +81,14 @@
             BorderThickness="0"
             IsChecked="{Binding IsOpeningInSameWindow}">
             <TextBlock
-                Padding="4,1,0,0"
+                Margin="0"
+                Padding="0,1,0,0"
                 Classes="txt"
                 Text="{Binding OpenInSameWindow}" />
         </ToggleButton>
 
         <TextBlock
+            Margin="0,3,0,10"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -83,6 +96,7 @@
         <ComboBox
             x:Name="MouseWheelBox"
             Width="250"
+            Margin="0,6,0,10"
             Padding="5,7,0,7"
             Background="{StaticResource SecondaryBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
@@ -93,6 +107,7 @@
         </ComboBox>
 
         <TextBlock
+            Margin="0,3,0,10"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -100,6 +115,7 @@
         <ComboBox
             x:Name="ScrollDirectionBox"
             Width="250"
+            Margin="0,6,0,10"
             Padding="5,7,0,7"
             Background="{StaticResource SecondaryBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
@@ -110,6 +126,7 @@
         </ComboBox>
 
         <TextBlock
+            Margin="0,3,0,10"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -117,6 +134,7 @@
         <ComboBox
             x:Name="ApplicationStartupBox"
             Width="250"
+            Margin="0,6,0,10"
             Padding="5,7,0,7"
             Background="{StaticResource SecondaryBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
@@ -127,6 +145,7 @@
         </ComboBox>
 
         <TextBlock
+            Margin="0,6,0,10"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -135,6 +154,7 @@
         <Slider
             Width="250"
             Height="30"
+            Margin="0,1,0,1"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
             Maximum="15"
@@ -142,8 +162,17 @@
             TickFrequency=".5"
             TickPlacement="BottomRight"
             Value="5" />
+        <TextBlock
+            Margin="0,0,0,15"
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            Foreground="{StaticResource MainTextColorFaded}">
+            <Run Text="5" />
+            <Run Text="{Binding SecAbbreviation}" />
+        </TextBlock>
 
         <TextBlock
+            Margin="0,3,0,10"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -152,6 +181,7 @@
         <Slider
             Width="250"
             Height="30"
+            Margin="0,1,0,1"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
             Maximum="1.5"
@@ -159,8 +189,17 @@
             TickFrequency=".1"
             TickPlacement="BottomRight"
             Value="5" />
+        <TextBlock
+            Margin="0,0,0,15"
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            Foreground="{StaticResource MainTextColorFaded}">
+            <Run Text="5" />
+            <Run Text="{Binding SecAbbreviation}" />
+        </TextBlock>
 
         <TextBlock
+            Margin="0,3,0,10"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -169,6 +208,7 @@
         <Slider
             Width="250"
             Height="30"
+            Margin="0,1,0,1"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
             Maximum="1.5"
@@ -176,5 +216,13 @@
             TickFrequency=".1"
             TickPlacement="BottomRight"
             Value="5" />
+        <TextBlock
+            Margin="0,0,0,15"
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            Foreground="{StaticResource MainTextColorFaded}">
+            <Run Text="5" />
+            <Run Text="{Binding SecAbbreviation}" />
+        </TextBlock>
     </StackPanel>
 </UserControl>
