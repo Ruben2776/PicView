@@ -1,4 +1,8 @@
-﻿using PicView.WPF.Animations;
+﻿using ImageMagick;
+using PicView.Core.Config;
+using PicView.Core.ImageDecoding;
+using PicView.Core.Navigation;
+using PicView.WPF.Animations;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.ConfigureSettings;
@@ -7,7 +11,7 @@ using PicView.WPF.Editing.Crop;
 using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
-using PicView.Core.Config;
+using PicView.WPF.Shortcuts;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.UILogic.TransformImage;
 using System.IO;
@@ -15,14 +19,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using PicView.Core.Navigation;
-using PicView.WPF.Shortcuts;
 using static PicView.WPF.Shortcuts.MainKeyboardShortcuts;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.UC;
-using PicView.Core.Localization;
-using ImageMagick;
-using PicView.Core.ImageDecoding;
 
 namespace PicView.WPF.UILogic;
 
