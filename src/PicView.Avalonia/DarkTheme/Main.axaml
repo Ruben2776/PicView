@@ -85,6 +85,12 @@
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
+    <Style Selector="TextBlock.hover">
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource AccentColor}" />
+        </Style>
+    </Style>
+
     <Style Selector="Button.hover">
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />

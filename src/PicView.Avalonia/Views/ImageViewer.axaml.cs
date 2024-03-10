@@ -60,6 +60,11 @@ public partial class ImageViewer : UserControl
 
     private void PreviewKeyDown(object? sender, KeyEventArgs e)
     {
+        if (e.Key == Key.Down)
+        {
+            var rt = new RotateTransform(180);
+            MainImage.RenderTransform = rt;
+        }
     }
 
     private async Task PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)

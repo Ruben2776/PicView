@@ -275,12 +275,17 @@ namespace PicView.Avalonia.ViewModels
             }
         }
 
-        private bool _isFileSavingDialogShown;
+        private bool _isFileSavingDialogShown = SettingsHelper.Settings.UIProperties.ShowFileSavingDialog;
 
         public bool IsFileSavingDialogShown
         {
             get => _isFileSavingDialogShown;
-            set => this.RaiseAndSetIfChanged(ref _isFileSavingDialogShown, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isFileSavingDialogShown, value);
+                SettingsHelper.Settings.UIProperties.ShowFileSavingDialog = value;
+                _ = SettingsHelper.SaveSettingsAsync();
+            }
         }
 
         private bool _isOpeningInSameWindow;
@@ -292,16 +297,6 @@ namespace PicView.Avalonia.ViewModels
         }
 
         #endregion Booleans
-
-        private string? _getFlipped;
-
-        public string? GetFlipped
-        {
-            get => _getFlipped;
-            set => this.RaiseAndSetIfChanged(ref _getFlipped, value);
-        }
-
-        public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
 
         private int _scaleX = 1;
 
@@ -346,6 +341,57 @@ namespace PicView.Avalonia.ViewModels
             get => _getIndex;
             set => this.RaiseAndSetIfChanged(ref _getIndex, value);
         }
+
+        private double _getSlideshowSpeed = SettingsHelper.Settings.UIProperties.SlideShowTimer;
+
+        public double GetSlideshowSpeed
+        {
+            get => _getSlideshowSpeed;
+            set
+            {
+                var roundedValue = Math.Round(value, 2);
+                this.RaiseAndSetIfChanged(ref _getSlideshowSpeed, roundedValue);
+                SettingsHelper.Settings.UIProperties.SlideShowTimer = roundedValue;
+            }
+        }
+
+        private double _getNavSpeed = SettingsHelper.Settings.UIProperties.NavSpeed;
+
+        public double GetNavSpeed
+        {
+            get => _getNavSpeed;
+            set
+            {
+                var roundedValue = Math.Round(value, 2);
+                this.RaiseAndSetIfChanged(ref _getNavSpeed, roundedValue);
+                SettingsHelper.Settings.UIProperties.NavSpeed = roundedValue;
+            }
+        }
+
+        private double _getZoomSpeed = SettingsHelper.Settings.Zoom.ZoomSpeed;
+
+        public double GetZoomSpeed
+        {
+            get => _getZoomSpeed;
+            set
+            {
+                var roundedValue = Math.Round(value, 2);
+                this.RaiseAndSetIfChanged(ref _getZoomSpeed, roundedValue);
+                SettingsHelper.Settings.Zoom.ZoomSpeed = roundedValue;
+            }
+        }
+
+        #region strings
+
+        private string? _getFlipped;
+
+        public string? GetFlipped
+        {
+            get => _getFlipped;
+            set => this.RaiseAndSetIfChanged(ref _getFlipped, value);
+        }
+
+        public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
 
         private string? _getPrintSizeInch;
 
@@ -714,6 +760,8 @@ namespace PicView.Avalonia.ViewModels
             get => _getLensMaker;
             set => this.RaiseAndSetIfChanged(ref _getLensMaker, value);
         }
+
+        #endregion strings
 
         #region Window Properties
 

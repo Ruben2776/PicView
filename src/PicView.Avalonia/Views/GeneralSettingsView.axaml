@@ -22,10 +22,11 @@
             Text="{Binding MiscSettings}" />
 
         <ToggleButton
-            Width="250"
+            Width="270"
             Margin="0,0,0,3"
             Background="Transparent"
             BorderThickness="0"
+            Classes="altHover"
             IsChecked="{Binding IsIncludingSubdirectories}">
             <TextBlock
                 Margin="0"
@@ -35,10 +36,11 @@
         </ToggleButton>
 
         <ToggleButton
-            Width="250"
+            Width="270"
             Margin="0,0,0,3"
             Background="Transparent"
             BorderThickness="0"
+            Classes="altHover"
             Command="{Binding ChangeTopMostCommand}"
             IsChecked="{Binding IsTopMost}">
             <TextBlock
@@ -49,10 +51,11 @@
         </ToggleButton>
 
         <ToggleButton
-            Width="250"
+            Width="270"
             Margin="0,0,0,3"
             Background="Transparent"
             BorderThickness="0"
+            Classes="altHover"
             IsChecked="{Binding IsStayingCentered}">
             <TextBlock
                 Margin="0"
@@ -62,10 +65,11 @@
         </ToggleButton>
 
         <ToggleButton
-            Width="250"
+            Width="270"
             Margin="0,0,0,3"
             Background="Transparent"
             BorderThickness="0"
+            Classes="altHover"
             IsChecked="{Binding IsFileSavingDialogShown}">
             <TextBlock
                 Margin="0"
@@ -75,10 +79,11 @@
         </ToggleButton>
 
         <ToggleButton
-            Width="250"
+            Width="270"
             Margin="0,0,0,3"
             Background="Transparent"
             BorderThickness="0"
+            Classes="altHover"
             IsChecked="{Binding IsOpeningInSameWindow}">
             <TextBlock
                 Margin="0"
@@ -95,7 +100,7 @@
             Text="{Binding MouseWheel}" />
         <ComboBox
             x:Name="MouseWheelBox"
-            Width="250"
+            Width="270"
             Margin="0,6,0,10"
             Padding="5,7,0,7"
             Background="{StaticResource SecondaryBackgroundColor}"
@@ -114,15 +119,18 @@
             Text="{Binding ScrollDirection}" />
         <ComboBox
             x:Name="ScrollDirectionBox"
-            Width="250"
+            Width="270"
             Margin="0,6,0,10"
             Padding="5,7,0,7"
             Background="{StaticResource SecondaryBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto">
-            <ComboBoxItem Content="{Binding Reverse}" IsSelected="{Binding IsNavigatingInReverse}" />
-            <ComboBoxItem Content="{Binding Forward}" />
+            <ComboBoxItem
+                x:Name="ReverseDirectionBoxItem"
+                Content="{Binding Reverse}"
+                IsSelected="{Binding IsNavigatingInReverse}" />
+            <ComboBoxItem x:Name="ForwardDirectionBoxItem" Content="{Binding Forward}" />
         </ComboBox>
 
         <TextBlock
@@ -133,7 +141,7 @@
             Text="{Binding ApplicationStartup}" />
         <ComboBox
             x:Name="ApplicationStartupBox"
-            Width="250"
+            Width="270"
             Margin="0,6,0,10"
             Padding="5,7,0,7"
             Background="{StaticResource SecondaryBackgroundColor}"
@@ -150,24 +158,23 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Text="{Binding AdjustTimingForSlideshow}" />
-
         <Slider
-            Width="250"
+            Width="270"
             Height="30"
             Margin="0,1,0,1"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
-            Maximum="15"
+            Maximum="120"
             Minimum="1"
-            TickFrequency=".5"
+            TickFrequency="1"
             TickPlacement="BottomRight"
-            Value="5" />
+            Value="{Binding GetSlideshowSpeed}" />
         <TextBlock
             Margin="0,0,0,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Foreground="{StaticResource MainTextColorFaded}">
-            <Run Text="5" />
+            <Run Text="{Binding GetSlideshowSpeed}" />
             <Run Text="{Binding SecAbbreviation}" />
         </TextBlock>
 
@@ -177,9 +184,8 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Text="{Binding AdjustTimingForZoom}" />
-
         <Slider
-            Width="250"
+            Width="270"
             Height="30"
             Margin="0,1,0,1"
             HorizontalAlignment="Center"
@@ -188,15 +194,13 @@
             Minimum=".1"
             TickFrequency=".1"
             TickPlacement="BottomRight"
-            Value="5" />
+            Value="{Binding GetZoomSpeed}" />
         <TextBlock
             Margin="0,0,0,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Foreground="{StaticResource MainTextColorFaded}">
-            <Run Text="5" />
-            <Run Text="{Binding SecAbbreviation}" />
-        </TextBlock>
+            Foreground="{StaticResource MainTextColorFaded}"
+            Text="{Binding GetZoomSpeed}" />
 
         <TextBlock
             Margin="0,3,0,10"
@@ -204,9 +208,8 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Text="{Binding AdjustNavSpeed}" />
-
         <Slider
-            Width="250"
+            Width="270"
             Height="30"
             Margin="0,1,0,1"
             HorizontalAlignment="Center"
@@ -215,14 +218,24 @@
             Minimum=".1"
             TickFrequency=".1"
             TickPlacement="BottomRight"
-            Value="5" />
+            Value="{Binding GetNavSpeed}" />
         <TextBlock
             Margin="0,0,0,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Foreground="{StaticResource MainTextColorFaded}">
-            <Run Text="5" />
+            <Run Text="{Binding GetNavSpeed}" />
             <Run Text="{Binding SecAbbreviation}" />
         </TextBlock>
+
+        <Button
+            Width="NaN"
+            Height="35"
+            Margin="0,0,0,10"
+            Padding="10"
+            HorizontalAlignment="Center"
+            Classes="BorderStyle altHover">
+            <TextBlock Classes="txt" Text="{Binding ResetButtonText}" />
+        </Button>
     </StackPanel>
 </UserControl>

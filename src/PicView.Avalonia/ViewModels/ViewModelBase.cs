@@ -154,6 +154,15 @@ public class ViewModelBase : ReactiveObject
         AdjustTimingForZoom = TranslationHelper.GetTranslation("AdjustTimingForZoom");
         AdjustNavSpeed = TranslationHelper.GetTranslation("AdjustNavSpeed");
         SecAbbreviation = TranslationHelper.GetTranslation("SecAbbreviation");
+        ResetButtonText = TranslationHelper.GetTranslation("ResetButtonText");
+    }
+
+    private string? _resetButtonText;
+
+    public string? ResetButtonText
+    {
+        get => _resetButtonText;
+        set => this.RaiseAndSetIfChanged(ref _resetButtonText, value);
     }
 
     private string? _secAbbreviation;

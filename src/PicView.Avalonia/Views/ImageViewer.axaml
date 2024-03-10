@@ -13,36 +13,42 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <ScrollViewer
-        x:Name="ImageScrollViewer"
-        Focusable="False"
-        ScrollChanged="ImageScrollViewer_OnScrollChanged"
-        VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
-        <Border
-            x:Name="ImageZoomBorder"
-            PointerMoved="ImageZoomBorder_OnPointerMoved"
-            PointerPressed="ImageZoomBorder_OnPointerPressed"
-            PointerReleased="ImageZoomBorder_OnPointerReleased">
-            <Image
-                x:Name="MainImage"
-                Width="{Binding ImageWidth}"
-                Height="{Binding ImageHeight}"
-                RenderOptions.BitmapInterpolationMode="HighQuality"
-                Source="{Binding Image}"
-                Stretch="Uniform">
-                <Image.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="{Binding ScaleX}">
-                            <ScaleTransform.Transitions>
-                                <Transitions>
-                                    <DoubleTransition Property="ScaleTransform.ScaleX" Duration="0:0:0.30" />
-                                </Transitions>
-                            </ScaleTransform.Transitions>
-                        </ScaleTransform>
-                        <RotateTransform Angle="{Binding RotationAngle}" />
-                    </TransformGroup>
-                </Image.RenderTransform>
-            </Image>
-        </Border>
-    </ScrollViewer>
+    <LayoutTransformControl>
+        <ScrollViewer
+            x:Name="ImageScrollViewer"
+            Focusable="False"
+            ScrollChanged="ImageScrollViewer_OnScrollChanged"
+            VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
+            <Border
+                x:Name="ImageZoomBorder"
+                PointerMoved="ImageZoomBorder_OnPointerMoved"
+                PointerPressed="ImageZoomBorder_OnPointerPressed"
+                PointerReleased="ImageZoomBorder_OnPointerReleased">
+                <Image
+                    x:Name="MainImage"
+                    Width="{Binding ImageWidth}"
+                    Height="{Binding ImageHeight}"
+                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                    Source="{Binding Image}"
+                    Stretch="Uniform">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding ScaleX}">
+                                <ScaleTransform.Transitions>
+                                    <Transitions>
+                                        <DoubleTransition Property="ScaleTransform.ScaleX" Duration="0:0:0.30" />
+                                    </Transitions>
+                                </ScaleTransform.Transitions>
+                            </ScaleTransform>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
+            </Border>
+        </ScrollViewer>
+        <LayoutTransformControl.LayoutTransform>
+            <TransformGroup>
+                <RotateTransform Angle="{Binding RotationAngle}" />
+            </TransformGroup>
+        </LayoutTransformControl.LayoutTransform>
+    </LayoutTransformControl>
 </UserControl>
