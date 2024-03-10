@@ -12,8 +12,15 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Rectangle
-        Width="300"
-        Height="300"
-        Fill="Orange" />
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                FontSize="14"
+                Text="{Binding ShowAllSettingsWindow}" />
+            <TextBox />
+            <TextBox />
+        </StackPanel>
+    </StackPanel>
 </UserControl>

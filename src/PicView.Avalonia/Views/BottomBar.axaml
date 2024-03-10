@@ -9,7 +9,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="viewModels:MainViewModel"
-    IsVisible="{Binding IsInterfaceShown}"
+    IsVisible="{Binding IsBottomToolbarShown}"
     mc:Ignorable="d">
     <Design.DataContext>
         <viewModels:MainViewModel />

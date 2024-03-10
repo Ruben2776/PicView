@@ -94,6 +94,8 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ToggleUICommand { get; }
 
+        public ICommand? ToggleBottomNavBarCommand { get; }
+
         private ICommand? _showExifWindowCommand;
 
         public ICommand? ShowExifWindowCommand
@@ -127,6 +129,30 @@ namespace PicView.Avalonia.ViewModels
         #region Fields
 
         #region Booleans
+
+        private bool _isInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+
+        public bool IsInterfaceShown
+        {
+            get => _isInterfaceShown;
+            set => this.RaiseAndSetIfChanged(ref _isInterfaceShown, value);
+        }
+
+        private bool _isTopToolbarShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+
+        public bool IsTopToolbarShown
+        {
+            get => _isTopToolbarShown;
+            set => this.RaiseAndSetIfChanged(ref _isTopToolbarShown, value);
+        }
+
+        private bool _isBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar && SettingsHelper.Settings.UIProperties.ShowInterface;
+
+        public bool IsBottomToolbarShown
+        {
+            get => _isBottomToolbarShown;
+            set => this.RaiseAndSetIfChanged(ref _isBottomToolbarShown, value);
+        }
 
         private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
 
@@ -213,14 +239,6 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _isAutoFit;
             set => this.RaiseAndSetIfChanged(ref _isAutoFit, value);
-        }
-
-        private bool _isInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
-
-        public bool IsInterfaceShown
-        {
-            get => _isInterfaceShown;
-            set => this.RaiseAndSetIfChanged(ref _isInterfaceShown, value);
         }
 
         private bool _isCtrlToZoomEnabled = SettingsHelper.Settings.Zoom.CtrlZoom;
@@ -993,6 +1011,8 @@ namespace PicView.Avalonia.ViewModels
 
         #endregion Size
 
+        #region Set model and title
+
         public void SetImageModel(ImageModel imageModel)
         {
             Image = imageModel?.Image ?? null; // TODO replace with broken image graphic if it is null
@@ -1270,6 +1290,10 @@ namespace PicView.Avalonia.ViewModels
             TitleTooltip = Title = TranslationHelper.GetTranslation("Loading");
         }
 
+        #endregion Set model and title
+
+        #region LoadPic
+
         public async Task LoadNextPic(NavigateTo navigateTo)
         {
             if (ImageIterator is null)
@@ -1444,6 +1468,16 @@ namespace PicView.Avalonia.ViewModels
             }
         }
 
+        #endregion LoadPic
+
+        #region Sorting Order
+
+        public async Task SetSortingOrder()
+        {
+        }
+
+        #endregion Sorting Order
+
         private async Task ResizeImageByPercentage(int percentage)
         {
             SetLoadingTitle();
@@ -1605,13 +1639,36 @@ namespace PicView.Avalonia.ViewModels
                 {
                     IsInterfaceShown = false;
                     SettingsHelper.Settings.UIProperties.ShowInterface = false;
+                    IsTopToolbarShown = false;
+                    IsBottomToolbarShown = false;
                 }
                 else
                 {
                     IsInterfaceShown = true;
+                    IsTopToolbarShown = true;
+                    if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+                    {
+                        IsBottomToolbarShown = true;
+                    }
                     SettingsHelper.Settings.UIProperties.ShowInterface = true;
                 }
-                CloseMenuCommand.Execute(null);
+                CloseMenuCommand?.Execute(null);
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+
+            ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+                {
+                    IsBottomToolbarShown = false;
+                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = false;
+                }
+                else
+                {
+                    IsBottomToolbarShown = true;
+                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
+                }
+                SetSize();
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 

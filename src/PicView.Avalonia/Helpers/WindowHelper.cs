@@ -23,7 +23,7 @@ public static class WindowHelper
                 desktop.MainWindow.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
                 desktop.MainWindow.Width = SettingsHelper.Settings.WindowProperties.Width;
                 desktop.MainWindow.Height = SettingsHelper.Settings.WindowProperties.Height;
-            }, DispatcherPriority.Normal).Wait();
+            });
         }
 
         _ = SettingsHelper.SaveSettingsAsync();
@@ -71,5 +71,31 @@ public static class WindowHelper
         var y = (size.OldValue.Value.Height - size.NewValue.Value.Height) / 2;
 
         window.Position = new PixelPoint(window.Position.X + (int)x, window.Position.Y + (int)y);
+    }
+
+    public static void CenterWindowOnScreen(Window window, bool horizontal = true)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        var screen = ScreenHelper.GetScreen(desktop.MainWindow);
+
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var width = window.Bounds.Width == 0 ? window.Width : window.Bounds.Width;
+            width = double.IsNaN(width) ? window.MinWidth : width;
+            var verticalPos = (screen.WorkingArea.Height * screen.Scaling - width) / 2 + screen.WorkingArea.Y;
+            if (horizontal)
+            {
+                var horizontalPos = (screen.WorkingArea.Width * screen.Scaling - width) / 2 + screen.WorkingArea.X;
+                window.Position = new PixelPoint((int)horizontalPos, (int)verticalPos);
+            }
+            else
+            {
+                window.Position = new PixelPoint(window.Position.X, (int)verticalPos);
+            }
+        });
     }
 }

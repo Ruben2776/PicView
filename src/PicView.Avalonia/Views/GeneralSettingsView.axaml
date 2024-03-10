@@ -229,12 +229,9 @@
         </TextBlock>
 
         <Button
-            Width="NaN"
-            Height="35"
             Margin="0,0,0,10"
-            Padding="10"
             HorizontalAlignment="Center"
-            Classes="BorderStyle altHover">
+            Classes="BorderStyle altHover mainBtn">
             <TextBlock Classes="txt" Text="{Binding ResetButtonText}" />
         </Button>
     </StackPanel>

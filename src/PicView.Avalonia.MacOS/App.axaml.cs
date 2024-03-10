@@ -33,9 +33,10 @@ public partial class App : Application, IPlatformSpecificService
             return;
         }
 
+        bool settingsExists;
         try
         {
-            await SettingsHelper.LoadSettingsAsync();
+            settingsExists = await SettingsHelper.LoadSettingsAsync();
             _ = Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
         }
         catch (TaskCanceledException)
@@ -45,19 +46,29 @@ public partial class App : Application, IPlatformSpecificService
         var w = desktop.MainWindow = new MacMainWindow();
         var vm = new MainViewModel(this);
         w.DataContext = vm;
-        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        if (!settingsExists)
         {
-            desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            vm.SizeToContent = SizeToContent.WidthAndHeight;
-            vm.CanResize = false;
-            vm.IsAutoFit = true;
+            WindowHelper.CenterWindowOnScreen(w);
+            vm.CanResize = true;
+            vm.IsAutoFit = false;
         }
         else
         {
-            vm.CanResize = true;
-            vm.IsAutoFit = false;
-            WindowHelper.InitializeWindowSizeAndPosition(desktop);
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                vm.SizeToContent = SizeToContent.WidthAndHeight;
+                vm.CanResize = false;
+                vm.IsAutoFit = true;
+            }
+            else
+            {
+                vm.CanResize = true;
+                vm.IsAutoFit = false;
+                WindowHelper.InitializeWindowSizeAndPosition(desktop);
+            }
         }
+
         w.Show();
         await vm.StartUpTask();
         base.OnFrameworkInitializationCompleted();

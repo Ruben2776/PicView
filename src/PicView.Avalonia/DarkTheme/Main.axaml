@@ -108,7 +108,7 @@
         <Setter Property="Background" Value="{StaticResource MainButtonBackgroundColor}" />
     </Style>
 
-    <Style Selector="Button.BorderStyle">
+    <Style Selector="Button.BorderStyle, ToggleButton.BorderStyle">
         <Setter Property="Width" Value="37" />
         <Setter Property="Height" Value="35" />
         <Setter Property="Margin" Value="7,0,0,0" />
@@ -116,6 +116,12 @@
         <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2" />
+    </Style>
+
+    <Style Selector="Button.mainBtn, ToggleButton.mainBtn">
+        <Setter Property="Width" Value="NaN" />
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Padding" Value="10" />
     </Style>
 
     <Style Selector="TextBox.TStyle">

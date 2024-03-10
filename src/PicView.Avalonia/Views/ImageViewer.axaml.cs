@@ -30,7 +30,7 @@ public partial class ImageViewer : UserControl
     {
         InitializeComponent();
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
-        AddHandler(KeyDownEvent, PreviewKeyDown, RoutingStrategies.Tunnel);
+        AddHandler(KeyDownEvent, PreviewKeyDown, RoutingStrategies.Direct);
         // TODO add visual feedback for drag and drop
         //AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
@@ -60,10 +60,20 @@ public partial class ImageViewer : UserControl
 
     private void PreviewKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Down)
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        if (e.Key == Key.Left)
         {
-            var rt = new RotateTransform(180);
-            MainImage.RenderTransform = rt;
+            //_ = vm.LoadPic(NavigateTo.Previous).ConfigureAwait(false);
+        }
+        else if (e.Key == Key.Right)
+        {
+            //_ = vm.LoadPic(NavigateTo.Next).ConfigureAwait(false);
+        }
+        else if (e.Key == Key.Escape)
+        {
+            ResetZoom(true);
         }
     }
 

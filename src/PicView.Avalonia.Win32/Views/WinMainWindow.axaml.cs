@@ -1,14 +1,14 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Threading;
+using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using ReactiveUI;
 using System.Reactive.Concurrency;
-using PicView.Avalonia.Helpers;
-using PicView.Core.Calculations;
+using Avalonia.Input;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -31,7 +31,7 @@ public partial class WinMainWindow : Window
 
             RxApp.MainThreadScheduler.Schedule(() =>
             {
-                var wm = (MainViewModel)DataContext;
+                var vm = (MainViewModel)DataContext;
 
                 // Keep window position when resizing
                 ClientSizeProperty.Changed.Subscribe(size =>
@@ -42,7 +42,7 @@ public partial class WinMainWindow : Window
                 var prevButton = BottomBar.GetControl<Button>("PreviousButton");
                 nextButton.Click += (_, _) => _nextButtonClicked = true;
                 prevButton.Click += (_, _) => _prevButtonClicked = true;
-                wm.ImageChanged += (s, e) =>
+                vm.ImageChanged += (s, e) =>
                 {
                     if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
                     {
@@ -91,22 +91,22 @@ public partial class WinMainWindow : Window
                 };
 
                 // TODO figure out how to use KeyBindings via json config file
-                KeyBindings.Add(new KeyBinding { Command = wm.NextCommand, Gesture = new KeyGesture(Key.D) });
-                KeyBindings.Add(new KeyBinding { Command = wm.PreviousCommand, Gesture = new KeyGesture(Key.A) });
-                KeyBindings.Add(new KeyBinding { Command = wm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
+                _ = KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
+                KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
+                KeyBindings.Add(new KeyBinding { Command = vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
 
-                wm.ShowInFolderCommand = ReactiveCommand.Create(() =>
+                vm.ShowInFolderCommand = ReactiveCommand.Create(() =>
                 {
-                    Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(wm.FileInfo?.DirectoryName, wm.FileInfo?.Name);
+                    Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(vm.FileInfo?.DirectoryName, vm.FileInfo?.Name);
                 });
 
-                wm.ShowExifWindowCommand = ReactiveCommand.Create(() =>
+                vm.ShowExifWindowCommand = ReactiveCommand.Create(() =>
                 {
                     if (_exifWindow is null)
                     {
                         _exifWindow = new ExifWindow
                         {
-                            DataContext = wm,
+                            DataContext = vm,
                             WindowStartupLocation = WindowStartupLocation.Manual,
                             Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
                         };
@@ -117,16 +117,16 @@ public partial class WinMainWindow : Window
                     {
                         _exifWindow.Activate();
                     }
-                    wm.CloseMenuCommand.Execute(null);
+                    vm.CloseMenuCommand.Execute(null);
                 });
 
-                wm.ShowSettingsWindowCommand = ReactiveCommand.Create(() =>
+                vm.ShowSettingsWindowCommand = ReactiveCommand.Create(() =>
                 {
                     if (_settingsWindow is null)
                     {
                         _settingsWindow = new SettingsWindow
                         {
-                            DataContext = wm,
+                            DataContext = vm,
                             WindowStartupLocation = WindowStartupLocation.Manual,
                             Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
                         };
@@ -137,7 +137,7 @@ public partial class WinMainWindow : Window
                     {
                         _settingsWindow.Activate();
                     }
-                    wm.CloseMenuCommand.Execute(null);
+                    vm.CloseMenuCommand.Execute(null);
                 });
             });
         };

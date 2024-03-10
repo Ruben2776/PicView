@@ -12,14 +12,9 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Grid>
+    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
 
-        <StackPanel
-            Height="35"
-            Margin="5,5,5,5"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal">
             <Image
                 Width="14"
                 Height="14"
@@ -30,18 +25,63 @@
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 FontSize="14"
                 Text="{Binding Language}" />
-            <ComboBox
-                x:Name="LanguageBox"
-                Width="130"
-                Padding="5,7,0,7"
-                Background="{StaticResource SecondaryBackgroundColor}"
-                BorderBrush="{StaticResource MainBorderColor}"
-                BorderThickness="1"
-                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                SelectedIndex="0">
-                <ComboBoxItem Content="test" />
-                <ComboBoxItem Content="95%" />
-            </ComboBox>
         </StackPanel>
-    </Grid>
+
+        <ComboBox
+            x:Name="LanguageBox"
+            Width="170"
+            Margin="0,0,0,3"
+            Padding="5,7,0,7"
+            Background="{StaticResource SecondaryBackgroundColor}"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+            SelectedIndex="0">
+            <ComboBoxItem Content="test" />
+            <ComboBoxItem Content="95%" />
+        </ComboBox>
+
+        <TextBlock
+            Margin="0,3,0,10"
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{Binding MiscSettings}" />
+
+        <ToggleButton
+            Width="270"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover"
+            Command="{Binding ToggleBottomNavBarCommand}"
+            IsChecked="{Binding IsBottomToolbarShown}">
+            <TextBlock
+                Margin="0"
+                Padding="0,1,0,0"
+                Classes="txt"
+                Text="{Binding ShowBottomToolbar}" />
+        </ToggleButton>
+
+        <ToggleButton
+            Width="270"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover"
+            IsChecked="{Binding IsBottomGalleryShownInHiddenUI}">
+            <TextBlock
+                Margin="0"
+                Padding="0,1,0,0"
+                Classes="txt"
+                Text="{Binding ShowBottomGalleryWhenUiIsHidden}" />
+        </ToggleButton>
+
+        <Button
+            Margin="0,20,0,10"
+            HorizontalAlignment="Center"
+            Classes="BorderStyle altHover mainBtn">
+            <TextBlock Classes="txt" Text="{Binding ResetButtonText}" />
+        </Button>
+    </StackPanel>
 </UserControl>

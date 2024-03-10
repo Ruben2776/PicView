@@ -155,6 +155,33 @@ public class ViewModelBase : ReactiveObject
         AdjustNavSpeed = TranslationHelper.GetTranslation("AdjustNavSpeed");
         SecAbbreviation = TranslationHelper.GetTranslation("SecAbbreviation");
         ResetButtonText = TranslationHelper.GetTranslation("ResetButtonText");
+        ShowBottomToolbar = TranslationHelper.GetTranslation("ShowBottomToolbar");
+        ShowBottomGalleryWhenUiIsHidden = TranslationHelper.GetTranslation("ShowBottomGalleryWhenUiIsHidden");
+        ChangeKeybindingTooltip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+    }
+
+    private string? _changeKeybindingTooltip;
+
+    public string? ChangeKeybindingTooltip
+    {
+        get => _changeKeybindingTooltip;
+        set => this.RaiseAndSetIfChanged(ref _changeKeybindingTooltip, value);
+    }
+
+    private string? _showBottomGalleryWhenUiIsHidden;
+
+    public string? ShowBottomGalleryWhenUiIsHidden
+    {
+        get => _showBottomGalleryWhenUiIsHidden;
+        set => this.RaiseAndSetIfChanged(ref _showBottomGalleryWhenUiIsHidden, value);
+    }
+
+    private string? _showBottomToolbar;
+
+    public string? ShowBottomToolbar
+    {
+        get => _showBottomToolbar;
+        set => this.RaiseAndSetIfChanged(ref _showBottomToolbar, value);
     }
 
     private string? _resetButtonText;
