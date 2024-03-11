@@ -31,7 +31,7 @@ public partial class ImageInfoWindow
             WindowBlur.EnableBlur(this);
             UpdateLanguage();
             Window_ContentRendered();
-            if (Pics.Count > FolderIndex)
+            if (Pics.Count > FolderIndex && FolderIndex > -1)
             {
                 await UpdateValuesAsync(new FileInfo(Pics?[FolderIndex])).ConfigureAwait(false);
             }
@@ -90,7 +90,7 @@ public partial class ImageInfoWindow
         WidthBox.ToolTip = TranslationHelper.GetTranslation("SizeTooltip");
         HeightBox.ToolTip = TranslationHelper.GetTranslation("SizeTooltip");
 
-        _ = UpdateValuesAsync(Pics.Count > FolderIndex ? new FileInfo(Pics?[FolderIndex]) : null);
+        _ = UpdateValuesAsync(Pics.Count > FolderIndex && FolderIndex > -1 ? new FileInfo(Pics?[FolderIndex]) : null);
     }
 
     private void Window_ContentRendered()

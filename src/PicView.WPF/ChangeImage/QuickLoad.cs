@@ -90,7 +90,7 @@ internal static class QuickLoad
         }, DispatcherPriority.Normal);
 
         // Add recent files, except when browsing archive
-        if (string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile) && Pics.Count > FolderIndex)
+        if (string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile) && Pics.Count > FolderIndex && FolderIndex > -1)
         {
             FileHistoryNavigation.Add(Pics[FolderIndex]);
         }

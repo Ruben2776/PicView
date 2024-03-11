@@ -35,7 +35,7 @@ internal static class ImageInfo
     {
         if (fileInfo is null)
         {
-            if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex)
+            if (Navigation.Pics.Count > 0 && Navigation.Pics.Count > Navigation.FolderIndex && Navigation.FolderIndex > -1)
             {
                 fileInfo = new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
             }

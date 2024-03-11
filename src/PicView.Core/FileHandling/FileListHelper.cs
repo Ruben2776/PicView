@@ -86,15 +86,15 @@ public static class FileListHelper
             {
                 files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
                 {
-                    IgnoreInaccessible = true,
-                    RecurseSubdirectories = true
+                    AttributesToSkip = default,
+                    RecurseSubdirectories = true,
                 }).AsParallel();
             }
             else
             {
                 files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
                 {
-                    IgnoreInaccessible = true,
+                    AttributesToSkip = default,
                     RecurseSubdirectories = false
                 });
             }
