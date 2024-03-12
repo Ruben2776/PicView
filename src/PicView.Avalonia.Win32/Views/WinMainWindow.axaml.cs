@@ -142,18 +142,26 @@ public partial class WinMainWindow : Window
                 });
             });
         };
+        PointerPressed += async (_, e) => await MoveWindow(e);
+    }
+
+    private async Task MoveWindow(PointerPressedEventArgs e)
+    {
+        if (VisualRoot is null) { return; }
+        if (!MainKeyboardShortcuts.ShiftDown) { return; }
+
+        var hostWindow = (Window)VisualRoot;
+        hostWindow?.BeginMoveDrag(e);
+        await WindowHelper.UpdateWindowPosToSettings();
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
-        e.Cancel = true;
         Hide();
 
         await SettingsHelper.SaveSettingsAsync();
         FileDeletionHelper.DeleteTempFiles();
         base.OnClosing(e);
-
-        Environment.Exit(0);
     }
 
     private void Control_OnSizeChanged(object? sender, SizeChangedEventArgs e)

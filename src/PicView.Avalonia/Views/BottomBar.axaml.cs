@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
+using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -48,6 +49,16 @@ public partial class BottomBar : UserControl
             var brush = new SolidColorBrush((Color)(mainIconColor ?? Brushes.White));
             PrevIcon.Fill = brush;
         };
+        PointerPressed += async (_, e) => await MoveWindow(e);
+    }
+
+    private async Task MoveWindow(PointerPressedEventArgs e)
+    {
+        if (VisualRoot is null) { return; }
+
+        var hostWindow = (Window)VisualRoot;
+        hostWindow?.BeginMoveDrag(e);
+        await WindowHelper.UpdateWindowPosToSettings();
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

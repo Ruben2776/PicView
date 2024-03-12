@@ -70,7 +70,7 @@ public partial class App : Application, IPlatformSpecificService
         }
 
         w.Show();
-        await vm.StartUpTask();
+        vm.StartUpTask();
         base.OnFrameworkInitializationCompleted();
     }
 

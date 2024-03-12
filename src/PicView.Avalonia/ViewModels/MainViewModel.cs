@@ -1414,20 +1414,15 @@ namespace PicView.Avalonia.ViewModels
 
         public async Task StartUpTask()
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-
             ImageViewer = new ImageViewer();
             var args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
-                await Task.Run(async () => { await LoadPicFromString(args[1]); }).ConfigureAwait(false);
+                await LoadPicFromString(args[1]).ConfigureAwait(false);
             }
             else if (SettingsHelper.Settings.StartUp.OpenLastFile)
             {
-                await Task.Run(async () => { await LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile); }).ConfigureAwait(false);
+                await LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile).ConfigureAwait(false);
             }
             else
             {
@@ -1575,14 +1570,7 @@ namespace PicView.Avalonia.ViewModels
 
             ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (SettingsHelper.Settings.Zoom.CtrlZoom)
-                {
-                    SettingsHelper.Settings.Zoom.CtrlZoom = false;
-                }
-                else
-                {
-                    SettingsHelper.Settings.Zoom.CtrlZoom = true;
-                }
+                SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 
@@ -1592,7 +1580,7 @@ namespace PicView.Avalonia.ViewModels
 
             NextCommand = ReactiveCommand.Create(async () =>
             {
-                if (ImageIterator is null)
+                if (!NavigationHelper.CanNavigate(this))
                 {
                     return;
                 }
@@ -1602,7 +1590,7 @@ namespace PicView.Avalonia.ViewModels
 
             PreviousCommand = ReactiveCommand.Create(async () =>
             {
-                if (ImageIterator is null)
+                if (!NavigationHelper.CanNavigate(this))
                 {
                     return;
                 }
@@ -1612,7 +1600,7 @@ namespace PicView.Avalonia.ViewModels
 
             FirstCommand = ReactiveCommand.Create(async () =>
             {
-                if (ImageIterator is null)
+                if (!NavigationHelper.CanNavigate(this))
                 {
                     return;
                 }
@@ -1622,7 +1610,7 @@ namespace PicView.Avalonia.ViewModels
 
             LastCommand = ReactiveCommand.Create(async () =>
             {
-                if (ImageIterator is null)
+                if (!NavigationHelper.CanNavigate(this))
                 {
                     return;
                 }

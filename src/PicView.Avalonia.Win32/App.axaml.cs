@@ -45,6 +45,7 @@ public class App : Application, IPlatformSpecificService
         var w = desktop.MainWindow = new WinMainWindow();
         var vm = new MainViewModel(this);
         w.DataContext = vm;
+        var setPos = false;
         if (!settingsExists)
         {
             WindowHelper.CenterWindowOnScreen();
@@ -64,7 +65,7 @@ public class App : Application, IPlatformSpecificService
             {
                 vm.CanResize = true;
                 vm.IsAutoFit = false;
-                WindowHelper.InitializeWindowSizeAndPosition(desktop);
+                WindowHelper.InitializeWindowSizeAndPosition(w);
             }
         }
         w.Show();

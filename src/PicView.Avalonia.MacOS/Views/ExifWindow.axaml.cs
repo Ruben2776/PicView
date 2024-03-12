@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.MacOS.Views;
 
@@ -17,6 +16,5 @@ public partial class ExifWindow : Window
 
         var hostWindow = (Window)VisualRoot;
         hostWindow?.BeginMoveDrag(e);
-        WindowHelper.UpdateWindowPosToSettings();
     }
 }

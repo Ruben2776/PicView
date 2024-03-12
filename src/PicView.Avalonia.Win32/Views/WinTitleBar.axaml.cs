@@ -9,14 +9,15 @@ public partial class WinTitleBar : UserControl
     public WinTitleBar()
     {
         InitializeComponent();
+        PointerPressed += async (_, e) => await MoveWindow(e);
     }
 
-    private void MoveWindow(object? sender, PointerPressedEventArgs e)
+    private async Task MoveWindow(PointerPressedEventArgs e)
     {
         if (VisualRoot is null) { return; }
 
         var hostWindow = (Window)VisualRoot;
         hostWindow?.BeginMoveDrag(e);
-        WindowHelper.UpdateWindowPosToSettings();
+        await WindowHelper.UpdateWindowPosToSettings();
     }
 }

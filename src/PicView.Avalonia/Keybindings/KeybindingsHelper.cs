@@ -1,8 +1,8 @@
 ﻿using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.Navigation;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -238,42 +238,12 @@ public static class KeybindingsHelper
 
     private static async Task Next()
     {
-        if (_vm is null)
-        {
-            return;
-        }
-
-        if (MainKeyboardShortcuts.CtrlDown)
-        {
-            await _vm.ImageIterator.LoadNextPic(NavigateTo.Last, _vm).ConfigureAwait(false);
-        }
-        else
-        {
-            if (!MainKeyboardShortcuts.IsKeyHeldDown)
-            {
-                await _vm.ImageIterator.LoadNextPic(NavigateTo.Next, _vm).ConfigureAwait(false);
-            }
-        }
+        await NavigationHelper.Navigate(true, _vm);
     }
 
     private static async Task Prev()
     {
-        if (_vm is null)
-        {
-            return;
-        }
-
-        if (MainKeyboardShortcuts.CtrlDown)
-        {
-            await _vm.ImageIterator.LoadNextPic(NavigateTo.First, _vm).ConfigureAwait(false);
-        }
-        else
-        {
-            if (!MainKeyboardShortcuts.IsKeyHeldDown)
-            {
-                await _vm.ImageIterator.LoadNextPic(NavigateTo.Previous, _vm).ConfigureAwait(false);
-            }
-        }
+        await NavigationHelper.Navigate(false, _vm);
     }
 
     private static async Task Up()

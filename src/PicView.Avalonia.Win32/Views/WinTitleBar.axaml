@@ -21,8 +21,7 @@
         Background="{StaticResource MainButtonBackgroundColor}"
         BorderBrush="{StaticResource MainBorderColor}"
         BorderThickness="0,0,0,1"
-        CornerRadius="8,8,0,0"
-        PointerPressed="MoveWindow">
+        CornerRadius="8,8,0,0">
         <DockPanel LastChildFill="True">
 
             <Border
