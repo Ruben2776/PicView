@@ -73,7 +73,7 @@ public static class WindowHelper
         window.Position = new PixelPoint(window.Position.X + (int)x, window.Position.Y + (int)y);
     }
 
-    public static void CenterWindowOnScreen(Window window, bool horizontal = true)
+    public static void CenterWindowOnScreen(bool horizontal = true)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -81,12 +81,17 @@ public static class WindowHelper
         }
 
         var screen = ScreenHelper.GetScreen(desktop.MainWindow);
+        if (screen is null)
+        {
+            return;
+        }
+        var window = desktop.MainWindow;
 
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             var width = window.Bounds.Width == 0 ? window.Width : window.Bounds.Width;
             width = double.IsNaN(width) ? window.MinWidth : width;
-            var verticalPos = (screen.WorkingArea.Height * screen.Scaling - width) / 2 + screen.WorkingArea.Y;
+            var verticalPos = (screen.WorkingArea.Height * screen.Scaling - width) / 2 + screen.WorkingArea.X;
             if (horizontal)
             {
                 var horizontalPos = (screen.WorkingArea.Width * screen.Scaling - width) / 2 + screen.WorkingArea.X;

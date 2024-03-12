@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,13 +37,16 @@ public static class MainKeyboardShortcuts
     /// </summary>
     public static Key CurrentKey { get; private set; }
 
+    private static short _x;
+
     public static async Task MainWindow_KeysDownAsync(KeyEventArgs e)
     {
+        _x++;
         CtrlDown = e.KeyModifiers == KeyModifiers.Control;
         AltDown = e.KeyModifiers == KeyModifiers.Alt;
         ShiftDown = e.KeyModifiers == KeyModifiers.Shift;
         CurrentKey = e.Key;
-        IsKeyHeldDown = false;
+        IsKeyHeldDown = _x > 1;
 
         if (KeybindingsHelper.CustomShortcuts is null)
         {
@@ -62,6 +66,10 @@ public static class MainKeyboardShortcuts
                 }
                 catch (Exception)
                 {
+                    // TODO: Display error to user
+#if DEBUG
+                    Trace.WriteLine($"[{nameof(MainWindow_KeysDownAsync)}] error \n{e}");
+#endif
                 }
                 return;
             }
@@ -74,7 +82,13 @@ public static class MainKeyboardShortcuts
         }
     }
 
-    public static async Task MainWindow_KeysUp(object sender, KeyEventArgs e)
+    public static async Task MainWindow_KeysUpAsync(KeyEventArgs e)
     {
+        CtrlDown = false;
+        AltDown = false;
+        ShiftDown = false;
+        CurrentKey = e.Key;
+        IsKeyHeldDown = false;
+        _x = 0;
     }
 }

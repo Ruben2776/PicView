@@ -11,7 +11,9 @@ using PicView.Core.Config;
 using PicView.Core.Navigation;
 using System.Runtime.InteropServices;
 using Avalonia.Controls.Primitives;
+using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
+using System.Drawing;
 
 namespace PicView.Avalonia.Views;
 
@@ -30,7 +32,6 @@ public partial class ImageViewer : UserControl
     {
         InitializeComponent();
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
-        AddHandler(KeyDownEvent, PreviewKeyDown, RoutingStrategies.Direct);
         // TODO add visual feedback for drag and drop
         //AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
@@ -56,25 +57,6 @@ public partial class ImageViewer : UserControl
                 _captured = false;
             };
         };
-    }
-
-    private void PreviewKeyDown(object? sender, KeyEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-            return;
-
-        if (e.Key == Key.Left)
-        {
-            //_ = vm.LoadPic(NavigateTo.Previous).ConfigureAwait(false);
-        }
-        else if (e.Key == Key.Right)
-        {
-            //_ = vm.LoadPic(NavigateTo.Next).ConfigureAwait(false);
-        }
-        else if (e.Key == Key.Escape)
-        {
-            ResetZoom(true);
-        }
     }
 
     private async Task PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -193,11 +175,6 @@ public partial class ImageViewer : UserControl
         }
     }
 
-    private void ImageScrollViewer_OnScrollChanged(object? sender, ScrollChangedEventArgs e)
-    {
-        e.Handled = true;
-    }
-
     #region Zoom
 
     private void InitializeZoom()
@@ -227,15 +204,27 @@ public partial class ImageViewer : UserControl
 
     public void ZoomIn(PointerWheelEventArgs e)
     {
-        ZoomTo(e, true);
+        ZoomTo(e.GetPosition(this), true);
     }
 
     public void ZoomOut(PointerWheelEventArgs e)
     {
-        ZoomTo(e, false);
+        ZoomTo(e.GetPosition(this), false);
     }
 
-    public void ZoomTo(PointerWheelEventArgs e, bool isZoomIn)
+    public void ZoomIn()
+    {
+        var point = new Point(Bounds.Width / 2, Bounds.Height / 2);
+        ZoomTo(point, true);
+    }
+
+    public void ZoomOut()
+    {
+        var point = new Point(Bounds.Width / 2, Bounds.Height / 2);
+        ZoomTo(point, false);
+    }
+
+    public void ZoomTo(Point point, bool isZoomIn)
     {
         var currentZoom = _scaleTransform.ScaleX;
         var zoomSpeed = SettingsHelper.Settings.Zoom.ZoomSpeed;
@@ -272,11 +261,11 @@ public partial class ImageViewer : UserControl
         }
         else
         {
-            ZoomTo(e, currentZoom, true);
+            ZoomTo(point, currentZoom, true);
         }
     }
 
-    public void ZoomTo(PointerWheelEventArgs e, double zoomValue, bool enableAnimations)
+    public void ZoomTo(Point point, double zoomValue, bool enableAnimations)
     {
         if (_scaleTransform == null || _translateTransform == null)
         {
@@ -301,8 +290,6 @@ public partial class ImageViewer : UserControl
             _scaleTransform.Transitions = null;
             _translateTransform.Transitions = null;
         }
-
-        var point = e.GetPosition(this);
 
         var absoluteX = point.X * _scaleTransform.ScaleX + _translateTransform.X;
         var absoluteY = point.Y * _scaleTransform.ScaleY + _translateTransform.Y;
@@ -395,6 +382,86 @@ public partial class ImageViewer : UserControl
 
     #endregion Zoom
 
+    #region Rotation and Flip
+
+    public void Rotate(bool clockWise, bool animate)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+        if (MainImage.Source is null)
+        {
+            return;
+        }
+        if (RotationHelper.IsValidRotation(vm.RotationAngle))
+        {
+            var nextAngle = RotationHelper.Rotate(vm.RotationAngle, clockWise);
+            vm.RotationAngle = nextAngle switch
+            {
+                360 => 0,
+                -90 => 270,
+                _ => nextAngle
+            };
+        }
+        else
+        {
+            vm.RotationAngle = RotationHelper.NextRotationAngle(vm.RotationAngle, true);
+        }
+
+        var rotateTransform = new RotateTransform(vm.RotationAngle);
+
+        if (animate)
+        {
+            rotateTransform.Transitions ??=
+            [
+                new DoubleTransition { Property = RotateTransform.AngleProperty, Duration = TimeSpan.FromSeconds(.5) },
+                new DoubleTransition { Property = RotateTransform.CenterXProperty, Duration = TimeSpan.FromSeconds(.5) },
+                new DoubleTransition { Property = RotateTransform.CenterYProperty, Duration = TimeSpan.FromSeconds(.5) }
+            ];
+        }
+
+        ImageLayoutTransformControl.LayoutTransform = rotateTransform;
+    }
+
+    public void Flip(bool animate)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+        if (MainImage.Source is null)
+        {
+            return;
+        }
+        vm.ScaleX = vm.ScaleX == -1 ? 1 : -1;
+        if (vm.ScaleX == 1)
+        {
+            vm.ScaleX = -1;
+            vm.GetFlipped = vm.UnFlip;
+        }
+        else
+        {
+            vm.ScaleX = 1;
+            vm.GetFlipped = vm.Flip;
+        }
+        var flipTransform = new ScaleTransform(vm.ScaleX, 1);
+        if (animate)
+        {
+            flipTransform.Transitions ??=
+            [
+                new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.3) },
+            ];
+        }
+        //_scaleTransform.ScaleX = vm.ScaleX;
+        MainImage.RenderTransform = flipTransform;
+    }
+
+    #endregion Rotation and Flip
+
+    #region Events
+
+    private void ImageScrollViewer_OnScrollChanged(object? sender, ScrollChangedEventArgs e)
+    {
+        e.Handled = true;
+    }
+
     private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (e.ClickCount == 2)
@@ -442,4 +509,6 @@ public partial class ImageViewer : UserControl
 
         _captured = false;
     }
+
+    #endregion Events
 }

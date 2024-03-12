@@ -93,6 +93,7 @@ public partial class WinMainWindow : Window
                 // TODO figure out how to use KeyBindings via json config file
                 _ = KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
                 KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
+                KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUpAsync(e).ConfigureAwait(false);
                 KeyBindings.Add(new KeyBinding { Command = vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
 
                 vm.ShowInFolderCommand = ReactiveCommand.Create(() =>

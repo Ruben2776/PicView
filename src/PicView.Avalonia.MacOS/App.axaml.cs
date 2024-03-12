@@ -48,7 +48,7 @@ public partial class App : Application, IPlatformSpecificService
         w.DataContext = vm;
         if (!settingsExists)
         {
-            WindowHelper.CenterWindowOnScreen(w);
+            WindowHelper.CenterWindowOnScreen();
             vm.CanResize = true;
             vm.IsAutoFit = false;
         }

@@ -158,6 +158,24 @@ public class ViewModelBase : ReactiveObject
         ShowBottomToolbar = TranslationHelper.GetTranslation("ShowBottomToolbar");
         ShowBottomGalleryWhenUiIsHidden = TranslationHelper.GetTranslation("ShowBottomGalleryWhenUiIsHidden");
         ChangeKeybindingTooltip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
+        ShowButtonsInHiddenUI = TranslationHelper.GetTranslation("ShowButtonsInHiddenUI");
+        ToggleTaskbarProgress = TranslationHelper.GetTranslation("ToggleTaskbarProgress");
+    }
+
+    private string? _toggleTaskbarProgress;
+
+    public string? ToggleTaskbarProgress
+    {
+        get => _toggleTaskbarProgress;
+        set => this.RaiseAndSetIfChanged(ref _toggleTaskbarProgress, value);
+    }
+
+    private string? _showButtonsInHiddenUI;
+
+    public string? ShowButtonsInHiddenUI
+    {
+        get => _showButtonsInHiddenUI;
+        set => this.RaiseAndSetIfChanged(ref _showButtonsInHiddenUI, value);
     }
 
     private string? _changeKeybindingTooltip;

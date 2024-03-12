@@ -170,6 +170,30 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
         }
 
+        private bool _isShowingButtonsInHiddenUI = SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons;
+
+        public bool IsShowingButtonsInHiddenUI
+        {
+            get => _isShowingButtonsInHiddenUI;
+            set => this.RaiseAndSetIfChanged(ref _isShowingButtonsInHiddenUI, value);
+        }
+
+        private bool _isShowingTaskbarProgress = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
+
+        public bool IsShowingTaskbarProgress
+        {
+            get => _isShowingTaskbarProgress;
+            set => this.RaiseAndSetIfChanged(ref _isShowingTaskbarProgress, value);
+        }
+
+        private bool _isFullscreen = SettingsHelper.Settings.WindowProperties.Fullscreen;
+
+        public bool IsFullscreen
+        {
+            get => _isFullscreen;
+            set => this.RaiseAndSetIfChanged(ref _isFullscreen, value);
+        }
+
         private bool _isTopMost = SettingsHelper.Settings.WindowProperties.TopMost;
 
         public bool IsTopMost
@@ -332,7 +356,7 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentView, value);
         }
 
-        private readonly SpinWaiter? _spinWaiter;
+        public readonly SpinWaiter? SpinWaiter;
 
         public ImageViewer? ImageViewer;
 
@@ -1300,12 +1324,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 return;
             }
-            var index = ImageIterator.GetIteration(ImageIterator.Index, navigateTo);
-            if (index < 0)
-            {
-                return;
-            }
-            await LoadPicAtIndex(index);
+            await ImageIterator.LoadNextPic(navigateTo, this).ConfigureAwait(false);
         }
 
         public async Task LoadPicAtIndex(int index) => await Task.Run(async () =>
@@ -1315,111 +1334,15 @@ namespace PicView.Avalonia.ViewModels
                 return;
             }
 
-            try
-            {
-                ImageIterator.Index = index;
-
-                var preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
-                var viewChanged = false;
-                var x = 0;
-                if (preLoadValue is not null)
-                {
-                    if (preLoadValue.IsLoading)
-                    {
-                        SetLoadingTitle();
-                        using var image = new MagickImage();
-                        image.Ping(ImageIterator.Pics[index]);
-                        var thumb = image.GetExifProfile()?.CreateThumbnail();
-                        if (thumb is not null)
-                        {
-                            var stream = new MemoryStream(thumb?.ToByteArray());
-                            Image = new Bitmap(stream);
-                        }
-                        else if (!viewChanged)
-                        {
-                            CurrentView = _spinWaiter;
-                            viewChanged = true;
-                        }
-                    }
-
-                    while (preLoadValue.IsLoading)
-                    {
-                        x++;
-                        await Task.Delay(20);
-                        if (ImageIterator.Index != index)
-                        {
-                            await ImageIterator.Preload(ImageService);
-                            CurrentView = ImageViewer;
-                            return;
-                        }
-
-                        if (x > 200)
-                        {
-                            await GetPreload();
-                            break;
-                        }
-                    }
-                }
-
-                if (preLoadValue is null)
-                {
-                    if (!viewChanged)
-                    {
-                        CurrentView = _spinWaiter;
-                    }
-                    await GetPreload();
-                }
-
-                CurrentView = ImageViewer;
-
-                if (ImageIterator.Index != index)
-                {
-                    await ImageIterator.Preload(ImageService);
-                    return;
-                }
-
-                SetImageModel(preLoadValue.ImageModel);
-                SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0);
-                SetTitle(preLoadValue.ImageModel, ImageIterator);
-                GetIndex = ImageIterator.Index + 1;
-                ImageChanged?.Invoke(this, preLoadValue.ImageModel);
-                await ImageIterator.AddAsync(ImageIterator.Index, ImageService, preLoadValue?.ImageModel);
-                await ImageIterator.Preload(ImageService);
-                return;
-
-                async Task GetPreload()
-                {
-                    await ImageIterator.PreLoader.AddAsync(index, ImageService, ImageIterator.Pics)
-                        .ConfigureAwait(false);
-                    preLoadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
-                    if (ImageIterator.Index != index)
-                    {
-                        await ImageIterator.Preload(ImageService);
-                        return;
-                    }
-
-                    if (preLoadValue is null)
-                    {
-                        throw new ArgumentNullException(nameof(LoadNextPic),
-                            nameof(preLoadValue) + " is null");
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // TODO display exception to user
-            }
+            await ImageIterator.LoadPicAtIndex(index, this).ConfigureAwait(false);
+            ImageChanged?.Invoke(this, null);
         }).ConfigureAwait(false);
 
         public async Task LoadPicFromString(string path)
         {
-            if (!Path.Exists(path))
-            {
-                // TODO load from URL if not a file
-                throw new FileNotFoundException(path);
-            }
-
-            await LoadPicFromFile(new FileInfo(path)).ConfigureAwait(false);
+            ImageIterator = new ImageIterator(new FileInfo(path), _platformService);
+            ImageService = new ImageService();
+            await ImageIterator.LoadPicFromString(path, this).ConfigureAwait(false);
         }
 
         public async Task LoadPicFromFile(FileInfo fileInfo)
@@ -1427,37 +1350,11 @@ namespace PicView.Avalonia.ViewModels
             SetLoadingTitle();
             try
             {
-                ArgumentNullException.ThrowIfNull(fileInfo);
-
-                var imageModel = new ImageModel
+                if (ImageIterator is null)
                 {
-                    FileInfo = fileInfo
-                };
-
-                ImageService ??= new ImageService();
-                await ImageService.LoadImageAsync(imageModel);
-                SetImageModel(imageModel);
-                SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation);
-                ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
-                await ImageIterator.AddAsync(ImageIterator.Index, ImageService, imageModel);
-                await LoadPicAtIndex(ImageIterator.Index);
-                ImageIterator.FileAdded += (_, e) => { SetTitle(); };
-                ImageIterator.FileRenamed += (_, e) => { SetTitle(); };
-                ImageIterator.FileDeleted += async (_, isSameFile) =>
-                {
-                    if (isSameFile) //change if deleting current file
-                    {
-                        if (ImageIterator?.Index < 0 || ImageIterator?.Index >= ImageIterator?.Pics.Count)
-                        {
-                            return;
-                        }
-                        await LoadPicFromString(ImageIterator?.Pics[ImageIterator.Index]);
-                    }
-                    else
-                    {
-                        SetTitle();
-                    }
-                };
+                    return;
+                }
+                await ImageIterator.LoadPicFromFile(fileInfo, this).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -1549,8 +1446,8 @@ namespace PicView.Avalonia.ViewModels
 
             SetLoadingTitle();
 
-            _spinWaiter = new SpinWaiter();
-            CurrentView = _spinWaiter;
+            SpinWaiter = new SpinWaiter();
+            CurrentView = SpinWaiter;
             IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
 
             Task.Run(UpdateLanguage);
@@ -1796,53 +1693,12 @@ namespace PicView.Avalonia.ViewModels
 
             RotateLeftCommand = ReactiveCommand.Create(() =>
             {
-                if (Image is null)
-                {
-                    return;
-                }
-                if (RotationHelper.IsValidRotation(RotationAngle))
-                {
-                    var nextAngle = RotationHelper.Rotate(RotationAngle, true);
-                    if (nextAngle == 360)
-                    {
-                        RotationAngle = 0;
-                    }
-                    else
-                    {
-                        RotationAngle = nextAngle;
-                    }
-                }
-                else
-                {
-                    RotationAngle = RotationHelper.NextRotationAngle(RotationAngle, true);
-                }
-                SetSize();
+                ImageViewer?.Rotate(true, true);
             });
 
             RotateRightCommand = ReactiveCommand.Create(() =>
             {
-                if (Image is null)
-                {
-                    return;
-                }
-                if (RotationHelper.IsValidRotation(RotationAngle))
-                {
-                    var nextAngle = RotationHelper.Rotate(RotationAngle, false);
-                    if (nextAngle == -90)
-                    {
-                        RotationAngle = 270;
-                    }
-                    else
-                    {
-                        RotationAngle = nextAngle;
-                    }
-                }
-                else
-                {
-                    RotationAngle = RotationHelper.NextRotationAngle(RotationAngle, false);
-                }
-
-                SetSize();
+                ImageViewer?.Rotate(false, true);
             });
 
             GetFlipped = Flip;
@@ -1862,6 +1718,7 @@ namespace PicView.Avalonia.ViewModels
                     ScaleX = 1;
                     GetFlipped = Flip;
                 }
+                ImageViewer?.Flip(true);
             });
 
             OptimizeImageCommand = ReactiveCommand.CreateFromTask(async () =>

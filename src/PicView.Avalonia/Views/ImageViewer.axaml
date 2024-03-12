@@ -13,7 +13,7 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <LayoutTransformControl>
+    <LayoutTransformControl x:Name="ImageLayoutTransformControl">
         <ScrollViewer
             x:Name="ImageScrollViewer"
             Focusable="False"
@@ -30,25 +30,8 @@
                     Height="{Binding ImageHeight}"
                     RenderOptions.BitmapInterpolationMode="HighQuality"
                     Source="{Binding Image}"
-                    Stretch="Uniform">
-                    <Image.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="{Binding ScaleX}">
-                                <ScaleTransform.Transitions>
-                                    <Transitions>
-                                        <DoubleTransition Property="ScaleTransform.ScaleX" Duration="0:0:0.30" />
-                                    </Transitions>
-                                </ScaleTransform.Transitions>
-                            </ScaleTransform>
-                        </TransformGroup>
-                    </Image.RenderTransform>
-                </Image>
+                    Stretch="Uniform" />
             </Border>
         </ScrollViewer>
-        <LayoutTransformControl.LayoutTransform>
-            <TransformGroup>
-                <RotateTransform Angle="{Binding RotationAngle}" />
-            </TransformGroup>
-        </LayoutTransformControl.LayoutTransform>
     </LayoutTransformControl>
 </UserControl>

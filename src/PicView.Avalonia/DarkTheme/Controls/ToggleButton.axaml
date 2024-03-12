@@ -13,7 +13,7 @@
         <Setter Property="Template">
             <ControlTemplate TargetType="{x:Type ToggleButton}">
                 <Border
-                    Name="PART_ContentPresenter"
+                    Name="border"
                     Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
@@ -53,6 +53,7 @@
                             </Canvas>
                         </Decorator>
                         <ContentPresenter
+                            Name="PART_ContentPresenter"
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding Content}"
@@ -82,7 +83,7 @@
             </Style>
         </Style>
 
-        <Style Selector="^.hover:pointerover /template/ Border#PART_ContentPresenter">
+        <Style Selector="^.hover:pointerover /template/ Border#border">
             <Style.Animations>
                 <Animation IterationCount="1" Duration=".35">
                     <KeyFrame>
@@ -99,7 +100,7 @@
             </Style.Animations>
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
-        <Style Selector="^.altHover:pointerover /template/ Border#PART_ContentPresenter">
+        <Style Selector="^.altHover:pointerover /template/ Border#border">
             <Style.Animations>
                 <Animation IterationCount="1" Duration=".35">
                     <KeyFrame>
@@ -116,7 +117,7 @@
             </Style.Animations>
             <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
         </Style>
-        <Style Selector="^.noBorderHover:pointerover /template/ Border#PART_ContentPresenter">
+        <Style Selector="^.noBorderHover:pointerover /template/ Border#border">
             <Style.Animations>
                 <Animation IterationCount="1" Duration=".35">
                     <KeyFrame>

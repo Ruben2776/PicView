@@ -1,9 +1,10 @@
 ﻿using Avalonia.Input;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Avalonia.Threading;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Navigation;
-using DynamicData;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -14,7 +15,6 @@ internal partial class SourceGenerationContext : JsonSerializerContext;
 public static class KeybindingsHelper
 {
     private const string DefaultKeybindings = """
-
                                               {
                                                 "D": "Next",
                                                 "Right": "Next",
@@ -242,7 +242,18 @@ public static class KeybindingsHelper
         {
             return;
         }
-        await _vm.LoadNextPic(NavigateTo.Next).ConfigureAwait(false);
+
+        if (MainKeyboardShortcuts.CtrlDown)
+        {
+            await _vm.ImageIterator.LoadNextPic(NavigateTo.Last, _vm).ConfigureAwait(false);
+        }
+        else
+        {
+            if (!MainKeyboardShortcuts.IsKeyHeldDown)
+            {
+                await _vm.ImageIterator.LoadNextPic(NavigateTo.Next, _vm).ConfigureAwait(false);
+            }
+        }
     }
 
     private static async Task Prev()
@@ -251,37 +262,100 @@ public static class KeybindingsHelper
         {
             return;
         }
-        await _vm.LoadNextPic(NavigateTo.Previous).ConfigureAwait(false);
+
+        if (MainKeyboardShortcuts.CtrlDown)
+        {
+            await _vm.ImageIterator.LoadNextPic(NavigateTo.First, _vm).ConfigureAwait(false);
+        }
+        else
+        {
+            if (!MainKeyboardShortcuts.IsKeyHeldDown)
+            {
+                await _vm.ImageIterator.LoadNextPic(NavigateTo.Previous, _vm).ConfigureAwait(false);
+            }
+        }
     }
 
-    private static Task Up()
+    private static async Task Up()
     {
-        throw new NotImplementedException();
+        if (_vm is null)
+        {
+            return;
+        }
+
+        if (_vm.IsScrollingEnabled)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (_vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
+                {
+                    _vm.ImageViewer.Rotate(clockWise: true, animate: true);
+                }
+                else
+                {
+                    _vm.ImageViewer.ImageScrollViewer.LineUp();
+                }
+            });
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _vm.ImageViewer.Rotate(clockWise: true, animate: true);
+            });
+        }
     }
 
-    private static Task Down()
+    private static async Task Down()
     {
-        throw new NotImplementedException();
+        if (_vm is null)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _vm.ImageViewer.Rotate(clockWise: false, animate: true);
+        });
     }
 
-    private static Task ScrollToTop()
+    private static async Task ScrollToTop()
     {
-        throw new NotImplementedException();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _vm.ImageViewer.ImageScrollViewer.ScrollToHome();
+        });
     }
 
-    private static Task ScrollToBottom()
+    private static async Task ScrollToBottom()
     {
-        throw new NotImplementedException();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _vm.ImageViewer.ImageScrollViewer.ScrollToEnd();
+        });
     }
 
-    private static Task ZoomIn()
+    private static async Task ZoomIn()
     {
-        throw new NotImplementedException();
+        if (_vm is null)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _vm.ImageViewer.ZoomIn();
+        });
     }
 
-    private static Task ZoomOut()
+    private static async Task ZoomOut()
     {
-        throw new NotImplementedException();
+        if (_vm is null)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _vm.ImageViewer.ZoomOut();
+        });
     }
 
     private static Task ResetZoom()
@@ -371,7 +445,8 @@ public static class KeybindingsHelper
 
     private static Task SettingsWindow()
     {
-        throw new NotImplementedException();
+        _vm?.ShowSettingsWindowCommand.Execute(null);
+        return Task.CompletedTask;
     }
 
     private static Task Open()
@@ -459,9 +534,16 @@ public static class KeybindingsHelper
         throw new NotImplementedException();
     }
 
-    private static Task Flip()
+    private static async Task Flip()
     {
-        throw new NotImplementedException();
+        if (_vm is null)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _vm.ImageViewer.Flip(animate: true);
+        });
     }
 
     private static Task OptimizeImage()
@@ -514,9 +596,12 @@ public static class KeybindingsHelper
         throw new NotImplementedException();
     }
 
-    private static Task Center()
+    private static async Task Center()
     {
-        throw new NotImplementedException();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            WindowHelper.CenterWindowOnScreen();
+        });
     }
 
     private static Task Slideshow()

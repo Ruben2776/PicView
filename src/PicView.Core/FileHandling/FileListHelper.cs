@@ -86,7 +86,7 @@ public static class FileListHelper
             {
                 files = Directory.EnumerateFiles(directory, "*.*", new EnumerationOptions
                 {
-                    AttributesToSkip = default,
+                    AttributesToSkip = default, // Pick up hidden files
                     RecurseSubdirectories = true,
                 }).AsParallel();
             }

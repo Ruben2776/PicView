@@ -77,6 +77,35 @@
                 Text="{Binding ShowBottomGalleryWhenUiIsHidden}" />
         </ToggleButton>
 
+        <ToggleButton
+            Width="270"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover"
+            IsChecked="{Binding IsShowingButtonsInHiddenUI}">
+            <TextBlock
+                Margin="0"
+                Padding="0,1,0,0"
+                Classes="txt"
+                Text="{Binding ShowButtonsInHiddenUI}" />
+        </ToggleButton>
+
+        <ToggleButton
+            x:Name="TaskBarToggleButton"
+            Width="270"
+            Margin="0,0,0,3"
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover"
+            IsChecked="{Binding IsShowingTaskbarProgress}">
+            <TextBlock
+                Margin="0"
+                Padding="0,1,0,0"
+                Classes="txt"
+                Text="{Binding ToggleTaskbarProgress}" />
+        </ToggleButton>
+
         <Button
             Margin="0,20,0,10"
             HorizontalAlignment="Center"

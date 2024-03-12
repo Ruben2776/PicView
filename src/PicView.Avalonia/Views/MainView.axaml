@@ -10,10 +10,6 @@
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
     <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
         <vm:MainViewModel />
     </Design.DataContext>
     <UserControl.ContextMenu>
@@ -107,10 +103,23 @@
                         Fill="{StaticResource MainIconColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-                <MenuItem Header="{Binding ToggleLooping}" />
-                <MenuItem Header="{Binding ToggleScroll}" />
-                <MenuItem Command="{Binding ChangeTopMostCommand}" Header="{Binding StayTopMost}" />
-                <MenuItem Header="{Binding Stretch}" />
+                <MenuItem
+                    Header="{Binding ToggleLooping}"
+                    IsChecked="{Binding IsLooping}"
+                    ToggleType="CheckBox" />
+                <MenuItem
+                    Header="{Binding ToggleScroll}"
+                    IsChecked="{Binding IsScrollingEnabled}"
+                    ToggleType="CheckBox" />
+                <MenuItem
+                    Command="{Binding ChangeTopMostCommand}"
+                    Header="{Binding StayTopMost}"
+                    IsChecked="{Binding IsTopMost}"
+                    ToggleType="CheckBox" />
+                <MenuItem
+                    Header="{Binding Stretch}"
+                    IsChecked="{Binding IsStretched}"
+                    ToggleType="CheckBox" />
                 <MenuItem Command="{Binding ChangeCtrlZoomCommand}" Header="{Binding CtrlToZoom}" />
                 <MenuItem Command="{Binding ToggleUICommand}" Header="{Binding HideShowInterface}">
                     <MenuItem.Icon>

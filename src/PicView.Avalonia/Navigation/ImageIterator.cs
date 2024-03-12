@@ -3,7 +3,13 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
+using Avalonia.Media.Imaging;
+using ImageMagick;
 using PicView.Avalonia.Services;
+using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views;
+using Avalonia.Threading;
+using PicView.Avalonia.Views.UC;
 
 namespace PicView.Avalonia.Navigation
 {
@@ -228,6 +234,166 @@ namespace PicView.Avalonia.Navigation
                 PreLoader.Clear();
             }
             FileAdded?.Invoke(this, e);
+        }
+
+        public async Task LoadNextPic(NavigateTo navigateTo, MainViewModel vm)
+        {
+            var index = GetIteration(Index, navigateTo);
+            if (index < 0)
+            {
+                return;
+            }
+            await LoadPicAtIndex(index, vm);
+        }
+
+        public async Task LoadPicAtIndex(int index, MainViewModel vm) => await Task.Run(async () =>
+        {
+            try
+            {
+                Index = index;
+
+                var preLoadValue = PreLoader.Get(index, Pics);
+                var viewChanged = false;
+                var x = 0;
+                if (preLoadValue is not null)
+                {
+                    if (preLoadValue.IsLoading)
+                    {
+                        vm.SetLoadingTitle();
+                        using var image = new MagickImage();
+                        image.Ping(Pics[index]);
+                        var thumb = image.GetExifProfile()?.CreateThumbnail();
+                        if (thumb is not null)
+                        {
+                            var stream = new MemoryStream(thumb?.ToByteArray());
+                            vm.Image = new Bitmap(stream);
+                        }
+                        else if (!viewChanged)
+                        {
+                            vm.CurrentView = vm.SpinWaiter;
+                            viewChanged = true;
+                        }
+                    }
+
+                    while (preLoadValue.IsLoading)
+                    {
+                        x++;
+                        await Task.Delay(20);
+                        if (Index != index)
+                        {
+                            await Preload(vm.ImageService);
+                            vm.CurrentView = vm.ImageViewer;
+                            return;
+                        }
+
+                        if (x > 200)
+                        {
+                            await GetPreload();
+                            break;
+                        }
+                    }
+                }
+
+                if (preLoadValue is null)
+                {
+                    if (!viewChanged)
+                    {
+                        vm.CurrentView = vm.SpinWaiter;
+                    }
+                    await GetPreload();
+                }
+
+                vm.CurrentView = vm.ImageViewer;
+
+                if (Index != index)
+                {
+                    await Preload(vm.ImageService);
+                    return;
+                }
+
+                vm.SetImageModel(preLoadValue.ImageModel);
+                vm.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0);
+                vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
+                vm.GetIndex = Index + 1;
+                //vm.ImageChanged?.Invoke(this, preLoadValue.ImageModel);
+                await AddAsync(Index, vm.ImageService, preLoadValue?.ImageModel);
+                await Preload(vm.ImageService);
+                return;
+
+                async Task GetPreload()
+                {
+                    await PreLoader.AddAsync(index, vm.ImageService, Pics)
+                        .ConfigureAwait(false);
+                    preLoadValue = PreLoader.Get(index, Pics);
+                    if (Index != index)
+                    {
+                        await Preload(vm.ImageService);
+                        return;
+                    }
+
+                    if (preLoadValue is null)
+                    {
+                        throw new ArgumentNullException(nameof(LoadNextPic),
+                            nameof(preLoadValue) + " is null");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // TODO display exception to user
+            }
+        }).ConfigureAwait(false);
+
+        public async Task LoadPicFromString(string path, MainViewModel vm)
+        {
+            if (!Path.Exists(path))
+            {
+                // TODO load from URL if not a file
+                throw new FileNotFoundException(path);
+            }
+
+            await LoadPicFromFile(new FileInfo(path), vm).ConfigureAwait(false);
+        }
+
+        public async Task LoadPicFromFile(FileInfo fileInfo, MainViewModel vm)
+        {
+            vm.SetLoadingTitle();
+            try
+            {
+                ArgumentNullException.ThrowIfNull(fileInfo);
+
+                var imageModel = new ImageModel
+                {
+                    FileInfo = fileInfo
+                };
+
+                await vm.ImageService.LoadImageAsync(imageModel);
+                vm.SetImageModel(imageModel);
+                vm.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation);
+                vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
+                await AddAsync(Index, vm.ImageService, imageModel);
+                await LoadPicAtIndex(Index, vm);
+                vm.ImageIterator.FileAdded += (_, e) => { vm.SetTitle(); };
+                vm.ImageIterator.FileRenamed += (_, e) => { vm.SetTitle(); };
+                vm.ImageIterator.FileDeleted += async (_, isSameFile) =>
+                {
+                    if (isSameFile) //change if deleting current file
+                    {
+                        if (Index < 0 || Index >= Pics.Count)
+                        {
+                            return;
+                        }
+                        await LoadPicFromString(Pics[Index], vm);
+                    }
+                    else
+                    {
+                        vm.SetTitle();
+                    }
+                };
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
