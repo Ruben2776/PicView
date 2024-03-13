@@ -12,7 +12,8 @@ public partial class SettingsWindow : Window
         InitializeComponent();
         Loaded += (sender, e) =>
         {
-            MinWidth = Width;
+            MinWidth = MaxWidth = Width;
+            Height = 500;
             Title = TranslationHelper.GetTranslation("Settings") + " - PicView";
         };
     }

@@ -54,7 +54,7 @@
                 </Border>
 
                 <TabControl
-                    Margin="27,0,82,0"
+                    Margin="27,0,52,0"
                     Padding="0"
                     HorizontalAlignment="Center"
                     Background="{StaticResource SecondaryBackgroundColor}"

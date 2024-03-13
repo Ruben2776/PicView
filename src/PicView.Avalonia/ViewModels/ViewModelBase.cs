@@ -170,9 +170,90 @@ public class ViewModelBase : ReactiveObject
         PrevFolder = TranslationHelper.GetTranslation("PrevFolder");
         SelectGalleryThumb = TranslationHelper.GetTranslation("SelectGalleryThumb");
         ScrollAndRotate = TranslationHelper.GetTranslation("ScrollAndRotate");
+        ScrollUp = TranslationHelper.GetTranslation("ScrollUp");
+        ScrollDown = TranslationHelper.GetTranslation("ScrollDown");
+        ScrollToTop = TranslationHelper.GetTranslation("ScrollToTop");
+        ScrollToBottom = TranslationHelper.GetTranslation("ScrollToBottom");
+        Zoom = TranslationHelper.GetTranslation("Zoom");
+        ZoomIn = TranslationHelper.GetTranslation("ZoomIn");
+        ZoomOut = TranslationHelper.GetTranslation("ZoomOut");
+        Pan = TranslationHelper.GetTranslation("Pan");
+        ResetZoom = TranslationHelper.GetTranslation("ResetZoom");
     }
 
     #region Strings
+
+    private string? _resetZoom;
+
+    public string? ResetZoom
+    {
+        get => _resetZoom;
+        set => this.RaiseAndSetIfChanged(ref _resetZoom, value);
+    }
+
+    private string? _pan;
+
+    public string? Pan
+    {
+        get => _pan;
+        set => this.RaiseAndSetIfChanged(ref _pan, value);
+    }
+
+    private string? _zoomOut;
+
+    public string? ZoomOut
+    {
+        get => _zoomOut;
+        set => this.RaiseAndSetIfChanged(ref _zoomOut, value);
+    }
+
+    private string? _zoomIn;
+
+    public string? ZoomIn
+    {
+        get => _zoomIn;
+        set => this.RaiseAndSetIfChanged(ref _zoomIn, value);
+    }
+
+    private string? _zoom;
+
+    public string? Zoom
+    {
+        get => _zoom;
+        set => this.RaiseAndSetIfChanged(ref _zoom, value);
+    }
+
+    private string? _scrollToBottom;
+
+    public string? ScrollToBottom
+    {
+        get => _scrollToBottom;
+        set => this.RaiseAndSetIfChanged(ref _scrollToBottom, value);
+    }
+
+    private string? _scrollToTop;
+
+    public string? ScrollToTop
+    {
+        get => _scrollToTop;
+        set => this.RaiseAndSetIfChanged(ref _scrollToTop, value);
+    }
+
+    private string? _scrollDown;
+
+    public string? ScrollDown
+    {
+        get => _scrollDown;
+        set => this.RaiseAndSetIfChanged(ref _scrollDown, value);
+    }
+
+    private string? _scrollUp;
+
+    public string? ScrollUp
+    {
+        get => _scrollUp;
+        set => this.RaiseAndSetIfChanged(ref _scrollUp, value);
+    }
 
     private string? _scrollAndRotate;
 

@@ -12,7 +12,10 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+    <StackPanel
+        Margin="20"
+        HorizontalAlignment="Center"
+        Orientation="Vertical">
 
         <TextBlock
             Margin="0,3,0,10"
