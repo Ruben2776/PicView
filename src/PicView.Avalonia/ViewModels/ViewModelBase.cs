@@ -160,6 +160,98 @@ public class ViewModelBase : ReactiveObject
         ChangeKeybindingTooltip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
         ShowButtonsInHiddenUI = TranslationHelper.GetTranslation("ShowButtonsInHiddenUI");
         ToggleTaskbarProgress = TranslationHelper.GetTranslation("ToggleTaskbarProgress");
+        ChangeKeybindingText = TranslationHelper.GetTranslation("ChangeKeybindingText");
+        Navigation = TranslationHelper.GetTranslation("Navigation");
+        NextImage = TranslationHelper.GetTranslation("NextImage");
+        PrevImage = TranslationHelper.GetTranslation("PrevImage");
+        LastImage = TranslationHelper.GetTranslation("LastImage");
+        FirstImage = TranslationHelper.GetTranslation("FirstImage");
+        NextFolder = TranslationHelper.GetTranslation("NextFolder");
+        PrevFolder = TranslationHelper.GetTranslation("PrevFolder");
+        SelectGalleryThumb = TranslationHelper.GetTranslation("SelectGalleryThumb");
+        ScrollAndRotate = TranslationHelper.GetTranslation("ScrollAndRotate");
+    }
+
+    #region Strings
+
+    private string? _scrollAndRotate;
+
+    public string? ScrollAndRotate
+    {
+        get => _scrollAndRotate;
+        set => this.RaiseAndSetIfChanged(ref _scrollAndRotate, value);
+    }
+
+    private string? _selectGalleryThumb;
+
+    public string? SelectGalleryThumb
+    {
+        get => _selectGalleryThumb;
+        set => this.RaiseAndSetIfChanged(ref _selectGalleryThumb, value);
+    }
+
+    private string? _navigation;
+
+    public string? Navigation
+    {
+        get => _navigation;
+        set => this.RaiseAndSetIfChanged(ref _navigation, value);
+    }
+
+    private string? _prevFolder;
+
+    public string? PrevFolder
+    {
+        get => _prevFolder;
+        set => this.RaiseAndSetIfChanged(ref _prevFolder, value);
+    }
+
+    private string? _nextFolder;
+
+    public string? NextFolder
+    {
+        get => _nextFolder;
+        set => this.RaiseAndSetIfChanged(ref _nextFolder, value);
+    }
+
+    private string? _firstImage;
+
+    public string? FirstImage
+    {
+        get => _firstImage;
+        set => this.RaiseAndSetIfChanged(ref _firstImage, value);
+    }
+
+    private string? _lastImage;
+
+    public string? LastImage
+    {
+        get => _lastImage;
+        set => this.RaiseAndSetIfChanged(ref _lastImage, value);
+    }
+
+    private string? _prevImage;
+
+    public string? PrevImage
+    {
+        get => _prevImage;
+        set => this.RaiseAndSetIfChanged(ref _prevImage, value);
+    }
+
+    private string? _nextImage;
+
+    public string? NextImage
+    {
+        get => _nextImage;
+        set => this.RaiseAndSetIfChanged(ref _nextImage, value);
+    }
+
+    private string? _changeKeybindingText;
+
+    public string? ChangeKeybindingText
+    {
+        get => _changeKeybindingText;
+        set => this.RaiseAndSetIfChanged(ref _changeKeybindingText, value);
     }
 
     private string? _toggleTaskbarProgress;
@@ -338,12 +430,12 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _language, value);
     }
 
-    private string? _Appearance;
+    private string? _appearance;
 
     public string? Appearance
     {
-        get => _Appearance;
-        set => this.RaiseAndSetIfChanged(ref _Appearance, value);
+        get => _appearance;
+        set => this.RaiseAndSetIfChanged(ref _appearance, value);
     }
 
     private string? _generalSettings;
@@ -1353,6 +1445,8 @@ public class ViewModelBase : ReactiveObject
         get => _exposureTime;
         set => this.RaiseAndSetIfChanged(ref _exposureTime, value);
     }
+
+    #endregion Strings
 
     #endregion Localization
 

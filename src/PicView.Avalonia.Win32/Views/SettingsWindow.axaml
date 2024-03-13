@@ -54,7 +54,7 @@
                 </Border>
 
                 <TabControl
-                    Margin="27,0,62,0"
+                    Margin="27,0,82,0"
                     Padding="0"
                     HorizontalAlignment="Center"
                     Background="{StaticResource SecondaryBackgroundColor}"
@@ -114,8 +114,8 @@
                 </TabControl>
 
                 <Button
-                    Width="35"
-                    Margin="0,0,35,0"
+                    Width="30"
+                    Margin="0,0,30,0"
                     HorizontalAlignment="Right"
                     Background="{StaticResource MainButtonBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
@@ -131,7 +131,7 @@
                 </Button>
 
                 <Button
-                    Width="35"
+                    Width="30"
                     HorizontalAlignment="Right"
                     Background="{StaticResource MainButtonBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
@@ -152,30 +152,21 @@
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
-                <views:GeneralSettingsView
-                    Margin="20"
-                    Background="Transparent"
-                    PointerPressed="MoveWindow" />
+                <views:GeneralSettingsView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}">
-                <views:AppearanceView
-                    Margin="20"
-                    Background="Transparent"
-                    PointerPressed="MoveWindow" />
+                <views:AppearanceView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer
                 Margin="0,28,0,0"
                 Background="{StaticResource NoisyTexture}"
                 IsVisible="{Binding Path=IsSelected, ElementName=ShortcutsTabItem}">
-                <views:ShortcutsView
-                    Margin="20"
-                    Background="Transparent"
-                    PointerPressed="MoveWindow" />
+                <views:ShortcutsView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
         </Grid>
     </Border>

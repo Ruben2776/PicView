@@ -16,7 +16,6 @@ using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
-using PicView.Core.ImageTransformations;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
