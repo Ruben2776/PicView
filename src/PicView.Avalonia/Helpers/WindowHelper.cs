@@ -2,12 +2,17 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.Navigation;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.Calculations;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.Helpers;
 
 public static class WindowHelper
 {
+    #region Window Dragging and size changing
+
     public static void InitializeWindowSizeAndPosition(Window window)
     {
         if (Dispatcher.UIThread.CheckAccess())
@@ -107,5 +112,127 @@ public static class WindowHelper
                 window.Position = new PixelPoint(window.Position.X, (int)verticalPos);
             }
         });
+    }
+
+    #endregion Window Dragging and size changing
+
+    #region Change window behavior
+
+    public static async Task ToggleTopMost(MainViewModel vm)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (SettingsHelper.Settings.WindowProperties.TopMost)
+        {
+            vm.IsTopMost = false;
+            desktop.MainWindow.Topmost = false;
+            SettingsHelper.Settings.WindowProperties.TopMost = false;
+        }
+        else
+        {
+            vm.IsTopMost = true;
+            desktop.MainWindow.Topmost = true;
+            SettingsHelper.Settings.WindowProperties.TopMost = true;
+        }
+
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    public static async Task ToggleAutoFit(MainViewModel vm)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            vm.SizeToContent = SizeToContent.Manual;
+            vm.CanResize = true;
+            SettingsHelper.Settings.WindowProperties.AutoFit = false;
+            vm.IsAutoFit = false;
+        }
+        else
+        {
+            vm.SizeToContent = SizeToContent.WidthAndHeight;
+            vm.CanResize = false;
+            SettingsHelper.Settings.WindowProperties.AutoFit = true;
+            vm.IsAutoFit = true;
+        }
+        SetSize(vm);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    #endregion Change window behavior
+
+    public static void SetSize(MainViewModel vm)
+    {
+        if (vm.Image is null)
+        {
+            return;
+        }
+        var preloadValue = vm.ImageIterator?.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
+        SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? (int)vm.ImageHeight, vm.RotationAngle, vm);
+    }
+
+    public static void SetSize(double width, double height, double rotation, MainViewModel vm)
+    {
+        width = width == 0 ? vm.ImageWidth : width;
+        height = height == 0 ? vm.ImageHeight : height;
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
+        double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
+        var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? 32 : 0; // Height of the titlebar, TODO get actual size
+        var uiBottomSize =
+            SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
+                ? 28 : 0;
+        var galleryHeight = vm.IsBottomGalleryShown ? 100 : 0;
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            desktopMinWidth = desktop.MainWindow.MinWidth;
+            desktopMinHeight = desktop.MainWindow.MinHeight;
+            containerWidth = desktop.MainWindow.Width;
+            containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                desktopMinWidth = desktop.MainWindow.MinWidth;
+                desktopMinHeight = desktop.MainWindow.MinHeight;
+                containerWidth = desktop.MainWindow.Width;
+                containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+            }, DispatcherPriority.Normal).Wait();
+        }
+        var size = ImageSizeCalculationHelper.GetImageSize(
+            width,
+            height,
+            monitor.Bounds.Width,
+            monitor.Bounds.Height,
+            desktopMinWidth,
+            desktopMinHeight,
+            ImageSizeCalculationHelper.GetInterfaceSize(),
+            rotation,
+            vm.IsStretched,
+            75,
+            monitor.Scaling,
+            SettingsHelper.Settings.WindowProperties.Fullscreen,
+            uiTopSize,
+            uiBottomSize,
+            galleryHeight,
+            vm.IsAutoFit,
+            containerWidth,
+            containerHeight,
+            vm.IsScrollingEnabled);
+
+        vm.TitleMaxWidth = size.TitleMaxWidth;
+        vm.ImageWidth = size.Width;
+        vm.ImageHeight = size.Height;
     }
 }

@@ -70,8 +70,8 @@ public partial class MacMainWindow : Window
         {
             return;
         }
-        var wm = (MainViewModel)DataContext;
-        wm.SetSize();
+        var vm = (MainViewModel)DataContext;
+        WindowHelper.SetSize(vm);
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)

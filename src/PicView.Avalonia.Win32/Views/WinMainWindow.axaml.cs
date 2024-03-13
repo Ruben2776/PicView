@@ -186,6 +186,6 @@ public partial class WinMainWindow : Window
             return;
         }
         var wm = (MainViewModel)DataContext;
-        wm.SetSize();
+        WindowHelper.SetSize(wm);
     }
 }

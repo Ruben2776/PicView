@@ -12,7 +12,6 @@ using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -224,7 +223,7 @@ namespace PicView.Avalonia.ViewModels
                 this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
                 ToggleScrollBarVisibility = value ? ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
                 SettingsHelper.Settings.Zoom.ScrollEnabled = value;
-                SetSize();
+                WindowHelper.SetSize(this);
                 _ = SettingsHelper.SaveSettingsAsync();
             }
         }
@@ -238,7 +237,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _isStretched, value);
                 SettingsHelper.Settings.ImageScaling.StretchImage = value;
-                SetSize();
+                WindowHelper.SetSize(this);
                 _ = SettingsHelper.SaveSettingsAsync();
             }
         }
@@ -962,78 +961,6 @@ namespace PicView.Avalonia.ViewModels
 
         #region Methods
 
-        #region Size
-
-        public void SetSize()
-        {
-            if (Image is null)
-            {
-                return;
-            }
-            var preloadValue = ImageIterator?.PreLoader.Get(ImageIterator.Index, ImageIterator.Pics);
-            SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? (int)ImageHeight, RotationAngle);
-        }
-
-        public void SetSize(double width, double height, double rotation)
-        {
-            width = width == 0 ? ImageWidth : width;
-            height = height == 0 ? ImageHeight : height;
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-            var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
-            double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
-            var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? 32 : 0; // Height of the titlebar, TODO get actual size
-            var uiBottomSize =
-                SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
-                    ? 28 : 0;
-            var galleryHeight = IsBottomGalleryShown ? 100 : 0;
-            if (Dispatcher.UIThread.CheckAccess())
-            {
-                desktopMinWidth = desktop.MainWindow.MinWidth;
-                desktopMinHeight = desktop.MainWindow.MinHeight;
-                containerWidth = desktop.MainWindow.Width;
-                containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
-            }
-            else
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    desktopMinWidth = desktop.MainWindow.MinWidth;
-                    desktopMinHeight = desktop.MainWindow.MinHeight;
-                    containerWidth = desktop.MainWindow.Width;
-                    containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
-                }, DispatcherPriority.Normal).Wait();
-            }
-            var size = ImageSizeCalculationHelper.GetImageSize(
-                width,
-                height,
-                monitor.Bounds.Width,
-                monitor.Bounds.Height,
-                desktopMinWidth,
-                desktopMinHeight,
-                ImageSizeCalculationHelper.GetInterfaceSize(),
-                rotation,
-                IsStretched,
-                75,
-                monitor.Scaling,
-                SettingsHelper.Settings.WindowProperties.Fullscreen,
-                uiTopSize,
-                uiBottomSize,
-                galleryHeight,
-                IsAutoFit,
-                containerWidth,
-                containerHeight,
-                IsScrollingEnabled);
-
-            TitleMaxWidth = size.TitleMaxWidth;
-            ImageWidth = size.Width;
-            ImageHeight = size.Height;
-        }
-
-        #endregion Size
-
         #region Set model and title
 
         public void SetImageModel(ImageModel imageModel)
@@ -1443,6 +1370,10 @@ namespace PicView.Avalonia.ViewModels
             SpinWaiter = new SpinWaiter();
             CurrentView = SpinWaiter;
             IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+            if (SettingsHelper.Settings.WindowProperties.TopMost)
+            {
+                desktop.MainWindow.Topmost = true;
+            }
 
             Task.Run(UpdateLanguage);
 
@@ -1460,47 +1391,9 @@ namespace PicView.Avalonia.ViewModels
 
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
-            ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (SettingsHelper.Settings.WindowProperties.AutoFit)
-                {
-                    SizeToContent = SizeToContent.Manual;
-                    CanResize = true;
-                    SettingsHelper.Settings.WindowProperties.AutoFit = false;
-                    IsAutoFit = false;
-                }
-                else
-                {
-                    SizeToContent = SizeToContent.WidthAndHeight;
-                    CanResize = false;
-                    SettingsHelper.Settings.WindowProperties.AutoFit = true;
-                    IsAutoFit = true;
-                }
-                SetSize();
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-            });
+            ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleAutoFit(this));
 
-            ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (SettingsHelper.Settings.WindowProperties.TopMost)
-                {
-                    IsTopMost = false;
-                    desktop.MainWindow.Topmost = false;
-                    SettingsHelper.Settings.WindowProperties.TopMost = false;
-                }
-                else
-                {
-                    IsTopMost = true;
-                    desktop.MainWindow.Topmost = true;
-                    SettingsHelper.Settings.WindowProperties.TopMost = true;
-                }
-
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-            });
-            if (SettingsHelper.Settings.WindowProperties.TopMost)
-            {
-                desktop.MainWindow.Topmost = true;
-            }
+            ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleTopMost(this));
 
             ChangeIncludeSubdirectoriesCommand = ReactiveCommand.Create(() =>
             {
@@ -1520,7 +1413,7 @@ namespace PicView.Avalonia.ViewModels
                     IsBottomGalleryShown = true;
                     SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
                 }
-                SetSize();
+                WindowHelper.SetSize(this);
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 
@@ -1559,7 +1452,7 @@ namespace PicView.Avalonia.ViewModels
                     IsBottomToolbarShown = true;
                     SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
                 }
-                SetSize();
+                WindowHelper.SetSize(this);
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 

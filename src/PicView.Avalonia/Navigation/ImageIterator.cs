@@ -313,7 +313,7 @@ namespace PicView.Avalonia.Navigation
                 }
 
                 vm.SetImageModel(preLoadValue.ImageModel);
-                vm.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0);
+                WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
                 vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
                 vm.GetIndex = Index + 1;
                 if (SettingsHelper.Settings.WindowProperties.KeepCentered)
@@ -373,7 +373,7 @@ namespace PicView.Avalonia.Navigation
 
                 await vm.ImageService.LoadImageAsync(imageModel);
                 vm.SetImageModel(imageModel);
-                vm.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation);
+                WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
                 vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
                 await AddAsync(Index, vm.ImageService, imageModel);
                 await LoadPicAtIndex(Index, vm);
