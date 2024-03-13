@@ -7,6 +7,7 @@ using PicView.WPF.SystemIntegration;
 using PicView.WPF.Views.UserControls.Buttons;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.HideInterfaceLogic;
@@ -281,9 +282,21 @@ internal static class WindowSizing
         {
             var width = window.ActualWidth == 0 ? window.Width : window.ActualWidth;
             width = double.IsNaN(width) ? window.MinWidth : width;
-            window.Top = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling - width) / 2 + MonitorInfo.WorkArea.Top;
+
             if (horizontal)
-                window.Left = (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling - width) / 2 + MonitorInfo.WorkArea.Left;
+            {
+                var height = window.ActualHeight == 0 ? window.Height : window.ActualHeight;
+                height = double.IsNaN(height) ? window.MinHeight : height;
+
+                var x = Math.Max(MonitorInfo.WorkArea.X, MonitorInfo.WorkArea.X + (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling - width) / 2);
+                var y = Math.Max(MonitorInfo.WorkArea.Y, MonitorInfo.WorkArea.Y + (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling - height) / 2);
+                window.Top = y;
+                window.Left = x;
+            }
+            else
+            {
+                window.Top = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling - width) / 2 + MonitorInfo.WorkArea.Top;
+            }
         });
     }
 
