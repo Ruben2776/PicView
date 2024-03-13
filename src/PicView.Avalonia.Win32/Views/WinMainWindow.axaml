@@ -31,7 +31,7 @@
         CornerRadius="8">
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
-            <uc:BottomBar x:Name="BottomBar" DockPanel.Dock="Bottom" />
+            <views:BottomBar x:Name="BottomBar" DockPanel.Dock="Bottom" />
             <views:MainView x:Name="MainView" Background="{StaticResource NoisyTexture}" />
         </DockPanel>
     </Border>

@@ -92,11 +92,15 @@ public static class WindowHelper
         {
             var width = window.Bounds.Width == 0 ? window.Width : window.Bounds.Width;
             width = double.IsNaN(width) ? window.MinWidth : width;
-            var verticalPos = (screen.WorkingArea.Height * screen.Scaling - width) / 2 + screen.WorkingArea.X;
+            var height = window.Bounds.Height == 0 ? window.Height : window.Bounds.Height;
+            height = double.IsNaN(height) ? window.MinHeight : height;
+            var verticalPos = Math.Max(screen.WorkingArea.Y, screen.WorkingArea.Y + (screen.WorkingArea.Height * screen.Scaling - height) / 2);
             if (horizontal)
             {
-                var horizontalPos = (screen.WorkingArea.Width * screen.Scaling - width) / 2 + screen.WorkingArea.X;
-                window.Position = new PixelPoint((int)horizontalPos, (int)verticalPos);
+                window.Position = new PixelPoint(
+                    x: (int)Math.Max(screen.WorkingArea.X, screen.WorkingArea.X + (screen.WorkingArea.Width * screen.Scaling - width) / 2),
+                    y: (int)verticalPos
+                );
             }
             else
             {

@@ -49,7 +49,7 @@
 
     <DockPanel LastChildFill="True">
         <views1:MacOSTitlebar DockPanel.Dock="Top" />
-        <uc:BottomBar DockPanel.Dock="Bottom" />
+        <views:BottomBar DockPanel.Dock="Bottom" />
         <views:MainView Background="#66000000" />
     </DockPanel>
 </Window>

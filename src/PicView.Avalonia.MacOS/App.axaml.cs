@@ -11,7 +11,6 @@ using PicView.Core.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime;
 using System.Threading.Tasks;
 
@@ -65,12 +64,12 @@ public partial class App : Application, IPlatformSpecificService
             {
                 vm.CanResize = true;
                 vm.IsAutoFit = false;
-                WindowHelper.InitializeWindowSizeAndPosition(desktop);
+                WindowHelper.InitializeWindowSizeAndPosition(w);
             }
         }
 
         w.Show();
-        vm.StartUpTask();
+        await vm.StartUpTask();
         base.OnFrameworkInitializationCompleted();
     }
 

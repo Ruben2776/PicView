@@ -9,6 +9,7 @@ using PicView.Core.FileHandling;
 using ReactiveUI;
 using System.Reactive.Concurrency;
 using Avalonia.Input;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -90,7 +91,6 @@ public partial class WinMainWindow : Window
                     }
                 };
 
-                // TODO figure out how to use KeyBindings via json config file
                 _ = KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
                 KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
                 KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUpAsync(e).ConfigureAwait(false);
@@ -143,6 +143,16 @@ public partial class WinMainWindow : Window
             });
         };
         PointerPressed += async (_, e) => await MoveWindow(e);
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        desktop.ShutdownRequested += async (_, e) =>
+        {
+            await SettingsHelper.SaveSettingsAsync();
+            FileDeletionHelper.DeleteTempFiles();
+        };
     }
 
     private async Task MoveWindow(PointerPressedEventArgs e)

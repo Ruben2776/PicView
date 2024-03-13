@@ -9,6 +9,7 @@ using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using Avalonia.Threading;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Views.UC;
 
 namespace PicView.Avalonia.Navigation
@@ -315,7 +316,10 @@ namespace PicView.Avalonia.Navigation
                 vm.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0);
                 vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
                 vm.GetIndex = Index + 1;
-                //vm.ImageChanged?.Invoke(this, preLoadValue.ImageModel);
+                if (SettingsHelper.Settings.WindowProperties.KeepCentered)
+                {
+                    WindowHelper.CenterWindowOnScreen(false);
+                }
                 await AddAsync(Index, vm.ImageService, preLoadValue?.ImageModel);
                 await Preload(vm.ImageService);
                 return;
