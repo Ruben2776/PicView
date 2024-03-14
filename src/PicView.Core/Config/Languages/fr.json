@@ -178,7 +178,7 @@
   "Random": "Aléatoire",
   "Ascending": "Ascendant",
   "Descending": "Descendant",
-  "Settings": "Options",
+  "Settings": "Paramètres",
   "Scrolling": "Défilement",
   "Looping": "Boucle",
   "FitToWindow": "Ajuster à la fenêtre / à l'image\"",
@@ -374,5 +374,5 @@
   "WhiteFluorescent": "Fluorescent blanc",
   "PhotometricInterpretation": "Interprétation photométrique",
   "LensModel": "Modèle de l'objectif",
-  "LensMaker": "Fabricant de l'objectif",
+  "LensMaker": "Fabricant de l'objectif"
 }

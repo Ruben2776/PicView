@@ -39,4 +39,8 @@
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
   </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="PicView.Tests" />
+	</ItemGroup>
 </Project>

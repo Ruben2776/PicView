@@ -52,11 +52,7 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\ExifWindow.axaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\SettingsWindow.axaml" />
-  </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="PicView.Tests" />
+	</ItemGroup>
 </Project>

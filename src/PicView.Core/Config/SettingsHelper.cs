@@ -115,7 +115,7 @@ public static class SettingsHelper
         Settings = await UpgradeSettings(settings);
     }
 
-    public static async Task SaveSettingsAsync()
+    public static async Task<bool> SaveSettingsAsync()
     {
         try
         {
@@ -132,12 +132,15 @@ public static class SettingsHelper
             catch (Exception)
             {
                 Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
+                return false;
             }
         }
         catch (Exception ex)
         {
             Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
+            return false;
         }
+        return true;
     }
 
     private static async Task<AppSettings> UpgradeSettings(AppSettings settings)

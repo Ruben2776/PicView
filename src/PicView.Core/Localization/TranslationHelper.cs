@@ -42,7 +42,7 @@ public static class TranslationHelper
     /// Determines the language based on the specified culture and loads the corresponding language file.
     /// </summary>
     /// <param name="isoLanguageCode">The culture code representing the desired language.</param>
-    public static async Task LoadLanguage(string isoLanguageCode)
+    public static async Task<bool> LoadLanguage(string isoLanguageCode)
     {
         var jsonLanguageFile = DetermineLanguageFilePath(isoLanguageCode);
 
@@ -72,9 +72,10 @@ public static class TranslationHelper
 #if DEBUG
             Trace.WriteLine($"{nameof(LoadLanguage)} exception:\n{exception.Message}");
 #endif
+            return false;
         }
 
-        return;
+        return true;
 
         async Task Deserialize(string file)
         {

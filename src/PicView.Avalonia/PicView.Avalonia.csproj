@@ -96,4 +96,8 @@
   <ItemGroup>
     <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="PicView.Tests" />
+	</ItemGroup>
 </Project>
