@@ -45,7 +45,6 @@ public class App : Application, IPlatformSpecificService
         var w = desktop.MainWindow = new WinMainWindow();
         var vm = new MainViewModel(this);
         w.DataContext = vm;
-        var setPos = false;
         if (!settingsExists)
         {
             WindowHelper.CenterWindowOnScreen();

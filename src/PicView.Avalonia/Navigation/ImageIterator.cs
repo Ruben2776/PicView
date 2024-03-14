@@ -370,7 +370,7 @@ namespace PicView.Avalonia.Navigation
                 {
                     FileInfo = fileInfo
                 };
-
+                vm.ImageService ??= new ImageService();
                 await vm.ImageService.LoadImageAsync(imageModel);
                 vm.SetImageModel(imageModel);
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);

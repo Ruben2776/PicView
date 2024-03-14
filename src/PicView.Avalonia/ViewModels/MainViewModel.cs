@@ -1276,10 +1276,7 @@ namespace PicView.Avalonia.ViewModels
             SetLoadingTitle();
             try
             {
-                if (ImageIterator is null)
-                {
-                    return;
-                }
+                ImageIterator = new ImageIterator(fileInfo, _platformService);
                 await ImageIterator.LoadPicFromFile(fileInfo, this).ConfigureAwait(false);
             }
             catch (Exception)
