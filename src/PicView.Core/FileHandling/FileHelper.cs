@@ -233,15 +233,14 @@ public static partial class FileHelper
         }
     }
 
-    public static async Task<byte[]> GetBytesFromFile(string filePath, CancellationToken cancellationToken = default)
-    {
-        var fileInfo = new FileInfo(filePath);
-        return await GetBytesFromFile(fileInfo, cancellationToken).ConfigureAwait(false);
-    }
-
     public static async Task<byte[]> GetBytesFromFile(FileInfo fileInfo, CancellationToken cancellationToken = default)
     {
-        await using var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: true);
+        return await GetBytesFromFile(fileInfo.FullName, cancellationToken).ConfigureAwait(false);
+    }
+
+    public static async Task<byte[]> GetBytesFromFile(string filePath, CancellationToken cancellationToken = default)
+    {
+        await using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: true);
         var count = fs.Length;
         var bytes = new byte[count];
         var writeIndex = 0;
