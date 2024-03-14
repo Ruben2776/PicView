@@ -166,7 +166,60 @@ public static class WindowHelper
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
+    public static async Task ToggleFullscreen(MainViewModel vm)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (SettingsHelper.Settings.WindowProperties.Fullscreen)
+        {
+            vm.IsFullscreen = false;
+            desktop.MainWindow.WindowState = WindowState.Normal;
+            SettingsHelper.Settings.WindowProperties.Fullscreen = false;
+        }
+        else
+        {
+            vm.IsFullscreen = true;
+            desktop.MainWindow.WindowState = WindowState.Maximized;
+            SettingsHelper.Settings.WindowProperties.Fullscreen = true;
+        }
+
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    public static async Task ToggleUI(MainViewModel vm)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (SettingsHelper.Settings.UIProperties.ShowInterface)
+        {
+            vm.IsInterfaceShown = false;
+            SettingsHelper.Settings.UIProperties.ShowInterface = false;
+            vm.IsTopToolbarShown = false;
+            vm.IsBottomToolbarShown = false;
+        }
+        else
+        {
+            vm.IsInterfaceShown = true;
+            vm.IsTopToolbarShown = true;
+            if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+            {
+                vm.IsBottomToolbarShown = true;
+            }
+            SettingsHelper.Settings.UIProperties.ShowInterface = true;
+        }
+        vm.CloseMenuCommand?.Execute(null);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
     #endregion Change window behavior
+
+    #region SetSize
 
     public static void SetSize(MainViewModel vm)
     {
@@ -235,4 +288,6 @@ public static class WindowHelper
         vm.ImageWidth = size.Width;
         vm.ImageHeight = size.Height;
     }
+
+    #endregion SetSize
 }

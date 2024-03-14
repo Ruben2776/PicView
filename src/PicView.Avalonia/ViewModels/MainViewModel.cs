@@ -1417,28 +1417,7 @@ namespace PicView.Avalonia.ViewModels
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 
-            ToggleUICommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (SettingsHelper.Settings.UIProperties.ShowInterface)
-                {
-                    IsInterfaceShown = false;
-                    SettingsHelper.Settings.UIProperties.ShowInterface = false;
-                    IsTopToolbarShown = false;
-                    IsBottomToolbarShown = false;
-                }
-                else
-                {
-                    IsInterfaceShown = true;
-                    IsTopToolbarShown = true;
-                    if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
-                    {
-                        IsBottomToolbarShown = true;
-                    }
-                    SettingsHelper.Settings.UIProperties.ShowInterface = true;
-                }
-                CloseMenuCommand?.Execute(null);
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-            });
+            ToggleUICommand = ReactiveCommand.CreateFromTask(async () => { await WindowHelper.ToggleUI(this); });
 
             ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(async () =>
             {
