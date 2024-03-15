@@ -1,8 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Headless;
-using Avalonia.Headless.XUnit;
-using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
+﻿using PicView.Core.Config;
 using PicView.Core.Localization;
 
 namespace PicView.Tests;

@@ -179,9 +179,18 @@ public class ViewModelBase : ReactiveObject
         ZoomOut = TranslationHelper.GetTranslation("ZoomOut");
         Pan = TranslationHelper.GetTranslation("Pan");
         ResetZoom = TranslationHelper.GetTranslation("ResetZoom");
+        ImageControl = TranslationHelper.GetTranslation("ImageControl");
     }
 
     #region Strings
+
+    private string? _imageControl;
+
+    public string? ImageControl
+    {
+        get => _imageControl;
+        set => this.RaiseAndSetIfChanged(ref _imageControl, value);
+    }
 
     private string? _resetZoom;
 

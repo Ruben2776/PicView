@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PicView.Avalonia.MacOS\PicView.Avalonia.MacOS.csproj" />
     <ProjectReference Include="..\PicView.Avalonia\PicView.Avalonia.csproj" />
     <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
   </ItemGroup>

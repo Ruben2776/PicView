@@ -26,10 +26,10 @@
                 PointerReleased="ImageZoomBorder_OnPointerReleased">
                 <Image
                     x:Name="MainImage"
-                    Width="{Binding ImageWidth}"
-                    Height="{Binding ImageHeight}"
+                    Width="{CompiledBinding ImageWidth}"
+                    Height="{CompiledBinding ImageHeight}"
                     RenderOptions.BitmapInterpolationMode="HighQuality"
-                    Source="{Binding Image}"
+                    Source="{CompiledBinding Image}"
                     Stretch="Uniform" />
             </Border>
         </ScrollViewer>

@@ -18,17 +18,17 @@
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="16"
-            Text="{Binding ApplicationShortcuts}"
+            Text="{CompiledBinding ApplicationShortcuts}"
             TextAlignment="Center" />
         <TextBlock
             Classes="txt"
-            Text="{Binding ChangeKeybindingText}"
+            Text="{CompiledBinding ChangeKeybindingText}"
             TextAlignment="Center" />
         <Button
             Margin="0,15,0,25"
             HorizontalAlignment="Center"
             Classes="BorderStyle altHover mainBtn">
-            <TextBlock Classes="txt" Text="{Binding ResetButtonText}" />
+            <TextBlock Classes="txt" Text="{CompiledBinding ResetButtonText}" />
         </Button>
 
         <TextBlock
@@ -36,7 +36,7 @@
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
-            Text="{Binding Navigation}"
+            Text="{CompiledBinding Navigation}"
             TextAlignment="Center" />
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -44,17 +44,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding NextImage}" />
+                Text="{CompiledBinding NextImage}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -62,7 +62,7 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding LastImage}" />
+                Text="{CompiledBinding LastImage}" />
             <TextBox Width="140" Classes="hover TStyle" />
             <TextBox Width="140" Classes="hover TStyle" />
         </StackPanel>
@@ -72,7 +72,7 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding NextFolder}" />
+                Text="{CompiledBinding NextFolder}" />
             <TextBox Width="140" Classes="hover TStyle" />
             <TextBox Width="140" Classes="hover TStyle" />
         </StackPanel>
@@ -82,17 +82,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding PrevImage}" />
+                Text="{CompiledBinding PrevImage}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -100,7 +100,7 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding FirstImage}" />
+                Text="{CompiledBinding FirstImage}" />
             <TextBox
                 Width="140"
                 Classes="hover TStyle"
@@ -116,7 +116,7 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding PrevFolder}" />
+                Text="{CompiledBinding PrevFolder}" />
             <TextBox
                 Width="140"
                 Classes="hover TStyle"
@@ -132,17 +132,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding SelectGalleryThumb}" />
+                Text="{CompiledBinding SelectGalleryThumb}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -150,17 +150,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ToggleLooping}" />
+                Text="{CompiledBinding ToggleLooping}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <TextBlock
@@ -168,7 +168,7 @@
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
-            Text="{Binding ScrollAndRotate}"
+            Text="{CompiledBinding ScrollAndRotate}"
             TextAlignment="Center" />
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -176,17 +176,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding RotateRight}" />
+                Text="{CompiledBinding RotateRight}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -194,7 +194,7 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ScrollUp}" />
+                Text="{CompiledBinding ScrollUp}" />
             <TextBox
                 Width="140"
                 Classes="hover TStyle"
@@ -210,17 +210,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding RotateLeft}" />
+                Text="{CompiledBinding RotateLeft}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -228,7 +228,7 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ScrollDown}" />
+                Text="{CompiledBinding ScrollDown}" />
             <TextBox
                 Width="140"
                 Classes="hover TStyle"
@@ -244,17 +244,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ScrollToTop}" />
+                Text="{CompiledBinding ScrollToTop}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -262,17 +262,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ScrollToBottom}" />
+                Text="{CompiledBinding ScrollToBottom}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -280,17 +280,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ScrollToBottom}" />
+                Text="{CompiledBinding ScrollToBottom}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ToggleScroll}" />
+                ToolTip.Tip="{CompiledBinding ToggleScroll}" />
         </StackPanel>
 
         <TextBlock
@@ -298,7 +298,7 @@
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
-            Text="{Binding Zoom}"
+            Text="{CompiledBinding Zoom}"
             TextAlignment="Center" />
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -306,17 +306,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ZoomIn}" />
+                Text="{CompiledBinding ZoomIn}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -324,17 +324,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ZoomOut}" />
+                Text="{CompiledBinding ZoomOut}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -342,17 +342,17 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding Pan}" />
+                Text="{CompiledBinding Pan}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -360,17 +360,43 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{Binding ResetZoom}" />
+                Text="{CompiledBinding ResetZoom}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{Binding ChangeKeybindingTooltip}" />
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
+        </StackPanel>
+
+        <TextBlock
+            Margin="10,10,10,15"
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Text="{CompiledBinding ImageControl}"
+            TextAlignment="Center" />
+
+        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
+            <TextBlock
+                Width="170"
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding Stretch}" />
+            <TextBox
+                Width="140"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
+            <TextBox
+                Width="140"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
     </StackPanel>
 </UserControl>
