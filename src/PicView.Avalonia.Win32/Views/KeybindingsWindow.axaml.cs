@@ -5,16 +5,15 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class SettingsWindow : Window
+public partial class KeybindingsWindow : Window
 {
-    public SettingsWindow()
+    public KeybindingsWindow()
     {
         InitializeComponent();
         Loaded += (sender, e) =>
         {
             MinWidth = MaxWidth = Width;
-            Height = 500;
-            Title = TranslationHelper.GetTranslation("Settings") + " - PicView";
+            Title = $"{TranslationHelper.GetTranslation("ApplicationShortcuts")}  - PicView";
         };
     }
 

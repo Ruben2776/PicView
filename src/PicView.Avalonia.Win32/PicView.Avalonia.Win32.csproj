@@ -55,4 +55,8 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="PicView.Tests" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\KeybindingsWindow.axaml" />
+	</ItemGroup>
 </Project>

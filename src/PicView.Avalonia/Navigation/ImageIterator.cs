@@ -1,16 +1,14 @@
-﻿using PicView.Avalonia.Models;
+﻿using Avalonia.Media.Imaging;
+using ImageMagick;
+using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Models;
+using PicView.Avalonia.Services;
+using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
-using Avalonia.Media.Imaging;
-using ImageMagick;
-using PicView.Avalonia.Services;
-using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
-using Avalonia.Threading;
-using PicView.Avalonia.Helpers;
-using PicView.Avalonia.Views.UC;
+using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation
 {
@@ -397,7 +395,34 @@ namespace PicView.Avalonia.Navigation
             }
             catch (Exception)
             {
+                // TODO display exception to user
             }
+        }
+
+        private static Timer? _timer;
+
+        internal void TimerPic(NavigateTo navigateTo, MainViewModel vm)
+        {
+            if (_timer is null)
+            {
+                _timer = new Timer(TimeSpan.FromSeconds(SettingsHelper.Settings.UIProperties.NavSpeed))
+                {
+                    AutoReset = false,
+                    Enabled = true
+                };
+                _timer.Elapsed += async (_, _) =>
+                {
+                    var nextIndex = GetIteration(Index, navigateTo);
+                    await LoadPicAtIndex(nextIndex, vm);
+                    _timer = null;
+                };
+            }
+            else if (_timer.Enabled)
+            {
+                return;
+            }
+
+            _timer?.Start();
         }
     }
 }

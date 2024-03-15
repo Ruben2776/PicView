@@ -19,6 +19,7 @@ public partial class WinMainWindow : Window
     private bool _prevButtonClicked;
     private ExifWindow? _exifWindow;
     private SettingsWindow? _settingsWindow;
+    private KeybindingsWindow? _keybindingsWindow;
 
     public WinMainWindow()
     {
@@ -93,7 +94,7 @@ public partial class WinMainWindow : Window
 
                 _ = KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
                 KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
-                KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUpAsync(e).ConfigureAwait(false);
+                KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);
                 KeyBindings.Add(new KeyBinding { Command = vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
 
                 vm.ShowInFolderCommand = ReactiveCommand.Create(() =>
@@ -137,6 +138,26 @@ public partial class WinMainWindow : Window
                     else
                     {
                         _settingsWindow.Activate();
+                    }
+                    vm.CloseMenuCommand.Execute(null);
+                });
+
+                vm.ShowKeybindingsWindowCommand = ReactiveCommand.Create(() =>
+                {
+                    if (_keybindingsWindow is null)
+                    {
+                        _keybindingsWindow = new KeybindingsWindow
+                        {
+                            DataContext = vm,
+                            WindowStartupLocation = WindowStartupLocation.Manual,
+                            Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
+                        };
+                        _keybindingsWindow.Show();
+                        _keybindingsWindow.Closing += (s, e) => _keybindingsWindow = null;
+                    }
+                    else
+                    {
+                        _keybindingsWindow.Activate();
                     }
                     vm.CloseMenuCommand.Execute(null);
                 });

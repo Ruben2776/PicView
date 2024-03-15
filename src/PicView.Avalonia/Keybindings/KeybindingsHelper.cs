@@ -1,10 +1,12 @@
-﻿using Avalonia.Input;
+﻿using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Avalonia;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -51,12 +53,14 @@ public static class KeybindingsHelper
                                                 "F12": "Fullscreen",
                                                 "B": "ChangeBackground",
                                                 "Space": "Center",
+                                                "K": "KeybindingsWindow",
                                                 "D0": "Set0Star",
                                                 "D1": "Set1Star",
                                                 "D2": "Set2Star",
                                                 "D3": "Set3Star",
                                                 "D4": "Set4Star",
-                                                "D5": "Set5Star"
+                                                "D5": "Set5Star",
+                                                "Escape": "Close"
                                               }
                                               """;
 
@@ -182,6 +186,7 @@ public static class KeybindingsHelper
             "ImageInfoWindow" => ImageInfoWindow,
             "ResizeWindow" => ResizeWindow,
             "SettingsWindow" => SettingsWindow,
+            "KeybindingsWindow" => KeybindingsWindow,
 
             // Open functions
             "Open" => Open,
@@ -378,9 +383,16 @@ public static class KeybindingsHelper
         throw new NotImplementedException();
     }
 
-    private static Task Close()
+    private static async Task Close()
     {
-        throw new NotImplementedException();
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            desktop.MainWindow?.Close();
+        });
     }
 
     private static Task ToggleInterface()
@@ -396,6 +408,12 @@ public static class KeybindingsHelper
     private static Task AboutWindow()
     {
         throw new NotImplementedException();
+    }
+
+    private static Task KeybindingsWindow()
+    {
+        _vm?.ShowKeybindingsWindowCommand.Execute(null);
+        return Task.CompletedTask;
     }
 
     private static Task EffectsWindow()

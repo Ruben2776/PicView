@@ -110,6 +110,14 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _showSettingsWindowCommand, value);
         }
 
+        private ICommand? _showKeybindingsWindowCommand;
+
+        public ICommand? ShowKeybindingsWindowCommand
+        {
+            get => _showKeybindingsWindowCommand;
+            set => this.RaiseAndSetIfChanged(ref _showKeybindingsWindowCommand, value);
+        }
+
         public ICommand? SetExifRating1Command { get; }
         public ICommand? SetExifRating2Command { get; }
         public ICommand? SetExifRating3Command { get; }

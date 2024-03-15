@@ -180,9 +180,63 @@ public class ViewModelBase : ReactiveObject
         Pan = TranslationHelper.GetTranslation("Pan");
         ResetZoom = TranslationHelper.GetTranslation("ResetZoom");
         ImageControl = TranslationHelper.GetTranslation("ImageControl");
+        ChangeBackground = TranslationHelper.GetTranslation("ChangeBackground");
+        InterfaceConfiguration = TranslationHelper.GetTranslation("InterfaceConfiguration");
+        FileManagement = TranslationHelper.GetTranslation("FileManagement");
+        ToggleFullscreen = TranslationHelper.GetTranslation("ToggleFullscreen");
+        ShowImageGallery = TranslationHelper.GetTranslation("ShowImageGallery");
+        WindowManagement = TranslationHelper.GetTranslation("WindowManagement");
     }
 
     #region Strings
+
+    private string? _windowManagement;
+
+    public string? WindowManagement
+    {
+        get => _windowManagement;
+        set => this.RaiseAndSetIfChanged(ref _windowManagement, value);
+    }
+
+    private string? _showImageGallery;
+
+    public string? ShowImageGallery
+    {
+        get => _showImageGallery;
+        set => this.RaiseAndSetIfChanged(ref _showImageGallery, value);
+    }
+
+    private string? _toggleFullscreen;
+
+    public string? ToggleFullscreen
+    {
+        get => _toggleFullscreen;
+        set => this.RaiseAndSetIfChanged(ref _toggleFullscreen, value);
+    }
+
+    private string? _fileManagement;
+
+    public string? FileManagement
+    {
+        get => _fileManagement;
+        set => this.RaiseAndSetIfChanged(ref _fileManagement, value);
+    }
+
+    private string? _interfaceConfiguration;
+
+    public string? InterfaceConfiguration
+    {
+        get => _interfaceConfiguration;
+        set => this.RaiseAndSetIfChanged(ref _interfaceConfiguration, value);
+    }
+
+    private string? _changeBackground;
+
+    public string? ChangeBackground
+    {
+        get => _changeBackground;
+        set => this.RaiseAndSetIfChanged(ref _changeBackground, value);
+    }
 
     private string? _imageControl;
 

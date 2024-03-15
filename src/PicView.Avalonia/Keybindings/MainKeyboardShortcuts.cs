@@ -1,5 +1,6 @@
 ﻿using Avalonia.Input;
 using System.Diagnostics;
+using PicView.Avalonia.Navigation;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -54,8 +55,14 @@ public static class MainKeyboardShortcuts
                 try
                 {
                     await KeybindingsHelper.SetDefaultKeybindings().ConfigureAwait(false);
-                    // ReSharper disable once TailRecursiveCall
-                    await MainWindow_KeysDownAsync(e).ConfigureAwait(false);
+                    if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKey, out var retryFunc))
+                    {
+                        await retryFunc.Invoke().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
                 catch (Exception)
                 {
@@ -75,7 +82,7 @@ public static class MainKeyboardShortcuts
         }
     }
 
-    public static async Task MainWindow_KeysUpAsync(KeyEventArgs e)
+    public static void MainWindow_KeysUp(KeyEventArgs e)
     {
         CtrlDown = false;
         AltDown = false;

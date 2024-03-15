@@ -97,7 +97,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
-                    ToolTip.Tip="{Binding Slideshow}">
+                    ToolTip.Tip="Coming soon...">
                     <Image Width="17" Height="17">
                         <DrawingImage>
                             <DrawingGroup>

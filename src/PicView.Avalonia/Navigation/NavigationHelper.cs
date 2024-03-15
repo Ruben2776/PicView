@@ -18,7 +18,7 @@ public static class NavigationHelper
             return false;
         }
 
-        return vm.ImageIterator.Pics.Count > 0 && vm.ImageIterator.Index > -1 && vm.ImageIterator.Index > vm.ImageIterator.Pics.Count;
+        return vm.ImageIterator.Pics.Count > 0 && vm.ImageIterator.Index > -1 && vm.ImageIterator.Index < vm.ImageIterator.Pics.Count;
     }
 
     public static async Task Navigate(bool next, MainViewModel vm)
@@ -27,26 +27,25 @@ public static class NavigationHelper
         {
             return;
         }
-
-        var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
 
         if (MainKeyboardShortcuts.CtrlDown)
         {
-            if (!CanNavigate(vm))
-            {
-                return;
-            }
-            await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
+            await vm.ImageIterator.LoadNextPic(next ? NavigateTo.Last : NavigateTo.First, vm).ConfigureAwait(false);
         }
         else
         {
+            var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
             if (!MainKeyboardShortcuts.IsKeyHeldDown)
             {
-                if (!CanNavigate(vm))
-                {
-                    return;
-                }
                 await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
+            }
+            else
+            {
+                vm.ImageIterator.TimerPic(navigateTo, vm);
             }
         }
     }

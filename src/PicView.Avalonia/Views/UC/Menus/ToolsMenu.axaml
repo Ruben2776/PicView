@@ -189,6 +189,7 @@
                     Canvas.Top="150"
                     Width="169"
                     Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding ShowKeybindingsWindowCommand}"
                     ToolTip.Tip="{Binding ApplicationShortcuts}">
                     <StackPanel Orientation="Horizontal">
                         <Image

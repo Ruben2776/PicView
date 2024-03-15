@@ -72,7 +72,7 @@
                                 Grid.Row="0"
                                 MinHeight="{DynamicResource ScrollBarThickness}"
                                 HorizontalAlignment="Center"
-                                Background="{StaticResource SecondaryBackgroundColor}"
+                                Background="Transparent"
                                 Classes="repeat"
                                 Focusable="False">
                                 <Path
@@ -98,14 +98,14 @@
                                 <Track.DecreaseButton>
                                     <RepeatButton
                                         Name="PART_PageUpButton"
-                                        Background="{StaticResource SecondaryBackgroundColor}"
+                                        Background="Transparent"
                                         Classes="repeattrack"
                                         Focusable="False" />
                                 </Track.DecreaseButton>
                                 <Track.IncreaseButton>
                                     <RepeatButton
                                         Name="PART_PageDownButton"
-                                        Background="{StaticResource SecondaryBackgroundColor}"
+                                        Background="Transparent"
                                         Classes="repeattrack"
                                         Focusable="False" />
                                 </Track.IncreaseButton>
@@ -117,7 +117,7 @@
                                 Grid.Column="2"
                                 MinHeight="{DynamicResource ScrollBarThickness}"
                                 HorizontalAlignment="Center"
-                                Background="{StaticResource SecondaryBackgroundColor}"
+                                Background="Transparent"
                                 Classes="repeat"
                                 Focusable="False">
                                 <Path
@@ -168,7 +168,7 @@
         <Style Selector="^ /template/ RepeatButton.repeattrack">
             <Setter Property="Template">
                 <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}" />
+                    <Border Background="Transparent" />
                 </ControlTemplate>
             </Setter>
         </Style>
