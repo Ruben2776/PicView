@@ -188,12 +188,6 @@ internal static class WindowSizing
             return; // Fixes weird unintentional hit
         }
 
-        if (GetMainWindow.MainImage.Source is null && !gotoFullscreen)
-        {
-            Restore_From_Move();
-            return;
-        }
-
         SetWindowSize(ConfigureWindows.GetMainWindow); // Fixes popping up on wrong monitor?
         MonitorInfo = MonitorSize.GetMonitorSize(GetMainWindow);
 

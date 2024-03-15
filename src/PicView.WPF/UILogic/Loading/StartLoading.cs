@@ -142,14 +142,7 @@ internal static class StartLoading
             ConfigureWindows.GetMainWindow.Show();
             if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
-                if (args.Length < 2)
-                {
-                    SettingsHelper.Settings.WindowProperties.Fullscreen = false;
-                }
-                else
-                {
-                    Fullscreen_Restore(true);
-                }
+                Fullscreen_Restore(true);
             }
 
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
