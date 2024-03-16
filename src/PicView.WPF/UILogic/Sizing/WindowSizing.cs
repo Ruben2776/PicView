@@ -203,12 +203,9 @@ internal static class WindowSizing
                 GalleryNavigation.ScrollToGalleryCenter();
             }
 
-            if (ErrorHandling.CheckOutOfRange() is false)
-            {
-                IsNavigationShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
-                if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                    IsShortcutsShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
-            }
+            IsNavigationShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
+            if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                IsShortcutsShown(SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons);
 
             SettingsHelper.Settings.WindowProperties.Fullscreen = true;
 

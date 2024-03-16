@@ -141,12 +141,7 @@ internal static class HideInterfaceLogic
 
         if (show)
         {
-            if (ErrorHandling.CheckOutOfRange() is false)
-            {
-                UC.GetClickArrowLeft.Visibility =
-                    UC.GetClickArrowRight.Visibility = Visibility.Visible;
-            }
-
+            UC.GetClickArrowLeft.Visibility = UC.GetClickArrowRight.Visibility =
             UC.GetX2.Visibility =
                 UC.GetRestoreButton.Visibility =
                     UC.GetMinus.Visibility = Visibility.Visible;

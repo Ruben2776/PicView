@@ -32,7 +32,7 @@
         </Button>
 
         <TextBlock
-            Margin="10,0,10,15"
+            Margin="10,10,10,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -472,7 +472,7 @@
         </StackPanel>
 
         <TextBlock
-            Margin="10,0,10,15"
+            Margin="10,10,10,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -568,7 +568,7 @@
         </StackPanel>
 
         <TextBlock
-            Margin="10,0,10,15"
+            Margin="10,10,10,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -736,7 +736,7 @@
         </StackPanel>
 
         <TextBlock
-            Margin="10,0,10,15"
+            Margin="10,10,10,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
@@ -872,7 +872,7 @@
         </StackPanel>
 
         <TextBlock
-            Margin="10,0,10,15"
+            Margin="10,10,10,15"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
