@@ -186,9 +186,99 @@ public class ViewModelBase : ReactiveObject
         ToggleFullscreen = TranslationHelper.GetTranslation("ToggleFullscreen");
         ShowImageGallery = TranslationHelper.GetTranslation("ShowImageGallery");
         WindowManagement = TranslationHelper.GetTranslation("WindowManagement");
+        CenterWindow = TranslationHelper.GetTranslation("CenterWindow");
+        WindowScaling = TranslationHelper.GetTranslation("WindowScaling");
+        NormalWindow = TranslationHelper.GetTranslation("NormalWindow");
+        SetStarRating = TranslationHelper.GetTranslation("SetStarRating");
+        _1Star = TranslationHelper.GetTranslation("_1Star");
+        _2Star = TranslationHelper.GetTranslation("_2Star");
+        _3Star = TranslationHelper.GetTranslation("_3Star");
+        _4Star = TranslationHelper.GetTranslation("_4Star");
+        _5Star = TranslationHelper.GetTranslation("_5Star");
+        RemoveStarRating = TranslationHelper.GetTranslation("RemoveStarRating");
     }
 
     #region Strings
+
+    private string? _removeStarRating;
+
+    public string? RemoveStarRating
+    {
+        get => _removeStarRating;
+        set => this.RaiseAndSetIfChanged(ref _removeStarRating, value);
+    }
+
+    private string? _5star;
+
+    public string? _5Star
+    {
+        get => _5star;
+        set => this.RaiseAndSetIfChanged(ref _5star, value);
+    }
+
+    private string? _4star;
+
+    public string? _4Star
+    {
+        get => _4star;
+        set => this.RaiseAndSetIfChanged(ref _4star, value);
+    }
+
+    private string? _3star;
+
+    public string? _3Star
+    {
+        get => _3star;
+        set => this.RaiseAndSetIfChanged(ref _3star, value);
+    }
+
+    private string? _2star;
+
+    public string? _2Star
+    {
+        get => _2star;
+        set => this.RaiseAndSetIfChanged(ref _2star, value);
+    }
+
+    private string? _1star;
+
+    public string? _1Star
+    {
+        get => _1star;
+        set => this.RaiseAndSetIfChanged(ref _1star, value);
+    }
+
+    private string? _setStarRating;
+
+    public string? SetStarRating
+    {
+        get => _setStarRating;
+        set => this.RaiseAndSetIfChanged(ref _setStarRating, value);
+    }
+
+    private string? _normalWindow;
+
+    public string? NormalWindow
+    {
+        get => _normalWindow;
+        set => this.RaiseAndSetIfChanged(ref _normalWindow, value);
+    }
+
+    private string? _windowScaling;
+
+    public string? WindowScaling
+    {
+        get => _windowScaling;
+        set => this.RaiseAndSetIfChanged(ref _windowScaling, value);
+    }
+
+    private string? _centerWindow;
+
+    public string? CenterWindow
+    {
+        get => _centerWindow;
+        set => this.RaiseAndSetIfChanged(ref _centerWindow, value);
+    }
 
     private string? _windowManagement;
 
