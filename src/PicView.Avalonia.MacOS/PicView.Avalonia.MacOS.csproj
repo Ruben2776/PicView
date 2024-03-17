@@ -43,4 +43,8 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="PicView.Tests" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\SettingsWindow.axaml" />
+	</ItemGroup>
 </Project>

@@ -196,9 +196,36 @@ public class ViewModelBase : ReactiveObject
         _4Star = TranslationHelper.GetTranslation("_4Star");
         _5Star = TranslationHelper.GetTranslation("_5Star");
         RemoveStarRating = TranslationHelper.GetTranslation("RemoveStarRating");
+        Theme = TranslationHelper.GetTranslation("Theme");
+        DarkTheme = TranslationHelper.GetTranslation("DarkTheme");
+        LightTheme = TranslationHelper.GetTranslation("LightTheme");
     }
 
     #region Strings
+
+    private string? _lightTheme;
+
+    public string? LightTheme
+    {
+        get => _lightTheme;
+        set => this.RaiseAndSetIfChanged(ref _lightTheme, value);
+    }
+
+    private string? _darkTheme;
+
+    public string? DarkTheme
+    {
+        get => _darkTheme;
+        set => this.RaiseAndSetIfChanged(ref _darkTheme, value);
+    }
+
+    private string? _theme;
+
+    public string? Theme
+    {
+        get => _theme;
+        set => this.RaiseAndSetIfChanged(ref _theme, value);
+    }
 
     private string? _removeStarRating;
 

@@ -1,23 +1,32 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime;
 using System.Threading.Tasks;
+using Avalonia.Input;
 
 namespace PicView.Avalonia.MacOS;
 
 public partial class App : Application, IPlatformSpecificService
 {
+    private ExifWindow? _exifWindow;
+    private SettingsWindow? _settingsWindow;
+    private KeybindingsWindow? _keybindingsWindow;
+
     public override void Initialize()
     {
         ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
@@ -72,6 +81,70 @@ public partial class App : Application, IPlatformSpecificService
         w.Show();
 
         await vm.StartUpTask();
+        await KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
+        w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
+        w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            w.KeyBindings.Add(new KeyBinding { Command = vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
+        });
+
+        vm.ShowExifWindowCommand = ReactiveCommand.Create(() =>
+        {
+            if (_exifWindow is null)
+            {
+                _exifWindow = new ExifWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _exifWindow.Show();
+                _exifWindow.Closing += (s, e) => _exifWindow = null;
+            }
+            else
+            {
+                _exifWindow.Activate();
+            }
+            vm.CloseMenuCommand.Execute(null);
+        });
+
+        vm.ShowSettingsWindowCommand = ReactiveCommand.Create(() =>
+        {
+            if (_settingsWindow is null)
+            {
+                _settingsWindow = new Views.SettingsWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _settingsWindow.Show();
+                _settingsWindow.Closing += (s, e) => _settingsWindow = null;
+            }
+            else
+            {
+                _settingsWindow.Activate();
+            }
+            vm.CloseMenuCommand.Execute(null);
+        });
+
+        vm.ShowKeybindingsWindowCommand = ReactiveCommand.Create(() =>
+        {
+            if (_keybindingsWindow is null)
+            {
+                _keybindingsWindow = new Views.KeybindingsWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _keybindingsWindow.Show();
+                _keybindingsWindow.Closing += (s, e) => _keybindingsWindow = null;
+            }
+            else
+            {
+                _keybindingsWindow.Activate();
+            }
+            vm.CloseMenuCommand.Execute(null);
+        });
     }
 
     public void SetCursorPos(int x, int y)

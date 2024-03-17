@@ -17,9 +17,6 @@ public partial class WinMainWindow : Window
 {
     private bool _nextButtonClicked;
     private bool _prevButtonClicked;
-    private ExifWindow? _exifWindow;
-    private SettingsWindow? _settingsWindow;
-    private KeybindingsWindow? _keybindingsWindow;
 
     public WinMainWindow()
     {
@@ -91,76 +88,6 @@ public partial class WinMainWindow : Window
                         _prevButtonClicked = false;
                     }
                 };
-
-                _ = KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
-                KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
-                KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);
-                KeyBindings.Add(new KeyBinding { Command = vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
-
-                vm.ShowInFolderCommand = ReactiveCommand.Create(() =>
-                {
-                    Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(vm.FileInfo?.DirectoryName, vm.FileInfo?.Name);
-                });
-
-                vm.ShowExifWindowCommand = ReactiveCommand.Create(() =>
-                {
-                    if (_exifWindow is null)
-                    {
-                        _exifWindow = new ExifWindow
-                        {
-                            DataContext = vm,
-                            WindowStartupLocation = WindowStartupLocation.Manual,
-                            Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
-                        };
-                        _exifWindow.Show();
-                        _exifWindow.Closing += (s, e) => _exifWindow = null;
-                    }
-                    else
-                    {
-                        _exifWindow.Activate();
-                    }
-                    vm.CloseMenuCommand.Execute(null);
-                });
-
-                vm.ShowSettingsWindowCommand = ReactiveCommand.Create(() =>
-                {
-                    if (_settingsWindow is null)
-                    {
-                        _settingsWindow = new SettingsWindow
-                        {
-                            DataContext = vm,
-                            WindowStartupLocation = WindowStartupLocation.Manual,
-                            Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
-                        };
-                        _settingsWindow.Show();
-                        _settingsWindow.Closing += (s, e) => _settingsWindow = null;
-                    }
-                    else
-                    {
-                        _settingsWindow.Activate();
-                    }
-                    vm.CloseMenuCommand.Execute(null);
-                });
-
-                vm.ShowKeybindingsWindowCommand = ReactiveCommand.Create(() =>
-                {
-                    if (_keybindingsWindow is null)
-                    {
-                        _keybindingsWindow = new KeybindingsWindow
-                        {
-                            DataContext = vm,
-                            WindowStartupLocation = WindowStartupLocation.Manual,
-                            Position = new PixelPoint(Position.X, Position.Y + (int)Height / 3)
-                        };
-                        _keybindingsWindow.Show();
-                        _keybindingsWindow.Closing += (s, e) => _keybindingsWindow = null;
-                    }
-                    else
-                    {
-                        _keybindingsWindow.Activate();
-                    }
-                    vm.CloseMenuCommand.Execute(null);
-                });
             });
         };
         PointerPressed += async (_, e) => await MoveWindow(e);
