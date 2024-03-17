@@ -1,4 +1,7 @@
-<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
     <Styles.Resources>
         <ResourceDictionary>
 
@@ -91,13 +94,13 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.hover">
+    <Style Selector="Button.hover, customControls|CopyButton:hover">
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
     </Style>
 
-    <Style Selector="Button.ButtonBorder, ToggleButton.ButtonBorder">
+    <Style Selector="Button.ButtonBorder, ToggleButton.ButtonBorder, customControls|CopyButton.ButtonBorder">
         <Setter Property="Height" Value="40" />
         <Setter Property="Width" Value="147" />
         <Setter Property="CornerRadius" Value="4" />
@@ -108,7 +111,7 @@
         <Setter Property="Background" Value="{StaticResource MainButtonBackgroundColor}" />
     </Style>
 
-    <Style Selector="Button.BorderStyle, ToggleButton.BorderStyle">
+    <Style Selector="Button.BorderStyle, ToggleButton.BorderStyle, customControls|CopyButton.BorderStyle">
         <Setter Property="Width" Value="37" />
         <Setter Property="Height" Value="35" />
         <Setter Property="Margin" Value="7,0,0,0" />

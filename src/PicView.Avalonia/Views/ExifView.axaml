@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.ExifView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
@@ -29,20 +30,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding FileName}" />
+                            Text="{CompiledBinding FileName}" />
                         <TextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
                             Text="{Binding FileInfo.Name}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding FileInfo.Name}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -50,20 +54,23 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding Folder}" />
+                            Text="{CompiledBinding Folder}" />
                         <TextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{Binding FileInfo.DirectoryName}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding FileInfo.DirectoryName}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding FileInfo.DirectoryName}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -71,20 +78,23 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding FullPath}" />
+                            Text="{CompiledBinding FullPath}" />
                         <TextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{Binding FileInfo.FullName}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding FileInfo.FullName}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding FileInfo.FullName}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -92,19 +102,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding Created}" />
+                            Text="{CompiledBinding Created}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding FileInfo.CreationTime}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding FileInfo.CreationTime}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding FileInfo.CreationTime}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -112,19 +125,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding Modified}" />
+                            Text="{CompiledBinding Modified}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding FileInfo.LastWriteTime}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding FileInfo.LastWriteTime}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding FileInfo.LastWriteTime}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -132,19 +148,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding LastAccessTime}" />
+                            Text="{CompiledBinding LastAccessTime}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding FileInfo.LastAccessTime}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding FileInfo.LastAccessTime}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding FileInfo.LastAccessTime}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -152,19 +171,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding BitDepth}" />
+                            Text="{CompiledBinding BitDepth}" />
                         <TextBox
                             Classes="TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetBitDepth}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetBitDepth}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetBitDepth}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
 
@@ -175,22 +197,25 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding Width}" />
+                            Text="{CompiledBinding Width}" />
                         <TextBox
                             x:Name="PixelWidthTextBox"
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{Binding PixelWidth}"
-                            ToolTip.Tip="{Binding SizeTooltip}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding PixelWidth}"
+                            ToolTip.Tip="{CompiledBinding SizeTooltip}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding PixelWidth}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -198,22 +223,25 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding Height}" />
+                            Text="{CompiledBinding Height}" />
                         <TextBox
                             x:Name="PixelHeightTextBox"
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{Binding PixelHeight}"
-                            ToolTip.Tip="{Binding SizeTooltip}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding PixelHeight}"
+                            ToolTip.Tip="{CompiledBinding SizeTooltip}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding PixelHeight}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -221,19 +249,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding SizeMp}" />
+                            Text="{CompiledBinding SizeMp}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetSizeMp}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetSizeMp}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetSizeMp}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -241,19 +272,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding Resolution}" />
+                            Text="{CompiledBinding Resolution}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetResolution}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetResolution}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetResolution}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -261,19 +295,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding PrintSizeCm}" />
+                            Text="{CompiledBinding PrintSizeCm}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetPrintSizeCm}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetPrintSizeCm}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetPrintSizeCm}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -281,19 +318,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding PrintSizeIn}" />
+                            Text="{CompiledBinding PrintSizeIn}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetPrintSizeInch}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetPrintSizeInch}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetPrintSizeInch}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="15,10" Orientation="Horizontal">
@@ -301,19 +341,22 @@
                             Width="100"
                             Margin="0,8,0,0"
                             Classes="txt"
-                            Text="{Binding AspectRatio}" />
+                            Text="{CompiledBinding AspectRatio}" />
                         <TextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetAspectRatio}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetAspectRatio}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetAspectRatio}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
 
@@ -322,7 +365,7 @@
                         Margin="0,25,0,10"
                         Classes="txt"
                         FontSize="16"
-                        Text="{Binding ConvertTo}"
+                        Text="{CompiledBinding ConvertTo}"
                         TextAlignment="Center" />
                     <ComboBox
                         x:Name="ConversionComboBox"
@@ -333,7 +376,7 @@
                         BorderThickness="1"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         SelectedIndex="0">
-                        <ComboBoxItem Content="{Binding NoConversion}" />
+                        <ComboBoxItem Content="{CompiledBinding NoConversion}" />
                         <ComboBoxItem Content=".png" />
                         <ComboBoxItem Content=".jpg" />
                         <ComboBoxItem Content=".webp" />
@@ -347,13 +390,14 @@
                         HorizontalAlignment="Center"
                         Background="{StaticResource SecondaryBackgroundColor}"
                         Classes="altHover BorderStyle"
-                        Command="{Binding ConvertCommand}"
-                        CommandParameter="{Binding Path=SelectedIndex, ElementName=ConversionComboBox}">
+                        Command="{CompiledBinding ConvertCommand}"
+                        CommandParameter="{CompiledBinding Path=SelectedIndex,
+                                                           ElementName=ConversionComboBox}">
                         <TextBlock
                             Padding="5,7,5,2"
                             Classes="txt"
                             FontSize="14"
-                            Text="{Binding Apply}"
+                            Text="{CompiledBinding Apply}"
                             TextAlignment="Center" />
                     </Button>
 
@@ -361,7 +405,7 @@
                         Margin="0,25,0,10"
                         Classes="txt"
                         FontSize="16"
-                        Text="{Binding Resize}"
+                        Text="{CompiledBinding Resize}"
                         TextAlignment="Center" />
                     <ComboBox
                         x:Name="PercentageComboBox"
@@ -372,7 +416,7 @@
                         BorderThickness="1"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         SelectedIndex="0">
-                        <ComboBoxItem Content="{Binding NoResize}" />
+                        <ComboBoxItem Content="{CompiledBinding NoResize}" />
                         <ComboBoxItem Content="95%" />
                         <ComboBoxItem Content="90%" />
                         <ComboBoxItem Content="85%" />
@@ -399,13 +443,14 @@
                         HorizontalAlignment="Center"
                         Background="{StaticResource SecondaryBackgroundColor}"
                         Classes="altHover BorderStyle"
-                        Command="{Binding ResizeCommand}"
-                        CommandParameter="{Binding Path=SelectedIndex, ElementName=PercentageComboBox}">
+                        Command="{CompiledBinding ResizeCommand}"
+                        CommandParameter="{CompiledBinding Path=SelectedIndex,
+                                                           ElementName=PercentageComboBox}">
                         <TextBlock
                             Padding="5,7,5,2"
                             Classes="txt"
                             FontSize="14"
-                            Text="{Binding Apply}"
+                            Text="{CompiledBinding Apply}"
                             TextAlignment="Center" />
                     </Button>
                 </StackPanel>
@@ -439,20 +484,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding DateTaken}" />
+                            Text="{CompiledBinding DateTaken}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetDateTaken}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetDateTaken}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetDateTaken}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -460,20 +508,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding Authors}" />
+                            Text="{CompiledBinding Authors}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetAuthors}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetAuthors}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetAuthors}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
 
@@ -483,20 +534,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding Copyright}" />
+                            Text="{CompiledBinding Copyright}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetCopyright}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetCopyright}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetCopyright}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -504,20 +558,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding Software}" />
+                            Text="{CompiledBinding Software}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetSoftware}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetSoftware}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetSoftware}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
 
@@ -528,20 +585,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding XPTitle}" />
+                                Text="{CompiledBinding XPTitle}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetTitle}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetTitle}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetTitle}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -549,20 +609,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Subject}" />
+                                Text="{CompiledBinding Subject}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetSubject}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetSubject}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetSubject}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -596,20 +659,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding Latitude}" />
+                            Text="{CompiledBinding Latitude}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetLatitude}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetLatitude}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetLatitude}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -617,20 +683,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding Longitude}" />
+                            Text="{CompiledBinding Longitude}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetLongitude}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetLongitude}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetLongitude}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
 
@@ -639,26 +708,29 @@
                         Width="100"
                         Margin="0,8,2,0"
                         Classes="txt"
-                        Text="{Binding Altitude}" />
+                        Text="{CompiledBinding Altitude}" />
                     <TextBox
                         Width="230"
                         Classes=" TStyle"
                         IsReadOnly="True"
-                        Text="{Binding GetAltitude}" />
-                    <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                        Text="{CompiledBinding GetAltitude}" />
+                    <customControls:CopyButton
+                        Classes="altHover BorderStyle"
+                        CopyText="{CompiledBinding GetAltitude}"
+                        ToolTip.Tip="{CompiledBinding Copy}">
                         <Path
                             Width="16"
                             Height="16"
                             Data="{StaticResource CopyGeometry}"
                             Fill="{StaticResource MainIconColor}"
                             Stretch="Fill" />
-                    </Button>
+                    </customControls:CopyButton>
 
                     <StackPanel Margin="94,0,0,0" Orientation="Horizontal">
                         <Button
                             Margin="30,0,15,0"
                             Classes="altHover BorderStyle"
-                            Command="{Binding OpenGoogleLinkCommand}">
+                            Command="{CompiledBinding OpenGoogleLinkCommand}">
                             <Path
                                 Width="20"
                                 Height="20"
@@ -666,7 +738,7 @@
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
                         </Button>
-                        <Button Classes="altHover BorderStyle" Command="{Binding OpenBingLinkCommand}">
+                        <Button Classes="altHover BorderStyle" Command="{CompiledBinding OpenBingLinkCommand}">
                             <Path
                                 Width="20"
                                 Height="20"
@@ -706,20 +778,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding ResolutionUnit}" />
+                            Text="{CompiledBinding ResolutionUnit}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetResolutionUnit}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetResolutionUnit}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetResolutionUnit}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -727,20 +802,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding ColorRepresentation}" />
+                            Text="{CompiledBinding ColorRepresentation}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetColorRepresentation}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetColorRepresentation}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetColorRepresentation}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
 
@@ -751,20 +829,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Compression}" />
+                                Text="{CompiledBinding Compression}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetCompression}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetCompression}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetCompression}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -772,20 +853,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding CompressedBitsPixel}" />
+                                Text="{CompiledBinding CompressedBitsPixel}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetCompressedBitsPixel}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetCompressedBitsPixel}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetCompressedBitsPixel}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -826,20 +910,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding CameraMaker}" />
+                            Text="{CompiledBinding CameraMaker}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetCameraMaker}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetCameraMaker}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetCameraMaker}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
 
                     <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -847,20 +934,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding CameraModel}" />
+                            Text="{CompiledBinding CameraModel}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetCameraModel}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetCameraModel}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetCameraModel}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
 
@@ -871,20 +961,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Fstop}" />
+                                Text="{CompiledBinding Fstop}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetFNumber}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetFNumber}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetFNumber}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -892,20 +985,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding MaxAperture}" />
+                                Text="{CompiledBinding MaxAperture}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetMaxAperture}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetMaxAperture}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetLensMaker}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -917,20 +1013,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding ExposureBias}" />
+                                Text="{CompiledBinding ExposureBias}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetExposureBias}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetExposureBias}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetExposureBias}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -938,20 +1037,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding ExposureTime}" />
+                                Text="{CompiledBinding ExposureTime}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetExposureTime}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetExposureTime}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetExposureTime}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -963,20 +1065,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding ExposureProgram}" />
+                                Text="{CompiledBinding ExposureProgram}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetExposureProgram}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetExposureProgram}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetExposureProgram}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -989,15 +1094,18 @@
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetDigitalZoom}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetDigitalZoom}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetDigitalZoom}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1009,20 +1117,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding FocalLength}" />
+                                Text="{CompiledBinding FocalLength}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetFocalLength}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetFocalLength}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetFocalLength}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1030,20 +1141,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding FocalLength35mm}" />
+                                Text="{CompiledBinding FocalLength35mm}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetFocalLength35mm}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetFocalLength35mm}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetFocalLength35mm}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1055,20 +1169,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding ISOSpeed}" />
+                                Text="{CompiledBinding ISOSpeed}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetISOSpeed}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetISOSpeed}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetISOSpeed}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1076,20 +1193,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding MeteringMode}" />
+                                Text="{CompiledBinding MeteringMode}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetMeteringMode}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetMeteringMode}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetMeteringMode}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1101,20 +1221,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Contrast}" />
+                                Text="{CompiledBinding Contrast}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetContrast}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetContrast}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetContrast}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1122,20 +1245,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Saturation}" />
+                                Text="{CompiledBinding Saturation}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetSaturation}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetSaturation}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetSaturation}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1147,20 +1273,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Sharpness}" />
+                                Text="{CompiledBinding Sharpness}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetSharpness}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetSharpness}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetSharpness}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1168,20 +1297,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding WhiteBalance}" />
+                                Text="{CompiledBinding WhiteBalance}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetWhiteBalance}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetWhiteBalance}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetWhiteBalance}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1193,20 +1325,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding FlashEnergy}" />
+                                Text="{CompiledBinding FlashEnergy}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetFlashEnergy}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetFlashEnergy}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetFlashEnergy}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1214,20 +1349,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding FlashMode}" />
+                                Text="{CompiledBinding FlashMode}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetFlashMode}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetFlashMode}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetFlashMode}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1239,20 +1377,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding LightSource}" />
+                                Text="{CompiledBinding LightSource}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetLightSource}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetLightSource}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetLightSource}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1260,20 +1401,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Brightness}" />
+                                Text="{CompiledBinding Brightness}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetBrightness}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetBrightness}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetBrightness}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1285,20 +1429,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding PhotometricInterpretation}" />
+                                Text="{CompiledBinding PhotometricInterpretation}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetPhotometricInterpretation}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetPhotometricInterpretation}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetPhotometricInterpretation}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1306,20 +1453,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding Orientation}" />
+                                Text="{CompiledBinding Orientation}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetOrientation}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetOrientation}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetOrientation}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1331,20 +1481,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding LensMaker}" />
+                                Text="{CompiledBinding LensMaker}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetLensMaker}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetLensMaker}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetLensMaker}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
 
                         <StackPanel Margin="10,10,0,10" Orientation="Horizontal">
@@ -1352,20 +1505,23 @@
                                 Width="100"
                                 Margin="0,8,2,0"
                                 Classes="txt"
-                                Text="{Binding LensModel}" />
+                                Text="{CompiledBinding LensModel}" />
                             <TextBox
                                 Width="230"
                                 Classes=" TStyle"
                                 IsReadOnly="True"
-                                Text="{Binding GetLensModel}" />
-                            <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                                Text="{CompiledBinding GetLensModel}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding GetLensModel}"
+                                ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Width="16"
                                     Height="16"
                                     Data="{StaticResource CopyGeometry}"
                                     Fill="{StaticResource MainIconColor}"
                                     Stretch="Fill" />
-                            </Button>
+                            </customControls:CopyButton>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -1376,20 +1532,23 @@
                             Width="100"
                             Margin="0,8,2,0"
                             Classes="txt"
-                            Text="{Binding ExifVersion}" />
+                            Text="{CompiledBinding ExifVersion}" />
                         <TextBox
                             Width="230"
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{Binding GetExifVersion}" />
-                        <Button Classes="altHover BorderStyle" ToolTip.Tip="{Binding Copy}">
+                            Text="{CompiledBinding GetExifVersion}" />
+                        <customControls:CopyButton
+                            Classes="altHover BorderStyle"
+                            CopyText="{CompiledBinding GetExifVersion}"
+                            ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Width="16"
                                 Height="16"
                                 Data="{StaticResource CopyGeometry}"
                                 Fill="{StaticResource MainIconColor}"
                                 Stretch="Fill" />
-                        </Button>
+                        </customControls:CopyButton>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
