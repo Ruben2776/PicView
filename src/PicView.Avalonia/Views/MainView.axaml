@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.MainView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
@@ -12,6 +13,9 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <converters:SortFilesByToBoolConverter x:Key="EnumToBoolConverter" />
+    </UserControl.Resources>
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Command="{Binding OpenFileCommand}" Header="{Binding Open}">
@@ -74,15 +78,58 @@
                         Fill="{StaticResource MainIconColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-                <MenuItem Header="{Binding FileName}" />
-                <MenuItem Header="{Binding FileSize}" />
-                <MenuItem Header="{Binding FileExtension}" />
-                <MenuItem Header="{Binding Created}" />
-                <MenuItem Header="{Binding LastAccessTime}" />
-                <MenuItem Header="{Binding Random}" />
+                <MenuItem
+                    GroupName="SortType"
+                    Header="{CompiledBinding FileName}"
+                    IsChecked="{CompiledBinding SortOrder,
+                                                Converter={StaticResource EnumToBoolConverter},
+                                                ConverterParameter=Name}"
+                    ToggleType="Radio" />
+                <MenuItem
+                    GroupName="SortType"
+                    Header="{CompiledBinding FileSize}"
+                    IsChecked="{CompiledBinding SortOrder,
+                                                Converter={StaticResource EnumToBoolConverter},
+                                                ConverterParameter=FileSize}"
+                    ToggleType="Radio" />
+                <MenuItem
+                    GroupName="SortType"
+                    Header="{CompiledBinding FileExtension}"
+                    IsChecked="{CompiledBinding SortOrder,
+                                                Converter={StaticResource EnumToBoolConverter},
+                                                ConverterParameter=FileExtension}"
+                    ToggleType="Radio" />
+                <MenuItem
+                    GroupName="SortType"
+                    Header="{CompiledBinding Created}"
+                    IsChecked="{CompiledBinding SortOrder,
+                                                Converter={StaticResource EnumToBoolConverter},
+                                                ConverterParameter=Created}"
+                    ToggleType="Radio" />
+                <MenuItem
+                    GroupName="SortType"
+                    Header="{CompiledBinding LastAccessTime}"
+                    IsChecked="{CompiledBinding SortOrder,
+                                                Converter={StaticResource EnumToBoolConverter},
+                                                ConverterParameter=LastAccessTime}"
+                    ToggleType="Radio" />
+                <MenuItem
+                    GroupName="SortType"
+                    Header="{CompiledBinding Random}"
+                    IsChecked="{CompiledBinding SortOrder,
+                                                Converter={StaticResource EnumToBoolConverter},
+                                                ConverterParameter=Random}"
+                    ToggleType="Radio" />
                 <Separator />
-                <MenuItem Header="{Binding Ascending}" />
-                <MenuItem Header="{Binding Descending}" />
+                <MenuItem
+                    GroupName="SortDirection"
+                    Header="{CompiledBinding Ascending}"
+                    IsChecked="{CompiledBinding IsAscending}"
+                    ToggleType="Radio" />
+                <MenuItem
+                    GroupName="SortDirection"
+                    Header="{CompiledBinding Descending}"
+                    ToggleType="Radio" />
             </MenuItem>
             <MenuItem Header="{Binding RecentFiles}">
                 <MenuItem.Icon>

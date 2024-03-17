@@ -170,7 +170,8 @@
                     Canvas.Top="53"
                     Width="169"
                     Height="45"
-                    Classes="ButtonBorder altHover">
+                    Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding OptimizeImageCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="20"

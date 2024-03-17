@@ -1300,8 +1300,20 @@ namespace PicView.Avalonia.ViewModels
 
         #region Sorting Order
 
-        public async Task SetSortingOrder()
+        private FileListHelper.SortFilesBy _sortOrder;
+
+        public FileListHelper.SortFilesBy SortOrder
         {
+            get => _sortOrder;
+            set => this.RaiseAndSetIfChanged(ref _sortOrder, value);
+        }
+
+        private bool _isAscending = SettingsHelper.Settings.Sorting.Ascending;
+
+        public bool IsAscending
+        {
+            get => _isAscending;
+            set => this.RaiseAndSetIfChanged(ref _isAscending, value);
         }
 
         #endregion Sorting Order
