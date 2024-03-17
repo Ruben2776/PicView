@@ -232,6 +232,9 @@ namespace PicView.Avalonia.ViewModels
                 ToggleScrollBarVisibility = value ? ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
                 SettingsHelper.Settings.Zoom.ScrollEnabled = value;
                 WindowHelper.SetSize(this);
+                GetScrolling = value
+                    ? TranslationHelper.GetTranslation("ScrollingEnabled")
+                    : TranslationHelper.GetTranslation("ScrollingDisabled");
                 _ = SettingsHelper.SaveSettingsAsync();
             }
         }
@@ -259,6 +262,9 @@ namespace PicView.Avalonia.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _isLooping, value);
                 SettingsHelper.Settings.UIProperties.Looping = value;
+                GetLooping = value
+                    ? TranslationHelper.GetTranslation("LoopingEnabled")
+                    : TranslationHelper.GetTranslation("LoopingDisabled");
                 _ = SettingsHelper.SaveSettingsAsync();
             }
         }
@@ -440,6 +446,36 @@ namespace PicView.Avalonia.ViewModels
         }
 
         public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
+
+        private string? _getLooping = SettingsHelper.Settings.UIProperties.Looping
+            ? TranslationHelper.GetTranslation("LoopingEnabled")
+            : TranslationHelper.GetTranslation("LoopingDisabled");
+
+        public string? GetLooping
+        {
+            get => _getLooping;
+            set => this.RaiseAndSetIfChanged(ref _getLooping, value);
+        }
+
+        private string? _getScrolling = SettingsHelper.Settings.Zoom.ScrollEnabled
+            ? TranslationHelper.GetTranslation("ScrollingEnabled")
+            : TranslationHelper.GetTranslation("ScrollingDisabled");
+
+        public string? GetScrolling
+        {
+            get => _getScrolling;
+            set => this.RaiseAndSetIfChanged(ref _getScrolling, value);
+        }
+
+        private string? _getCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
+            ? TranslationHelper.GetTranslation("CtrlToZoom")
+            : TranslationHelper.GetTranslation("ScrollToZoom");
+
+        public string? GetCtrlZoom
+        {
+            get => _getCtrlZoom;
+            set => this.RaiseAndSetIfChanged(ref _getCtrlZoom, value);
+        }
 
         private string? _getPrintSizeInch;
 

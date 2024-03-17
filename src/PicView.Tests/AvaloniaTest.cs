@@ -17,6 +17,7 @@ public class AvaloniaTest
     [AvaloniaFact]
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>()
         .UseReactiveUI()
+        .LogToTrace()
         .UseHeadless(new AvaloniaHeadlessPlatformOptions());
 
     [AvaloniaFact]

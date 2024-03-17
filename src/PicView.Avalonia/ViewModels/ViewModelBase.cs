@@ -1296,6 +1296,22 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _hideBottomGallery, value);
     }
 
+    private string? _loopingDisabled = TranslationHelper.GetTranslation("LoopingDisabled");
+
+    public string? LoopingDisabled
+    {
+        get => _loopingDisabled;
+        set => this.RaiseAndSetIfChanged(ref _loopingDisabled, value);
+    }
+
+    private string? _loopingEnabled = TranslationHelper.GetTranslation("LoopingEnabled");
+
+    public string? LoopingEnabled
+    {
+        get => _loopingEnabled;
+        set => this.RaiseAndSetIfChanged(ref _loopingEnabled, value);
+    }
+
     private string? _autoFitWindow;
 
     public string? AutoFitWindow

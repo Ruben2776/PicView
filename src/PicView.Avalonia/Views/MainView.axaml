@@ -151,11 +151,11 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
                 <MenuItem
-                    Header="{Binding ToggleLooping}"
+                    Header="{Binding GetLooping}"
                     IsChecked="{Binding IsLooping}"
                     ToggleType="CheckBox" />
                 <MenuItem
-                    Header="{Binding ToggleScroll}"
+                    Header="{Binding GetScrolling}"
                     IsChecked="{Binding IsScrollingEnabled}"
                     ToggleType="CheckBox" />
                 <MenuItem
@@ -167,7 +167,7 @@
                     Header="{Binding Stretch}"
                     IsChecked="{Binding IsStretched}"
                     ToggleType="CheckBox" />
-                <MenuItem Command="{Binding ChangeCtrlZoomCommand}" Header="{Binding CtrlToZoom}" />
+                <MenuItem Command="{Binding ChangeCtrlZoomCommand}" Header="{Binding GetCtrlZoom}" />
                 <MenuItem Command="{Binding ToggleUICommand}" Header="{Binding HideShowInterface}">
                     <MenuItem.Icon>
                         <Image Width="12" Height="12">

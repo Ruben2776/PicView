@@ -143,7 +143,7 @@
                     <TextBlock
                         MaxWidth="150"
                         Classes="txt"
-                        Text="{Binding ToggleScroll}" />
+                        Text="{Binding GetScrolling}" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -170,7 +170,7 @@
                     <TextBlock
                         MaxWidth="150"
                         Classes="txt"
-                        Text="{Binding ToggleLooping}" />
+                        Text="{Binding GetLooping}" />
                 </ToggleButton>
 
                 <ToggleButton
