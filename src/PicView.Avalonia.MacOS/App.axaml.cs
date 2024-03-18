@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
@@ -13,15 +14,13 @@ using PicView.Core.Localization;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime;
 using System.Threading.Tasks;
-using Avalonia.Input;
 
 namespace PicView.Avalonia.MacOS;
 
-public partial class App : Application, IPlatformSpecificService
+public class App : Application, IPlatformSpecificService
 {
     private ExifWindow? _exifWindow;
     private SettingsWindow? _settingsWindow;
