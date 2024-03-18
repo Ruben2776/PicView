@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Runtime;
 
 namespace PicView.Core.Navigation;
 

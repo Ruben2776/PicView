@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.ReactiveUI;
 using Avalonia.Themes.Simple;
