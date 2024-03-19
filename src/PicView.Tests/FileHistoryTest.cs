@@ -32,7 +32,6 @@ public class FileHistoryTest
         history.Rename(lastFile, newFile);
         Assert.Equal(newFile, history.GetLastFile());
 
-        // Check removing
         history.Remove(newFile);
         Assert.False(history.Contains(newFile));
 
