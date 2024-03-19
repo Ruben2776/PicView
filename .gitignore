@@ -362,3 +362,6 @@ MigrationBackup/
 
 *.7z 
 *.zip 
+/src/.7z 
+/src/.zip 
+/src/.zip 
