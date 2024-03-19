@@ -1,9 +1,94 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="PicView.Avalonia.MacOS.Views.SettingsWindow"
-        Title="SettingsWindow">
-  Welcome to Avalonia!
+<Window
+    x:Class="PicView.Avalonia.MacOS.Views.SettingsWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    Title="SettingsWindow"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="viewModels:MainViewModel"
+    BorderBrush="{StaticResource SecondaryBackgroundColor}"
+    BorderThickness="1"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    <Border
+        BorderBrush="{StaticResource MainBorderColor}"
+        BorderThickness="1"
+        CornerRadius="8">
+        <Grid>
+
+            <Grid
+                Height="28"
+                VerticalAlignment="Top"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                PointerPressed="MoveWindow">
+
+                <TabControl
+                    Margin="70,0,0,0"
+                    Padding="0"
+                    HorizontalAlignment="Center"
+                    Background="{StaticResource SecondaryBackgroundColor}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="1,0,0,0"
+                    PointerPressed="MoveWindow">
+                    <TabItem x:Name="GeneralSettingsTabItem" PointerPressed="MoveWindow">
+
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Path
+                                    Width="14"
+                                    Height="14"
+                                    Margin="0,0,5,0"
+                                    Data="{StaticResource CogGeometry}"
+                                    Fill="{StaticResource MainIconColor}"
+                                    Stretch="Fill" />
+                                <TextBlock
+                                    Classes="txt"
+                                    Text="{Binding GeneralSettings}"
+                                    TextAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                    </TabItem>
+                    <TabItem x:Name="AppearanceTabItem" PointerPressed="MoveWindow">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image
+                                    Width="14"
+                                    Height="14"
+                                    Margin="0,0,5,0"
+                                    Source="{StaticResource DisplayImage}" />
+                                <TextBlock
+                                    Classes="txt"
+                                    Text="{Binding Appearance}"
+                                    TextAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+
+            <ScrollViewer
+                Margin="0,28,0,0"
+                Background="{StaticResource NoisyTexture}"
+                IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
+                <views:GeneralSettingsView Background="Transparent" PointerPressed="MoveWindow" />
+            </ScrollViewer>
+
+            <ScrollViewer
+                Margin="0,28,0,0"
+                Background="{StaticResource NoisyTexture}"
+                IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}">
+                <views:AppearanceView Background="Transparent" PointerPressed="MoveWindow" />
+            </ScrollViewer>
+        </Grid>
+    </Border>
 </Window>
