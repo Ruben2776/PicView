@@ -3,7 +3,6 @@ using ImageMagick;
 using PicView.Avalonia.Models;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
-using System.IO;
 
 namespace PicView.Avalonia.Services;
 

@@ -130,6 +130,18 @@ namespace PicView.Avalonia.ViewModels
         public ReactiveCommand<int, Unit>? ResizeCommand { get; }
         public ReactiveCommand<int, Unit>? ConvertCommand { get; }
 
+        public ICommand? SortFilesByNameCommand { get; }
+        public ICommand? SortFilesBySizeCommand { get; }
+        public ICommand? SortFilesByExtensionCommand { get; }
+        public ICommand? SortFilesByCreationTimeCommand { get; }
+        public ICommand? SortFilesByLastAccessTimeCommand { get; }
+        public ICommand? SortFilesByLastWriteTimeCommand { get; }
+        public ICommand? SortFilesRandomlyCommand { get; }
+
+        public ICommand? SortFilesAscendingCommand { get; }
+
+        public ICommand? SortFilesDescendingCommand { get; }
+
         #endregion Commands
 
         #region Fields
@@ -1556,6 +1568,55 @@ namespace PicView.Avalonia.ViewModels
             });
 
             #endregion Navigation Commands
+
+            #region Sort Commands
+
+            SortFilesByNameCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.Name);
+            });
+
+            SortFilesByCreationTimeCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.CreationTime);
+            });
+
+            SortFilesByLastAccessTimeCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.LastAccessTime);
+            });
+
+            SortFilesByLastWriteTimeCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.LastWriteTime);
+            });
+
+            SortFilesBySizeCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.FileSize);
+            });
+
+            SortFilesByExtensionCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.Extension);
+            });
+
+            SortFilesRandomlyCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.Random);
+            });
+
+            SortFilesAscendingCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, ascending: true);
+            });
+
+            SortFilesDescendingCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await SortingHelper.UpdateFileList(platformSpecificService, this, ascending: false);
+            });
+
+            #endregion Sort Commands
 
             #region Menus
 

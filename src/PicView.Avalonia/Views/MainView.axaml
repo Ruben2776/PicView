@@ -18,7 +18,7 @@
     </UserControl.Resources>
     <UserControl.ContextMenu>
         <ContextMenu>
-            <MenuItem Command="{Binding OpenFileCommand}" Header="{Binding Open}">
+            <MenuItem Command="{CompiledBinding OpenFileCommand}" Header="{CompiledBinding Open}">
                 <MenuItem.Icon>
                     <Path
                         Width="15"
@@ -28,7 +28,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding SaveFileCommand}" Header="{Binding Save}">
+            <MenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -38,7 +38,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding PrintCommand}" Header="{Binding Print}">
+            <MenuItem Command="{CompiledBinding PrintCommand}" Header="{CompiledBinding Print}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -48,7 +48,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding OpenWithCommand}" Header="{Binding OpenWith}">
+            <MenuItem Command="{CompiledBinding OpenWithCommand}" Header="{CompiledBinding OpenWith}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -58,7 +58,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding ShowInFolderCommand}" Header="{Binding ShowInFolder}">
+            <MenuItem Command="{CompiledBinding ShowInFolderCommand}" Header="{CompiledBinding ShowInFolder}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -69,7 +69,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Header="{Binding SortFilesBy}">
+            <MenuItem Header="{CompiledBinding SortFilesBy}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -79,6 +79,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
                 <MenuItem
+                    Command="{CompiledBinding SortFilesByNameCommand}"
                     GroupName="SortType"
                     Header="{CompiledBinding FileName}"
                     IsChecked="{CompiledBinding SortOrder,
@@ -86,6 +87,7 @@
                                                 ConverterParameter=Name}"
                     ToggleType="Radio" />
                 <MenuItem
+                    Command="{CompiledBinding SortFilesBySizeCommand}"
                     GroupName="SortType"
                     Header="{CompiledBinding FileSize}"
                     IsChecked="{CompiledBinding SortOrder,
@@ -93,6 +95,7 @@
                                                 ConverterParameter=FileSize}"
                     ToggleType="Radio" />
                 <MenuItem
+                    Command="{CompiledBinding SortFilesByExtensionCommand}"
                     GroupName="SortType"
                     Header="{CompiledBinding FileExtension}"
                     IsChecked="{CompiledBinding SortOrder,
@@ -100,6 +103,7 @@
                                                 ConverterParameter=FileExtension}"
                     ToggleType="Radio" />
                 <MenuItem
+                    Command="{CompiledBinding SortFilesByCreationTimeCommand}"
                     GroupName="SortType"
                     Header="{CompiledBinding Created}"
                     IsChecked="{CompiledBinding SortOrder,
@@ -107,6 +111,7 @@
                                                 ConverterParameter=Created}"
                     ToggleType="Radio" />
                 <MenuItem
+                    Command="{CompiledBinding SortFilesByLastAccessTimeCommand}"
                     GroupName="SortType"
                     Header="{CompiledBinding LastAccessTime}"
                     IsChecked="{CompiledBinding SortOrder,
@@ -114,6 +119,7 @@
                                                 ConverterParameter=LastAccessTime}"
                     ToggleType="Radio" />
                 <MenuItem
+                    Command="{CompiledBinding SortFilesRandomlyCommand}"
                     GroupName="SortType"
                     Header="{CompiledBinding Random}"
                     IsChecked="{CompiledBinding SortOrder,
@@ -122,11 +128,13 @@
                     ToggleType="Radio" />
                 <Separator />
                 <MenuItem
+                    Command="{CompiledBinding SortFilesAscendingCommand}"
                     GroupName="SortDirection"
                     Header="{CompiledBinding Ascending}"
                     IsChecked="{CompiledBinding IsAscending}"
                     ToggleType="Radio" />
                 <MenuItem
+                    Command="{CompiledBinding SortFilesDescendingCommand}"
                     GroupName="SortDirection"
                     Header="{CompiledBinding Descending}"
                     ToggleType="Radio" />
