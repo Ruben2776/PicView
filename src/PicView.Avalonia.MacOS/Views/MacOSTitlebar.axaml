@@ -1,28 +1,64 @@
 <UserControl
+    IsVisible="{Binding IsInterfaceShown}"
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar"
+    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    x:DataType="viewModels:MainViewModel"
-    IsVisible="{Binding IsInterfaceShown}"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
     <DockPanel Background="{StaticResource MainBackgroundColor}" LastChildFill="True">
-        <Rectangle Width="70" DockPanel.Dock="Left" />
+        <Rectangle DockPanel.Dock="Left" Width="70" />
 
         <Button
-            Name="GalleryButton"
-            Width="30"
             Background="Transparent"
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="0"
             Classes="noBorderHover"
-            DockPanel.Dock="Right">
+            Command="{CompiledBinding FlipCommand}"
+            DockPanel.Dock="Right"
+            Margin="0"
+            ToolTip.Tip="{CompiledBinding Flip}"
+            Width="30">
+            <Path
+                Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
+                Fill="{StaticResource MainIconColor}"
+                Height="12"
+                Stretch="Fill"
+                Width="12" />
+        </Button>
+
+        <Button
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="noBorderHover"
+            Command="{CompiledBinding RotateRightCommand}"
+            DockPanel.Dock="Right"
+            Margin="0"
+            ToolTip.Tip="{CompiledBinding RotateRight}"
+            Width="30">
+            <Path
+                Data="M142.9 142.9c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5c0 0 0 0 0 0H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1C73.2 122 55.6 150.7 44.8 181.4c-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5c7.7-21.8 20.2-42.3 37.8-59.8zM16 312v7.6 .7V440c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l41.6-41.6c87.6 86.5 228.7 86.2 315.8-1c24.4-24.4 42.1-53.1 52.9-83.7c5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8c-62.2 62.2-162.7 62.5-225.3 1L185 329c6.9-6.9 8.9-17.2 5.2-26.2s-12.5-14.8-22.2-14.8H48.4h-.7H40c-13.3 0-24 10.7-24 24z"
+                Fill="{StaticResource MainIconColor}"
+                Height="13"
+                Stretch="Fill"
+                Width="13" />
+        </Button>
+
+        <Button
+            Background="Transparent"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="0"
+            Classes="noBorderHover"
+            DockPanel.Dock="Right"
+            Name="GalleryButton"
+            Width="30">
             <Image Width="17">
                 <DrawingImage>
                     <DrawingGroup>
@@ -32,40 +68,6 @@
             </Image>
         </Button>
 
-        <Button
-            Width="30"
-            Margin="0"
-            Background="Transparent"
-            BorderBrush="{StaticResource MainBorderColor}"
-            BorderThickness="0"
-            Classes="noBorderHover"
-            Command="{Binding RotateRightCommand}"
-            DockPanel.Dock="Right">
-            <Path
-                Width="13"
-                Height="13"
-                Data="M142.9 142.9c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5c0 0 0 0 0 0H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1C73.2 122 55.6 150.7 44.8 181.4c-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5c7.7-21.8 20.2-42.3 37.8-59.8zM16 312v7.6 .7V440c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l41.6-41.6c87.6 86.5 228.7 86.2 315.8-1c24.4-24.4 42.1-53.1 52.9-83.7c5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8c-62.2 62.2-162.7 62.5-225.3 1L185 329c6.9-6.9 8.9-17.2 5.2-26.2s-12.5-14.8-22.2-14.8H48.4h-.7H40c-13.3 0-24 10.7-24 24z"
-                Fill="{StaticResource MainIconColor}"
-                Stretch="Fill" />
-        </Button>
-
-        <Button
-            Width="30"
-            Margin="0"
-            Background="Transparent"
-            BorderBrush="{StaticResource MainBorderColor}"
-            BorderThickness="0"
-            Classes="noBorderHover"
-            Command="{Binding FlipCommand}"
-            DockPanel.Dock="Right">
-            <Path
-                Width="12"
-                Height="12"
-                Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
-                Fill="{StaticResource MainIconColor}"
-                Stretch="Fill" />
-        </Button>
-
-        <uc:TitleTextBox Height="28" Background="Transparent" />
+        <uc:TitleTextBox Background="Transparent" Height="28" />
     </DockPanel>
 </UserControl>

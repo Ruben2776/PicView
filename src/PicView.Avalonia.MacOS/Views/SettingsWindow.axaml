@@ -1,22 +1,22 @@
 <Window
-    x:Class="PicView.Avalonia.MacOS.Views.SettingsWindow"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
-    Title="SettingsWindow"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:DataType="viewModels:MainViewModel"
     BorderBrush="{StaticResource SecondaryBackgroundColor}"
     BorderThickness="1"
     ExtendClientAreaChromeHints="SystemChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
     SizeToContent="WidthAndHeight"
+    Title="SettingsWindow"
     WindowStartupLocation="CenterOwner"
-    mc:Ignorable="d">
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.MacOS.Views.SettingsWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -27,30 +27,31 @@
         <Grid>
 
             <Grid
-                Height="28"
-                VerticalAlignment="Top"
                 Background="{StaticResource SecondaryBackgroundColor}"
-                PointerPressed="MoveWindow">
+                Height="28"
+                PointerPressed="MoveWindow"
+                VerticalAlignment="Top">
 
                 <TabControl
-                    Margin="70,0,0,0"
-                    Padding="0"
-                    HorizontalAlignment="Center"
                     Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="1,0,0,0"
+                    BorderThickness="1,0,1,0"
+                    CornerRadius="0,8,0,0"
+                    HorizontalAlignment="Center"
+                    Margin="70,0,0,0"
+                    Padding="0"
                     PointerPressed="MoveWindow">
-                    <TabItem x:Name="GeneralSettingsTabItem" PointerPressed="MoveWindow">
+                    <TabItem PointerPressed="MoveWindow" x:Name="GeneralSettingsTabItem">
 
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Path
-                                    Width="14"
-                                    Height="14"
-                                    Margin="0,0,5,0"
                                     Data="{StaticResource CogGeometry}"
                                     Fill="{StaticResource MainIconColor}"
-                                    Stretch="Fill" />
+                                    Height="14"
+                                    Margin="0,0,5,0"
+                                    Stretch="Fill"
+                                    Width="14" />
                                 <TextBlock
                                     Classes="txt"
                                     Text="{Binding GeneralSettings}"
@@ -58,14 +59,17 @@
                             </StackPanel>
                         </TabItem.Header>
                     </TabItem>
-                    <TabItem x:Name="AppearanceTabItem" PointerPressed="MoveWindow">
+                    <TabItem
+                        CornerRadius="0,8,0,0"
+                        PointerPressed="MoveWindow"
+                        x:Name="AppearanceTabItem">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image
-                                    Width="14"
                                     Height="14"
                                     Margin="0,0,5,0"
-                                    Source="{StaticResource DisplayImage}" />
+                                    Source="{StaticResource DisplayImage}"
+                                    Width="14" />
                                 <TextBlock
                                     Classes="txt"
                                     Text="{Binding Appearance}"
@@ -77,16 +81,16 @@
             </Grid>
 
             <ScrollViewer
-                Margin="0,28,0,0"
-                Background="{StaticResource NoisyTexture}"
-                IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}">
+                Background="{StaticResource WindowBackgroundColor}"
+                IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}"
+                Margin="0,28,0,0">
                 <views:GeneralSettingsView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
 
             <ScrollViewer
-                Margin="0,28,0,0"
-                Background="{StaticResource NoisyTexture}"
-                IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}">
+                Background="{StaticResource WindowBackgroundColor}"
+                IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}"
+                Margin="0,28,0,0">
                 <views:AppearanceView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
         </Grid>
