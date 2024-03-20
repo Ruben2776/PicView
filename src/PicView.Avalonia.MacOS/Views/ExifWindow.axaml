@@ -1,108 +1,108 @@
 <Window
+    CanResize="False"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    Height="385"
+    Title="ExifWindow"
+    Width="890"
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.MacOS.Views.ExifWindow"
+    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons;assembly=PicView.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:vm="using:PicView.Avalonia.ViewModels"
-    Title="ExifWindow"
-    Width="890"
-    Height="385"
-    x:DataType="viewModels:MainViewModel"
-    CanResize="False"
-    ExtendClientAreaChromeHints="SystemChrome"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
     <DockPanel PointerPressed="MoveWindow">
         <StackPanel
-            Height="28"
             Background="{StaticResource SecondaryBackgroundColor}"
             DockPanel.Dock="Top"
+            Height="28"
             Orientation="Horizontal">
-            <Rectangle Width="70" DockPanel.Dock="Left" />
+            <Rectangle DockPanel.Dock="Left" Width="70" />
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding DuplicateFileCommand}">
+                Command="{Binding DuplicateFileCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding DuplicateFile}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding DuplicateFile}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding RecycleFileCommand}">
+                Command="{Binding RecycleFileCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding DeleteFile}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding DeleteFile}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding OptimizeImageCommand}">
+                Command="{Binding OptimizeImageCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding OptimizeImage}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding OptimizeImage}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding OpenWithCommand}">
+                Command="{Binding OpenWithCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding OpenWith}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding OpenWith}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding ShowInFolderCommand}">
+                Command="{Binding ShowInFolderCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding ShowInFolder}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding ShowInFolder}"
+                    VerticalAlignment="Center" />
             </Button>
             <buttons:StarOutlineButtons Margin="10,0,0,0" />
         </StackPanel>
-        <views:ExifView Background="#66000000" PointerPressed="MoveWindow" />
+        <views:ExifView Background="{StaticResource WindowBackgroundColor}" PointerPressed="MoveWindow" />
     </DockPanel>
 </Window>

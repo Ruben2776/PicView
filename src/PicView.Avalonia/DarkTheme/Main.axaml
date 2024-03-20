@@ -1,7 +1,7 @@
 <Styles
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Styles.Resources>
         <ResourceDictionary>
 
@@ -34,14 +34,15 @@
             <Color x:Key="MenuBackgroundColor">#292929</Color>
             <Color x:Key="ContextMenuBackgroundColor">#EE2b2b2b</Color>
 
+            <Color x:Key="WindowBackgroundColor">#66000000</Color>
             <ImageBrush
-                x:Key="NoisyTexture"
                 DestinationRect="0,0,100,100"
                 Opacity=".6"
                 Source="/DarkTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 SourceRect="0,0,200,200"
                 Stretch="Fill"
-                TileMode="FlipXY" />
+                TileMode="FlipXY"
+                x:Key="NoisyTexture" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/DarkTheme/Icons.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
@@ -61,11 +62,11 @@
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <DropShadowEffect
-                x:Key="MenuShadowButtonBorder"
                 BlurRadius="5"
+                Color="#112e2e2e"
                 OffsetX="2"
                 OffsetY="2"
-                Color="#112e2e2e" />
+                x:Key="MenuShadowButtonBorder" />
         </ResourceDictionary>
     </Styles.Resources>
     <Style Selector="Window">
