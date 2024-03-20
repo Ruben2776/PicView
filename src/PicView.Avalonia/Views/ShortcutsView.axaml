@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.ShortcutsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
@@ -45,15 +46,19 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding NextImage}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="False"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Next"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Next"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 

@@ -16,6 +16,8 @@ internal partial class SourceGenerationContext : JsonSerializerContext;
 
 public static class KeybindingsHelper
 {
+    #region Keybindings logic
+
     private const string DefaultKeybindings = """
                                               {
                                                 "D": "Next",
@@ -140,7 +142,9 @@ public static class KeybindingsHelper
         await Loop(keyValues).ConfigureAwait(false);
     }
 
-    #region Functions
+    #endregion Keybindings logic
+
+    #region Functions list
 
     public static Task<Func<Task>> GetFunctionByName(string functionName)
     {
@@ -602,5 +606,5 @@ public static class KeybindingsHelper
         throw new NotImplementedException();
     }
 
-    #endregion Functions
+    #endregion Functions list
 }

@@ -1889,7 +1889,8 @@ namespace PicView.Avalonia.ViewModels
 
         public MainViewModel()
         {
-            throw new NotImplementedException();
+            // Only use for unit test
+            SpinWaiter = new SpinWaiter();
         }
     }
 }

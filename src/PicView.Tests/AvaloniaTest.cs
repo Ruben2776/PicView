@@ -7,6 +7,7 @@ using Avalonia.Themes.Simple;
 using PicView.Avalonia.MacOS;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
 
 namespace PicView.Tests;
 
@@ -31,5 +32,13 @@ public class AvaloniaTest
         };
 
         window.Show();
+    }
+
+    [AvaloniaFact]
+    public async Task TestPreloader()
+    {
+        await SettingsHelper.LoadSettingsAsync();
+        var vm = new MainViewModel();
+        //await vm.StartUpTask();
     }
 }
