@@ -50,6 +50,10 @@ public class KeybindTextBox : TextBox
         {
             if (IsReadOnly)
             {
+                if (!this.TryFindResource("MainBorderColor", ThemeVariant.Default, out var borderColor))
+                    return;
+                var borderBrush = new SolidColorBrush((Color)(borderColor ?? Color.Parse("#FFf6f4f4")));
+                BorderBrush = borderBrush;
                 return;
             }
             if (!this.TryFindResource("MainTextColorFaded", ThemeVariant.Default, out var color))
@@ -65,18 +69,18 @@ public class KeybindTextBox : TextBox
                 return;
             var foreground = new SolidColorBrush((Color)(color ?? Color.Parse("#FFf6f4f4")));
             Foreground = foreground;
-            Text = GetFunctionKey();
+            this.GetObservable(MethodNameProperty).Subscribe(_ => Text = GetFunctionKey());
         };
     }
 
     private void KeyUpHandler(object? sender, KeyEventArgs e)
     {
-        // TODO: figure out how to change focus to the next control or clear focus
+        // TODO: figure out how to clear focus
         if (!this.TryFindResource("MainTextColor", ThemeVariant.Default, out var color))
             return;
         var foreground = new SolidColorBrush((Color)(color ?? Color.Parse("#FFf6f4f4")));
         Foreground = foreground;
-        Text = GetFunctionKey();
+        this.GetObservable(MethodNameProperty).Subscribe(_ => Text = GetFunctionKey());
     }
 
     private async Task KeyDownHandler(object? sender, KeyEventArgs e)
@@ -88,6 +92,13 @@ public class KeybindTextBox : TextBox
     {
         KeybindingsHelper.CustomShortcuts.Remove(e.Key);
 
+        var function = await KeybindingsHelper.GetFunctionByName(MethodName);
+
+        if (function == null)
+        {
+            return;
+        }
+
         if (e.Key == Key.Escape)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -95,10 +106,10 @@ public class KeybindTextBox : TextBox
                 Text = string.Empty;
             });
 
+            Remove();
+
             return;
         }
-
-        var function = await KeybindingsHelper.GetFunctionByName(MethodName);
 
         // Handle whether it's an alternative key or not
         if (Alt)
@@ -134,11 +145,46 @@ public class KeybindTextBox : TextBox
         }
     }
 
-    private string GetFunctionKey()
+    public string GetFunctionKey()
     {
         if (string.IsNullOrEmpty(MethodName))
         {
             return string.Empty;
+        }
+
+        // ReSharper disable once InvertIf
+        if (IsReadOnly)
+        {
+            switch (MethodName)
+            {
+                case "LastImage":
+                    var lastKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Next")
+                        ?.Select(x => x.Key).ToList() ?? null;
+                    return lastKey is not { Count: > 0 } ?
+                        string.Empty :
+                        $"{TranslationHelper.GetTranslation("Ctrl")} + {(Alt ? lastKey.LastOrDefault().ToString() : lastKey.FirstOrDefault().ToString())}";
+
+                case "FirstImage":
+                    var firstKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Prev")
+                        ?.Select(x => x.Key).ToList() ?? null;
+                    return firstKey is not { Count: > 0 } ?
+                        string.Empty :
+                        $"{TranslationHelper.GetTranslation("Ctrl")} + {(Alt ? firstKey.LastOrDefault().ToString() : firstKey.FirstOrDefault().ToString())}";
+
+                case "NextFolder":
+                    var nextFolderKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Next")
+                        ?.Select(x => x.Key).ToList() ?? null;
+                    return nextFolderKey is not { Count: > 0 } ?
+                        string.Empty :
+                        $"{TranslationHelper.GetTranslation("Shift")} + {(Alt ? nextFolderKey.LastOrDefault().ToString() : nextFolderKey.FirstOrDefault().ToString())}";
+
+                case "PrevFolder":
+                    var prevFolderKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Prev")
+                        ?.Select(x => x.Key).ToList() ?? null;
+                    return prevFolderKey is not { Count: > 0 } ?
+                        string.Empty :
+                        $"{TranslationHelper.GetTranslation("Shift")} + {(Alt ? prevFolderKey.LastOrDefault().ToString() : prevFolderKey.FirstOrDefault().ToString())}";
+            }
         }
 
         // Find the key associated with the specified function
