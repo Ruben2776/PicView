@@ -1507,6 +1507,9 @@ namespace PicView.Avalonia.ViewModels
             ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
+                GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
+                    ? TranslationHelper.GetTranslation("CtrlToZoom")
+                    : TranslationHelper.GetTranslation("ScrollToZoom");
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 

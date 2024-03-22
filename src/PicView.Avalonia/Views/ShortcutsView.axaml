@@ -589,12 +589,11 @@
                 Classes="hover TStyle"
                 MethodName="ToggleInterface"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <customControls:KeybindTextBox
+            <TextBox
+                x:Name="ToggleUIBox"
                 Width="140"
-                Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                MethodName="ToggleInterface"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -643,15 +642,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Slideshow}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Slideshow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Slideshow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -661,15 +663,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding ShowImageGallery}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="ToggleGallery"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="ToggleGallery"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -687,15 +692,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Open}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Open"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="OpenBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -705,15 +712,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding OpenWith}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="OpenWith"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="OpenWith"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -723,15 +733,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Reload}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Reload"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="ReloadBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -741,15 +753,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Save}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Save"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="SaveBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -759,15 +773,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Print}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Print"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="PrintBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -778,10 +794,12 @@
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding DeleteFile}" />
             <TextBox
+                x:Name="DeleteBox"
                 Width="140"
                 Classes="hover TStyle"
                 IsReadOnly="True" />
             <TextBox
+                x:Name="DeleteAltBox"
                 Width="140"
                 Classes="hover TStyle"
                 IsReadOnly="True" />
@@ -793,15 +811,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding DeleteFile}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="DeleteFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="DeleteFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -811,15 +832,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding RenameFile}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Rename"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Rename"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -829,15 +853,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding FileProperties}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="ShowFileProperties"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="ShowFileProperties"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -855,15 +882,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding CopyFile}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="CopyFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="CopyBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
