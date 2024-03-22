@@ -25,6 +25,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using PicView.Avalonia.Keybindings;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -137,9 +138,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? SortFilesByLastAccessTimeCommand { get; }
         public ICommand? SortFilesByLastWriteTimeCommand { get; }
         public ICommand? SortFilesRandomlyCommand { get; }
-
         public ICommand? SortFilesAscendingCommand { get; }
-
         public ICommand? SortFilesDescendingCommand { get; }
 
         #endregion Commands

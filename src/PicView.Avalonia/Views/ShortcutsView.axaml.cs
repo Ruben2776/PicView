@@ -1,6 +1,10 @@
 using Avalonia.Controls;
-using System.Runtime.InteropServices;
+using Avalonia.Threading;
+using PicView.Avalonia.Keybindings;
 using PicView.Core.Localization;
+using System.Runtime.InteropServices;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views;
 
@@ -9,6 +13,7 @@ public partial class ShortcutsView : UserControl
     public ShortcutsView()
     {
         InitializeComponent();
+        DefaultButton.Click += async delegate { await SetDefault(); };
         var alt = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ?
             "Option" : TranslationHelper.GetTranslation("Alt");
         NextBox.KeyUp += delegate
@@ -36,10 +41,33 @@ public partial class ShortcutsView : UserControl
         CopyFilePathBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {alt} + C";
         CopyImageBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Shift")} + C";
         PasteBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + V";
+        CutBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + X";
         DeleteBox.Text = $"{TranslationHelper.GetTranslation("Del")}";
         DeleteAltBox.Text = $"{TranslationHelper.GetTranslation("Shift")} +  {TranslationHelper.GetTranslation("Del")}";
         PrintBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + P";
         ToggleUIBox.Text = $"{alt} + Z";
         FullscreenBox2.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("DoubleClick")}";
+        DragWindowBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("MouseDrag")}";
+        CloseBox.Text = TranslationHelper.GetTranslation("Esc");
+        CloseAltBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + Q";
+    }
+
+    private async Task SetDefault()
+    {
+        await KeybindingsHelper.SetDefaultKeybindings().ConfigureAwait(false);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel is not Window window)
+            {
+                return;
+            }
+            window.Close();
+        });
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        vm.ShowKeybindingsWindowCommand.Execute(null);
     }
 }

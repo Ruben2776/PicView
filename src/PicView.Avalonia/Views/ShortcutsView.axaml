@@ -26,6 +26,7 @@
             Text="{CompiledBinding ChangeKeybindingText}"
             TextAlignment="Center" />
         <Button
+            x:Name="DefaultButton"
             Margin="0,15,0,25"
             HorizontalAlignment="Center"
             Classes="BorderStyle altHover mainBtn">
@@ -964,6 +965,26 @@
                 Width="170"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding FileCut}" />
+            <customControls:KeybindTextBox
+                Width="140"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                MethodName="CutFile"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
+            <TextBox
+                x:Name="CutBox"
+                Width="140"
+                Classes="hover TStyle"
+                IsReadOnly="True"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
+        </StackPanel>
+
+        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
+            <TextBlock
+                Width="170"
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding FilePaste}" />
             <customControls:KeybindTextBox
                 Width="140"
@@ -985,33 +1006,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding DuplicateFile}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="DuplicateFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Width="170"
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding FileCut}" />
-            <TextBox
-                Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
-                Classes="hover TStyle"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
-                Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
-                Classes="hover TStyle"
+                MethodName="DuplicateFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1029,15 +1035,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding About}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="AboutWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="AboutWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1047,15 +1056,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Settings}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="SettingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="SettingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1083,15 +1095,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding ApplicationShortcuts}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="KeybindingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="KeybindingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1101,15 +1116,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Resize}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="ResizeWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="ResizeWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1120,10 +1138,12 @@
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Close}" />
             <TextBox
+                x:Name="CloseBox"
                 Width="140"
                 Classes="hover TStyle"
                 IsReadOnly="True" />
             <TextBox
+                x:Name="CloseAltBox"
                 Width="140"
                 Classes="hover TStyle"
                 IsReadOnly="True" />
@@ -1135,15 +1155,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Close}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Close"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Close"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1153,15 +1176,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding NewWindow}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="NewWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="NewWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1171,15 +1197,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding CenterWindow}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Center"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Center"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1189,15 +1218,37 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding StayTopMost}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="SetTopMost"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
+            <customControls:KeybindTextBox
+                Width="140"
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                MethodName="SetTopMost"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
+        </StackPanel>
+
+        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
+            <TextBlock
+                Width="170"
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding MoveWindow}" />
+            <TextBox
+                x:Name="DragWindowBox"
+                Width="140"
+                Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1215,15 +1266,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding AutoFitWindow}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="AutoFitWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="AutoFitWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1235,15 +1289,18 @@
                 <Run Text="⇔ " />
                 <Run Text="{CompiledBinding Stretch}" />
             </TextBlock>
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="AutoFitWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="AutoFitWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1253,15 +1310,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding NormalWindow}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="NormalWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="NormalWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1273,15 +1333,18 @@
                 <Run Text="⇔ " />
                 <Run Text="{CompiledBinding Stretch}" />
             </TextBlock>
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="NormalWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="NormalWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1299,15 +1362,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding _1Star}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set1Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set1Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1317,15 +1383,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding _2Star}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set2Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set2Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1335,15 +1404,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding _3Star}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set3Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set3Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1353,15 +1425,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding _4Star}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set4Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set4Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1371,15 +1446,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding _5Star}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set5Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set2Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -1389,15 +1467,18 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding RemoveStarRating}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set0Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Set0Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
     </StackPanel>

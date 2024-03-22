@@ -218,6 +218,7 @@ public static class KeybindingsHelper
             "Close" => Close,
             "ToggleInterface" => ToggleInterface,
             "NewWindow" => NewWindow,
+            "Center" => Center,
 
             // Windows
             "AboutWindow" => AboutWindow,
@@ -267,7 +268,6 @@ public static class KeybindingsHelper
             // Misc
             "ChangeBackground" => ChangeBackground,
             "GalleryClick" => GalleryClick,
-            "Center" => Center,
             "Slideshow" => Slideshow,
             "ColorPicker" => ColorPicker,
 

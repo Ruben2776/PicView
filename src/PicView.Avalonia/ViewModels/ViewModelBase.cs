@@ -201,9 +201,18 @@ public class ViewModelBase : ReactiveObject
         LightTheme = TranslationHelper.GetTranslation("LightTheme");
         MouseDrag = TranslationHelper.GetTranslation("MouseDrag");
         DoubleClick = TranslationHelper.GetTranslation("DoubleClick");
+        MoveWindow = TranslationHelper.GetTranslation("MoveWindow");
     }
 
     #region Strings
+
+    private string? _moveWindow;
+
+    public string? MoveWindow
+    {
+        get => _moveWindow;
+        set => this.RaiseAndSetIfChanged(ref _moveWindow, value);
+    }
 
     private string? _doubleClick;
 
