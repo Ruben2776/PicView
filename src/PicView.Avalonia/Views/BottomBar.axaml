@@ -125,22 +125,6 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
-                    Command="{Binding ToggleSettingsMenuCommand}">
-                    <Path
-                        Width="18"
-                        Height="18"
-                        Data="{StaticResource CogGeometry}"
-                        Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
-                </Button>
-
-                <Button
-                    Width="56"
-                    Height="25"
-                    Background="{StaticResource MainButtonBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
                     Command="{Binding ToggleToolsMenuCommand}">
                     <Image Width="22" Height="22">
                         <Image.Resources>
@@ -171,6 +155,22 @@
                             </DrawingGroup>
                         </DrawingImage>
                     </Image>
+                </Button>
+
+                <Button
+                    Width="56"
+                    Height="25"
+                    Background="{StaticResource MainButtonBackgroundColor}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Classes="noBorderHover"
+                    Command="{Binding ToggleSettingsMenuCommand}">
+                    <Path
+                        Width="18"
+                        Height="18"
+                        Data="{StaticResource CogGeometry}"
+                        Fill="{StaticResource MainIconColor}"
+                        Stretch="Fill" />
                 </Button>
             </StackPanel>
 

@@ -332,10 +332,11 @@
         </Border>
         <Rectangle
             Width="26"
-            Height="1.5"
-            Margin="57,0,0,0"
+            Height="4"
+            Margin="55,-2,0,0"
             HorizontalAlignment="Left"
-            Fill="{StaticResource MenuBackgroundColor}" />
+            Fill="{StaticResource MenuBackgroundColor}"
+            ZIndex="1" />
         <Polygon
             Margin="54,-3.5,0,0"
             Fill="{StaticResource MenuBackgroundColor}"

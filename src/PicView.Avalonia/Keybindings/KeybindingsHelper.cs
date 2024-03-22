@@ -1,12 +1,13 @@
-﻿using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Avalonia;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -66,7 +67,7 @@ public static class KeybindingsHelper
                                               }
                                               """;
 
-    internal static Dictionary<Key, Func<Task>>? CustomShortcuts;
+    public static Dictionary<Key, Func<Task>>? CustomShortcuts;
     private static MainViewModel? _vm;
 
     public static async Task LoadKeybindings(MainViewModel vm)
@@ -92,22 +93,48 @@ public static class KeybindingsHelper
         _vm = vm;
     }
 
-    internal static async Task UpdateKeybindings(string json)
+    public static async Task UpdateKeybindings()
+    {
+        var json = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
+        if (!File.Exists(json))
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(UpdateKeybindings)} no json found");
+#endif
+            return;
+        }
+
+        await UpdateKeybindings(json);
+    }
+
+    public static async Task UpdateKeybindings(string json)
     {
         // Deserialize JSON into a dictionary of string keys and string values
         var keyValues = JsonSerializer.Deserialize(
                 json, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             as Dictionary<string, string>;
 
-        if (CustomShortcuts is null)
-        {
-            CustomShortcuts = new Dictionary<Key, Func<Task>>();
-        }
-        else if (CustomShortcuts.Count > 0)
-        {
-            CustomShortcuts.Clear();
-        }
+        CustomShortcuts ??= new Dictionary<Key, Func<Task>>();
         await Loop(keyValues).ConfigureAwait(false);
+    }
+
+    public static async Task UpdateKeyBindingsFile()
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(
+                CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(),
+                    kvp => GetFunctionNameByFunction(kvp.Value)), typeof(Dictionary<string, string>), SourceGenerationContext.Default);
+
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
+            await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(UpdateKeyBindingsFile)} exception:\n{exception.Message}");
+#endif
+        }
     }
 
     private static async Task Loop(Dictionary<string, string> keyValues)
@@ -145,6 +172,14 @@ public static class KeybindingsHelper
     #endregion Keybindings logic
 
     #region Functions list
+
+    internal static string? GetFunctionNameByFunction(Func<Task> function)
+    {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (function == null)
+            return "";
+        return CustomShortcuts.FirstOrDefault(x => x.Value == function).Value.Method.Name ?? "";
+    }
 
     public static Task<Func<Task>> GetFunctionByName(string functionName)
     {
@@ -319,10 +354,7 @@ public static class KeybindingsHelper
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _vm.ImageViewer.ZoomIn();
-        });
+        await Dispatcher.UIThread.InvokeAsync(_vm.ImageViewer.ZoomIn);
     }
 
     private static async Task ZoomOut()
@@ -331,10 +363,7 @@ public static class KeybindingsHelper
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _vm.ImageViewer.ZoomOut();
-        });
+        await Dispatcher.UIThread.InvokeAsync(_vm.ImageViewer.ZoomOut);
     }
 
     private static Task ResetZoom()
@@ -379,6 +408,10 @@ public static class KeybindingsHelper
 
     private static Task Fullscreen()
     {
+#if DEBUG
+        // Show Avalonia DevTools in DEBUG mode
+        return Task.CompletedTask;
+#endif
         throw new NotImplementedException();
     }
 

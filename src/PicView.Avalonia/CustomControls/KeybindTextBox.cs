@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.CustomControls;
@@ -107,7 +108,7 @@ public class KeybindTextBox : TextBox
             });
 
             Remove();
-
+            await Save();
             return;
         }
 
@@ -117,7 +118,7 @@ public class KeybindTextBox : TextBox
             if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
             {
                 // If the main key is not present, add a new entry with the alternative key
-                var altKey = (Key)Enum.Parse(typeof(Key), Text);
+                var altKey = (Key)Enum.Parse(typeof(Key), e.Key.ToString());
                 KeybindingsHelper.CustomShortcuts[altKey] = function;
             }
             else
@@ -136,7 +137,13 @@ public class KeybindTextBox : TextBox
             KeybindingsHelper.CustomShortcuts[e.Key] = function;
         }
 
+        await Save();
         return;
+
+        async Task Save()
+        {
+            await KeybindingsHelper.UpdateKeyBindingsFile();
+        }
 
         void Remove()
         {
@@ -184,6 +191,20 @@ public class KeybindTextBox : TextBox
                     return prevFolderKey is not { Count: > 0 } ?
                         string.Empty :
                         $"{TranslationHelper.GetTranslation("Shift")} + {(Alt ? prevFolderKey.LastOrDefault().ToString() : prevFolderKey.FirstOrDefault().ToString())}";
+
+                case "ScrollUp":
+                    var rotateRightKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Up")
+                        ?.Select(x => x.Key).ToList() ?? null;
+                    return rotateRightKey is not { Count: > 0 } ?
+                        string.Empty :
+                        Alt ? rotateRightKey.LastOrDefault().ToString() : rotateRightKey.FirstOrDefault().ToString();
+
+                case "ScrollDown":
+                    var rotateLeftKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Down")
+                        ?.Select(x => x.Key).ToList() ?? null;
+                    return rotateLeftKey is not { Count: > 0 } ?
+                        string.Empty :
+                        Alt ? rotateLeftKey.LastOrDefault().ToString() : rotateLeftKey.FirstOrDefault().ToString();
             }
         }
 
