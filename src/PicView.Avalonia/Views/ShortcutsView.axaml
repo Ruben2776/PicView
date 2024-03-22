@@ -902,15 +902,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding FileCopyPath}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="CopyFilePath"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="CopyFilePathBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -920,15 +922,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding CopyImage}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="CopyImage"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="CopyImageBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -940,15 +944,18 @@
                 <Run Text="{CompiledBinding Copy}" />
                 <Run Text=" base64" />
             </TextBlock>
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="CopyBase64"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
+                Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="CopyBase64"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 
@@ -958,15 +965,17 @@
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding FilePaste}" />
-            <TextBox
+            <customControls:KeybindTextBox
                 Width="140"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                MethodName="Paste"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
             <TextBox
+                x:Name="PasteBox"
                 Width="140"
-                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
+                IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}" />
         </StackPanel>
 

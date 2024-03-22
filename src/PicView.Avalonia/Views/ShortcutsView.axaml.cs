@@ -9,6 +9,8 @@ public partial class ShortcutsView : UserControl
     public ShortcutsView()
     {
         InitializeComponent();
+        var alt = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ?
+            "Option" : TranslationHelper.GetTranslation("Alt");
         NextBox.KeyUp += delegate
         {
             LastImageBox.Text = LastImageBox.GetFunctionKey();
@@ -31,13 +33,13 @@ public partial class ShortcutsView : UserControl
         ReloadBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + R";
         SaveBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + S";
         CopyBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + C";
-        //PasteBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + V";
+        CopyFilePathBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {alt} + C";
+        CopyImageBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Shift")} + C";
+        PasteBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + V";
         DeleteBox.Text = $"{TranslationHelper.GetTranslation("Del")}";
-        DeleteAltBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("Del")}";
+        DeleteAltBox.Text = $"{TranslationHelper.GetTranslation("Shift")} +  {TranslationHelper.GetTranslation("Del")}";
         PrintBox.Text = $"{TranslationHelper.GetTranslation("Ctrl")} + P";
-        ToggleUIBox.Text = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ?
-            $"Option + Z" :
-            $"{TranslationHelper.GetTranslation("Alt")} + Z";
+        ToggleUIBox.Text = $"{alt} + Z";
         FullscreenBox2.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("DoubleClick")}";
     }
 }
