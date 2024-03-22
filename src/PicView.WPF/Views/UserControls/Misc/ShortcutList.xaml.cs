@@ -742,7 +742,7 @@ public partial class ShortcutList
         FileCopyPathTextBlock.Text = TranslationHelper.GetTranslation("FileCopyPath");
         CopyFilePathBox.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
         CopyFilePathBox2.Text =
-            $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Shift")} C";
+            $"{TranslationHelper.GetTranslation("Ctrl")} + {TranslationHelper.GetTranslation("Alt")} C";
 
         CopyImageTextBlock.Text = TranslationHelper.GetTranslation("CopyImage");
         CopyImageBox1.ToolTip = TranslationHelper.GetTranslation("ChangeKeybindingTooltip");
