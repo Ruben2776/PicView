@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Avalonia.Models;
+using PicView.Avalonia.Navigation;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 
@@ -32,9 +33,11 @@ public class ImageService
                 }
 
             case ".svg":
-                return;
-
             case ".svgz":
+                imageModel.Image = imageModel.FileInfo.FullName;
+                imageModel.PixelWidth = 500;
+                imageModel.PixelHeight = 500;
+                imageModel.ImageType = ImageType.Svg;
                 return;
 
             case ".b64":
@@ -77,6 +80,7 @@ public class ImageService
                     imageModel.Image = bmp;
                     imageModel.PixelWidth = bmp.PixelSize.Width;
                     imageModel.PixelHeight = bmp.PixelSize.Height;
+                    imageModel.ImageType = ImageType.Bitmap;
                 }
         }
     }

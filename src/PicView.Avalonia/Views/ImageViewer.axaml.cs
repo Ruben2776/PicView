@@ -11,8 +11,11 @@ using PicView.Core.Config;
 using PicView.Core.Navigation;
 using System.Runtime.InteropServices;
 using Avalonia.Controls.Primitives;
+using Avalonia.Media.Imaging;
 using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
+using Avalonia.Svg.Skia;
+using PicView.Avalonia.Navigation;
 
 namespace PicView.Avalonia.Views;
 
@@ -59,6 +62,19 @@ public partial class ImageViewer : UserControl
         };
     }
 
+    public void SetImage(object image, ImageType imageType)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+        MainImage.Source = imageType switch
+        {
+            ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string, null) },
+            ImageType.Bitmap => image as Bitmap,
+            ImageType.AnimatedBitmap => image as Bitmap,
+            _ => MainImage.Source
+        };
+    }
+
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)
     {
         ZoomTo(e.GetPosition(this), e.Delta.Y > 0);
@@ -70,7 +86,7 @@ public partial class ImageViewer : UserControl
         await Main_OnPointerWheelChanged(e);
     }
 
-    private void Drop(object? sender, DragEventArgs e)
+    private async Task Drop(object? sender, DragEventArgs e)
     {
         if (DataContext is not MainViewModel vm)
             return;
@@ -85,7 +101,7 @@ public partial class ImageViewer : UserControl
         var storageItems = data as IStorageItem[] ?? data.ToArray();
         var firstFile = storageItems.FirstOrDefault();
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
-        _ = vm.LoadPicFromString(path).ConfigureAwait(false);
+        await vm.LoadPicFromString(path).ConfigureAwait(false);
         foreach (var file in storageItems.Skip(1))
         {
             // TODO Open each file in a new window if the setting to open in the same window is false
@@ -276,6 +292,11 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
+
+        //if (zoomValue < 1)
+        //{
+        //    point = new Point(Bounds.Width / 2, Bounds.Height / 2);
+        //}
 
         if (enableAnimations)
         {

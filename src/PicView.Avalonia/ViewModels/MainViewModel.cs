@@ -383,14 +383,6 @@ namespace PicView.Avalonia.ViewModels
 
         public ImageViewer? ImageViewer;
 
-        private IImage? _image;
-
-        public IImage? Image
-        {
-            get => _image;
-            set => this.RaiseAndSetIfChanged(ref _image, value);
-        }
-
         private uint _exifRating;
 
         public uint EXIFRating
@@ -1020,7 +1012,7 @@ namespace PicView.Avalonia.ViewModels
 
         public void SetImageModel(ImageModel imageModel)
         {
-            Image = imageModel?.Image ?? null; // TODO replace with broken image graphic if it is null
+            //Image = imageModel?.Image ?? null; // TODO replace with broken image graphic if it is null
             FileInfo = imageModel?.FileInfo ?? null;
             if (imageModel?.EXIFOrientation.HasValue ?? false)
             {
@@ -1115,9 +1107,9 @@ namespace PicView.Avalonia.ViewModels
                         }
                     }
 
-                    if (DpiX is 0)
+                    if (DpiX is 0 && imageModel.ImageType is ImageType.Bitmap or ImageType.AnimatedBitmap)
                     {
-                        var bmp = Image as Bitmap;
+                        var bmp = imageModel.Image as Bitmap;
                         DpiX = bmp?.Dpi.X ?? 0;
                         DpiY = bmp?.Dpi.Y ?? 0;
                     }
@@ -1565,7 +1557,6 @@ namespace PicView.Avalonia.ViewModels
 
                 ImageIterator.PreLoader.Clear();
                 CurrentView = new ImageViewer();
-                Image = null;
                 await LoadPicFromString(FileInfo.FullName);
             });
 
@@ -1679,7 +1670,7 @@ namespace PicView.Avalonia.ViewModels
             GetFlipped = Flip;
             FlipCommand = ReactiveCommand.Create(() =>
             {
-                if (Image is null)
+                if (!NavigationHelper.CanNavigate(this))
                 {
                     return;
                 }

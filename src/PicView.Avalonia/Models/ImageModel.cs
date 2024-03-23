@@ -1,15 +1,17 @@
 ﻿using Avalonia.Media;
+using PicView.Avalonia.Navigation;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Models;
 
 public class ImageModel
 {
-    public IImage? Image { get; set; }
+    public object Image { get; set; }
     public FileInfo? FileInfo { get; set; }
     public int PixelWidth { get; set; }
     public int PixelHeight { get; set; }
     public EXIFHelper.EXIFOrientation? EXIFOrientation { get; set; }
+    public ImageType ImageType { get; set; }
 
     public double Rotation
     {

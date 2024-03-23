@@ -223,7 +223,7 @@ public static class WindowHelper
 
     public static void SetSize(MainViewModel vm)
     {
-        if (vm.Image is null)
+        if (!NavigationHelper.CanNavigate(vm))
         {
             return;
         }

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Models;
@@ -8,6 +9,7 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
+using System.IO;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation
@@ -265,7 +267,10 @@ namespace PicView.Avalonia.Navigation
                         if (thumb is not null)
                         {
                             var stream = new MemoryStream(thumb?.ToByteArray());
-                            vm.Image = new Bitmap(stream);
+                            await Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
+                            });
                         }
                         else if (!viewChanged)
                         {
@@ -311,6 +316,10 @@ namespace PicView.Avalonia.Navigation
                 }
 
                 vm.SetImageModel(preLoadValue.ImageModel);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
+                });
                 WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
                 vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
                 vm.GetIndex = Index + 1;
