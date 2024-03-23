@@ -13,7 +13,6 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls.Primitives;
 using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
-using System.Drawing;
 
 namespace PicView.Avalonia.Views;
 
@@ -35,6 +34,7 @@ public partial class ImageViewer : UserControl
         // TODO add visual feedback for drag and drop
         //AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
+        AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent,  RoutingStrategies.Bubble);
 
         Loaded += delegate
         {
@@ -57,6 +57,11 @@ public partial class ImageViewer : UserControl
                 _captured = false;
             };
         };
+    }
+
+    private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)
+    {
+        ZoomTo(e.GetPosition(this), e.Delta.Y > 0);
     }
 
     private async Task PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)

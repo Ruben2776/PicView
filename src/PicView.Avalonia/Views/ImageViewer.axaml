@@ -1,36 +1,36 @@
 <UserControl
+    DragDrop.AllowDrop="True"
+    PointerPressed="InputElement_OnPointerPressed"
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.ImageViewer"
+    x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
-    x:DataType="vm:MainViewModel"
-    DragDrop.AllowDrop="True"
-    PointerPressed="InputElement_OnPointerPressed"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
 
     <LayoutTransformControl x:Name="ImageLayoutTransformControl">
         <ScrollViewer
-            x:Name="ImageScrollViewer"
             Focusable="False"
             ScrollChanged="ImageScrollViewer_OnScrollChanged"
-            VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
+            VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}"
+            x:Name="ImageScrollViewer">
             <Border
-                x:Name="ImageZoomBorder"
                 PointerMoved="ImageZoomBorder_OnPointerMoved"
                 PointerPressed="ImageZoomBorder_OnPointerPressed"
-                PointerReleased="ImageZoomBorder_OnPointerReleased">
+                PointerReleased="ImageZoomBorder_OnPointerReleased"
+                x:Name="ImageZoomBorder">
                 <Image
-                    x:Name="MainImage"
-                    Width="{CompiledBinding ImageWidth}"
                     Height="{CompiledBinding ImageHeight}"
                     RenderOptions.BitmapInterpolationMode="HighQuality"
                     Source="{CompiledBinding Image}"
-                    Stretch="Uniform" />
+                    Stretch="Uniform"
+                    Width="{CompiledBinding ImageWidth}"
+                    x:Name="MainImage" />
             </Border>
         </ScrollViewer>
     </LayoutTransformControl>

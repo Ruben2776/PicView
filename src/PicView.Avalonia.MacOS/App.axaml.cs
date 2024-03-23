@@ -46,7 +46,7 @@ public class App : Application, IPlatformSpecificService
         try
         {
             settingsExists = await SettingsHelper.LoadSettingsAsync();
-            _ = Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
+            await Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
         }
         catch (TaskCanceledException)
         {
@@ -111,12 +111,12 @@ public class App : Application, IPlatformSpecificService
         {
             if (_settingsWindow is null)
             {
-                _settingsWindow = new Views.SettingsWindow
+                _settingsWindow = new SettingsWindow
                 {
                     DataContext = vm,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 };
-                _settingsWindow.Show();
+                _settingsWindow.ShowDialog(w);
                 _settingsWindow.Closing += (s, e) => _settingsWindow = null;
             }
             else
