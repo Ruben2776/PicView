@@ -34,7 +34,7 @@ public partial class ImageViewer : UserControl
         // TODO add visual feedback for drag and drop
         //AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
-        AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent,  RoutingStrategies.Bubble);
+        AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
 
         Loaded += delegate
         {
@@ -375,13 +375,43 @@ public partial class ImageViewer : UserControl
         speed = _translateTransform.X < -750 ? 20 : speed;
         speed = _translateTransform.X < -1000 ? 25 : speed;
         speed = _translateTransform.X < -1200 ? -35 : speed;
-        var x = _origin.X - (position.X + speed);
-        var y = _origin.Y - (position.Y + speed);
+        var newXproperty = _origin.X - (position.X + speed);
+        var newYproperty = _origin.Y - (position.Y + speed);
+
+        var actualScrollWidth = ImageScrollViewer.Bounds.Width;
+        var actualBorderWidth = ImageZoomBorder.Bounds.Width;
+        var actualScrollHeight = ImageScrollViewer.Bounds.Height;
+        var actualBorderHeight = ImageZoomBorder.Bounds.Height;
+
+        var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
+        var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
+        var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
+        var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
+
+        if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
+        {
+            newXproperty = maxX;
+        }
+
+        if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
+        {
+            newYproperty = maxY;
+        }
+
+        if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
+        {
+            newXproperty = 0;
+        }
+
+        if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+        {
+            newYproperty = 0;
+        }
 
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _translateTransform.X = x;
-            _translateTransform.Y = y;
+            _translateTransform.X = newXproperty;
+            _translateTransform.Y = newYproperty;
         });
     }
 
