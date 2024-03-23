@@ -1,10 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
 using System.Runtime.InteropServices;
-using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views;
 

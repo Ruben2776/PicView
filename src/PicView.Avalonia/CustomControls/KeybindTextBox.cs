@@ -6,7 +6,6 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
-using PicView.Core.Config;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.CustomControls;
