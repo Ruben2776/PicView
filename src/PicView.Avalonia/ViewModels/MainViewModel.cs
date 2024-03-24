@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
@@ -25,7 +24,6 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using PicView.Avalonia.Keybindings;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -146,6 +144,14 @@ namespace PicView.Avalonia.ViewModels
         #region Fields
 
         #region Booleans
+
+        private bool _isLoading;
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => this.RaiseAndSetIfChanged(ref _isLoading, value);
+        }
 
         private bool _isInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
 
@@ -379,8 +385,6 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentView, value);
         }
 
-        public readonly SpinWaiter? SpinWaiter;
-
         public ImageViewer? ImageViewer;
 
         private uint _exifRating;
@@ -422,6 +426,7 @@ namespace PicView.Avalonia.ViewModels
                 var roundedValue = Math.Round(value, 2);
                 this.RaiseAndSetIfChanged(ref _getNavSpeed, roundedValue);
                 SettingsHelper.Settings.UIProperties.NavSpeed = roundedValue;
+                _= SettingsHelper.SaveSettingsAsync();
             }
         }
 
@@ -1410,6 +1415,8 @@ namespace PicView.Avalonia.ViewModels
             {
                 CurrentView = new StartUpMenu();
             }
+
+            IsLoading = false;
         }
 
         #endregion Methods
@@ -1422,9 +1429,8 @@ namespace PicView.Avalonia.ViewModels
             }
 
             SetLoadingTitle();
+            IsLoading = true;
 
-            SpinWaiter = new SpinWaiter();
-            CurrentView = SpinWaiter;
             IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
             if (SettingsHelper.Settings.WindowProperties.TopMost)
             {
@@ -1883,7 +1889,6 @@ namespace PicView.Avalonia.ViewModels
         public MainViewModel()
         {
             // Only use for unit test
-            SpinWaiter = new SpinWaiter();
         }
     }
 }

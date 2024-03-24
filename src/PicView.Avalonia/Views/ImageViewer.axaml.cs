@@ -64,8 +64,6 @@ public partial class ImageViewer : UserControl
 
     public void SetImage(object image, ImageType imageType)
     {
-        if (DataContext is not MainViewModel vm)
-            return;
         MainImage.Source = imageType switch
         {
             ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string, null) },

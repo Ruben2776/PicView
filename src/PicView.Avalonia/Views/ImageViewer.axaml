@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     x:DataType="vm:MainViewModel"
     DragDrop.AllowDrop="True"
@@ -13,24 +14,30 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <LayoutTransformControl x:Name="ImageLayoutTransformControl">
-        <ScrollViewer
-            x:Name="ImageScrollViewer"
-            Focusable="False"
-            ScrollChanged="ImageScrollViewer_OnScrollChanged"
-            VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
-            <Border
-                x:Name="ImageZoomBorder"
-                PointerMoved="ImageZoomBorder_OnPointerMoved"
-                PointerPressed="ImageZoomBorder_OnPointerPressed"
-                PointerReleased="ImageZoomBorder_OnPointerReleased">
-                <Image
-                    x:Name="MainImage"
-                    Width="{CompiledBinding ImageWidth}"
-                    Height="{CompiledBinding ImageHeight}"
-                    RenderOptions.BitmapInterpolationMode="HighQuality"
-                    Stretch="Uniform" />
-            </Border>
-        </ScrollViewer>
-    </LayoutTransformControl>
+    <Grid>
+        <LayoutTransformControl x:Name="ImageLayoutTransformControl">
+            <ScrollViewer
+                x:Name="ImageScrollViewer"
+                Focusable="False"
+                ScrollChanged="ImageScrollViewer_OnScrollChanged"
+                VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}">
+                <Border
+                    x:Name="ImageZoomBorder"
+                    PointerMoved="ImageZoomBorder_OnPointerMoved"
+                    PointerPressed="ImageZoomBorder_OnPointerPressed"
+                    PointerReleased="ImageZoomBorder_OnPointerReleased">
+                    <Image
+                        x:Name="MainImage"
+                        Width="{CompiledBinding ImageWidth}"
+                        Height="{CompiledBinding ImageHeight}"
+                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                        Stretch="Uniform" />
+                </Border>
+            </ScrollViewer>
+        </LayoutTransformControl>
+        <uc:SpinWaiter
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsVisible="{CompiledBinding IsLoading}" />
+    </Grid>
 </UserControl>

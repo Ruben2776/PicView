@@ -35,7 +35,7 @@ public class ImageService
             case ".svg":
             case ".svgz":
                 imageModel.Image = imageModel.FileInfo.FullName;
-                imageModel.PixelWidth = 500;
+                imageModel.PixelWidth = 500; // TODO: Use screen width instead or implement a user setting value
                 imageModel.PixelHeight = 500;
                 imageModel.ImageType = ImageType.Svg;
                 return;

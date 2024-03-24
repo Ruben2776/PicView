@@ -1,7 +1,6 @@
-﻿using Avalonia.Media.Imaging;
-using Avalonia.Threading;
-using ImageMagick;
+﻿using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
@@ -9,7 +8,6 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
-using System.IO;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation
@@ -244,7 +242,15 @@ namespace PicView.Avalonia.Navigation
             {
                 return;
             }
-            await LoadPicAtIndex(index, vm);
+
+            if (!MainKeyboardShortcuts.IsKeyHeldDown)
+            {
+                await LoadPicAtIndex(index, vm);
+            }
+            else
+            {
+                await TimerPic(index, vm);
+            }
         }
 
         public async Task LoadPicAtIndex(int index, MainViewModel vm) => await Task.Run(async () =>
@@ -254,29 +260,14 @@ namespace PicView.Avalonia.Navigation
                 Index = index;
 
                 var preLoadValue = PreLoader.Get(index, Pics);
-                var viewChanged = false;
                 var x = 0;
                 if (preLoadValue is not null)
                 {
                     if (preLoadValue.IsLoading)
                     {
                         vm.SetLoadingTitle();
-                        using var image = new MagickImage();
-                        image.Ping(Pics[index]);
-                        var thumb = image.GetExifProfile()?.CreateThumbnail();
-                        if (thumb is not null)
-                        {
-                            var stream = new MemoryStream(thumb?.ToByteArray());
-                            await Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
-                            });
-                        }
-                        else if (!viewChanged)
-                        {
-                            vm.CurrentView = vm.SpinWaiter;
-                            viewChanged = true;
-                        }
+                        vm.IsLoading = true;
+                        NavigationHelper.LoadingPreview(index, vm);
                     }
 
                     while (preLoadValue.IsLoading)
@@ -300,10 +291,6 @@ namespace PicView.Avalonia.Navigation
 
                 if (preLoadValue is null)
                 {
-                    if (!viewChanged)
-                    {
-                        vm.CurrentView = vm.SpinWaiter;
-                    }
                     await GetPreload();
                 }
 
@@ -320,6 +307,7 @@ namespace PicView.Avalonia.Navigation
                 {
                     vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
                 });
+                vm.IsLoading = false;
                 WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
                 vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
                 vm.GetIndex = Index + 1;
@@ -409,8 +397,9 @@ namespace PicView.Avalonia.Navigation
         }
 
         private static Timer? _timer;
+        private static bool _updateSource;
 
-        internal void TimerPic(NavigateTo navigateTo, MainViewModel vm)
+        internal async Task TimerPic(int index, MainViewModel vm)
         {
             if (_timer is null)
             {
@@ -419,19 +408,86 @@ namespace PicView.Avalonia.Navigation
                     AutoReset = false,
                     Enabled = true
                 };
-                _timer.Elapsed += async (_, _) =>
-                {
-                    var nextIndex = GetIteration(Index, navigateTo);
-                    await LoadPicAtIndex(nextIndex, vm);
-                    _timer = null;
-                };
             }
             else if (_timer.Enabled)
             {
                 return;
             }
-
             _timer?.Start();
+            Index = index;
+            _updateSource = true; // Update it when key released
+            var preLoadValue = PreLoader.Get(index, Pics);
+
+            if (preLoadValue != null)
+            {
+                var showThumb = true;
+                while (preLoadValue.IsLoading)
+                {
+                    if (showThumb)
+                    {
+                        NavigationHelper.LoadingPreview(index, vm);
+                        showThumb = false;
+                    }
+
+                    await Task.Delay(10);
+                }
+            }
+            else
+            {
+                NavigationHelper.LoadingPreview(index, vm);
+                await PreLoader.AddAsync(index, vm.ImageService, Pics).ConfigureAwait(false);
+                preLoadValue = PreLoader.Get(index, Pics);
+                if (preLoadValue is null)
+                {
+                    return;
+                }
+            }
+            vm.SetImageModel(preLoadValue.ImageModel);
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
+            });
+            WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
+            vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
+            vm.GetIndex = Index + 1;
+
+            _updateSource = false;
+            await PreLoader.PreLoadAsync(index, Pics.Count, Reverse, vm.ImageService, Pics).ConfigureAwait(false);
+        }
+
+        internal static async Task TimerPicUpdate()
+        {
+            _timer = null;
+
+            if (_updateSource == false)
+            {
+                return;
+            }
+
+            // Update picture in case it didn't load. Won't happen normally
+
+            //var preLoadValue = PreLoader.Get(Index, Pics);
+            //if (preLoadValue is null)
+            //{
+            //    await PreLoader.AddAsync(Index).ConfigureAwait(false);
+            //    preLoadValue = PreLoader.Get(FolderIndex);
+            //    if (preLoadValue is null)
+            //    {
+            //        var fileInfo = new FileInfo(Pics[FolderIndex]);
+            //        var bitmapSource = await Image2BitmapSource.ReturnBitmapSourceAsync(fileInfo).ConfigureAwait(false);
+            //        preLoadValue = new PreLoader.PreLoadValue(bitmapSource, fileInfo, null);
+            //    }
+            //}
+
+            //while (preLoadValue.BitmapSource is null)
+            //{
+            //    await Task.Delay(10).ConfigureAwait(false);
+            //}
+            //try
+            //{
+            //    await UpdateImage.UpdateImageValuesAsync(FolderIndex, preLoadValue).ConfigureAwait(false);
+            //}
         }
     }
 }

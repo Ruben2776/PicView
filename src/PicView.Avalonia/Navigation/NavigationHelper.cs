@@ -1,4 +1,7 @@
-﻿using PicView.Avalonia.Keybindings;
+﻿using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using ImageMagick;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Navigation;
 
@@ -39,14 +42,24 @@ public static class NavigationHelper
         else
         {
             var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
-            if (!MainKeyboardShortcuts.IsKeyHeldDown)
-            {
-                await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
-            }
-            else
-            {
-                vm.ImageIterator.TimerPic(navigateTo, vm);
-            }
+            await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
         }
+    }
+
+    public static void LoadingPreview(int index, MainViewModel vm)
+    {
+        using var image = new MagickImage();
+        image.Ping(vm.ImageIterator.Pics[index]);
+        var thumb = image.GetExifProfile()?.CreateThumbnail();
+        if (thumb is null)
+        {
+            return;
+        }
+
+        var stream = new MemoryStream(thumb?.ToByteArray());
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
+        });
     }
 }
