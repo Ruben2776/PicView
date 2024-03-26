@@ -28,6 +28,7 @@
             <DockPanel
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Height="28"
+                PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
 
                 <TextBlock

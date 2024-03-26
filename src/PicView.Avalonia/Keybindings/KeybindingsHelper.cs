@@ -460,7 +460,8 @@ public static class KeybindingsHelper
 
     private static Task ImageInfoWindow()
     {
-        throw new NotImplementedException();
+        _vm?.ShowExifWindowCommand.Execute(null);
+        return Task.CompletedTask;
     }
 
     private static Task ResizeWindow()
