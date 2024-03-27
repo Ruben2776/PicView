@@ -426,7 +426,7 @@ namespace PicView.Avalonia.ViewModels
                 var roundedValue = Math.Round(value, 2);
                 this.RaiseAndSetIfChanged(ref _getNavSpeed, roundedValue);
                 SettingsHelper.Settings.UIProperties.NavSpeed = roundedValue;
-                _= SettingsHelper.SaveSettingsAsync();
+                _ = SettingsHelper.SaveSettingsAsync();
             }
         }
 
@@ -1114,9 +1114,11 @@ namespace PicView.Avalonia.ViewModels
 
                     if (DpiX is 0 && imageModel.ImageType is ImageType.Bitmap or ImageType.AnimatedBitmap)
                     {
-                        var bmp = imageModel.Image as Bitmap;
-                        DpiX = bmp?.Dpi.X ?? 0;
-                        DpiY = bmp?.Dpi.Y ?? 0;
+                        if (imageModel.Image is Bitmap bmp)
+                        {
+                            DpiX = bmp?.Dpi.X ?? 0;
+                            DpiY = bmp?.Dpi.Y ?? 0;
+                        }
                     }
 
                     if (string.IsNullOrEmpty(GetBitDepth))
@@ -1313,7 +1315,8 @@ namespace PicView.Avalonia.ViewModels
             }
 
             await ImageIterator.LoadPicAtIndex(index, this).ConfigureAwait(false);
-            ImageChanged?.Invoke(this, null);
+            var preloadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
+            ImageChanged?.Invoke(this, preloadValue.ImageModel);
         }).ConfigureAwait(false);
 
         public async Task LoadPicFromString(string path)

@@ -193,6 +193,7 @@ public class PreLoader
 
         try
         {
+            _preLoadList[key].ImageModel?.Dispose();
             _ = _preLoadList[key];
             var remove = _preLoadList.TryRemove(key, out _);
 #if DEBUG

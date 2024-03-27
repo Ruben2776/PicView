@@ -42,7 +42,7 @@ public class ImageService
 
             case ".b64":
                 {
-                    var magickImage = await ImageDecoder.Base64ToMagickImage(imageModel.FileInfo).ConfigureAwait(false);
+                    using var magickImage = await ImageDecoder.Base64ToMagickImage(imageModel.FileInfo).ConfigureAwait(false);
                     using var b64Stream = new MemoryStream();
                     await magickImage.WriteAsync(b64Stream);
                     b64Stream.Position = 0;
@@ -52,7 +52,7 @@ public class ImageService
 
             default:
                 {
-                    var magickImage = new MagickImage();
+                    using var magickImage = new MagickImage();
                     if (imageModel.FileInfo.Length >= 2147483648)
                     {
                         await Task.Run(() =>

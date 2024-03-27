@@ -1,9 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
-using Avalonia.Threading;
-using PicView.Avalonia.Helpers;
-using PicView.Avalonia.Navigation;
+﻿using Avalonia.Input;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using System.Diagnostics;
 using System.Text.Json;
@@ -17,8 +13,6 @@ internal partial class SourceGenerationContext : JsonSerializerContext;
 
 public static class KeybindingsHelper
 {
-    #region Keybindings logic
-
     private const string DefaultKeybindings = """
                                               {
                                                 "D": "Next",
@@ -67,11 +61,12 @@ public static class KeybindingsHelper
                                               }
                                               """;
 
-    public static Dictionary<Key, Func<Task>>? CustomShortcuts;
-    private static MainViewModel? _vm;
+    public static Dictionary<Key, Func<Task>>? CustomShortcuts { get; private set; }
+    private static UIFunctions? _uiFunctions;
 
     public static async Task LoadKeybindings(MainViewModel vm)
     {
+        _uiFunctions = new UIFunctions(vm);
         try
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
@@ -90,7 +85,6 @@ public static class KeybindingsHelper
             // Handle other exceptions as needed
             //Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
         }
-        _vm = vm;
     }
 
     public static async Task UpdateKeybindings()
@@ -169,10 +163,6 @@ public static class KeybindingsHelper
         await Loop(keyValues).ConfigureAwait(false);
     }
 
-    #endregion Keybindings logic
-
-    #region Functions list
-
     internal static string? GetFunctionNameByFunction(Func<Task> function)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -187,457 +177,91 @@ public static class KeybindingsHelper
         return Task.FromResult<Func<Task>>(functionName switch
         {
             // Navigation values
-            "Next" => Next,
-            "Prev" => Prev,
-            "Up" => Up,
-            "Down" => Down,
+            "Next" => UIFunctions.Next,
+            "Prev" => UIFunctions.Prev,
+            "Up" => _uiFunctions.Up,
+            "Down" => _uiFunctions.Down,
 
             // Scroll
-            "ScrollToTop" => ScrollToTop,
-            "ScrollToBottom" => ScrollToBottom,
+            "ScrollToTop" => _uiFunctions.ScrollToTop,
+            "ScrollToBottom" => _uiFunctions.ScrollToBottom,
 
             // Zoom
-            "ZoomIn" => ZoomIn,
-            "ZoomOut" => ZoomOut,
-            "ResetZoom" => ResetZoom,
+            "ZoomIn" => _uiFunctions.ZoomIn,
+            "ZoomOut" => _uiFunctions.ZoomOut,
+            "ResetZoom" => _uiFunctions.ResetZoom,
 
             // Toggles
-            "ToggleScroll" => ToggleScroll,
-            "ToggleLooping" => ToggleLooping,
-            "ToggleGallery" => ToggleGallery,
+            "ToggleScroll" => _uiFunctions.ToggleScroll,
+            "ToggleLooping" => _uiFunctions.ToggleLooping,
+            "ToggleGallery" => _uiFunctions.ToggleGallery,
 
             // Scale Window
-            "AutoFitWindow" => AutoFitWindow,
-            "AutoFitWindowAndStretch" => AutoFitWindowAndStretch,
-            "NormalWindow" => NormalWindow,
-            "NormalWindowAndStretch" => NormalWindowAndStretch,
+            "AutoFitWindow" => _uiFunctions.AutoFitWindow,
+            "AutoFitWindowAndStretch" => _uiFunctions.AutoFitWindowAndStretch,
+            "NormalWindow" => _uiFunctions.NormalWindow,
+            "NormalWindowAndStretch" => _uiFunctions.NormalWindowAndStretch,
 
             // Window functions
-            "Fullscreen" => Fullscreen,
-            "SetTopMost" => SetTopMost,
-            "Close" => Close,
-            "ToggleInterface" => ToggleInterface,
-            "NewWindow" => NewWindow,
-            "Center" => Center,
+            "Fullscreen" => _uiFunctions.Fullscreen,
+            "SetTopMost" => _uiFunctions.SetTopMost,
+            "Close" => _uiFunctions.Close,
+            "ToggleInterface" => _uiFunctions.ToggleInterface,
+            "NewWindow" => _uiFunctions.NewWindow,
+            "Center" => _uiFunctions.Center,
 
             // Windows
-            "AboutWindow" => AboutWindow,
-            "EffectsWindow" => EffectsWindow,
-            "ImageInfoWindow" => ImageInfoWindow,
-            "ResizeWindow" => ResizeWindow,
-            "SettingsWindow" => SettingsWindow,
-            "KeybindingsWindow" => KeybindingsWindow,
+            "AboutWindow" => _uiFunctions.AboutWindow,
+            "EffectsWindow" => _uiFunctions.EffectsWindow,
+            "ImageInfoWindow" => _uiFunctions.ImageInfoWindow,
+            "ResizeWindow" => _uiFunctions.ResizeWindow,
+            "SettingsWindow" => _uiFunctions.SettingsWindow,
+            "KeybindingsWindow" => _uiFunctions.KeybindingsWindow,
 
             // Open functions
-            "Open" => Open,
-            "OpenWith" => OpenWith,
-            "OpenInExplorer" => OpenInExplorer,
-            "Save" => Save,
-            "Print" => Print,
-            "Reload" => Reload,
+            "Open" => _uiFunctions.Open,
+            "OpenWith" => _uiFunctions.OpenWith,
+            "OpenInExplorer" => _uiFunctions.OpenInExplorer,
+            "Save" => _uiFunctions.Save,
+            "Print" => _uiFunctions.Print,
+            "Reload" => _uiFunctions.Reload,
 
             // Copy functions
-            "CopyFile" => CopyFile,
-            "CopyFilePath" => CopyFilePath,
-            "CopyImage" => CopyImage,
-            "CopyBase64" => CopyBase64,
-            "DuplicateFile" => DuplicateFile,
-            "CutFile" => CutFile,
-            "Paste" => Paste,
+            "CopyFile" => _uiFunctions.CopyFile,
+            "CopyFilePath" => _uiFunctions.CopyFilePath,
+            "CopyImage" => _uiFunctions.CopyImage,
+            "CopyBase64" => _uiFunctions.CopyBase64,
+            "DuplicateFile" => _uiFunctions.DuplicateFile,
+            "CutFile" => _uiFunctions.CutFile,
+            "Paste" => _uiFunctions.Paste,
 
             // File functions
-            "DeleteFile" => DeleteFile,
-            "Rename" => Rename,
-            "ShowFileProperties" => ShowFileProperties,
+            "DeleteFile" => _uiFunctions.DeleteFile,
+            "Rename" => _uiFunctions.Rename,
+            "ShowFileProperties" => _uiFunctions.ShowFileProperties,
 
             // Image functions
-            "ResizeImage" => ResizeImage,
-            "Crop" => Crop,
-            "Flip" => Flip,
-            "OptimizeImage" => OptimizeImage,
-            "Stretch" => Stretch,
+            "ResizeImage" => _uiFunctions.ResizeImage,
+            "Crop" => _uiFunctions.Crop,
+            "Flip" => _uiFunctions.Flip,
+            "OptimizeImage" => _uiFunctions.OptimizeImage,
+            "Stretch" => _uiFunctions.Stretch,
 
             // Set stars
-            "Set0Star" => Set0Star,
-            "Set1Star" => Set1Star,
-            "Set2Star" => Set2Star,
-            "Set3Star" => Set3Star,
-            "Set4Star" => Set4Star,
-            "Set5Star" => Set5Star,
+            "Set0Star" => _uiFunctions.Set0Star,
+            "Set1Star" => _uiFunctions.Set1Star,
+            "Set2Star" => _uiFunctions.Set2Star,
+            "Set3Star" => _uiFunctions.Set3Star,
+            "Set4Star" => _uiFunctions.Set4Star,
+            "Set5Star" => _uiFunctions.Set5Star,
 
             // Misc
-            "ChangeBackground" => ChangeBackground,
-            "GalleryClick" => GalleryClick,
-            "Slideshow" => Slideshow,
-            "ColorPicker" => ColorPicker,
+            "ChangeBackground" => _uiFunctions.ChangeBackground,
+            "GalleryClick" => _uiFunctions.GalleryClick,
+            "Slideshow" => _uiFunctions.Slideshow,
+            "ColorPicker" => _uiFunctions.ColorPicker,
 
             _ => null
         });
     }
-
-    private static Task Print()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static async Task Next()
-    {
-        await NavigationHelper.Navigate(true, _vm);
-    }
-
-    private static async Task Prev()
-    {
-        await NavigationHelper.Navigate(false, _vm);
-    }
-
-    private static async Task Up()
-    {
-        if (_vm is null)
-        {
-            return;
-        }
-
-        if (_vm.IsScrollingEnabled)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (_vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
-                {
-                    _vm.ImageViewer.Rotate(clockWise: true, animate: true);
-                }
-                else
-                {
-                    _vm.ImageViewer.ImageScrollViewer.LineUp();
-                }
-            });
-        }
-        else
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _vm.ImageViewer.Rotate(clockWise: true, animate: true);
-            });
-        }
-    }
-
-    private static async Task Down()
-    {
-        if (_vm is null)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _vm.ImageViewer.Rotate(clockWise: false, animate: true);
-        });
-    }
-
-    private static async Task ScrollToTop()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _vm.ImageViewer.ImageScrollViewer.ScrollToHome();
-        });
-    }
-
-    private static async Task ScrollToBottom()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _vm.ImageViewer.ImageScrollViewer.ScrollToEnd();
-        });
-    }
-
-    private static async Task ZoomIn()
-    {
-        if (_vm is null)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(_vm.ImageViewer.ZoomIn);
-    }
-
-    private static async Task ZoomOut()
-    {
-        if (_vm is null)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(_vm.ImageViewer.ZoomOut);
-    }
-
-    private static Task ResetZoom()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ToggleScroll()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ToggleLooping()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ToggleGallery()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task AutoFitWindow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task AutoFitWindowAndStretch()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task NormalWindow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task NormalWindowAndStretch()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Fullscreen()
-    {
-#if DEBUG
-        // Show Avalonia DevTools in DEBUG mode
-        return Task.CompletedTask;
-#endif
-        throw new NotImplementedException();
-    }
-
-    private static Task SetTopMost()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static async Task Close()
-    {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            desktop.MainWindow?.Close();
-        });
-    }
-
-    private static Task ToggleInterface()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task NewWindow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task AboutWindow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task KeybindingsWindow()
-    {
-        _vm?.ShowKeybindingsWindowCommand.Execute(null);
-        return Task.CompletedTask;
-    }
-
-    private static Task EffectsWindow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ImageInfoWindow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ResizeWindow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task SettingsWindow()
-    {
-        _vm?.ShowSettingsWindowCommand.Execute(null);
-        return Task.CompletedTask;
-    }
-
-    private static Task Open()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task OpenWith()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task OpenInExplorer()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Save()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Reload()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task CopyFile()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task CopyFilePath()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task CopyImage()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task CopyBase64()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task DuplicateFile()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task CutFile()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Paste()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task DeleteFile()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Rename()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ShowFileProperties()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ResizeImage()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Crop()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static async Task Flip()
-    {
-        if (_vm is null)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _vm.ImageViewer.Flip(animate: true);
-        });
-    }
-
-    private static Task OptimizeImage()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Stretch()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Set0Star()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Set1Star()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Set2Star()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Set3Star()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Set4Star()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task Set5Star()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ChangeBackground()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task GalleryClick()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static async Task Center()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            WindowHelper.CenterWindowOnScreen();
-        });
-    }
-
-    private static Task Slideshow()
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Task ColorPicker()
-    {
-        throw new NotImplementedException();
-    }
-
-    #endregion Functions list
 }

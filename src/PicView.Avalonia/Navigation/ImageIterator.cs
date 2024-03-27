@@ -367,8 +367,8 @@ namespace PicView.Avalonia.Navigation
                 };
                 vm.ImageService ??= new ImageService();
                 await vm.ImageService.LoadImageAsync(imageModel);
-                vm.SetImageModel(imageModel);
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+                vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
                 vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
                 await AddAsync(Index, vm.ImageService, imageModel);
                 await LoadPicAtIndex(Index, vm);
