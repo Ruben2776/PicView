@@ -43,25 +43,31 @@ public partial class SettingsWindow
             WindowBlur.EnableBlur(this);
             UpdateLanguage();
             Owner = null; // Remove owner, so that minimizing main-window will not minimize this
-
-            foreach (var language in Enum.GetValues(typeof(Languages)))
+            try
             {
-                try
+                foreach (var language in Enum.GetValues(typeof(Languages)))
                 {
+                    var lang = language.ToString().Replace('_', '-');
+                    var isSelected = lang.Length switch
+                    {
+                        >= 4 => lang[^2..] == SettingsHelper.Settings.UIProperties.UserLanguage[^2..],
+                        2 => lang[..2] == SettingsHelper.Settings.UIProperties.UserLanguage[..2],
+                        _ => lang == SettingsHelper.Settings.UIProperties.UserLanguage
+                    };
+
                     LanguageBox.Items.Add(new ComboBoxItem
                     {
-                        Content = new CultureInfo(language.ToString().Replace('_', '-')).DisplayName,
-                        IsSelected = language.ToString().Replace('_', '-') ==
-                                     SettingsHelper.Settings.UIProperties.UserLanguage
+                        Content = new CultureInfo(lang).DisplayName,
+                        IsSelected = isSelected
                     });
                 }
-                catch (Exception e)
-                {
-                    // Fix weird crash https://github.com/Ruben2776/PicView/issues/51
+            }
+            catch (Exception e)
+            {
+                // Fix weird crash https://github.com/Ruben2776/PicView/issues/51
 #if DEBUG
-                    Trace.WriteLine($"{nameof(SettingsWindow)} Add language caught exception: \n {e.Message}");
+                Trace.WriteLine($"{nameof(SettingsWindow)} Add language caught exception: \n {e.Message}");
 #endif
-                }
             }
 
             Deactivated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, false);
