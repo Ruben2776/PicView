@@ -87,6 +87,15 @@ public static class TranslationHelper
         }
     }
 
+    public static IEnumerable<string> GetLanguages()
+    {
+        var languagesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
+
+        return Directory.EnumerateFiles(languagesDirectory, "*")
+            .Where(file => file?.EndsWith(".json", StringComparison.OrdinalIgnoreCase) ==
+                true);
+    }
+
     private static string DetermineLanguageFilePath(string isoLanguageCode)
     {
         var languagesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");

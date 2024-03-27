@@ -15,7 +15,28 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckDanishLangauge()
+    public void GetLanguages()
+    {
+        var languages = TranslationHelper.GetLanguages();
+        Assert.NotNull(languages);
+        Assert.NotEmpty(languages);
+    }
+
+    [Fact]
+    public async Task ChangeLanguage()
+    {
+        await SettingsHelper.LoadSettingsAsync();
+        Assert.NotNull(SettingsHelper.Settings);
+
+        var exists = await TranslationHelper.LoadLanguage("en");
+        Assert.True(exists);
+        const Languages da = Languages.da;
+        await TranslationHelper.ChangeLanguage((int)da);
+        Assert.Equal("Billede", TranslationHelper.GetTranslation("Image"));
+    }
+
+    [Fact]
+    public async Task CheckDanishLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("da");
         Assert.True(exists);
@@ -25,7 +46,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckGermanLangauge()
+    public async Task CheckGermanLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("de");
         Assert.True(exists);
@@ -35,7 +56,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckEnglishLangauge()
+    public async Task CheckEnglishLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("en");
         Assert.True(exists);
@@ -45,7 +66,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckSpanishLangauge()
+    public async Task CheckSpanishLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("es");
         Assert.True(exists);
@@ -55,7 +76,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckFrenchLangauge()
+    public async Task CheckFrenchLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("fr");
         Assert.True(exists);
@@ -65,7 +86,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckItalianLangauge()
+    public async Task CheckItalianLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("it");
         Assert.True(exists);
@@ -75,7 +96,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckKoreanLangauge()
+    public async Task CheckKoreanLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("ko");
         Assert.True(exists);
@@ -85,7 +106,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckPolishLangauge()
+    public async Task CheckPolishLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("pl");
         Assert.True(exists);
@@ -95,7 +116,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckRomanianLangauge()
+    public async Task CheckRomanianLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("ro");
         Assert.True(exists);
@@ -105,7 +126,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckRussianLangauge()
+    public async Task CheckRussianLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("ru");
         Assert.True(exists);
@@ -115,7 +136,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckChineseSimplifiedLangauge()
+    public async Task CheckChineseSimplifiedLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("zh-CN");
         Assert.True(exists);
@@ -125,7 +146,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckChineseTraditionalLangauge()
+    public async Task CheckChineseTraditionalLanguage()
     {
         var exists = await TranslationHelper.LoadLanguage("zh-TW");
         Assert.True(exists);
