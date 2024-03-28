@@ -271,22 +271,17 @@ internal static class WindowSizing
     {
         window?.Dispatcher.Invoke(() =>
         {
-            var width = window.ActualWidth == 0 ? window.Width : window.ActualWidth;
-            width = double.IsNaN(width) ? window.MinWidth : width;
+            var height = window.ActualHeight == 0 ? window.Height : window.ActualHeight;
+            height = double.IsNaN(height) ? window.MinHeight : height;
 
+            var y = Math.Max(MonitorInfo.WorkArea.Y, MonitorInfo.WorkArea.Y + (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling - height) / 2);
+            window.Top = y;
             if (horizontal)
             {
-                var height = window.ActualHeight == 0 ? window.Height : window.ActualHeight;
-                height = double.IsNaN(height) ? window.MinHeight : height;
-
+                var width = window.ActualWidth == 0 ? window.Width : window.ActualWidth;
+                width = double.IsNaN(width) ? window.MinWidth : width;
                 var x = Math.Max(MonitorInfo.WorkArea.X, MonitorInfo.WorkArea.X + (MonitorInfo.WorkArea.Width * MonitorInfo.DpiScaling - width) / 2);
-                var y = Math.Max(MonitorInfo.WorkArea.Y, MonitorInfo.WorkArea.Y + (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling - height) / 2);
-                window.Top = y;
                 window.Left = x;
-            }
-            else
-            {
-                window.Top = (MonitorInfo.WorkArea.Height * MonitorInfo.DpiScaling - width) / 2 + MonitorInfo.WorkArea.Top;
             }
         });
     }
