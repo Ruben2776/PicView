@@ -297,7 +297,7 @@
 	</ItemGroup>
 	
   <PropertyGroup>
-    <FileVersion>2.2.3</FileVersion>
+    <FileVersion>2.2.4</FileVersion>
     <SignAssembly>False</SignAssembly>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
@@ -308,7 +308,7 @@
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>icon-raster.128b.png</PackageIcon>
-    <AssemblyVersion>2.2.3</AssemblyVersion>
+    <AssemblyVersion>2.2.4</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
