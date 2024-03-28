@@ -9,7 +9,8 @@ public class CopyButton : Button
 {
     public static readonly AvaloniaProperty<string> CopyTextProperty =
         AvaloniaProperty.Register<CopyButton, string>(nameof(CopyText));
-
+    protected override Type StyleKeyOverride => typeof(Button);
+    
     public string CopyText
     {
         get => (string)GetValue(CopyTextProperty);

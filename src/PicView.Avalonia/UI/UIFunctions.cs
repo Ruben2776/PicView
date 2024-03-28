@@ -203,7 +203,8 @@ public class UIFunctions
 
     public Task ImageInfoWindow()
     {
-        throw new NotImplementedException();
+        _vm.ShowExifWindowCommand.Execute(null);
+        return Task.CompletedTask;
     }
 
     public Task ResizeWindow()
