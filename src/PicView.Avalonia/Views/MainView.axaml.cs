@@ -21,7 +21,7 @@ public partial class MainView : UserControl
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Margin = new Thickness(0, 0, 168, 0),
-                    Opacity = 1
+                    IsVisible = false
                 };
 
                 MainGrid.Children.Add(fileMenu);
@@ -31,7 +31,7 @@ public partial class MainView : UserControl
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Margin = new Thickness(0, 0, 64.5, 0),
-                    Opacity = 1
+                    IsVisible = false
                 };
 
                 MainGrid.Children.Add(imageMenu);
@@ -41,7 +41,7 @@ public partial class MainView : UserControl
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Margin = new Thickness(127, 0, 0, 0),
-                    Opacity = 1
+                    IsVisible = false
                 };
 
                 MainGrid.Children.Add(settingsMenu);
@@ -51,7 +51,7 @@ public partial class MainView : UserControl
                     VerticalAlignment = VerticalAlignment.Bottom,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Margin = new Thickness(120, 0, 0, 0),
-                    Opacity = 1
+                    IsVisible = false
                 };
 
                 MainGrid.Children.Add(toolsMenu);

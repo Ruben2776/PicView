@@ -33,10 +33,7 @@
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-            SelectedIndex="0">
-            <ComboBoxItem Content="test" />
-            <ComboBoxItem Content="95%" />
-        </ComboBox>
+            SelectedIndex="0" />
 
         <TextBlock
             Margin="0,10,0,10"
