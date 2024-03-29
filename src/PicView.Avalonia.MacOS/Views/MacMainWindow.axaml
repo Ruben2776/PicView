@@ -1,50 +1,121 @@
 <Window
+    BorderBrush="{StaticResource SecondaryBackgroundColor}"
+    BorderThickness="1"
+    CanResize="{Binding CanResize}"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    MinHeight="450"
+    MinWidth="500"
+    SizeChanged="Control_OnSizeChanged"
+    SizeToContent="{Binding SizeToContent}"
+    Title="{Binding WindowTitle}"
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.MacOS.Views.MacMainWindow"
+    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
     xmlns:vm="using:PicView.Avalonia.ViewModels"
-    Title="{Binding WindowTitle}"
-    MinWidth="500"
-    MinHeight="450"
-    x:DataType="viewModels:MainViewModel"
-    BorderBrush="{StaticResource SecondaryBackgroundColor}"
-    BorderThickness="1"
-    CanResize="{Binding CanResize}"
-    ExtendClientAreaChromeHints="SystemChrome"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    SizeChanged="Control_OnSizeChanged"
-    SizeToContent="{Binding SizeToContent}"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
     <NativeMenu.Menu>
         <NativeMenu>
-            <NativeMenuItem Header="{Binding File}">
+            <NativeMenuItem Header="{CompiledBinding File}">
                 <NativeMenu>
-                    <NativeMenuItem Command="{Binding OpenFileCommand}" Header="{Binding Open}" />
-                    <NativeMenuItem Command="{Binding SaveFileCommand}" Header="{Binding Save}" />
+                    <NativeMenuItem Command="{CompiledBinding OpenFileCommand}" Header="{CompiledBinding Open}" />
+                    <NativeMenuItem Command="{CompiledBinding OpenWithCommand}" Header="{CompiledBinding OpenWith}" />
+                    <NativeMenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save}" />
+                    <NativeMenuItem Command="{CompiledBinding PrintCommand}" Header="{CompiledBinding Print}" />
+                    <NativeMenuItem Command="{CompiledBinding ShowInFolderCommand}" Header="{CompiledBinding ShowInFolder}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding DeleteFileCommand}" Header="{CompiledBinding DeleteFile}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding ReloadCommand}" Header="{CompiledBinding Reload}" />
+                    <NativeMenuItem Command="{CompiledBinding NewWindowCommand}" Header="{CompiledBinding NewWindow}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding RenameCommand}" Header="{CompiledBinding RenameFile}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding PasteCommand}" Header="{CompiledBinding FilePaste}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding CopyFileCommand}" Header="{CompiledBinding CopyFile}" />
+                    <NativeMenuItem Command="{CompiledBinding CopyImageCommand}" Header="{CompiledBinding CopyImage}" />
+                    <NativeMenuItem Command="{CompiledBinding CopyFilePathCommand}" Header="{CompiledBinding FileCopyPath}" />
+                    <NativeMenuItem Command="{CompiledBinding DuplicateFileCommand}" Header="{CompiledBinding DuplicateFile}" />
+                    <NativeMenuItem Command="{CompiledBinding CutCommand}" Header="{CompiledBinding FileCut}" />
                 </NativeMenu>
             </NativeMenuItem>
-            <NativeMenuItem Header="View">
+            <NativeMenuItem Header="{CompiledBinding ImageTxt}">
                 <NativeMenu>
-                    <NativeMenuItem Command="{Binding ToggleUICommand}" Header="{Binding HideShowInterface}" />
+                    <NativeMenuItem Command="{CompiledBinding RotateLeftCommand}" Header="{CompiledBinding RotateLeft}" />
+                    <NativeMenuItem Command="{CompiledBinding RotateRightCommand}" Header="{CompiledBinding RotateRight}" />
+                    <NativeMenuItem Command="{CompiledBinding FlipCommand}" Header="{CompiledBinding Flip}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{CompiledBinding Crop}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{CompiledBinding SetAsWallpaper}" />
+                    <NativeMenuItem Header="{CompiledBinding SetAsLockScreenImage}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{CompiledBinding ChangeBackground}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{CompiledBinding Slideshow}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding ShowExifWindowCommand}" Header="{CompiledBinding ImageInfo}" />
+                    <NativeMenuItem Header="{CompiledBinding FileProperties}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{CompiledBinding ResizeImage}" />
+                    <NativeMenuItem Header="{CompiledBinding BatchResize}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding OptimizeImageCommand}" Header="{CompiledBinding OptimizeImage}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{CompiledBinding Effects}" />
                 </NativeMenu>
             </NativeMenuItem>
+            <NativeMenuItem Header="{CompiledBinding Settings}">
+                <NativeMenu>
+                    <NativeMenuItem
+                        Header="{CompiledBinding GetBottomGallery}"
+                        IsChecked="{CompiledBinding IsBottomGalleryShown}"
+                        ToggleType="CheckBox" />
+                    <NativeMenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
+                        Header="{CompiledBinding GetLooping}"
+                        IsChecked="{CompiledBinding IsLooping}"
+                        ToggleType="CheckBox" />
+                    <NativeMenuItem
+                        Header="{CompiledBinding Stretch}"
+                        IsChecked="{CompiledBinding IsStretched}"
+                        ToggleType="CheckBox" />
+                    <NativeMenuItem
+                        Header="{CompiledBinding ToggleScroll}"
+                        IsChecked="{CompiledBinding GetScrolling}"
+                        ToggleType="CheckBox" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
+                        Header="{CompiledBinding StayTopMost}"
+                        IsChecked="{CompiledBinding IsTopMost}"
+                        ToggleType="CheckBox" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem
+                        Header="{CompiledBinding SearchSubdirectory}"
+                        IsChecked="{CompiledBinding IsIncludingSubdirectories}"
+                        ToggleType="CheckBox" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding ShowKeybindingsWindowCommand}" Header="{CompiledBinding ApplicationShortcuts}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{CompiledBinding About}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Command="{CompiledBinding ShowSettingsWindowCommand}" Header="{CompiledBinding ShowAllSettingsWindow}" />
+                </NativeMenu>
+            </NativeMenuItem>
+
         </NativeMenu>
     </NativeMenu.Menu>
-    <Window.KeyBindings>
-        <KeyBinding Command="{Binding NextCommand}" Gesture="Right" />
-        <KeyBinding Command="{Binding PreviousCommand}" Gesture="Left" />
-        <KeyBinding Command="{Binding RotateLeftCommand}" Gesture="Up" />
-        <KeyBinding Command="{Binding RotateRightCommand}" Gesture="Down" />
-        <KeyBinding Command="{Binding ToggleUICommand}" Gesture="Z" />
-    </Window.KeyBindings>
 
     <DockPanel LastChildFill="True">
         <views1:MacOSTitlebar DockPanel.Dock="Top" />
