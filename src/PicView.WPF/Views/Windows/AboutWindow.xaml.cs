@@ -43,7 +43,7 @@ public partial class AboutWindow
     {
         WindowBlur.EnableBlur(this);
 
-        UpdateLanguage(GetFileVersionInfo());
+        UpdateLanguage(VersionHelper.GetFileVersionInfo());
         Owner = null; // Remove owner, so that minimizing main-window will not minimize this
         ShortcutList = new UserControls.Misc.ShortcutList
         {
@@ -139,7 +139,7 @@ public partial class AboutWindow
     public void UpdateLanguage()
     {
         ShortcutList?.UpdateLanguage();
-        UpdateLanguage(GetFileVersionInfo());
+        UpdateLanguage(VersionHelper.GetFileVersionInfo());
     }
 
     private void UpdateLanguage(FileVersionInfo fvi)
@@ -151,13 +151,6 @@ public partial class AboutWindow
         GitHub.ToolTip = TranslationHelper.GetTranslation("ViewLicenseFile");
 
         UpdateButtonLabel.Content = TranslationHelper.GetTranslation("CheckForUpdates");
-    }
-
-    private FileVersionInfo GetFileVersionInfo()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-        return fvi;
     }
 
     private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
