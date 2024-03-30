@@ -43,7 +43,7 @@ public class FileHistoryTest
         Assert.NotNull(nextEntry);
         Assert.True(File.Exists(nextEntry));
 
-        var prevEntry = history.GetNextEntry(looping: false, 2, list);
+        var prevEntry = history.GetPreviousEntry(looping: true, 2, list);
         Assert.NotNull(prevEntry);
         Assert.True(File.Exists(prevEntry));
 
