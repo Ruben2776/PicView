@@ -145,6 +145,25 @@ public class App : Application, IPlatformSpecificService
             }
             vm.CloseMenuCommand.Execute(null);
         });
+        
+        vm.ShowAboutWindowCommand = ReactiveCommand.Create(() =>
+        {
+            if (_aboutWindow is null)
+            {
+                _aboutWindow = new AboutWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _aboutWindow.Show(w);
+                _aboutWindow.Closing += (s, e) => _aboutWindow = null;
+            }
+            else
+            {
+                _aboutWindow.Activate();
+            }
+            vm.CloseMenuCommand.Execute(null);
+        });
     }
 
     public void SetCursorPos(int x, int y)

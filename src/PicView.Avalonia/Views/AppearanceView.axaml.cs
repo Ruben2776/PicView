@@ -26,7 +26,7 @@ public partial class AppearanceView : UserControl
     {
         try
         {
-            var languages = TranslationHelper.GetLanguages();
+            var languages = TranslationHelper.GetLanguages().OrderBy(x => x);
             foreach (var language in languages)
             {
                 var lang = Path.GetFileNameWithoutExtension(language);

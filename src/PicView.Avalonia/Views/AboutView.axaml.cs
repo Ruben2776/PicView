@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -13,7 +14,10 @@ public partial class AboutView : UserControl
         InitializeComponent();
         Loaded += (sender, e) =>
         {
-            AppVersion.Text = VersionHelper.GetFileVersionInfo().FileVersion;
+            AppVersion.Text = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                VersionHelper.GetFileVersionInfo().FileVersion :
+                GetType().Assembly.GetName().Version.ToString();
+            
             KofiImage.PointerEntered += (_, _) =>
             {
                 if (!TryGetResource("kofi_button_redDrawingImage", ThemeVariant.Default, out var redDrawing))
