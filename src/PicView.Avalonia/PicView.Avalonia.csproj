@@ -59,6 +59,9 @@
     <Compile Update="Views\AppearanceView.axaml.cs">
       <DependentUpon>AppearanceView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\AboutView.axaml.cs">
+      <DependentUpon>AboutView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ShortcutsView.axaml.cs">
       <DependentUpon>ShortcutsView.axaml</DependentUpon>
     </Compile>

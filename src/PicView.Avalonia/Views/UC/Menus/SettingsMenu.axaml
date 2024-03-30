@@ -65,6 +65,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
+                    Command="{CompiledBinding ShowAboutWindowCommand}"
                     ToolTip.Tip="{Binding InfoWinow}">
                     <StackPanel Orientation="Horizontal">
                         <Image

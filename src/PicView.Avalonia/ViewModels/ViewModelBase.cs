@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using ReactiveUI;
 
@@ -202,9 +203,54 @@ public class ViewModelBase : ReactiveObject
         MouseDrag = TranslationHelper.GetTranslation("MouseDrag");
         DoubleClick = TranslationHelper.GetTranslation("DoubleClick");
         MoveWindow = TranslationHelper.GetTranslation("MoveWindow");
+        GithubRepo = TranslationHelper.GetTranslation("GithubRepo");
+        Version = TranslationHelper.GetTranslation("Version");
+        ViewLicenseFile = TranslationHelper.GetTranslation("ViewLicenseFile");
+        CheckForUpdates = TranslationHelper.GetTranslation("CheckForUpdates");
+        Credits = TranslationHelper.GetTranslation("Credits");
     }
 
     #region Strings
+
+    private string? _credits;
+
+    public string? Credits
+    {
+        get => _credits;
+        set => this.RaiseAndSetIfChanged(ref _credits, value);
+    }
+
+    private string? _checkForUpdates;
+
+    public string? CheckForUpdates
+    {
+        get => _checkForUpdates;
+        set => this.RaiseAndSetIfChanged(ref _checkForUpdates, value);
+    }
+
+    private string? _viewLicenseFile;
+
+    public string? ViewLicenseFile
+    {
+        get => _viewLicenseFile;
+        set => this.RaiseAndSetIfChanged(ref _viewLicenseFile, value);
+    }
+
+    private string? _version;
+
+    public string? Version
+    {
+        get => _version;
+        set => this.RaiseAndSetIfChanged(ref _version, value);
+    }
+
+    private string? _githubRepo;
+
+    public string? GithubRepo
+    {
+        get => _githubRepo;
+        set => this.RaiseAndSetIfChanged(ref _githubRepo, value);
+    }
 
     private string? _moveWindow;
 
@@ -1170,7 +1216,7 @@ public class ViewModelBase : ReactiveObject
 
     public string? File
     {
-        get => _file;
+        get => _file.FirstCharToUpper();
         set => this.RaiseAndSetIfChanged(ref _file, value);
     }
 

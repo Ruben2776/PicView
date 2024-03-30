@@ -101,6 +101,14 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _showExifWindowCommand, value);
         }
 
+        private ICommand? _showAboutWindowCommand;
+
+        public ICommand? ShowAboutWindowCommand
+        {
+            get => _showAboutWindowCommand;
+            set => this.RaiseAndSetIfChanged(ref _showAboutWindowCommand, value);
+        }
+
         private ICommand? _showSettingsWindowCommand;
 
         public ICommand? ShowSettingsWindowCommand
@@ -1501,6 +1509,10 @@ namespace PicView.Avalonia.ViewModels
             });
 
             ShowExifWindowCommand = ReactiveCommand.Create(() =>
+            {
+            });
+
+            ShowAboutWindowCommand = ReactiveCommand.Create(() =>
             {
             });
 

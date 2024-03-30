@@ -23,6 +23,7 @@ public class App : Application, IPlatformSpecificService
     private ExifWindow? _exifWindow;
     private SettingsWindow? _settingsWindow;
     private KeybindingsWindow? _keybindingsWindow;
+    private AboutWindow? _aboutWindow;
 
     public override void Initialize()
     {
@@ -144,6 +145,25 @@ public class App : Application, IPlatformSpecificService
             else
             {
                 _keybindingsWindow.Activate();
+            }
+            vm.CloseMenuCommand.Execute(null);
+        });
+
+        vm.ShowAboutWindowCommand = ReactiveCommand.Create(() =>
+        {
+            if (_aboutWindow is null)
+            {
+                _aboutWindow = new AboutWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _aboutWindow.Show();
+                _aboutWindow.Closing += (s, e) => _aboutWindow = null;
+            }
+            else
+            {
+                _aboutWindow.Activate();
             }
             vm.CloseMenuCommand.Execute(null);
         });

@@ -187,7 +187,8 @@ public class UIFunctions
 
     public Task AboutWindow()
     {
-        throw new NotImplementedException();
+        _vm?.ShowAboutWindowCommand.Execute(null);
+        return Task.CompletedTask;
     }
 
     public Task KeybindingsWindow()

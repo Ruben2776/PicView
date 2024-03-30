@@ -25,6 +25,7 @@ public class App : Application, IPlatformSpecificService
     private ExifWindow? _exifWindow;
     private SettingsWindow? _settingsWindow;
     private KeybindingsWindow? _keybindingsWindow;
+    private AboutWindow? _aboutWindow;
 
     public override void Initialize()
     {

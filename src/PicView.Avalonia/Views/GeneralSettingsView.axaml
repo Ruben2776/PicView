@@ -32,8 +32,9 @@
             Classes="altHover"
             IsChecked="{Binding IsIncludingSubdirectories}">
             <TextBlock
+                MaxWidth="240"
                 Margin="0"
-                Padding="0,1,0,0"
+                Padding="0,1,5,0"
                 Classes="txt"
                 Text="{Binding SearchSubdirectory}" />
         </ToggleButton>
@@ -47,8 +48,9 @@
             Command="{Binding ChangeTopMostCommand}"
             IsChecked="{Binding IsTopMost}">
             <TextBlock
+                MaxWidth="240"
                 Margin="0"
-                Padding="0,1,0,0"
+                Padding="0,1,5,0"
                 Classes="txt"
                 Text="{Binding StayTopMost}" />
         </ToggleButton>
@@ -61,8 +63,9 @@
             Classes="altHover"
             IsChecked="{Binding IsStayingCentered}">
             <TextBlock
+                MaxWidth="240"
                 Margin="0"
-                Padding="0,1,0,0"
+                Padding="0,1,5,0"
                 Classes="txt"
                 Text="{Binding StayCentered}" />
         </ToggleButton>
@@ -75,8 +78,9 @@
             Classes="altHover"
             IsChecked="{Binding IsFileSavingDialogShown}">
             <TextBlock
+                MaxWidth="240"
                 Margin="0"
-                Padding="0,1,0,0"
+                Padding="0,1,5,0"
                 Classes="txt"
                 Text="{Binding ShowFileSavingDialog}" />
         </ToggleButton>
@@ -89,8 +93,9 @@
             Classes="altHover"
             IsChecked="{Binding IsOpeningInSameWindow}">
             <TextBlock
+                MaxWidth="240"
                 Margin="0"
-                Padding="0,1,0,0"
+                Padding="0,1,5,0"
                 Classes="txt"
                 Text="{Binding OpenInSameWindow}" />
         </ToggleButton>
