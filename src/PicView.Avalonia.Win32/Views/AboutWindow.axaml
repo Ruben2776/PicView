@@ -8,7 +8,9 @@
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     Title="Loading..."
     x:DataType="viewModels:MainViewModel"
+    BorderThickness="0"
     CanResize="False"
+    CornerRadius="8"
     SizeToContent="WidthAndHeight"
     mc:Ignorable="d">
     <Design.DataContext>
@@ -90,7 +92,6 @@
             </DockPanel>
 
             <Rectangle Height="1" Fill="{StaticResource MainBorderColor}" />
-
 
             <views:AboutView
                 Margin="0"
