@@ -85,8 +85,6 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ChangeCtrlZoomCommand { get; }
 
-        public ICommand? ToggleBottomGalleryCommand { get; }
-
         public ICommand? ChangeIncludeSubdirectoriesCommand { get; }
 
         public ICommand? ToggleUICommand { get; }
@@ -146,6 +144,8 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? SortFilesRandomlyCommand { get; }
         public ICommand? SortFilesAscendingCommand { get; }
         public ICommand? SortFilesDescendingCommand { get; }
+
+        public ICommand? ToggleGalleryCommand { get; }
 
         #endregion Commands
 
@@ -207,6 +207,14 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _isShowingButtonsInHiddenUI;
             set => this.RaiseAndSetIfChanged(ref _isShowingButtonsInHiddenUI, value);
+        }
+
+        private bool _isGalleryOpen;
+
+        public bool IsGalleryOpen
+        {
+            get => _isGalleryOpen;
+            set => this.RaiseAndSetIfChanged(ref _isGalleryOpen, value);
         }
 
         private bool _isShowingTaskbarProgress = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
@@ -1464,49 +1472,7 @@ namespace PicView.Avalonia.ViewModels
 
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
-            ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleAutoFit(this));
-
-            ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleTopMost(this));
-
-            ChangeIncludeSubdirectoriesCommand = ReactiveCommand.Create(() =>
-            {
-                IsIncludingSubdirectories = !IsIncludingSubdirectories;
-                SetTitle();
-            });
-
-            ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                {
-                    IsBottomGalleryShown = false;
-                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
-                }
-                else
-                {
-                    IsBottomGalleryShown = true;
-                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
-                }
-                WindowHelper.SetSize(this);
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-            });
-
             ToggleUICommand = ReactiveCommand.CreateFromTask(async () => { await WindowHelper.ToggleUI(this); });
-
-            ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
-                {
-                    IsBottomToolbarShown = false;
-                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = false;
-                }
-                else
-                {
-                    IsBottomToolbarShown = true;
-                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
-                }
-                WindowHelper.SetSize(this);
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-            });
 
             ShowExifWindowCommand = ReactiveCommand.Create(() =>
             {
@@ -1514,15 +1480,6 @@ namespace PicView.Avalonia.ViewModels
 
             ShowAboutWindowCommand = ReactiveCommand.Create(() =>
             {
-            });
-
-            ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
-                GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
-                    ? TranslationHelper.GetTranslation("CtrlToZoom")
-                    : TranslationHelper.GetTranslation("ScrollToZoom");
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
 
             #endregion Window commands
@@ -1886,6 +1843,64 @@ namespace PicView.Avalonia.ViewModels
             });
 
             #endregion EXIF commands
+
+            #region UI Commands
+
+            ToggleGalleryCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                IsGalleryOpen = !IsGalleryOpen;
+                SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
+                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                {
+                    // TODO: Change to bottom gallery view
+                }
+                else
+                {
+                }
+                //WindowHelper.SetSize(this);
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+
+            ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+                {
+                    IsBottomToolbarShown = false;
+                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = false;
+                }
+                else
+                {
+                    IsBottomToolbarShown = true;
+                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
+                }
+                WindowHelper.SetSize(this);
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+
+            ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
+                GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
+                    ? TranslationHelper.GetTranslation("CtrlToZoom")
+                    : TranslationHelper.GetTranslation("ScrollToZoom");
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+
+            #endregion UI Commands
+
+            #region Settings commands
+
+            ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleAutoFit(this));
+
+            ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleTopMost(this));
+
+            ChangeIncludeSubdirectoriesCommand = ReactiveCommand.Create(() =>
+            {
+                IsIncludingSubdirectories = !IsIncludingSubdirectories;
+                SetTitle();
+            });
+
+            #endregion Settings commands
 
             _platformService = platformSpecificService;
             Activator = new ViewModelActivator();

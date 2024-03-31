@@ -8,17 +8,16 @@
         <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Grid Background="{TemplateBinding Background}" ColumnDefinitions="Auto,*">
+                <Panel Background="{TemplateBinding Background}">
 
                     <ContentPresenter
                         Name="PART_ContentPresenter"
-                        Grid.Column="1"
                         Margin="4,0,0,0"
                         VerticalAlignment="Center"
                         Content="{TemplateBinding Content}"
                         ContentTemplate="{TemplateBinding ContentTemplate}"
                         RecognizesAccessKey="True" />
-                </Grid>
+                </Panel>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

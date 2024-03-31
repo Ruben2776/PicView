@@ -47,7 +47,7 @@
         <SolidColorBrush x:Key="OpenLastFileBrush" Color="{StaticResource MainTextColor}" />
         <SolidColorBrush x:Key="PasteBrush" Color="{StaticResource MainTextColor}" />
     </UserControl.Resources>
-    <Grid>
+    <Panel>
         <Viewbox
             x:Name="LogoViewbox"
             Width="435"
@@ -162,5 +162,5 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-    </Grid>
+    </Panel>
 </UserControl>

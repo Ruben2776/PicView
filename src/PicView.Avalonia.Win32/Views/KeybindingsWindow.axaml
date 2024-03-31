@@ -19,7 +19,7 @@
         BorderBrush="{StaticResource MainBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
-        <Grid>
+        <Panel>
 
             <DockPanel
                 Height="28"
@@ -97,6 +97,6 @@
                 Focusable="True">
                 <views:ShortcutsView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
-        </Grid>
+        </Panel>
     </Border>
 </Window>

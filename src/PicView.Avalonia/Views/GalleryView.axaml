@@ -1,0 +1,47 @@
+<UserControl
+    x:Class="PicView.Avalonia.Views.GalleryView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    x:DataType="viewModels:MainViewModel"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    <Border
+        Background="{StaticResource BackgroundAlpha}"
+        BorderBrush="{StaticResource MainBorderColor}"
+        BorderThickness="0">
+        <Grid>
+            <Button
+                Width="50"
+                Height="60"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="{StaticResource MainButtonBackgroundColor}"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="1,0,0,0"
+                Classes="altHover"
+                CornerRadius="0,0,0,45"
+                DockPanel.Dock="Right">
+                <Path
+                    Width="23"
+                    Height="23"
+                    Margin="7,0,0,11"
+                    Data="{StaticResource CloseGeometry}"
+                    Fill="{StaticResource MainIconColor}"
+                    Stretch="Fill" />
+            </Button>
+            <ScrollViewer
+                Margin="0,0,0,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <ItemsControl />
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

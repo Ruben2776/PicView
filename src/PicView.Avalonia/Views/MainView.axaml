@@ -8,6 +8,7 @@
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
@@ -422,7 +423,8 @@
             </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Grid x:Name="MainGrid">
+    <Panel x:Name="MainGrid">
         <ContentControl Content="{Binding CurrentView}" />
-    </Grid>
+        <views:GalleryView IsVisible="{CompiledBinding IsGalleryOpen}" />
+    </Panel>
 </UserControl>

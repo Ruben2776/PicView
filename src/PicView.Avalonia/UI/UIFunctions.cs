@@ -126,7 +126,8 @@ public class UIFunctions
 
     public Task ToggleGallery()
     {
-        throw new NotImplementedException();
+        _vm?.ToggleGalleryCommand.Execute(null);
+        return Task.CompletedTask;
     }
 
     public Task AutoFitWindow()

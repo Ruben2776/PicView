@@ -113,7 +113,7 @@ public partial class ImageViewer : UserControl
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            // TODO figure out how to do image navigation with gestures
+            // Use touch gestures for zooming on macOS
             return;
         }
         var ctrl = e.KeyModifiers == KeyModifiers.Control;
@@ -223,12 +223,12 @@ public partial class ImageViewer : UserControl
 
     public void ZoomIn(PointerWheelEventArgs e)
     {
-        ZoomTo(e.GetPosition(this), true);
+        ZoomTo(e.GetPosition(ImageScrollViewer), true);
     }
 
     public void ZoomOut(PointerWheelEventArgs e)
     {
-        ZoomTo(e.GetPosition(this), false);
+        ZoomTo(e.GetPosition(ImageScrollViewer), false);
     }
 
     public void ZoomIn()
@@ -273,7 +273,7 @@ public partial class ImageViewer : UserControl
         }
 
         currentZoom += zoomSpeed;
-        currentZoom = Math.Max(0.09, currentZoom);
+        currentZoom = Math.Max(0.09, currentZoom); // Fix for zooming out too much
         if (SettingsHelper.Settings.Zoom.AvoidZoomingOut && currentZoom < 1.0)
         {
             ResetZoom(true);
@@ -290,11 +290,6 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
-
-        //if (zoomValue < 1)
-        //{
-        //    point = new Point(Bounds.Width / 2, Bounds.Height / 2);
-        //}
 
         if (enableAnimations)
         {
@@ -388,14 +383,8 @@ public partial class ImageViewer : UserControl
         }
 
         var position = _start - e.GetPosition(ImageZoomBorder);
-        var speed = _translateTransform.X < -200 ? 7 : 3;
-        speed = _translateTransform.X < -350 ? 11 : speed;
-        speed = _translateTransform.X < -500 ? 15 : speed;
-        speed = _translateTransform.X < -750 ? 20 : speed;
-        speed = _translateTransform.X < -1000 ? 25 : speed;
-        speed = _translateTransform.X < -1200 ? -35 : speed;
-        var newXproperty = _origin.X - (position.X + speed);
-        var newYproperty = _origin.Y - (position.Y + speed);
+        var newXproperty = _origin.X - (position.X + 1);
+        var newYproperty = _origin.Y - (position.Y + 1);
 
         var actualScrollWidth = ImageScrollViewer.Bounds.Width;
         var actualBorderWidth = ImageZoomBorder.Bounds.Width;

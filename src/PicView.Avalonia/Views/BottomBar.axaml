@@ -22,7 +22,7 @@
         BorderThickness="0,1,0,0"
         CornerRadius="0,0,8,8"
         PointerPressed="MoveWindow">
-        <Grid>
+        <Panel>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
                 <Button
@@ -184,6 +184,6 @@
                 Fill="{StaticResource MainIconColor}"
                 IsVisible="{Binding CanResize}"
                 Stretch="Fill" />
-        </Grid>
+        </Panel>
     </Border>
 </UserControl>

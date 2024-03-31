@@ -55,6 +55,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
+                Command="{CompiledBinding ToggleGalleryCommand}"
                 DockPanel.Dock="Left">
                 <Image Width="17">
                     <DrawingImage>
@@ -116,7 +117,7 @@
                 <Path
                     Width="10"
                     Height="10"
-                    Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
+                    Data="{StaticResource CloseGeometry}"
                     Fill="{StaticResource MainIconColor}"
                     Stretch="Fill" />
             </Button>
@@ -133,7 +134,7 @@
                 <Path
                     Width="12"
                     Height="12"
-                    Data="M405.34 405.332H106.66V106.668H240V64H106.66C83.191 64 64 83.197 64 106.668v298.664C64 428.803 83.191 448 106.66 448h298.68c23.469 0 42.66-19.197 42.66-42.668V272h-42.66v133.332zM288 64v42.668h87.474L159.999 322.133l29.866 29.866 215.476-215.47V224H448V64H288z"
+                    Data="{StaticResource FullscreenGeometry}"
                     Fill="{StaticResource MainIconColor}"
                     Stretch="Fill" />
             </Button>
@@ -148,7 +149,7 @@
                 DockPanel.Dock="Right">
                 <Viewbox Width="12" Height="12">
                     <Path
-                        Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z"
+                        Data="{StaticResource MinimizeGeometry}"
                         Fill="{StaticResource MainIconColor}"
                         Stretch="Fill" />
                 </Viewbox>

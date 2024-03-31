@@ -21,9 +21,9 @@
         BorderBrush="{StaticResource MainBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
-        <Grid>
+        <Panel>
 
-            <Grid
+            <Panel
                 Height="28"
                 VerticalAlignment="Top"
                 Background="{StaticResource SecondaryBackgroundColor}"
@@ -129,7 +129,7 @@
                         Fill="{StaticResource MainIconColor}"
                         Stretch="Fill" />
                 </Button>
-            </Grid>
+            </Panel>
 
             <ScrollViewer
                 Margin="0,28,0,0"
@@ -144,6 +144,6 @@
                 IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}">
                 <views:AppearanceView Background="Transparent" PointerPressed="MoveWindow" />
             </ScrollViewer>
-        </Grid>
+        </Panel>
     </Border>
 </Window>
