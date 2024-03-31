@@ -124,6 +124,7 @@ internal class LanguageModel
     public string? WaveWarper { get; set; }
     public string? Underwater { get; set; }
     public string? BandedSwirl { get; set; }
+    public string? Swirl { get; set; }
     public string? Ripple { get; set; }
     public string? RippleAlt { get; set; }
     public string? Blur { get; set; }
