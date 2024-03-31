@@ -356,6 +356,11 @@ internal static class LoadPic
         var folderChanged = Pics.Count > 0;
         if (folderChanged)
         {
+            if (FolderIndex > Pics.Count)
+            {
+                await ReloadAsync();
+                return;
+            }
             folderChanged = fileInfo.Directory.FullName != Path.GetDirectoryName(Pics[FolderIndex]);
         }
 
@@ -552,7 +557,7 @@ internal static class LoadPic
             if (showLoading)
             {
                 // Set Loading
-                SetLoadingString(); 
+                SetLoadingString();
                 GetSpinWaiter.Visibility = Visibility.Visible;
             }
 

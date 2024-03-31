@@ -75,7 +75,7 @@ public class PreLoader
                 }
 #if DEBUG
                 if (ShowAddRemove)
-                    Trace.WriteLine($"{imageModel.FileInfo.Name} added at {index}");
+                    Trace.WriteLine($"{imageModel?.FileInfo?.Name} added at {index}");
 #endif
                 return true;
             }
