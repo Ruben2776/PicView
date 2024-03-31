@@ -445,4 +445,16 @@ public static class EXIFHelper
         var exifVersion = profile?.GetValue(ExifTag.ExifVersion)?.Value;
         return exifVersion is null ? string.Empty : Encoding.ASCII.GetString(exifVersion);
     }
+
+    public static string? GetTitle(IExifProfile? profile)
+    {
+        var xPTitle = profile?.GetValue(ExifTag.XPTitle)?.Value;
+        var title = xPTitle is null ? string.Empty : Encoding.ASCII.GetString(xPTitle);
+        if (!string.IsNullOrEmpty(title))
+        {
+            return title;
+        }
+        var titleTag = profile?.GetValue(ExifTag.ImageDescription)?.Value;
+        return titleTag ?? string.Empty;
+    }
 }

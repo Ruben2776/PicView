@@ -1197,7 +1197,7 @@ namespace PicView.Avalonia.ViewModels
                     GetAuthors = getAuthors ?? string.Empty;
                     GetDateTaken = EXIFHelper.GetDateTaken(profile);
                     GetCopyright = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
-                    GetTitle = profile?.GetValue(ExifTag.XPTitle)?.Value.ToString() ?? string.Empty;
+                    GetTitle = EXIFHelper.GetTitle(profile);
                     GetSubject = profile?.GetValue(ExifTag.XPSubject)?.Value.ToString() ?? string.Empty;
                     GetSoftware = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
                     GetResolutionUnit = EXIFHelper.GetResolutionUnit(profile);
