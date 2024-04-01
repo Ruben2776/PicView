@@ -75,7 +75,7 @@ public partial class ImageViewer : UserControl
 
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)
     {
-        ZoomTo(e.GetPosition(this), e.Delta.Y > 0);
+        ZoomTo(e.GetPosition(this), e.Delta.X > 0);
     }
 
     private async Task PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -315,6 +315,36 @@ public partial class ImageViewer : UserControl
 
         var newTranslateValueX = Math.Abs(zoomValue - 1) > .2 ? absoluteX - point.X * zoomValue : 0;
         var newTranslateValueY = Math.Abs(zoomValue - 1) > .2 ? absoluteY - point.Y * zoomValue : 0;
+        
+        var actualScrollWidth = ImageScrollViewer.Bounds.Width;
+        var actualBorderWidth = ImageZoomBorder.Bounds.Width;
+        var actualScrollHeight = ImageScrollViewer.Bounds.Height;
+        var actualBorderHeight = ImageZoomBorder.Bounds.Height;
+
+        var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
+        var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
+        var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
+        var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
+
+        if (isXOutOfBorder && newTranslateValueX < maxX || isXOutOfBorder == false && newTranslateValueX > maxX)
+        {
+            newTranslateValueX = maxX;
+        }
+
+        if (isXOutOfBorder && newTranslateValueY < maxY || isXOutOfBorder == false && newTranslateValueY > maxY)
+        {
+            newTranslateValueY = maxY;
+        }
+
+        if (isXOutOfBorder && newTranslateValueX > 0 || isXOutOfBorder == false && newTranslateValueX < 0)
+        {
+            newTranslateValueX = 0;
+        }
+
+        if (isYOutOfBorder && newTranslateValueY > 0 || isYOutOfBorder == false && newTranslateValueY < 0)
+        {
+            newTranslateValueY = 0;
+        }
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             _scaleTransform.ScaleX = zoomValue;

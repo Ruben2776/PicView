@@ -1,13 +1,13 @@
 <UserControl
+    IsVisible="{Binding IsToolsMenuVisible}"
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.Menus.ToolsMenu"
+    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
-    x:DataType="viewModels:MainViewModel"
-    IsVisible="{Binding IsToolsMenuVisible}"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -19,30 +19,30 @@
             BorderThickness="1"
             CornerRadius="8"
             Effect="{StaticResource MenuShadowButtonBorder}">
-            <Canvas Width="359" Height="201">
+            <Canvas Height="201" Width="359">
 
                 <Border
-                    Width="359"
-                    Height="47"
                     Background="{StaticResource SecondaryBackgroundColor}"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,0,1"
-                    CornerRadius="8,8,0,0" />
+                    CornerRadius="8,8,0,0"
+                    Height="47"
+                    Width="359" />
 
                 <Button
-                    Width="179"
-                    Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
                     CornerRadius="8,0,0,0"
-                    ToolTip.Tip="{Binding BatchResize}">
+                    Height="45"
+                    ToolTip.Tip="{Binding BatchResize}"
+                    Width="179">
                     <StackPanel Orientation="Horizontal">
                         <Image
-                            Width="22"
                             Height="22"
-                            Margin="17,0,0,0">
+                            Margin="17,0,0,0"
+                            Width="22">
                             <DrawingImage>
                                 <DrawingGroup>
                                     <GeometryDrawing Geometry="F1 M432 112L432 96Q431.997 94.8226 431.936 93.6468Q431.875 92.471 431.756 91.2995Q431.638 90.1281 431.462 88.9638Q431.287 87.7996 431.055 86.6453Q430.822 85.4911 430.534 84.3495Q430.246 83.208 429.902 82.0819Q429.558 80.9558 429.16 79.8479Q428.761 78.74 428.309 77.6528Q427.857 76.5657 427.352 75.502Q426.847 74.4383 426.291 73.4005Q425.735 72.3627 425.129 71.3534Q424.523 70.3441 423.868 69.3656Q423.213 68.3871 422.511 67.4418Q421.809 66.4965 421.062 65.5866Q420.315 64.6767 419.524 63.8045Q418.733 62.9322 417.9 62.0997Q417.068 61.2671 416.195 60.4763Q415.323 59.6854 414.413 58.9381Q413.504 58.1909 412.558 57.489Q411.613 56.7871 410.634 56.1323Q409.656 55.4774 408.647 54.8712Q407.637 54.265 406.599 53.7088Q405.562 53.1527 404.498 52.6479Q403.434 52.1432 402.347 51.691Q401.26 51.2389 400.152 50.8404Q399.044 50.4419 397.918 50.0981Q396.792 49.7543 395.65 49.4659Q394.509 49.1776 393.355 48.9454Q392.2 48.7131 391.036 48.5376Q389.872 48.3621 388.7 48.2437Q387.529 48.1254 386.353 48.0644Q385.177 48.0034 384 48L64 48Q62.8226 48.0034 61.6468 48.0644Q60.471 48.1254 59.2995 48.2438Q58.1281 48.3621 56.9639 48.5376Q55.7996 48.7132 54.6453 48.9454Q53.4911 49.1776 52.3495 49.4659Q51.208 49.7543 50.0819 50.0981Q48.9558 50.442 47.8479 50.8404Q46.74 51.2389 45.6529 51.691Q44.5657 52.1432 43.502 52.6479Q42.4383 53.1527 41.4005 53.7089Q40.3628 54.265 39.3534 54.8712Q38.3441 55.4774 37.3656 56.1323Q36.3871 56.7871 35.4418 57.489Q34.4965 58.1909 33.5866 58.9382Q32.6767 59.6854 31.8045 60.4763Q30.9322 61.2671 30.0997 62.0997Q29.2671 62.9322 28.4763 63.8045Q27.6854 64.6767 26.9382 65.5866Q26.1909 66.4965 25.489 67.4418Q24.7871 68.3871 24.1323 69.3656Q23.4774 70.3441 22.8712 71.3534Q22.265 72.3628 21.7088 73.4006Q21.1527 74.4383 20.6479 75.502Q20.1432 76.5658 19.691 77.6529Q19.2389 78.74 18.8404 79.8479Q18.442 80.9558 18.0981 82.0819Q17.7543 83.208 17.4659 84.3495Q17.1776 85.4911 16.9454 86.6453Q16.7131 87.7996 16.5376 88.9639Q16.3621 90.1281 16.2437 91.2995Q16.1254 92.471 16.0644 93.6468Q16.0034 94.8226 16 96L16 352Q16.0034 353.177 16.0644 354.353Q16.1254 355.529 16.2437 356.701Q16.3621 357.872 16.5376 359.036Q16.7131 360.2 16.9454 361.355Q17.1776 362.509 17.4659 363.65Q17.7543 364.792 18.0981 365.918Q18.442 367.044 18.8404 368.152Q19.2389 369.26 19.691 370.347Q20.1432 371.434 20.6479 372.498Q21.1527 373.562 21.7088 374.599Q22.265 375.637 22.8712 376.647Q23.4774 377.656 24.1323 378.634Q24.7871 379.613 25.489 380.558Q26.1909 381.504 26.9382 382.413Q27.6854 383.323 28.4763 384.196Q29.2671 385.068 30.0997 385.9Q30.9322 386.733 31.8045 387.524Q32.6767 388.315 33.5866 389.062Q34.4965 389.809 35.4418 390.511Q36.3871 391.213 37.3656 391.868Q38.3441 392.523 39.3534 393.129Q40.3628 393.735 41.4005 394.291Q42.4383 394.847 43.502 395.352Q44.5657 395.857 45.6529 396.309Q46.74 396.761 47.8479 397.16Q48.9558 397.558 50.0819 397.902Q51.208 398.246 52.3495 398.534Q53.4911 398.822 54.6453 399.055Q55.7996 399.287 56.9639 399.462Q58.1281 399.638 59.2995 399.756Q60.471 399.875 61.6468 399.936Q62.8226 399.997 64 400L80 400">
@@ -85,28 +85,29 @@
                             </DrawingImage>
                         </Image>
                         <TextBlock
-                            Margin="10,0,6,0"
-                            VerticalAlignment="Center"
                             Classes="txt"
                             FontSize="14"
-                            Text="{Binding BatchResize}" />
+                            Margin="10,0,7,0"
+                            MaxWidth="130"
+                            Text="{Binding BatchResize}"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
                 <Button
-                    Canvas.Left="179"
-                    Width="136"
-                    Height="45"
                     Background="Transparent"
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
+                    Canvas.Left="179"
                     Classes="noBorderHover"
-                    ToolTip.Tip="{Binding EffectsTooltip}">
+                    Height="45"
+                    ToolTip.Tip="{Binding EffectsTooltip}"
+                    Width="136">
                     <StackPanel Orientation="Horizontal">
                         <Image
-                            Width="20"
                             Height="20"
-                            Margin="11,0,0,0">
+                            Margin="11,0,0,0"
+                            Width="20">
                             <DrawingImage>
                                 <DrawingImage.Drawing>
                                     <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
@@ -116,67 +117,68 @@
                             </DrawingImage>
                         </Image>
                         <TextBlock
-                            Margin="10,0,6,0"
-                            VerticalAlignment="Center"
                             Classes="txt"
                             FontSize="14"
-                            Text="{Binding Effects}" />
+                            Margin="10,0,6,0"
+                            MaxWidth="130"
+                            Text="{Binding Effects}"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
                 <Button
+                    Background="Transparent"
                     Canvas.Left="315"
                     Canvas.Top="-1"
-                    Width="45"
-                    Height="45"
-                    Background="Transparent"
                     Classes="hover"
                     Command="{Binding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
-                    ToolTip.Tip="{Binding Close}">
+                    Height="45"
+                    ToolTip.Tip="{Binding Close}"
+                    Width="45">
                     <Path
-                        Width="10"
-                        Height="10"
                         Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
                         Fill="{StaticResource MainIconColor}"
-                        Stretch="Fill" />
+                        Height="10"
+                        Stretch="Fill"
+                        Width="10" />
                 </Button>
 
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="53"
-                    Width="169"
-                    Height="45"
                     Classes="ButtonBorder altHover"
-                    Command="{Binding ShowExifWindowCommand}">
+                    Command="{Binding ShowExifWindowCommand}"
+                    Height="45"
+                    Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Path
-                            Width="17"
-                            Height="17"
-                            Margin="17,0,0,0"
                             Data="M48 32C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H48zm0 32h106c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H38c-3.3 0-6-2.7-6-6V80c0-8.8 7.2-16 16-16zm426 96H38c-3.3 0-6-2.7-6-6v-36c0-3.3 2.7-6 6-6h138l30.2-45.3c1.1-1.7 3-2.7 5-2.7H464c8.8 0 16 7.2 16 16v74c0 3.3-2.7 6-6 6zM256 424c-66.2 0-120-53.8-120-120s53.8-120 120-120 120 53.8 120 120-53.8 120-120 120zm0-208c-48.5 0-88 39.5-88 88s39.5 88 88 88 88-39.5 88-88-39.5-88-88-88zm-48 104c-8.8 0-16-7.2-16-16 0-35.3 28.7-64 64-64 8.8 0 16 7.2 16 16s-7.2 16-16 16c-17.6 0-32 14.4-32 32 0 8.8-7.2 16-16 16z"
                             Fill="{StaticResource MainIconColor}"
-                            Stretch="Fill" />
+                            Height="17"
+                            Margin="17,0,0,0"
+                            Stretch="Fill"
+                            Width="17" />
                         <TextBlock
-                            Margin="10,0,6,0"
-                            VerticalAlignment="Center"
                             Classes="txt"
-                            Text="{Binding ImageInfo}" />
+                            Margin="10,0,6,0"
+                            Text="{Binding ImageInfo}"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
                 <Button
                     Canvas.Left="182"
                     Canvas.Top="53"
-                    Width="169"
-                    Height="45"
                     Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding OptimizeImageCommand}">
+                    Command="{CompiledBinding OptimizeImageCommand}"
+                    Height="45"
+                    Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
-                            Width="20"
                             Height="20"
-                            Margin="9,0,8,0">
+                            Margin="9,0,8,0"
+                            Width="20">
                             <DrawingImage>
                                 <DrawingImage.Drawing>
                                     <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
@@ -203,8 +205,8 @@
                             </DrawingImage>
                         </Image>
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{Binding OptimizeImage}" />
                     </StackPanel>
                 </Button>
@@ -212,19 +214,19 @@
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="104"
-                    Width="169"
-                    Classes="ButtonBorder altHover" />
+                    Classes="ButtonBorder altHover"
+                    Width="169" />
 
                 <Button
                     Canvas.Left="182"
                     Canvas.Top="104"
-                    Width="169"
-                    Classes="ButtonBorder altHover">
+                    Classes="ButtonBorder altHover"
+                    Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
-                            Width="20"
                             Height="20"
-                            Margin="9,0,8,0">
+                            Margin="9,0,8,0"
+                            Width="20">
                             <DrawingImage>
                                 <DrawingImage.Drawing>
                                     <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
@@ -250,7 +252,7 @@
                                                     Thickness="32" />
                                             </GeometryDrawing.Pen>
                                             <GeometryDrawing.Geometry>
-                                                <LineGeometry StartPoint="256,416" EndPoint="256,352" />
+                                                <LineGeometry EndPoint="256,352" StartPoint="256,416" />
                                             </GeometryDrawing.Geometry>
                                         </GeometryDrawing>
                                         <GeometryDrawing>
@@ -261,7 +263,7 @@
                                                     Thickness="32" />
                                             </GeometryDrawing.Pen>
                                             <GeometryDrawing.Geometry>
-                                                <LineGeometry StartPoint="256,80" EndPoint="256,48" />
+                                                <LineGeometry EndPoint="256,48" StartPoint="256,80" />
                                             </GeometryDrawing.Geometry>
                                         </GeometryDrawing>
                                         <GeometryDrawing>
@@ -272,7 +274,7 @@
                                                     Thickness="32" />
                                             </GeometryDrawing.Pen>
                                             <GeometryDrawing.Geometry>
-                                                <LineGeometry StartPoint="400,464" EndPoint="368,352" />
+                                                <LineGeometry EndPoint="368,352" StartPoint="400,464" />
                                             </GeometryDrawing.Geometry>
                                         </GeometryDrawing>
                                         <GeometryDrawing>
@@ -283,7 +285,7 @@
                                                     Thickness="32" />
                                             </GeometryDrawing.Pen>
                                             <GeometryDrawing.Geometry>
-                                                <LineGeometry StartPoint="112,464" EndPoint="144,352" />
+                                                <LineGeometry EndPoint="144,352" StartPoint="112,464" />
                                             </GeometryDrawing.Geometry>
                                         </GeometryDrawing>
                                     </DrawingGroup>
@@ -291,8 +293,8 @@
                             </DrawingImage>
                         </Image>
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{Binding ChangeBackground}" />
                     </StackPanel>
                 </Button>
@@ -300,63 +302,63 @@
                 <Button
                     Canvas.Left="7"
                     Canvas.Top="150"
-                    Width="169"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ShowKeybindingsWindowCommand}"
-                    ToolTip.Tip="{Binding ApplicationShortcuts}">
+                    ToolTip.Tip="{Binding ApplicationShortcuts}"
+                    Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
-                            Width="17"
                             Height="17"
                             Margin="9,0,6,0"
-                            Source="{StaticResource ShortcutsImage}" />
+                            Source="{StaticResource ShortcutsImage}"
+                            Width="17" />
                         <TextBlock
-                            MaxWidth="150"
-                            VerticalAlignment="Center"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                             FontSize="12"
+                            MaxWidth="150"
                             Text="{Binding ApplicationShortcuts}"
                             TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
                 <Button
                     Canvas.Left="182"
                     Canvas.Top="150"
-                    Width="169"
                     Classes="ButtonBorder altHover"
                     Command="{Binding ToggleUICommand}"
-                    ToolTip.Tip="Hide interface">
+                    ToolTip.Tip="Hide interface"
+                    Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
-                            Width="17"
                             Height="17"
                             Margin="9,0,6,0"
-                            Source="{StaticResource DisplayImage}" />
+                            Source="{StaticResource DisplayImage}"
+                            Width="17" />
                         <TextBlock
-                            MaxWidth="150"
-                            VerticalAlignment="Center"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                             FontSize="12"
+                            MaxWidth="150"
                             Text="Hide interface"
                             TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
             </Canvas>
         </Border>
 
         <Rectangle
-            Width="27"
-            Height="4"
-            Margin="219,-2,0,0"
-            HorizontalAlignment="Left"
             Fill="{StaticResource MenuBackgroundColor}"
+            Height="4"
+            HorizontalAlignment="Left"
+            Margin="219,-2,0,0"
+            Width="27"
             ZIndex="1" />
         <Polygon
-            Margin="217,-3.5,0,0"
             Fill="{StaticResource MenuBackgroundColor}"
+            Margin="217,-3.5,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource MainBorderColor}"
             StrokeThickness="1" />

@@ -1,12 +1,12 @@
 <UserControl
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.GalleryView"
+    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
-    x:DataType="viewModels:MainViewModel"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -14,34 +14,34 @@
         Background="{StaticResource BackgroundAlpha}"
         BorderBrush="{StaticResource MainBorderColor}"
         BorderThickness="0">
-        <Grid>
+        <Panel>
             <Button
-                Width="50"
+                BorderThickness="1,0,0,0"
+                Classes="ButtonBorder altHover"
+                Command="{CompiledBinding ToggleGalleryCommand}"
+                CornerRadius="0,0,0,45"
+                DockPanel.Dock="Right"
                 Height="60"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Background="{StaticResource MainButtonBackgroundColor}"
-                BorderBrush="{StaticResource MainBorderColor}"
-                BorderThickness="1,0,0,0"
-                Classes="altHover"
-                CornerRadius="0,0,0,45"
-                DockPanel.Dock="Right">
+                Width="50"
+                ZIndex="99">
                 <Path
-                    Width="23"
-                    Height="23"
-                    Margin="7,0,0,11"
                     Data="{StaticResource CloseGeometry}"
                     Fill="{StaticResource MainIconColor}"
-                    Stretch="Fill" />
+                    Height="23"
+                    Margin="7,0,0,11"
+                    Stretch="Fill"
+                    Width="23" />
             </Button>
             <ScrollViewer
+                HorizontalScrollBarVisibility="Auto"
                 Margin="0,0,0,0"
                 Padding="0"
                 VerticalAlignment="Stretch"
-                HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Auto">
                 <ItemsControl />
             </ScrollViewer>
-        </Grid>
+        </Panel>
     </Border>
 </UserControl>
