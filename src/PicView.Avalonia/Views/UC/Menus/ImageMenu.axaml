@@ -306,6 +306,7 @@
                     Canvas.Top="145"
                     Width="300"
                     Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding ToggleBottomGalleryCommand}"
                     ToolTip.Tip="{Binding GetBottomGallery}">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <Image

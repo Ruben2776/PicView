@@ -1,0 +1,24 @@
+<UserControl
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Views.UC.DragDropView"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    <Panel Background="{StaticResource BackgroundAlpha}">
+        <Border
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <Image
+                RenderOptions.BitmapInterpolationMode="HighQuality"
+                Stretch="Uniform"
+                x:Name="DragImage" />
+        </Border>
+    </Panel>
+</UserControl>

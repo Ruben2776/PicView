@@ -147,6 +147,8 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ToggleGalleryCommand { get; }
 
+        public ICommand? ToggleBottomGalleryCommand { get; }
+
         #endregion Commands
 
         #region Fields
@@ -1857,6 +1859,24 @@ namespace PicView.Avalonia.ViewModels
                 else
                 {
                 }
+                CloseMenuCommand.Execute(null);
+                //WindowHelper.SetSize(this);
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+            });
+
+            ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                {
+                    IsGalleryOpen = false;
+                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
+                }
+                else
+                {
+                    IsGalleryOpen = true;
+                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
+                }
+                CloseMenuCommand.Execute(null);
                 //WindowHelper.SetSize(this);
                 await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
             });
