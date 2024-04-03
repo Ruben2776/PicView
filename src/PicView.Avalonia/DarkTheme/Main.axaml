@@ -26,6 +26,7 @@
 
             <Color x:Key="MainBorderColor">#FF3A3A3A</Color>
             <Color x:Key="SecondaryBorderColor">#777</Color>
+            <Color x:Key="TertiaryBorderColor">#555</Color>
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 

@@ -12,8 +12,8 @@
     </Design.DataContext>
     <Border
         Background="{StaticResource BackgroundAlpha}"
-        BorderBrush="{StaticResource MainBorderColor}"
-        BorderThickness="0">
+        BorderBrush="{StaticResource TertiaryBorderColor}"
+        BorderThickness="1">
         <Panel>
             <Button
                 BorderThickness="1,0,0,0"
@@ -34,14 +34,31 @@
                     Stretch="Fill"
                     Width="23" />
             </Button>
-            <ScrollViewer
-                HorizontalScrollBarVisibility="Auto"
-                Margin="0,0,0,0"
-                Padding="0"
-                VerticalAlignment="Stretch"
-                VerticalScrollBarVisibility="Auto">
-                <ItemsControl />
-            </ScrollViewer>
+            <ListBox
+                Background="Transparent"
+                BorderThickness="0"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                x:Name="GalleryListBox">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Background="{StaticResource AltBackgroundHoverColor}"
+                            BorderBrush="{StaticResource TertiaryBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Height="100"
+                            Margin="5,5,5,5"
+                            Width="100">
+                            <Image Source="" Stretch="UniformToFill" />
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Panel>
     </Border>
 </UserControl>
