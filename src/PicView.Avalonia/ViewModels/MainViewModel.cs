@@ -24,6 +24,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using PicView.Avalonia.UI;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -1459,6 +1460,7 @@ namespace PicView.Avalonia.ViewModels
             }
 
             Task.Run(UpdateLanguage);
+            UIFunctions.Vm = this;
 
             #region Window commands
 
@@ -1488,57 +1490,15 @@ namespace PicView.Avalonia.ViewModels
 
             #region Navigation Commands
 
-            NextCommand = ReactiveCommand.Create(async () =>
-            {
-                if (!NavigationHelper.CanNavigate(this))
-                {
-                    return;
-                }
+            NextCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Next);
 
-                await LoadNextPic(NavigateTo.Next).ConfigureAwait(false);
-            });
+            PreviousCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Prev);
+            
+            FirstCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.First);
 
-            PreviousCommand = ReactiveCommand.Create(async () =>
-            {
-                if (!NavigationHelper.CanNavigate(this))
-                {
-                    return;
-                }
+            LastCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Last);
 
-                await LoadNextPic(NavigateTo.Previous).ConfigureAwait(false);
-            });
-
-            FirstCommand = ReactiveCommand.Create(async () =>
-            {
-                if (!NavigationHelper.CanNavigate(this))
-                {
-                    return;
-                }
-
-                await LoadNextPic(NavigateTo.First).ConfigureAwait(false);
-            });
-
-            LastCommand = ReactiveCommand.Create(async () =>
-            {
-                if (!NavigationHelper.CanNavigate(this))
-                {
-                    return;
-                }
-
-                await LoadNextPic(NavigateTo.Last).ConfigureAwait(false);
-            });
-
-            ReloadCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (FileInfo is null || ImageIterator is null)
-                {
-                    return;
-                }
-
-                ImageIterator.PreLoader.Clear();
-                CurrentView = new ImageViewer();
-                await LoadPicFromString(FileInfo.FullName);
-            });
+            ReloadCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Reload);
 
             #endregion Navigation Commands
 

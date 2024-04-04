@@ -45,6 +45,20 @@ public static class NavigationHelper
             await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
         }
     }
+    
+    public static async Task NavigateFirstOrLast(bool last, MainViewModel vm)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+
+        await vm.ImageIterator.LoadNextPic(last ? NavigateTo.Last : NavigateTo.First, vm).ConfigureAwait(false);
+    }
 
     public static void LoadingPreview(int index, MainViewModel vm)
     {

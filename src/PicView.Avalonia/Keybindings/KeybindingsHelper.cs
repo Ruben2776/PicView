@@ -62,11 +62,9 @@ public static class KeybindingsHelper
                                               """;
 
     public static Dictionary<Key, Func<Task>>? CustomShortcuts { get; private set; }
-    private static UIFunctions? _uiFunctions;
 
     public static async Task LoadKeybindings(MainViewModel vm)
     {
-        _uiFunctions = new UIFunctions(vm);
         try
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
@@ -179,87 +177,87 @@ public static class KeybindingsHelper
             // Navigation values
             "Next" => UIFunctions.Next,
             "Prev" => UIFunctions.Prev,
-            "Up" => _uiFunctions.Up,
-            "Down" => _uiFunctions.Down,
+            "Up" => UIFunctions.Up,
+            "Down" => UIFunctions.Down,
 
             // Scroll
-            "ScrollToTop" => _uiFunctions.ScrollToTop,
-            "ScrollToBottom" => _uiFunctions.ScrollToBottom,
+            "ScrollToTop" => UIFunctions.ScrollToTop,
+            "ScrollToBottom" => UIFunctions.ScrollToBottom,
 
             // Zoom
-            "ZoomIn" => _uiFunctions.ZoomIn,
-            "ZoomOut" => _uiFunctions.ZoomOut,
-            "ResetZoom" => _uiFunctions.ResetZoom,
+            "ZoomIn" => UIFunctions.ZoomIn,
+            "ZoomOut" => UIFunctions.ZoomOut,
+            "ResetZoom" => UIFunctions.ResetZoom,
 
             // Toggles
-            "ToggleScroll" => _uiFunctions.ToggleScroll,
-            "ToggleLooping" => _uiFunctions.ToggleLooping,
-            "ToggleGallery" => _uiFunctions.ToggleGallery,
+            "ToggleScroll" => UIFunctions.ToggleScroll,
+            "ToggleLooping" => UIFunctions.ToggleLooping,
+            "ToggleGallery" => UIFunctions.ToggleGallery,
 
             // Scale Window
-            "AutoFitWindow" => _uiFunctions.AutoFitWindow,
-            "AutoFitWindowAndStretch" => _uiFunctions.AutoFitWindowAndStretch,
-            "NormalWindow" => _uiFunctions.NormalWindow,
-            "NormalWindowAndStretch" => _uiFunctions.NormalWindowAndStretch,
+            "AutoFitWindow" => UIFunctions.AutoFitWindow,
+            "AutoFitWindowAndStretch" => UIFunctions.AutoFitWindowAndStretch,
+            "NormalWindow" => UIFunctions.NormalWindow,
+            "NormalWindowAndStretch" => UIFunctions.NormalWindowAndStretch,
 
             // Window functions
-            "Fullscreen" => _uiFunctions.Fullscreen,
-            "SetTopMost" => _uiFunctions.SetTopMost,
-            "Close" => _uiFunctions.Close,
-            "ToggleInterface" => _uiFunctions.ToggleInterface,
-            "NewWindow" => _uiFunctions.NewWindow,
-            "Center" => _uiFunctions.Center,
+            "Fullscreen" => UIFunctions.Fullscreen,
+            "SetTopMost" => UIFunctions.SetTopMost,
+            "Close" => UIFunctions.Close,
+            "ToggleInterface" => UIFunctions.ToggleInterface,
+            "NewWindow" => UIFunctions.NewWindow,
+            "Center" => UIFunctions.Center,
 
             // Windows
-            "AboutWindow" => _uiFunctions.AboutWindow,
-            "EffectsWindow" => _uiFunctions.EffectsWindow,
-            "ImageInfoWindow" => _uiFunctions.ImageInfoWindow,
-            "ResizeWindow" => _uiFunctions.ResizeWindow,
-            "SettingsWindow" => _uiFunctions.SettingsWindow,
-            "KeybindingsWindow" => _uiFunctions.KeybindingsWindow,
+            "AboutWindow" => UIFunctions.AboutWindow,
+            "EffectsWindow" => UIFunctions.EffectsWindow,
+            "ImageInfoWindow" => UIFunctions.ImageInfoWindow,
+            "ResizeWindow" => UIFunctions.ResizeWindow,
+            "SettingsWindow" => UIFunctions.SettingsWindow,
+            "KeybindingsWindow" => UIFunctions.KeybindingsWindow,
 
             // Open functions
-            "Open" => _uiFunctions.Open,
-            "OpenWith" => _uiFunctions.OpenWith,
-            "OpenInExplorer" => _uiFunctions.OpenInExplorer,
-            "Save" => _uiFunctions.Save,
-            "Print" => _uiFunctions.Print,
-            "Reload" => _uiFunctions.Reload,
+            "Open" => UIFunctions.Open,
+            "OpenWith" => UIFunctions.OpenWith,
+            "OpenInExplorer" => UIFunctions.OpenInExplorer,
+            "Save" => UIFunctions.Save,
+            "Print" => UIFunctions.Print,
+            "Reload" => UIFunctions.Reload,
 
             // Copy functions
-            "CopyFile" => _uiFunctions.CopyFile,
-            "CopyFilePath" => _uiFunctions.CopyFilePath,
-            "CopyImage" => _uiFunctions.CopyImage,
-            "CopyBase64" => _uiFunctions.CopyBase64,
-            "DuplicateFile" => _uiFunctions.DuplicateFile,
-            "CutFile" => _uiFunctions.CutFile,
-            "Paste" => _uiFunctions.Paste,
+            "CopyFile" => UIFunctions.CopyFile,
+            "CopyFilePath" => UIFunctions.CopyFilePath,
+            "CopyImage" => UIFunctions.CopyImage,
+            "CopyBase64" => UIFunctions.CopyBase64,
+            "DuplicateFile" => UIFunctions.DuplicateFile,
+            "CutFile" => UIFunctions.CutFile,
+            "Paste" => UIFunctions.Paste,
 
             // File functions
-            "DeleteFile" => _uiFunctions.DeleteFile,
-            "Rename" => _uiFunctions.Rename,
-            "ShowFileProperties" => _uiFunctions.ShowFileProperties,
+            "DeleteFile" => UIFunctions.DeleteFile,
+            "Rename" => UIFunctions.Rename,
+            "ShowFileProperties" => UIFunctions.ShowFileProperties,
 
             // Image functions
-            "ResizeImage" => _uiFunctions.ResizeImage,
-            "Crop" => _uiFunctions.Crop,
-            "Flip" => _uiFunctions.Flip,
-            "OptimizeImage" => _uiFunctions.OptimizeImage,
-            "Stretch" => _uiFunctions.Stretch,
+            "ResizeImage" => UIFunctions.ResizeImage,
+            "Crop" => UIFunctions.Crop,
+            "Flip" => UIFunctions.Flip,
+            "OptimizeImage" => UIFunctions.OptimizeImage,
+            "Stretch" => UIFunctions.Stretch,
 
             // Set stars
-            "Set0Star" => _uiFunctions.Set0Star,
-            "Set1Star" => _uiFunctions.Set1Star,
-            "Set2Star" => _uiFunctions.Set2Star,
-            "Set3Star" => _uiFunctions.Set3Star,
-            "Set4Star" => _uiFunctions.Set4Star,
-            "Set5Star" => _uiFunctions.Set5Star,
+            "Set0Star" => UIFunctions.Set0Star,
+            "Set1Star" => UIFunctions.Set1Star,
+            "Set2Star" => UIFunctions.Set2Star,
+            "Set3Star" => UIFunctions.Set3Star,
+            "Set4Star" => UIFunctions.Set4Star,
+            "Set5Star" => UIFunctions.Set5Star,
 
             // Misc
-            "ChangeBackground" => _uiFunctions.ChangeBackground,
-            "GalleryClick" => _uiFunctions.GalleryClick,
-            "Slideshow" => _uiFunctions.Slideshow,
-            "ColorPicker" => _uiFunctions.ColorPicker,
+            "ChangeBackground" => UIFunctions.ChangeBackground,
+            "GalleryClick" => UIFunctions.GalleryClick,
+            "Slideshow" => UIFunctions.Slideshow,
+            "ColorPicker" => UIFunctions.ColorPicker,
 
             _ => null
         });

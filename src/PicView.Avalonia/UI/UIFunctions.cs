@@ -4,53 +4,125 @@ using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views;
 
 namespace PicView.Avalonia.UI;
 
-public class UIFunctions
+public static class UIFunctions
 {
-    private static MainViewModel? _vm;
-
-    public UIFunctions(MainViewModel vm)
-    {
-        _vm = vm;
-    }
+    public static MainViewModel? Vm;
 
     #region Functions list
 
-    public Task Print()
+    public static Task Print()
     {
         throw new NotImplementedException();
     }
 
     public static async Task Next()
     {
-        await NavigationHelper.Navigate(true, _vm);
-    }
-
-    public static async Task Prev()
-    {
-        await NavigationHelper.Navigate(false, _vm);
-    }
-
-    public async Task Up()
-    {
-        if (_vm is null)
+        if (Vm is null)
         {
             return;
         }
 
-        if (_vm.IsScrollingEnabled)
+        if (Vm.IsGalleryOpen)
+        {
+            // TODO - Implement gallery navigation
+            return;
+        }
+        
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
+        await NavigationHelper.Navigate(true, Vm);
+    }
+    
+    public static async Task Last()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (Vm.IsGalleryOpen)
+        {
+            // TODO - Implement gallery navigation
+            return;
+        }
+        
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
+        await NavigationHelper.NavigateFirstOrLast(true, Vm);
+    }
+
+    public static async Task Prev()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (Vm.IsGalleryOpen)
+        {
+            // TODO - Implement gallery navigation
+            return;
+        }
+        
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
+        await NavigationHelper.Navigate(false, Vm);
+    }
+    
+    public static async Task First()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (Vm.IsGalleryOpen)
+        {
+            // TODO - Implement gallery navigation
+            return;
+        }
+        
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
+        await NavigationHelper.NavigateFirstOrLast(false, Vm);
+    }
+
+    public static async Task Up()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (Vm.IsGalleryOpen)
+        {
+            // TODO - Implement gallery navigation
+            return;
+        }
+
+        if (Vm.IsScrollingEnabled)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (_vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
+                if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
                 {
-                    _vm.ImageViewer.Rotate(clockWise: true, animate: true);
+                    Vm.ImageViewer.Rotate(clockWise: true, animate: true);
                 }
                 else
                 {
-                    _vm.ImageViewer.ImageScrollViewer.LineUp();
+                    Vm.ImageViewer.ImageScrollViewer.LineUp();
                 }
             });
         }
@@ -58,99 +130,123 @@ public class UIFunctions
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                _vm.ImageViewer.Rotate(clockWise: true, animate: true);
+                Vm.ImageViewer.Rotate(clockWise: true, animate: true);
             });
         }
     }
 
-    public async Task Down()
+    public static async Task Down()
     {
-        if (_vm is null)
+        if (Vm is null)
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(() =>
+
+        if (Vm.IsGalleryOpen)
         {
-            _vm.ImageViewer.Rotate(clockWise: false, animate: true);
-        });
+            // TODO - Implement gallery navigation
+            return;
+        }
+
+        if (Vm.IsScrollingEnabled)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
+                {
+                    Vm.ImageViewer.Rotate(clockWise: false, animate: true);
+                }
+                else
+                {
+                    Vm.ImageViewer.ImageScrollViewer.LineUp();
+                }
+            });
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Vm.ImageViewer.Rotate(clockWise: false, animate: true);
+            });
+        }
     }
 
-    public async Task ScrollToTop()
+    public static async Task ScrollToTop()
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _vm.ImageViewer.ImageScrollViewer.ScrollToHome();
+            Vm.ImageViewer.ImageScrollViewer.ScrollToHome();
         });
     }
 
-    public async Task ScrollToBottom()
+    public static async Task ScrollToBottom()
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _vm.ImageViewer.ImageScrollViewer.ScrollToEnd();
+            Vm.ImageViewer.ImageScrollViewer.ScrollToEnd();
         });
     }
 
-    public async Task ZoomIn()
+    public static async Task ZoomIn()
     {
-        if (_vm is null)
+        if (Vm is null)
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(_vm.ImageViewer.ZoomIn);
+        await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomIn);
     }
 
-    public async Task ZoomOut()
+    public static async Task ZoomOut()
     {
-        if (_vm is null)
+        if (Vm is null)
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(_vm.ImageViewer.ZoomOut);
+        await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomOut);
     }
 
-    public Task ResetZoom()
+    public static Task ResetZoom()
     {
         throw new NotImplementedException();
     }
 
-    public Task ToggleScroll()
+    public static Task ToggleScroll()
     {
         throw new NotImplementedException();
     }
 
-    public Task ToggleLooping()
+    public static Task ToggleLooping()
     {
         throw new NotImplementedException();
     }
 
-    public Task ToggleGallery()
+    public static Task ToggleGallery()
     {
-        _vm?.ToggleGalleryCommand.Execute(null);
+        Vm?.ToggleGalleryCommand.Execute(null);
         return Task.CompletedTask;
     }
 
-    public Task AutoFitWindow()
+    public static Task AutoFitWindow()
     {
         throw new NotImplementedException();
     }
 
-    public Task AutoFitWindowAndStretch()
+    public static Task AutoFitWindowAndStretch()
     {
         throw new NotImplementedException();
     }
 
-    public Task NormalWindow()
+    public static Task NormalWindow()
     {
         throw new NotImplementedException();
     }
 
-    public Task NormalWindowAndStretch()
+    public static Task NormalWindowAndStretch()
     {
         throw new NotImplementedException();
     }
 
-    public Task Fullscreen()
+    public static Task Fullscreen()
     {
 #if DEBUG
         // Show Avalonia DevTools in DEBUG mode
@@ -159,12 +255,12 @@ public class UIFunctions
         throw new NotImplementedException();
     }
 
-    public Task SetTopMost()
+    public static Task SetTopMost()
     {
         throw new NotImplementedException();
     }
 
-    public async Task Close()
+    public static async Task Close()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -176,199 +272,215 @@ public class UIFunctions
         });
     }
 
-    public Task ToggleInterface()
+    public static Task ToggleInterface()
     {
         throw new NotImplementedException();
     }
 
-    public Task NewWindow()
+    public static Task NewWindow()
     {
         throw new NotImplementedException();
     }
 
-    public Task AboutWindow()
+    public static Task AboutWindow()
     {
-        _vm?.ShowAboutWindowCommand.Execute(null);
+        Vm?.ShowAboutWindowCommand.Execute(null);
         return Task.CompletedTask;
     }
 
-    public Task KeybindingsWindow()
+    public static Task KeybindingsWindow()
     {
-        _vm?.ShowKeybindingsWindowCommand.Execute(null);
+        Vm?.ShowKeybindingsWindowCommand.Execute(null);
         return Task.CompletedTask;
     }
 
-    public Task EffectsWindow()
+    public static Task EffectsWindow()
     {
         throw new NotImplementedException();
     }
 
-    public Task ImageInfoWindow()
+    public static Task ImageInfoWindow()
     {
-        _vm.ShowExifWindowCommand.Execute(null);
+        Vm.ShowExifWindowCommand.Execute(null);
         return Task.CompletedTask;
     }
 
-    public Task ResizeWindow()
+    public static Task ResizeWindow()
     {
         throw new NotImplementedException();
     }
 
-    public Task SettingsWindow()
+    public static Task SettingsWindow()
     {
-        _vm?.ShowSettingsWindowCommand.Execute(null);
+        Vm?.ShowSettingsWindowCommand.Execute(null);
         return Task.CompletedTask;
     }
 
-    public Task Open()
+    public static Task Open()
     {
         throw new NotImplementedException();
     }
 
-    public Task OpenWith()
+    public static Task OpenWith()
     {
         throw new NotImplementedException();
     }
 
-    public Task OpenInExplorer()
+    public static Task OpenInExplorer()
     {
-        _vm?.ShowInFolderCommand.Execute(null);
+        Vm?.ShowInFolderCommand.Execute(null);
         return Task.CompletedTask;
     }
 
-    public Task Save()
+    public static Task Save()
     {
         throw new NotImplementedException();
     }
 
-    public Task Reload()
+    public static async Task Reload()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (Vm.IsGalleryOpen)
+        {
+            return;
+        }
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
+
+        Vm.ImageIterator.PreLoader.Clear();
+        Vm.CurrentView = new ImageViewer();
+        await Vm.LoadPicFromString(Vm.FileInfo.FullName);
+    }
+
+    public static Task CopyFile()
     {
         throw new NotImplementedException();
     }
 
-    public Task CopyFile()
+    public static Task CopyFilePath()
     {
         throw new NotImplementedException();
     }
 
-    public Task CopyFilePath()
+    public static Task CopyImage()
     {
         throw new NotImplementedException();
     }
 
-    public Task CopyImage()
+    public static Task CopyBase64()
     {
         throw new NotImplementedException();
     }
 
-    public Task CopyBase64()
+    public static Task DuplicateFile()
     {
         throw new NotImplementedException();
     }
 
-    public Task DuplicateFile()
+    public static Task CutFile()
     {
         throw new NotImplementedException();
     }
 
-    public Task CutFile()
+    public static Task Paste()
     {
         throw new NotImplementedException();
     }
 
-    public Task Paste()
+    public static Task DeleteFile()
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteFile()
+    public static Task Rename()
     {
         throw new NotImplementedException();
     }
 
-    public Task Rename()
+    public static Task ShowFileProperties()
     {
         throw new NotImplementedException();
     }
 
-    public Task ShowFileProperties()
+    public static Task ResizeImage()
     {
         throw new NotImplementedException();
     }
 
-    public Task ResizeImage()
+    public static Task Crop()
     {
         throw new NotImplementedException();
     }
 
-    public Task Crop()
+    public static async Task Flip()
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task Flip()
-    {
-        if (_vm is null)
+        if (Vm is null)
         {
             return;
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _vm.ImageViewer.Flip(animate: true);
+            Vm.ImageViewer.Flip(animate: true);
         });
     }
 
-    public Task OptimizeImage()
+    public static Task OptimizeImage()
     {
         throw new NotImplementedException();
     }
 
-    public Task Stretch()
+    public static Task Stretch()
     {
         throw new NotImplementedException();
     }
 
-    public Task Set0Star()
+    public static Task Set0Star()
     {
         throw new NotImplementedException();
     }
 
-    public Task Set1Star()
+    public static Task Set1Star()
     {
         throw new NotImplementedException();
     }
 
-    public Task Set2Star()
+    public static Task Set2Star()
     {
         throw new NotImplementedException();
     }
 
-    public Task Set3Star()
+    public static Task Set3Star()
     {
         throw new NotImplementedException();
     }
 
-    public Task Set4Star()
+    public static Task Set4Star()
     {
         throw new NotImplementedException();
     }
 
-    public Task Set5Star()
+    public static Task Set5Star()
     {
         throw new NotImplementedException();
     }
 
-    public Task ChangeBackground()
+    public static Task ChangeBackground()
     {
         throw new NotImplementedException();
     }
 
-    public Task GalleryClick()
+    public static Task GalleryClick()
     {
         throw new NotImplementedException();
     }
 
-    public async Task Center()
+    public static async Task Center()
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -376,12 +488,12 @@ public class UIFunctions
         });
     }
 
-    public Task Slideshow()
+    public static Task Slideshow()
     {
         throw new NotImplementedException();
     }
 
-    public Task ColorPicker()
+    public static Task ColorPicker()
     {
         throw new NotImplementedException();
     }
