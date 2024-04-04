@@ -1,9 +1,8 @@
-using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
 using PicView.Core.Config;
-using PicView.Core.Localization;
+using System.Runtime.InteropServices;
 
 namespace PicView.Avalonia.Views;
 
@@ -17,7 +16,9 @@ public partial class AboutView : UserControl
             AppVersion.Text = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
                 VersionHelper.GetFileVersionInfo().FileVersion :
                 GetType().Assembly.GetName().Version.ToString();
-            
+
+            // TODO Check if https://github.com/NetSparkleUpdater/NetSparkle is a good choice for auto-updates
+
             KofiImage.PointerEntered += (_, _) =>
             {
                 if (!TryGetResource("kofi_button_redDrawingImage", ThemeVariant.Default, out var redDrawing))

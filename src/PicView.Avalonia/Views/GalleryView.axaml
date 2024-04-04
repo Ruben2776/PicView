@@ -1,12 +1,12 @@
 <UserControl
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.GalleryView"
-    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:MainViewModel"
+    mc:Ignorable="d">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -16,29 +16,29 @@
         BorderThickness="1">
         <Panel>
             <Button
+                Width="50"
+                Height="60"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 BorderThickness="1,0,0,0"
                 Classes="ButtonBorder altHover"
                 Command="{CompiledBinding ToggleGalleryCommand}"
                 CornerRadius="0,0,0,45"
                 DockPanel.Dock="Right"
-                Height="60"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Width="50"
                 ZIndex="99">
                 <Path
-                    Data="{StaticResource CloseGeometry}"
-                    Fill="{StaticResource MainIconColor}"
+                    Width="23"
                     Height="23"
                     Margin="7,0,0,11"
-                    Stretch="Fill"
-                    Width="23" />
+                    Data="{StaticResource CloseGeometry}"
+                    Fill="{StaticResource MainIconColor}"
+                    Stretch="Fill" />
             </Button>
             <ListBox
+                x:Name="GalleryListBox"
                 Background="Transparent"
                 BorderThickness="0"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                x:Name="GalleryListBox">
+                ScrollViewer.VerticalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Vertical" />
@@ -47,13 +47,10 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border
-                            Background="{StaticResource AltBackgroundHoverColor}"
-                            BorderBrush="{StaticResource TertiaryBorderColor}"
-                            BorderThickness="1"
-                            CornerRadius="8"
+                            Width="100"
                             Height="100"
-                            Margin="5,5,5,5"
-                            Width="100">
+                            BorderThickness="0"
+                            CornerRadius="8">
                             <Image Source="" Stretch="UniformToFill" />
                         </Border>
                     </DataTemplate>
