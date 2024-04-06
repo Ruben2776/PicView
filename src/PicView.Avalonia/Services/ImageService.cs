@@ -3,6 +3,7 @@ using ImageMagick;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Core.FileHandling;
+using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Services;
@@ -82,6 +83,16 @@ public class ImageService
                     imageModel.PixelHeight = bmp.PixelSize.Height;
                     imageModel.ImageType = ImageType.Bitmap;
                 }
+        }
+    }
+
+    public class AvaloniaImageSource(Bitmap bitmap) : GalleryThumbInfo.IImageSource
+    {
+        private readonly Bitmap _bitmap = bitmap ?? throw new ArgumentNullException(nameof(bitmap));
+
+        public object GetPlatformImageSource()
+        {
+            return _bitmap;
         }
     }
 }

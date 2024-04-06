@@ -15,6 +15,52 @@
         BorderBrush="{StaticResource TertiaryBorderColor}"
         BorderThickness="1">
         <Panel>
+            <ListBox
+                x:Name="GalleryListBox"
+                AutoScrollToSelectedItem="True"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{CompiledBinding GalleryItems}"
+                ScrollViewer.IsScrollInertiaEnabled="True"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Height="100"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            ToolTip.HorizontalOffset="0"
+                            ToolTip.Placement="TopEdgeAlignedLeft"
+                            ToolTip.VerticalOffset="0">
+                            <Image Source="{CompiledBinding GetSource}" Stretch="None" />
+                            <ToolTip.Tip>
+                                <StackPanel>
+                                    <TextBlock
+                                        Margin="0,0,0,2"
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        FontSize="14"
+                                        Text="{CompiledBinding FileName}" />
+                                    <TextBlock
+                                        Margin="0,0,0,2"
+                                        Classes="txt"
+                                        Text="{CompiledBinding FileLocation}" />
+                                    <TextBlock
+                                        Margin="0,0,0,2"
+                                        Classes="txt"
+                                        Text="{CompiledBinding FileSize}" />
+                                    <TextBlock Classes="txt" Text="{CompiledBinding FileDate}" />
+                                </StackPanel>
+                            </ToolTip.Tip>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
             <Button
                 Width="50"
                 Height="60"
@@ -34,28 +80,6 @@
                     Fill="{StaticResource MainIconColor}"
                     Stretch="Fill" />
             </Button>
-            <ListBox
-                x:Name="GalleryListBox"
-                Background="Transparent"
-                BorderThickness="0"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            Width="100"
-                            Height="100"
-                            BorderThickness="0"
-                            CornerRadius="8">
-                            <Image Source="" Stretch="UniformToFill" />
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
         </Panel>
     </Border>
 </UserControl>

@@ -10,6 +10,7 @@ using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -18,13 +19,15 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using PicView.Avalonia.UI;
+using PicView.Avalonia.Gallery;
+using static PicView.Core.Gallery.GalleryThumbInfo;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -36,6 +39,14 @@ namespace PicView.Avalonia.ViewModels
         public event EventHandler<ImageModel>? ImageChanged;
 
         private readonly IPlatformSpecificService? _platformService;
+
+        private ObservableCollection<GalleryThumbHolder> _galleryItems;
+
+        public ObservableCollection<GalleryThumbHolder> GalleryItems
+        {
+            get => _galleryItems;
+            set => this.RaiseAndSetIfChanged(ref _galleryItems, value);
+        }
 
         #region Commands
 
@@ -180,7 +191,8 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isTopToolbarShown, value);
         }
 
-        private bool _isBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar && SettingsHelper.Settings.UIProperties.ShowInterface;
+        private bool _isBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar &&
+                                             SettingsHelper.Settings.UIProperties.ShowInterface;
 
         public bool IsBottomToolbarShown
         {
@@ -1063,13 +1075,15 @@ namespace PicView.Avalonia.ViewModels
                     case EXIFHelper.EXIFOrientation.Rotated180Flipped:
                         RotationAngle = 180;
                         ScaleX = -1;
-                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 180\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
+                        GetOrientation =
+                            $"{TranslationHelper.GetTranslation("Rotated")} 180\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated270Flipped:
                         RotationAngle = 270;
                         ScaleX = -1;
-                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 270\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
+                        GetOrientation =
+                            $"{TranslationHelper.GetTranslation("Rotated")} 270\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated90:
@@ -1081,7 +1095,8 @@ namespace PicView.Avalonia.ViewModels
                     case EXIFHelper.EXIFOrientation.Rotated90Flipped:
                         RotationAngle = 90;
                         ScaleX = -1;
-                        GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 90\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
+                        GetOrientation =
+                            $"{TranslationHelper.GetTranslation("Rotated")} 90\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
                         break;
 
                     case EXIFHelper.EXIFOrientation.Rotated270:
@@ -1214,7 +1229,8 @@ namespace PicView.Avalonia.ViewModels
                     GetResolutionUnit = EXIFHelper.GetResolutionUnit(profile);
                     GetColorRepresentation = EXIFHelper.GetColorSpace(profile);
                     GetCompression = profile?.GetValue(ExifTag.Compression)?.Value.ToString() ?? string.Empty;
-                    GetCompressedBitsPixel = profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
+                    GetCompressedBitsPixel = profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ??
+                                             string.Empty;
                     GetCameraMaker = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
                     GetCameraModel = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
                     GetExposureProgram = EXIFHelper.GetExposureProgram(profile);
@@ -1223,7 +1239,8 @@ namespace PicView.Avalonia.ViewModels
                     GetMaxAperture = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString() ?? string.Empty;
                     GetExposureBias = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString() ?? string.Empty;
                     GetDigitalZoom = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
-                    GetFocalLength35mm = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
+                    GetFocalLength35mm = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ??
+                                         string.Empty;
                     GetFocalLength = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
                     GetISOSpeed = EXIFHelper.GetISOSpeed(profile);
                     GetMeteringMode = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
@@ -1272,8 +1289,8 @@ namespace PicView.Avalonia.ViewModels
             void ReturnError()
             {
                 WindowTitle =
-                Title =
-                TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
+                    Title =
+                        TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
             }
         }
 
@@ -1288,7 +1305,7 @@ namespace PicView.Avalonia.ViewModels
             }
 
             var titleString = TitleHelper.GetTitle((int)ImageWidth, (int)ImageHeight, ImageIterator.Index,
-                    FileInfo, ZoomValue, ImageIterator.Pics);
+                FileInfo, ZoomValue, ImageIterator.Pics);
             WindowTitle = titleString[0];
             Title = titleString[1];
             TitleTooltip = titleString[2];
@@ -1323,6 +1340,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 return;
             }
+
             await ImageIterator.LoadNextPic(navigateTo, this).ConfigureAwait(false);
         }
 
@@ -1410,11 +1428,13 @@ namespace PicView.Avalonia.ViewModels
             {
                 ImageIterator.IsFileBeingRenamed = true;
             }
+
             var newPath = await ConversionHelper.ConvertTask(FileInfo, index);
             if (!string.IsNullOrWhiteSpace(newPath))
             {
                 await LoadPicFromString(newPath);
             }
+
             if (ImageIterator is not null)
             {
                 ImageIterator.IsFileBeingRenamed = false;
@@ -1493,7 +1513,7 @@ namespace PicView.Avalonia.ViewModels
             NextCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Next);
 
             PreviousCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Prev);
-            
+
             FirstCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.First);
 
             LastCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Last);
@@ -1808,7 +1828,7 @@ namespace PicView.Avalonia.ViewModels
 
             #region UI Commands
 
-            ToggleGalleryCommand = ReactiveCommand.CreateFromTask(async () =>
+            ToggleGalleryCommand = ReactiveCommand.Create(() =>
             {
                 IsGalleryOpen = !IsGalleryOpen;
                 SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
@@ -1820,11 +1840,19 @@ namespace PicView.Avalonia.ViewModels
                 {
                 }
                 CloseMenuCommand.Execute(null);
+                if (IsGalleryOpen)
+                {
+                    if (!NavigationHelper.CanNavigate(this))
+                    {
+                        return;
+                    }
+                    Task.Run(() => GalleryLoad.LoadGallery(this, Path.GetDirectoryName(ImageIterator.Pics[0])));
+                }
                 //WindowHelper.SetSize(this);
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+                _ = SettingsHelper.SaveSettingsAsync();
             });
 
-            ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(async () =>
+            ToggleBottomGalleryCommand = ReactiveCommand.Create(() =>
             {
                 if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                 {
@@ -1835,10 +1863,15 @@ namespace PicView.Avalonia.ViewModels
                 {
                     IsGalleryOpen = true;
                     SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
+                    if (!NavigationHelper.CanNavigate(this))
+                    {
+                        return;
+                    }
+                    Task.Run(() => GalleryLoad.LoadGallery(this, Path.GetDirectoryName(ImageIterator.Pics[0])));
                 }
                 CloseMenuCommand.Execute(null);
                 //WindowHelper.SetSize(this);
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+                _ = SettingsHelper.SaveSettingsAsync();
             });
 
             ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(async () =>

@@ -29,6 +29,7 @@
 
         <Style Selector="^:selected /template/ ContentPresenter">
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
+            <Setter Property="BorderThickness" Value="3" />
         </Style>
 
         <Style Selector="^:selected:focus /template/ ContentPresenter">

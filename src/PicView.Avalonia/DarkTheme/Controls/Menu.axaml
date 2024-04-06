@@ -22,12 +22,10 @@
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="8">
-                    <ScrollViewer Theme="{StaticResource SimpleMenuScrollViewer}">
-                        <ItemsPresenter
-                            Name="PART_ItemsPresenter"
-                            ItemsPanel="{TemplateBinding ItemsPanel}"
-                            KeyboardNavigation.TabNavigation="Continue" />
-                    </ScrollViewer>
+                    <ItemsPresenter
+                        Name="PART_ItemsPresenter"
+                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                        KeyboardNavigation.TabNavigation="Continue" />
                 </Border>
             </ControlTemplate>
         </Setter>
@@ -156,6 +154,14 @@
         <Style Selector="^:selected /template/ Border#root">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
+        </Style>
+
+        <Style Selector="^:nth-child(1) /template/ Border#root">
+            <Setter Property="CornerRadius" Value="6,6,0,0" />
+        </Style>
+
+        <Style Selector="^:nth-last-child(1) /template/ Border#root">
+            <Setter Property="CornerRadius" Value="0,0,6,6" />
         </Style>
 
         <Style Selector="^:empty /template/ Path#rightArrow">

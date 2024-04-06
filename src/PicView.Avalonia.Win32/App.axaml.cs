@@ -101,7 +101,7 @@ public class App : Application, IPlatformSpecificService
                     DataContext = vm,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 };
-                _exifWindow.Show();
+                _exifWindow.Show(w);
                 _exifWindow.Closing += (s, e) => _exifWindow = null;
             }
             else
@@ -120,7 +120,7 @@ public class App : Application, IPlatformSpecificService
                     DataContext = vm,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 };
-                _settingsWindow.Show();
+                _settingsWindow.Show(w);
                 _settingsWindow.Closing += (s, e) => _settingsWindow = null;
             }
             else
@@ -139,7 +139,7 @@ public class App : Application, IPlatformSpecificService
                     DataContext = vm,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 };
-                _keybindingsWindow.Show();
+                _keybindingsWindow.Show(w);
                 _keybindingsWindow.Closing += (s, e) => _keybindingsWindow = null;
             }
             else
@@ -158,7 +158,7 @@ public class App : Application, IPlatformSpecificService
                     DataContext = vm,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 };
-                _aboutWindow.Show();
+                _aboutWindow.Show(w);
                 _aboutWindow.Closing += (s, e) => _aboutWindow = null;
             }
             else
