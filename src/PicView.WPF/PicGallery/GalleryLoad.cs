@@ -185,7 +185,8 @@ internal static class GalleryLoad
             var fileInfo = new FileInfo(Navigation.Pics[i]);
             var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Navigation.Pics[i],
                 (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, bitmapSource, fileInfo);
+            var converted = new Image2BitmapSource.WpfImageSource(bitmapSource);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, converted, fileInfo);
             await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
             {
                 UpdatePic(i, bitmapSource, thumbData.FileLocation,

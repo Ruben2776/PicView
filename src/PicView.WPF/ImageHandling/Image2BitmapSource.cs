@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using PicView.Core.FileHandling;
+using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.WPF.UILogic;
 using SkiaSharp;
@@ -236,5 +237,15 @@ internal static class Image2BitmapSource
         var bitmap = magickImage.ToBitmapSource();
         bitmap.Freeze();
         return bitmap;
+    }
+
+    public class WpfImageSource(BitmapSource? bitmapSource) : GalleryThumbInfo.IImageSource
+    {
+        private readonly BitmapSource _bitmapSource = bitmapSource ?? throw new ArgumentNullException(nameof(bitmapSource));
+
+        public object GetPlatformImageSource()
+        {
+            return _bitmapSource;
+        }
     }
 }

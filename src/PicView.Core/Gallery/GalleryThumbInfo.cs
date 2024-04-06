@@ -7,6 +7,18 @@ namespace PicView.Core.Gallery;
 public class GalleryThumbInfo
 {
     /// <summary>
+    /// Interface for providing platform-specific image sources.
+    /// </summary>
+    public interface IImageSource
+    {
+        /// <summary>
+        /// Gets the platform-specific image source.
+        /// </summary>
+        /// <returns>The platform-specific image source object.</returns>
+        object GetPlatformImageSource();
+    }
+
+    /// <summary>
     /// Represents the data for a gallery thumbnail.
     /// </summary>
     public struct GalleryThumbHolder
@@ -34,7 +46,22 @@ public class GalleryThumbInfo
         /// <summary>
         /// Gets or sets the source of the thumbnail.
         /// </summary>
-        public object ImageSource { get; set; }
+        public IImageSource? ImageSource { get; set; }
+
+        public object? GetSource
+        {
+            get
+            {
+                try
+                {
+                    return ImageSource.GetPlatformImageSource();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GalleryThumbHolder"/> class.
@@ -45,7 +72,7 @@ public class GalleryThumbInfo
         /// <param name="fileDate">The file date of the thumbnail.</param>
         /// <param name="imageSource">The source of the thumbnail.</param>
         public GalleryThumbHolder(string fileLocation, string fileName, string fileSize, string fileDate,
-            object imageSource)
+            IImageSource? imageSource)
         {
             FileLocation = fileLocation;
             FileName = fileName;
@@ -58,10 +85,12 @@ public class GalleryThumbInfo
         /// Gets thumbnail data for the specified index.
         /// </summary>
         /// <param name="index">The index of the thumbnail.</param>
+        /// <param name="imageSource">The image source of the thumbnail.</param>
+        /// <param name="fileInfo">The file information of the thumbnail.</param>
         /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
-        public static GalleryThumbHolder GetThumbData(int index, object? imageSource, FileInfo fileInfo)
+        public static GalleryThumbHolder GetThumbData(int index, IImageSource? imageSource, FileInfo fileInfo)
         {
-            var fileNameLength = 60;
+            const int fileNameLength = 60;
             var fileLocation = fileInfo.FullName;
             var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
             fileName = fileName.Length > fileNameLength ? fileName.Shorten(fileNameLength) : fileName;
@@ -69,12 +98,12 @@ public class GalleryThumbInfo
             var getFileDateResource = TranslationHelper.GetTranslation("Modified");
             var fileSize = "";
             var fileDate = "";
-            if (getFileSizeResource != null)
+            if (!string.IsNullOrWhiteSpace(getFileSizeResource))
             {
                 fileSize = $"{getFileSizeResource}: {fileInfo.Length.GetReadableFileSize()}";
             }
 
-            if (getFileDateResource != null)
+            if (!string.IsNullOrWhiteSpace(getFileDateResource))
             {
                 fileDate =
                     $"{getFileDateResource}: {fileInfo.LastWriteTimeUtc.ToString(CultureInfo.CurrentCulture)}";

@@ -331,7 +331,7 @@ internal static class FileUpdateNavigation
             }
             var thumbSource = await Thumbnails.GetBitmapSourceThumbAsync(e.FullPath,
                 (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, thumbSource, fileInfo);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, new Image2BitmapSource.WpfImageSource(thumbSource), fileInfo);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {
                 var item = new PicGalleryItem(thumbSource, e.FullPath, false)

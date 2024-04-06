@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.WPF.ImageHandling;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.UC;
 
@@ -92,9 +93,10 @@ internal static class GalleryFunctions
                         return;
                     }
                     var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
+                    var bitmapSource = new Image2BitmapSource.WpfImageSource(picGalleryItem.ThumbImage?.Source as BitmapSource);
                     var thumb = new GalleryThumbInfo.GalleryThumbHolder(picGalleryItem.ThumbFileLocation.Text,
                         picGalleryItem.ThumbFileName.Text, picGalleryItem.ThumbFileSize.Text,
-                        picGalleryItem.ThumbFileDate.Text, picGalleryItem.ThumbImage?.Source as BitmapSource);
+                        picGalleryItem.ThumbFileDate.Text, bitmapSource);
                     thumbs.Add(thumb);
                 }, DispatcherPriority.Render, cancelToken);
             }
