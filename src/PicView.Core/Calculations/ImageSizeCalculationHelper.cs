@@ -58,16 +58,9 @@ public static class ImageSizeCalculationHelper
         else
         {
             maxWidth = stretch ? containerWidth : Math.Min(containerWidth, width);
-            if (scrollEnabled)
-            {
-                maxHeight = stretch ? containerHeight : height;
-            }
-            else
-            {
-                maxHeight = stretch
-                    ? containerHeight - galleryHeight
-                    : Math.Min(containerHeight - galleryHeight, height);
-            }
+            maxHeight = stretch
+                ? containerHeight - galleryHeight
+                : Math.Min(containerHeight - galleryHeight, height);
         }
 
         // aspect ratio calculation

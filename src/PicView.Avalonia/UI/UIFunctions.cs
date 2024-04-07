@@ -31,14 +31,14 @@ public static class UIFunctions
             // TODO - Implement gallery navigation
             return;
         }
-        
+
         if (!NavigationHelper.CanNavigate(Vm))
         {
             return;
         }
         await NavigationHelper.Navigate(true, Vm);
     }
-    
+
     public static async Task Last()
     {
         if (Vm is null)
@@ -51,7 +51,7 @@ public static class UIFunctions
             // TODO - Implement gallery navigation
             return;
         }
-        
+
         if (!NavigationHelper.CanNavigate(Vm))
         {
             return;
@@ -71,14 +71,14 @@ public static class UIFunctions
             // TODO - Implement gallery navigation
             return;
         }
-        
+
         if (!NavigationHelper.CanNavigate(Vm))
         {
             return;
         }
         await NavigationHelper.Navigate(false, Vm);
     }
-    
+
     public static async Task First()
     {
         if (Vm is null)
@@ -91,7 +91,7 @@ public static class UIFunctions
             // TODO - Implement gallery navigation
             return;
         }
-        
+
         if (!NavigationHelper.CanNavigate(Vm))
         {
             return;
@@ -212,7 +212,8 @@ public static class UIFunctions
 
     public static Task ToggleScroll()
     {
-        throw new NotImplementedException();
+        Vm?.ToggleScrollCommand.Execute(null);
+        return Task.CompletedTask;
     }
 
     public static Task ToggleLooping()

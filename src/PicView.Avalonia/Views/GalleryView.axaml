@@ -17,10 +17,12 @@
         <Panel>
             <ListBox
                 x:Name="GalleryListBox"
+                Margin="0,40,0,0"
                 AutoScrollToSelectedItem="True"
                 Background="Transparent"
                 BorderThickness="0"
                 ItemsSource="{CompiledBinding GalleryItems}"
+                PointerWheelChanged="GalleryListBox_OnPointerWheelChanged"
                 ScrollViewer.IsScrollInertiaEnabled="True"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
@@ -32,8 +34,10 @@
                     <DataTemplate>
                         <Border
                             Height="100"
+                            Background="Transparent"
                             BorderThickness="1"
                             CornerRadius="8"
+                            PointerPressed="InputElement_OnPointerPressed"
                             ToolTip.HorizontalOffset="0"
                             ToolTip.Placement="TopEdgeAlignedLeft"
                             ToolTip.VerticalOffset="0">
@@ -57,6 +61,11 @@
                                     <TextBlock Classes="txt" Text="{CompiledBinding FileDate}" />
                                 </StackPanel>
                             </ToolTip.Tip>
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="test" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
                         </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

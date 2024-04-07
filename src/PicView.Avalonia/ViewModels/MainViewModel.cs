@@ -161,6 +161,8 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ToggleBottomGalleryCommand { get; }
 
+        public ICommand? ToggleScrollCommand { get; }
+
         #endregion Commands
 
         #region Fields
@@ -269,22 +271,12 @@ namespace PicView.Avalonia.ViewModels
             }
         }
 
-        private bool _isScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+        private bool _isScrollingEnabled;
 
         public bool IsScrollingEnabled
         {
             get => _isScrollingEnabled;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
-                ToggleScrollBarVisibility = value ? ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
-                SettingsHelper.Settings.Zoom.ScrollEnabled = value;
-                WindowHelper.SetSize(this);
-                GetScrolling = value
-                    ? TranslationHelper.GetTranslation("ScrollingEnabled")
-                    : TranslationHelper.GetTranslation("ScrollingDisabled");
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
+            set => this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
         }
 
         private bool _isStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
@@ -1443,22 +1435,7 @@ namespace PicView.Avalonia.ViewModels
 
         public async Task StartUpTask()
         {
-            ImageViewer = new ImageViewer();
-            var args = Environment.GetCommandLineArgs();
-            if (args.Length > 1)
-            {
-                await LoadPicFromString(args[1]).ConfigureAwait(false);
-            }
-            else if (SettingsHelper.Settings.StartUp.OpenLastFile)
-            {
-                await LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile).ConfigureAwait(false);
-            }
-            else
-            {
-                CurrentView = new StartUpMenu();
-            }
-
-            IsLoading = false;
+            await StartUpHelper.Start(this);
         }
 
         #endregion Methods
@@ -1473,14 +1450,28 @@ namespace PicView.Avalonia.ViewModels
             SetLoadingTitle();
             IsLoading = true;
 
-            IsScrollingEnabled = SettingsHelper.Settings.Zoom.ScrollEnabled;
+            Task.Run(UpdateLanguage);
+            UIFunctions.Vm = this;
+
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+            {
+                ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
+                GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
+                IsScrollingEnabled = true;
+                SettingsHelper.Settings.Zoom.ScrollEnabled = true;
+            }
+            else
+            {
+                ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
+                GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
+                IsScrollingEnabled = false;
+                SettingsHelper.Settings.Zoom.ScrollEnabled = false;
+            }
+
             if (SettingsHelper.Settings.WindowProperties.TopMost)
             {
                 desktop.MainWindow.Topmost = true;
             }
-
-            Task.Run(UpdateLanguage);
-            UIFunctions.Vm = this;
 
             #region Window commands
 
@@ -1495,8 +1486,6 @@ namespace PicView.Avalonia.ViewModels
             });
 
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
-
-            ToggleUICommand = ReactiveCommand.CreateFromTask(async () => { await WindowHelper.ToggleUI(this); });
 
             ShowExifWindowCommand = ReactiveCommand.Create(() =>
             {
@@ -1645,6 +1634,26 @@ namespace PicView.Avalonia.ViewModels
                     GetFlipped = Flip;
                 }
                 ImageViewer?.Flip(true);
+            });
+
+            ToggleScrollCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+                {
+                    ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
+                    GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
+                    IsScrollingEnabled = false;
+                    SettingsHelper.Settings.Zoom.ScrollEnabled = false;
+                }
+                else
+                {
+                    ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
+                    GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
+                    IsScrollingEnabled = true;
+                    SettingsHelper.Settings.Zoom.ScrollEnabled = true;
+                }
+                WindowHelper.SetSize(this);
+                await SettingsHelper.SaveSettingsAsync();
             });
 
             OptimizeImageCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -1826,7 +1835,7 @@ namespace PicView.Avalonia.ViewModels
 
             #endregion EXIF commands
 
-            #region UI Commands
+            #region Gallery Commands
 
             ToggleGalleryCommand = ReactiveCommand.Create(() =>
             {
@@ -1873,6 +1882,12 @@ namespace PicView.Avalonia.ViewModels
                 //WindowHelper.SetSize(this);
                 _ = SettingsHelper.SaveSettingsAsync();
             });
+
+            #endregion Gallery Commands
+
+            #region UI Commands
+
+            ToggleUICommand = ReactiveCommand.CreateFromTask(async () => { await WindowHelper.ToggleUI(this); });
 
             ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(async () =>
             {

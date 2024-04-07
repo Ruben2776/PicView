@@ -1,52 +1,29 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using PicView.Avalonia.Services;
-using PicView.Avalonia.ViewModels;
+﻿using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
-using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Helpers;
 
 public static class StartUpHelper
 {
-    public static async Task Start(IClassicDesktopStyleApplicationLifetime desktop, IPlatformSpecificService platformSpecificService, Window window)
+    public static async Task Start(MainViewModel vm)
     {
-        //bool settingsExists;
-        //try
-        //{
-        //    settingsExists = await SettingsHelper.LoadSettingsAsync();
-        //    _ = Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
-        //}
-        //catch (TaskCanceledException)
-        //{
-        //    return;
-        //}
-        //var vm = new MainViewModel(platformSpecificService);
-        //window.DataContext = vm;
-        //if (!settingsExists)
-        //{
-        //    WindowHelper.CenterWindowOnScreen();
-        //    vm.CanResize = true;
-        //    vm.IsAutoFit = false;
-        //}
-        //else
-        //{
-        //    if (SettingsHelper.Settings.WindowProperties.AutoFit)
-        //    {
-        //        desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        //        vm.SizeToContent = SizeToContent.WidthAndHeight;
-        //        vm.CanResize = false;
-        //        vm.IsAutoFit = true;
-        //    }
-        //    else
-        //    {
-        //        vm.CanResize = true;
-        //        vm.IsAutoFit = false;
-        //        WindowHelper.InitializeWindowSizeAndPosition(desktop);
-        //    }
-        //}
+        vm.ImageViewer = new ImageViewer();
+        var args = Environment.GetCommandLineArgs();
+        if (args.Length > 1)
+        {
+            await vm.LoadPicFromString(args[1]).ConfigureAwait(false);
+        }
+        else if (SettingsHelper.Settings.StartUp.OpenLastFile)
+        {
+            await vm.LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile).ConfigureAwait(false);
+        }
+        else
+        {
+            vm.CurrentView = new StartUpMenu();
+        }
 
-        //window.Show();
-        //await vm.StartUpTask();
+        vm.IsLoading = false;
     }
 }

@@ -26,10 +26,6 @@ public static class NavigationHelper
 
     public static async Task Navigate(bool next, MainViewModel vm)
     {
-        if (vm is null)
-        {
-            return;
-        }
         if (!CanNavigate(vm))
         {
             return;
@@ -45,13 +41,9 @@ public static class NavigationHelper
             await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
         }
     }
-    
+
     public static async Task NavigateFirstOrLast(bool last, MainViewModel vm)
     {
-        if (vm is null)
-        {
-            return;
-        }
         if (!CanNavigate(vm))
         {
             return;
