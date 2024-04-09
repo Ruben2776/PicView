@@ -63,7 +63,109 @@
                             </ToolTip.Tip>
                             <Border.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="test" />
+                                    <MenuItem Header="{CompiledBinding Print}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource PrintGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{CompiledBinding OpenWith}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource OpenWithGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{CompiledBinding ShowInFolder}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource ShowInFolderGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="{CompiledBinding SetAsWallpaper}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource PanoramaGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{CompiledBinding SetAsLockScreenImage}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource PanoramaGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="{CompiledBinding CopyFile}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource CopyGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{CompiledBinding CopyImage}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource CopyGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{CompiledBinding CopyBase64}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource CopyGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="{CompiledBinding FileCut}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource CutGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{CompiledBinding Delete}">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="12"
+                                                Height="12"
+                                                Data="{StaticResource RecycleGeometry}"
+                                                Fill="{StaticResource MainIconColor}"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </Border.ContextMenu>
                         </Border>

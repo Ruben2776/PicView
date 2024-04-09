@@ -1,4 +1,6 @@
-﻿using PicView.Avalonia.Services;
+﻿using DynamicData;
+using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -21,6 +23,12 @@ public static class SortingHelper
             vm.ImageIterator.Index = files.IndexOf(vm.FileInfo.FullName);
             vm.SetTitle();
         }
+        else return;
+
+        if (vm.GalleryItems.Count > 0)
+        {
+            SortGalleryItems(files, vm, platformSpecificService);
+        }
     }
 
     public static async Task UpdateFileList(IPlatformSpecificService platformSpecificService, MainViewModel vm, bool ascending)
@@ -36,6 +44,25 @@ public static class SortingHelper
             vm.ImageIterator.Pics = files;
             vm.ImageIterator.Index = files.IndexOf(vm.FileInfo.FullName);
             vm.SetTitle();
+        }
+        else return;
+
+        if (vm.GalleryItems.Count > 0)
+        {
+            SortGalleryItems(files, vm, platformSpecificService);
+        }
+    }
+
+    public static void SortGalleryItems(List<string> files, MainViewModel vm, IPlatformSpecificService platformSpecificService)
+    {
+        var sortedFiles = SortHelper.SortIEnumerable(files, platformSpecificService);
+        var tempList = vm.GalleryItems;
+
+        vm.GalleryItems.Clear();
+
+        foreach (var file in sortedFiles)
+        {
+            vm.GalleryItems.Add(tempList.Where(x => x.FileName == file));
         }
     }
 }

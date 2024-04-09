@@ -43,6 +43,20 @@ public class GalleryThumbInfo
         /// </summary>
         public string FileDate { get; set; }
 
+        public string Print => TranslationHelper.GetTranslation("Print");
+        public string OpenWith => TranslationHelper.GetTranslation("OpenWith");
+        public string ShowInFolder => TranslationHelper.GetTranslation("ShowInFolder");
+
+        public string SetAsWallpaper => TranslationHelper.GetTranslation("SetAsWallpaper");
+        public string SetAsLockScreenImage => TranslationHelper.GetTranslation("SetAsLockScreenImage");
+
+        public string CopyImage => TranslationHelper.GetTranslation("CopyImage");
+        public string CopyFile => TranslationHelper.GetTranslation("CopyFile");
+        public string CopyBase64 => $"{TranslationHelper.GetTranslation("Copy")} base64";
+
+        public string FileCut => TranslationHelper.GetTranslation("FileCut");
+        public string Delete => TranslationHelper.GetTranslation("DeleteFile");
+
         /// <summary>
         /// Gets or sets the source of the thumbnail.
         /// </summary>
