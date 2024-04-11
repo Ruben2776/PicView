@@ -122,9 +122,14 @@ public static class SettingsHelper
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
             await PerformSave(path).ConfigureAwait(false);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (Exception ex)
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+            if (!File.Exists(path))
+            {
+                var fileInfo = new FileInfo(path);
+                fileInfo.Directory?.Create();
+            }
             try
             {
                 await PerformSave(path).ConfigureAwait(false);
@@ -134,11 +139,6 @@ public static class SettingsHelper
                 Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
                 return false;
             }
-        }
-        catch (Exception ex)
-        {
-            Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
-            return false;
         }
         return true;
     }

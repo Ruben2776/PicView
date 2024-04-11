@@ -1,5 +1,5 @@
-﻿using PicView.WPF.UILogic;
-using System.Diagnostics;
+﻿using PicView.Core.Keybindings;
+using PicView.WPF.UILogic;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
@@ -117,27 +117,15 @@ internal static class CustomKeybindings
     /// </summary>
     internal static async Task UpdateKeyBindingsFile()
     {
-        try
-        {
-            // Serialize the CustomShortcuts dictionary to JSON
-            var json =
-                JsonSerializer.Serialize(CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(),
-                    kvp => UIHelper.GetFunctionNameByFunction(kvp.Value)), new JsonSerializerOptions
-                    {
-                        WriteIndented = true
-                    });
+        // Serialize the CustomShortcuts dictionary to JSON
+        var json =
+            JsonSerializer.Serialize(CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(),
+                kvp => UIHelper.GetFunctionNameByFunction(kvp.Value)), new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
 
-            // Write the JSON to the keybindings.json file
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
-            await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(UpdateKeyBindingsFile)} exception:\n{exception.Message}");
-#endif
-            Tooltip.ShowTooltipMessage(exception.Message, true, TimeSpan.FromSeconds(5));
-        }
+        await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
     }
 
     internal static async Task SetDefaultKeybindings()

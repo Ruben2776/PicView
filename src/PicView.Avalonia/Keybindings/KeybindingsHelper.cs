@@ -4,6 +4,7 @@ using PicView.Avalonia.ViewModels;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -117,9 +118,7 @@ public static class KeybindingsHelper
             var json = JsonSerializer.Serialize(
                 CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(),
                     kvp => GetFunctionNameByFunction(kvp.Value)), typeof(Dictionary<string, string>), SourceGenerationContext.Default);
-
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
-            await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
+            await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
