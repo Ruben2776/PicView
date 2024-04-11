@@ -271,7 +271,7 @@ public abstract class Animator : DependencyObject, IDisposable
     private static Dictionary<int, GifPalette> CreatePalettes(GifDataStream metadata)
     {
         var palettes = new Dictionary<int, GifPalette>();
-        Color[] globalColorTable = null;
+        Color[]? globalColorTable = null;
         if (metadata.Header.LogicalScreenDescriptor.HasGlobalColorTable)
         {
             globalColorTable =

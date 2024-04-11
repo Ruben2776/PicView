@@ -45,25 +45,25 @@ internal class TimingManager
             }
         }
 
-        if (_current >= _timeSpans.Count)
+        if (_current < _timeSpans.Count)
         {
-            _count++;
-            if (repeatBehavior.HasCount)
-            {
-                if (_count < repeatBehavior.Count)
-                {
-                    _current = 0;
-                    return true;
-                }
-
-                IsComplete = true;
-                return false;
-            }
-
-            _current = 0;
             return true;
         }
 
+        _count++;
+        if (repeatBehavior.HasCount)
+        {
+            if (_count < repeatBehavior.Count)
+            {
+                _current = 0;
+                return true;
+            }
+
+            IsComplete = true;
+            return false;
+        }
+
+        _current = 0;
         return true;
     }
 
@@ -94,7 +94,7 @@ internal class TimingManager
     }
 
     private readonly Task _completedTask = Task.FromResult(0);
-    private TaskCompletionSource<int> _pauseCompletionSource;
+    private TaskCompletionSource<int>? _pauseCompletionSource;
 
     public void Pause()
     {
@@ -117,11 +117,6 @@ internal class TimingManager
     private Task IsPausedAsync(CancellationToken cancellationToken)
     {
         var tcs = _pauseCompletionSource;
-        if (tcs != null)
-        {
-            return tcs.Task.WithCancellationToken(cancellationToken);
-        }
-
-        return _completedTask;
+        return tcs?.Task.WithCancellationToken(cancellationToken) ?? _completedTask;
     }
 }
