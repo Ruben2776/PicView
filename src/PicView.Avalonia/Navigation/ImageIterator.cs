@@ -45,7 +45,12 @@ namespace PicView.Avalonia.Navigation
 #if DEBUG
             Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
 #endif
-            _watcher ??= new FileSystemWatcher();
+            InitiateWatcher(fileInfo);
+        }
+
+        private void InitiateWatcher(FileInfo fileInfo)
+        {
+            _watcher = new FileSystemWatcher();
             _watcher.Path = fileInfo.DirectoryName;
             _watcher.EnableRaisingEvents = true;
             _watcher.Filter = "*.*";
@@ -63,6 +68,13 @@ namespace PicView.Avalonia.Navigation
         public async Task AddAsync(int index, ImageService imageService, ImageModel imageModel)
         {
             await PreLoader.AddAsync(index, imageService, Pics, imageModel).ConfigureAwait(false);
+        }
+        
+        public async Task ReloadFileList()
+        {
+            Pics = await Task.FromResult(_platformService.GetFiles(FileInfo)).ConfigureAwait(false);
+            Index = Pics.IndexOf(FileInfo.FullName);
+            InitiateWatcher(FileInfo);
         }
 
         public int GetIteration(int index, NavigateTo navigateTo)

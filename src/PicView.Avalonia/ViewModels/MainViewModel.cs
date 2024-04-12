@@ -97,8 +97,6 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ChangeCtrlZoomCommand { get; }
 
-        public ICommand? ChangeIncludeSubdirectoriesCommand { get; }
-
         public ICommand? ToggleUICommand { get; }
 
         public ICommand? ToggleBottomNavBarCommand { get; }
@@ -162,6 +160,8 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleBottomGalleryCommand { get; }
 
         public ICommand? ToggleScrollCommand { get; }
+        
+        public ICommand? ToggleSubdirectoriesCommand { get; }
 
         #endregion Commands
 
@@ -263,12 +263,7 @@ namespace PicView.Avalonia.ViewModels
         public bool IsIncludingSubdirectories
         {
             get => _isIncludingSubdirectories;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isIncludingSubdirectories, value);
-                SettingsHelper.Settings.Sorting.IncludeSubDirectories = value;
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
+            set => this.RaiseAndSetIfChanged(ref _isIncludingSubdirectories, value);
         }
 
         private bool _isScrollingEnabled;
@@ -1921,12 +1916,8 @@ namespace PicView.Avalonia.ViewModels
             ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleAutoFit(this));
 
             ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleTopMost(this));
-
-            ChangeIncludeSubdirectoriesCommand = ReactiveCommand.Create(() =>
-            {
-                IsIncludingSubdirectories = !IsIncludingSubdirectories;
-                SetTitle();
-            });
+            
+            ToggleSubdirectoriesCommand = ReactiveCommand.CreateFromTask(UIFunctions.ToggleSubdirectories);
 
             #endregion Settings commands
 

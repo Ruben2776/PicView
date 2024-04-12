@@ -1,5 +1,7 @@
+using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -12,6 +14,18 @@ public partial class GalleryView : UserControl
     public GalleryView()
     {
         InitializeComponent();
+        AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
+    }
+
+    private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+        
+        // Disable right click selection
+        e.Handled = true;
     }
 
     private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -62,6 +76,11 @@ public partial class GalleryView : UserControl
 
     private void GalleryListBox_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            // macOS already has horizontal scrolling for touchpad
+            return;
+        }
         var scrollViewer = GalleryListBox.FindDescendantOfType<ScrollViewer>();
         if (scrollViewer is null)
         {

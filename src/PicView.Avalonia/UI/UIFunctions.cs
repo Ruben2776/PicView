@@ -5,6 +5,7 @@ using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.UI;
 
@@ -205,9 +206,13 @@ public static class UIFunctions
         await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomOut);
     }
 
-    public static Task ResetZoom()
+    public static async Task ResetZoom()
     {
-        throw new NotImplementedException();
+        if (Vm is null)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
     }
 
     public static Task ToggleScroll()
@@ -357,6 +362,29 @@ public static class UIFunctions
         Vm.ImageIterator.PreLoader.Clear();
         Vm.CurrentView = new ImageViewer();
         await Vm.LoadPicFromString(Vm.FileInfo.FullName);
+    }
+    
+    public static async Task ToggleSubdirectories()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
+        {
+            Vm.IsIncludingSubdirectories = false;
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories = false;
+        }
+        else
+        {
+            Vm.IsIncludingSubdirectories = true;
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories = true;
+        }
+        
+        await Vm.ImageIterator.ReloadFileList();
+        Vm.SetTitle();
+        await SettingsHelper.SaveSettingsAsync();
     }
 
     public static Task CopyFile()
