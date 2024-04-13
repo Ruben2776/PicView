@@ -9,7 +9,7 @@ namespace PicView.Avalonia.Navigation;
 
 public static class SortingHelper
 {
-    public static async Task UpdateFileList(IPlatformSpecificService platformSpecificService, MainViewModel vm, FileListHelper.SortFilesBy sortFilesBy)
+    public static async Task UpdateFileList(IPlatformSpecificService? platformSpecificService, MainViewModel vm, FileListHelper.SortFilesBy sortFilesBy)
     {
         SettingsHelper.Settings.Sorting.SortPreference = (int)sortFilesBy;
         if (!NavigationHelper.CanNavigate(vm))
@@ -31,7 +31,7 @@ public static class SortingHelper
         }
     }
 
-    public static async Task UpdateFileList(IPlatformSpecificService platformSpecificService, MainViewModel vm, bool ascending)
+    public static async Task UpdateFileList(IPlatformSpecificService? platformSpecificService, MainViewModel vm, bool ascending)
     {
         SettingsHelper.Settings.Sorting.Ascending = ascending;
         if (!NavigationHelper.CanNavigate(vm))
@@ -53,7 +53,7 @@ public static class SortingHelper
         }
     }
 
-    public static void SortGalleryItems(List<string> files, MainViewModel vm, IPlatformSpecificService platformSpecificService)
+    public static void SortGalleryItems(List<string> files, MainViewModel vm, IPlatformSpecificService? platformSpecificService)
     {
         var sortedFiles = SortHelper.SortIEnumerable(files, platformSpecificService);
         var tempList = vm.GalleryItems;

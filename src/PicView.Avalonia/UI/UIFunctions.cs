@@ -3,15 +3,18 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
+using PicView.Core.FileHandling;
 
 namespace PicView.Avalonia.UI;
 
 public static class UIFunctions
 {
     public static MainViewModel? Vm;
+    public static IPlatformSpecificService? PlatformSpecificService;
 
     #region Functions list
 
@@ -363,7 +366,7 @@ public static class UIFunctions
         Vm.CurrentView = new ImageViewer();
         await Vm.LoadPicFromString(Vm.FileInfo.FullName);
     }
-    
+
     public static async Task ToggleSubdirectories()
     {
         if (Vm is null)
@@ -381,7 +384,7 @@ public static class UIFunctions
             Vm.IsIncludingSubdirectories = true;
             SettingsHelper.Settings.Sorting.IncludeSubDirectories = true;
         }
-        
+
         await Vm.ImageIterator.ReloadFileList();
         Vm.SetTitle();
         await SettingsHelper.SaveSettingsAsync();
@@ -525,6 +528,123 @@ public static class UIFunctions
     public static Task ColorPicker()
     {
         throw new NotImplementedException();
+    }
+
+    public static async Task SortFilesByName()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.Name);
+    }
+
+    public static async Task SortFilesByCreationTime()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.CreationTime);
+    }
+
+    public static async Task SortFilesByLastAccessTime()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.LastAccessTime);
+    }
+
+    public static async Task SortFilesByLastWriteTime()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.LastWriteTime);
+    }
+
+    public static async Task SortFilesBySize()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.FileSize);
+    }
+
+    public static async Task SortFilesByExtension()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.Extension);
+    }
+
+    public static async Task SortFilesRandomly()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.Random);
+    }
+
+    public static async Task SortFilesAscending()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, ascending: true);
+    }
+
+    public static async Task SortFilesDescending()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (PlatformSpecificService is null)
+        {
+            return;
+        }
+        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, ascending: false);
     }
 
     #endregion Functions list

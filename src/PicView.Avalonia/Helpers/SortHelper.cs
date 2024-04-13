@@ -6,7 +6,7 @@ namespace PicView.Avalonia.Helpers;
 
 public static class SortHelper
 {
-    public static List<string> SortIEnumerable(IEnumerable<string> files, IPlatformSpecificService platformService)
+    public static List<string> SortIEnumerable(IEnumerable<string> files, IPlatformSpecificService? platformService)
     {
         var sortFilesBy = FileListHelper.GetSortOrder();
 

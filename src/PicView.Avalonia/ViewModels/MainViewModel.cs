@@ -160,7 +160,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleBottomGalleryCommand { get; }
 
         public ICommand? ToggleScrollCommand { get; }
-        
+
         public ICommand? ToggleSubdirectoriesCommand { get; }
 
         #endregion Commands
@@ -1447,6 +1447,7 @@ namespace PicView.Avalonia.ViewModels
 
             Task.Run(UpdateLanguage);
             UIFunctions.Vm = this;
+            UIFunctions.PlatformSpecificService = platformSpecificService;
 
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
@@ -1508,50 +1509,23 @@ namespace PicView.Avalonia.ViewModels
 
             #region Sort Commands
 
-            SortFilesByNameCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.Name);
-            });
+            SortFilesByNameCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByName);
 
-            SortFilesByCreationTimeCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.CreationTime);
-            });
+            SortFilesByCreationTimeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByCreationTime);
 
-            SortFilesByLastAccessTimeCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.LastAccessTime);
-            });
+            SortFilesByLastAccessTimeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByLastAccessTime);
 
-            SortFilesByLastWriteTimeCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.LastWriteTime);
-            });
+            SortFilesByLastWriteTimeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByLastWriteTime);
 
-            SortFilesBySizeCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.FileSize);
-            });
+            SortFilesBySizeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesBySize);
 
-            SortFilesByExtensionCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.Extension);
-            });
+            SortFilesByExtensionCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByExtension);
 
-            SortFilesRandomlyCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, FileListHelper.SortFilesBy.Random);
-            });
+            SortFilesRandomlyCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesRandomly);
 
-            SortFilesAscendingCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, ascending: true);
-            });
+            SortFilesAscendingCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesAscending);
 
-            SortFilesDescendingCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await SortingHelper.UpdateFileList(platformSpecificService, this, ascending: false);
-            });
+            SortFilesDescendingCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesDescending);
 
             #endregion Sort Commands
 
@@ -1916,7 +1890,7 @@ namespace PicView.Avalonia.ViewModels
             ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleAutoFit(this));
 
             ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleTopMost(this));
-            
+
             ToggleSubdirectoriesCommand = ReactiveCommand.CreateFromTask(UIFunctions.ToggleSubdirectories);
 
             #endregion Settings commands
