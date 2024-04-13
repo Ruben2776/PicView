@@ -140,9 +140,6 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                <Style TargetType="{x:Type Grid}">
-                    <Setter Property="Background" Value="{StaticResource NoisyBg}" />
-                </Style>
             </TabControl.Resources>
 
             <TabItem>
@@ -918,5 +915,30 @@
                 </ScrollViewer>
             </TabItem>
         </TabControl>
+        <StackPanel Background="{StaticResource MenuBg}">
+            <Border
+                Margin="0,2,0,15"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Panel.ZIndex="1"
+                Background="{StaticResource BackgroundColorBrushAlt}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="2"
+                DockPanel.Dock="Bottom"
+                Effect="{StaticResource MenuShadowButtonBorder}"
+                Focusable="False">
+                <Button x:Name="DefaultButton">
+                    <Button.Background>
+                        <SolidColorBrush x:Name="DefaultButtonBrush" Color="{StaticResource BackgroundColorAlt}" />
+                    </Button.Background>
+                    <Label x:Name="DefaultButtonLabel" Padding="10">
+                        <Label.Foreground>
+                            <SolidColorBrush x:Name="DefaultButtonLabelBrush" Color="{StaticResource MainColor}" />
+                        </Label.Foreground>
+                    </Label>
+                </Button>
+            </Border>
+        </StackPanel>
     </DockPanel>
 </Window>

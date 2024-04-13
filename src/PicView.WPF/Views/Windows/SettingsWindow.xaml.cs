@@ -18,6 +18,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using PicView.Core.ProcessHandling;
 using static PicView.WPF.Animations.MouseOverAnimations;
 using static PicView.WPF.ConfigureSettings.ConfigColors;
 
@@ -74,6 +75,40 @@ public partial class SettingsWindow
             Activated += (_, _) => WindowUnfocusOrFocus(TitleBar, TitleText, null, true);
             var colorAnimation = new ColorAnimation { Duration = TimeSpan.FromSeconds(.1) };
             AddGenericEvents(colorAnimation);
+
+            var color = SettingsHelper.Settings.Theme.Dark ? Colors.White : (Color)Application.Current.Resources["MainColor"];
+            DefaultButton.MouseEnter += delegate
+            {
+                AnimationHelper.MouseOverColorEvent(color.A, color.R, color.G, color.B, DefaultButtonLabelBrush);
+            };
+            DefaultButton.MouseEnter += delegate { AnimationHelper.MouseEnterBgTexColor(DefaultButtonBrush); };
+            DefaultButton.MouseLeave += delegate
+            {
+                AnimationHelper.MouseLeaveColorEvent(color.A, color.R, color.G, color.B, DefaultButtonLabelBrush);
+            };
+            DefaultButton.MouseLeave += delegate { AnimationHelper.MouseLeaveBgTexColor(DefaultButtonBrush); };
+            DefaultButton.Click += async delegate
+            {
+                SettingsHelper.DeleteSettingFiles();
+                SettingsHelper.SetDefaults();
+                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+                await ConfigureWindows.GetMainWindow?.Dispatcher?.InvokeAsync(() =>
+                {
+                    Close();
+                    ConfigureWindows.GetMainWindow.Close();
+                });
+                string args;
+                if (ErrorHandling.CheckOutOfRange())
+                {
+                    var argsList = Environment.GetCommandLineArgs();
+                    args = argsList.Length > 1 ? argsList[1] : string.Empty;
+                }
+                else
+                {
+                    args = Navigation.Pics[Navigation.FolderIndex];
+                }
+                ProcessHelper.RestartApp(args);
+            };
 
             // AvoidZoomRadio
             AvoidZoomRadio.IsChecked = SettingsHelper.Settings.Zoom.AvoidZoomingOut;
@@ -482,6 +517,7 @@ public partial class SettingsWindow
         StartUpNone.Content = TranslationHelper.GetTranslation("None");
         StartUpLastFile.Content = TranslationHelper.GetTranslation("OpenLastFile");
         OpenInSameWindowTextBlock.Text = TranslationHelper.GetTranslation("OpenInSameWindow");
+        DefaultButtonLabel.Content = TranslationHelper.GetTranslation("ResetButtonText");
     }
 
     #region EventHandlers
