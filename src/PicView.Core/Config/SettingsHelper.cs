@@ -81,7 +81,7 @@ public static class SettingsHelper
         return File.Exists(baseDirectory) ? baseDirectory : string.Empty;
     }
 
-    private static void SetDefaults()
+    public static void SetDefaults()
     {
         Settings = new AppSettings
         {
@@ -96,6 +96,30 @@ public static class SettingsHelper
         };
         // Get the default culture from the OS
         Settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
+    }
+
+    public static void DeleteSettingFiles()
+    {
+        try
+        {
+            var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+            if (File.Exists(appDataPath))
+            {
+                File.Delete(appDataPath);
+            }
+
+            var baseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
+            if (File.Exists(baseDirectory))
+            {
+                File.Delete(baseDirectory);
+            }
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(DeleteSettingFiles)} error deleting settings:\n {ex.Message}");
+#endif
+        }
     }
 
     private static async Task PerformSave(string path)
