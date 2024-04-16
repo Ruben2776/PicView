@@ -15,6 +15,31 @@
         BorderBrush="{StaticResource TertiaryBorderColor}"
         BorderThickness="1">
         <Panel>
+            <Panel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Adjust size">
+                        <MenuItem.Icon>
+                            <Path
+                                Width="12"
+                                Height="12"
+                                Data="{StaticResource ImageGeometry}"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Command="{CompiledBinding ToggleGalleryCommand}" Header="{CompiledBinding Close}">
+                        <MenuItem.Icon>
+                            <Path
+                                Width="12"
+                                Height="12"
+                                Data="{StaticResource CloseGeometry}"
+                                Fill="{StaticResource MainIconColor}"
+                                Stretch="Fill" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Panel.ContextMenu>
             <ListBox
                 x:Name="GalleryListBox"
                 Margin="0,40,0,0"
