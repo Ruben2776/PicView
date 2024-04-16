@@ -100,38 +100,10 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleUICommand { get; }
 
         public ICommand? ToggleBottomNavBarCommand { get; }
-
-        private ICommand? _showExifWindowCommand;
-
-        public ICommand? ShowExifWindowCommand
-        {
-            get => _showExifWindowCommand;
-            set => this.RaiseAndSetIfChanged(ref _showExifWindowCommand, value);
-        }
-
-        private ICommand? _showAboutWindowCommand;
-
-        public ICommand? ShowAboutWindowCommand
-        {
-            get => _showAboutWindowCommand;
-            set => this.RaiseAndSetIfChanged(ref _showAboutWindowCommand, value);
-        }
-
-        private ICommand? _showSettingsWindowCommand;
-
-        public ICommand? ShowSettingsWindowCommand
-        {
-            get => _showSettingsWindowCommand;
-            set => this.RaiseAndSetIfChanged(ref _showSettingsWindowCommand, value);
-        }
-
-        private ICommand? _showKeybindingsWindowCommand;
-
-        public ICommand? ShowKeybindingsWindowCommand
-        {
-            get => _showKeybindingsWindowCommand;
-            set => this.RaiseAndSetIfChanged(ref _showKeybindingsWindowCommand, value);
-        }
+        public ICommand? ShowExifWindowCommand { get; }
+        public ICommand? ShowAboutWindowCommand { get; }
+        public ICommand? ShowSettingsWindowCommand { get; }
+        public ICommand? ShowKeybindingsWindowCommand { get; }
 
         public ICommand? SetExifRating1Command { get; }
         public ICommand? SetExifRating2Command { get; }
@@ -1428,11 +1400,6 @@ namespace PicView.Avalonia.ViewModels
             }
         }
 
-        public async Task StartUpTask()
-        {
-            await StartUpHelper.Start(this);
-        }
-
         #endregion Methods
 
         public MainViewModel(IPlatformSpecificService? platformSpecificService)
@@ -1484,13 +1451,10 @@ namespace PicView.Avalonia.ViewModels
 
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
-            ShowExifWindowCommand = ReactiveCommand.Create(() =>
-            {
-            });
-
-            ShowAboutWindowCommand = ReactiveCommand.Create(() =>
-            {
-            });
+            ShowExifWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowExifWindow);
+            ShowSettingsWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowSettingsWindow);
+            ShowKeybindingsWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowKeybindingsWindow);
+            ShowAboutWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowAboutWindow);
 
             #endregion Window commands
 

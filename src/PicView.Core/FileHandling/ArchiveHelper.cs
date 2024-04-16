@@ -20,4 +20,6 @@ public static class ArchiveHelper
 
         return Directory.Exists(TempFilePath);
     }
+    
+    //TODO use https://github.com/adamhathcock/sharpcompress for multiplatform support
 }

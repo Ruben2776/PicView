@@ -36,10 +36,9 @@ public static class MainKeyboardShortcuts
         {
             return;
         }
-
-        _x++;
+        
         CtrlDown = e.KeyModifiers == KeyModifiers.Control;
-        AltDown = e.KeyModifiers == KeyModifiers.Alt;
+        AltDown = e.KeyModifiers is KeyModifiers.Alt or KeyModifiers.Meta;
         ShiftDown = e.KeyModifiers == KeyModifiers.Shift;
         switch (e.Key)
         {
@@ -49,6 +48,8 @@ public static class MainKeyboardShortcuts
             case Key.RightCtrl:
             case Key.LeftAlt:
             case Key.RightAlt:
+            case Key.LWin:
+            case Key.RWin:
                 return;
         }
 
@@ -69,6 +70,11 @@ public static class MainKeyboardShortcuts
             CurrentKeys = new KeyGesture(e.Key);
         }
 
+        if (_x >= ushort.MaxValue - 1)
+        {
+            _x = 1;
+        }
+        _x++;
         IsKeyHeldDown = _x > 1;
 
         if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKeys, out var func))

@@ -11,4 +11,8 @@ public interface IPlatformSpecificService
     void ShowAboutWindow();
 
     void ShowExifWindow();
+    
+    void ShowKeybindingsWindow();
+    
+    void ShowSettingsWindow();
 }
