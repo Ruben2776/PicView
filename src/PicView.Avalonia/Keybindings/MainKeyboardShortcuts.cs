@@ -26,28 +26,52 @@ public static class MainKeyboardShortcuts
     /// </summary>
     public static bool ShiftDown { get; private set; }
 
-    /// <summary>
-    /// Gets the currently pressed key.
-    /// </summary>
-    public static Key CurrentKey { get; private set; }
+    public static KeyGesture? CurrentKeys { get; private set; }
 
-    private static short _x;
+    private static ushort _x;
 
     public static async Task MainWindow_KeysDownAsync(KeyEventArgs e)
     {
-        _x++;
-        CtrlDown = e.KeyModifiers == KeyModifiers.Control;
-        AltDown = e.KeyModifiers == KeyModifiers.Alt;
-        ShiftDown = e.KeyModifiers == KeyModifiers.Shift;
-        CurrentKey = e.Key;
-        IsKeyHeldDown = _x > 1;
-
         if (KeybindingsHelper.CustomShortcuts is null)
         {
             return;
         }
 
-        if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKey, out var func))
+        _x++;
+        CtrlDown = e.KeyModifiers == KeyModifiers.Control;
+        AltDown = e.KeyModifiers == KeyModifiers.Alt;
+        ShiftDown = e.KeyModifiers == KeyModifiers.Shift;
+        switch (e.Key)
+        {
+            case Key.LeftShift:
+            case Key.RightShift:
+            case Key.LeftCtrl:
+            case Key.RightCtrl:
+            case Key.LeftAlt:
+            case Key.RightAlt:
+                return;
+        }
+
+        if (CtrlDown)
+        {
+            CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control);
+        }
+        else if (AltDown)
+        {
+            CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Alt);
+        }
+        else if (ShiftDown)
+        {
+            CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Shift);
+        }
+        else
+        {
+            CurrentKeys = new KeyGesture(e.Key);
+        }
+
+        IsKeyHeldDown = _x > 1;
+
+        if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKeys, out var func))
         {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (func is null)
@@ -55,7 +79,7 @@ public static class MainKeyboardShortcuts
                 try
                 {
                     await KeybindingsHelper.SetDefaultKeybindings().ConfigureAwait(false);
-                    if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKey, out var retryFunc))
+                    if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKeys, out var retryFunc))
                     {
                         await retryFunc.Invoke().ConfigureAwait(false);
                     }
@@ -76,10 +100,6 @@ public static class MainKeyboardShortcuts
             // Execute the associated action
             await func.Invoke().ConfigureAwait(false);
         }
-        else
-        {
-            //await UIHelper.CheckModifierFunctionAsync().ConfigureAwait(false);
-        }
     }
 
     public static async Task MainWindow_KeysUp(KeyEventArgs e)
@@ -87,7 +107,7 @@ public static class MainKeyboardShortcuts
         CtrlDown = false;
         AltDown = false;
         ShiftDown = false;
-        CurrentKey = e.Key;
+        CurrentKeys = null;
         IsKeyHeldDown = false;
         _x = 0;
 

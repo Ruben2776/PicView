@@ -1,4 +1,11 @@
-﻿using Avalonia;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -6,11 +13,11 @@ using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -19,14 +26,6 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Reactive;
-using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
-using PicView.Avalonia.Gallery;
 using static PicView.Core.Gallery.GalleryThumbInfo;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
@@ -53,22 +52,23 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ExitCommand { get; }
         public ICommand? MinimizeCommand { get; }
         public ICommand? MaximizeCommand { get; }
-        public ICommand? NextCommand { get; private set; }
-        public ICommand? PreviousCommand { get; private set; }
-        public ICommand? FirstCommand { get; private set; }
-        public ICommand? LastCommand { get; private set; }
-        public ICommand? OpenFileCommand { get; private set; }
-        public ICommand? SaveFileCommand { get; private set; }
+
+        public ICommand? NextCommand { get; }
+        public ICommand? PreviousCommand { get; }
+        public ICommand? FirstCommand { get; }
+        public ICommand? LastCommand { get; }
+        public ICommand? OpenFileCommand { get; }
+        public ICommand? SaveFileCommand { get; }
         public ICommand? OpenLastFileCommand { get; }
-        public ICommand? PasteCommand { get; private set; }
-        public ICommand? CopyFileCommand { get; private set; }
-        public ICommand? CopyFilePathCommand { get; private set; }
-        public ICommand? CopyImageCommand { get; private set; }
-        public ICommand? CutCommand { get; private set; }
-        public ICommand? ReloadCommand { get; private set; }
-        public ICommand? PrintCommand { get; private set; }
-        public ICommand? DeleteFileCommand { get; private set; }
-        public ICommand? RecycleFileCommand { get; private set; }
+        public ICommand? PasteCommand { get; }
+        public ICommand? CopyFileCommand { get; }
+        public ICommand? CopyFilePathCommand { get; }
+        public ICommand? CopyImageCommand { get; }
+        public ICommand? CutCommand { get; }
+        public ICommand? ReloadCommand { get; }
+        public ICommand? PrintCommand { get; }
+        public ICommand? DeleteFileCommand { get; }
+        public ICommand? RecycleFileCommand { get; }
         public ICommand? CloseMenuCommand { get; }
         public ICommand? ToggleFileMenuCommand { get; }
         public ICommand? ToggleImageMenuCommand { get; }
@@ -1446,8 +1446,9 @@ namespace PicView.Avalonia.ViewModels
             IsLoading = true;
 
             Task.Run(UpdateLanguage);
-            UIFunctions.Vm = this;
-            UIFunctions.PlatformSpecificService = platformSpecificService;
+            FunctionsHelper.Vm = this;
+            FunctionsHelper.PlatformSpecificService = platformSpecificService;
+            GetFlipped = Flip;
 
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
@@ -1495,37 +1496,37 @@ namespace PicView.Avalonia.ViewModels
 
             #region Navigation Commands
 
-            NextCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Next);
+            NextCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Next);
 
-            PreviousCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Prev);
+            PreviousCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Prev);
 
-            FirstCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.First);
+            FirstCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.First);
 
-            LastCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Last);
+            LastCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Last);
 
-            ReloadCommand = ReactiveCommand.CreateFromTask(UI.UIFunctions.Reload);
+            ReloadCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Reload);
 
             #endregion Navigation Commands
 
             #region Sort Commands
 
-            SortFilesByNameCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByName);
+            SortFilesByNameCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByName);
 
-            SortFilesByCreationTimeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByCreationTime);
+            SortFilesByCreationTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByCreationTime);
 
-            SortFilesByLastAccessTimeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByLastAccessTime);
+            SortFilesByLastAccessTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastAccessTime);
 
-            SortFilesByLastWriteTimeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByLastWriteTime);
+            SortFilesByLastWriteTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastWriteTime);
 
-            SortFilesBySizeCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesBySize);
+            SortFilesBySizeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesBySize);
 
-            SortFilesByExtensionCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesByExtension);
+            SortFilesByExtensionCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByExtension);
 
-            SortFilesRandomlyCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesRandomly);
+            SortFilesRandomlyCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesRandomly);
 
-            SortFilesAscendingCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesAscending);
+            SortFilesAscendingCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesAscending);
 
-            SortFilesDescendingCommand = ReactiveCommand.CreateFromTask(UIFunctions.SortFilesDescending);
+            SortFilesDescendingCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesDescending);
 
             #endregion Sort Commands
 
@@ -1575,104 +1576,21 @@ namespace PicView.Avalonia.ViewModels
 
             #region Image commands
 
-            RotateLeftCommand = ReactiveCommand.Create(() =>
-            {
-                ImageViewer?.Rotate(true, true);
-            });
+            RotateLeftCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RotateLeft);
 
-            RotateRightCommand = ReactiveCommand.Create(() =>
-            {
-                ImageViewer?.Rotate(false, true);
-            });
+            RotateRightCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RotateRight);
 
-            GetFlipped = Flip;
-            FlipCommand = ReactiveCommand.Create(() =>
-            {
-                if (!NavigationHelper.CanNavigate(this))
-                {
-                    return;
-                }
-                if (ScaleX == 1)
-                {
-                    ScaleX = -1;
-                    GetFlipped = UnFlip;
-                }
-                else
-                {
-                    ScaleX = 1;
-                    GetFlipped = Flip;
-                }
-                ImageViewer?.Flip(true);
-            });
+            FlipCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Flip);
 
-            ToggleScrollCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-                {
-                    ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
-                    GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
-                    IsScrollingEnabled = false;
-                    SettingsHelper.Settings.Zoom.ScrollEnabled = false;
-                }
-                else
-                {
-                    ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
-                    GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
-                    IsScrollingEnabled = true;
-                    SettingsHelper.Settings.Zoom.ScrollEnabled = true;
-                }
-                WindowHelper.SetSize(this);
-                await SettingsHelper.SaveSettingsAsync();
-            });
+            ToggleScrollCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleScroll);
 
-            OptimizeImageCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (FileInfo is null)
-                {
-                    return;
-                }
-                await Task.Run(() =>
-                {
-                    try
-                    {
-                        ImageOptimizer imageOptimizer = new()
-                        {
-                            OptimalCompression = true
-                        };
-                        imageOptimizer.LosslessCompress(FileInfo.FullName);
-                    }
-                    catch (Exception e)
-                    {
-                        Trace.WriteLine(e);
-                    }
-                });
-                RefreshTitle();
-            });
+            OptimizeImageCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OptimizeImage);
 
             #endregion Image commands
 
             #region File commands
 
-            OpenFileCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                FileService ??= new FileService();
-                var file = await FileService.OpenFile();
-                if (file is null)
-                {
-                    return;
-                }
-
-                CurrentView = new ImageViewer();
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    var path = file.Path.AbsolutePath;
-                    await LoadPicFromFile(new FileInfo(path));
-                }
-                else
-                {
-                    await LoadPicFromFile(new FileInfo(file.Path.LocalPath));
-                }
-            });
+            OpenFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Open);
 
             OpenLastFileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -1814,9 +1732,7 @@ namespace PicView.Avalonia.ViewModels
                 {
                     // TODO: Change to bottom gallery view
                 }
-                else
-                {
-                }
+
                 CloseMenuCommand.Execute(null);
                 if (IsGalleryOpen)
                 {
@@ -1856,32 +1772,11 @@ namespace PicView.Avalonia.ViewModels
 
             #region UI Commands
 
-            ToggleUICommand = ReactiveCommand.CreateFromTask(async () => { await WindowHelper.ToggleUI(this); });
+            ToggleUICommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleUI);
 
-            ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
-                {
-                    IsBottomToolbarShown = false;
-                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = false;
-                }
-                else
-                {
-                    IsBottomToolbarShown = true;
-                    SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
-                }
-                WindowHelper.SetSize(this);
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-            });
+            ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleBottomToolbar);
 
-            ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
-                GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
-                    ? TranslationHelper.GetTranslation("CtrlToZoom")
-                    : TranslationHelper.GetTranslation("ScrollToZoom");
-                await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-            });
+            ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeCtrlZoom);
 
             #endregion UI Commands
 
@@ -1889,9 +1784,9 @@ namespace PicView.Avalonia.ViewModels
 
             ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleAutoFit(this));
 
-            ChangeTopMostCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleTopMost(this));
+            ChangeTopMostCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetTopMost);
 
-            ToggleSubdirectoriesCommand = ReactiveCommand.CreateFromTask(UIFunctions.ToggleSubdirectories);
+            ToggleSubdirectoriesCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleSubdirectories);
 
             #endregion Settings commands
 

@@ -217,6 +217,22 @@ public static class WindowHelper
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
+    public static async Task ToggleBottomToolbar(MainViewModel vm)
+    {
+        if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+        {
+            vm.IsBottomToolbarShown = false;
+            SettingsHelper.Settings.UIProperties.ShowBottomNavBar = false;
+        }
+        else
+        {
+            vm.IsBottomToolbarShown = true;
+            SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
+        }
+        SetSize(vm);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
     #endregion Change window behavior
 
     #region SetSize

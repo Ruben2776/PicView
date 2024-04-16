@@ -1,10 +1,11 @@
 ﻿using Avalonia.Input;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PicView.Core.Keybindings;
+using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -18,6 +19,7 @@ public static class KeybindingsHelper
                                               {
                                                 "D": "Next",
                                                 "Right": "Next",
+                                                "Ctrl+D": "Last",
                                                 "A": "Prev",
                                                 "Left": "Prev",
                                                 "W": "Up",
@@ -58,11 +60,12 @@ public static class KeybindingsHelper
                                                 "D3": "Set3Star",
                                                 "D4": "Set4Star",
                                                 "D5": "Set5Star",
-                                                "Escape": "Close"
+                                                "Escape": "Close",
+                                                "Ctrl+O": "Open",
                                               }
                                               """;
 
-    public static Dictionary<Key, Func<Task>>? CustomShortcuts { get; private set; }
+    public static Dictionary<KeyGesture, Func<Task>>? CustomShortcuts { get; private set; }
 
     public static async Task LoadKeybindings(MainViewModel vm)
     {
@@ -107,7 +110,7 @@ public static class KeybindingsHelper
                 json, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             as Dictionary<string, string>;
 
-        CustomShortcuts ??= new Dictionary<Key, Func<Task>>();
+        CustomShortcuts ??= new Dictionary<KeyGesture, Func<Task>>();
         await Loop(keyValues).ConfigureAwait(false);
     }
 
@@ -117,7 +120,8 @@ public static class KeybindingsHelper
         {
             var json = JsonSerializer.Serialize(
                 CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(),
-                    kvp => GetFunctionNameByFunction(kvp.Value)), typeof(Dictionary<string, string>), SourceGenerationContext.Default);
+                    kvp => GetFunctionNameByFunction(kvp.Value)), typeof(Dictionary<string, string>),
+                SourceGenerationContext.Default).Replace("\\u002B", "+"); // Fix plus sign encoded to unicode
             await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
         }
         catch (Exception exception)
@@ -132,14 +136,23 @@ public static class KeybindingsHelper
     {
         foreach (var kvp in keyValues)
         {
-            var checkKey = Enum.TryParse<Key>(kvp.Key, out var key);
-            if (!checkKey)
+            try
             {
-                continue;
+                var gesture = KeyGesture.Parse(kvp.Key);
+                if (gesture is null)
+                {
+                    continue;
+                }
+                var function = await GetFunctionByName(kvp.Value).ConfigureAwait(false);
+                // Add to the dictionary
+                CustomShortcuts[gesture] = function;
             }
-            var function = await GetFunctionByName(kvp.Value).ConfigureAwait(false);
-            // Add to the dictionary
-            CustomShortcuts[key] = function;
+            catch (Exception exception)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(Loop)} exception:\n{exception.Message}");
+#endif
+            }
         }
     }
 
@@ -151,7 +164,7 @@ public static class KeybindingsHelper
         }
         else
         {
-            CustomShortcuts = new Dictionary<Key, Func<Task>>();
+            CustomShortcuts = new Dictionary<KeyGesture, Func<Task>>();
         }
         var keyValues = JsonSerializer.Deserialize(
                 DefaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
@@ -174,89 +187,91 @@ public static class KeybindingsHelper
         return Task.FromResult<Func<Task>>(functionName switch
         {
             // Navigation values
-            "Next" => UIFunctions.Next,
-            "Prev" => UIFunctions.Prev,
-            "Up" => UIFunctions.Up,
-            "Down" => UIFunctions.Down,
+            "Next" => FunctionsHelper.Next,
+            "Prev" => FunctionsHelper.Prev,
+            "Up" => FunctionsHelper.Up,
+            "Down" => FunctionsHelper.Down,
+            "Last" => FunctionsHelper.Last,
+            "First" => FunctionsHelper.First,
 
             // Scroll
-            "ScrollToTop" => UIFunctions.ScrollToTop,
-            "ScrollToBottom" => UIFunctions.ScrollToBottom,
+            "ScrollToTop" => FunctionsHelper.ScrollToTop,
+            "ScrollToBottom" => FunctionsHelper.ScrollToBottom,
 
             // Zoom
-            "ZoomIn" => UIFunctions.ZoomIn,
-            "ZoomOut" => UIFunctions.ZoomOut,
-            "ResetZoom" => UIFunctions.ResetZoom,
+            "ZoomIn" => FunctionsHelper.ZoomIn,
+            "ZoomOut" => FunctionsHelper.ZoomOut,
+            "ResetZoom" => FunctionsHelper.ResetZoom,
 
             // Toggles
-            "ToggleScroll" => UIFunctions.ToggleScroll,
-            "ToggleLooping" => UIFunctions.ToggleLooping,
-            "ToggleGallery" => UIFunctions.ToggleGallery,
+            "ToggleScroll" => FunctionsHelper.ToggleScroll,
+            "ToggleLooping" => FunctionsHelper.ToggleLooping,
+            "ToggleGallery" => FunctionsHelper.ToggleGallery,
 
             // Scale Window
-            "AutoFitWindow" => UIFunctions.AutoFitWindow,
-            "AutoFitWindowAndStretch" => UIFunctions.AutoFitWindowAndStretch,
-            "NormalWindow" => UIFunctions.NormalWindow,
-            "NormalWindowAndStretch" => UIFunctions.NormalWindowAndStretch,
+            "AutoFitWindow" => FunctionsHelper.AutoFitWindow,
+            "AutoFitWindowAndStretch" => FunctionsHelper.AutoFitWindowAndStretch,
+            "NormalWindow" => FunctionsHelper.NormalWindow,
+            "NormalWindowAndStretch" => FunctionsHelper.NormalWindowAndStretch,
 
             // Window functions
-            "Fullscreen" => UIFunctions.Fullscreen,
-            "SetTopMost" => UIFunctions.SetTopMost,
-            "Close" => UIFunctions.Close,
-            "ToggleInterface" => UIFunctions.ToggleInterface,
-            "NewWindow" => UIFunctions.NewWindow,
-            "Center" => UIFunctions.Center,
+            "Fullscreen" => FunctionsHelper.Fullscreen,
+            "SetTopMost" => FunctionsHelper.SetTopMost,
+            "Close" => FunctionsHelper.Close,
+            "ToggleInterface" => FunctionsHelper.ToggleInterface,
+            "NewWindow" => FunctionsHelper.NewWindow,
+            "Center" => FunctionsHelper.Center,
 
             // Windows
-            "AboutWindow" => UIFunctions.AboutWindow,
-            "EffectsWindow" => UIFunctions.EffectsWindow,
-            "ImageInfoWindow" => UIFunctions.ImageInfoWindow,
-            "ResizeWindow" => UIFunctions.ResizeWindow,
-            "SettingsWindow" => UIFunctions.SettingsWindow,
-            "KeybindingsWindow" => UIFunctions.KeybindingsWindow,
+            "AboutWindow" => FunctionsHelper.AboutWindow,
+            "EffectsWindow" => FunctionsHelper.EffectsWindow,
+            "ImageInfoWindow" => FunctionsHelper.ImageInfoWindow,
+            "ResizeWindow" => FunctionsHelper.ResizeWindow,
+            "SettingsWindow" => FunctionsHelper.SettingsWindow,
+            "KeybindingsWindow" => FunctionsHelper.KeybindingsWindow,
 
             // Open functions
-            "Open" => UIFunctions.Open,
-            "OpenWith" => UIFunctions.OpenWith,
-            "OpenInExplorer" => UIFunctions.OpenInExplorer,
-            "Save" => UIFunctions.Save,
-            "Print" => UIFunctions.Print,
-            "Reload" => UIFunctions.Reload,
+            "Open" => FunctionsHelper.Open,
+            "OpenWith" => FunctionsHelper.OpenWith,
+            "OpenInExplorer" => FunctionsHelper.OpenInExplorer,
+            "Save" => FunctionsHelper.Save,
+            "Print" => FunctionsHelper.Print,
+            "Reload" => FunctionsHelper.Reload,
 
             // Copy functions
-            "CopyFile" => UIFunctions.CopyFile,
-            "CopyFilePath" => UIFunctions.CopyFilePath,
-            "CopyImage" => UIFunctions.CopyImage,
-            "CopyBase64" => UIFunctions.CopyBase64,
-            "DuplicateFile" => UIFunctions.DuplicateFile,
-            "CutFile" => UIFunctions.CutFile,
-            "Paste" => UIFunctions.Paste,
+            "CopyFile" => FunctionsHelper.CopyFile,
+            "CopyFilePath" => FunctionsHelper.CopyFilePath,
+            "CopyImage" => FunctionsHelper.CopyImage,
+            "CopyBase64" => FunctionsHelper.CopyBase64,
+            "DuplicateFile" => FunctionsHelper.DuplicateFile,
+            "CutFile" => FunctionsHelper.CutFile,
+            "Paste" => FunctionsHelper.Paste,
 
             // File functions
-            "DeleteFile" => UIFunctions.DeleteFile,
-            "Rename" => UIFunctions.Rename,
-            "ShowFileProperties" => UIFunctions.ShowFileProperties,
+            "DeleteFile" => FunctionsHelper.DeleteFile,
+            "Rename" => FunctionsHelper.Rename,
+            "ShowFileProperties" => FunctionsHelper.ShowFileProperties,
 
             // Image functions
-            "ResizeImage" => UIFunctions.ResizeImage,
-            "Crop" => UIFunctions.Crop,
-            "Flip" => UIFunctions.Flip,
-            "OptimizeImage" => UIFunctions.OptimizeImage,
-            "Stretch" => UIFunctions.Stretch,
+            "ResizeImage" => FunctionsHelper.ResizeImage,
+            "Crop" => FunctionsHelper.Crop,
+            "Flip" => FunctionsHelper.Flip,
+            "OptimizeImage" => FunctionsHelper.OptimizeImage,
+            "Stretch" => FunctionsHelper.Stretch,
 
             // Set stars
-            "Set0Star" => UIFunctions.Set0Star,
-            "Set1Star" => UIFunctions.Set1Star,
-            "Set2Star" => UIFunctions.Set2Star,
-            "Set3Star" => UIFunctions.Set3Star,
-            "Set4Star" => UIFunctions.Set4Star,
-            "Set5Star" => UIFunctions.Set5Star,
+            "Set0Star" => FunctionsHelper.Set0Star,
+            "Set1Star" => FunctionsHelper.Set1Star,
+            "Set2Star" => FunctionsHelper.Set2Star,
+            "Set3Star" => FunctionsHelper.Set3Star,
+            "Set4Star" => FunctionsHelper.Set4Star,
+            "Set5Star" => FunctionsHelper.Set5Star,
 
             // Misc
-            "ChangeBackground" => UIFunctions.ChangeBackground,
-            "GalleryClick" => UIFunctions.GalleryClick,
-            "Slideshow" => UIFunctions.Slideshow,
-            "ColorPicker" => UIFunctions.ColorPicker,
+            "ChangeBackground" => FunctionsHelper.ChangeBackground,
+            "GalleryClick" => FunctionsHelper.GalleryClick,
+            "Slideshow" => FunctionsHelper.Slideshow,
+            "ColorPicker" => FunctionsHelper.ColorPicker,
 
             _ => null
         });

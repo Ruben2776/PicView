@@ -90,7 +90,18 @@ public class KeybindTextBox : TextBox
 
     private async Task AssociateKey(KeyEventArgs e)
     {
-        KeybindingsHelper.CustomShortcuts.Remove(e.Key);
+        switch (e.Key)
+        {
+            case Key.LeftShift:
+            case Key.RightShift:
+            case Key.LeftCtrl:
+            case Key.RightCtrl:
+            case Key.LeftAlt:
+            case Key.RightAlt:
+                return;
+        }
+
+        KeybindingsHelper.CustomShortcuts.Remove(new KeyGesture(e.Key, e.KeyModifiers));
 
         var function = await KeybindingsHelper.GetFunctionByName(MethodName);
 
@@ -112,29 +123,29 @@ public class KeybindTextBox : TextBox
         }
 
         // Handle whether it's an alternative key or not
-        if (Alt)
-        {
-            if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
-            {
-                // If the main key is not present, add a new entry with the alternative key
-                var altKey = (Key)Enum.Parse(typeof(Key), e.Key.ToString());
-                KeybindingsHelper.CustomShortcuts[altKey] = function;
-            }
-            else
-            {
-                // Update the key and function name in the CustomShortcuts dictionary
-                KeybindingsHelper.CustomShortcuts[e.Key] = function;
-            }
-        }
-        else
-        {
-            // Remove if it already contains
-            if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
-            {
-                Remove();
-            }
-            KeybindingsHelper.CustomShortcuts[e.Key] = function;
-        }
+        //if (Alt)
+        //{
+        //    if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
+        //    {
+        //        // If the main key is not present, add a new entry with the alternative key
+        //        var altKey = (Key)Enum.Parse(typeof(Key), e.Key.ToString());
+        //        KeybindingsHelper.CustomShortcuts[altKey] = function;
+        //    }
+        //    else
+        //    {
+        //        // Update the key and function name in the CustomShortcuts dictionary
+        //        KeybindingsHelper.CustomShortcuts[e.Key] = function;
+        //    }
+        //}
+        //else
+        //{
+        //    // Remove if it already contains
+        //    if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
+        //    {
+        //        Remove();
+        //    }
+        //    KeybindingsHelper.CustomShortcuts[e.Key] = function;
+        //}
 
         await Save();
         return;
@@ -208,7 +219,8 @@ public class KeybindTextBox : TextBox
         }
 
         // Find the key associated with the specified function
-        var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName)?.Select(x => x.Key).ToList() ?? null;
+        //var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName && x.Value?.Method != null).Select(x => x.Key);
+        var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName)?.Select(x => x.Key.Key).ToList() ?? null;
 
         return keys.Count switch
         {

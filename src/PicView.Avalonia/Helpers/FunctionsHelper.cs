@@ -1,17 +1,22 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
-using PicView.Avalonia.Helpers;
+using ImageMagick;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Localization;
+using PicView.Core.ProcessHandling;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
-namespace PicView.Avalonia.UI;
+namespace PicView.Avalonia.Helpers;
 
-public static class UIFunctions
+public static class FunctionsHelper
 {
     public static MainViewModel? Vm;
     public static IPlatformSpecificService? PlatformSpecificService;
@@ -139,6 +144,40 @@ public static class UIFunctions
         }
     }
 
+    public static async Task RotateRight()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (Vm.IsGalleryOpen)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Vm.ImageViewer.Rotate(clockWise: true, animate: true);
+        });
+    }
+
+    public static async Task RotateLeft()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (Vm.IsGalleryOpen)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Vm.ImageViewer.Rotate(clockWise: false, animate: true);
+        });
+    }
+
     public static async Task Down()
     {
         if (Vm is null)
@@ -218,10 +257,41 @@ public static class UIFunctions
         await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
     }
 
-    public static Task ToggleScroll()
+    public static async Task ToggleScroll()
     {
-        Vm?.ToggleScrollCommand.Execute(null);
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+        {
+            Vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
+            Vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
+            Vm.IsScrollingEnabled = false;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = false;
+        }
+        else
+        {
+            Vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
+            Vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
+            Vm.IsScrollingEnabled = true;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = true;
+        }
+        WindowHelper.SetSize(Vm);
+        await SettingsHelper.SaveSettingsAsync();
+    }
+
+    public static async Task ChangeCtrlZoom()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
+        Vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
+            ? TranslationHelper.GetTranslation("CtrlToZoom")
+            : TranslationHelper.GetTranslation("ScrollToZoom");
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
     public static Task ToggleLooping()
@@ -264,9 +334,14 @@ public static class UIFunctions
         throw new NotImplementedException();
     }
 
-    public static Task SetTopMost()
+    public static async Task SetTopMost()
     {
-        throw new NotImplementedException();
+        if (Vm is null)
+        {
+            return;
+        }
+
+        await WindowHelper.ToggleTopMost(Vm);
     }
 
     public static async Task Close()
@@ -288,12 +363,13 @@ public static class UIFunctions
 
     public static Task NewWindow()
     {
-        throw new NotImplementedException();
+        ProcessHelper.StartNewProcess();
+        return Task.CompletedTask;
     }
 
     public static Task AboutWindow()
     {
-        Vm?.ShowAboutWindowCommand.Execute(null);
+        PlatformSpecificService?.ShowAboutWindow();
         return Task.CompletedTask;
     }
 
@@ -325,9 +401,30 @@ public static class UIFunctions
         return Task.CompletedTask;
     }
 
-    public static Task Open()
+    public static async Task Open()
     {
-        throw new NotImplementedException();
+        if (Vm is null)
+        {
+            return;
+        }
+
+        Vm.FileService ??= new FileService();
+        var file = await FileService.OpenFile();
+        if (file is null)
+        {
+            return;
+        }
+
+        Vm.CurrentView = new ImageViewer();
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            var path = file.Path.AbsolutePath;
+            await Vm.LoadPicFromFile(new FileInfo(path));
+        }
+        else
+        {
+            await Vm.LoadPicFromFile(new FileInfo(file.Path.LocalPath));
+        }
     }
 
     public static Task OpenWith()
@@ -456,15 +553,56 @@ public static class UIFunctions
         {
             return;
         }
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
+        if (Vm.ScaleX == 1)
+        {
+            Vm.ScaleX = -1;
+            Vm.GetFlipped = Vm.UnFlip;
+        }
+        else
+        {
+            Vm.ScaleX = 1;
+            Vm.GetFlipped = Vm.Flip;
+        }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Vm.ImageViewer.Flip(animate: true);
         });
     }
 
-    public static Task OptimizeImage()
+    public static async Task OptimizeImage()
     {
-        throw new NotImplementedException();
+        if (Vm is null)
+        {
+            return;
+        }
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
+        if (Vm.FileInfo is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            try
+            {
+                ImageOptimizer imageOptimizer = new()
+                {
+                    OptimalCompression = true
+                };
+                imageOptimizer.LosslessCompress(Vm.FileInfo.FullName);
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e);
+            }
+        });
+        Vm.RefreshTitle();
     }
 
     public static Task Stretch()
@@ -529,6 +667,26 @@ public static class UIFunctions
     {
         throw new NotImplementedException();
     }
+
+    public static async Task ToggleBottomToolbar()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await WindowHelper.ToggleBottomToolbar(Vm);
+    }
+
+    public static async Task ToggleUI()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await WindowHelper.ToggleUI(Vm);
+    }
+
+    #region Sorting
 
     public static async Task SortFilesByName()
     {
@@ -646,6 +804,8 @@ public static class UIFunctions
         }
         await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, ascending: false);
     }
+
+    #endregion Sorting
 
     #endregion Functions list
 }

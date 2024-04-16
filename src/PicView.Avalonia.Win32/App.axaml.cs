@@ -24,6 +24,7 @@ public class App : Application, IPlatformSpecificService
     private SettingsWindow? _settingsWindow;
     private KeybindingsWindow? _keybindingsWindow;
     private AboutWindow? _aboutWindow;
+    private MainViewModel _vm;
 
     public override void Initialize()
     {
@@ -52,72 +53,55 @@ public class App : Application, IPlatformSpecificService
             return;
         }
         var w = desktop.MainWindow = new WinMainWindow();
-        var vm = new MainViewModel(this);
-        w.DataContext = vm;
+        _vm = new MainViewModel(this);
+        w.DataContext = _vm;
         if (!settingsExists)
         {
             WindowHelper.CenterWindowOnScreen();
-            vm.CanResize = true;
-            vm.IsAutoFit = false;
+            _vm.CanResize = true;
+            _vm.IsAutoFit = false;
         }
         else
         {
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                vm.SizeToContent = SizeToContent.WidthAndHeight;
-                vm.CanResize = false;
-                vm.IsAutoFit = true;
+                _vm.SizeToContent = SizeToContent.WidthAndHeight;
+                _vm.CanResize = false;
+                _vm.IsAutoFit = true;
             }
             else
             {
-                vm.CanResize = true;
-                vm.IsAutoFit = false;
+                _vm.CanResize = true;
+                _vm.IsAutoFit = false;
                 WindowHelper.InitializeWindowSizeAndPosition(w);
             }
         }
         w.Show();
 
-        await vm.StartUpTask();
-        await KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
+        await _vm.StartUpTask();
+        await KeybindingsHelper.LoadKeybindings(_vm).ConfigureAwait(false);
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
-        w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);
+        w.KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUp(e).ConfigureAwait(false);
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            w.KeyBindings.Add(new KeyBinding { Command = vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
+            w.KeyBindings.Add(new KeyBinding { Command = _vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
         });
 
-        vm.ShowInFolderCommand = ReactiveCommand.Create(() =>
+        _vm.ShowInFolderCommand = ReactiveCommand.Create(() =>
         {
-            Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(vm.FileInfo?.DirectoryName, vm.FileInfo?.Name);
+            Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(_vm.FileInfo?.DirectoryName, _vm.FileInfo?.Name);
         });
 
-        vm.ShowExifWindowCommand = ReactiveCommand.Create(() =>
-        {
-            if (_exifWindow is null)
-            {
-                _exifWindow = new ExifWindow
-                {
-                    DataContext = vm,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                };
-                _exifWindow.Show(w);
-                _exifWindow.Closing += (s, e) => _exifWindow = null;
-            }
-            else
-            {
-                _exifWindow.Activate();
-            }
-            vm.CloseMenuCommand.Execute(null);
-        });
+        _vm.ShowExifWindowCommand = ReactiveCommand.Create(ShowExifWindow);
 
-        vm.ShowSettingsWindowCommand = ReactiveCommand.Create(() =>
+        _vm.ShowSettingsWindowCommand = ReactiveCommand.Create(() =>
         {
             if (_settingsWindow is null)
             {
                 _settingsWindow = new SettingsWindow
                 {
-                    DataContext = vm,
+                    DataContext = _vm,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 };
                 _settingsWindow.Show(w);
@@ -127,16 +111,16 @@ public class App : Application, IPlatformSpecificService
             {
                 _settingsWindow.Activate();
             }
-            vm.CloseMenuCommand.Execute(null);
+            _vm.CloseMenuCommand.Execute(null);
         });
 
-        vm.ShowKeybindingsWindowCommand = ReactiveCommand.Create(() =>
+        _vm.ShowKeybindingsWindowCommand = ReactiveCommand.Create(() =>
         {
             if (_keybindingsWindow is null)
             {
                 _keybindingsWindow = new KeybindingsWindow
                 {
-                    DataContext = vm,
+                    DataContext = _vm,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 };
                 _keybindingsWindow.Show(w);
@@ -146,27 +130,10 @@ public class App : Application, IPlatformSpecificService
             {
                 _keybindingsWindow.Activate();
             }
-            vm.CloseMenuCommand.Execute(null);
+            _vm.CloseMenuCommand.Execute(null);
         });
 
-        vm.ShowAboutWindowCommand = ReactiveCommand.Create(() =>
-        {
-            if (_aboutWindow is null)
-            {
-                _aboutWindow = new AboutWindow
-                {
-                    DataContext = vm,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                };
-                _aboutWindow.Show(w);
-                _aboutWindow.Closing += (s, e) => _aboutWindow = null;
-            }
-            else
-            {
-                _aboutWindow.Activate();
-            }
-            vm.CloseMenuCommand.Execute(null);
-        });
+        _vm.ShowAboutWindowCommand = ReactiveCommand.Create(ShowAboutWindow);
     }
 
     public void SetCursorPos(int x, int y)
@@ -183,5 +150,53 @@ public class App : Application, IPlatformSpecificService
     public int CompareStrings(string str1, string str2)
     {
         return Windows.NativeMethods.StrCmpLogicalW(str1, str2);
+    }
+
+    public void ShowAboutWindow()
+    {
+        if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (_aboutWindow is null)
+        {
+            _aboutWindow = new AboutWindow
+            {
+                DataContext = _vm,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            };
+            _aboutWindow.Show(desktop.MainWindow);
+            _aboutWindow.Closing += (s, e) => _aboutWindow = null;
+        }
+        else
+        {
+            _aboutWindow.Activate();
+        }
+        _vm.CloseMenuCommand.Execute(null);
+    }
+
+    public void ShowExifWindow()
+    {
+        if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (_exifWindow is null)
+        {
+            _exifWindow = new ExifWindow
+            {
+                DataContext = _vm,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            };
+            _exifWindow.Show(desktop.MainWindow);
+            _exifWindow.Closing += (s, e) => _exifWindow = null;
+        }
+        else
+        {
+            _exifWindow.Activate();
+        }
+        _vm.CloseMenuCommand.Execute(null);
     }
 }
