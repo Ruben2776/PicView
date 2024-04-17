@@ -60,7 +60,7 @@
                         ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
                     <TextBox
                         x:Name="WidthBox"
-                        Width="55"
+                        Width="80"
                         d:Text="1920"
                         IsReadOnly="False" />
                 </StackPanel>
@@ -76,7 +76,7 @@
                         ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
                     <TextBox
                         x:Name="HeightBox"
-                        Width="55"
+                        Width="80"
                         d:Text="1080"
                         IsReadOnly="False" />
                 </StackPanel>

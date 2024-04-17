@@ -248,6 +248,11 @@ internal static class WindowSizing
 
             TryFitImage();
         }
+
+        if (GetQuickResize?.Opacity > 0)
+        {
+            GetQuickResize?.Show();
+        }
     }
 
     internal static void RenderFullscreen()
