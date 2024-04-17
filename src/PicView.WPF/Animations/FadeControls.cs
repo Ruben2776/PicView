@@ -33,7 +33,7 @@ internal static class FadeControls
             return;
         }
 
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
+        ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             if (GetCroppingTool is { IsVisible: true })
             {
@@ -74,7 +74,7 @@ internal static class FadeControls
             AnimationHelper.Fade(GetX2, opacity, timespan);
             AnimationHelper.Fade(GetMinus, opacity, timespan);
             AnimationHelper.Fade(GetRestoreButton, opacity, timespan);
-        }));
+        });
     }
 
     /// <summary>
