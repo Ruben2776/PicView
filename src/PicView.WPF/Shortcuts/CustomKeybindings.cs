@@ -70,11 +70,9 @@ internal static class CustomKeybindings
             var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
             await UpdateKeybindings(keybindings).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await SetDefaultKeybindings().ConfigureAwait(false);
-            // Handle other exceptions as needed
-            Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
         }
     }
 
