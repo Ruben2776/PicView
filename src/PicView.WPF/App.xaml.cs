@@ -26,7 +26,7 @@ public partial class App
         DispatcherUnhandledException += App_DispatcherUnhandledException;
     }
 
-    private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    private static void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         MessageBox.Show(e.Exception.ToString());
     }

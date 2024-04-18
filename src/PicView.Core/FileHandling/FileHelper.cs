@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace PicView.Core.FileHandling;
 
@@ -235,20 +236,37 @@ public static partial class FileHelper
 
     public static async Task<byte[]> GetBytesFromFile(FileInfo fileInfo, CancellationToken cancellationToken = default)
     {
-        return await GetBytesFromFile(fileInfo.FullName, cancellationToken).ConfigureAwait(false);
+        return await GetBytesFromFile(fileInfo.FullName, useAsync: fileInfo.Length > 1e7, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async Task<byte[]> GetBytesFromFile(string filePath, CancellationToken cancellationToken = default)
+    public static async Task<byte[]> GetBytesFromFile(string filePath, bool useAsync = false, CancellationToken cancellationToken = default)
     {
-        await using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: true);
+        const int bufferSize = 4096;
+        await using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize, useAsync: useAsync);
         var count = fs.Length;
-        var bytes = new byte[count];
-        var writeIndex = 0;
-        while (writeIndex < count)
+        if (count >= int.MaxValue)
         {
-            var n = await fs.ReadAsync(bytes.AsMemory(writeIndex, (int)count - writeIndex), cancellationToken).ConfigureAwait(false);
-            writeIndex += n;
+            var bytes = new List<byte>();
+            var buffer = new byte[bufferSize]; // Buffer size for reading chunks from the file
+            int bytesRead;
+            while ((bytesRead = await fs.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) > 0)
+            {
+                bytes.AddRange(buffer.Take(bytesRead)); // Add the bytes read to the list
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+            return bytes.ToArray();
         }
-        return bytes;
+        else
+        {
+            var bytes = new byte[count];
+            var writeIndex = 0;
+            while (writeIndex < count)
+            {
+                var n = await fs.ReadAsync(bytes.AsMemory(writeIndex, (int)count - writeIndex), cancellationToken).ConfigureAwait(false);
+                writeIndex += n;
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+            return bytes;
+        }
     }
 }
