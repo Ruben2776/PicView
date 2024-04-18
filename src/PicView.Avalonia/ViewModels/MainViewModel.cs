@@ -47,6 +47,14 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _galleryItems, value);
         }
 
+        private GalleryThumbHolder? _selectedGalleryItem;
+
+        public GalleryThumbHolder? SelectedGalleryItem
+        {
+            get => _selectedGalleryItem;
+            set => this.RaiseAndSetIfChanged(ref _selectedGalleryItem, value);
+        }
+
         #region Commands
 
         public ICommand? ExitCommand { get; }
@@ -1688,49 +1696,9 @@ namespace PicView.Avalonia.ViewModels
 
             #region Gallery Commands
 
-            ToggleGalleryCommand = ReactiveCommand.Create(() =>
-            {
-                IsGalleryOpen = !IsGalleryOpen;
-                SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
-                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                {
-                    // TODO: Change to bottom gallery view
-                }
+            ToggleGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleGallery);
 
-                CloseMenuCommand.Execute(null);
-                if (IsGalleryOpen)
-                {
-                    if (!NavigationHelper.CanNavigate(this))
-                    {
-                        return;
-                    }
-                    Task.Run(() => GalleryLoad.LoadGallery(this, Path.GetDirectoryName(ImageIterator.Pics[0])));
-                }
-                //WindowHelper.SetSize(this);
-                _ = SettingsHelper.SaveSettingsAsync();
-            });
-
-            ToggleBottomGalleryCommand = ReactiveCommand.Create(() =>
-            {
-                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                {
-                    IsGalleryOpen = false;
-                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
-                }
-                else
-                {
-                    IsGalleryOpen = true;
-                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
-                    if (!NavigationHelper.CanNavigate(this))
-                    {
-                        return;
-                    }
-                    Task.Run(() => GalleryLoad.LoadGallery(this, Path.GetDirectoryName(ImageIterator.Pics[0])));
-                }
-                CloseMenuCommand.Execute(null);
-                //WindowHelper.SetSize(this);
-                _ = SettingsHelper.SaveSettingsAsync();
-            });
+            ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleBottomGallery);
 
             #endregion Gallery Commands
 

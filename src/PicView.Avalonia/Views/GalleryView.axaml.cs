@@ -1,11 +1,11 @@
-using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
-using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
+using System.Runtime.InteropServices;
 
 namespace PicView.Avalonia.Views;
 
@@ -15,6 +15,7 @@ public partial class GalleryView : UserControl
     {
         InitializeComponent();
         AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
+        GalleryListBox.SelectionChanged += async (_, _) => await GalleryListBox_OnSelectionChanged();
     }
 
     private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
@@ -23,55 +24,9 @@ public partial class GalleryView : UserControl
         {
             return;
         }
-        
+
         // Disable right click selection
         e.Handled = true;
-    }
-
-    private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            return;
-        }
-
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        if (!NavigationHelper.CanNavigate(vm))
-        {
-            return;
-        }
-
-        if (sender is not Border item)
-        {
-            return;
-        }
-
-        if (item.Parent is not ListBoxItem listBoxItem)
-        {
-            return;
-        }
-
-        if (listBoxItem.Parent is not ListBox parent)
-        {
-            return;
-        }
-
-        //var index = parent.ItemContainerGenerator.IndexFromContainer(item);
-        //var itemsControl = new ItemsControl();
-        //var index2 = itemsControl.IndexFromContainer(listBoxItem);
-        //var index3 = itemsControl.IndexFromContainer(item);
-        var index4 = parent.ItemContainerGenerator.IndexFromContainer(listBoxItem);
-        //var index5 = parent.ItemContainerGenerator.IndexFromContainer(item);
-        //var index6 = itemsControl.IndexFromContainer(parent);
-        //var index7 = itemsControl.IndexFromContainer(listBoxItem);
-        //var index8 = itemsControl.IndexFromContainer(item);
-
-        vm.ToggleGalleryCommand.Execute(null);
-        vm.LoadPicAtIndex(index4).ConfigureAwait(false);
     }
 
     private void GalleryListBox_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -113,5 +68,20 @@ public partial class GalleryView : UserControl
                 scrollViewer.LineLeft();
             }
         }
+    }
+
+    private async Task GalleryListBox_OnSelectionChanged()
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var selectedItem = vm.SelectedGalleryItem;
+        if (selectedItem is null) { return; }
+        var selectedItemIndex = vm.ImageIterator.Pics.IndexOf(selectedItem.Value.FileLocation);
+
+        _ = FunctionsHelper.ToggleGallery();
+        await vm.LoadPicAtIndex(selectedItemIndex).ConfigureAwait(false);
     }
 }

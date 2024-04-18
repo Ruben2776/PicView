@@ -49,7 +49,8 @@
                 ItemsSource="{CompiledBinding GalleryItems}"
                 PointerWheelChanged="GalleryListBox_OnPointerWheelChanged"
                 ScrollViewer.IsScrollInertiaEnabled="True"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                SelectedItem="{CompiledBinding SelectedGalleryItem}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Vertical" />
@@ -62,7 +63,6 @@
                             Background="Transparent"
                             BorderThickness="1"
                             CornerRadius="8"
-                            PointerPressed="InputElement_OnPointerPressed"
                             ToolTip.HorizontalOffset="0"
                             ToolTip.Placement="TopEdgeAlignedLeft"
                             ToolTip.VerticalOffset="0">
