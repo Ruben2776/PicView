@@ -1,8 +1,6 @@
 ﻿using ImageMagick;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.Views.UserControls.Gallery;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -123,29 +121,6 @@ internal static class Thumbnails
             fileInfo ??= new FileInfo(file);
             await using var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096,
                 fileInfo.Length > 1e+8);
-
-            switch (fileInfo.Extension.ToLowerInvariant())
-            {
-                case ".jpg":
-                case ".jpeg":
-                case ".jpe":
-                case ".png":
-                case ".bmp":
-                case ".gif":
-                case ".jfif":
-                case ".ico":
-                case ".webp":
-                case ".wbmp":
-                    var skImage = SKBitmap.Decode(fileStream);
-                    if (skImage is null)
-                    {
-                        return ImageFunctions.ImageErrorMessage();
-                    }
-                    var resized = skImage.Resize(new SKImageInfo(size, size), SKFilterQuality.High);
-                    var writeableBitmap = resized.ToWriteableBitmap();
-                    writeableBitmap.Freeze();
-                    return writeableBitmap;
-            }
 
             if (fileInfo.Length >= 2147483648)
             {

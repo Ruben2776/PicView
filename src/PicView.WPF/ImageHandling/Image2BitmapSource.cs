@@ -3,14 +3,13 @@ using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.WPF.UILogic;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static System.Windows.Forms.DataFormats;
 using Rotation = PicView.WPF.UILogic.TransformImage.Rotation;
 
 namespace PicView.WPF.ImageHandling;
@@ -46,7 +45,7 @@ internal static class Image2BitmapSource
             case ".ico":
             case ".webp":
             case ".wbmp":
-                return await GetWriteAbleBitmapAsync(fileInfo).ConfigureAwait(false);
+                return await GetBitmapAsync(fileInfo).ConfigureAwait(false);
 
             case ".svg":
                 return await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
@@ -205,19 +204,13 @@ internal static class Image2BitmapSource
     /// </summary>
     /// <param name="fileInfo">The FileInfo representing the image file.</param>
     /// <returns>A Task containing the BitmapSource if successful</returns>
-    private static async Task<BitmapSource?> GetWriteAbleBitmapAsync(FileInfo fileInfo)
+    private static async Task<BitmapSource?> GetBitmapAsync(FileInfo fileInfo)
     {
         var bytes = await FileHelper.GetBytesFromFile(fileInfo).ConfigureAwait(false);
-        using var sKBitmap = SKBitmap.Decode(bytes);
-        if (sKBitmap is null)
-        {
-            return null;
-        }
-
-        var skPic = sKBitmap.ToWriteableBitmap();
-
-        skPic.Freeze();
-        return skPic;
+        var magickImage = new MagickImage(bytes);
+        var bitmap = magickImage.ToBitmapSource();
+        bitmap.Freeze();
+        return bitmap;
     }
 
     /// <summary>

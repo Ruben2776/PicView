@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using ImageMagick.Formats;
 using System.Diagnostics;
+using PicView.Core.FileHandling;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -76,7 +77,7 @@ public static class ImageDecoder
                     // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
                     // ReSharper disable once MethodHasAsyncOverload
                     magickImage.Read(fileInfo);
-                });
+                }).ConfigureAwait(false);
             }
             else
             {
