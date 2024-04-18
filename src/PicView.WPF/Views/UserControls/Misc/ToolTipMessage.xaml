@@ -6,6 +6,7 @@
         Margin="0,0,0,95"
         HorizontalAlignment="Center"
         VerticalAlignment="Bottom"
+        Panel.ZIndex="99"
         Background="{StaticResource BackgroundColorBrushFade}"
         BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1"
