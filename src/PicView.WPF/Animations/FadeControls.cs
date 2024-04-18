@@ -33,48 +33,55 @@ internal static class FadeControls
             return;
         }
 
-        ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+        try
         {
-            if (GetCroppingTool is { IsVisible: true })
+            ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                return;
-            }
+                if (GetCroppingTool is { IsVisible: true })
+                {
+                    return;
+                }
 
-            if (SettingsHelper.Settings.Zoom.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
-            {
-                ScrollbarFade(show);
-            }
+                if (SettingsHelper.Settings.Zoom.ScrollEnabled && ConfigureWindows.GetMainWindow?.Scroller?.ScrollableHeight > 0)
+                {
+                    ScrollbarFade(show);
+                }
 
-            // Don't run, if already being animated || prevent lag
-            if (GetX2.Opacity is > 0 and < 1)
-            {
-                return;
-            }
+                // Don't run, if already being animated || prevent lag
+                if (GetX2.Opacity is > 0 and < 1)
+                {
+                    return;
+                }
 
-            if (Scroll.IsAutoScrolling)
-            {
-                GetClickArrowLeft.Opacity =
-                    GetClickArrowRight.Opacity =
-                        GetGalleryShortcut.Opacity =
-                            GetX2.Opacity =
-                                GetMinus.Opacity = 0;
-                return;
-            }
+                if (Scroll.IsAutoScrolling)
+                {
+                    GetClickArrowLeft.Opacity =
+                        GetClickArrowRight.Opacity =
+                            GetGalleryShortcut.Opacity =
+                                GetX2.Opacity =
+                                    GetMinus.Opacity = 0;
+                    return;
+                }
 
-            var timespan = TimeSpan.FromSeconds(show ? .5 : 1);
+                var timespan = TimeSpan.FromSeconds(show ? .5 : 1);
 
-            var opacity = show ? 1 : 0;
+                var opacity = show ? 1 : 0;
 
-            AnimationHelper.Fade(GetClickArrowLeft, opacity, timespan);
-            AnimationHelper.Fade(GetClickArrowRight, opacity, timespan);
-            if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-            {
-                AnimationHelper.Fade(GetGalleryShortcut, opacity, timespan);
-            }
-            AnimationHelper.Fade(GetX2, opacity, timespan);
-            AnimationHelper.Fade(GetMinus, opacity, timespan);
-            AnimationHelper.Fade(GetRestoreButton, opacity, timespan);
-        });
+                AnimationHelper.Fade(GetClickArrowLeft, opacity, timespan);
+                AnimationHelper.Fade(GetClickArrowRight, opacity, timespan);
+                if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                {
+                    AnimationHelper.Fade(GetGalleryShortcut, opacity, timespan);
+                }
+                AnimationHelper.Fade(GetX2, opacity, timespan);
+                AnimationHelper.Fade(GetMinus, opacity, timespan);
+                AnimationHelper.Fade(GetRestoreButton, opacity, timespan);
+            });
+        }
+        catch (Exception)
+        {
+            // #148
+        }
     }
 
     /// <summary>

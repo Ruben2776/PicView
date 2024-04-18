@@ -21,6 +21,13 @@ internal static class GalleryClick
 {
     internal static async Task ClickAsync(int id)
     {
+        if (GetQuickResize is not null)
+        {
+            if (GetQuickResize.Opacity > 0)
+            {
+                return;
+            }
+        }
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen)
         {
             await ItemClickAsync(id).ConfigureAwait(false);

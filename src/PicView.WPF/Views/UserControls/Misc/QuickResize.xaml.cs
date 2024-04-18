@@ -7,6 +7,7 @@ using System.Windows.Media.Animation;
 using PicView.WPF.Animations;
 using PicView.Core.Config;
 using PicView.Core.Localization;
+using PicView.WPF.PicGallery;
 using PicView.WPF.Shortcuts;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
@@ -121,11 +122,12 @@ public partial class QuickResize
 
     public void Show()
     {
+        var padding = SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? GalleryNavigation.PicGalleryItemSize + GalleryNavigation.ScrollbarSize : 0;
         grid.Width = SettingsHelper.Settings.WindowProperties.AutoFit
             ? ScaleImage.XWidth
             : ConfigureWindows.GetMainWindow.ActualWidth;
         grid.Height = SettingsHelper.Settings.WindowProperties.AutoFit
-            ? ScaleImage.XHeight
+            ? ScaleImage.XHeight + padding
             : ConfigureWindows.GetMainWindow.ActualHeight;
         Visibility = Visibility.Visible;
         AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 0, 1);
@@ -145,7 +147,7 @@ public partial class QuickResize
     {
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
-            AnimationHelper.Fade(this, TimeSpan.FromSeconds(.6), TimeSpan.Zero, 1, 0);
+            AnimationHelper.Fade(this, TimeSpan.FromSeconds(.4), TimeSpan.Zero, 1, 0);
         });
 
         var timer = new Timer(601) { AutoReset = false, Enabled = true };
