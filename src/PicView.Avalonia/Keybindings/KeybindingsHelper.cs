@@ -1,11 +1,10 @@
 ﻿using Avalonia.Input;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Keybindings;
 using System.Diagnostics;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using PicView.Core.Keybindings;
-using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -71,19 +70,12 @@ public static class KeybindingsHelper
     {
         try
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
-            if (File.Exists(path))
-            {
-                var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                await UpdateKeybindings(text).ConfigureAwait(false);
-            }
-            else
-            {
-                await SetDefaultKeybindings().ConfigureAwait(false);
-            }
+            var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
+            await UpdateKeybindings(keybindings).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
+            await SetDefaultKeybindings().ConfigureAwait(false);
             // Handle other exceptions as needed
             //Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
         }

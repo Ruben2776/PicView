@@ -67,19 +67,12 @@ internal static class CustomKeybindings
     {
         try
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
-            if (File.Exists(path))
-            {
-                var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                await UpdateKeybindings(text).ConfigureAwait(false);
-            }
-            else
-            {
-                await SetDefaultKeybindings().ConfigureAwait(false);
-            }
+            var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
+            await UpdateKeybindings(keybindings).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
+            await SetDefaultKeybindings().ConfigureAwait(false);
             // Handle other exceptions as needed
             Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
         }

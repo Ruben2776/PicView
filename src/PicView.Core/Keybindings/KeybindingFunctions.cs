@@ -22,4 +22,23 @@ public static class KeybindingFunctions
             await newWriter.WriteAsync(json).ConfigureAwait(false);
         }
     }
+
+    public static async Task<string> LoadKeyBindingsFile()
+    {
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
+        if (File.Exists(path))
+        {
+            var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+            return text;
+        }
+
+        var newPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/keybindings.json");
+        if (File.Exists(newPath))
+        {
+            var text = await File.ReadAllTextAsync(newPath).ConfigureAwait(false);
+            return text;
+        }
+
+        throw new FileNotFoundException();
+    }
 }
