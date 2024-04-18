@@ -1,10 +1,12 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Helpers;
 
@@ -35,7 +37,33 @@ public static class StartUpHelper
             }
         }
         w.Show();
-        
+        _ = Task.Run(vm.UpdateLanguage);
+
+        vm.SetLoadingTitle();
+        vm.IsLoading = true;
+
+        vm.GetFlipped = vm.Flip;
+
+        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+        {
+            vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
+            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
+            vm.IsScrollingEnabled = true;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = true;
+        }
+        else
+        {
+            vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
+            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
+            vm.IsScrollingEnabled = false;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = false;
+        }
+
+        if (SettingsHelper.Settings.WindowProperties.TopMost)
+        {
+            desktop.MainWindow.Topmost = true;
+        }
+
         vm.ImageViewer = new ImageViewer();
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
@@ -52,8 +80,9 @@ public static class StartUpHelper
         }
 
         vm.IsLoading = false;
-        
+
         await KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
+
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUp(e).ConfigureAwait(false);
     }

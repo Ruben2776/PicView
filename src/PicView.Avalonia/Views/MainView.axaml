@@ -245,7 +245,7 @@
                 </MenuItem>
             </MenuItem>
             <Separator />
-            <MenuItem Header="{Binding SetAsWallpaper}">
+            <MenuItem Header="{CompiledBinding SetAsWallpaper}">
                 <MenuItem.Icon>
                     <Path
                         Width="13"
@@ -255,7 +255,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="{Binding SetAsLockScreenImage}">
+            <MenuItem Header="{CompiledBinding SetAsLockScreenImage}">
                 <MenuItem.Icon>
                     <Path
                         Width="13"
@@ -266,7 +266,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Header="{Binding ImageTxt}">
+            <MenuItem Header="{CompiledBinding ImageTxt}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -276,7 +276,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
 
-                <MenuItem Command="{Binding ShowExifWindowCommand}" Header="{Binding ImageInfo}">
+                <MenuItem Command="{CompiledBinding ShowExifWindowCommand}" Header="{Binding ImageInfo}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -287,7 +287,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{Binding FileProperties}">
+                <MenuItem Header="{CompiledBinding FileProperties}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -298,7 +298,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{Binding ResizeImage}">
+                <MenuItem Header="{CompiledBinding ResizeImage}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -309,7 +309,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{Binding BatchResize}">
+                <MenuItem Header="{CompiledBinding BatchResize}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -321,7 +321,7 @@
                 </MenuItem>
             </MenuItem>
             <Separator />
-            <MenuItem Command="{Binding DeleteFileCommand}" Header="{Binding DeleteFile}">
+            <MenuItem Command="{CompiledBinding DeleteFileCommand}" Header="{Binding DeleteFile}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -332,7 +332,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Header="{Binding Copy}">
+            <MenuItem Header="{CompiledBinding Copy}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -341,7 +341,7 @@
                         Fill="{StaticResource MainIconColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-                <MenuItem Command="{Binding CopyFilePathCommand}" Header="{Binding FileCopyPath}">
+                <MenuItem Command="{CompiledBinding CopyFilePathCommand}" Header="{Binding FileCopyPath}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -354,7 +354,7 @@
                 <MenuItem>
                     <MenuItem.Header>
                         <TextBlock>
-                            <Run Text="{Binding Copy}" />
+                            <Run Text="{CompiledBinding Copy}" />
                             <Run Text=" base64" />
                         </TextBlock>
                     </MenuItem.Header>
@@ -368,7 +368,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding DuplicateFileCommand}" Header="{Binding DuplicateFile}">
+                <MenuItem Command="{CompiledBinding DuplicateFileCommand}" Header="{Binding DuplicateFile}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -378,7 +378,7 @@
                             Stretch="Fill" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{Binding CutCommand}" Header="{Binding FileCut}">
+                <MenuItem Command="{CompiledBinding CutCommand}" Header="{Binding FileCut}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -389,7 +389,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Command="{Binding CopyFileCommand}" Header="{Binding CopyFile}">
+            <MenuItem Command="{CompiledBinding CopyFileCommand}" Header="{Binding CopyFile}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -399,7 +399,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding CopyImageCommand}" Header="{Binding CopyImage}">
+            <MenuItem Command="{CompiledBinding CopyImageCommand}" Header="{Binding CopyImage}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -411,7 +411,7 @@
             </MenuItem>
 
             <Separator />
-            <MenuItem Command="{Binding ExitCommand}" Header="{Binding Close}">
+            <MenuItem Command="{CompiledBinding ExitCommand}" Header="{Binding Close}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -424,7 +424,10 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Panel x:Name="MainGrid">
-        <ContentControl Content="{Binding CurrentView}" />
-        <views:GalleryView IsVisible="{CompiledBinding IsGalleryOpen}" />
+        <ContentControl Content="{CompiledBinding CurrentView}" />
+        <views:GalleryView
+            Width="{CompiledBinding $parent.Bounds.Width}"
+            Height="{CompiledBinding $parent.Bounds.Height}"
+            IsVisible="{CompiledBinding IsGalleryOpen}" />
     </Panel>
 </UserControl>

@@ -90,7 +90,7 @@ public partial class WinMainWindow : Window
                 };
             });
         };
-        PointerPressed += async (_, e) => await MoveWindow(e);
+        PointerPressed += (_, e) => MoveWindow(e);
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -103,22 +103,19 @@ public partial class WinMainWindow : Window
         };
     }
 
-    private async Task MoveWindow(PointerPressedEventArgs e)
+    private void MoveWindow(PointerPressedEventArgs e)
     {
         if (VisualRoot is null) { return; }
         if (!MainKeyboardShortcuts.ShiftDown) { return; }
 
         var hostWindow = (Window)VisualRoot;
         hostWindow?.BeginMoveDrag(e);
-        await WindowHelper.UpdateWindowPosToSettings();
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
-        Hide();
-
-        await SettingsHelper.SaveSettingsAsync();
-        FileDeletionHelper.DeleteTempFiles();
+        e.Cancel = true;
+        await WindowHelper.WindowClosingBehavior(this);
         base.OnClosing(e);
     }
 

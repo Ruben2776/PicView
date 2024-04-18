@@ -12,6 +12,7 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
+using ReactiveUI;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -476,12 +477,17 @@ public static class FunctionsHelper
 
     public static Task OpenWith()
     {
-        throw new NotImplementedException();
+        PlatformSpecificService?.OpenWith();
+        return Task.CompletedTask;
     }
 
     public static Task OpenInExplorer()
     {
-        Vm?.ShowInFolderCommand.Execute(null);
+        if (Vm is null)
+        {
+            return Task.CompletedTask;
+        }
+        PlatformSpecificService?.LocateOnDisk();
         return Task.CompletedTask;
     }
 

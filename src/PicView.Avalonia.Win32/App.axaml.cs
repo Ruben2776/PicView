@@ -12,6 +12,7 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using System.Runtime;
+using PicView.Core.ProcessHandling;
 using SortHelper = PicView.Avalonia.Helpers.SortHelper;
 
 namespace PicView.Avalonia.Win32;
@@ -76,6 +77,16 @@ public class App : Application, IPlatformSpecificService
     public int CompareStrings(string str1, string str2)
     {
         return Windows.NativeMethods.StrCmpLogicalW(str1, str2);
+    }
+
+    public void OpenWith()
+    {
+        ProcessHelper.OpenWith(_vm.FileInfo.FullName);
+    }
+
+    public void LocateOnDisk()
+    {
+        Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(_vm.FileInfo.DirectoryName, _vm.FileInfo.FullName);
     }
 
     public void ShowAboutWindow()

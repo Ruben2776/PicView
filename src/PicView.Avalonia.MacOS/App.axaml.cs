@@ -12,6 +12,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime;
 using System.Threading.Tasks;
@@ -57,7 +58,7 @@ public class App : Application, IPlatformSpecificService
         _vm = new MainViewModel(this);
         w.DataContext = _vm;
         await StartUpHelper.Start(_vm, settingsExists, desktop, w);
-        
+
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             w.KeyBindings.Add(new KeyBinding { Command = _vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
@@ -78,6 +79,11 @@ public class App : Application, IPlatformSpecificService
     public int CompareStrings(string str1, string str2)
     {
         return string.CompareOrdinal(str1, str2);
+    }
+
+    public void LocateOnDisk(string path)
+    {
+        Process.Start("open", $"-R \"{_vm.FileInfo?.FullName}\"");
     }
 
     public void ShowAboutWindow()
@@ -170,5 +176,15 @@ public class App : Application, IPlatformSpecificService
             _settingsWindow.Activate();
         }
         _vm.CloseMenuCommand.Execute(null);
+    }
+
+    public void OpenWith()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void LocateOnDisk()
+    {
+        throw new NotImplementedException();
     }
 }

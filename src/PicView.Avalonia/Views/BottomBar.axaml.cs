@@ -48,16 +48,15 @@ public partial class BottomBar : UserControl
             var brush = new SolidColorBrush((Color)(mainIconColor ?? Brushes.White));
             PrevIcon.Fill = brush;
         };
-        PointerPressed += async (_, e) => await MoveWindow(e);
+        PointerPressed += (_, e) => MoveWindow(e);
     }
 
-    private async Task MoveWindow(PointerPressedEventArgs e)
+    private void MoveWindow(PointerPressedEventArgs e)
     {
         if (VisualRoot is null) { return; }
 
         var hostWindow = (Window)VisualRoot;
         hostWindow?.BeginMoveDrag(e);
-        await WindowHelper.UpdateWindowPosToSettings();
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

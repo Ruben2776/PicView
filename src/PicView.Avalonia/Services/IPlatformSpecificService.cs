@@ -8,11 +8,15 @@ public interface IPlatformSpecificService
 
     int CompareStrings(string str1, string str2);
 
+    void OpenWith();
+
+    void LocateOnDisk();
+
     void ShowAboutWindow();
 
     void ShowExifWindow();
-    
+
     void ShowKeybindingsWindow();
-    
+
     void ShowSettingsWindow();
 }

@@ -82,15 +82,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleImageMenuCommand { get; }
         public ICommand? ToggleSettingsMenuCommand { get; }
         public ICommand? ToggleToolsMenuCommand { get; }
-
-        private ICommand? _showInFolderCommand;
-
-        public ICommand? ShowInFolderCommand
-        {
-            get => _showInFolderCommand;
-            set => this.RaiseAndSetIfChanged(ref _showInFolderCommand, value);
-        }
-
+        public ICommand? ShowInFolderCommand { get; }
         public ICommand? OpenWithCommand { get; }
         public ICommand? RenameCommand { get; }
         public ICommand? NewWindowCommand { get; }
@@ -1417,33 +1409,8 @@ namespace PicView.Avalonia.ViewModels
                 return;
             }
 
-            SetLoadingTitle();
-            IsLoading = true;
-
-            Task.Run(UpdateLanguage);
             FunctionsHelper.Vm = this;
             FunctionsHelper.PlatformSpecificService = platformSpecificService;
-            GetFlipped = Flip;
-
-            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-            {
-                ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
-                GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
-                IsScrollingEnabled = true;
-                SettingsHelper.Settings.Zoom.ScrollEnabled = true;
-            }
-            else
-            {
-                ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
-                GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
-                IsScrollingEnabled = false;
-                SettingsHelper.Settings.Zoom.ScrollEnabled = false;
-            }
-
-            if (SettingsHelper.Settings.WindowProperties.TopMost)
-            {
-                desktop.MainWindow.Topmost = true;
-            }
 
             #region Window commands
 
@@ -1600,25 +1567,7 @@ namespace PicView.Avalonia.ViewModels
 
             PasteCommand = ReactiveCommand.Create(() => { });
 
-            OpenWithCommand = ReactiveCommand.Create(() =>
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    // TODO: implement open with on mac
-                }
-                else
-                {
-                    ProcessHelper.OpenWith(FileInfo?.FullName);
-                }
-            });
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                ShowInFolderCommand = ReactiveCommand.Create(() =>
-                {
-                    Process.Start("open", $"-R \"{FileInfo?.FullName}\"");
-                });
-            }
+            OpenWithCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenWith);
 
             RenameCommand = ReactiveCommand.Create(() =>
             {
@@ -1643,6 +1592,8 @@ namespace PicView.Avalonia.ViewModels
             {
                 FileDeletionHelper.DeleteFileWithErrorMsg(FileInfo?.FullName, true);
             });
+
+            ShowInFolderCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenInExplorer);
 
             #endregion File commands
 

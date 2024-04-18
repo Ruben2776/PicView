@@ -53,12 +53,7 @@ public partial class MacMainWindow : Window
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
         e.Cancel = true;
-        Hide();
-
-        await SettingsHelper.SaveSettingsAsync();
-        FileDeletionHelper.DeleteTempFiles();
+        await WindowHelper.WindowClosingBehavior(this);
         base.OnClosing(e);
-
-        Environment.Exit(0);
     }
 }

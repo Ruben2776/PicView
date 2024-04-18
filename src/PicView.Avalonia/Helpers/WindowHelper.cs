@@ -6,6 +6,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
+using PicView.Core.FileHandling;
 
 namespace PicView.Avalonia.Helpers;
 
@@ -30,24 +31,6 @@ public static class WindowHelper
                 window.Height = SettingsHelper.Settings.WindowProperties.Height;
             });
         }
-    }
-
-    public static async Task UpdateWindowPosToSettings()
-    {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            SettingsHelper.Settings.WindowProperties.Top = desktop.MainWindow.Position.X;
-            SettingsHelper.Settings.WindowProperties.Left = desktop.MainWindow.Position.Y;
-            SettingsHelper.Settings.WindowProperties.Width = desktop.MainWindow.Width;
-            SettingsHelper.Settings.WindowProperties.Height = desktop.MainWindow.Height;
-        });
-
-        await SettingsHelper.SaveSettingsAsync();
     }
 
     public static void HandleWindowResize(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
@@ -306,4 +289,24 @@ public static class WindowHelper
     }
 
     #endregion SetSize
+
+    public static async Task WindowClosingBehavior(Window window)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            window.Hide();
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(window.Hide);
+        }
+        SettingsHelper.Settings.WindowProperties.Top = window.Position.Y;
+        SettingsHelper.Settings.WindowProperties.Left = window.Position.X;
+        SettingsHelper.Settings.WindowProperties.Width = window.Width;
+        SettingsHelper.Settings.WindowProperties.Height = window.Height;
+
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        FileDeletionHelper.DeleteTempFiles();
+        Environment.Exit(0);
+    }
 }
