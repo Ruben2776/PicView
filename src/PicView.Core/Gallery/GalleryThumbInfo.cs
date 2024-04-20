@@ -76,6 +76,8 @@ public class GalleryThumbInfo
                 }
             }
         }
+        
+        public double ThumbNailSize { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GalleryThumbHolder"/> class.

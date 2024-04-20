@@ -134,6 +134,10 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleScrollCommand { get; }
 
         public ICommand? ToggleSubdirectoriesCommand { get; }
+        
+        public ICommand? SetGalleryItemSizeCommand { get; }
+        
+        public ICommand? SetBottomGalleryItemSizeCommand { get; }
 
         #endregion Commands
 
@@ -431,6 +435,20 @@ namespace PicView.Avalonia.ViewModels
                 this.RaiseAndSetIfChanged(ref _getZoomSpeed, roundedValue);
                 SettingsHelper.Settings.Zoom.ZoomSpeed = roundedValue;
             }
+        }
+
+        private double _galleryItemSize;
+        public double GalleryItemSize
+        {
+            get => _galleryItemSize;
+            set => this.RaiseAndSetIfChanged(ref _galleryItemSize, value);
+        }
+        
+        private double _bottomGalleryItemSize;
+        public double BottomGalleryItemSize
+        {
+            get => _bottomGalleryItemSize;
+            set => this.RaiseAndSetIfChanged(ref _bottomGalleryItemSize, value);
         }
 
         #region strings

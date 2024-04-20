@@ -78,6 +78,7 @@
             <NativeMenuItem Header="{CompiledBinding Settings}">
                 <NativeMenu>
                     <NativeMenuItem
+                        Command="{CompiledBinding ToggleBottomGalleryCommand}"
                         Header="{CompiledBinding GetBottomGallery}"
                         IsChecked="{CompiledBinding IsBottomGalleryShown}"
                         ToggleType="CheckBox" />

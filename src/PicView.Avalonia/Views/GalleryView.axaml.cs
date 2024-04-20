@@ -9,6 +9,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using System.Runtime.InteropServices;
 using DynamicData;
+using PicView.Avalonia.Gallery;
 using PicView.Core.FileHandling;
 using static PicView.Core.Gallery.GalleryThumbInfo;
 
@@ -96,6 +97,7 @@ public partial class GalleryView : UserControl
         Debug.Assert(sender != null, nameof(sender) + " != null");
 #endif
         var border = (Border)sender;
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (border is null) { return; }
 #if DEBUG
         Debug.Assert(border != null, nameof(border) + " != null");
@@ -114,18 +116,6 @@ public partial class GalleryView : UserControl
         {
             return;
         }
-#if DEBUG
-        Debug.Assert(sender != null, nameof(sender) + " != null");
-#endif
-        var menuItem = (MenuItem)sender;
-        if (menuItem is null) { return; }
-#if DEBUG
-        Debug.Assert(menuItem != null, nameof(menuItem) + " != null");
-        Debug.Assert(menuItem.DataContext != null, "menuItem.DataContext != null");
-#endif
-        var galleryItem = (GalleryThumbHolder)menuItem.DataContext;
-        FileDeletionHelper.DeleteFileWithErrorMsg(galleryItem.FileLocation, recycle: true);
-
-        vm.GalleryItems.Remove(galleryItem); // TODO: rewrite file system watcher to delete gallery items
+        GalleryFunctions.RecycleItem(sender, vm);
     }
 }

@@ -303,54 +303,12 @@ public static class FunctionsHelper
 
     public static async Task ToggleGallery()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-        Vm.IsGalleryOpen = !Vm.IsGalleryOpen;
-        SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            // TODO: Change to bottom gallery view
-        }
-
-        Vm.CloseMenuCommand.Execute(null);
-        if (Vm.IsGalleryOpen)
-        {
-            if (!NavigationHelper.CanNavigate(Vm))
-            {
-                return;
-            }
-            _ = Task.Run(() => GalleryLoad.LoadGallery(Vm, Path.GetDirectoryName(Vm.ImageIterator.Pics[0])));
-        }
-        //WindowHelper.SetSize(this);
-        await SettingsHelper.SaveSettingsAsync();
+        await GalleryFunctions.ToggleGallery(Vm).ConfigureAwait(false);
     }
 
     public static async Task ToggleBottomGallery()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            Vm.IsGalleryOpen = false;
-            SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
-        }
-        else
-        {
-            Vm.IsGalleryOpen = true;
-            SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
-            if (!NavigationHelper.CanNavigate(Vm))
-            {
-                return;
-            }
-            _ = Task.Run(() => GalleryLoad.LoadGallery(Vm, Path.GetDirectoryName(Vm.ImageIterator.Pics[0])));
-        }
-        Vm.CloseMenuCommand.Execute(null);
-        //WindowHelper.SetSize(this);
-        await SettingsHelper.SaveSettingsAsync();
+        await GalleryFunctions.ToggleBottomGallery(Vm).ConfigureAwait(false);
     }
 
     public static Task AutoFitWindow()

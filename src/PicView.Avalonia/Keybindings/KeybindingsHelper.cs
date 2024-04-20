@@ -18,7 +18,10 @@ public static class KeybindingsHelper
                                               {
                                                 "D": "Next",
                                                 "Right": "Next",
+                                                "Ctrl+Right": "Last",
                                                 "Ctrl+D": "Last",
+                                                "Ctrl+Left": "First",
+                                                "Ctrl+A": "First",
                                                 "A": "Prev",
                                                 "Left": "Prev",
                                                 "W": "Up",
@@ -79,20 +82,6 @@ public static class KeybindingsHelper
             // Handle other exceptions as needed
             //Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
         }
-    }
-
-    public static async Task UpdateKeybindings()
-    {
-        var json = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/keybindings.json");
-        if (!File.Exists(json))
-        {
-#if DEBUG
-            Trace.WriteLine($"{nameof(UpdateKeybindings)} no json found");
-#endif
-            return;
-        }
-
-        await UpdateKeybindings(json);
     }
 
     public static async Task UpdateKeybindings(string json)

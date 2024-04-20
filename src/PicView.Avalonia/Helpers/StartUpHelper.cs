@@ -79,6 +79,13 @@ public static class StartUpHelper
             vm.CurrentView = new StartUpMenu();
         }
 
+        if (vm.GalleryItemSize <= 0)
+        {
+            var screen = ScreenHelper.GetScreen(desktop.MainWindow);
+            // ReSharper disable once PossibleLossOfFraction
+            vm.GalleryItemSize = screen.WorkingArea.Height / 10;
+        }
+
         vm.IsLoading = false;
 
         await KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
