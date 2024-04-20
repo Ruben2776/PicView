@@ -69,7 +69,7 @@ namespace PicView.Avalonia.Navigation
         {
             await PreLoader.AddAsync(index, imageService, Pics, imageModel).ConfigureAwait(false);
         }
-        
+
         public async Task ReloadFileList()
         {
             Pics = await Task.FromResult(_platformService.GetFiles(FileInfo)).ConfigureAwait(false);
@@ -191,6 +191,7 @@ namespace PicView.Avalonia.Navigation
             Index--;
 
             PreLoader.Remove(Index, Pics);
+
             _running = false;
 
             //FileHistoryNavigation.Remove(e.FullPath);
@@ -327,6 +328,15 @@ namespace PicView.Avalonia.Navigation
                 {
                     WindowHelper.CenterWindowOnScreen(false);
                 }
+
+                if (vm.GalleryItems is not null)
+                {
+                    if (vm.GalleryItems.Count > 0 && Index < vm.GalleryItems.Count - 1)
+                    {
+                        vm.SelectedGalleryItem = vm.GalleryItems[Index];
+                    }
+                }
+
                 await AddAsync(Index, vm.ImageService, preLoadValue?.ImageModel);
                 await Preload(vm.ImageService);
                 return;

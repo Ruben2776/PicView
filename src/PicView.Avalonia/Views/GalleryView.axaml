@@ -63,6 +63,7 @@
                             Background="Transparent"
                             BorderThickness="1"
                             CornerRadius="8"
+                            PointerPressed="InputElement_OnPointerPressed"
                             ToolTip.HorizontalOffset="0"
                             ToolTip.Placement="TopEdgeAlignedLeft"
                             ToolTip.VerticalOffset="0">
@@ -181,7 +182,7 @@
                                                 Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="{CompiledBinding Delete}">
+                                    <MenuItem Click="RecycleItem" Header="{CompiledBinding Delete}">
                                         <MenuItem.Icon>
                                             <Path
                                                 Width="12"

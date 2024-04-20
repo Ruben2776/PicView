@@ -1,11 +1,16 @@
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using System.Runtime.InteropServices;
+using DynamicData;
+using PicView.Core.FileHandling;
+using static PicView.Core.Gallery.GalleryThumbInfo;
 
 namespace PicView.Avalonia.Views;
 
@@ -15,7 +20,6 @@ public partial class GalleryView : UserControl
     {
         InitializeComponent();
         AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
-        GalleryListBox.SelectionChanged += async (_, _) => await GalleryListBox_OnSelectionChanged();
     }
 
     private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
@@ -70,18 +74,58 @@ public partial class GalleryView : UserControl
         }
     }
 
-    private async Task GalleryListBox_OnSelectionChanged()
+    private async void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
         if (DataContext is not MainViewModel vm)
         {
             return;
         }
 
-        var selectedItem = vm.SelectedGalleryItem;
-        if (selectedItem is null) { return; }
-        var selectedItemIndex = vm.ImageIterator.Pics.IndexOf(selectedItem.Value.FileLocation);
-
+        if (!NavigationHelper.CanNavigate(vm))
+        {
+            return;
+        }
         _ = FunctionsHelper.ToggleGallery();
+
+#if DEBUG
+        Debug.Assert(sender != null, nameof(sender) + " != null");
+#endif
+        var border = (Border)sender;
+        if (border is null) { return; }
+#if DEBUG
+        Debug.Assert(border != null, nameof(border) + " != null");
+        Debug.Assert(border.DataContext != null, "border.DataContext != null");
+#endif
+        var galleryItem = (GalleryThumbHolder)border.DataContext;
+
+        var selectedItemIndex = vm.ImageIterator.Pics.IndexOf(galleryItem.FileLocation);
+
         await vm.LoadPicAtIndex(selectedItemIndex).ConfigureAwait(false);
+    }
+
+    private void RecycleItem(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+#if DEBUG
+        Debug.Assert(sender != null, nameof(sender) + " != null");
+#endif
+        var menuItem = (MenuItem)sender;
+        if (menuItem is null) { return; }
+#if DEBUG
+        Debug.Assert(menuItem != null, nameof(menuItem) + " != null");
+        Debug.Assert(menuItem.DataContext != null, "menuItem.DataContext != null");
+#endif
+        var galleryItem = (GalleryThumbHolder)menuItem.DataContext;
+        FileDeletionHelper.DeleteFileWithErrorMsg(galleryItem.FileLocation, recycle: true);
+
+        vm.GalleryItems.Remove(galleryItem); // TODO: rewrite file system watcher to delete gallery items
     }
 }
