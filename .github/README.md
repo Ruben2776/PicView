@@ -19,7 +19,7 @@ Additional features includes viewing EXIF metadata, image compression, batch res
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.2.4/PicView-v.2.2.4-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.2.4/PicView-v.2.2.4-win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.2.5/PicView-v.2.2.5-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.2.5/PicView-v.2.2.5-win-arm64.zip)
 
 Latest releases at https://picview.org/download
 
