@@ -87,7 +87,8 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? RenameCommand { get; }
         public ICommand? NewWindowCommand { get; }
         public ICommand? DuplicateFileCommand { get; }
-
+        
+        public ICommand? ToggleLoopingCommand { get; }
         public ICommand? RotateLeftCommand { get; }
         public ICommand? RotateRightCommand { get; }
         public ICommand? FlipCommand { get; }
@@ -1688,6 +1689,8 @@ namespace PicView.Avalonia.ViewModels
             ChangeTopMostCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetTopMost);
 
             ToggleSubdirectoriesCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleSubdirectories);
+            
+            ToggleLoopingCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleLooping);
 
             #endregion Settings commands
 

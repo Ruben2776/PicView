@@ -85,6 +85,7 @@
                     <NativeMenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
+                        Command="{CompiledBinding ToggleLoopingCommand}"
                         Header="{CompiledBinding GetLooping}"
                         IsChecked="{CompiledBinding IsLooping}"
                         ToggleType="CheckBox" />
@@ -109,7 +110,7 @@
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Command="{CompiledBinding ShowKeybindingsWindowCommand}" Header="{CompiledBinding ApplicationShortcuts}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{CompiledBinding About}" />
+                    <NativeMenuItem Command="{CompiledBinding ShowAboutWindowCommand}" Header="{CompiledBinding About}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Command="{CompiledBinding ShowSettingsWindowCommand}" Header="{CompiledBinding ShowAllSettingsWindow}" />
                 </NativeMenu>
