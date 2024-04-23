@@ -88,7 +88,7 @@ internal static class ImageDragAndDrop
         }
         else return;
 
-        AddDragOverlay();
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(AddDragOverlay);
 
         // Tell that it's succeeded
         e.Effects = DragDropEffects.Copy;
