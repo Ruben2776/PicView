@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
@@ -82,8 +83,16 @@ public static class StartUpHelper
         if (vm.GalleryItemSize <= 0)
         {
             var screen = ScreenHelper.GetScreen(desktop.MainWindow);
-            // ReSharper disable once PossibleLossOfFraction
-            vm.GalleryItemSize = screen.WorkingArea.Height / 10;
+            var size = Math.Min(SettingsHelper.Settings.Gallery.BottomGalleryItemSize,
+                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize);
+            vm.GalleryItemSize = screen.WorkingArea.Height / size;
+        }
+
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        {
+            _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
+            GalleryFunctions.OpenBottomGallery(vm);
+            WindowHelper.SetSize(vm);
         }
 
         vm.IsLoading = false;

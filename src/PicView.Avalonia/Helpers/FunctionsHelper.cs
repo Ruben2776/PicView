@@ -12,7 +12,6 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
-using ReactiveUI;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -37,7 +36,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -57,7 +56,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -77,7 +76,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -97,7 +96,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -117,7 +116,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -153,7 +152,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             return;
         }
@@ -170,7 +169,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             return;
         }
@@ -187,7 +186,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (Vm.IsGalleryOpen)
+        if (GalleryFunctions.isFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -311,6 +310,11 @@ public static class FunctionsHelper
         await GalleryFunctions.ToggleBottomGallery(Vm).ConfigureAwait(false);
     }
 
+    public static async Task OpenCloseBottomGallery()
+    {
+        await GalleryFunctions.OpenCloseBottomGallery(Vm).ConfigureAwait(false);
+    }
+
     public static Task AutoFitWindow()
     {
         throw new NotImplementedException();
@@ -333,10 +337,6 @@ public static class FunctionsHelper
 
     public static Task Fullscreen()
     {
-#if DEBUG
-        // Show Avalonia DevTools in DEBUG mode
-        return Task.CompletedTask;
-#endif
         throw new NotImplementedException();
     }
 
@@ -457,11 +457,6 @@ public static class FunctionsHelper
     public static async Task Reload()
     {
         if (Vm is null)
-        {
-            return;
-        }
-
-        if (Vm.IsGalleryOpen)
         {
             return;
         }

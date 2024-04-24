@@ -1,12 +1,12 @@
 <UserControl
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.GalleryView"
-    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:MainViewModel"
+    mc:Ignorable="d">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -20,176 +20,208 @@
                     <MenuItem Header="Adjust size">
                         <MenuItem.Icon>
                             <Path
+                                Width="12"
+                                Height="12"
                                 Data="{StaticResource ImageGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="12"
-                                Stretch="Fill"
-                                Width="12" />
+                                Stretch="Fill" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
                     <MenuItem Command="{CompiledBinding ToggleGalleryCommand}" Header="{CompiledBinding Close}">
                         <MenuItem.Icon>
                             <Path
+                                Width="12"
+                                Height="12"
                                 Data="{StaticResource CloseGeometry}"
                                 Fill="{StaticResource MainIconColor}"
-                                Height="12"
-                                Stretch="Fill"
-                                Width="12" />
+                                Stretch="Fill" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
             </Panel.ContextMenu>
+
+            <Button
+                Width="50"
+                Height="60"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                BorderThickness="1,0,0,0"
+                Classes="ButtonBorder altHover"
+                Command="{CompiledBinding ToggleGalleryCommand}"
+                CornerRadius="0,0,0,45"
+                DockPanel.Dock="Right"
+                IsVisible="{CompiledBinding IsGalleryCloseIconVisible}"
+                ZIndex="99">
+                <Path
+                    Width="23"
+                    Height="23"
+                    Margin="7,0,0,11"
+                    Data="{StaticResource CloseGeometry}"
+                    Fill="{StaticResource MainIconColor}"
+                    Stretch="Fill" />
+            </Button>
+
             <ListBox
+                x:Name="GalleryListBox"
+                Padding="0"
                 AutoScrollToSelectedItem="True"
                 Background="Transparent"
                 BorderThickness="0"
+                IsVisible="{CompiledBinding !!GalleryItems.Count}"
                 ItemsSource="{CompiledBinding GalleryItems}"
-                Margin="0,40,0,0"
                 PointerWheelChanged="GalleryListBox_OnPointerWheelChanged"
                 ScrollViewer.IsScrollInertiaEnabled="True"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                SelectedItem="{CompiledBinding SelectedGalleryItem}"
-                x:Name="GalleryListBox">
+                SelectedItem="{CompiledBinding SelectedGalleryItem}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Vertical" />
+                        <WrapPanel Orientation="{CompiledBinding GalleryOrientation}" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border
+                            Height="{Binding #GalleryListBox.((viewModels:MainViewModel)DataContext).GalleryItemSize}"
                             Background="Transparent"
                             BorderThickness="1"
                             CornerRadius="8"
-                            Height="{CompiledBinding ThumbNailSize}"
                             PointerPressed="InputElement_OnPointerPressed"
                             ToolTip.HorizontalOffset="0"
                             ToolTip.Placement="TopEdgeAlignedLeft"
                             ToolTip.VerticalOffset="0">
-                            <Image Source="{CompiledBinding GetSource}" Stretch="UniformToFill" />
+                            <Image
+                                Height="{Binding #GalleryListBox.((viewModels:MainViewModel)DataContext).GalleryItemSize}"
+                                Source="{CompiledBinding GetSource}"
+                                Stretch="UniformToFill" />
                             <ToolTip.Tip>
                                 <StackPanel>
                                     <TextBlock
+                                        Margin="0,0,0,2"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                                         FontSize="14"
-                                        Margin="0,0,0,2"
                                         Text="{CompiledBinding FileName}" />
                                     <TextBlock
-                                        Classes="txt"
                                         Margin="0,0,0,2"
+                                        Classes="txt"
                                         Text="{CompiledBinding FileLocation}" />
                                     <TextBlock
-                                        Classes="txt"
                                         Margin="0,0,0,2"
+                                        Classes="txt"
                                         Text="{CompiledBinding FileSize}" />
                                     <TextBlock Classes="txt" Text="{CompiledBinding FileDate}" />
                                 </StackPanel>
                             </ToolTip.Tip>
                             <Border.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="{CompiledBinding Print}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).Print}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource PrintGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="{CompiledBinding OpenWith}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).OpenWith}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource OpenWithGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="{CompiledBinding ShowInFolder}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).ShowInFolder}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource ShowInFolderGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <Separator />
-                                    <MenuItem Header="{CompiledBinding SetAsWallpaper}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).SetAsWallpaper}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource PanoramaGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="{CompiledBinding SetAsLockScreenImage}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).SetAsLockScreenImage}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource PanoramaGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <Separator />
-                                    <MenuItem Header="{CompiledBinding CopyFile}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).CopyFile}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource CopyGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="{CompiledBinding CopyImage}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).CopyImage}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource CopyGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="{CompiledBinding CopyBase64}">
+                                    <MenuItem>
+                                        <MenuItem.Header>
+                                            <TextBlock>
+                                                <Run Text="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).Copy}" />
+                                                <Run Text=" + base64" />
+                                            </TextBlock>
+                                        </MenuItem.Header>
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource CopyGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <Separator />
-                                    <MenuItem Header="{CompiledBinding FileCut}">
+                                    <MenuItem Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).FileCut}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource CutGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Click="RecycleItem" Header="{CompiledBinding Delete}">
+                                    <MenuItem Click="RecycleItem" Header="{CompiledBinding #GalleryListBox.((viewModels:MainViewModel)DataContext).DeleteFile}">
                                         <MenuItem.Icon>
                                             <Path
+                                                Width="12"
+                                                Height="12"
                                                 Data="{StaticResource RecycleGeometry}"
                                                 Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
+                                                Stretch="Fill" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </ContextMenu>
@@ -198,25 +230,6 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Button
-                BorderThickness="1,0,0,0"
-                Classes="ButtonBorder altHover"
-                Command="{CompiledBinding ToggleGalleryCommand}"
-                CornerRadius="0,0,0,45"
-                DockPanel.Dock="Right"
-                Height="60"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Width="50"
-                ZIndex="99">
-                <Path
-                    Data="{StaticResource CloseGeometry}"
-                    Fill="{StaticResource MainIconColor}"
-                    Height="23"
-                    Margin="7,0,0,11"
-                    Stretch="Fill"
-                    Width="23" />
-            </Button>
         </Panel>
     </Border>
 </UserControl>

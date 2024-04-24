@@ -425,9 +425,6 @@
     </UserControl.ContextMenu>
     <Panel x:Name="MainGrid">
         <ContentControl Content="{CompiledBinding CurrentView}" />
-        <views:GalleryView
-            Width="{CompiledBinding $parent.Bounds.Width}"
-            Height="{CompiledBinding $parent.Bounds.Height}"
-            IsVisible="{CompiledBinding IsGalleryOpen}" />
+        <views:GalleryView VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}" IsVisible="{CompiledBinding IsGalleryOpen}" />
     </Panel>
 </UserControl>

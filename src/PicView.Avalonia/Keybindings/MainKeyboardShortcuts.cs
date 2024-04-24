@@ -36,12 +36,20 @@ public static class MainKeyboardShortcuts
         {
             return;
         }
-        
+
         CtrlDown = e.KeyModifiers == KeyModifiers.Control;
         AltDown = e.KeyModifiers is KeyModifiers.Alt or KeyModifiers.Meta;
         ShiftDown = e.KeyModifiers == KeyModifiers.Shift;
         switch (e.Key)
         {
+            case Key.F12:
+#if DEBUG
+                // Show Avalonia DevTools in DEBUG mode
+                return;
+#else
+                break;
+#endif
+
             case Key.LeftShift:
             case Key.RightShift:
             case Key.LeftCtrl:

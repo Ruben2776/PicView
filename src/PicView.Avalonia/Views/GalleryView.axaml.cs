@@ -91,7 +91,11 @@ public partial class GalleryView : UserControl
         {
             return;
         }
-        _ = FunctionsHelper.ToggleGallery();
+
+        if (GalleryFunctions.isFullGalleryOpen)
+        {
+           await GalleryFunctions.ToggleGallery(vm);
+        }
 
 #if DEBUG
         Debug.Assert(sender != null, nameof(sender) + " != null");

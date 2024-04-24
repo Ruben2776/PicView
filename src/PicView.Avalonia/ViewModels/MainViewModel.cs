@@ -1,11 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Reactive;
-using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -13,7 +6,6 @@ using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
@@ -26,6 +18,12 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Windows.Input;
+using Avalonia.Layout;
 using static PicView.Core.Gallery.GalleryThumbInfo;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
@@ -38,6 +36,8 @@ namespace PicView.Avalonia.ViewModels
         public event EventHandler<ImageModel>? ImageChanged;
 
         private readonly IPlatformSpecificService? _platformService;
+
+        #region Gallery
 
         private ObservableCollection<GalleryThumbHolder> _galleryItems;
 
@@ -54,6 +54,40 @@ namespace PicView.Avalonia.ViewModels
             get => _selectedGalleryItem;
             set => this.RaiseAndSetIfChanged(ref _selectedGalleryItem, value);
         }
+
+        private VerticalAlignment _galleryVerticalAlignment;
+
+        public VerticalAlignment GalleryVerticalAlignment
+        {
+            get => _galleryVerticalAlignment;
+            set => this.RaiseAndSetIfChanged(ref _galleryVerticalAlignment, value);
+        }
+
+        private Orientation _galleryOrientation;
+
+        public Orientation GalleryOrientation
+        {
+            set => this.RaiseAndSetIfChanged(ref _galleryOrientation, value);
+            get => _galleryOrientation;
+        }
+
+        private bool _isGalleryCloseIconVisible;
+
+        public bool IsGalleryCloseIconVisible
+        {
+            get => _isGalleryCloseIconVisible;
+            set => this.RaiseAndSetIfChanged(ref _isGalleryCloseIconVisible, value);
+        }
+
+        private double _galleryItemSize;
+
+        public double GalleryItemSize
+        {
+            get => _galleryItemSize;
+            set => this.RaiseAndSetIfChanged(ref _galleryItemSize, value);
+        }
+
+        #endregion Gallery
 
         #region Commands
 
@@ -87,7 +121,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? RenameCommand { get; }
         public ICommand? NewWindowCommand { get; }
         public ICommand? DuplicateFileCommand { get; }
-        
+
         public ICommand? ToggleLoopingCommand { get; }
         public ICommand? RotateLeftCommand { get; }
         public ICommand? RotateRightCommand { get; }
@@ -135,9 +169,9 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleScrollCommand { get; }
 
         public ICommand? ToggleSubdirectoriesCommand { get; }
-        
+
         public ICommand? SetGalleryItemSizeCommand { get; }
-        
+
         public ICommand? SetBottomGalleryItemSizeCommand { get; }
 
         #endregion Commands
@@ -436,20 +470,6 @@ namespace PicView.Avalonia.ViewModels
                 this.RaiseAndSetIfChanged(ref _getZoomSpeed, roundedValue);
                 SettingsHelper.Settings.Zoom.ZoomSpeed = roundedValue;
             }
-        }
-
-        private double _galleryItemSize;
-        public double GalleryItemSize
-        {
-            get => _galleryItemSize;
-            set => this.RaiseAndSetIfChanged(ref _galleryItemSize, value);
-        }
-        
-        private double _bottomGalleryItemSize;
-        public double BottomGalleryItemSize
-        {
-            get => _bottomGalleryItemSize;
-            set => this.RaiseAndSetIfChanged(ref _bottomGalleryItemSize, value);
         }
 
         #region strings
@@ -940,6 +960,14 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _titleMaxWidth;
             set => this.RaiseAndSetIfChanged(ref _titleMaxWidth, value);
+        }
+
+        private Thickness _imageMargin;
+
+        public Thickness ImageMargin
+        {
+            get => _imageMargin;
+            set => this.RaiseAndSetIfChanged(ref _imageMargin, value);
         }
 
         #endregion Size
@@ -1668,7 +1696,7 @@ namespace PicView.Avalonia.ViewModels
 
             ToggleGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleGallery);
 
-            ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleBottomGallery);
+            ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenCloseBottomGallery);
 
             #endregion Gallery Commands
 
@@ -1689,7 +1717,7 @@ namespace PicView.Avalonia.ViewModels
             ChangeTopMostCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetTopMost);
 
             ToggleSubdirectoriesCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleSubdirectories);
-            
+
             ToggleLoopingCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleLooping);
 
             #endregion Settings commands

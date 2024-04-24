@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
@@ -244,7 +245,7 @@ public static class WindowHelper
         var uiBottomSize =
             SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
                 ? 28 : 0;
-        var galleryHeight = vm.IsBottomGalleryShown ? 100 : 0;
+        var galleryHeight = GalleryFunctions.isBottomGalleryOpen ? vm.GalleryItemSize + 36 : 0;
         if (Dispatcher.UIThread.CheckAccess())
         {
             desktopMinWidth = desktop.MainWindow.MinWidth;
@@ -286,6 +287,7 @@ public static class WindowHelper
         vm.TitleMaxWidth = size.TitleMaxWidth;
         vm.ImageWidth = size.Width;
         vm.ImageHeight = size.Height;
+        vm.ImageMargin = new Thickness(0, 0, 0, size.Margin);
     }
 
     #endregion SetSize
