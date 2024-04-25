@@ -19,7 +19,7 @@ public static class WindowHelper
     {
         if (Dispatcher.UIThread.CheckAccess())
         {
-            window.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
+            window.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Left, (int)SettingsHelper.Settings.WindowProperties.Top);
             window.Width = SettingsHelper.Settings.WindowProperties.Width;
             window.Height = SettingsHelper.Settings.WindowProperties.Height;
         }
@@ -27,7 +27,7 @@ public static class WindowHelper
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                window.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Top, (int)SettingsHelper.Settings.WindowProperties.Left);
+                window.Position = new PixelPoint((int)SettingsHelper.Settings.WindowProperties.Left, (int)SettingsHelper.Settings.WindowProperties.Top);
                 window.Width = SettingsHelper.Settings.WindowProperties.Width;
                 window.Height = SettingsHelper.Settings.WindowProperties.Height;
             });
@@ -96,6 +96,19 @@ public static class WindowHelper
                 window.Position = new PixelPoint(window.Position.X, (int)verticalPos);
             }
         });
+    }
+
+    public static async Task UpdateWindowPosToSettings(Window window)
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            SettingsHelper.Settings.WindowProperties.Top = window.Position.X;
+            SettingsHelper.Settings.WindowProperties.Left = window.Position.Y;
+            SettingsHelper.Settings.WindowProperties.Width = window.Width;
+            SettingsHelper.Settings.WindowProperties.Height = window.Height;
+        });
+
+        await SettingsHelper.SaveSettingsAsync();
     }
 
     #endregion Window Dragging and size changing
@@ -307,7 +320,7 @@ public static class WindowHelper
         SettingsHelper.Settings.WindowProperties.Width = window.Width;
         SettingsHelper.Settings.WindowProperties.Height = window.Height;
 
-        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        await SettingsHelper.SaveSettingsAsync();
         FileDeletionHelper.DeleteTempFiles();
         Environment.Exit(0);
     }

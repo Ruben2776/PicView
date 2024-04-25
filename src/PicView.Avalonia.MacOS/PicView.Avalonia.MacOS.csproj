@@ -12,10 +12,13 @@
     <UseAppHost>true</UseAppHost>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.1.0-beta1" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.1.0-beta1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.0-beta2" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.1.0-beta2" />
   </ItemGroup>
 
   <ItemGroup>
