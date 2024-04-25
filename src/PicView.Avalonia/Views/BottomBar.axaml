@@ -32,7 +32,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="noBorderHover"
-                    Command="{Binding ToggleFileMenuCommand}">
+                    Command="{CompiledBinding ToggleFileMenuCommand}">
                     <Path
                         Width="25.112"
                         Height="20.091"
@@ -48,7 +48,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
-                    Command="{Binding ToggleImageMenuCommand}">
+                    Command="{CompiledBinding ToggleImageMenuCommand}">
                     <Canvas
                         Width="28"
                         Height="25"
@@ -88,7 +88,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
-                    Command="{Binding PreviousCommand}"
+                    Command="{CompiledBinding PreviousButtonCommand}"
                     Focusable="False">
                     <Path
                         x:Name="PrevIcon"
@@ -107,7 +107,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
-                    Command="{Binding NextCommand}"
+                    Command="{CompiledBinding NextButtonCommand}"
                     Focusable="False">
                     <Path
                         x:Name="NextIcon"
@@ -125,7 +125,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
-                    Command="{Binding ToggleToolsMenuCommand}">
+                    Command="{CompiledBinding ToggleToolsMenuCommand}">
                     <Image Width="22" Height="22">
                         <Image.Resources>
                             <SolidColorBrush x:Key="Brush0" Color="{StaticResource MainIconColor}" />
@@ -164,7 +164,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
-                    Command="{Binding ToggleSettingsMenuCommand}">
+                    Command="{CompiledBinding ToggleSettingsMenuCommand}">
                     <Path
                         Width="18"
                         Height="18"

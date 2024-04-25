@@ -36,8 +36,10 @@ public class ImageService
             case ".svg":
             case ".svgz":
                 imageModel.Image = imageModel.FileInfo.FullName;
-                imageModel.PixelWidth = 500; // TODO: Use screen width instead or implement a user setting value
-                imageModel.PixelHeight = 500;
+                var svg = new MagickImage();
+                svg.Ping(imageModel.FileInfo.FullName);
+                imageModel.PixelWidth = svg.Width;
+                imageModel.PixelHeight = svg.Height;
                 imageModel.ImageType = ImageType.Svg;
                 return;
 

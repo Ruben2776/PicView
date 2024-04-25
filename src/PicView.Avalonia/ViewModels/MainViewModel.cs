@@ -35,7 +35,7 @@ namespace PicView.Avalonia.ViewModels
 
         public event EventHandler<ImageModel>? ImageChanged;
 
-        private readonly IPlatformSpecificService? _platformService;
+        public readonly IPlatformSpecificService? PlatformService;
 
         #region Gallery
 
@@ -96,7 +96,9 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? MaximizeCommand { get; }
 
         public ICommand? NextCommand { get; }
+        public ICommand? NextButtonCommand { get; }
         public ICommand? PreviousCommand { get; }
+        public ICommand? PreviousButtonCommand { get; }
         public ICommand? FirstCommand { get; }
         public ICommand? LastCommand { get; }
         public ICommand? OpenFileCommand { get; }
@@ -1364,7 +1366,7 @@ namespace PicView.Avalonia.ViewModels
 
         public async Task LoadPicFromString(string path)
         {
-            ImageIterator = new ImageIterator(new FileInfo(path), _platformService);
+            ImageIterator = new ImageIterator(new FileInfo(path), PlatformService);
             ImageService = new ImageService();
             await ImageIterator.LoadPicFromString(path, this).ConfigureAwait(false);
         }
@@ -1374,7 +1376,7 @@ namespace PicView.Avalonia.ViewModels
             SetLoadingTitle();
             try
             {
-                ImageIterator = new ImageIterator(fileInfo, _platformService);
+                ImageIterator = new ImageIterator(fileInfo, PlatformService);
                 await ImageIterator.LoadPicFromFile(fileInfo, this).ConfigureAwait(false);
             }
             catch (Exception)
@@ -1457,7 +1459,7 @@ namespace PicView.Avalonia.ViewModels
             }
 
             FunctionsHelper.Vm = this;
-            FunctionsHelper.PlatformSpecificService = platformSpecificService;
+            PlatformService = platformSpecificService;
 
             #region Window commands
 
@@ -1484,7 +1486,11 @@ namespace PicView.Avalonia.ViewModels
 
             NextCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Next);
 
+            NextButtonCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.NextButton);
+
             PreviousCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Prev);
+
+            PreviousButtonCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.PrevButton);
 
             FirstCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.First);
 
@@ -1722,7 +1728,6 @@ namespace PicView.Avalonia.ViewModels
 
             #endregion Settings commands
 
-            _platformService = platformSpecificService;
             Activator = new ViewModelActivator();
             this.WhenActivated(disposables =>
             {

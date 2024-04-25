@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Threading;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
@@ -8,16 +9,11 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using ReactiveUI;
 using System.Reactive.Concurrency;
-using Avalonia.Input;
-using Avalonia.Controls.ApplicationLifetimes;
 
 namespace PicView.Avalonia.Win32.Views;
 
 public partial class WinMainWindow : Window
 {
-    private bool _nextButtonClicked;
-    private bool _prevButtonClicked;
-
     public WinMainWindow()
     {
         InitializeComponent();
@@ -37,10 +33,7 @@ public partial class WinMainWindow : Window
                 {
                     WindowHelper.HandleWindowResize(this, size);
                 });
-                var nextButton = BottomBar.GetControl<Button>("NextButton");
-                var prevButton = BottomBar.GetControl<Button>("PreviousButton");
-                nextButton.Click += (_, _) => _nextButtonClicked = true;
-                prevButton.Click += (_, _) => _prevButtonClicked = true;
+
                 vm.ImageChanged += (s, e) =>
                 {
                     if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
@@ -52,41 +45,6 @@ public partial class WinMainWindow : Window
                         //TaskbarManager.Instance.SetProgressValue(wm.GetIndex, wm.ImageIterator.Pics.Count, TryGetPlatformHandle().Handle);
                     }
                     // TODO: using NativeMethods.SetCursorPos(p.X, p.Y) to move cursor is not AOT compatible
-                    PixelPoint p = default;
-                    if (_nextButtonClicked)
-                    {
-                        if (Dispatcher.UIThread.CheckAccess())
-                        {
-                            p = nextButton.PointToScreen(new Point(50, 10));
-                        }
-                        else
-                        {
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                p = nextButton.PointToScreen(new Point(50, 10));
-                            }, DispatcherPriority.Normal).Wait();
-                        }
-
-                        Windows.NativeMethods.SetCursorPos(p.X, p.Y); // TODO check if https://github.com/microsoft/CsWin32 will work in AOT
-                        _nextButtonClicked = false;
-                    }
-                    else if (_prevButtonClicked)
-                    {
-                        if (Dispatcher.UIThread.CheckAccess())
-                        {
-                            p = prevButton.PointToScreen(new Point(50, 10));
-                        }
-                        else
-                        {
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                p = prevButton.PointToScreen(new Point(50, 10));
-                            }, DispatcherPriority.Normal).Wait();
-                        }
-
-                        Windows.NativeMethods.SetCursorPos(p.X, p.Y);
-                        _prevButtonClicked = false;
-                    }
                 };
             });
         };

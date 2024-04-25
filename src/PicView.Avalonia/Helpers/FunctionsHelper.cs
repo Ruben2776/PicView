@@ -20,93 +20,42 @@ namespace PicView.Avalonia.Helpers;
 public static class FunctionsHelper
 {
     public static MainViewModel? Vm;
-    public static IPlatformSpecificService? PlatformSpecificService;
 
     #region Functions list
 
     public static Task Print()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static async Task Next()
     {
-        if (Vm is null)
-        {
-            return;
-        }
+        await NavigationHelper.Iterate(next: true, Vm);
+    }
 
-        if (GalleryFunctions.isFullGalleryOpen)
-        {
-            // TODO - Implement gallery navigation
-            return;
-        }
-
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-        await NavigationHelper.Navigate(true, Vm);
+    public static async Task NextButton()
+    {
+        await NavigationHelper.IterateButton(next: true, Vm);
     }
 
     public static async Task Last()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        if (GalleryFunctions.isFullGalleryOpen)
-        {
-            // TODO - Implement gallery navigation
-            return;
-        }
-
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-        await NavigationHelper.NavigateFirstOrLast(true, Vm);
+        await NavigationHelper.NavigateFirstOrLast(last: true, Vm);
     }
 
     public static async Task Prev()
     {
-        if (Vm is null)
-        {
-            return;
-        }
+        await NavigationHelper.Iterate(next: false, Vm);
+    }
 
-        if (GalleryFunctions.isFullGalleryOpen)
-        {
-            // TODO - Implement gallery navigation
-            return;
-        }
-
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-        await NavigationHelper.Navigate(false, Vm);
+    public static async Task PrevButton()
+    {
+        await NavigationHelper.IterateButton(next: false, Vm);
     }
 
     public static async Task First()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        if (GalleryFunctions.isFullGalleryOpen)
-        {
-            // TODO - Implement gallery navigation
-            return;
-        }
-
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-        await NavigationHelper.NavigateFirstOrLast(false, Vm);
+        await NavigationHelper.NavigateFirstOrLast(last: false, Vm);
     }
 
     public static async Task Up()
@@ -297,7 +246,7 @@ public static class FunctionsHelper
 
     public static Task ToggleLooping()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static async Task ToggleGallery()
@@ -317,27 +266,27 @@ public static class FunctionsHelper
 
     public static Task AutoFitWindow()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task AutoFitWindowAndStretch()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task NormalWindow()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task NormalWindowAndStretch()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Fullscreen()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static async Task SetTopMost()
@@ -364,7 +313,7 @@ public static class FunctionsHelper
 
     public static Task ToggleInterface()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task NewWindow()
@@ -375,19 +324,19 @@ public static class FunctionsHelper
 
     public static Task AboutWindow()
     {
-        PlatformSpecificService?.ShowAboutWindow();
+        Vm?.PlatformService?.ShowAboutWindow();
         return Task.CompletedTask;
     }
 
     public static Task KeybindingsWindow()
     {
-        Vm?.ShowKeybindingsWindowCommand.Execute(null);
+        Vm?.PlatformService?.ShowKeybindingsWindow();
         return Task.CompletedTask;
     }
 
     public static Task EffectsWindow()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task ImageInfoWindow()
@@ -398,7 +347,7 @@ public static class FunctionsHelper
 
     public static Task ResizeWindow()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task SettingsWindow()
@@ -435,7 +384,7 @@ public static class FunctionsHelper
 
     public static Task OpenWith()
     {
-        PlatformSpecificService?.OpenWith();
+        Vm?.PlatformService?.OpenWith();
         return Task.CompletedTask;
     }
 
@@ -445,13 +394,13 @@ public static class FunctionsHelper
         {
             return Task.CompletedTask;
         }
-        PlatformSpecificService?.LocateOnDisk();
+        Vm?.PlatformService?.LocateOnDisk();
         return Task.CompletedTask;
     }
 
     public static Task Save()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static async Task Reload()
@@ -495,62 +444,62 @@ public static class FunctionsHelper
 
     public static Task CopyFile()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task CopyFilePath()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task CopyImage()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task CopyBase64()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task DuplicateFile()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task CutFile()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Paste()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task DeleteFile()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Rename()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task ShowFileProperties()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task ResizeImage()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Crop()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static async Task Flip()
@@ -613,47 +562,47 @@ public static class FunctionsHelper
 
     public static Task Stretch()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Set0Star()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Set1Star()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Set2Star()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Set3Star()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Set4Star()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task Set5Star()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task ChangeBackground()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task GalleryClick()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static async Task Center()
@@ -666,12 +615,12 @@ public static class FunctionsHelper
 
     public static Task Slideshow()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static Task ColorPicker()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public static async Task ToggleBottomToolbar()
@@ -696,119 +645,83 @@ public static class FunctionsHelper
 
     public static async Task SortFilesByName()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.Name);
+        await SortingHelper.UpdateFileList(Vm.PlatformService, Vm, FileListHelper.SortFilesBy.Name);
     }
 
     public static async Task SortFilesByCreationTime()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.CreationTime);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.CreationTime);
     }
 
     public static async Task SortFilesByLastAccessTime()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.LastAccessTime);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.LastAccessTime);
     }
 
     public static async Task SortFilesByLastWriteTime()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.LastWriteTime);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.LastWriteTime);
     }
 
     public static async Task SortFilesBySize()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.FileSize);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.FileSize);
     }
 
     public static async Task SortFilesByExtension()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.Extension);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.Extension);
     }
 
     public static async Task SortFilesRandomly()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, FileListHelper.SortFilesBy.Random);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.Random);
     }
 
     public static async Task SortFilesAscending()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, ascending: true);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, ascending: true);
     }
 
     public static async Task SortFilesDescending()
     {
-        if (Vm is null)
+        if (Vm?.PlatformService is null)
         {
             return;
         }
-        if (PlatformSpecificService is null)
-        {
-            return;
-        }
-        await SortingHelper.UpdateFileList(PlatformSpecificService, Vm, ascending: false);
+        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, ascending: false);
     }
 
     #endregion Sorting
