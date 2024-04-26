@@ -1,16 +1,13 @@
-using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
-using PicView.Avalonia.Helpers;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using DynamicData;
-using PicView.Avalonia.Gallery;
-using PicView.Core.FileHandling;
 using static PicView.Core.Gallery.GalleryThumbInfo;
 
 namespace PicView.Avalonia.Views;
@@ -92,9 +89,9 @@ public partial class GalleryView : UserControl
             return;
         }
 
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
-           await GalleryFunctions.ToggleGallery(vm);
+            await GalleryFunctions.ToggleGallery(vm);
         }
 
 #if DEBUG
@@ -121,5 +118,14 @@ public partial class GalleryView : UserControl
             return;
         }
         GalleryFunctions.RecycleItem(sender, vm);
+    }
+
+    private void OpenWithItem(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        GalleryFunctions.OpenWithItem(sender, vm);
     }
 }

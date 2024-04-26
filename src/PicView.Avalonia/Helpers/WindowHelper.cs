@@ -258,7 +258,7 @@ public static class WindowHelper
         var uiBottomSize =
             SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
                 ? 28 : 0;
-        var galleryHeight = GalleryFunctions.isBottomGalleryOpen ? vm.GalleryItemSize + 36 : 0;
+        var galleryHeight = GalleryFunctions.IsBottomGalleryOpen ? vm.GalleryItemSize + 36 : 0;
         if (Dispatcher.UIThread.CheckAccess())
         {
             desktopMinWidth = desktop.MainWindow.MinWidth;

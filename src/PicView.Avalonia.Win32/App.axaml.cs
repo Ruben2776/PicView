@@ -79,9 +79,9 @@ public class App : Application, IPlatformSpecificService
         return Windows.NativeMethods.StrCmpLogicalW(str1, str2);
     }
 
-    public void OpenWith()
+    public void OpenWith(string path)
     {
-        ProcessHelper.OpenWith(_vm.FileInfo.FullName);
+        ProcessHelper.OpenWith(path);
     }
 
     public void LocateOnDisk()

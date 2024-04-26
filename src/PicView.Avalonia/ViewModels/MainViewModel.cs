@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
@@ -23,7 +24,6 @@ using System.Globalization;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Windows.Input;
-using Avalonia.Layout;
 using static PicView.Core.Gallery.GalleryThumbInfo;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
@@ -1046,8 +1046,6 @@ namespace PicView.Avalonia.ViewModels
 
         public ImageIterator? ImageIterator;
 
-        public ImageService? ImageService;
-
         #endregion Services
 
         #region Methods
@@ -1367,7 +1365,6 @@ namespace PicView.Avalonia.ViewModels
         public async Task LoadPicFromString(string path)
         {
             ImageIterator = new ImageIterator(new FileInfo(path), PlatformService);
-            ImageService = new ImageService();
             await ImageIterator.LoadPicFromString(path, this).ConfigureAwait(false);
         }
 
@@ -1524,45 +1521,15 @@ namespace PicView.Avalonia.ViewModels
 
             #region Menus
 
-            CloseMenuCommand = ReactiveCommand.Create(() =>
-            {
-                IsFileMenuVisible = false;
-                IsImageMenuVisible = false;
-                IsSettingsMenuVisible = false;
-                IsToolsMenuVisible = false;
-            });
+            CloseMenuCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CloseMenus);
 
-            ToggleFileMenuCommand = ReactiveCommand.Create(() =>
-            {
-                IsFileMenuVisible = !IsFileMenuVisible;
-                IsImageMenuVisible = false;
-                IsSettingsMenuVisible = false;
-                IsToolsMenuVisible = false;
-            });
+            ToggleFileMenuCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleFileMenu);
 
-            ToggleImageMenuCommand = ReactiveCommand.Create(() =>
-            {
-                IsFileMenuVisible = false;
-                IsImageMenuVisible = !IsImageMenuVisible;
-                IsSettingsMenuVisible = false;
-                IsToolsMenuVisible = false;
-            });
+            ToggleImageMenuCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleImageMenu);
 
-            ToggleSettingsMenuCommand = ReactiveCommand.Create(() =>
-            {
-                IsFileMenuVisible = false;
-                IsImageMenuVisible = false;
-                IsSettingsMenuVisible = !IsSettingsMenuVisible;
-                IsToolsMenuVisible = false;
-            });
+            ToggleSettingsMenuCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleSettingsMenu);
 
-            ToggleToolsMenuCommand = ReactiveCommand.Create(() =>
-            {
-                IsFileMenuVisible = false;
-                IsImageMenuVisible = false;
-                IsSettingsMenuVisible = false;
-                IsToolsMenuVisible = !IsToolsMenuVisible;
-            });
+            ToggleToolsMenuCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleToolsMenu);
 
             #endregion Menus
 

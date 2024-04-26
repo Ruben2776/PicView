@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using ImageMagick;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Gallery;
@@ -69,7 +70,7 @@ public static class GalleryLoad
                 await magick.WriteAsync(memoryStream);
                 memoryStream.Position = 0;
                 var bmp = new Bitmap(memoryStream);
-                avaloniaImage = new ImageService.AvaloniaImageSource(bmp);
+                avaloniaImage = new AvaloniaImageSource(bmp);
                 if (currentDirectory != _currentDirectory || count != viewModel.ImageIterator.Pics.Count)
                 {
                     viewModel.GalleryItems.Clear();

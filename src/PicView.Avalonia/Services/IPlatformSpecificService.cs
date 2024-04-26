@@ -8,7 +8,7 @@ public interface IPlatformSpecificService
 
     int CompareStrings(string str1, string str2);
 
-    void OpenWith();
+    void OpenWith(string path);
 
     void LocateOnDisk();
 

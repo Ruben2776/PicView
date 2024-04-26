@@ -21,11 +21,6 @@ public static class NavigationHelper
             return false;
         }
 
-        if (vm.ImageService is null)
-        {
-            return false;
-        }
-
         return vm.ImageIterator.Pics.Count > 0 && vm.ImageIterator.Index > -1 && vm.ImageIterator.Index < vm.ImageIterator.Pics.Count;
     }
 
@@ -57,7 +52,7 @@ public static class NavigationHelper
         {
             return;
         }
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
             // TODO - Go to first or page image in gallery
             return;
@@ -73,7 +68,7 @@ public static class NavigationHelper
             return;
         }
 
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -83,7 +78,7 @@ public static class NavigationHelper
         {
             return;
         }
-        await Navigate(false, vm);
+        await Navigate(next, vm);
     }
 
     public static async Task IterateButton(bool next, MainViewModel vm)
@@ -93,7 +88,7 @@ public static class NavigationHelper
             return;
         }
 
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;

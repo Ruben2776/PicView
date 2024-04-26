@@ -23,6 +23,55 @@ public static class FunctionsHelper
 
     #region Functions list
 
+    #region Menus
+
+    public static Task CloseMenus()
+    {
+        Vm.IsFileMenuVisible = false;
+        Vm.IsImageMenuVisible = false;
+        Vm.IsSettingsMenuVisible = false;
+        Vm.IsToolsMenuVisible = false;
+        return Task.CompletedTask;
+    }
+
+    public static Task ToggleFileMenu()
+    {
+        Vm.IsFileMenuVisible = !Vm.IsFileMenuVisible;
+        Vm.IsImageMenuVisible = false;
+        Vm.IsSettingsMenuVisible = false;
+        Vm.IsToolsMenuVisible = false;
+        return Task.CompletedTask;
+    }
+
+    public static Task ToggleImageMenu()
+    {
+        Vm.IsFileMenuVisible = false;
+        Vm.IsImageMenuVisible = !Vm.IsImageMenuVisible;
+        Vm.IsSettingsMenuVisible = false;
+        Vm.IsToolsMenuVisible = false;
+        return Task.CompletedTask;
+    }
+
+    public static Task ToggleSettingsMenu()
+    {
+        Vm.IsFileMenuVisible = false;
+        Vm.IsImageMenuVisible = false;
+        Vm.IsSettingsMenuVisible = !Vm.IsSettingsMenuVisible;
+        Vm.IsToolsMenuVisible = false;
+        return Task.CompletedTask;
+    }
+
+    public static Task ToggleToolsMenu()
+    {
+        Vm.IsFileMenuVisible = false;
+        Vm.IsImageMenuVisible = false;
+        Vm.IsSettingsMenuVisible = false;
+        Vm.IsToolsMenuVisible = !Vm.IsToolsMenuVisible;
+        return Task.CompletedTask;
+    }
+
+    #endregion Menus
+
     public static Task Print()
     {
         return Task.CompletedTask;
@@ -65,7 +114,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -101,7 +150,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
             return;
         }
@@ -118,7 +167,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
             return;
         }
@@ -135,7 +184,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (GalleryFunctions.isFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
         {
             // TODO - Implement gallery navigation
             return;
@@ -384,7 +433,7 @@ public static class FunctionsHelper
 
     public static Task OpenWith()
     {
-        Vm?.PlatformService?.OpenWith();
+        Vm?.PlatformService?.OpenWith(Vm.FileInfo?.FullName);
         return Task.CompletedTask;
     }
 

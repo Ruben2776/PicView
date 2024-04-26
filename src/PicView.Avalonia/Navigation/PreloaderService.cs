@@ -3,6 +3,7 @@ using PicView.Avalonia.Models;
 using PicView.Core.ImageDecoding;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Services;
 
 namespace PicView.Avalonia.Navigation;
@@ -30,7 +31,7 @@ public class PreLoader
 
 #endif
 
-    public async Task<bool> AddAsync(int index, ImageService imageService, List<string> list, ImageModel? imageModel = null)
+    public async Task<bool> AddAsync(int index, List<string> list, ImageModel? imageModel = null)
     {
         if (list == null)
         {
@@ -60,7 +61,7 @@ public class PreLoader
                 {
                     preLoadValue.IsLoading = true;
 
-                    await imageService.LoadImageAsync(imageModel).ConfigureAwait(false);
+                    preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(imageModel.FileInfo).ConfigureAwait(false);
                 }
 
                 if (imageModel.EXIFOrientation is null || imageModel is { EXIFOrientation: EXIFHelper.EXIFOrientation.None, Image: not null })
@@ -93,7 +94,7 @@ public class PreLoader
         return false;
     }
 
-    public async Task<bool> RefreshFileInfo(int index, ImageService imageService, List<string> list)
+    public async Task<bool> RefreshFileInfo(int index, List<string> list)
     {
         if (list == null)
         {
@@ -116,7 +117,7 @@ public class PreLoader
             preLoadValue.ImageModel.FileInfo = null;
         }
 
-        await AddAsync(index, imageService, list, preLoadValue.ImageModel).ConfigureAwait(false);
+        await AddAsync(index, list, preLoadValue.ImageModel).ConfigureAwait(false);
         return removed;
     }
 
@@ -211,7 +212,7 @@ public class PreLoader
         }
     }
 
-    public async Task PreLoadAsync(int currentIndex, int count, bool reverse, ImageService imageService, List<string> list)
+    public async Task PreLoadAsync(int currentIndex, int count, bool reverse, List<string> list)
     {
         if (list == null)
         {
@@ -292,7 +293,7 @@ public class PreLoader
                         return;
                     }
                     var index = (nextStartingIndex + i) % list.Count;
-                    var isAdded = await AddAsync(index, imageService, list);
+                    var isAdded = await AddAsync(index, list);
                     if (isAdded)
                     {
                         array[i] = index;
@@ -309,7 +310,7 @@ public class PreLoader
                         return;
                     }
                     var index = (nextStartingIndex + i) % list.Count;
-                    _ = AddAsync(index, imageService, list);
+                    _ = AddAsync(index, list);
                     array[i] = index;
                 }
             }
@@ -327,7 +328,7 @@ public class PreLoader
                         return;
                     }
                     var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    var isAdded = await AddAsync(index, imageService, list);
+                    var isAdded = await AddAsync(index, list);
                     if (isAdded)
                     {
                         array[i] = index;
@@ -344,7 +345,7 @@ public class PreLoader
                         return;
                     }
                     var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    _ = AddAsync(index, imageService, list);
+                    _ = AddAsync(index, list);
                     array[i] = index;
                 }
             }

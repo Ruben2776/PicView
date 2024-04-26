@@ -60,14 +60,14 @@ namespace PicView.Avalonia.Navigation
             _watcher.Renamed += (_, e) => OnFileRenamed(e);
         }
 
-        public async Task Preload(ImageService imageService)
+        public async Task Preload()
         {
-            await PreLoader.PreLoadAsync(Index, Pics.Count, Reverse, imageService, Pics).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(Index, Pics.Count, Reverse, Pics).ConfigureAwait(false);
         }
 
-        public async Task AddAsync(int index, ImageService imageService, ImageModel imageModel)
+        public async Task AddAsync(int index, ImageModel imageModel)
         {
-            await PreLoader.AddAsync(index, imageService, Pics, imageModel).ConfigureAwait(false);
+            await PreLoader.AddAsync(index, Pics, imageModel).ConfigureAwait(false);
         }
 
         public async Task ReloadFileList()
@@ -289,7 +289,7 @@ namespace PicView.Avalonia.Navigation
                         await Task.Delay(20);
                         if (Index != index)
                         {
-                            await Preload(vm.ImageService);
+                            await Preload();
                             vm.CurrentView = vm.ImageViewer;
                             return;
                         }
@@ -311,7 +311,7 @@ namespace PicView.Avalonia.Navigation
 
                 if (Index != index)
                 {
-                    await Preload(vm.ImageService);
+                    await Preload();
                     return;
                 }
 
@@ -337,18 +337,18 @@ namespace PicView.Avalonia.Navigation
                     }
                 }
 
-                await AddAsync(Index, vm.ImageService, preLoadValue?.ImageModel);
-                await Preload(vm.ImageService);
+                await AddAsync(Index, preLoadValue?.ImageModel);
+                await Preload();
                 return;
 
                 async Task GetPreload()
                 {
-                    await PreLoader.AddAsync(index, vm.ImageService, Pics)
+                    await PreLoader.AddAsync(index, Pics)
                         .ConfigureAwait(false);
                     preLoadValue = PreLoader.Get(index, Pics);
                     if (Index != index)
                     {
-                        await Preload(vm.ImageService);
+                        await Preload();
                         return;
                     }
 
@@ -383,16 +383,11 @@ namespace PicView.Avalonia.Navigation
             {
                 ArgumentNullException.ThrowIfNull(fileInfo);
 
-                var imageModel = new ImageModel
-                {
-                    FileInfo = fileInfo
-                };
-                vm.ImageService ??= new ImageService();
-                await vm.ImageService.LoadImageAsync(imageModel);
+                var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
                 vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
                 vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
-                await AddAsync(Index, vm.ImageService, imageModel);
+                await AddAsync(Index, imageModel);
                 await LoadPicAtIndex(Index, vm);
                 vm.ImageIterator.FileAdded += (_, e) => { vm.SetTitle(); };
                 vm.ImageIterator.FileRenamed += (_, e) => { vm.SetTitle(); };
@@ -412,7 +407,7 @@ namespace PicView.Avalonia.Navigation
                     }
                 };
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // TODO display exception to user
             }
@@ -457,7 +452,7 @@ namespace PicView.Avalonia.Navigation
             else
             {
                 NavigationHelper.LoadingPreview(index, vm);
-                await PreLoader.AddAsync(index, vm.ImageService, Pics).ConfigureAwait(false);
+                await PreLoader.AddAsync(index, Pics).ConfigureAwait(false);
                 preLoadValue = PreLoader.Get(index, Pics);
                 if (preLoadValue is null)
                 {
@@ -475,7 +470,7 @@ namespace PicView.Avalonia.Navigation
             vm.GetIndex = Index + 1;
 
             _updateSource = false;
-            await PreLoader.PreLoadAsync(index, Pics.Count, Reverse, vm.ImageService, Pics).ConfigureAwait(false);
+            await PreLoader.PreLoadAsync(index, Pics.Count, Reverse, Pics).ConfigureAwait(false);
         }
 
         internal static async Task TimerPicUpdate()

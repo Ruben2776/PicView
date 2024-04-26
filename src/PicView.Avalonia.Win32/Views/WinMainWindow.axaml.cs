@@ -5,10 +5,6 @@ using Avalonia.Input;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
-using PicView.Core.FileHandling;
-using ReactiveUI;
-using System.Reactive.Concurrency;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -23,29 +19,12 @@ public partial class WinMainWindow : Window
             {
                 return;
             }
+            var vm = (MainViewModel)DataContext;
 
-            RxApp.MainThreadScheduler.Schedule(() =>
+            // Keep window position when resizing
+            ClientSizeProperty.Changed.Subscribe(size =>
             {
-                var vm = (MainViewModel)DataContext;
-
-                // Keep window position when resizing
-                ClientSizeProperty.Changed.Subscribe(size =>
-                {
-                    WindowHelper.HandleWindowResize(this, size);
-                });
-
-                vm.ImageChanged += (s, e) =>
-                {
-                    if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
-                    {
-                        // TODO: Add taskbar progress for Win32. using Microsoft.WindowsAPICodePack.Taskbar is not AOT compatible
-                        // check if https://github.com/microsoft/CsWin32 AOT compatible
-
-                        //TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, TryGetPlatformHandle().Handle);
-                        //TaskbarManager.Instance.SetProgressValue(wm.GetIndex, wm.ImageIterator.Pics.Count, TryGetPlatformHandle().Handle);
-                    }
-                    // TODO: using NativeMethods.SetCursorPos(p.X, p.Y) to move cursor is not AOT compatible
-                };
+                WindowHelper.HandleWindowResize(this, size);
             });
         };
         PointerPressed += (_, e) => MoveWindow(e);
@@ -56,8 +35,7 @@ public partial class WinMainWindow : Window
 
         desktop.ShutdownRequested += async (_, e) =>
         {
-            await SettingsHelper.SaveSettingsAsync();
-            FileDeletionHelper.DeleteTempFiles();
+            await WindowHelper.WindowClosingBehavior(this);
         };
     }
 

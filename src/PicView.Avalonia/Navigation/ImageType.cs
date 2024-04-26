@@ -2,6 +2,7 @@
 
 public enum ImageType
 {
+    Invalid,
     AnimatedBitmap,
     Bitmap,
     Svg,

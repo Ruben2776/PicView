@@ -14,9 +14,9 @@ namespace PicView.Avalonia.Gallery
 {
     public static class GalleryFunctions
     {
-        public static bool isFullGalleryOpen { get; private set; }
-        public static bool isBottomGalleryOpen { get; private set; }
-        public static bool isAnyGalleryOpen => isFullGalleryOpen || isBottomGalleryOpen;
+        public static bool IsFullGalleryOpen { get; private set; }
+        public static bool IsBottomGalleryOpen { get; private set; }
+        public static bool IsAnyGalleryOpen => IsFullGalleryOpen || IsBottomGalleryOpen;
 
         public static void RecycleItem(object sender, MainViewModel vm)
         {
@@ -36,6 +36,22 @@ namespace PicView.Avalonia.Gallery
             vm.GalleryItems.Remove(galleryItem); // TODO: rewrite file system watcher to delete gallery items
         }
 
+        public static void OpenWithItem(object sender, MainViewModel vm)
+        {
+#if DEBUG
+            Debug.Assert(sender != null, nameof(sender) + " != null");
+#endif
+            var menuItem = (MenuItem)sender;
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (menuItem is null) { return; }
+#if DEBUG
+            Debug.Assert(menuItem != null, nameof(menuItem) + " != null");
+            Debug.Assert(menuItem.DataContext != null, "menuItem.DataContext != null");
+#endif
+            var galleryItem = (GalleryThumbInfo.GalleryThumbHolder)menuItem.DataContext;
+            vm.PlatformService.OpenWith(galleryItem.FileLocation);
+        }
+
         public static async Task ToggleGallery(MainViewModel vm)
         {
             if (vm is null)
@@ -45,7 +61,7 @@ namespace PicView.Avalonia.Gallery
 
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
-                if (isFullGalleryOpen)
+                if (IsFullGalleryOpen)
                 {
                     OpenBottomGallery(vm);
                 }
@@ -60,7 +76,7 @@ namespace PicView.Avalonia.Gallery
 
             OpenFullGallery(vm);
             vm.CloseMenuCommand.Execute(null);
-            if (isAnyGalleryOpen)
+            if (IsAnyGalleryOpen)
             {
                 if (!NavigationHelper.CanNavigate(vm))
                 {
@@ -123,8 +139,8 @@ namespace PicView.Avalonia.Gallery
             vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
             vm.GalleryOrientation = Orientation.Horizontal;
             vm.IsGalleryCloseIconVisible = false;
-            isBottomGalleryOpen = true;
-            isFullGalleryOpen = false;
+            IsBottomGalleryOpen = true;
+            IsFullGalleryOpen = false;
             vm.IsGalleryOpen = true;
         }
 
@@ -133,15 +149,15 @@ namespace PicView.Avalonia.Gallery
             vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
             vm.GalleryOrientation = Orientation.Vertical;
             vm.IsGalleryCloseIconVisible = true;
-            isBottomGalleryOpen = false;
-            isFullGalleryOpen = true;
+            IsBottomGalleryOpen = false;
+            IsFullGalleryOpen = true;
             vm.IsGalleryOpen = true;
         }
 
         public static void CloseGallery(MainViewModel vm)
         {
-            isBottomGalleryOpen = false;
-            isFullGalleryOpen = false;
+            IsBottomGalleryOpen = false;
+            IsFullGalleryOpen = false;
             vm.IsGalleryOpen = false;
         }
 
@@ -153,7 +169,7 @@ namespace PicView.Avalonia.Gallery
             }
 
             var screen = ScreenHelper.GetScreen(desktop.MainWindow);
-            var size = isBottomGalleryOpen ? SettingsHelper.Settings.Gallery.BottomGalleryItemSize :
+            var size = IsBottomGalleryOpen ? SettingsHelper.Settings.Gallery.BottomGalleryItemSize :
                 SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
             vm.GalleryItemSize = screen.WorkingArea.Height / size;
         }

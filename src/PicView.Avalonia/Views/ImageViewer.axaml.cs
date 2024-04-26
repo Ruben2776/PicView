@@ -62,15 +62,38 @@ public partial class ImageViewer : UserControl
         };
     }
 
-    public void SetImage(object image, ImageType imageType)
+    public async Task SetImage(object image, ImageType imageType)
     {
-        MainImage.Source = imageType switch
+        if (imageType is ImageType.Svg)
         {
-            ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string, null) },
-            ImageType.Bitmap => image as Bitmap,
-            ImageType.AnimatedBitmap => image as Bitmap,
-            _ => MainImage.Source
-        };
+            var svgSource = await Task.FromResult(SvgSource.Load(image as string, null));
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                MainImage.Source = new SvgImage { Source = svgSource };
+            }, DispatcherPriority.Send);
+            return;
+        }
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            MainImage.Source = imageType switch
+            {
+                ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string, null) },
+                ImageType.Bitmap => image as Bitmap,
+                ImageType.AnimatedBitmap => image as Bitmap,
+                _ => MainImage.Source
+            };
+        }
     }
 
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)

@@ -81,6 +81,11 @@ public class App : Application, IPlatformSpecificService
         return string.CompareOrdinal(str1, str2);
     }
 
+    public void OpenWith(string path)
+    {
+        //
+    }
+
     public void LocateOnDisk(string path)
     {
         Process.Start("open", $"-R \"{_vm.FileInfo?.FullName}\"");
@@ -106,7 +111,8 @@ public class App : Application, IPlatformSpecificService
         {
             _aboutWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
+
+        FunctionsHelper.CloseMenus();
     }
 
     public void ShowExifWindow()
@@ -129,7 +135,7 @@ public class App : Application, IPlatformSpecificService
         {
             _exifWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
+        FunctionsHelper.CloseMenus();
     }
 
     public void ShowKeybindingsWindow()
@@ -152,7 +158,7 @@ public class App : Application, IPlatformSpecificService
         {
             _keybindingsWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
+        FunctionsHelper.CloseMenus();
     }
 
     public void ShowSettingsWindow()
@@ -175,12 +181,7 @@ public class App : Application, IPlatformSpecificService
         {
             _settingsWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
-    }
-
-    public void OpenWith()
-    {
-        throw new NotImplementedException();
+        FunctionsHelper.CloseMenus();
     }
 
     public void LocateOnDisk()
