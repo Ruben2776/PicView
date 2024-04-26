@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -99,6 +100,12 @@ public static class NavigationHelper
             return;
         }
         await Navigate(next, vm);
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            // TODO: fix  for macOS
+            return;
+        }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {

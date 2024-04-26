@@ -1,4 +1,5 @@
 <UserControl
+    Focusable="False"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.GalleryView"
     x:DataType="viewModels:MainViewModel"
@@ -63,6 +64,7 @@
                 AutoScrollToSelectedItem="True"
                 Background="Transparent"
                 BorderThickness="0"
+                Focusable="False"
                 IsVisible="{CompiledBinding !!GalleryItems.Count}"
                 ItemsSource="{CompiledBinding GalleryItems}"
                 Padding="0"

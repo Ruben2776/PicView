@@ -8,6 +8,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using PicView.Avalonia.Keybindings;
 using static PicView.Core.Gallery.GalleryThumbInfo;
 
 namespace PicView.Avalonia.Views;
@@ -18,6 +19,14 @@ public partial class GalleryView : UserControl
     {
         InitializeComponent();
         AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
+        AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
+    }
+
+    private async Task PreviewKeyDownEvent(object? sender, KeyEventArgs e)
+    {
+        // Prevent control from hijacking keys
+        await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false); 
+        e.Handled = true;
     }
 
     private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
