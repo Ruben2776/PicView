@@ -58,6 +58,8 @@ namespace PicView.Avalonia.Gallery
             {
                 return;
             }
+            
+            vm.CloseMenuCommand.Execute(null);
 
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
@@ -73,16 +75,19 @@ namespace PicView.Avalonia.Gallery
                 SetGalleryItemSize(vm);
                 return;
             }
-
-            OpenFullGallery(vm);
-            vm.CloseMenuCommand.Execute(null);
-            if (IsAnyGalleryOpen)
+            
+            if (IsFullGalleryOpen)
+            {
+                CloseGallery(vm);
+            }
+            else
             {
                 if (!NavigationHelper.CanNavigate(vm))
                 {
                     return;
                 }
                 _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
+                OpenFullGallery(vm);
             }
 
             await SettingsHelper.SaveSettingsAsync();
@@ -94,6 +99,8 @@ namespace PicView.Avalonia.Gallery
             {
                 return;
             }
+            _= FunctionsHelper.CloseMenus();
+            
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 OpenBottomGallery(vm);
@@ -108,13 +115,18 @@ namespace PicView.Avalonia.Gallery
                 }
                 _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
             }
-            vm.CloseMenuCommand.Execute(null);
-
+            
             await SettingsHelper.SaveSettingsAsync();
         }
 
         public static async Task OpenCloseBottomGallery(MainViewModel vm)
         {
+            if (vm is null)
+            {
+                return;
+            }
+            _= FunctionsHelper.CloseMenus();
+            
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 CloseGallery(vm);
@@ -130,7 +142,6 @@ namespace PicView.Avalonia.Gallery
             {
                 return;
             }
-            vm.CloseMenuCommand.Execute(null);
             await Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
         }
 
@@ -142,6 +153,8 @@ namespace PicView.Avalonia.Gallery
             IsBottomGalleryOpen = true;
             IsFullGalleryOpen = false;
             vm.IsGalleryOpen = true;
+            SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
+            WindowHelper.SetSize(vm);
         }
 
         public static void OpenFullGallery(MainViewModel vm)
@@ -159,6 +172,7 @@ namespace PicView.Avalonia.Gallery
             IsBottomGalleryOpen = false;
             IsFullGalleryOpen = false;
             vm.IsGalleryOpen = false;
+            WindowHelper.SetSize(vm);
         }
 
         public static void SetGalleryItemSize(MainViewModel vm)

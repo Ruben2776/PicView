@@ -121,8 +121,18 @@ public static class NavigationHelper
         });
     }
 
-    public static void LoadingPreview(int index, MainViewModel vm)
+    public static async Task LoadingPreview(int index, MainViewModel vm)
     {
+        if (vm.GalleryItems is not null && vm.GalleryItems.Count > index)
+        {
+            var source = vm.GalleryItems[index].ImageSource;
+            if (source is null)
+            {
+                return;
+            }
+            await vm.ImageViewer.SetImage(source, ImageType.Bitmap);
+            return;
+        }
         using var image = new MagickImage();
         image.Ping(vm.ImageIterator.Pics[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();
@@ -131,10 +141,8 @@ public static class NavigationHelper
             return;
         }
 
-        var stream = new MemoryStream(thumb?.ToByteArray());
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
-        });
+        var byteArray = await Task.FromResult(thumb.ToByteArray());
+        var stream = new MemoryStream(byteArray);
+        await vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
     }
 }

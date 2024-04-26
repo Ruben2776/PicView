@@ -25,26 +25,15 @@ public class ImageModel : IDisposable
                 return 0;
             }
 
-            switch (EXIFOrientation)
+            return EXIFOrientation switch
             {
-                case EXIFHelper.EXIFOrientation.None:
-                case EXIFHelper.EXIFOrientation.Normal:
-                case EXIFHelper.EXIFOrientation.Flipped:
-                    return 0;
-
-                case EXIFHelper.EXIFOrientation.Rotated180:
-                case EXIFHelper.EXIFOrientation.Rotated180Flipped:
-                    return 180;
-
-                case EXIFHelper.EXIFOrientation.Rotated270Flipped:
-                case EXIFHelper.EXIFOrientation.Rotated270:
-                    return 270;
-
-                case EXIFHelper.EXIFOrientation.Rotated90:
-                case EXIFHelper.EXIFOrientation.Rotated90Flipped:
-                    return 90;
-            }
-            return 0;
+                EXIFHelper.EXIFOrientation.None or EXIFHelper.EXIFOrientation.Normal
+                    or EXIFHelper.EXIFOrientation.Flipped => 0,
+                EXIFHelper.EXIFOrientation.Rotated180 or EXIFHelper.EXIFOrientation.Rotated180Flipped => 180,
+                EXIFHelper.EXIFOrientation.Rotated270Flipped or EXIFHelper.EXIFOrientation.Rotated270 => 270,
+                EXIFHelper.EXIFOrientation.Rotated90 or EXIFHelper.EXIFOrientation.Rotated90Flipped => 90,
+                _ => 0
+            };
         }
     }
 

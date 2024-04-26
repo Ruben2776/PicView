@@ -29,10 +29,8 @@ using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
 {
-    public class MainViewModel : ViewModelBase, IActivatableViewModel
+    public class MainViewModel : ViewModelBase
     {
-        public ViewModelActivator? Activator { get; }
-
         public event EventHandler<ImageModel>? ImageChanged;
 
         public readonly IPlatformSpecificService? PlatformService;
@@ -171,10 +169,6 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleScrollCommand { get; }
 
         public ICommand? ToggleSubdirectoriesCommand { get; }
-
-        public ICommand? SetGalleryItemSizeCommand { get; }
-
-        public ICommand? SetBottomGalleryItemSizeCommand { get; }
 
         #endregion Commands
 
@@ -1054,7 +1048,6 @@ namespace PicView.Avalonia.ViewModels
 
         public void SetImageModel(ImageModel imageModel)
         {
-            //Image = imageModel?.Image ?? null; // TODO replace with broken image graphic if it is null
             FileInfo = imageModel?.FileInfo ?? null;
             if (imageModel?.EXIFOrientation.HasValue ?? false)
             {
@@ -1503,7 +1496,8 @@ namespace PicView.Avalonia.ViewModels
 
             SortFilesByCreationTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByCreationTime);
 
-            SortFilesByLastAccessTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastAccessTime);
+            SortFilesByLastAccessTimeCommand =
+                ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastAccessTime);
 
             SortFilesByLastWriteTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastWriteTime);
 
@@ -1589,9 +1583,7 @@ namespace PicView.Avalonia.ViewModels
 
             OpenWithCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenWith);
 
-            RenameCommand = ReactiveCommand.Create(() =>
-            {
-            });
+            RenameCommand = ReactiveCommand.Create(() => { });
 
             ResizeCommand = ReactiveCommand.CreateFromTask<int>(ResizeImageByPercentage);
             ConvertCommand = ReactiveCommand.CreateFromTask<int>(ConvertFileExtension);
@@ -1651,6 +1643,7 @@ namespace PicView.Avalonia.ViewModels
                 {
                     return;
                 }
+
                 ProcessHelper.OpenLink(GoogleLink);
             });
 
@@ -1660,6 +1653,7 @@ namespace PicView.Avalonia.ViewModels
                 {
                     return;
                 }
+
                 ProcessHelper.OpenLink(BingLink);
             });
 
@@ -1694,18 +1688,6 @@ namespace PicView.Avalonia.ViewModels
             ToggleLoopingCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleLooping);
 
             #endregion Settings commands
-
-            Activator = new ViewModelActivator();
-            this.WhenActivated(disposables =>
-            {
-                /* handle activation */
-                Disposable
-                    .Create(() =>
-                    {
-                        /* handle deactivation */
-                    })
-                    .DisposeWith(disposables);
-            });
         }
 
         public MainViewModel()

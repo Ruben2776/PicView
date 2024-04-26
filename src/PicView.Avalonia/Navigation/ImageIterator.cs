@@ -1,5 +1,4 @@
-﻿using Avalonia.Threading;
-using PicView.Avalonia.Helpers;
+﻿using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Services;
@@ -280,7 +279,7 @@ namespace PicView.Avalonia.Navigation
                     {
                         vm.SetLoadingTitle();
                         vm.IsLoading = true;
-                        NavigationHelper.LoadingPreview(index, vm);
+                        await NavigationHelper.LoadingPreview(index, vm);
                     }
 
                     while (preLoadValue.IsLoading)
@@ -316,10 +315,7 @@ namespace PicView.Avalonia.Navigation
                 }
 
                 vm.SetImageModel(preLoadValue.ImageModel);
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
-                });
+                await vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
                 vm.IsLoading = false;
                 WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
                 vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
@@ -442,7 +438,7 @@ namespace PicView.Avalonia.Navigation
                 {
                     if (showThumb)
                     {
-                        NavigationHelper.LoadingPreview(index, vm);
+                        await NavigationHelper.LoadingPreview(index, vm);
                         showThumb = false;
                     }
 
@@ -451,7 +447,7 @@ namespace PicView.Avalonia.Navigation
             }
             else
             {
-                NavigationHelper.LoadingPreview(index, vm);
+                await NavigationHelper.LoadingPreview(index, vm);
                 await PreLoader.AddAsync(index, Pics).ConfigureAwait(false);
                 preLoadValue = PreLoader.Get(index, Pics);
                 if (preLoadValue is null)
@@ -461,11 +457,15 @@ namespace PicView.Avalonia.Navigation
             }
             vm.SetImageModel(preLoadValue.ImageModel);
 
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
-            });
+            await vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
             WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
+            if (vm.GalleryItems is not null)
+            {
+                if (vm.GalleryItems.Count > 0 && Index < vm.GalleryItems.Count - 1)
+                {
+                    vm.SelectedGalleryItem = vm.GalleryItems[Index];
+                }
+            }
             vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
             vm.GetIndex = Index + 1;
 
