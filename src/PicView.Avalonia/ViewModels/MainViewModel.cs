@@ -37,9 +37,9 @@ namespace PicView.Avalonia.ViewModels
 
         #region Gallery
 
-        private ObservableCollection<GalleryThumbHolder> _galleryItems;
+        private ObservableCollection<GalleryThumbHolder>? _galleryItems;
 
-        public ObservableCollection<GalleryThumbHolder> GalleryItems
+        public ObservableCollection<GalleryThumbHolder>? GalleryItems
         {
             get => _galleryItems;
             set => this.RaiseAndSetIfChanged(ref _galleryItems, value);

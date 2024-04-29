@@ -1,9 +1,11 @@
-﻿using DynamicData;
+﻿using System.Collections.ObjectModel;
+using DynamicData;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Gallery;
 
 namespace PicView.Avalonia.Navigation;
 
