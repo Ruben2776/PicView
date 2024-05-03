@@ -170,6 +170,8 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ToggleSubdirectoriesCommand { get; }
 
+        public ICommand? ColorPickerCommand { get; }
+
         #endregion Commands
 
         #region Fields
@@ -1674,6 +1676,8 @@ namespace PicView.Avalonia.ViewModels
             ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleBottomToolbar);
 
             ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeCtrlZoom);
+            
+            ColorPickerCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ColorPicker);
 
             #endregion UI Commands
 

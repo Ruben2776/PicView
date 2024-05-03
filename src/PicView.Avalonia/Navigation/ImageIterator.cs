@@ -7,6 +7,7 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
+using PicView.Avalonia.Gallery;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation
@@ -381,7 +382,7 @@ namespace PicView.Avalonia.Navigation
 
                 var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-                vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
+                await vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
                 vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
                 await AddAsync(Index, imageModel);
                 await LoadPicAtIndex(Index, vm);
@@ -402,6 +403,10 @@ namespace PicView.Avalonia.Navigation
                         vm.SetTitle();
                     }
                 };
+                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                {
+                   _ = Task.Run(() => GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
+                }
             }
             catch (Exception e)
             {

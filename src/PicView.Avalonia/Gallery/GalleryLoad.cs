@@ -48,7 +48,7 @@ public static class GalleryLoad
             FileInfo? fileInfo = null;
             try
             {
-                var magick = new MagickImage();
+                using var magick = new MagickImage();
                 fileInfo = new FileInfo(item);
                 if (fileInfo.Length >= 2147483648)
                 {
@@ -56,7 +56,7 @@ public static class GalleryLoad
                         FileShare.ReadWrite, 4096, true);
                     // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
                     // ReSharper disable once MethodHasAsyncOverload
-                    magick?.Read(fileStream);
+                    magick.Read(fileStream);
                 }
                 else
                 {

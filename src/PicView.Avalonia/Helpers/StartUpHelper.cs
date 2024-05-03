@@ -90,7 +90,6 @@ public static class StartUpHelper
 
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
             GalleryFunctions.OpenBottomGallery(vm);
             WindowHelper.SetSize(vm);
         }

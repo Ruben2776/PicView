@@ -208,9 +208,27 @@ public class ViewModelBase : ReactiveObject
         ViewLicenseFile = TranslationHelper.GetTranslation("ViewLicenseFile");
         CheckForUpdates = TranslationHelper.GetTranslation("CheckForUpdates");
         Credits = TranslationHelper.GetTranslation("Credits");
+        ColorPickerTool = TranslationHelper.GetTranslation("ColorPickerTool");
+        ColorPickerToolTooltip = TranslationHelper.GetTranslation("ColorPickerToolTooltip");
     }
 
     #region Strings
+    
+    private string? _colorPickerTool;
+    
+    public string? ColorPickerTool
+    {
+        get => _colorPickerTool;
+        set => this.RaiseAndSetIfChanged(ref _colorPickerTool, value);
+    }
+    
+    private string? _colorPickerToolTooltip;
+    
+    public string? ColorPickerToolTooltip
+    {
+        get => _colorPickerToolTooltip;
+        set => this.RaiseAndSetIfChanged(ref _colorPickerToolTooltip, value);
+    }
 
     private string? _credits;
 
