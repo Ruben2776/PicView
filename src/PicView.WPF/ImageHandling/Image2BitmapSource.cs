@@ -33,32 +33,15 @@ internal static class Image2BitmapSource
 
         var extension = fileInfo.Extension.ToLowerInvariant();
 
-        switch (extension)
+        return extension switch
         {
-            case ".jpg":
-            case ".jpeg":
-            case ".jpe":
-            case ".png":
-            case ".bmp":
-            case ".gif":
-            case ".jfif":
-            case ".ico":
-            case ".webp":
-            case ".wbmp":
-                return await GetBitmapAsync(fileInfo).ConfigureAwait(false);
-
-            case ".svg":
-                return await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
-
-            case ".svgz":
-                return await GetMagickSvg(fileInfo, MagickFormat.Svgz).ConfigureAwait(false);
-
-            case ".b64":
-                return await GetMagickBase64(fileInfo).ConfigureAwait(false);
-
-            default:
-                return await GetDefaultBitmapSource(fileInfo, extension).ConfigureAwait(false);
-        }
+            ".jpg" or ".jpeg" or ".jpe" or ".png" or ".bmp" or ".gif" or ".jfif" or ".ico" or ".webp" or ".wbmp" =>
+                await GetBitmapAsync(fileInfo).ConfigureAwait(false),
+            ".svg" => await GetMagickSvg(fileInfo, MagickFormat.Svg).ConfigureAwait(false),
+            ".svgz" => await GetMagickSvg(fileInfo, MagickFormat.Svgz).ConfigureAwait(false),
+            ".b64" => await GetMagickBase64(fileInfo).ConfigureAwait(false),
+            _ => await GetDefaultBitmapSource(fileInfo, extension).ConfigureAwait(false)
+        };
     }
 
     #region Render Image From Source
