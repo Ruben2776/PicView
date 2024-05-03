@@ -12,9 +12,15 @@ internal partial class SourceGenerationContext : JsonSerializerContext;
 public static class SettingsHelper
 {
     private const double CurrentSettingsVersion = 1;
+    private const string ConfigPath = "Config/UserSettings.json";
+    private const string RoamingConfigPath = "Ruben2776/PicView/Config/UserSettings.json";
 
     public static AppSettings? Settings { get; private set; }
-
+    
+    /// <summary>
+    /// Asynchronously loads the user settings. Loads defaults if not found 
+    /// </summary>
+    /// <returns>True if settings exists</returns>
     public static async Task<bool> LoadSettingsAsync()
     {
         try
@@ -48,7 +54,7 @@ public static class SettingsHelper
         async Task<bool> Retry()
         {
             // TODO test saving location for macOS https://johnkoerner.com/csharp/special-folder-values-on-windows-versus-mac/
-            var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+            var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RoamingConfigPath);
             if (File.Exists(appData))
             {
                 try
@@ -72,12 +78,12 @@ public static class SettingsHelper
 
     public static string GetUserSettingsPath()
     {
-        var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+        var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RoamingConfigPath);
         if (File.Exists(appData))
         {
             return appData;
         }
-        var baseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
+        var baseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigPath);
         return File.Exists(baseDirectory) ? baseDirectory : string.Empty;
     }
 
@@ -102,13 +108,13 @@ public static class SettingsHelper
     {
         try
         {
-            var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
+            var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), RoamingConfigPath);
             if (File.Exists(appDataPath))
             {
                 File.Delete(appDataPath);
             }
 
-            var baseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
+            var baseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigPath);
             if (File.Exists(baseDirectory))
             {
                 File.Delete(baseDirectory);
@@ -146,7 +152,7 @@ public static class SettingsHelper
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/UserSettings.json");
             await PerformSave(path).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (UnauthorizedAccessException ex)
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/UserSettings.json");
             if (!File.Exists(path))
@@ -163,6 +169,11 @@ public static class SettingsHelper
                 Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
                 return false;
             }
+        }
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"{nameof(SaveSettingsAsync)} error saving settings:\n {ex.Message}");
+            return false;
         }
         return true;
     }
