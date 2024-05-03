@@ -88,7 +88,7 @@ public class App : Application, IPlatformSpecificService
 
     public void LocateOnDisk(string path)
     {
-        Process.Start("open", $"-R \"{_vm.FileInfo?.FullName}\"");
+        Process.Start("open", $"-R \"{path}\"");
     }
 
     public void ShowAboutWindow()
@@ -182,10 +182,5 @@ public class App : Application, IPlatformSpecificService
             _settingsWindow.Activate();
         }
         FunctionsHelper.CloseMenus();
-    }
-
-    public void LocateOnDisk()
-    {
-        throw new NotImplementedException();
     }
 }

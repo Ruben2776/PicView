@@ -75,15 +75,15 @@
                     <NativeMenuItem Header="{CompiledBinding Effects}" />
                 </NativeMenu>
             </NativeMenuItem>
+            <NativeMenuItem Header="{CompiledBinding InterfaceConfiguration}">
+                <NativeMenu>
+                    <NativeMenuItem Command="{CompiledBinding ToggleFullscreenCommand}" Header="{CompiledBinding ToggleFullscreen}" />
+                    <NativeMenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface}" />
+                    <NativeMenuItem Command="{CompiledBinding ToggleGalleryCommand}" Header="{CompiledBinding ShowImageGallery}" />
+                </NativeMenu>
+            </NativeMenuItem>
             <NativeMenuItem Header="{CompiledBinding Settings}">
                 <NativeMenu>
-                    <NativeMenuItem
-                        Command="{CompiledBinding ToggleBottomGalleryCommand}"
-                        Header="{CompiledBinding GetBottomGallery}"
-                        IsChecked="{CompiledBinding IsBottomGalleryShown}"
-                        ToggleType="CheckBox" />
-                    <NativeMenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface}" />
-                    <NativeMenuItemSeparator />
                     <NativeMenuItem
                         Command="{CompiledBinding ToggleLoopingCommand}"
                         Header="{CompiledBinding GetLooping}"

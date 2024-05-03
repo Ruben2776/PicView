@@ -9,6 +9,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Gallery
 {
@@ -131,6 +132,7 @@ namespace PicView.Avalonia.Gallery
             {
                 CloseGallery(vm);
                 SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
+                vm.GetBottomGallery = TranslationHelper.GetTranslation("ShowBottomGallery");
                 await SettingsHelper.SaveSettingsAsync();
                 return;
             }
@@ -155,9 +157,10 @@ namespace PicView.Avalonia.Gallery
             vm.IsGalleryOpen = true;
             SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
             WindowHelper.SetSize(vm);
+            vm.GetBottomGallery = TranslationHelper.GetTranslation("HideBottomGallery");
         }
 
-        public static void OpenFullGallery(MainViewModel vm)
+        private static void OpenFullGallery(MainViewModel vm)
         {
             vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
             vm.GalleryOrientation = Orientation.Vertical;
@@ -167,7 +170,7 @@ namespace PicView.Avalonia.Gallery
             vm.IsGalleryOpen = true;
         }
 
-        public static void CloseGallery(MainViewModel vm)
+        private static void CloseGallery(MainViewModel vm)
         {
             IsBottomGalleryOpen = false;
             IsFullGalleryOpen = false;

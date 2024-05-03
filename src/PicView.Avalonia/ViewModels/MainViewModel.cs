@@ -92,6 +92,8 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ExitCommand { get; }
         public ICommand? MinimizeCommand { get; }
         public ICommand? MaximizeCommand { get; }
+        
+        public ICommand? ToggleFullscreenCommand { get; }
 
         public ICommand? NextCommand { get; }
         public ICommand? NextButtonCommand { get; }
@@ -133,6 +135,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ChangeCtrlZoomCommand { get; }
 
         public ICommand? ToggleUICommand { get; }
+        
 
         public ICommand? ToggleBottomNavBarCommand { get; }
         public ICommand? ShowExifWindowCommand { get; }
@@ -171,6 +174,8 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleSubdirectoriesCommand { get; }
 
         public ICommand? ColorPickerCommand { get; }
+
+        public ICommand? SlideshowCommand { get; }
 
         #endregion Commands
 
@@ -302,15 +307,7 @@ namespace PicView.Avalonia.ViewModels
         public bool IsLooping
         {
             get => _isLooping;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isLooping, value);
-                SettingsHelper.Settings.UIProperties.Looping = value;
-                GetLooping = value
-                    ? TranslationHelper.GetTranslation("LoopingEnabled")
-                    : TranslationHelper.GetTranslation("LoopingDisabled");
-                _ = SettingsHelper.SaveSettingsAsync();
-            }
+            set => this.RaiseAndSetIfChanged(ref _isLooping, value);
         }
 
         private bool _isAutoFit = SettingsHelper.Settings.WindowProperties.AutoFit;
@@ -480,7 +477,13 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _getFlipped, value);
         }
 
-        public string? GetBottomGallery => IsBottomGalleryShown ? HideBottomGallery : ShowBottomGallery;
+        private string? _getBottomGallery;
+
+        public string? GetBottomGallery
+        {
+            get => _getBottomGallery;
+            set => this.RaiseAndSetIfChanged(ref _getBottomGallery, value);
+        }
 
         private string? _getLooping = SettingsHelper.Settings.UIProperties.Looping
             ? TranslationHelper.GetTranslation("LoopingEnabled")
@@ -1464,7 +1467,8 @@ namespace PicView.Avalonia.ViewModels
                     ? WindowState.Maximized
                     : WindowState.Normal;
             });
-
+            
+            ToggleFullscreenCommand = ReactiveCommand.Create(FunctionsHelper.Fullscreen);
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
             ShowExifWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowExifWindow);
@@ -1678,6 +1682,8 @@ namespace PicView.Avalonia.ViewModels
             ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeCtrlZoom);
             
             ColorPickerCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ColorPicker);
+            
+            SlideshowCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Slideshow);
 
             #endregion UI Commands
 

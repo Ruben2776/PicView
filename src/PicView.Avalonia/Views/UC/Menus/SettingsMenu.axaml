@@ -166,6 +166,7 @@
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding ToggleLoopingCommand}"
                     IsChecked="{Binding IsLooping}"
                     ToolTip.Tip="{Binding ToggleLooping}"
                     Width="169">

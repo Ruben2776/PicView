@@ -293,9 +293,19 @@ public static class FunctionsHelper
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
-    public static Task ToggleLooping()
+    public static async Task ToggleLooping()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        var value = !SettingsHelper.Settings.UIProperties.Looping;
+        SettingsHelper.Settings.UIProperties.Looping = value;
+        Vm.GetLooping = value
+            ? TranslationHelper.GetTranslation("LoopingEnabled")
+            : TranslationHelper.GetTranslation("LoopingDisabled");
+        Vm.IsLooping = value;
+        await SettingsHelper.SaveSettingsAsync();
     }
 
     public static async Task ToggleGallery()
@@ -443,7 +453,12 @@ public static class FunctionsHelper
         {
             return Task.CompletedTask;
         }
-        Vm?.PlatformService?.LocateOnDisk();
+
+        if (Vm.FileInfo is null)
+        {
+            return Task.CompletedTask;
+        }
+        Vm?.PlatformService?.LocateOnDisk(Vm.FileInfo.FullName);
         return Task.CompletedTask;
     }
 

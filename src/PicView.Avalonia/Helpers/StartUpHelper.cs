@@ -50,15 +50,17 @@ public static class StartUpHelper
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
             vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
             vm.IsScrollingEnabled = true;
-            SettingsHelper.Settings.Zoom.ScrollEnabled = true;
         }
         else
         {
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
             vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
             vm.IsScrollingEnabled = false;
-            SettingsHelper.Settings.Zoom.ScrollEnabled = false;
         }
+        
+        vm.GetBottomGallery = vm.IsBottomGalleryShown ?
+            TranslationHelper.GetTranslation("HideBottomGallery") :
+            TranslationHelper.GetTranslation("ShowBottomGallery");
 
         if (SettingsHelper.Settings.WindowProperties.TopMost)
         {

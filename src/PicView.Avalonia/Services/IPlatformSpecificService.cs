@@ -10,7 +10,7 @@ public interface IPlatformSpecificService
 
     void OpenWith(string path);
 
-    void LocateOnDisk();
+    void LocateOnDisk(string path);
 
     void ShowAboutWindow();
 
