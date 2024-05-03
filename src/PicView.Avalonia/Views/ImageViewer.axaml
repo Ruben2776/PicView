@@ -18,7 +18,6 @@
         <LayoutTransformControl x:Name="ImageLayoutTransformControl">
             <ScrollViewer
                 Focusable="False"
-                Margin="{CompiledBinding ImageMargin}"
                 ScrollChanged="ImageScrollViewer_OnScrollChanged"
                 VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}"
                 x:Name="ImageScrollViewer">

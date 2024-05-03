@@ -328,13 +328,9 @@
                             Source="{StaticResource ShortcutsImage}"
                             Width="17" />
                         <TextBlock
-                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                            FontSize="12"
+                            Classes="txt"
                             MaxWidth="150"
-                            Text="{Binding ApplicationShortcuts}"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap"
-                            VerticalAlignment="Center" />
+                            Text="{Binding ApplicationShortcuts}" />
                     </StackPanel>
                 </Button>
 
@@ -343,22 +339,17 @@
                     Canvas.Top="150"
                     Classes="ButtonBorder altHover"
                     Command="{Binding ToggleUICommand}"
-                    ToolTip.Tip="Hide interface"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Height="18"
-                            Margin="12,0,12,0"
+                            Margin="11,0,12,0"
                             Source="{StaticResource DisplayImage}"
                             Width="18" />
                         <TextBlock
-                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                            FontSize="12"
+                            Classes="txt"
                             MaxWidth="150"
-                            Text="Hide interface"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap"
-                            VerticalAlignment="Center" />
+                            Text="{CompiledBinding HideShowInterface}" />
                     </StackPanel>
                 </Button>
             </Canvas>

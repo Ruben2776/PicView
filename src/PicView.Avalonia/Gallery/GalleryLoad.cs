@@ -43,44 +43,21 @@ public static class GalleryLoad
 
         for (var i = 0; i < viewModel.ImageIterator.Pics.Count; i++)
         {
-            var item = viewModel.ImageIterator.Pics[i];
-            object? avaloniaImage = null;
-            FileInfo? fileInfo = null;
-            try
+            var path = viewModel.ImageIterator.Pics[i];
+            var fileInfo = new FileInfo(path);
+            
+            var avaloniaImage = await ThumbnailHelper.GetThumb(fileInfo, (int)viewModel.GalleryItemSize);
+            if (avaloniaImage is null)
             {
-                using var magick = new MagickImage();
-                fileInfo = new FileInfo(item);
-                if (fileInfo.Length >= 2147483648)
-                {
-                    await using var fileStream = new FileStream(item, FileMode.Open, FileAccess.Read,
-                        FileShare.ReadWrite, 4096, true);
-                    // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
-                    // ReSharper disable once MethodHasAsyncOverload
-                    magick.Read(fileStream);
-                }
-                else
-                {
-                    await magick.ReadAsync(item);
-                }
+                continue;
+            }
+            
+            if (currentDirectory != _currentDirectory || count != viewModel.ImageIterator.Pics.Count)
+            {
+                viewModel.GalleryItems.Clear();
+                return;
+            }
 
-                var geometry = new MagickGeometry(0, (int)viewModel.GalleryItemSize);
-                magick?.Thumbnail(geometry);
-                magick.Format = MagickFormat.Png;
-                await using var memoryStream = new MemoryStream();
-                await magick.WriteAsync(memoryStream);
-                memoryStream.Position = 0;
-                var bmp = new Bitmap(memoryStream);
-                avaloniaImage = new AvaloniaImageSource(bmp);
-                if (currentDirectory != _currentDirectory || count != viewModel.ImageIterator.Pics.Count)
-                {
-                    viewModel.GalleryItems.Clear();
-                    return;
-                }
-            }
-            catch (Exception)
-            {
-                //
-            }
             var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(0, avaloniaImage as GalleryThumbInfo.IImageSource, fileInfo);
             thumbData.ThumbNailSize = viewModel.GalleryItemSize;
             viewModel.GalleryItems.Add(thumbData);

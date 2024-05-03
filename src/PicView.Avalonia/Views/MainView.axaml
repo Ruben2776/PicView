@@ -332,6 +332,16 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
+            <MenuItem Command="{CompiledBinding PasteCommand}" Header="{Binding FilePaste}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource PasteGeometry}"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Header="{CompiledBinding Copy}">
                 <MenuItem.Icon>
                     <Path
@@ -424,7 +434,7 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Panel x:Name="MainGrid">
-        <ContentControl Content="{CompiledBinding CurrentView}" />
+        <ContentControl Content="{CompiledBinding CurrentView}" Margin="{CompiledBinding ImageMargin}" />
         <views:GalleryView IsVisible="{CompiledBinding IsGalleryOpen}" VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}" />
     </Panel>
 </UserControl>
