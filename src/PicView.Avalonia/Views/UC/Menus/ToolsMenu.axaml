@@ -324,7 +324,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Height="17"
-                            Margin="9,0,11,0"
+                            Margin="9,0,12,0"
                             Source="{StaticResource ShortcutsImage}"
                             Width="17" />
                         <TextBlock

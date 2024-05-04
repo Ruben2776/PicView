@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace PicView.Core.FileHandling;
 
@@ -15,7 +16,15 @@ public static class FileDeletionHelper
         try
         {
             var toRecycleOption = recycle ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently;
-            FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, toRecycleOption);
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, toRecycleOption);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                File.Delete(file);
+            }
         }
         catch (Exception e)
         {

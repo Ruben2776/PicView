@@ -83,18 +83,19 @@ public class App : Application, IPlatformSpecificService
 
     public void OpenWith(string path)
     {
-        // TODO: Implement OpenWith
+        //
     }
 
     public void LocateOnDisk(string path)
     {
-        Process.Start("open", $"-R \"{_vm.FileInfo?.FullName}\"");
+        Process.Start("open", $"-R \"{path}\"");
     }
-
+    
     public void ShowFileProperties(string path)
     {
-        throw new NotImplementedException();
+        // TODO implement show file properties on macOS
     }
+
 
     public void ShowAboutWindow()
     {
@@ -197,10 +198,5 @@ public class App : Application, IPlatformSpecificService
     public void ShowResizeWindow()
     {
         // TODO: Implement ShowResizeWindow
-    }
-
-    public void LocateOnDisk()
-    {
-        // TODO: Implement LocateOnDisk
     }
 }
