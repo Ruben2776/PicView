@@ -84,9 +84,15 @@ public class App : Application, IPlatformSpecificService
         ProcessHelper.OpenWith(path);
     }
 
-    public void LocateOnDisk()
+    public void LocateOnDisk(string path)
     {
-        Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(_vm.FileInfo.DirectoryName, _vm.FileInfo.FullName);
+        var folder = Path.GetDirectoryName(path);
+        Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(folder, path);
+    }
+
+    public void ShowFileProperties(string path)
+    {
+        Windows.FileHandling.FileExplorer.ShowFileProperties(path);
     }
 
     public void ShowAboutWindow()
@@ -179,5 +185,15 @@ public class App : Application, IPlatformSpecificService
             _settingsWindow.Activate();
         }
         _vm.CloseMenuCommand.Execute(null);
+    }
+    
+    public void ShowEffectsWindow()
+    {
+        // TODO: Implement ShowEffectsWindow
+    }
+
+    public void ShowResizeWindow()
+    {
+        // TODO: Implement ShowResizeWindow
     }
 }

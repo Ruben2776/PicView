@@ -10,7 +10,9 @@ public interface IPlatformSpecificService
 
     void OpenWith(string path);
 
-    void LocateOnDisk();
+    void LocateOnDisk(string path);
+    
+    void ShowFileProperties(string path);
 
     void ShowAboutWindow();
 
@@ -19,4 +21,8 @@ public interface IPlatformSpecificService
     void ShowKeybindingsWindow();
 
     void ShowSettingsWindow();
+    
+    void ShowEffectsWindow();
+    
+    void ShowResizeWindow();
 }

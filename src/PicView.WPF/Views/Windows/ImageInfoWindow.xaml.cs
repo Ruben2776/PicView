@@ -134,7 +134,7 @@ public partial class ImageInfoWindow
         FileProperties.MouseEnter += (_, _) => AnimationHelper.MouseEnterBgTexColor(FilePropertiesBrush);
         FileProperties.MouseLeave += (_, _) => ButtonMouseLeaveAnim(FilePropertiesFill);
         FileProperties.MouseLeave += (_, _) => AnimationHelper.MouseLeaveBgTexColor(FilePropertiesBrush);
-        FileProperties.Click += (_, _) => FileHandling.FileProperties.ShowFileProperties();
+        FileProperties.Click += (_, _) => _ = UIHelper.ShowFileProperties();
 
         // Delete
         Delete.MouseEnter += (_, _) => ButtonMouseOverAnim(DeleteFill);

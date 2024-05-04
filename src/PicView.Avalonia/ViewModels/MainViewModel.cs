@@ -105,6 +105,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? PasteCommand { get; }
         public ICommand? CopyFileCommand { get; }
         public ICommand? CopyFilePathCommand { get; }
+        public ICommand? FilePropertiesCommand { get; }
         public ICommand? CopyImageCommand { get; }
         public ICommand? CutCommand { get; }
         public ICommand? ReloadCommand { get; }
@@ -1576,6 +1577,8 @@ namespace PicView.Avalonia.ViewModels
             {
                 await desktop.MainWindow.Clipboard.SetTextAsync(FileInfo?.FullName);
             });
+            
+            FilePropertiesCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ShowFileProperties);
 
             CopyImageCommand = ReactiveCommand.Create(() => { });
 

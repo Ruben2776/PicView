@@ -199,7 +199,7 @@ internal static class UIHelper
                 return true;
 
             case Key.I when CtrlDown && !GalleryFunctions.IsGalleryOpen:
-                FileProperties.ShowFileProperties();
+                await ShowFileProperties();
                 return true;
 
             case Key.N when CtrlDown:
@@ -719,7 +719,12 @@ internal static class UIHelper
         {
             return;
         }
-        FileProperties.ShowFileProperties();
+
+        if (ErrorHandling.CheckOutOfRange())
+        {
+            return;
+        }
+        Windows.FileHandling.FileExplorer.ShowFileProperties(Navigation.Pics[Navigation.FolderIndex]);
     }
 
     internal static async Task Print()

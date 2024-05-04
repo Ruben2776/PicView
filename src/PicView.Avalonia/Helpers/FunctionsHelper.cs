@@ -439,11 +439,7 @@ public static class FunctionsHelper
 
     public static Task OpenInExplorer()
     {
-        if (Vm is null)
-        {
-            return Task.CompletedTask;
-        }
-        Vm?.PlatformService?.LocateOnDisk();
+        Vm?.PlatformService?.LocateOnDisk(Vm.FileInfo.FullName);
         return Task.CompletedTask;
     }
 
@@ -538,6 +534,7 @@ public static class FunctionsHelper
 
     public static Task ShowFileProperties()
     {
+        Vm?.PlatformService?.ShowFileProperties(Vm.FileInfo.FullName);
         return Task.CompletedTask;
     }
 

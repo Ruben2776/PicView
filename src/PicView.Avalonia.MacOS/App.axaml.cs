@@ -83,12 +83,17 @@ public class App : Application, IPlatformSpecificService
 
     public void OpenWith(string path)
     {
-        //
+        // TODO: Implement OpenWith
     }
 
     public void LocateOnDisk(string path)
     {
         Process.Start("open", $"-R \"{_vm.FileInfo?.FullName}\"");
+    }
+
+    public void ShowFileProperties(string path)
+    {
+        throw new NotImplementedException();
     }
 
     public void ShowAboutWindow()
@@ -184,8 +189,18 @@ public class App : Application, IPlatformSpecificService
         FunctionsHelper.CloseMenus();
     }
 
+    public void ShowEffectsWindow()
+    {
+        // TODO: Implement ShowEffectsWindow
+    }
+
+    public void ShowResizeWindow()
+    {
+        // TODO: Implement ShowResizeWindow
+    }
+
     public void LocateOnDisk()
     {
-        throw new NotImplementedException();
+        // TODO: Implement LocateOnDisk
     }
 }

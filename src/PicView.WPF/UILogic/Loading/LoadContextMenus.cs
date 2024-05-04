@@ -319,7 +319,7 @@ internal static class LoadContextMenus
         ImageInfoCm.Header = TranslationHelper.GetTranslation("ImageInfo");
 
         var FileProps = (MenuItem)ImageChoices.Items[1];
-        FileProps.Click += (_, _) => FileProperties.ShowFileProperties();
+        FileProps.Click += (_, _) => _ = UIHelper.ShowFileProperties();
         FileProps.InputGestureText = TranslationHelper.GetTranslation("Ctrl") + " + I";
         FileProps.Header = TranslationHelper.GetTranslation("FileProperties");
 
