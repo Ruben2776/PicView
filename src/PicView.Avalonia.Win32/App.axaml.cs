@@ -56,11 +56,6 @@ public class App : Application, IPlatformSpecificService
         _vm = new MainViewModel(this);
         w.DataContext = _vm;
         await StartUpHelper.Start(_vm, settingsExists, desktop, w);
-
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            w.KeyBindings.Add(new KeyBinding { Command = _vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
-        });
     }
 
     public void SetCursorPos(int x, int y)
@@ -115,7 +110,7 @@ public class App : Application, IPlatformSpecificService
         {
             _aboutWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
+        _= FunctionsHelper.CloseMenus();
     }
 
     public void ShowExifWindow()
@@ -138,7 +133,7 @@ public class App : Application, IPlatformSpecificService
         {
             _exifWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
+        _= FunctionsHelper.CloseMenus();
     }
 
     public void ShowKeybindingsWindow()
@@ -161,7 +156,7 @@ public class App : Application, IPlatformSpecificService
         {
             _keybindingsWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
+        _= FunctionsHelper.CloseMenus();
     }
 
     public void ShowSettingsWindow()
@@ -184,7 +179,7 @@ public class App : Application, IPlatformSpecificService
         {
             _settingsWindow.Activate();
         }
-        _vm.CloseMenuCommand.Execute(null);
+        _= FunctionsHelper.CloseMenus();
     }
     
     public void ShowEffectsWindow()

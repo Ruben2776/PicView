@@ -254,12 +254,31 @@
             <customControls:KeybindTextBox
                 Classes="hover TStyle"
                 IsReadOnly="True"
-                MethodName="ScrollUp"
+                MethodName="ScrollUpInternal"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
                 Classes="hover TStyle"
                 IsReadOnly="True"
+                MethodName="ScrollUpInternal"
+                Width="140" />
+        </StackPanel>
+
+        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding ScrollUp}"
+                Width="170" />
+            <customControls:KeybindTextBox
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                MethodName="ScrollUp"
+                Width="140" />
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
                 MethodName="ScrollUp"
                 Width="140" />
         </StackPanel>
@@ -294,12 +313,31 @@
             <customControls:KeybindTextBox
                 Classes="hover TStyle"
                 IsReadOnly="True"
-                MethodName="ScrollDown"
+                MethodName="ScrollDownInternal"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
                 Classes="hover TStyle"
                 IsReadOnly="True"
+                MethodName="ScrollDownInternal"
+                Width="140" />
+        </StackPanel>
+
+        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding ScrollDown}"
+                Width="170" />
+            <customControls:KeybindTextBox
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                MethodName="ScrollDown"
+                Width="140" />
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
                 MethodName="ScrollDown"
                 Width="140" />
         </StackPanel>
@@ -591,12 +629,13 @@
                 MethodName="ToggleInterface"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="ToggleInterface"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="ToggleUIBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -605,16 +644,17 @@
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding ToggleFullscreen}"
                 Width="170" />
+            <customControls:KeybindTextBox
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                MethodName="Fullscreen"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                Width="140" />
             <TextBox
                 Classes="hover TStyle"
                 IsReadOnly="True"
                 Width="140"
-                x:Name="FullscreenBox1" />
-            <TextBox
-                Classes="hover TStyle"
-                IsReadOnly="True"
-                Width="140"
-                x:Name="FullscreenBox2" />
+                x:Name="FullscreenBox" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -624,17 +664,15 @@
                 Text="{CompiledBinding ToggleFullscreen}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
-                Classes="hover TStyle"
-                MethodName="ToggleFullscreen"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140" />
-            <customControls:KeybindTextBox
                 Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                MethodName="ToggleFullscreen"
+                MethodName="Fullscreen"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                Width="140" />
+            <TextBox
+                Classes="hover TStyle"
+                IsReadOnly="True"
                 Width="140" />
         </StackPanel>
 
@@ -700,12 +738,13 @@
                 MethodName="Open"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="Open"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="OpenBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -741,12 +780,13 @@
                 MethodName="Reload"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="Reload"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="ReloadBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -761,12 +801,13 @@
                 MethodName="Save"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="Save"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="SaveBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -781,30 +822,13 @@
                 MethodName="Print"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="Print"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="PrintBox" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding DeleteFile}"
-                Width="170" />
-            <TextBox
-                Classes="hover TStyle"
-                IsReadOnly="True"
-                Width="140"
-                x:Name="DeleteBox" />
-            <TextBox
-                Classes="hover TStyle"
-                IsReadOnly="True"
-                Width="140"
-                x:Name="DeleteAltBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -890,12 +914,13 @@
                 MethodName="CopyFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="CopyFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="CopyBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -910,12 +935,13 @@
                 MethodName="CopyFilePath"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="CopyFilePath"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="CopyFilePathBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -930,12 +956,13 @@
                 MethodName="CopyImage"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="CopyImage"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="CopyImageBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -973,12 +1000,13 @@
                 MethodName="CutFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="CutFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="CutBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -993,12 +1021,13 @@
                 MethodName="Paste"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
-            <TextBox
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
+                MethodName="Paste"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="PasteBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -1149,8 +1178,7 @@
             <TextBox
                 Classes="hover TStyle"
                 IsReadOnly="True"
-                Width="140"
-                x:Name="CloseAltBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">

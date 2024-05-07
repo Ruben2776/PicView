@@ -98,19 +98,6 @@ public static class WindowHelper
         });
     }
 
-    public static async Task UpdateWindowPosToSettings(Window window)
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            SettingsHelper.Settings.WindowProperties.Top = window.Position.X;
-            SettingsHelper.Settings.WindowProperties.Left = window.Position.Y;
-            SettingsHelper.Settings.WindowProperties.Width = window.Width;
-            SettingsHelper.Settings.WindowProperties.Height = window.Height;
-        });
-
-        await SettingsHelper.SaveSettingsAsync();
-    }
-
     #endregion Window Dragging and size changing
 
     #region Change window behavior
@@ -210,8 +197,11 @@ public static class WindowHelper
             }
             SettingsHelper.Settings.UIProperties.ShowInterface = true;
         }
-        vm.CloseMenuCommand?.Execute(null);
+        
+        SetSize(vm);
+        await FunctionsHelper.CloseMenus();
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        
     }
 
     public static async Task ToggleBottomToolbar(MainViewModel vm)

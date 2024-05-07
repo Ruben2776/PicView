@@ -135,9 +135,9 @@ internal static class ImageDragAndDrop
             return;
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, RemoveDragOverlay);
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(RemoveDragOverlay);
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
             // Don't show drop message any longer
             CloseToolTipMessage();
@@ -202,7 +202,7 @@ internal static class ImageDragAndDrop
         BackupPath = files[0];
         var fileInfo = new FileInfo(files[0]);
 
-        //detect whether its a directory or file
+        //detect whether it's a directory or file
         if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
         {
             await LoadPic.LoadPicFromFolderAsync(fileInfo).ConfigureAwait(false);

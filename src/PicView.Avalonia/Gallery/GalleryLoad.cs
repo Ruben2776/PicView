@@ -9,7 +9,7 @@ namespace PicView.Avalonia.Gallery;
 
 public static class GalleryLoad
 {
-    private static bool _isLoading;
+    public static bool IsLoading;
     private static string? _currentDirectory;
 
     public static async Task LoadGallery(MainViewModel viewModel, string currentDirectory)
@@ -38,12 +38,10 @@ public static class GalleryLoad
         }
 
         _currentDirectory = currentDirectory;
-        _isLoading = true;
-        var count = viewModel.ImageIterator.Pics.Count;
+        IsLoading = true;
 
-        for (var i = 0; i < viewModel.ImageIterator.Pics.Count; i++)
+        foreach (var path in viewModel.ImageIterator.Pics)
         {
-            var path = viewModel.ImageIterator.Pics[i];
             var fileInfo = new FileInfo(path);
             
             var avaloniaImage = await ThumbnailHelper.GetThumb(fileInfo, (int)viewModel.GalleryItemSize);
@@ -52,7 +50,7 @@ public static class GalleryLoad
                 continue;
             }
             
-            if (currentDirectory != _currentDirectory || count != viewModel.ImageIterator.Pics.Count)
+            if (currentDirectory != _currentDirectory)
             {
                 viewModel.GalleryItems.Clear();
                 return;
@@ -61,11 +59,11 @@ public static class GalleryLoad
             var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(0, avaloniaImage as GalleryThumbInfo.IImageSource, fileInfo);
             thumbData.ThumbNailSize = viewModel.GalleryItemSize;
             viewModel.GalleryItems.Add(thumbData);
-            if (i == viewModel.ImageIterator.Index)
+            if (path == viewModel.ImageIterator.Pics[viewModel.ImageIterator.Index])
             {
                 viewModel.SelectedGalleryItem = thumbData;
             }
         }
-        _isLoading = false;
+        IsLoading = false;
     }
 }

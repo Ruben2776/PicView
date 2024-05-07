@@ -59,8 +59,8 @@ namespace PicView.Avalonia.Gallery
             {
                 return;
             }
-            
-            vm.CloseMenuCommand.Execute(null);
+
+            await FunctionsHelper.CloseMenus();
 
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
@@ -72,7 +72,7 @@ namespace PicView.Avalonia.Gallery
                 {
                     OpenFullGallery(vm);
                 }
-                vm.CloseMenuCommand.Execute(null);
+                await FunctionsHelper.CloseMenus();
                 SetGalleryItemSize(vm);
                 return;
             }

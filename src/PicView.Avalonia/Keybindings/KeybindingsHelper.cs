@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace PicView.Avalonia.Keybindings;
 
-[JsonSourceGenerationOptions(AllowTrailingCommas = true)]
+[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 internal partial class SourceGenerationContext : JsonSerializerContext;
 
@@ -47,7 +47,6 @@ public static class KeybindingsHelper
                                                 "I": "ImageInfoWindow",
                                                 "F6": "EffectsWindow",
                                                 "F1": "AboutWindow",
-                                                "F2": "Rename",
                                                 "F3": "OpenInExplorer",
                                                 "F4": "SettingsWindow",
                                                 "F5": "Slideshow",
@@ -62,8 +61,18 @@ public static class KeybindingsHelper
                                                 "D3": "Set3Star",
                                                 "D4": "Set4Star",
                                                 "D5": "Set5Star",
-                                                "Escape": "Close",
                                                 "Ctrl+O": "Open",
+                                                "Ctrl+E": "OpenWith",
+                                                "Ctrl+R": "Reload",
+                                                "Ctrl+S": "Save",
+                                                "F2": "Rename",
+                                                "Ctrl+C": "CopyFile",
+                                                "Ctrl+Alt+V": "CopyFilePath",
+                                                "Ctrl+Shift+C": "CopyImage",
+                                                "Ctrl+X": "CutFile",
+                                                "Ctrl+V": "Paste",
+                                                "Ctrl+P": "Print",
+                                                "Alt+Z": "ToggleInterface",
                                               }
                                               """;
 
@@ -141,7 +150,7 @@ public static class KeybindingsHelper
     {
         if (CustomShortcuts is not null)
         {
-            CustomShortcuts?.Clear();
+            CustomShortcuts.Clear();
         }
         else
         {
@@ -164,7 +173,7 @@ public static class KeybindingsHelper
 
     public static Task<Func<Task>> GetFunctionByName(string functionName)
     {
-        // Remember to have exact matching names or it will be null
+        // Remember to have exact matching names, or it will be null
         return Task.FromResult<Func<Task>>(functionName switch
         {
             // Navigation values
@@ -176,6 +185,8 @@ public static class KeybindingsHelper
             "First" => FunctionsHelper.First,
 
             // Scroll
+            "ScrollUp" => FunctionsHelper.ScrollUp,
+            "ScrollDown" => FunctionsHelper.ScrollDown,
             "ScrollToTop" => FunctionsHelper.ScrollToTop,
             "ScrollToBottom" => FunctionsHelper.ScrollToBottom,
 

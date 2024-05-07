@@ -8,6 +8,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
 using PicView.Avalonia.Gallery;
+using PicView.Core.Gallery;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation
@@ -31,16 +32,16 @@ namespace PicView.Avalonia.Navigation
 
         private static FileSystemWatcher? _watcher;
         private static bool _running;
-        private readonly IPlatformSpecificService? _platformService;
+        private readonly MainViewModel? _vm;
 
-        public ImageIterator(FileInfo fileInfo, IPlatformSpecificService? platformService)
+        public ImageIterator(FileInfo fileInfo, MainViewModel vm)
         {
             ArgumentNullException.ThrowIfNull(fileInfo);
 
             FileInfo = fileInfo;
 
-            _platformService = platformService;
-            Pics = _platformService.GetFiles(fileInfo);
+            _vm = vm;
+            Pics = vm.PlatformService.GetFiles(fileInfo);
             Index = Pics.IndexOf(fileInfo.FullName);
 #if DEBUG
             Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
@@ -51,6 +52,9 @@ namespace PicView.Avalonia.Navigation
         private void InitiateWatcher(FileInfo fileInfo)
         {
             _watcher = new FileSystemWatcher();
+#if DEBUG
+            Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
+#endif
             _watcher.Path = fileInfo.DirectoryName;
             _watcher.EnableRaisingEvents = true;
             _watcher.Filter = "*.*";
@@ -72,7 +76,7 @@ namespace PicView.Avalonia.Navigation
 
         public async Task ReloadFileList()
         {
-            Pics = await Task.FromResult(_platformService.GetFiles(FileInfo)).ConfigureAwait(false);
+            Pics = await Task.FromResult(_vm.PlatformService.GetFiles(FileInfo)).ConfigureAwait(false);
             Index = Pics.IndexOf(FileInfo.FullName);
             InitiateWatcher(FileInfo);
         }
@@ -218,12 +222,16 @@ namespace PicView.Avalonia.Navigation
             if (_running) { return; }
             _running = true;
 
-            var newList = await Task.FromResult(_platformService.GetFiles(fileInfo));
+            var newList = await Task.FromResult(_vm.PlatformService.GetFiles(fileInfo));
             if (newList.Count == 0) { return; }
             if (newList.Count == Pics.Count) { return; }
 
             if (fileInfo.Exists == false) { return; }
-
+            
+            while (GalleryLoad.IsLoading)
+            {
+                await Task.Delay(200);
+            }
             Pics = newList;
 
             _running = false;
@@ -245,7 +253,21 @@ namespace PicView.Avalonia.Navigation
             {
                 PreLoader.Clear();
             }
+            
             FileAdded?.Invoke(this, e);
+            
+            if (_vm.GalleryItems.Count > 0)
+            {
+                var newFileInfo = new FileInfo(Pics[index]);
+                var avaloniaImage = await ThumbnailHelper.GetThumb(newFileInfo, (int)_vm.GalleryItemSize);
+                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(0, avaloniaImage as GalleryThumbInfo.IImageSource, newFileInfo);
+                if (_vm.GalleryItems.Contains(thumbData))
+                {
+                    return;
+                }
+                _vm.GalleryItems.Add(thumbData);
+                _vm.GalleryItems.Move(_vm.GalleryItems.IndexOf(thumbData), Index);
+            }
         }
 
         public async Task LoadNextPic(NavigateTo navigateTo, MainViewModel vm)
@@ -331,6 +353,7 @@ namespace PicView.Avalonia.Navigation
                     if (vm.GalleryItems.Count > 0 && Index < vm.GalleryItems.Count - 1)
                     {
                         vm.SelectedGalleryItem = vm.GalleryItems[Index];
+                        GalleryNavigation.CenterScrollToSelectedItem(vm);
                     }
                 }
 
@@ -383,7 +406,7 @@ namespace PicView.Avalonia.Navigation
                 var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
                 await vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
-                vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _platformService);
+                vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
                 await AddAsync(Index, imageModel);
                 await LoadPicAtIndex(Index, vm);
                 vm.ImageIterator.FileAdded += (_, e) => { vm.SetTitle(); };

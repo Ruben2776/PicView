@@ -212,6 +212,22 @@ public static class FunctionsHelper
             });
         }
     }
+    
+    public static async Task ScrollDown()
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Vm.ImageViewer.ImageScrollViewer.LineDown();
+        });
+    }
+    
+    public static async Task ScrollUp()
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Vm.ImageViewer.ImageScrollViewer.LineUp();
+        });
+    }
 
     public static async Task ScrollToTop()
     {
@@ -370,9 +386,13 @@ public static class FunctionsHelper
         });
     }
 
-    public static Task ToggleInterface()
+    public static async Task ToggleInterface()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        await WindowHelper.ToggleUI(Vm);
     }
 
     public static Task NewWindow()
@@ -686,15 +706,6 @@ public static class FunctionsHelper
             return;
         }
         await WindowHelper.ToggleBottomToolbar(Vm);
-    }
-
-    public static async Task ToggleUI()
-    {
-        if (Vm is null)
-        {
-            return;
-        }
-        await WindowHelper.ToggleUI(Vm);
     }
 
     #region Sorting

@@ -123,29 +123,32 @@ public class KeybindTextBox : TextBox
         }
 
         // Handle whether it's an alternative key or not
-        //if (Alt)
-        //{
-        //    if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
-        //    {
-        //        // If the main key is not present, add a new entry with the alternative key
-        //        var altKey = (Key)Enum.Parse(typeof(Key), e.Key.ToString());
-        //        KeybindingsHelper.CustomShortcuts[altKey] = function;
-        //    }
-        //    else
-        //    {
-        //        // Update the key and function name in the CustomShortcuts dictionary
-        //        KeybindingsHelper.CustomShortcuts[e.Key] = function;
-        //    }
-        //}
-        //else
-        //{
-        //    // Remove if it already contains
-        //    if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
-        //    {
-        //        Remove();
-        //    }
-        //    KeybindingsHelper.CustomShortcuts[e.Key] = function;
-        //}
+        if (Alt)
+        {
+            if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
+            {
+                // If the main key is not present, add a new entry with the alternative key
+                var altKey = (Key)Enum.Parse(typeof(Key), e.Key.ToString());
+                var keyGesture = new KeyGesture(altKey, e.KeyModifiers);
+                KeybindingsHelper.CustomShortcuts[keyGesture] = function;
+            }
+            else
+            {
+                // Update the key and function name in the CustomShortcuts dictionary
+                var keyGesture = new KeyGesture(e.Key, e.KeyModifiers);
+                KeybindingsHelper.CustomShortcuts[keyGesture] = function;
+            }
+        }
+        else
+        {
+            // Remove if it already contains
+            if (KeybindingsHelper.CustomShortcuts.ContainsValue(function))
+            {
+                Remove();
+            }
+            var keyGesture = new KeyGesture(e.Key, e.KeyModifiers);
+            KeybindingsHelper.CustomShortcuts[keyGesture] = function;
+        }
 
         await Save();
         return;
@@ -162,14 +165,13 @@ public class KeybindTextBox : TextBox
         }
     }
 
-    public string GetFunctionKey()
+    public string? GetFunctionKey()
     {
         if (string.IsNullOrEmpty(MethodName))
         {
             return string.Empty;
         }
-
-        // ReSharper disable once InvertIf
+        
         if (IsReadOnly)
         {
             switch (MethodName)
@@ -202,14 +204,14 @@ public class KeybindTextBox : TextBox
                         string.Empty :
                         $"{TranslationHelper.GetTranslation("Shift")} + {(Alt ? prevFolderKey.LastOrDefault().ToString() : prevFolderKey.FirstOrDefault().ToString())}";
 
-                case "ScrollUp":
+                case "ScrollUpInternal":
                     var rotateRightKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Up")
                         ?.Select(x => x.Key).ToList() ?? null;
                     return rotateRightKey is not { Count: > 0 } ?
                         string.Empty :
                         Alt ? rotateRightKey.LastOrDefault().ToString() : rotateRightKey.FirstOrDefault().ToString();
 
-                case "ScrollDown":
+                case "ScrollDownInternal":
                     var rotateLeftKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Down")
                         ?.Select(x => x.Key).ToList() ?? null;
                     return rotateLeftKey is not { Count: > 0 } ?
@@ -220,8 +222,12 @@ public class KeybindTextBox : TextBox
 
         // Find the key associated with the specified function
         //var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName && x.Value?.Method != null).Select(x => x.Key);
-        var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName)?.Select(x => x.Key.Key).ToList() ?? null;
+        var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName)?.Select(x => x.Key).ToList() ?? null;
 
+        if (keys is null)
+        {
+            return string.Empty;
+        }
         return keys.Count switch
         {
             <= 0 => string.Empty,

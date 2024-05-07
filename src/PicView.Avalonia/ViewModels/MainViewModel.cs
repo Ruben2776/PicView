@@ -1363,7 +1363,7 @@ namespace PicView.Avalonia.ViewModels
 
         public async Task LoadPicFromString(string path)
         {
-            ImageIterator = new ImageIterator(new FileInfo(path), PlatformService);
+            ImageIterator = new ImageIterator(new FileInfo(path), this);
             await ImageIterator.LoadPicFromString(path, this).ConfigureAwait(false);
         }
 
@@ -1372,7 +1372,7 @@ namespace PicView.Avalonia.ViewModels
             SetLoadingTitle();
             try
             {
-                ImageIterator = new ImageIterator(fileInfo, PlatformService);
+                ImageIterator = new ImageIterator(fileInfo, this);
                 await ImageIterator.LoadPicFromFile(fileInfo, this).ConfigureAwait(false);
             }
             catch (Exception)
@@ -1678,7 +1678,7 @@ namespace PicView.Avalonia.ViewModels
 
             #region UI Commands
 
-            ToggleUICommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleUI);
+            ToggleUICommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleInterface);
 
             ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleBottomToolbar);
 

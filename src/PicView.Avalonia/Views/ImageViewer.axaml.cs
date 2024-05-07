@@ -516,7 +516,10 @@ public partial class ImageViewer : UserControl
             ];
         }
 
-        ImageLayoutTransformControl.LayoutTransform = rotateTransform;
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            ImageLayoutTransformControl.LayoutTransform = rotateTransform;
+        });
     }
 
     public void Flip(bool animate)
