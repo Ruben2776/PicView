@@ -25,4 +25,6 @@ public interface IPlatformSpecificService
     void ShowEffectsWindow();
     
     void ShowResizeWindow();
+    
+    void Print(string path);
 }

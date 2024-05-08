@@ -191,4 +191,9 @@ public class App : Application, IPlatformSpecificService
     {
         // TODO: Implement ShowResizeWindow
     }
+
+    public void Print(string path)
+    {
+        ProcessHelper.Print(path);
+    }
 }

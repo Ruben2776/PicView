@@ -22,7 +22,6 @@ using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Windows.Input;
 using static PicView.Core.Gallery.GalleryThumbInfo;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
@@ -144,6 +143,7 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ShowSettingsWindowCommand { get; }
         public ICommand? ShowKeybindingsWindowCommand { get; }
 
+        public ICommand? SetExifRating0Command { get; }
         public ICommand? SetExifRating1Command { get; }
         public ICommand? SetExifRating2Command { get; }
         public ICommand? SetExifRating3Command { get; }
@@ -1602,7 +1602,7 @@ namespace PicView.Avalonia.ViewModels
                 FileHelper.DuplicateAndReturnFileName(FileInfo?.FullName);
             });
 
-            PrintCommand = ReactiveCommand.Create(() => { ProcessHelper.Print(FileInfo?.FullName); });
+            PrintCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Print);
 
             DeleteFileCommand = ReactiveCommand.Create(() =>
             {
@@ -1620,31 +1620,12 @@ namespace PicView.Avalonia.ViewModels
 
             #region EXIF commands
 
-            SetExifRating1Command = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 1);
-                EXIFRating = 1;
-            });
-            SetExifRating2Command = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 2);
-                EXIFRating = 2;
-            });
-            SetExifRating3Command = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 3);
-                EXIFRating = 3;
-            });
-            SetExifRating4Command = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 4);
-                EXIFRating = 4;
-            });
-            SetExifRating5Command = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await EXIFHelper.SetEXIFRating(FileInfo.FullName, 5);
-                EXIFRating = 5;
-            });
+            SetExifRating0Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set0Star);
+            SetExifRating1Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set1Star);
+            SetExifRating2Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set2Star);
+            SetExifRating3Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set3Star);
+            SetExifRating4Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set4Star);
+            SetExifRating5Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set5Star);
 
             OpenGoogleLinkCommand = ReactiveCommand.Create(() =>
             {

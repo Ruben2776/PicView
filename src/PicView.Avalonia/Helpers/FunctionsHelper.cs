@@ -14,6 +14,7 @@ using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Helpers;
 
@@ -72,9 +73,12 @@ public static class FunctionsHelper
 
     #endregion Menus
 
-    public static Task Print()
+    public static async Task Print()
     {
-        return Task.CompletedTask;
+        await Task.Run(() =>
+        {
+            Vm?.PlatformService?.Print(Vm.FileInfo.FullName);
+        });
     }
 
     public static async Task Next()
@@ -394,11 +398,12 @@ public static class FunctionsHelper
         }
         await WindowHelper.ToggleUI(Vm);
     }
+    
+    #region Windows
 
-    public static Task NewWindow()
-    {
-        ProcessHelper.StartNewProcess();
-        return Task.CompletedTask;
+    public static async Task NewWindow()
+    {        
+        await Task.Run(ProcessHelper.StartNewProcess);
     }
 
     public static Task AboutWindow()
@@ -434,6 +439,8 @@ public static class FunctionsHelper
         Vm?.ShowSettingsWindowCommand.Execute(null);
         return Task.CompletedTask;
     }
+    
+    #endregion Windows
 
     public static async Task Open()
     {
@@ -641,36 +648,6 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    public static Task Set0Star()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task Set1Star()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task Set2Star()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task Set3Star()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task Set4Star()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task Set5Star()
-    {
-        return Task.CompletedTask;
-    }
-
     public static Task ChangeBackground()
     {
         return Task.CompletedTask;
@@ -792,6 +769,70 @@ public static class FunctionsHelper
     }
 
     #endregion Sorting
+
+    #region Rating
+
+    public static async Task Set0Star()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 0);
+        Vm.EXIFRating = 0;
+    }
+
+    public static async Task Set1Star()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 1);
+        Vm.EXIFRating = 1;
+    }
+
+    public static async Task Set2Star()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 2);
+        Vm.EXIFRating = 2;
+    }
+
+    public static async Task Set3Star()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 3);
+        Vm.EXIFRating = 3;
+    }
+
+    public static async Task Set4Star()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 4);
+        Vm.EXIFRating = 4;
+    }
+
+    public static async Task Set5Star()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 5);
+        Vm.EXIFRating = 5;
+    }
+
+    #endregion
 
     #endregion Functions list
 }
