@@ -305,8 +305,16 @@ public static class WindowHelper
         {
             await Dispatcher.UIThread.InvokeAsync(window.Hide);
         }
-        SettingsHelper.Settings.WindowProperties.Top = window.Position.Y;
-        SettingsHelper.Settings.WindowProperties.Left = window.Position.X;
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            Environment.Exit(0);
+            return;
+        }
+        var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
+        var top = window.Position.Y + (monitor.WorkingArea.Height - monitor.Bounds.Height);
+        var left = window.Position.X + (monitor.WorkingArea.Width - monitor.Bounds.Width);
+        SettingsHelper.Settings.WindowProperties.Top = top;
+        SettingsHelper.Settings.WindowProperties.Left = left;
         SettingsHelper.Settings.WindowProperties.Width = window.Width;
         SettingsHelper.Settings.WindowProperties.Height = window.Height;
 

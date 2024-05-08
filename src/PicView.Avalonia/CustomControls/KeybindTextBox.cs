@@ -221,7 +221,6 @@ public class KeybindTextBox : TextBox
         }
 
         // Find the key associated with the specified function
-        //var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName && x.Value?.Method != null).Select(x => x.Key);
         var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName)?.Select(x => x.Key).ToList() ?? null;
 
         if (keys is null)
@@ -231,8 +230,13 @@ public class KeybindTextBox : TextBox
         return keys.Count switch
         {
             <= 0 => string.Empty,
-            1 => Alt ? string.Empty : keys.FirstOrDefault().ToString(),
-            _ => Alt ? keys.LastOrDefault().ToString() : keys.FirstOrDefault().ToString()
+            1 => Alt ? string.Empty : FormatPlus(keys.FirstOrDefault().ToString()),
+            _ => Alt ? FormatPlus(keys.LastOrDefault().ToString()) : FormatPlus(keys.FirstOrDefault().ToString())
         };
+
+        string FormatPlus(string value)
+        {
+            return string.IsNullOrEmpty(value) ? string.Empty : value.Replace("+", " + ");
+        }
     }
 }
