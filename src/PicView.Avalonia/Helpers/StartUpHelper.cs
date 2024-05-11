@@ -13,7 +13,7 @@ namespace PicView.Avalonia.Helpers;
 
 public static class StartUpHelper
 {
-    public static async Task Start(MainViewModel vm, bool settingsExists, IClassicDesktopStyleApplicationLifetime desktop, Window w)
+    public static void Start(MainViewModel vm, bool settingsExists, IClassicDesktopStyleApplicationLifetime desktop, Window w)
     {
         if (!settingsExists)
         {
@@ -71,16 +71,18 @@ public static class StartUpHelper
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
-            await vm.LoadPicFromString(args[1]).ConfigureAwait(false);
+            Task.Run(() => vm.LoadPicFromString(args[1]));
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
         {
-            await vm.LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile).ConfigureAwait(false);
+            Task.Run(() => vm.LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile));
         }
         else
         {
             vm.CurrentView = new StartUpMenu();
         }
+        
+        UIHelper.AddMenus(desktop);
 
         if (vm.GalleryItemSize <= 0)
         {
@@ -98,7 +100,7 @@ public static class StartUpHelper
 
         vm.IsLoading = false;
 
-        await KeybindingsHelper.LoadKeybindings(vm).ConfigureAwait(false);
+        Task.Run(() => KeybindingsHelper.LoadKeybindings(vm));
 
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUp(e).ConfigureAwait(false);

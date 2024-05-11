@@ -55,7 +55,7 @@ public class App : Application, IPlatformSpecificService
         var w = desktop.MainWindow = new WinMainWindow();
         _vm = new MainViewModel(this);
         w.DataContext = _vm;
-        await StartUpHelper.Start(_vm, settingsExists, desktop, w);
+        StartUpHelper.Start(_vm, settingsExists, desktop, w);
     }
 
     public void SetCursorPos(int x, int y)

@@ -57,12 +57,7 @@ public class App : Application, IPlatformSpecificService
         var w = desktop.MainWindow = new MacMainWindow();
         _vm = new MainViewModel(this);
         w.DataContext = _vm;
-        await StartUpHelper.Start(_vm, settingsExists, desktop, w);
-
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            w.KeyBindings.Add(new KeyBinding { Command = _vm.ToggleUICommand, Gesture = new KeyGesture(Key.Z, KeyModifiers.Alt) });
-        });
+        StartUpHelper.Start(_vm, settingsExists, desktop, w);
     }
 
     public void SetCursorPos(int x, int y)

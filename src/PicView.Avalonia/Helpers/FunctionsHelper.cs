@@ -28,46 +28,51 @@ public static class FunctionsHelper
 
     public static Task CloseMenus()
     {
-        Vm.IsFileMenuVisible = false;
-        Vm.IsImageMenuVisible = false;
-        Vm.IsSettingsMenuVisible = false;
-        Vm.IsToolsMenuVisible = false;
+        if (Vm is null)
+        {
+            return Task.CompletedTask;
+        }
+        UIHelper.CloseMenus(Vm);
         return Task.CompletedTask;
     }
 
     public static Task ToggleFileMenu()
     {
-        Vm.IsFileMenuVisible = !Vm.IsFileMenuVisible;
-        Vm.IsImageMenuVisible = false;
-        Vm.IsSettingsMenuVisible = false;
-        Vm.IsToolsMenuVisible = false;
+        if (Vm is null)
+        {
+            return Task.CompletedTask;
+        }
+        UIHelper.ToggleFileMenu(Vm);
         return Task.CompletedTask;
     }
 
     public static Task ToggleImageMenu()
     {
-        Vm.IsFileMenuVisible = false;
-        Vm.IsImageMenuVisible = !Vm.IsImageMenuVisible;
-        Vm.IsSettingsMenuVisible = false;
-        Vm.IsToolsMenuVisible = false;
+        if (Vm is null)
+        {
+            return Task.CompletedTask;
+        }
+        UIHelper.ToggleImageMenu(Vm);
         return Task.CompletedTask;
     }
 
     public static Task ToggleSettingsMenu()
     {
-        Vm.IsFileMenuVisible = false;
-        Vm.IsImageMenuVisible = false;
-        Vm.IsSettingsMenuVisible = !Vm.IsSettingsMenuVisible;
-        Vm.IsToolsMenuVisible = false;
+        if (Vm is null)
+        {
+            return Task.CompletedTask;
+        }
+        UIHelper.ToggleSettingsMenu(Vm);
         return Task.CompletedTask;
     }
 
     public static Task ToggleToolsMenu()
     {
-        Vm.IsFileMenuVisible = false;
-        Vm.IsImageMenuVisible = false;
-        Vm.IsSettingsMenuVisible = false;
-        Vm.IsToolsMenuVisible = !Vm.IsToolsMenuVisible;
+        if (Vm is null)
+        {
+            return Task.CompletedTask;
+        }
+        UIHelper.ToggleToolsMenu(Vm);
         return Task.CompletedTask;
     }
 

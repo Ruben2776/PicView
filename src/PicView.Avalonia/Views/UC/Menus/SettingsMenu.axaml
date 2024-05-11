@@ -1,9 +1,9 @@
 <UserControl
-    IsVisible="{Binding IsSettingsMenuVisible}"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.Menus.SettingsMenu"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
@@ -11,228 +11,230 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <StackPanel>
+    <customControls:AnimatedPopUp AnimationTime="0:0:0.1" Open="{Binding IsSettingsMenuVisible}">
+        <StackPanel>
 
-        <Border
-            Background="{StaticResource MenuBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Effect="{StaticResource MenuShadowButtonBorder}">
-            <Canvas Height="205" Width="359">
+            <Border
+                Background="{StaticResource MenuBackgroundColor}"
+                BorderBrush="{StaticResource MainBorderColor}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Effect="{StaticResource MenuShadowButtonBorder}">
+                <Canvas Height="205" Width="359">
 
-                <Border
-                    Background="{StaticResource SecondaryBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="8,8,0,0"
-                    Height="47"
-                    Width="359" />
+                    <Border
+                        Background="{StaticResource SecondaryBackgroundColor}"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="8,8,0,0"
+                        Height="47"
+                        Width="359" />
 
-                <Button
-                    Background="Transparent"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{Binding ShowSettingsWindowCommand}"
-                    CornerRadius="8,0,0,0"
-                    Height="45"
-                    ToolTip.Tip="{Binding ShowAllSettingsWindow}"
-                    Width="179">
-                    <StackPanel Orientation="Horizontal">
+                    <Button
+                        Background="Transparent"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{Binding ShowSettingsWindowCommand}"
+                        CornerRadius="8,0,0,0"
+                        Height="45"
+                        ToolTip.Tip="{Binding ShowAllSettingsWindow}"
+                        Width="179">
+                        <StackPanel Orientation="Horizontal">
+                            <Path
+                                Data="M 1.9205 50.6968 L 5.3687 54.1450 C 7.2673 56 9.4279 55.8472 11.3484 53.7303 L 34.1981 28.8511 C 35.1365 29.5058 36.0094 29.4840 37.0788 29.2658 L 39.4140 28.7856 L 40.9636 30.3351 L 40.8545 31.4918 C 40.7017 32.6921 41.0508 33.6087 42.1637 34.7217 L 43.9971 36.5331 C 45.1100 37.6679 46.5939 37.7334 47.6634 36.6640 L 54.9309 29.3967 C 56.0000 28.3273 55.9347 26.8651 54.8218 25.7303 L 52.9884 23.8971 C 51.8755 22.7840 50.9369 22.3912 49.7583 22.5658 L 48.5801 22.6967 L 47.0958 21.2127 L 47.7506 18.6593 C 48.0563 17.3936 47.7287 16.3678 46.3539 15.0147 L 40.9636 9.6461 C 33.0414 1.7677 22.8933 2.0077 15.9532 9.0132 C 14.9930 9.9734 14.9057 11.2829 15.5168 12.2431 C 16.0187 13.0724 17.0881 13.5744 18.5503 13.2034 C 21.9330 12.3522 25.3157 12.6141 28.6330 14.8620 L 27.2362 18.3975 C 26.7124 19.7069 26.7561 20.7762 27.2799 21.7583 L 2.3352 44.7171 C .2401 46.6594 0 48.7763 1.9205 50.6968 Z M 19.4233 9.8861 C 25.3812 5.4341 32.8013 6.1542 38.1700 11.5229 L 44.0404 17.3499 C 44.5643 17.8737 44.6300 18.2883 44.4771 18.9431 L 43.6480 22.4349 L 47.1615 25.9485 L 49.3002 25.7521 C 49.9331 25.6866 50.1293 25.7303 50.6531 26.2322 L 52.0284 27.6290 L 45.8957 33.7833 L 44.4990 32.3866 C 43.9971 31.8846 43.9533 31.6882 44.0190 31.0553 L 44.2152 28.8947 L 40.7236 25.4029 L 37.1006 26.1013 C 36.4677 26.2322 36.1404 26.2322 35.5948 25.6866 L 30.7499 20.8199 C 30.2261 20.2961 30.1606 19.9906 30.4443 19.2922 L 32.5831 14.1855 C 29.0040 10.7591 24.2682 8.8604 19.7070 10.3226 C 19.5106 10.3881 19.3796 10.3444 19.3142 10.2571 C 19.2487 10.1480 19.2487 10.0389 19.4233 9.8861 Z M 4.7576 49.1255 C 3.6446 48.0125 4.0374 47.3359 4.7794 46.6594 L 29.2877 24.0499 L 32.0156 26.7996 L 9.3406 51.2206 C 8.6641 51.9626 7.8130 52.1808 6.8964 51.2861 Z"
+                                Fill="{StaticResource MainIconColor}"
+                                Height="17"
+                                Margin="17,0,0,0"
+                                Stretch="Fill"
+                                Width="17" />
+                            <TextBlock
+                                Classes="txt"
+                                FontSize="14"
+                                Margin="10,0,6,0"
+                                MaxWidth="150"
+                                Text="{Binding Settings}"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Background="Transparent"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Canvas.Left="179"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding ShowAboutWindowCommand}"
+                        Height="45"
+                        ToolTip.Tip="{Binding InfoWinow}"
+                        Width="135">
+                        <StackPanel Orientation="Horizontal">
+                            <Image
+                                Height="17"
+                                Margin="11,0,0,0"
+                                Width="17">
+                                <DrawingImage>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Geometry="F1 M248 64C146.39 64 64 146.39 64 248C64 349.61 146.39 432 248 432C349.61 432 432 349.61 432 248C432 146.39 349.61 64 248 64Z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainIconColor}"
+                                                    LineJoin="Miter"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Geometry="F1 M220 220L252 220L252 336">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainIconColor}"
+                                                    LineCap="Round"
+                                                    LineJoin="Round"
+                                                    MiterLimit="4"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Geometry="F1 M208 340L296 340">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainIconColor}"
+                                                    LineCap="Round"
+                                                    LineJoin="Miter"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M248 130Q247.362 130 246.724 130.031Q246.087 130.063 245.452 130.125Q244.816 130.188 244.185 130.281Q243.554 130.375 242.928 130.5Q242.302 130.624 241.683 130.779Q241.063 130.934 240.453 131.12Q239.842 131.305 239.241 131.52Q238.64 131.735 238.05 131.979Q237.461 132.223 236.884 132.496Q236.307 132.769 235.744 133.07Q235.181 133.371 234.633 133.699Q234.086 134.027 233.555 134.382Q233.024 134.736 232.512 135.117Q231.999 135.497 231.506 135.902Q231.012 136.307 230.539 136.735Q230.067 137.164 229.615 137.615Q229.164 138.067 228.735 138.539Q228.307 139.012 227.902 139.506Q227.497 139.999 227.117 140.512Q226.736 141.024 226.382 141.555Q226.027 142.086 225.699 142.633Q225.371 143.181 225.07 143.744Q224.769 144.307 224.496 144.884Q224.223 145.461 223.979 146.05Q223.735 146.64 223.52 147.241Q223.305 147.842 223.12 148.453Q222.934 149.063 222.779 149.682Q222.624 150.302 222.5 150.928Q222.375 151.554 222.281 152.185Q222.188 152.816 222.125 153.452Q222.063 154.087 222.031 154.724Q222 155.362 222 156Q222 156.638 222.031 157.276Q222.063 157.913 222.125 158.548Q222.188 159.184 222.281 159.815Q222.375 160.446 222.5 161.072Q222.624 161.698 222.779 162.317Q222.934 162.937 223.12 163.547Q223.305 164.158 223.52 164.759Q223.735 165.36 223.979 165.95Q224.223 166.539 224.496 167.116Q224.769 167.693 225.07 168.256Q225.371 168.819 225.699 169.367Q226.027 169.914 226.382 170.445Q226.736 170.975 227.117 171.488Q227.497 172.001 227.902 172.494Q228.307 172.988 228.735 173.461Q229.164 173.933 229.615 174.385Q230.067 174.836 230.539 175.265Q231.012 175.693 231.506 176.098Q231.999 176.503 232.512 176.883Q233.024 177.264 233.555 177.618Q234.086 177.973 234.633 178.301Q235.181 178.629 235.744 178.93Q236.307 179.231 236.884 179.504Q237.461 179.777 238.05 180.021Q238.64 180.265 239.241 180.48Q239.842 180.695 240.453 180.88Q241.063 181.066 241.683 181.221Q242.302 181.376 242.928 181.5Q243.554 181.625 244.185 181.719Q244.816 181.812 245.452 181.875Q246.087 181.937 246.724 181.969Q247.362 182 248 182Q248.638 182 249.276 181.969Q249.913 181.937 250.548 181.875Q251.184 181.812 251.815 181.719Q252.446 181.625 253.072 181.5Q253.698 181.376 254.317 181.221Q254.937 181.066 255.547 180.88Q256.158 180.695 256.759 180.48Q257.36 180.265 257.95 180.021Q258.539 179.777 259.116 179.504Q259.693 179.231 260.256 178.93Q260.819 178.629 261.367 178.301Q261.914 177.973 262.445 177.618Q262.976 177.264 263.488 176.883Q264.001 176.503 264.494 176.098Q264.988 175.693 265.461 175.265Q265.933 174.836 266.385 174.385Q266.836 173.933 267.265 173.46Q267.693 172.988 268.098 172.494Q268.503 172.001 268.883 171.488Q269.264 170.975 269.618 170.445Q269.973 169.914 270.301 169.367Q270.629 168.819 270.93 168.256Q271.231 167.693 271.504 167.116Q271.777 166.539 272.021 165.95Q272.265 165.36 272.48 164.759Q272.695 164.158 272.88 163.547Q273.066 162.937 273.221 162.317Q273.376 161.698 273.5 161.072Q273.625 160.446 273.719 159.815Q273.812 159.184 273.875 158.548Q273.937 157.913 273.969 157.276Q274 156.638 274 156Q274 155.362 273.969 154.724Q273.937 154.087 273.875 153.452Q273.812 152.816 273.719 152.185Q273.625 151.554 273.5 150.928Q273.376 150.302 273.221 149.682Q273.066 149.063 272.88 148.453Q272.695 147.842 272.48 147.241Q272.265 146.64 272.021 146.05Q271.777 145.461 271.504 144.884Q271.231 144.307 270.93 143.744Q270.629 143.181 270.301 142.633Q269.973 142.086 269.618 141.555Q269.264 141.024 268.883 140.512Q268.503 139.999 268.098 139.506Q267.693 139.012 267.265 138.539Q266.836 138.067 266.385 137.615Q265.933 137.164 265.461 136.735Q264.988 136.307 264.494 135.902Q264.001 135.497 263.488 135.117Q262.976 134.736 262.445 134.382Q261.914 134.027 261.367 133.699Q260.819 133.371 260.256 133.07Q259.693 132.769 259.116 132.496Q258.539 132.223 257.95 131.979Q257.36 131.735 256.759 131.52Q256.158 131.305 255.547 131.12Q254.937 130.934 254.317 130.779Q253.698 130.624 253.072 130.5Q252.446 130.375 251.815 130.281Q251.184 130.188 250.548 130.125Q249.913 130.063 249.276 130.031Q248.638 130 248 130Z" />
+                                    </DrawingGroup>
+                                </DrawingImage>
+                            </Image>
+                            <TextBlock
+                                Classes="txt"
+                                FontSize="14"
+                                Margin="10,0,6,0"
+                                MaxWidth="150"
+                                Text="{Binding About}"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Background="Transparent"
+                        Canvas.Left="315"
+                        Canvas.Top="-1"
+                        Classes="hover"
+                        Command="{Binding CloseMenuCommand}"
+                        CornerRadius="0,8,0,0"
+                        Height="46"
+                        ToolTip.Tip="{Binding Close}"
+                        Width="45">
                         <Path
-                            Data="M 1.9205 50.6968 L 5.3687 54.1450 C 7.2673 56 9.4279 55.8472 11.3484 53.7303 L 34.1981 28.8511 C 35.1365 29.5058 36.0094 29.4840 37.0788 29.2658 L 39.4140 28.7856 L 40.9636 30.3351 L 40.8545 31.4918 C 40.7017 32.6921 41.0508 33.6087 42.1637 34.7217 L 43.9971 36.5331 C 45.1100 37.6679 46.5939 37.7334 47.6634 36.6640 L 54.9309 29.3967 C 56.0000 28.3273 55.9347 26.8651 54.8218 25.7303 L 52.9884 23.8971 C 51.8755 22.7840 50.9369 22.3912 49.7583 22.5658 L 48.5801 22.6967 L 47.0958 21.2127 L 47.7506 18.6593 C 48.0563 17.3936 47.7287 16.3678 46.3539 15.0147 L 40.9636 9.6461 C 33.0414 1.7677 22.8933 2.0077 15.9532 9.0132 C 14.9930 9.9734 14.9057 11.2829 15.5168 12.2431 C 16.0187 13.0724 17.0881 13.5744 18.5503 13.2034 C 21.9330 12.3522 25.3157 12.6141 28.6330 14.8620 L 27.2362 18.3975 C 26.7124 19.7069 26.7561 20.7762 27.2799 21.7583 L 2.3352 44.7171 C .2401 46.6594 0 48.7763 1.9205 50.6968 Z M 19.4233 9.8861 C 25.3812 5.4341 32.8013 6.1542 38.1700 11.5229 L 44.0404 17.3499 C 44.5643 17.8737 44.6300 18.2883 44.4771 18.9431 L 43.6480 22.4349 L 47.1615 25.9485 L 49.3002 25.7521 C 49.9331 25.6866 50.1293 25.7303 50.6531 26.2322 L 52.0284 27.6290 L 45.8957 33.7833 L 44.4990 32.3866 C 43.9971 31.8846 43.9533 31.6882 44.0190 31.0553 L 44.2152 28.8947 L 40.7236 25.4029 L 37.1006 26.1013 C 36.4677 26.2322 36.1404 26.2322 35.5948 25.6866 L 30.7499 20.8199 C 30.2261 20.2961 30.1606 19.9906 30.4443 19.2922 L 32.5831 14.1855 C 29.0040 10.7591 24.2682 8.8604 19.7070 10.3226 C 19.5106 10.3881 19.3796 10.3444 19.3142 10.2571 C 19.2487 10.1480 19.2487 10.0389 19.4233 9.8861 Z M 4.7576 49.1255 C 3.6446 48.0125 4.0374 47.3359 4.7794 46.6594 L 29.2877 24.0499 L 32.0156 26.7996 L 9.3406 51.2206 C 8.6641 51.9626 7.8130 52.1808 6.8964 51.2861 Z"
+                            Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
                             Fill="{StaticResource MainIconColor}"
-                            Height="17"
-                            Margin="17,0,0,0"
+                            Height="10"
                             Stretch="Fill"
-                            Width="17" />
+                            Width="10" />
+                    </Button>
+
+                    <ToggleButton
+                        Canvas.Left="7"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding ToggleScrollCommand}"
+                        Height="45"
+                        IsChecked="{Binding IsScrollingEnabled}"
+                        ToolTip.Tip="{Binding ToggleScroll}"
+                        Width="169">
                         <TextBlock
                             Classes="txt"
-                            FontSize="14"
-                            Margin="10,0,6,0"
                             MaxWidth="150"
-                            Text="{Binding Settings}"
-                            VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                            Text="{Binding GetScrolling}" />
+                    </ToggleButton>
 
-                <Button
-                    Background="Transparent"
-                    BorderBrush="{StaticResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Canvas.Left="179"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding ShowAboutWindowCommand}"
-                    Height="45"
-                    ToolTip.Tip="{Binding InfoWinow}"
-                    Width="135">
-                    <StackPanel Orientation="Horizontal">
-                        <Image
-                            Height="17"
-                            Margin="11,0,0,0"
-                            Width="17">
-                            <DrawingImage>
-                                <DrawingGroup>
-                                    <GeometryDrawing Geometry="F1 M248 64C146.39 64 64 146.39 64 248C64 349.61 146.39 432 248 432C349.61 432 432 349.61 432 248C432 146.39 349.61 64 248 64Z">
-                                        <GeometryDrawing.Pen>
-                                            <Pen
-                                                Brush="{StaticResource MainIconColor}"
-                                                LineJoin="Miter"
-                                                Thickness="32" />
-                                        </GeometryDrawing.Pen>
-                                    </GeometryDrawing>
-                                    <GeometryDrawing Geometry="F1 M220 220L252 220L252 336">
-                                        <GeometryDrawing.Pen>
-                                            <Pen
-                                                Brush="{StaticResource MainIconColor}"
-                                                LineCap="Round"
-                                                LineJoin="Round"
-                                                MiterLimit="4"
-                                                Thickness="32" />
-                                        </GeometryDrawing.Pen>
-                                    </GeometryDrawing>
-                                    <GeometryDrawing Geometry="F1 M208 340L296 340">
-                                        <GeometryDrawing.Pen>
-                                            <Pen
-                                                Brush="{StaticResource MainIconColor}"
-                                                LineCap="Round"
-                                                LineJoin="Miter"
-                                                Thickness="32" />
-                                        </GeometryDrawing.Pen>
-                                    </GeometryDrawing>
-                                    <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M248 130Q247.362 130 246.724 130.031Q246.087 130.063 245.452 130.125Q244.816 130.188 244.185 130.281Q243.554 130.375 242.928 130.5Q242.302 130.624 241.683 130.779Q241.063 130.934 240.453 131.12Q239.842 131.305 239.241 131.52Q238.64 131.735 238.05 131.979Q237.461 132.223 236.884 132.496Q236.307 132.769 235.744 133.07Q235.181 133.371 234.633 133.699Q234.086 134.027 233.555 134.382Q233.024 134.736 232.512 135.117Q231.999 135.497 231.506 135.902Q231.012 136.307 230.539 136.735Q230.067 137.164 229.615 137.615Q229.164 138.067 228.735 138.539Q228.307 139.012 227.902 139.506Q227.497 139.999 227.117 140.512Q226.736 141.024 226.382 141.555Q226.027 142.086 225.699 142.633Q225.371 143.181 225.07 143.744Q224.769 144.307 224.496 144.884Q224.223 145.461 223.979 146.05Q223.735 146.64 223.52 147.241Q223.305 147.842 223.12 148.453Q222.934 149.063 222.779 149.682Q222.624 150.302 222.5 150.928Q222.375 151.554 222.281 152.185Q222.188 152.816 222.125 153.452Q222.063 154.087 222.031 154.724Q222 155.362 222 156Q222 156.638 222.031 157.276Q222.063 157.913 222.125 158.548Q222.188 159.184 222.281 159.815Q222.375 160.446 222.5 161.072Q222.624 161.698 222.779 162.317Q222.934 162.937 223.12 163.547Q223.305 164.158 223.52 164.759Q223.735 165.36 223.979 165.95Q224.223 166.539 224.496 167.116Q224.769 167.693 225.07 168.256Q225.371 168.819 225.699 169.367Q226.027 169.914 226.382 170.445Q226.736 170.975 227.117 171.488Q227.497 172.001 227.902 172.494Q228.307 172.988 228.735 173.461Q229.164 173.933 229.615 174.385Q230.067 174.836 230.539 175.265Q231.012 175.693 231.506 176.098Q231.999 176.503 232.512 176.883Q233.024 177.264 233.555 177.618Q234.086 177.973 234.633 178.301Q235.181 178.629 235.744 178.93Q236.307 179.231 236.884 179.504Q237.461 179.777 238.05 180.021Q238.64 180.265 239.241 180.48Q239.842 180.695 240.453 180.88Q241.063 181.066 241.683 181.221Q242.302 181.376 242.928 181.5Q243.554 181.625 244.185 181.719Q244.816 181.812 245.452 181.875Q246.087 181.937 246.724 181.969Q247.362 182 248 182Q248.638 182 249.276 181.969Q249.913 181.937 250.548 181.875Q251.184 181.812 251.815 181.719Q252.446 181.625 253.072 181.5Q253.698 181.376 254.317 181.221Q254.937 181.066 255.547 180.88Q256.158 180.695 256.759 180.48Q257.36 180.265 257.95 180.021Q258.539 179.777 259.116 179.504Q259.693 179.231 260.256 178.93Q260.819 178.629 261.367 178.301Q261.914 177.973 262.445 177.618Q262.976 177.264 263.488 176.883Q264.001 176.503 264.494 176.098Q264.988 175.693 265.461 175.265Q265.933 174.836 266.385 174.385Q266.836 173.933 267.265 173.46Q267.693 172.988 268.098 172.494Q268.503 172.001 268.883 171.488Q269.264 170.975 269.618 170.445Q269.973 169.914 270.301 169.367Q270.629 168.819 270.93 168.256Q271.231 167.693 271.504 167.116Q271.777 166.539 272.021 165.95Q272.265 165.36 272.48 164.759Q272.695 164.158 272.88 163.547Q273.066 162.937 273.221 162.317Q273.376 161.698 273.5 161.072Q273.625 160.446 273.719 159.815Q273.812 159.184 273.875 158.548Q273.937 157.913 273.969 157.276Q274 156.638 274 156Q274 155.362 273.969 154.724Q273.937 154.087 273.875 153.452Q273.812 152.816 273.719 152.185Q273.625 151.554 273.5 150.928Q273.376 150.302 273.221 149.682Q273.066 149.063 272.88 148.453Q272.695 147.842 272.48 147.241Q272.265 146.64 272.021 146.05Q271.777 145.461 271.504 144.884Q271.231 144.307 270.93 143.744Q270.629 143.181 270.301 142.633Q269.973 142.086 269.618 141.555Q269.264 141.024 268.883 140.512Q268.503 139.999 268.098 139.506Q267.693 139.012 267.265 138.539Q266.836 138.067 266.385 137.615Q265.933 137.164 265.461 136.735Q264.988 136.307 264.494 135.902Q264.001 135.497 263.488 135.117Q262.976 134.736 262.445 134.382Q261.914 134.027 261.367 133.699Q260.819 133.371 260.256 133.07Q259.693 132.769 259.116 132.496Q258.539 132.223 257.95 131.979Q257.36 131.735 256.759 131.52Q256.158 131.305 255.547 131.12Q254.937 130.934 254.317 130.779Q253.698 130.624 253.072 130.5Q252.446 130.375 251.815 130.281Q251.184 130.188 250.548 130.125Q249.913 130.063 249.276 130.031Q248.638 130 248 130Z" />
-                                </DrawingGroup>
-                            </DrawingImage>
-                        </Image>
+                    <ToggleButton
+                        Canvas.Left="182"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Height="45"
+                        IsChecked="{Binding IsStretched}"
+                        ToolTip.Tip="{Binding Stretch}"
+                        Width="169">
                         <TextBlock
                             Classes="txt"
-                            FontSize="14"
-                            Margin="10,0,6,0"
                             MaxWidth="150"
-                            Text="{Binding About}"
-                            VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                            Text="{Binding Stretch}" />
+                    </ToggleButton>
 
-                <Button
-                    Background="Transparent"
-                    Canvas.Left="315"
-                    Canvas.Top="-1"
-                    Classes="hover"
-                    Command="{Binding CloseMenuCommand}"
-                    CornerRadius="0,8,0,0"
-                    Height="46"
-                    ToolTip.Tip="{Binding Close}"
-                    Width="45">
-                    <Path
-                        Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                        Fill="{StaticResource MainIconColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
+                    <ToggleButton
+                        Canvas.Left="7"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding ToggleLoopingCommand}"
+                        IsChecked="{Binding IsLooping}"
+                        ToolTip.Tip="{Binding ToggleLooping}"
+                        Width="169">
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding GetLooping}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Canvas.Left="7"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding ToggleScrollCommand}"
-                    Height="45"
-                    IsChecked="{Binding IsScrollingEnabled}"
-                    ToolTip.Tip="{Binding ToggleScroll}"
-                    Width="169">
-                    <TextBlock
-                        Classes="txt"
-                        MaxWidth="150"
-                        Text="{Binding GetScrolling}" />
-                </ToggleButton>
+                    <ToggleButton
+                        Canvas.Left="182"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover"
+                        Command="{Binding ChangeAutoFitCommand}"
+                        IsChecked="{Binding IsAutoFit}"
+                        ToolTip.Tip="{Binding AutoFitWindow}"
+                        Width="169">
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding AutoFitWindow}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Canvas.Left="182"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Height="45"
-                    IsChecked="{Binding IsStretched}"
-                    ToolTip.Tip="{Binding Stretch}"
-                    Width="169">
-                    <TextBlock
-                        Classes="txt"
-                        MaxWidth="150"
-                        Text="{Binding Stretch}" />
-                </ToggleButton>
+                    <ToggleButton
+                        Canvas.Left="7"
+                        Canvas.Top="150"
+                        Classes="ButtonBorder altHover"
+                        Command="{Binding ChangeTopMostCommand}"
+                        Height="45"
+                        IsChecked="{Binding IsTopMost}"
+                        ToolTip.Tip="{Binding StayTopMost}"
+                        Width="169">
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding StayTopMost}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Canvas.Left="7"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding ToggleLoopingCommand}"
-                    IsChecked="{Binding IsLooping}"
-                    ToolTip.Tip="{Binding ToggleLooping}"
-                    Width="169">
-                    <TextBlock
-                        Classes="txt"
-                        MaxWidth="150"
-                        Text="{Binding GetLooping}" />
-                </ToggleButton>
-
-                <ToggleButton
-                    Canvas.Left="182"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
-                    Command="{Binding ChangeAutoFitCommand}"
-                    IsChecked="{Binding IsAutoFit}"
-                    ToolTip.Tip="{Binding AutoFitWindow}"
-                    Width="169">
-                    <TextBlock
-                        Classes="txt"
-                        MaxWidth="150"
-                        Text="{Binding AutoFitWindow}" />
-                </ToggleButton>
-
-                <ToggleButton
-                    Canvas.Left="7"
-                    Canvas.Top="150"
-                    Classes="ButtonBorder altHover"
-                    Command="{Binding ChangeTopMostCommand}"
-                    Height="45"
-                    IsChecked="{Binding IsTopMost}"
-                    ToolTip.Tip="{Binding StayTopMost}"
-                    Width="169">
-                    <TextBlock
-                        Classes="txt"
-                        MaxWidth="150"
-                        Text="{Binding StayTopMost}" />
-                </ToggleButton>
-
-                <ToggleButton
-                    Canvas.Left="182"
-                    Canvas.Top="150"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding ToggleSubdirectoriesCommand}"
-                    Height="45"
-                    IsChecked="{CompiledBinding IsIncludingSubdirectories}"
-                    ToolTip.Tip="{CompiledBinding SearchSubdirectory}"
-                    Width="169">
-                    <TextBlock
-                        Classes="txt"
-                        MaxWidth="150"
-                        Text="{Binding SearchSubdirectory}" />
-                </ToggleButton>
-            </Canvas>
-        </Border>
-        <Rectangle
-            Fill="{StaticResource MenuBackgroundColor}"
-            Height="4"
-            HorizontalAlignment="Left"
-            Margin="278,-2,0,0"
-            Width="24"
-            ZIndex="1" />
-        <Polygon
-            Fill="{StaticResource MenuBackgroundColor}"
-            Margin="276,-3.5,0,0"
-            Points="0,0 15,30, 30,0"
-            Stroke="{StaticResource MainBorderColor}"
-            StrokeThickness="1" />
-    </StackPanel>
+                    <ToggleButton
+                        Canvas.Left="182"
+                        Canvas.Top="150"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding ToggleSubdirectoriesCommand}"
+                        Height="45"
+                        IsChecked="{CompiledBinding IsIncludingSubdirectories}"
+                        ToolTip.Tip="{CompiledBinding SearchSubdirectory}"
+                        Width="169">
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding SearchSubdirectory}" />
+                    </ToggleButton>
+                </Canvas>
+            </Border>
+            <Rectangle
+                Fill="{StaticResource MenuBackgroundColor}"
+                Height="4"
+                HorizontalAlignment="Left"
+                Margin="278,-2,0,0"
+                Width="24"
+                ZIndex="1" />
+            <Polygon
+                Fill="{StaticResource MenuBackgroundColor}"
+                Margin="276,-3.5,0,0"
+                Points="0,0 15,30, 30,0"
+                Stroke="{StaticResource MainBorderColor}"
+                StrokeThickness="1" />
+        </StackPanel>
+    </customControls:AnimatedPopUp>
 </UserControl>
