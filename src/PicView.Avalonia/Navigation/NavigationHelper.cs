@@ -101,12 +101,6 @@ public static class NavigationHelper
         }
         await Navigate(next, vm);
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            // TODO: fix  for macOS
-            return;
-        }
-
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)

@@ -121,7 +121,7 @@
 
     <DockPanel LastChildFill="True">
         <views1:MacOSTitlebar DockPanel.Dock="Top" />
-        <views:BottomBar DockPanel.Dock="Bottom" />
-        <views:MainView Background="{StaticResource WindowBackgroundColor}" />
+        <views:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
+        <views:MainView Background="{StaticResource WindowBackgroundColor}" x:Name="MainView" />
     </DockPanel>
 </Window>
