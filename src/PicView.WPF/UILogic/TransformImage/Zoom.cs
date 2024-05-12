@@ -141,6 +141,14 @@ internal static class ZoomLogic
         var newXproperty = _origin.X - dragMousePosition.X;
         var newYproperty = _origin.Y - dragMousePosition.Y;
 
+        if (SettingsHelper.Settings.WindowProperties.Fullscreen)
+        {
+            TranslateTransform.X = newXproperty;
+            TranslateTransform.Y = newYproperty;
+            e.Handled = true;
+            return;
+        }
+
         // Keep panning it in bounds
 
         var actualScrollWidth = ConfigureWindows.GetMainWindow.Scroller.ActualWidth;
