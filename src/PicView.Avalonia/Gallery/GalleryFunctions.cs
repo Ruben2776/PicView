@@ -60,7 +60,7 @@ namespace PicView.Avalonia.Gallery
                 return;
             }
 
-            await FunctionsHelper.CloseMenus();
+            UIHelper.CloseMenus(vm);
 
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
@@ -72,7 +72,7 @@ namespace PicView.Avalonia.Gallery
                 {
                     OpenFullGallery(vm);
                 }
-                await FunctionsHelper.CloseMenus();
+                
                 SetGalleryItemSize(vm);
                 return;
             }
@@ -100,7 +100,7 @@ namespace PicView.Avalonia.Gallery
             {
                 return;
             }
-            _= FunctionsHelper.CloseMenus();
+            UIHelper.CloseMenus(vm);
             
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
@@ -126,7 +126,7 @@ namespace PicView.Avalonia.Gallery
             {
                 return;
             }
-            _= FunctionsHelper.CloseMenus();
+            UIHelper.CloseMenus(vm);
             
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {

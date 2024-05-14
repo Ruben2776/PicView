@@ -1,4 +1,6 @@
-﻿using Avalonia;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ImageMagick;
@@ -9,11 +11,9 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Helpers;
 
@@ -21,7 +21,105 @@ public static class FunctionsHelper
 {
     public static MainViewModel? Vm;
 
-    #region Functions list
+    public static Task<Func<Task>> GetFunctionByName(string functionName)
+    {
+        // Remember to have exact matching names, or it will be null
+        return Task.FromResult<Func<Task>>(functionName switch
+        {
+            // Navigation values
+            "Next" => Next,
+            "Prev" => Prev,
+            "Up" => Up,
+            "Down" => Down,
+            "Last" => Last,
+            "First" => First,
+
+            // Scroll
+            "ScrollUp" => ScrollUp,
+            "ScrollDown" => ScrollDown,
+            "ScrollToTop" => ScrollToTop,
+            "ScrollToBottom" => ScrollToBottom,
+
+            // Zoom
+            "ZoomIn" => ZoomIn,
+            "ZoomOut" => ZoomOut,
+            "ResetZoom" => ResetZoom,
+
+            // Toggles
+            "ToggleScroll" => ToggleScroll,
+            "ToggleLooping" => ToggleLooping,
+            "ToggleGallery" => ToggleGallery,
+
+            // Scale Window
+            "AutoFitWindow" => AutoFitWindow,
+            "AutoFitWindowAndStretch" => AutoFitWindowAndStretch,
+            "NormalWindow" => NormalWindow,
+            "NormalWindowAndStretch" => NormalWindowAndStretch,
+
+            // Window functions
+            "Fullscreen" => Fullscreen,
+            "SetTopMost" => SetTopMost,
+            "Close" => Close,
+            "ToggleInterface" => ToggleInterface,
+            "NewWindow" => NewWindow,
+            "Center" => Center,
+
+            // Windows
+            "AboutWindow" => AboutWindow,
+            "EffectsWindow" => EffectsWindow,
+            "ImageInfoWindow" => ImageInfoWindow,
+            "ResizeWindow" => ResizeWindow,
+            "SettingsWindow" => SettingsWindow,
+            "KeybindingsWindow" => KeybindingsWindow,
+
+            // Open functions
+            "Open" => Open,
+            "OpenWith" => OpenWith,
+            "OpenInExplorer" => OpenInExplorer,
+            "Save" => Save,
+            "Print" => Print,
+            "Reload" => Reload,
+
+            // Copy functions
+            "CopyFile" => CopyFile,
+            "CopyFilePath" => CopyFilePath,
+            "CopyImage" => CopyImage,
+            "CopyBase64" => CopyBase64,
+            "DuplicateFile" => DuplicateFile,
+            "CutFile" => CutFile,
+            "Paste" => Paste,
+
+            // File functions
+            "DeleteFile" => DeleteFile,
+            "Rename" => Rename,
+            "ShowFileProperties" => ShowFileProperties,
+
+            // Image functions
+            "ResizeImage" => ResizeImage,
+            "Crop" => Crop,
+            "Flip" => Flip,
+            "OptimizeImage" => OptimizeImage,
+            "Stretch" => Stretch,
+
+            // Set stars
+            "Set0Star" => Set0Star,
+            "Set1Star" => Set1Star,
+            "Set2Star" => Set2Star,
+            "Set3Star" => Set3Star,
+            "Set4Star" => Set4Star,
+            "Set5Star" => Set5Star,
+
+            // Misc
+            "ChangeBackground" => ChangeBackground,
+            "GalleryClick" => GalleryClick,
+            "Slideshow" => Slideshow,
+            "ColorPicker" => ColorPicker,
+
+            _ => null
+        });
+    }
+
+    #region Functionns
 
     #region Menus
 
@@ -77,13 +175,7 @@ public static class FunctionsHelper
 
     #endregion Menusf
 
-    public static async Task Print()
-    {
-        await Task.Run(() =>
-        {
-            Vm?.PlatformService?.Print(Vm.FileInfo.FullName);
-        });
-    }
+    #region Navigation, zoom and rotation
 
     public static async Task Next()
     {
@@ -279,6 +371,10 @@ public static class FunctionsHelper
         }
         await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
     }
+    
+    #endregion
+
+    #region Toggle UI functions
 
     public static async Task ToggleScroll()
     {
@@ -318,6 +414,51 @@ public static class FunctionsHelper
         Vm.IsLooping = value;
         await SettingsHelper.SaveSettingsAsync();
     }
+    
+    public static async Task ToggleInterface()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await WindowHelper.ToggleUI(Vm);
+    }
+    
+    public static async Task ToggleSubdirectories()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
+        {
+            Vm.IsIncludingSubdirectories = false;
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories = false;
+        }
+        else
+        {
+            Vm.IsIncludingSubdirectories = true;
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories = true;
+        }
+
+        await Vm.ImageIterator.ReloadFileList();
+        Vm.SetTitle();
+        await SettingsHelper.SaveSettingsAsync();
+    }
+    
+    public static async Task ToggleBottomToolbar()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await WindowHelper.ToggleBottomToolbar(Vm);
+    }
+    
+    #endregion
+
+    #region Gallery functions
 
     public static async Task ToggleGallery()
     {
@@ -333,42 +474,16 @@ public static class FunctionsHelper
     {
         await GalleryFunctions.OpenCloseBottomGallery(Vm).ConfigureAwait(false);
     }
-
-    public static Task AutoFitWindow()
+    
+    public static Task GalleryClick()
     {
         return Task.CompletedTask;
     }
 
-    public static Task AutoFitWindowAndStretch()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task NormalWindow()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task NormalWindowAndStretch()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task Fullscreen()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static async Task SetTopMost()
-    {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        await WindowHelper.ToggleTopMost(Vm);
-    }
-
+    #endregion
+    
+    #region Windows and window functions
+    
     public static async Task Close()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -380,17 +495,15 @@ public static class FunctionsHelper
             desktop.MainWindow?.Close();
         });
     }
-
-    public static async Task ToggleInterface()
-    {
-        if (Vm is null)
-        {
-            return;
-        }
-        await WindowHelper.ToggleUI(Vm);
-    }
     
-    #region Windows
+    public static async Task Center()
+    {
+        // TODO: scroll to center when the gallery is open
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            WindowHelper.CenterWindowOnScreen();
+        });
+    }
 
     public static async Task NewWindow()
     {        
@@ -433,6 +546,64 @@ public static class FunctionsHelper
     
     #endregion Windows
 
+    #region Image Scaling and Window Behavior
+    
+    public static Task Stretch()
+    {
+        return Task.CompletedTask;
+    }
+    public static Task AutoFitWindow()
+    {
+        return Task.CompletedTask;
+    }
+
+    public static Task AutoFitWindowAndStretch()
+    {
+        return Task.CompletedTask;
+    }
+
+    public static Task NormalWindow()
+    {
+        return Task.CompletedTask;
+    }
+
+    public static Task NormalWindowAndStretch()
+    {
+        return Task.CompletedTask;
+    }
+
+    public static async Task Fullscreen()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        await WindowHelper.ToggleFullscreen(Vm);
+    }
+
+    public static async Task SetTopMost()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        await WindowHelper.ToggleTopMost(Vm);
+    }
+
+    #endregion
+
+    #region File funnctions
+    
+    public static async Task Print()
+    {
+        await Task.Run(() =>
+        {
+            Vm?.PlatformService?.Print(Vm.FileInfo.FullName);
+        });
+    }
+
     public static async Task Open()
     {
         if (Vm is null)
@@ -471,49 +642,34 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    public static Task Save()
+    public static async Task Save()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        Vm.FileService ??= new FileService();
+        await Vm.FileService.SaveFileAsync(Vm.FileInfo?.FullName);
+    }
+    
+    public static Task DeleteFile()
     {
         return Task.CompletedTask;
     }
 
-    public static async Task Reload()
+    public static Task Rename()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-
-        Vm.ImageIterator.PreLoader.Clear();
-        Vm.CurrentView = new ImageViewer();
-        await Vm.LoadPicFromString(Vm.FileInfo.FullName);
+        return Task.CompletedTask;
     }
-
-    public static async Task ToggleSubdirectories()
+    
+    public static async Task ShowFileProperties()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
-        {
-            Vm.IsIncludingSubdirectories = false;
-            SettingsHelper.Settings.Sorting.IncludeSubDirectories = false;
-        }
-        else
-        {
-            Vm.IsIncludingSubdirectories = true;
-            SettingsHelper.Settings.Sorting.IncludeSubDirectories = true;
-        }
-
-        await Vm.ImageIterator.ReloadFileList();
-        Vm.SetTitle();
-        await SettingsHelper.SaveSettingsAsync();
+        await Task.Run(() => Vm?.PlatformService?.ShowFileProperties(Vm.FileInfo.FullName));
     }
+    
+    #endregion
+
+    #region Copy and Paste functions
 
     public static async Task CopyFile()
     {
@@ -549,20 +705,30 @@ public static class FunctionsHelper
     {
         return Task.CompletedTask;
     }
+    
+    #endregion
 
-    public static Task DeleteFile()
+    #region Image Functions
+    
+    public static Task ChangeBackground()
     {
         return Task.CompletedTask;
     }
-
-    public static Task Rename()
+    
+    public static async Task Reload()
     {
-        return Task.CompletedTask;
-    }
+        if (Vm is null)
+        {
+            return;
+        }
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            return;
+        }
 
-    public static async Task ShowFileProperties()
-    {
-        await Task.Run(() => Vm?.PlatformService?.ShowFileProperties(Vm.FileInfo.FullName));
+        Vm.ImageIterator.PreLoader.Clear();
+        Vm.CurrentView = new ImageViewer();
+        await Vm.LoadPicFromString(Vm.FileInfo.FullName);
     }
 
     public static Task ResizeImage()
@@ -581,24 +747,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-        if (Vm.ScaleX == 1)
-        {
-            Vm.ScaleX = -1;
-            Vm.GetFlipped = Vm.UnFlip;
-        }
-        else
-        {
-            Vm.ScaleX = 1;
-            Vm.GetFlipped = Vm.Flip;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Vm.ImageViewer.Flip(animate: true);
-        });
+        await UIHelper.Flip(Vm);
     }
 
     public static async Task OptimizeImage()
@@ -633,29 +782,6 @@ public static class FunctionsHelper
         Vm.RefreshTitle();
     }
 
-    public static Task Stretch()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task ChangeBackground()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static Task GalleryClick()
-    {
-        return Task.CompletedTask;
-    }
-
-    public static async Task Center()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            WindowHelper.CenterWindowOnScreen();
-        });
-    }
-
     public static Task Slideshow()
     {
         return Task.CompletedTask;
@@ -665,15 +791,8 @@ public static class FunctionsHelper
     {
         return Task.CompletedTask;
     }
-
-    public static async Task ToggleBottomToolbar()
-    {
-        if (Vm is null)
-        {
-            return;
-        }
-        await WindowHelper.ToggleBottomToolbar(Vm);
-    }
+    
+    #endregion
 
     #region Sorting
 
@@ -824,6 +943,38 @@ public static class FunctionsHelper
 
     #endregion
 
+    #region Open GPS link
+
+    public static async Task OpenGoogleMaps()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (string.IsNullOrEmpty(Vm.GoogleLink))
+        {
+            return;
+        }
+
+        await Task.Run(() => ProcessHelper.OpenLink(Vm.GoogleLink));
+    }
+    
+    public static async Task OpenBingMaps()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        if (string.IsNullOrEmpty(Vm.BingLink))
+        {
+            return;
+        }
+
+        await Task.Run(() => ProcessHelper.OpenLink(Vm.BingLink));
+    }
+
+    #endregion
+
     #region Wallpaper and lockscreen image
     
     public static async Task SetAsWallpaper()
@@ -905,9 +1056,5 @@ public static class FunctionsHelper
 
     #endregion
     
-
-
-    #endregion Functions list
-
-
+    #endregion
 }

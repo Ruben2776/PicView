@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Core.Localization;
 
@@ -103,7 +104,7 @@ public class KeybindTextBox : TextBox
 
         KeybindingsHelper.CustomShortcuts.Remove(new KeyGesture(e.Key, e.KeyModifiers));
 
-        var function = await KeybindingsHelper.GetFunctionByName(MethodName);
+        var function = await FunctionsHelper.GetFunctionByName(MethodName);
 
         if (function == null)
         {

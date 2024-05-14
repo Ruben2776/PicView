@@ -133,7 +133,7 @@ public static class KeybindingsHelper
                 {
                     continue;
                 }
-                var function = await GetFunctionByName(kvp.Value).ConfigureAwait(false);
+                var function = await FunctionsHelper.GetFunctionByName(kvp.Value).ConfigureAwait(false);
                 // Add to the dictionary
                 CustomShortcuts[gesture] = function;
             }
@@ -162,110 +162,12 @@ public static class KeybindingsHelper
 
         await Loop(keyValues).ConfigureAwait(false);
     }
-
-    internal static string? GetFunctionNameByFunction(Func<Task> function)
+    
+    private static string? GetFunctionNameByFunction(Func<Task> function)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (function == null)
             return "";
         return CustomShortcuts.FirstOrDefault(x => x.Value == function).Value.Method.Name ?? "";
-    }
-
-    public static Task<Func<Task>> GetFunctionByName(string functionName)
-    {
-        // Remember to have exact matching names, or it will be null
-        return Task.FromResult<Func<Task>>(functionName switch
-        {
-            // Navigation values
-            "Next" => FunctionsHelper.Next,
-            "Prev" => FunctionsHelper.Prev,
-            "Up" => FunctionsHelper.Up,
-            "Down" => FunctionsHelper.Down,
-            "Last" => FunctionsHelper.Last,
-            "First" => FunctionsHelper.First,
-
-            // Scroll
-            "ScrollUp" => FunctionsHelper.ScrollUp,
-            "ScrollDown" => FunctionsHelper.ScrollDown,
-            "ScrollToTop" => FunctionsHelper.ScrollToTop,
-            "ScrollToBottom" => FunctionsHelper.ScrollToBottom,
-
-            // Zoom
-            "ZoomIn" => FunctionsHelper.ZoomIn,
-            "ZoomOut" => FunctionsHelper.ZoomOut,
-            "ResetZoom" => FunctionsHelper.ResetZoom,
-
-            // Toggles
-            "ToggleScroll" => FunctionsHelper.ToggleScroll,
-            "ToggleLooping" => FunctionsHelper.ToggleLooping,
-            "ToggleGallery" => FunctionsHelper.ToggleGallery,
-
-            // Scale Window
-            "AutoFitWindow" => FunctionsHelper.AutoFitWindow,
-            "AutoFitWindowAndStretch" => FunctionsHelper.AutoFitWindowAndStretch,
-            "NormalWindow" => FunctionsHelper.NormalWindow,
-            "NormalWindowAndStretch" => FunctionsHelper.NormalWindowAndStretch,
-
-            // Window functions
-            "Fullscreen" => FunctionsHelper.Fullscreen,
-            "SetTopMost" => FunctionsHelper.SetTopMost,
-            "Close" => FunctionsHelper.Close,
-            "ToggleInterface" => FunctionsHelper.ToggleInterface,
-            "NewWindow" => FunctionsHelper.NewWindow,
-            "Center" => FunctionsHelper.Center,
-
-            // Windows
-            "AboutWindow" => FunctionsHelper.AboutWindow,
-            "EffectsWindow" => FunctionsHelper.EffectsWindow,
-            "ImageInfoWindow" => FunctionsHelper.ImageInfoWindow,
-            "ResizeWindow" => FunctionsHelper.ResizeWindow,
-            "SettingsWindow" => FunctionsHelper.SettingsWindow,
-            "KeybindingsWindow" => FunctionsHelper.KeybindingsWindow,
-
-            // Open functions
-            "Open" => FunctionsHelper.Open,
-            "OpenWith" => FunctionsHelper.OpenWith,
-            "OpenInExplorer" => FunctionsHelper.OpenInExplorer,
-            "Save" => FunctionsHelper.Save,
-            "Print" => FunctionsHelper.Print,
-            "Reload" => FunctionsHelper.Reload,
-
-            // Copy functions
-            "CopyFile" => FunctionsHelper.CopyFile,
-            "CopyFilePath" => FunctionsHelper.CopyFilePath,
-            "CopyImage" => FunctionsHelper.CopyImage,
-            "CopyBase64" => FunctionsHelper.CopyBase64,
-            "DuplicateFile" => FunctionsHelper.DuplicateFile,
-            "CutFile" => FunctionsHelper.CutFile,
-            "Paste" => FunctionsHelper.Paste,
-
-            // File functions
-            "DeleteFile" => FunctionsHelper.DeleteFile,
-            "Rename" => FunctionsHelper.Rename,
-            "ShowFileProperties" => FunctionsHelper.ShowFileProperties,
-
-            // Image functions
-            "ResizeImage" => FunctionsHelper.ResizeImage,
-            "Crop" => FunctionsHelper.Crop,
-            "Flip" => FunctionsHelper.Flip,
-            "OptimizeImage" => FunctionsHelper.OptimizeImage,
-            "Stretch" => FunctionsHelper.Stretch,
-
-            // Set stars
-            "Set0Star" => FunctionsHelper.Set0Star,
-            "Set1Star" => FunctionsHelper.Set1Star,
-            "Set2Star" => FunctionsHelper.Set2Star,
-            "Set3Star" => FunctionsHelper.Set3Star,
-            "Set4Star" => FunctionsHelper.Set4Star,
-            "Set5Star" => FunctionsHelper.Set5Star,
-
-            // Misc
-            "ChangeBackground" => FunctionsHelper.ChangeBackground,
-            "GalleryClick" => FunctionsHelper.GalleryClick,
-            "Slideshow" => FunctionsHelper.Slideshow,
-            "ColorPicker" => FunctionsHelper.ColorPicker,
-
-            _ => null
-        });
     }
 }

@@ -60,7 +60,7 @@ public class FileService
         MimeTypes = new[] { "archive/*" }
     };
 
-    public static async Task SaveFileAsync(string fileName)
+    public async Task SaveFileAsync(string fileName)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)

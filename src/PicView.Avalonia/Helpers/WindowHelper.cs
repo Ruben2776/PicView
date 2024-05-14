@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -168,6 +169,19 @@ public static class WindowHelper
             vm.IsFullscreen = true;
             desktop.MainWindow.WindowState = WindowState.Maximized;
             SettingsHelper.Settings.WindowProperties.Fullscreen = true;
+        }
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // TODO: Add Fullscreen mode for Windows (and maybe for Linux?)
+            // macOS fullscreen version already works nicely
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                // TODO go to macOS fullscreen mode when auto fit is on
+            }
         }
 
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);

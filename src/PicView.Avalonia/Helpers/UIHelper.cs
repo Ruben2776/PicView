@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
+using Avalonia.Threading;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
@@ -95,6 +97,8 @@ public class UIHelper
     }
 
     #endregion Menus
+
+    #region Settings
     
     public static void ToggleScroll(MainViewModel vm)
     {
@@ -114,4 +118,28 @@ public class UIHelper
         }
         WindowHelper.SetSize(vm);
     }
+
+    public static async Task Flip(MainViewModel vm)
+    {
+        if (!NavigationHelper.CanNavigate(vm))
+        {
+            return;
+        }
+        if (vm.ScaleX == 1)
+        {
+            vm.ScaleX = -1;
+            vm.GetFlipped = vm.UnFlip;
+        }
+        else
+        {
+            vm.ScaleX = 1;
+            vm.GetFlipped = vm.Flip;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            vm.ImageViewer.Flip(animate: true);
+        });
+    }
+    
+    #endregion
 }

@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
-using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -1567,11 +1566,7 @@ namespace PicView.Avalonia.ViewModels
                 await LoadPicFromString(lastFile);
             });
 
-            SaveFileCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                FileService ??= new FileService();
-                await FileService.SaveFileAsync(FileInfo?.FullName);
-            });
+            SaveFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Save);
 
             CopyFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CopyFile);
 
@@ -1624,25 +1619,8 @@ namespace PicView.Avalonia.ViewModels
             SetExifRating4Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set4Star);
             SetExifRating5Command = ReactiveCommand.CreateFromTask(FunctionsHelper.Set5Star);
 
-            OpenGoogleLinkCommand = ReactiveCommand.Create(() =>
-            {
-                if (string.IsNullOrEmpty(GoogleLink))
-                {
-                    return;
-                }
-
-                ProcessHelper.OpenLink(GoogleLink);
-            });
-
-            OpenBingLinkCommand = ReactiveCommand.Create(() =>
-            {
-                if (string.IsNullOrEmpty(BingLink))
-                {
-                    return;
-                }
-
-                ProcessHelper.OpenLink(BingLink);
-            });
+            OpenGoogleLinkCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenGoogleMaps);
+            OpenBingLinkCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenBingMaps);
 
             #endregion EXIF commands
 
