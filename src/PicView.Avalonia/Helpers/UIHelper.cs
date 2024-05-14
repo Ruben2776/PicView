@@ -1,9 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Core.Config;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Helpers;
 
@@ -92,4 +95,23 @@ public class UIHelper
     }
 
     #endregion Menus
+    
+    public static void ToggleScroll(MainViewModel vm)
+    {
+        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+        {
+            vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
+            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
+            vm.IsScrollingEnabled = false;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = false;
+        }
+        else
+        {
+            vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
+            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
+            vm.IsScrollingEnabled = true;
+            SettingsHelper.Settings.Zoom.ScrollEnabled = true;
+        }
+        WindowHelper.SetSize(vm);
+    }
 }

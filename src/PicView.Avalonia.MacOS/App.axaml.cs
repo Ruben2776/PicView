@@ -199,4 +199,14 @@ public class App : Application, IPlatformSpecificService
     {
         // TODO: Implement Print
     }
+
+    public void SetAsWallpaper(string path, int wallpaperStyle)
+    {
+        // TODO: Implement SetAsWallpaper
+    }
+
+    public void SetAsLockScreen(string path)
+    {
+        // TODO: Implement SetAsLockScreen
+    }
 }

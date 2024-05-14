@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
@@ -76,7 +75,7 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    #endregion Menus
+    #endregion Menusf
 
     public static async Task Print()
     {
@@ -287,21 +286,8 @@ public static class FunctionsHelper
         {
             return;
         }
-        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-        {
-            Vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
-            Vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
-            Vm.IsScrollingEnabled = false;
-            SettingsHelper.Settings.Zoom.ScrollEnabled = false;
-        }
-        else
-        {
-            Vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
-            Vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
-            Vm.IsScrollingEnabled = true;
-            SettingsHelper.Settings.Zoom.ScrollEnabled = true;
-        }
-        WindowHelper.SetSize(Vm);
+        
+        UIHelper.ToggleScroll(Vm);
         await SettingsHelper.SaveSettingsAsync();
     }
 
@@ -529,14 +515,14 @@ public static class FunctionsHelper
         await SettingsHelper.SaveSettingsAsync();
     }
 
-    public static Task CopyFile()
+    public static async Task CopyFile()
     {
-        return Task.CompletedTask;
+        await ClipboardHelper.CopyFileToClipboard(Vm?.FileInfo.FullName);
     }
 
-    public static Task CopyFilePath()
+    public static async Task CopyFilePath()
     {
-        return Task.CompletedTask;
+        await ClipboardHelper.CopyTextToClipboard(Vm?.FileInfo.FullName);
     }
 
     public static Task CopyImage()
@@ -574,10 +560,9 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    public static Task ShowFileProperties()
+    public static async Task ShowFileProperties()
     {
-        Vm?.PlatformService?.ShowFileProperties(Vm.FileInfo.FullName);
-        return Task.CompletedTask;
+        await Task.Run(() => Vm?.PlatformService?.ShowFileProperties(Vm.FileInfo.FullName));
     }
 
     public static Task ResizeImage()
@@ -839,5 +824,90 @@ public static class FunctionsHelper
 
     #endregion
 
+    #region Wallpaper and lockscreen image
+    
+    public static async Task SetAsWallpaper()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            await SetAsWallpaperFilled();
+        }
+        // TODO: Add support for macOS
+    }
+
+    public static async Task SetAsWallpaperTiled()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() => Vm.PlatformService.SetAsWallpaper(Vm.FileInfo.FullName, 0));
+    }
+    
+    public static async Task SetAsWallpaperCentered()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() => Vm.PlatformService.SetAsWallpaper(Vm.FileInfo.FullName, 1));
+    }
+    
+    public static async Task SetAsWallpaperStretched()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() => Vm.PlatformService.SetAsWallpaper(Vm.FileInfo.FullName, 2));
+    }
+    
+    public static async Task SetAsWallpaperFitted()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() => Vm.PlatformService.SetAsWallpaper(Vm.FileInfo.FullName, 3));
+    }
+    
+    public static async Task SetAsWallpaperFilled()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() => Vm.PlatformService.SetAsWallpaper(Vm.FileInfo.FullName, 4));
+    }
+    
+    public static async Task SetAsLockscreenCentered()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() => Vm.PlatformService.SetAsLockScreen(Vm.FileInfo.FullName));
+    }
+    
+    public static async Task SetAsLockScreen()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() => Vm.PlatformService.SetAsLockScreen(Vm.FileInfo.FullName));
+    }
+
+    #endregion
+    
+
+
     #endregion Functions list
+
+
 }

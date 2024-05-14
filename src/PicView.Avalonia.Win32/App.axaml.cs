@@ -196,4 +196,15 @@ public class App : Application, IPlatformSpecificService
     {
         ProcessHelper.Print(path);
     }
+
+    public void SetAsWallpaper(string path, int wallpaperStyle)
+    {
+        var style = (Windows.Wallpaper.WallpaperHelper.WallpaperStyle)wallpaperStyle;
+        Windows.Wallpaper.WallpaperHelper.SetDesktopWallpaper(path, style);
+    }
+    
+    public void SetAsLockScreen(string path)
+    {
+        Windows.Lockscreen.LockscreenHelper.SetLockScreenImage(path);
+    }
 }

@@ -27,4 +27,8 @@ public interface IPlatformSpecificService
     void ShowResizeWindow();
     
     void Print(string path);
+    
+    void SetAsWallpaper(string path, int wallpaperStyle);
+    
+    void SetAsLockScreen(string path);
 }

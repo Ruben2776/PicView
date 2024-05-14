@@ -177,6 +177,10 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ColorPickerCommand { get; }
 
         public ICommand? SlideshowCommand { get; }
+        
+        public ICommand? SetAsWallpaperCommand { get; }
+        
+        public ICommand? SetAsLockScreenCommand { get; }
 
         #endregion Commands
 
@@ -1569,30 +1573,21 @@ namespace PicView.Avalonia.ViewModels
                 await FileService.SaveFileAsync(FileInfo?.FullName);
             });
 
-            CopyFileCommand = ReactiveCommand.Create(async () =>
-            {
-                var clipboard = desktop.MainWindow.Clipboard;
-                var dataObject = new DataObject();
-                dataObject.Set(DataFormats.Files, new[] { FileInfo?.FullName });
-                await clipboard.SetDataObjectAsync(dataObject);
-            });
+            CopyFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CopyFile);
 
-            CopyFilePathCommand = ReactiveCommand.Create(async () =>
-            {
-                await desktop.MainWindow.Clipboard.SetTextAsync(FileInfo?.FullName);
-            });
+            CopyFilePathCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CopyFilePath);
             
             FilePropertiesCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ShowFileProperties);
 
-            CopyImageCommand = ReactiveCommand.Create(() => { });
+            CopyImageCommand = ReactiveCommand.Create(FunctionsHelper.CopyImage);
 
-            CutCommand = ReactiveCommand.Create(() => { });
+            CutCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CutFile);
 
-            PasteCommand = ReactiveCommand.Create(() => { });
+            PasteCommand = ReactiveCommand.Create(FunctionsHelper.Paste);
 
             OpenWithCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenWith);
 
-            RenameCommand = ReactiveCommand.Create(() => { });
+            RenameCommand = ReactiveCommand.Create(FunctionsHelper.Rename);
 
             ResizeCommand = ReactiveCommand.CreateFromTask<int>(ResizeImageByPercentage);
             ConvertCommand = ReactiveCommand.CreateFromTask<int>(ConvertFileExtension);
@@ -1615,6 +1610,8 @@ namespace PicView.Avalonia.ViewModels
             });
 
             ShowInFolderCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenInExplorer);
+            
+            SetAsWallpaperCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetAsWallpaper);
 
             #endregion File commands
 

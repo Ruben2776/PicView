@@ -245,7 +245,7 @@
                 </MenuItem>
             </MenuItem>
             <Separator />
-            <MenuItem Header="{CompiledBinding SetAsWallpaper}">
+            <MenuItem Command="{CompiledBinding SetAsWallpaperCommand}" Header="{CompiledBinding SetAsWallpaper}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
