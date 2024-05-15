@@ -173,6 +173,7 @@
                     IsChecked="{Binding IsTopMost}"
                     ToggleType="CheckBox" />
                 <MenuItem
+                    Command="{CompiledBinding StretchCommand}"
                     Header="{Binding Stretch}"
                     IsChecked="{Binding IsStretched}"
                     ToggleType="CheckBox" />

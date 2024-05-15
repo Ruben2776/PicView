@@ -652,9 +652,28 @@ public static class FunctionsHelper
         await Vm.FileService.SaveFileAsync(Vm.FileInfo?.FullName);
     }
     
-    public static Task DeleteFile()
+    public static async Task DeleteFile()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo.FullName, false);
+        });
+    }
+    
+    public static async Task RecycleFile()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo.FullName, false);
+        });
     }
 
     public static Task Rename()
@@ -691,9 +710,16 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    public static Task DuplicateFile()
+    public static async Task DuplicateFile()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            FileHelper.DuplicateAndReturnFileName(Vm.FileInfo.FullName);
+        });
     }
 
     public static Task CutFile()

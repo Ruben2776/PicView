@@ -55,12 +55,12 @@
                     <NativeMenuItem Command="{CompiledBinding RotateRightCommand}" Header="{CompiledBinding RotateRight}" />
                     <NativeMenuItem Command="{CompiledBinding FlipCommand}" Header="{CompiledBinding Flip}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{CompiledBinding Crop}" />
+                    <NativeMenuItem Command="{CompiledBinding CropCommand}" Header="{CompiledBinding Crop}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{CompiledBinding SetAsWallpaper}" />
-                    <NativeMenuItem Header="{CompiledBinding SetAsLockScreenImage}" />
+                    <NativeMenuItem Command="{CompiledBinding SetAsWallpaperCommand}" Header="{CompiledBinding SetAsWallpaper}" />
+                    <NativeMenuItem Command="{CompiledBinding SetAsLockScreenCommand}" Header="{CompiledBinding SetAsLockScreenImage}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Header="{CompiledBinding ChangeBackground}" />
+                    <NativeMenuItem Command="{CompiledBinding ChangeBackgroundCommand}" Header="{CompiledBinding ChangeBackground}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Header="{CompiledBinding Slideshow}" />
                     <NativeMenuItemSeparator />
@@ -78,8 +78,14 @@
             <NativeMenuItem Header="{CompiledBinding InterfaceConfiguration}">
                 <NativeMenu>
                     <NativeMenuItem Command="{CompiledBinding ToggleFullscreenCommand}" Header="{CompiledBinding ToggleFullscreen}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding ChangeAutoFitCommand}"
+                        Header="{CompiledBinding AutoFitWindow}"
+                        IsChecked="{CompiledBinding IsAutoFit}"
+                        ToggleType="CheckBox" />
                     <NativeMenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface}" />
                     <NativeMenuItem Command="{CompiledBinding ToggleGalleryCommand}" Header="{CompiledBinding ShowImageGallery}" />
+
                 </NativeMenu>
             </NativeMenuItem>
             <NativeMenuItem Header="{CompiledBinding Settings}">
@@ -90,20 +96,24 @@
                         IsChecked="{CompiledBinding IsLooping}"
                         ToggleType="CheckBox" />
                     <NativeMenuItem
+                        Command="{CompiledBinding StretchCommand}"
                         Header="{CompiledBinding Stretch}"
                         IsChecked="{CompiledBinding IsStretched}"
                         ToggleType="CheckBox" />
                     <NativeMenuItem
+                        Command="{CompiledBinding ToggleScrollCommand}"
                         Header="{CompiledBinding ToggleScroll}"
                         IsChecked="{CompiledBinding GetScrolling}"
                         ToggleType="CheckBox" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
+                        Command="{CompiledBinding ChangeTopMostCommand}"
                         Header="{CompiledBinding StayTopMost}"
                         IsChecked="{CompiledBinding IsTopMost}"
                         ToggleType="CheckBox" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem
+                        Command="{CompiledBinding ToggleSubdirectoriesCommand}"
                         Header="{CompiledBinding SearchSubdirectory}"
                         IsChecked="{CompiledBinding IsIncludingSubdirectories}"
                         ToggleType="CheckBox" />

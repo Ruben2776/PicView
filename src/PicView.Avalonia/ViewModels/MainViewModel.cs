@@ -127,6 +127,8 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? RotateLeftCommand { get; }
         public ICommand? RotateRightCommand { get; }
         public ICommand? FlipCommand { get; }
+        public ICommand? StretchCommand { get; }
+        public ICommand? CropCommand { get; }
         public ICommand? ChangeAutoFitCommand { get; }
 
         public ICommand? ChangeTopMostCommand { get; }
@@ -135,7 +137,7 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? ToggleUICommand { get; }
         
-
+        public ICommand? ChangeBackgroundCommand { get; }
         public ICommand? ToggleBottomNavBarCommand { get; }
         public ICommand? ShowExifWindowCommand { get; }
         public ICommand? ShowAboutWindowCommand { get; }
@@ -1545,9 +1547,15 @@ namespace PicView.Avalonia.ViewModels
 
             FlipCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Flip);
 
+            StretchCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Stretch);
+
+            CropCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Crop);
+
             ToggleScrollCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleScroll);
 
             OptimizeImageCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OptimizeImage);
+            
+            ChangeBackgroundCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeBackground);
 
             #endregion Image commands
 
@@ -1587,26 +1595,18 @@ namespace PicView.Avalonia.ViewModels
             ResizeCommand = ReactiveCommand.CreateFromTask<int>(ResizeImageByPercentage);
             ConvertCommand = ReactiveCommand.CreateFromTask<int>(ConvertFileExtension);
 
-            DuplicateFileCommand = ReactiveCommand.Create(() =>
-            {
-                FileHelper.DuplicateAndReturnFileName(FileInfo?.FullName);
-            });
+            DuplicateFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.DuplicateFile);
 
             PrintCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Print);
 
-            DeleteFileCommand = ReactiveCommand.Create(() =>
-            {
-                FileDeletionHelper.DeleteFileWithErrorMsg(FileInfo?.FullName, false);
-            });
+            DeleteFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.DeleteFile);
 
-            RecycleFileCommand = ReactiveCommand.Create(() =>
-            {
-                FileDeletionHelper.DeleteFileWithErrorMsg(FileInfo?.FullName, true);
-            });
+            RecycleFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RecycleFile);
 
             ShowInFolderCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenInExplorer);
             
             SetAsWallpaperCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetAsWallpaper);
+            SetAsLockScreenCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetAsLockScreen);
 
             #endregion File commands
 
@@ -1648,7 +1648,7 @@ namespace PicView.Avalonia.ViewModels
 
             #region Settings commands
 
-            ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(async () => await WindowHelper.ToggleAutoFit(this));
+            ChangeAutoFitCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.AutoFitWindow);
 
             ChangeTopMostCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetTopMost);
 
