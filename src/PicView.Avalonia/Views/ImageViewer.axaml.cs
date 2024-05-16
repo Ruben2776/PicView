@@ -93,6 +93,11 @@ public partial class ImageViewer : UserControl
                 ImageType.AnimatedBitmap => image as Bitmap,
                 _ => MainImage.Source
             };
+
+            if (_isZoomed)
+            {
+                ResetZoom(enableAnimations: false);
+            }
         }
     }
 
