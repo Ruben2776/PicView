@@ -113,11 +113,10 @@ public partial class GalleryView : UserControl
         Debug.Assert(border != null, nameof(border) + " != null");
         Debug.Assert(border.DataContext != null, "border.DataContext != null");
 #endif
-        var galleryItem = (GalleryThumbHolder)border.DataContext;
+        var galleryModel = border.DataContext as GalleryViewModel;
+        var galleryItemIndex = vm.ImageIterator.Pics.IndexOf(galleryModel.FileLocation);
 
-        var selectedItemIndex = vm.ImageIterator.Pics.IndexOf(galleryItem.FileLocation);
-
-        await vm.LoadPicAtIndex(selectedItemIndex).ConfigureAwait(false);
+        await vm.LoadPicAtIndex(galleryItemIndex).ConfigureAwait(false);
     }
 
     private void RecycleItem(object? sender, RoutedEventArgs e)
@@ -136,5 +135,10 @@ public partial class GalleryView : UserControl
             return;
         }
         GalleryFunctions.OpenWithItem(sender, vm);
+    }
+
+    private void GalleryListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        
     }
 }

@@ -21,17 +21,12 @@ namespace PicView.Avalonia.Gallery
 
         public static void RecycleItem(object sender, MainViewModel vm)
         {
-#if DEBUG
-            Debug.Assert(sender != null, nameof(sender) + " != null");
-#endif
-            var menuItem = (MenuItem)sender;
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            if (menuItem is null) { return; }
-#if DEBUG
-            Debug.Assert(menuItem != null, nameof(menuItem) + " != null");
-            Debug.Assert(menuItem.DataContext != null, "menuItem.DataContext != null");
-#endif
-            var galleryItem = (GalleryThumbInfo.GalleryThumbHolder)menuItem.DataContext;
+            if (vm.GalleryItems.Count <= vm.ImageIterator.Index)
+            {
+                return;
+            }
+
+            var galleryItem = vm.GalleryItems[vm.ImageIterator.Index];
             FileDeletionHelper.DeleteFileWithErrorMsg(galleryItem.FileLocation, recycle: true);
 
             vm.GalleryItems.Remove(galleryItem); // TODO: rewrite file system watcher to delete gallery items
@@ -39,17 +34,12 @@ namespace PicView.Avalonia.Gallery
 
         public static void OpenWithItem(object sender, MainViewModel vm)
         {
-#if DEBUG
-            Debug.Assert(sender != null, nameof(sender) + " != null");
-#endif
-            var menuItem = (MenuItem)sender;
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            if (menuItem is null) { return; }
-#if DEBUG
-            Debug.Assert(menuItem != null, nameof(menuItem) + " != null");
-            Debug.Assert(menuItem.DataContext != null, "menuItem.DataContext != null");
-#endif
-            var galleryItem = (GalleryThumbInfo.GalleryThumbHolder)menuItem.DataContext;
+            if (vm.GalleryItems.Count <= vm.ImageIterator.Index)
+            {
+                return;
+            }
+
+            var galleryItem = vm.GalleryItems[vm.ImageIterator.Index];
             vm.PlatformService.OpenWith(galleryItem.FileLocation);
         }
 

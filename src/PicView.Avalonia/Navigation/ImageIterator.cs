@@ -256,17 +256,18 @@ namespace PicView.Avalonia.Navigation
             
             FileAdded?.Invoke(this, e);
             
-            if (_vm.GalleryItems.Count > 0)
+            if (_vm.GalleryItems.Count > 0 && _vm.ImageIterator.Index < _vm.GalleryItems.Count)
             {
-                var newFileInfo = new FileInfo(Pics[index]);
-                var avaloniaImage = await ThumbnailHelper.GetThumb(newFileInfo, (int)_vm.GalleryItemSize);
-                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(0, avaloniaImage as GalleryThumbInfo.IImageSource, newFileInfo);
-                if (_vm.GalleryItems.Contains(thumbData))
+                var galleryItem = _vm.GalleryItems[_vm.ImageIterator.Index];
+                if (_vm.GalleryItems.Contains(galleryItem))
                 {
                     return;
                 }
-                _vm.GalleryItems.Add(thumbData);
-                _vm.GalleryItems.Move(_vm.GalleryItems.IndexOf(thumbData), Index);
+                var newFileInfo = new FileInfo(Pics[index]);
+                var galleryViewModel = new GalleryViewModel(_vm.GalleryItemSize);
+                galleryViewModel.ImageSource = await ThumbnailHelper.GetThumb(newFileInfo, (int)galleryViewModel.GalleryItemSize);
+                _vm.GalleryItems.Add(galleryViewModel);
+                _vm.GalleryItems.Move(_vm.GalleryItems.IndexOf(galleryViewModel), Index);
             }
         }
 
@@ -352,7 +353,7 @@ namespace PicView.Avalonia.Navigation
                 {
                     if (vm.GalleryItems.Count > 0 && Index < vm.GalleryItems.Count - 1)
                     {
-                        vm.SelectedGalleryItem = vm.GalleryItems[Index];
+                        vm.SelectedGalleryItemIndex = Index;
                         GalleryNavigation.CenterScrollToSelectedItem(vm);
                     }
                 }
@@ -491,7 +492,7 @@ namespace PicView.Avalonia.Navigation
             {
                 if (vm.GalleryItems.Count > 0 && Index < vm.GalleryItems.Count - 1)
                 {
-                    vm.SelectedGalleryItem = vm.GalleryItems[Index];
+                    vm.SelectedGalleryItemIndex = Index;
                 }
             }
             vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);

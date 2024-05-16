@@ -90,13 +90,3 @@ public static class ImageHelper
         }
     }
 }
-
-public class AvaloniaImageSource(Bitmap bitmap) : GalleryThumbInfo.IImageSource
-{
-    private readonly Bitmap _bitmap = bitmap ?? throw new ArgumentNullException(nameof(bitmap));
-
-    public object GetPlatformImageSource()
-    {
-        return _bitmap;
-    }
-}

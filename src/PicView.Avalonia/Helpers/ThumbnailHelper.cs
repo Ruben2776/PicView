@@ -5,7 +5,7 @@ namespace PicView.Avalonia.Helpers;
 
 public static class ThumbnailHelper
 {
-    public static async Task<object?> GetThumb(FileInfo fileInfo, int height)
+    public static async Task<Bitmap?> GetThumb(FileInfo fileInfo, int height)
     {
         try
         {
@@ -24,15 +24,14 @@ public static class ThumbnailHelper
 
             var byteArray = thumbnail.ToByteArray();
             var stream = new MemoryStream(byteArray);
-            var bmp = new Bitmap(stream);
-            return new AvaloniaImageSource(bmp);
+            return new Bitmap(stream);
         }
         catch (Exception)
         {
             return null;
         }
         
-        async Task<object> CreateThumb(IMagickImage magick)
+        async Task<Bitmap> CreateThumb(IMagickImage magick)
         {
             if (fileInfo.Length >= 2147483648)
             {
@@ -53,8 +52,7 @@ public static class ThumbnailHelper
             await using var memoryStream = new MemoryStream();
             await magick.WriteAsync(memoryStream);
             memoryStream.Position = 0;
-            var bmp = new Bitmap(memoryStream);
-            return new AvaloniaImageSource(bmp);
+            return new Bitmap(memoryStream);
         }
     }
 }

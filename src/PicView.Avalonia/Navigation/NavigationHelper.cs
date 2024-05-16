@@ -119,7 +119,7 @@ public static class NavigationHelper
     {
         if (vm.GalleryItems is not null && vm.GalleryItems.Count > index)
         {
-            vm.SelectedGalleryItem = vm.GalleryItems[index];
+            vm.SelectedGalleryItemIndex = index;
             var source = vm.GalleryItems[index].ImageSource;
             if (source is null)
             {
@@ -128,7 +128,6 @@ public static class NavigationHelper
             await vm.ImageViewer.SetImage(source, ImageType.Bitmap);
             return;
         }
-        vm.SelectedGalleryItem = null;
         using var image = new MagickImage();
         image.Ping(vm.ImageIterator.Pics[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();

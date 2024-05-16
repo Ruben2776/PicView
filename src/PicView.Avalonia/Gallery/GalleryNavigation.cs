@@ -31,15 +31,10 @@ public static class GalleryNavigation
         return;
         void ScrollToSelected()
         {
-            // var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-            // var mainGrid = mainView.GetControl<Panel>("MainGrid");
-            // var galleryView = mainGrid.GetControl<GalleryView>("GalleryView");
-            // var galleryListbox = galleryView.GetControl<ListBox>("GalleryListBox");
-            // var galleryItems = galleryListbox.Items.Source;
-            // var scrollViewer = galleryListbox.Scroll;
-            // var size = galleryListbox.Bounds;
-            // var center = galleryListbox.TransformToVisual(scrollViewer).Value.Transform(new Point(size.Width / 2, size.Height / 2));
-            // scrollPresenter.Offset = new Vector(center.X + scrollPresenter.Offset.X, center.Y + scrollPresenter.Offset.Y);   
+            var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+            var mainGrid = mainView.GetControl<Panel>("MainGrid");
+            var galleryView = mainGrid.GetControl<GalleryView>("GalleryView");
+            galleryView.GalleryListBox.ScrollIntoView(vm.ImageIterator.Index);
             
         }
     }

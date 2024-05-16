@@ -34,21 +34,21 @@ namespace PicView.Avalonia.ViewModels
         public readonly IPlatformSpecificService? PlatformService;
 
         #region Gallery
+        
+        private ObservableCollection<GalleryViewModel>? _galleryItems;
 
-        private ObservableCollection<GalleryThumbHolder>? _galleryItems;
-
-        public ObservableCollection<GalleryThumbHolder>? GalleryItems
+        public ObservableCollection<GalleryViewModel>? GalleryItems
         {
             get => _galleryItems;
             set => this.RaiseAndSetIfChanged(ref _galleryItems, value);
         }
 
-        private GalleryThumbHolder? _selectedGalleryItem;
+        private int _selectedGalleryItemIndex;
 
-        public GalleryThumbHolder? SelectedGalleryItem
+        public int SelectedGalleryItemIndex
         {
-            get => _selectedGalleryItem;
-            set => this.RaiseAndSetIfChanged(ref _selectedGalleryItem, value);
+            get => _selectedGalleryItemIndex;
+            set => this.RaiseAndSetIfChanged(ref _selectedGalleryItemIndex, value);
         }
 
         private VerticalAlignment _galleryVerticalAlignment;
