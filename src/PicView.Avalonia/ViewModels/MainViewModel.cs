@@ -1454,26 +1454,14 @@ namespace PicView.Avalonia.ViewModels
 
         public MainViewModel(IPlatformSpecificService? platformSpecificService)
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-
             FunctionsHelper.Vm = this;
             PlatformService = platformSpecificService;
 
             #region Window commands
 
-            ExitCommand = ReactiveCommand.Create(desktop.MainWindow.Close);
-            MinimizeCommand = ReactiveCommand.Create(() =>
-                desktop.MainWindow.WindowState = WindowState.Minimized);
-            MaximizeCommand = ReactiveCommand.Create(() =>
-            {
-                desktop.MainWindow.WindowState = desktop.MainWindow.WindowState == WindowState.Normal
-                    ? WindowState.Maximized
-                    : WindowState.Normal;
-            });
-            
+            ExitCommand = ReactiveCommand.CreateFromTask(WindowHelper.Close);
+            MinimizeCommand = ReactiveCommand.CreateFromTask(WindowHelper.Minimize);
+            MaximizeCommand = ReactiveCommand.CreateFromTask(WindowHelper.MaximizeRestore);
             ToggleFullscreenCommand = ReactiveCommand.Create(FunctionsHelper.Fullscreen);
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
@@ -1563,16 +1551,7 @@ namespace PicView.Avalonia.ViewModels
 
             OpenFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Open);
 
-            OpenLastFileCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var lastFile = SettingsHelper.Settings.StartUp.LastFile;
-                if (string.IsNullOrEmpty(lastFile))
-                {
-                    return;
-                }
-
-                await LoadPicFromString(lastFile);
-            });
+            OpenLastFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenLastFile);
 
             SaveFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Save);
 

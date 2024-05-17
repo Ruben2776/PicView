@@ -4,6 +4,7 @@ using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
 using System.Runtime.InteropServices;
+using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.Views;
 
@@ -49,6 +50,7 @@ public partial class ShortcutsView : UserControl
         {
             return;
         }
-        vm.ShowKeybindingsWindowCommand.Execute(null);
+
+        await FunctionsHelper.KeybindingsWindow();
     }
 }

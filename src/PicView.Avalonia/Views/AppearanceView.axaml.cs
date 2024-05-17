@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Localization;
@@ -78,10 +79,9 @@ public partial class AppearanceView : UserControl
                         return;
                     }
                     window.Close();
-
-                    vm.ShowSettingsWindowCommand.Execute(null);
                 });
 
+                await FunctionsHelper.SettingsWindow();
                 await SettingsHelper.SaveSettingsAsync();
             };
         }

@@ -529,7 +529,7 @@ public static class FunctionsHelper
 
     public static Task ImageInfoWindow()
     {
-        Vm.ShowExifWindowCommand.Execute(null);
+        Vm.PlatformService.ShowExifWindow();
         return Task.CompletedTask;
     }
 
@@ -540,7 +540,7 @@ public static class FunctionsHelper
 
     public static Task SettingsWindow()
     {
-        Vm?.ShowSettingsWindowCommand.Execute(null);
+        Vm?.PlatformService.ShowSettingsWindow();
         return Task.CompletedTask;
     }
     
@@ -595,6 +595,21 @@ public static class FunctionsHelper
     #endregion
 
     #region File funnctions
+
+    public static async Task OpenLastFile()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        var lastFile = SettingsHelper.Settings.StartUp.LastFile;
+        if (string.IsNullOrEmpty(lastFile))
+        {
+            return;
+        }
+
+        await Vm.LoadPicFromString(lastFile);
+    }
     
     public static async Task Print()
     {

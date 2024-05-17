@@ -186,6 +186,48 @@ public static class WindowHelper
 
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
+    
+    public static async Task MaximizeRestore()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (SettingsHelper.Settings.WindowProperties.Maximized)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => 
+                desktop.MainWindow.WindowState = WindowState.Normal);
+            SettingsHelper.Settings.WindowProperties.Maximized = false;
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => 
+                desktop.MainWindow.WindowState = WindowState.Maximized);
+            SettingsHelper.Settings.WindowProperties.Maximized = true;
+        }
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    public static async Task Minimize()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() => 
+            desktop.MainWindow.WindowState = WindowState.Maximized);
+    }
+    
+    public static async Task Close()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() => 
+            desktop.MainWindow.Close());
+    }
 
     public static async Task ToggleUI(MainViewModel vm)
     {
