@@ -86,10 +86,7 @@ public static class StartUpHelper
 
         if (vm.GalleryItemSize <= 0)
         {
-            var screen = ScreenHelper.GetScreen(desktop.MainWindow);
-            var size = Math.Min(SettingsHelper.Settings.Gallery.BottomGalleryItemSize,
-                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize);
-            vm.GalleryItemSize = screen.WorkingArea.Height / size;
+            GalleryFunctions.SetGalleryItemSize(vm);
         }
 
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
@@ -104,5 +101,6 @@ public static class StartUpHelper
 
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUp(e).ConfigureAwait(false);
+        w.PointerPressed += async (_, e) => await MouseShortcuts.MainWindow_PointerPressed(e).ConfigureAwait(false);
     }
 }

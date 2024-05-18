@@ -258,16 +258,26 @@ namespace PicView.Avalonia.Navigation
             
             if (_vm.GalleryItems.Count > 0 && _vm.ImageIterator.Index < _vm.GalleryItems.Count)
             {
-                var galleryItem = _vm.GalleryItems[_vm.ImageIterator.Index];
-                if (_vm.GalleryItems.Contains(galleryItem))
+                var galleryViewModel = new GalleryViewModel(_vm.GalleryItemSize);
+                galleryViewModel.ImageSource = await ThumbnailHelper.GetThumb(fileInfo, (int)galleryViewModel.GalleryItemSize);
+                var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(0, null, fileInfo);
+                galleryViewModel.FileLocation = galleryThumbInfo.FileLocation;
+                galleryViewModel.FileDate = galleryThumbInfo.FileDate;
+                galleryViewModel.FileSize = galleryThumbInfo.FileSize;
+                galleryViewModel.FileName = galleryThumbInfo.FileName;
+                if (_vm.GalleryItems.Contains(galleryViewModel))
                 {
                     return;
                 }
-                var newFileInfo = new FileInfo(Pics[index]);
-                var galleryViewModel = new GalleryViewModel(_vm.GalleryItemSize);
-                galleryViewModel.ImageSource = await ThumbnailHelper.GetThumb(newFileInfo, (int)galleryViewModel.GalleryItemSize);
-                _vm.GalleryItems.Add(galleryViewModel);
-                _vm.GalleryItems.Move(_vm.GalleryItems.IndexOf(galleryViewModel), Index);
+
+                try
+                {
+                    _vm.GalleryItems.Insert(_vm.ImageIterator.Pics.IndexOf(fileInfo.FullName), galleryViewModel);
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
             }
         }
 

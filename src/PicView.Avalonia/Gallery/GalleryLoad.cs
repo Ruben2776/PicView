@@ -47,9 +47,9 @@ public static class GalleryLoad
         {
             await Loop(0, viewModel.ImageIterator.Pics.Count, cancellationToken);
             
+            const int batchSize = 25;
             var maxDegreeOfParallelism = Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : 2;
             ParallelOptions options = new() { MaxDegreeOfParallelism = maxDegreeOfParallelism };
-            const int batchSize = 25;
             
             for (var start = 0; start < viewModel.ImageIterator.Pics.Count; start += batchSize)
             {
@@ -80,7 +80,6 @@ public static class GalleryLoad
         {
             for (var i = startIndex; i < endIndex; i++)
             {
-                await Task.Delay(3, cancellationToken).ConfigureAwait(false);
                 if (currentDirectory != _currentDirectory || ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -95,8 +94,17 @@ public static class GalleryLoad
                 galleryViewModel.FileDate = thumbData.FileDate;
                 galleryViewModel.FileSize = thumbData.FileSize;
                 galleryViewModel.FileName = thumbData.FileName;
-                viewModel.GalleryItems.Add(galleryViewModel);
-                
+                try
+                {
+                    viewModel.GalleryItems.Add(galleryViewModel);
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Trace.WriteLine(e.ToString());
+#endif
+                }
+                await Task.Delay(5, cancellationToken);
                 if (i == viewModel.ImageIterator.Index)
                 {
                     viewModel.SelectedGalleryItemIndex = i;

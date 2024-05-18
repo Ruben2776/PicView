@@ -1,26 +1,25 @@
 <Window
-    x:Class="PicView.Avalonia.Win32.Views.WinMainWindow"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
-    xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
-    Title="{Binding WindowTitle}"
-    MinWidth="475"
-    MinHeight="400"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:DataType="viewModels:MainViewModel"
     CanResize="{Binding CanResize}"
     CornerRadius="8"
     Icon="/icon.ico"
+    MinHeight="400"
+    MinWidth="475"
     SizeChanged="Control_OnSizeChanged"
     SizeToContent="{Binding SizeToContent}"
+    Title="{Binding WindowTitle}"
     TransparencyLevelHint="AcrylicBlur"
-    mc:Ignorable="d">
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Win32.Views.WinMainWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -30,9 +29,9 @@
         BorderThickness="1"
         CornerRadius="8">
         <DockPanel LastChildFill="True">
-            <views1:WinTitleBar x:Name="TitleBar" DockPanel.Dock="Top" />
-            <views:BottomBar x:Name="BottomBar" DockPanel.Dock="Bottom" />
-            <views:MainView x:Name="MainView" Background="{StaticResource NoisyTexture}" />
+            <views1:WinTitleBar DockPanel.Dock="Top" x:Name="TitleBar" />
+            <views:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
+            <views:MainView Background="{StaticResource NoisyTexture}" x:Name="MainView" />
         </DockPanel>
     </Border>
 </Window>

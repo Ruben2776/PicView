@@ -1,5 +1,5 @@
 <UserControl
-    Height="26"
+    Height="{CompiledBinding BottombarHeight}"
     IsVisible="{Binding IsBottomToolbarShown}"
     d:DesignHeight="450"
     d:DesignWidth="800"

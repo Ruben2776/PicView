@@ -63,7 +63,7 @@ namespace PicView.Avalonia.Gallery
                     OpenFullGallery(vm);
                 }
                 
-                SetGalleryItemSize(vm);
+                //SetGalleryItemSize(vm);
                 return;
             }
             
@@ -176,8 +176,8 @@ namespace PicView.Avalonia.Gallery
             }
 
             var screen = ScreenHelper.GetScreen(desktop.MainWindow);
-            var size = IsBottomGalleryOpen ? SettingsHelper.Settings.Gallery.BottomGalleryItemSize :
-                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+            var size = Math.Min(SettingsHelper.Settings.Gallery.BottomGalleryItemSize,
+                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize);
             vm.GalleryItemSize = screen.WorkingArea.Height / size;
         }
     }

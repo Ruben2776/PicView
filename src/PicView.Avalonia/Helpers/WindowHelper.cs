@@ -300,11 +300,11 @@ public static class WindowHelper
         }
         var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
-        var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? 32 : 0; // Height of the titlebar, TODO get actual size
+        var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? vm.TitlebarHeight : 0;
         var uiBottomSize =
             SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
-                ? 28 : 0;
-        var galleryHeight = GalleryFunctions.IsBottomGalleryOpen ? vm.GalleryItemSize + 36 : 0;
+                ? vm.BottombarHeight : 0;
+        var galleryHeight = GalleryFunctions.IsBottomGalleryOpen ? vm.GalleryItemSize + vm.BottombarHeight : 0;
         if (Dispatcher.UIThread.CheckAccess())
         {
             desktopMinWidth = desktop.MainWindow.MinWidth;

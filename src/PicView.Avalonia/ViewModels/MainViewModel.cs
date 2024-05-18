@@ -22,7 +22,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reactive;
 using System.Windows.Input;
-using static PicView.Core.Gallery.GalleryThumbInfo;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -398,6 +397,9 @@ namespace PicView.Avalonia.ViewModels
         }
 
         #endregion Booleans
+
+        public int TitlebarHeight  { get {return 32;} }
+        public int BottombarHeight { get {return 26;} }
 
         private int _scaleX = 1;
 
