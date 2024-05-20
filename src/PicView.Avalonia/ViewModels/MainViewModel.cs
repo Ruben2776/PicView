@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reactive;
 using System.Windows.Input;
+using Avalonia.Media;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -33,15 +34,15 @@ namespace PicView.Avalonia.ViewModels
         public readonly IPlatformSpecificService? PlatformService;
 
         #region Gallery
-        
-        private ObservableCollection<GalleryViewModel>? _galleryItems;
 
-        public ObservableCollection<GalleryViewModel>? GalleryItems
+        private Stretch _galleryStretch;
+
+        public Stretch GalleryStretch
         {
-            get => _galleryItems;
-            set => this.RaiseAndSetIfChanged(ref _galleryItems, value);
+            get => _galleryStretch; 
+            set => this.RaiseAndSetIfChanged(ref _galleryStretch, value);
         }
-
+        
         private int _selectedGalleryItemIndex;
 
         public int SelectedGalleryItemIndex

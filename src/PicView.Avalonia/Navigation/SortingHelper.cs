@@ -27,10 +27,10 @@ public static class SortingHelper
         }
         else return;
 
-        if (vm.GalleryItems.Count > 0)
-        {
-            SortGalleryItems(files, vm, platformSpecificService);
-        }
+        // if (vm.GalleryItems.Count > 0)
+        // {
+        //     SortGalleryItems(files, vm, platformSpecificService);
+        // }
     }
 
     public static async Task UpdateFileList(IPlatformSpecificService? platformSpecificService, MainViewModel vm, bool ascending)
@@ -49,22 +49,22 @@ public static class SortingHelper
         }
         else return;
 
-        if (vm.GalleryItems.Count > 0)
-        {
-            SortGalleryItems(files, vm, platformSpecificService);
-        }
+        // if (vm.GalleryItems.Count > 0)
+        // {
+        //     SortGalleryItems(files, vm, platformSpecificService);
+        // }
     }
 
     public static void SortGalleryItems(List<string> files, MainViewModel vm, IPlatformSpecificService? platformSpecificService)
     {
         var sortedFiles = SortHelper.SortIEnumerable(files, platformSpecificService);
-        var tempList = vm.GalleryItems;
-
-        vm.GalleryItems.Clear();
-
-        foreach (var file in sortedFiles)
-        {
-            vm.GalleryItems.Add(tempList.Where(x => x.FileName == file));
-        }
+        // var tempList = vm.GalleryItems;
+        //
+        // vm.GalleryItems.Clear();
+        //
+        // foreach (var file in sortedFiles)
+        // {
+        //     vm.GalleryItems.Add(tempList.Where(x => x.FileName == file));
+        // }
     }
 }

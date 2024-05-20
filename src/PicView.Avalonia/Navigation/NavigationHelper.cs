@@ -117,17 +117,17 @@ public static class NavigationHelper
 
     public static async Task LoadingPreview(int index, MainViewModel vm)
     {
-        if (vm.GalleryItems is not null && vm.GalleryItems.Count > index)
-        {
-            vm.SelectedGalleryItemIndex = index;
-            var source = vm.GalleryItems[index].ImageSource;
-            if (source is null)
-            {
-                return;
-            }
-            await vm.ImageViewer.SetImage(source, ImageType.Bitmap);
-            return;
-        }
+        // if (vm.GalleryItems is not null && vm.GalleryItems.Count > index)
+        // {
+        //     vm.SelectedGalleryItemIndex = index;
+        //     var source = vm.GalleryItems[index].ImageSource;
+        //     if (source is null)
+        //     {
+        //         return;
+        //     }
+        //     await vm.ImageViewer.SetImage(source, ImageType.Bitmap);
+        //     return;
+        // }
         using var image = new MagickImage();
         image.Ping(vm.ImageIterator.Pics[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();

@@ -256,7 +256,7 @@ namespace PicView.Avalonia.Navigation
             
             FileAdded?.Invoke(this, e);
             
-            if (_vm.GalleryItems.Count > 0 && _vm.ImageIterator.Index < _vm.GalleryItems.Count)
+            /*if (_vm.GalleryItems.Count > 0 && _vm.ImageIterator.Index < _vm.GalleryItems.Count)
             {
                 var galleryViewModel = new GalleryViewModel(_vm.GalleryItemSize);
                 galleryViewModel.ImageSource = await ThumbnailHelper.GetThumb(fileInfo, (int)galleryViewModel.GalleryItemSize);
@@ -278,7 +278,7 @@ namespace PicView.Avalonia.Navigation
                 {
                     Console.WriteLine(exception);
                 }
-            }
+            }*/
         }
 
         public async Task LoadNextPic(NavigateTo navigateTo, MainViewModel vm)
@@ -359,14 +359,7 @@ namespace PicView.Avalonia.Navigation
                     WindowHelper.CenterWindowOnScreen(false);
                 }
 
-                if (vm.GalleryItems is not null)
-                {
-                    if (vm.GalleryItems.Count > 0 && Index < vm.GalleryItems.Count - 1)
-                    {
-                        vm.SelectedGalleryItemIndex = Index;
-                        GalleryNavigation.CenterScrollToSelectedItem(vm);
-                    }
-                }
+                vm.SelectedGalleryItemIndex = Index;
 
                 await AddAsync(Index, preLoadValue?.ImageModel);
                 await Preload();
@@ -498,13 +491,7 @@ namespace PicView.Avalonia.Navigation
 
             await vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
             WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
-            if (vm.GalleryItems is not null)
-            {
-                if (vm.GalleryItems.Count > 0 && Index < vm.GalleryItems.Count - 1)
-                {
-                    vm.SelectedGalleryItemIndex = Index;
-                }
-            }
+            vm.SelectedGalleryItemIndex = Index;
             vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
             vm.GetIndex = Index + 1;
 

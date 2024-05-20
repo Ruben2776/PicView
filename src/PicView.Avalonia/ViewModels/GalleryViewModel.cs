@@ -10,30 +10,6 @@ namespace PicView.Avalonia.ViewModels;
 
 public class GalleryViewModel : ViewModelBase
 {
-    public GalleryViewModel(double galleryItemSize)
-    {
-        GalleryItemSize = galleryItemSize;
-
-        try
-        {
-            Print = TranslationHelper.GetTranslation("Print");
-            OpenWith = TranslationHelper.GetTranslation("OpenWith");
-            ShowInFolder = TranslationHelper.GetTranslation("ShowInFolder");
-            SetAsWallpaper = TranslationHelper.GetTranslation("SetAsWallpaper");
-            SetAsLockScreenImage = TranslationHelper.GetTranslation("SetAsLockScreenImage");
-            CopyFile = TranslationHelper.GetTranslation("CopyFile");
-            CopyImage = TranslationHelper.GetTranslation("CopyImage");
-            Copy = TranslationHelper.GetTranslation("Copy");
-            FileCut = TranslationHelper.GetTranslation("FileCut");
-            DeleteFile = TranslationHelper.GetTranslation("DeleteFile");
-        }
-        catch (Exception e)
-        {
-#if DEBUG
-            Trace.WriteLine(e.ToString());
-#endif
-        }
-    }
     private string? _fileLocation;
     public string? FileLocation
     {
@@ -60,20 +36,5 @@ public class GalleryViewModel : ViewModelBase
     {
         get => _fileDate;
         set => this.RaiseAndSetIfChanged(ref _fileDate, value);
-    }
-    
-    private Bitmap? _imageSource;
-    public Bitmap? ImageSource
-    {
-        get => _imageSource;
-        set => this.RaiseAndSetIfChanged(ref _imageSource, value);
-    }
-    
-    private double _galleryItemSize;
-
-    public double GalleryItemSize
-    {
-        get => _galleryItemSize;
-        set => this.RaiseAndSetIfChanged(ref _galleryItemSize, value);
     }
 }

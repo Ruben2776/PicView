@@ -15,6 +15,7 @@ using Avalonia.Media.Imaging;
 using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
 using Avalonia.Svg.Skia;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 
 namespace PicView.Avalonia.Views;
@@ -86,13 +87,7 @@ public partial class ImageViewer : UserControl
 
         void Set()
         {
-            MainImage.Source = imageType switch
-            {
-                ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string, null) },
-                ImageType.Bitmap => image as Bitmap,
-                ImageType.AnimatedBitmap => image as Bitmap,
-                _ => MainImage.Source
-            };
+            ImageHelper.SetImage(image, MainImage, imageType);
 
             if (_isZoomed)
             {

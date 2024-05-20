@@ -1,62 +1,82 @@
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
+using Avalonia.Svg.Skia;
 using ImageMagick;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Core.FileHandling;
-using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Helpers;
 
 public static class ImageHelper
 {
-    public static async Task<ImageModel> GetImageModelAsync(FileInfo fileInfo)
+    public static async Task<ImageModel?> GetImageModelAsync(FileInfo fileInfo, bool isThumb = false, int height = 0)
     {
         var imageModel = new ImageModel
         {
             FileInfo = fileInfo
         };
-        switch (fileInfo.Extension.ToLower())
+        try
         {
-            case ".gif":
-            case ".png":
-            case ".webp":
-            case ".jpg":
-            case ".jpeg":
-            case ".jpe":
-            case ".bmp":
-            case ".jfif":
-            case ".ico":
-            case ".wbmp":
+            switch (fileInfo.Extension.ToLower())
+            {
+                case ".gif":
+                case ".png":
+                case ".webp":
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".bmp":
+                case ".jfif":
+                case ".ico":
+                case ".wbmp":
                 {
+                    if (isThumb)
+                    {
+                        await AddThumb().ConfigureAwait(false);
+                        return imageModel;
+                    }
                     var bytes = await FileHelper.GetBytesFromFile(fileInfo.FullName).ConfigureAwait(false);
                     using var memoryStream = new MemoryStream(bytes);
                     Add(memoryStream);
                     return imageModel;
                 }
 
-            case ".svg":
-            case ".svgz":
-                imageModel.Image = fileInfo.FullName;
-                var svg = new MagickImage();
-                svg.Ping(fileInfo.FullName);
-                imageModel.PixelWidth = svg.Width;
-                imageModel.PixelHeight = svg.Height;
-                imageModel.ImageType = ImageType.Svg;
-                return imageModel;
+                case ".svg":
+                case ".svgz":
+                    imageModel.Image = fileInfo.FullName;
+                    var svg = new MagickImage();
+                    svg.Ping(fileInfo.FullName);
+                    imageModel.PixelWidth = svg.Width;
+                    imageModel.PixelHeight = svg.Height;
+                    imageModel.ImageType = ImageType.Svg;
+                    return imageModel;
 
-            case ".b64":
+                case ".b64":
                 {
                     using var magickImage = await ImageDecoder.Base64ToMagickImage(fileInfo.FullName).ConfigureAwait(false);
                     using var b64Stream = new MemoryStream();
-                    await magickImage.WriteAsync(b64Stream);
-                    b64Stream.Position = 0;
+                    if (isThumb)
+                    {
+                        magickImage.Thumbnail(0, height);
+                    }
+                    else
+                    {
+                        await magickImage.WriteAsync(b64Stream);
+                        b64Stream.Position = 0;
+                    }
                     Add(b64Stream);
                     return imageModel;
                 }
 
-            default:
+                default:
                 {
+                    if (isThumb)
+                    {
+                        await AddThumb().ConfigureAwait(false);
+                        return imageModel;
+                    }
                     using var magickImage = new MagickImage();
                     if (imageModel.FileInfo.Length >= 2147483648)
                     {
@@ -77,16 +97,100 @@ public static class ImageHelper
                     memoryStream.Position = 0;
                     Add(memoryStream);
                 }
-                return imageModel;
+                    return imageModel;
 
-                void Add(Stream stream)
-                {
-                    var bmp = new Bitmap(stream);
-                    imageModel.Image = bmp;
-                    imageModel.PixelWidth = bmp.PixelSize.Width;
-                    imageModel.PixelHeight = bmp.PixelSize.Height;
-                    imageModel.ImageType = ImageType.Bitmap;
-                }
+                    void Add(Stream stream)
+                    {
+                        var bmp = new Bitmap(stream);
+                        imageModel.Image = bmp;
+                        imageModel.PixelWidth = bmp.PixelSize.Width;
+                        imageModel.PixelHeight = bmp.PixelSize.Height;
+                        imageModel.ImageType = ImageType.Bitmap;
+                    }
+
+                    async Task AddThumb()
+                    {
+                        var thumb = await GetThumb(fileInfo, height).ConfigureAwait(false);
+                        imageModel.Image = thumb;
+                        imageModel.PixelWidth = thumb.PixelSize.Width;
+                        imageModel.PixelHeight = thumb.PixelSize.Height;
+                        imageModel.ImageType = ImageType.Bitmap;
+                    }
+            }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new ImageModel
+            {
+                FileInfo = fileInfo,
+                ImageType = ImageType.Invalid,
+                Image = null, // TODO replace with error image
+                PixelHeight = 0,
+                PixelWidth = 0,
+                EXIFOrientation = EXIFHelper.EXIFOrientation.None
+            };
+        }
+    }
+    
+    public static async Task<Bitmap?> GetThumb(FileInfo fileInfo, int height)
+    {
+        try
+        {
+            using var magick = new MagickImage();
+            magick.Ping(fileInfo.FullName);
+            var profile = magick.GetExifProfile();
+            if (profile == null)
+            {
+                return await CreateThumb(magick).ConfigureAwait(false);
+            }
+            var thumbnail = profile.CreateThumbnail();
+            if (thumbnail == null)
+            {
+                return await CreateThumb(magick).ConfigureAwait(false);
+            }
+
+            var byteArray = thumbnail.ToByteArray();
+            var stream = new MemoryStream(byteArray);
+            return new Bitmap(stream);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+        async Task<Bitmap> CreateThumb(IMagickImage magick)
+        {
+            if (fileInfo.Length >= 2147483648)
+            {
+                await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
+                    FileShare.ReadWrite, 4096, true);
+                // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+                // ReSharper disable once MethodHasAsyncOverload
+                magick.Read(fileStream);
+            }
+            else
+            {
+                await magick.ReadAsync(fileInfo.FullName);
+            }
+
+            var geometry = new MagickGeometry(0, height);
+            magick.Thumbnail(geometry);
+            magick.Format = MagickFormat.Png;
+            await using var memoryStream = new MemoryStream();
+            await magick.WriteAsync(memoryStream);
+            memoryStream.Position = 0;
+            return new Bitmap(memoryStream);
+        }
+    }
+    
+    public static void SetImage(object image, Image imageControl, ImageType imageType)
+    {
+        imageControl.Source = imageType switch
+        {
+            ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string, null) },
+            ImageType.Bitmap => image as Bitmap,
+            ImageType.AnimatedBitmap => image as Bitmap,
+            _ => imageControl.Source
+        };
     }
 }

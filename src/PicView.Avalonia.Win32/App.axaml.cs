@@ -1,9 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;

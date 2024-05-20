@@ -1,9 +1,14 @@
 ﻿#if DEBUG
 using System.Diagnostics;
 #endif
-using System.Collections.ObjectModel;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
 
 namespace PicView.Avalonia.Gallery;
@@ -20,48 +25,60 @@ public static class GalleryLoad
         {
             return;
         }
-
-        if (viewModel.GalleryItems == null)
+        
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
-            viewModel.GalleryItems = new ObservableCollection<GalleryViewModel>();
+            return;
         }
-        else if (viewModel.GalleryItems.Count > 0)
+
+        MainView? mainView;
+        ListBox? galleryListBox = null;
+        
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+            galleryListBox = mainView.GalleryView.GalleryListBox;
+        });
+
+        if (IsLoading)
         {
             if (string.IsNullOrEmpty(_currentDirectory) || currentDirectory == _currentDirectory)
             {
                 return;
             }
-            viewModel.GalleryItems.Clear();
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                galleryListBox?.Items.Clear();
+            });
         }
-        
         // ReSharper disable once MethodHasAsyncOverload
         _cancellationTokenSource?.Cancel();
         _cancellationTokenSource = new CancellationTokenSource();
         _currentDirectory = currentDirectory;
         IsLoading = true;
-
-        var fileInfos = new FileInfo[viewModel.ImageIterator.Pics.Count];
         var cancellationToken = _cancellationTokenSource.Token;
-        
+        var index = viewModel.ImageIterator.Index;
+
         try
         {
             await Loop(0, viewModel.ImageIterator.Pics.Count, cancellationToken);
-            
-            const int batchSize = 25;
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                galleryListBox.ScrollIntoView(viewModel.SelectedGalleryItemIndex);
+            });
+
             var maxDegreeOfParallelism = Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : 2;
             ParallelOptions options = new() { MaxDegreeOfParallelism = maxDegreeOfParallelism };
-            
-            for (var start = 0; start < viewModel.ImageIterator.Pics.Count; start += batchSize)
-            {
-                var end = Math.Min(start + batchSize, viewModel.ImageIterator.Pics.Count);
-                await AsyncLoop(start, end, options, cancellationToken);
-                await Task.Delay(5, cancellationToken);
-            }
+            await AsyncLoop(positive:true, index, viewModel.ImageIterator.Pics.Count, options, cancellationToken);
+            await AsyncLoop(positive:false, 0, index, options, cancellationToken);
             
         }
         catch (OperationCanceledException)
         {
-            viewModel.GalleryItems.Clear();
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                galleryListBox?.Items.Clear();
+            });
         }
         catch (Exception e)
         {
@@ -83,20 +100,31 @@ public static class GalleryLoad
                 if (currentDirectory != _currentDirectory || ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
-                    viewModel.GalleryItems.Clear();
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        galleryListBox?.Items.Clear();
+                    });
                     return;
                 }
 
-                var galleryViewModel = new GalleryViewModel(viewModel.GalleryItemSize);
-                fileInfos[i] = new FileInfo(viewModel.ImageIterator.Pics[i]);
-                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(0, null, fileInfos[i]);
-                galleryViewModel.FileLocation = thumbData.FileLocation;
-                galleryViewModel.FileDate = thumbData.FileDate;
-                galleryViewModel.FileSize = thumbData.FileSize;
-                galleryViewModel.FileName = thumbData.FileName;
                 try
                 {
-                    viewModel.GalleryItems.Add(galleryViewModel);
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        var galleryItem = new GalleryItem
+                        {
+                            DataContext = viewModel,
+                        };
+                        galleryListBox.Items.Add(galleryItem);
+                    }, DispatcherPriority.Background, ct);
+                    if (i == viewModel.ImageIterator.Index)
+                    {
+                        viewModel.SelectedGalleryItemIndex = i;
+                        await Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            galleryListBox.ScrollIntoView(viewModel.SelectedGalleryItemIndex);
+                        });
+                    }
                 }
                 catch (Exception e)
                 {
@@ -104,22 +132,49 @@ public static class GalleryLoad
                     Trace.WriteLine(e.ToString());
 #endif
                 }
-                await Task.Delay(5, cancellationToken);
-                if (i == viewModel.ImageIterator.Index)
-                {
-                    viewModel.SelectedGalleryItemIndex = i;
-                }
             }
         }
-        async Task AsyncLoop(int startIndex, int endIndex, ParallelOptions options, CancellationToken ct)
+
+        async Task AsyncLoop(bool positive, int startIndex, int endIndex, ParallelOptions options, CancellationToken ct)
         {
             await Parallel.ForAsync(startIndex, endIndex, options, async (i, _) =>
             {
                 ct.ThrowIfCancellationRequested();
-                var fileInfo = fileInfos[i];
-                var galleryViewModel = viewModel.GalleryItems[i];
-                galleryViewModel.ImageSource = await ThumbnailHelper.GetThumb(fileInfo, (int)galleryViewModel.GalleryItemSize);
-                
+
+                var fileInfo = new FileInfo(viewModel.ImageIterator.Pics[i]);
+                var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfo, isThumb: true,
+                    (int)viewModel.GalleryItemSize);
+                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, null, fileInfo);
+
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+                    var galleryListBox = mainView.GalleryView.GalleryListBox;
+                    if (galleryListBox.Items[i] is not GalleryItem galleryItem)
+                    {
+                        return;
+                    }
+
+                    if (thumbImageModel?.Image is not null)
+                    {
+                        ImageHelper.SetImage(thumbImageModel.Image, galleryItem.GalleryImage,
+                            thumbImageModel.ImageType);
+                    }
+
+                    galleryItem.FileLocation.Text = thumbData.FileLocation ?? "";
+                    galleryItem.FileDate.Text = thumbData.FileDate ?? "";
+                    galleryItem.FileSize.Text = thumbData.FileSize ?? "";
+                    galleryItem.FileName.Text = thumbData.FileName ?? "";
+                    galleryItem.PointerPressed += async (_, _) =>
+                    {
+                        if (GalleryFunctions.IsFullGalleryOpen)
+                        {
+                            await GalleryFunctions.ToggleGallery(viewModel);
+                        }
+                        await viewModel.ImageIterator.LoadPicAtIndex(i, viewModel);
+                    };
+                }, DispatcherPriority.Background, ct);
             });
         }
     }

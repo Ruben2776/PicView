@@ -65,171 +65,17 @@
                 Background="Transparent"
                 BorderThickness="0"
                 Focusable="False"
-                IsVisible="{CompiledBinding !!GalleryItems.Count}"
-                ItemsSource="{CompiledBinding GalleryItems}"
                 Padding="0"
                 PointerWheelChanged="GalleryListBox_OnPointerWheelChanged"
                 ScrollViewer.IsScrollInertiaEnabled="True"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
                 SelectedIndex="{CompiledBinding SelectedGalleryItemIndex}"
-                SelectionChanged="GalleryListBox_OnSelectionChanged"
                 x:Name="GalleryListBox">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="{CompiledBinding GalleryOrientation}" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            Background="Transparent"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Height="{CompiledBinding GalleryItemSize}"
-                            MinWidth="25"
-                            PointerPressed="InputElement_OnPointerPressed"
-                            ToolTip.HorizontalOffset="0"
-                            ToolTip.Placement="TopEdgeAlignedLeft"
-                            ToolTip.VerticalOffset="0">
-                            <Image
-                                Source="{CompiledBinding ImageSource}"
-                                Stretch="UniformToFill"
-                                x:Name="GalleryImage" />
-                            <ToolTip.Tip>
-                                <StackPanel>
-                                    <TextBlock
-                                        Classes="txt"
-                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        FontSize="14"
-                                        Margin="0,0,0,2"
-                                        Text="{CompiledBinding FileName}" />
-                                    <TextBlock
-                                        Classes="txt"
-                                        Margin="0,0,0,2"
-                                        Text="{CompiledBinding FileLocation}" />
-                                    <TextBlock
-                                        Classes="txt"
-                                        Margin="0,0,0,2"
-                                        Text="{CompiledBinding FileSize}" />
-                                    <TextBlock Classes="txt" Text="{CompiledBinding FileDate}" />
-                                </StackPanel>
-                            </ToolTip.Tip>
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="{CompiledBinding Print}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource PrintGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Click="OpenWithItem" Header="{CompiledBinding OpenWith}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource OpenWithGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="{CompiledBinding ShowInFolder}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource ShowInFolderGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <Separator />
-                                    <MenuItem Header="{CompiledBinding SetAsWallpaper}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource PanoramaGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="{CompiledBinding SetAsLockScreenImage}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource PanoramaGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <Separator />
-                                    <MenuItem Header="{CompiledBinding CopyFile}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource CopyGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="{CompiledBinding CopyImage}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource CopyGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <MenuItem.Header>
-                                            <TextBlock>
-                                                <Run Text="{CompiledBinding Copy}" />
-                                                <Run Text=" + base64" />
-                                            </TextBlock>
-                                        </MenuItem.Header>
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource CopyGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <Separator />
-                                    <MenuItem Header="{CompiledBinding FileCut}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource CutGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Click="RecycleItem" Header="{CompiledBinding DeleteFile}">
-                                        <MenuItem.Icon>
-                                            <Path
-                                                Data="{StaticResource RecycleGeometry}"
-                                                Fill="{StaticResource MainIconColor}"
-                                                Height="12"
-                                                Stretch="Fill"
-                                                Width="12" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                </ContextMenu>
-                            </Border.ContextMenu>
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
             </ListBox>
         </Panel>
     </Border>

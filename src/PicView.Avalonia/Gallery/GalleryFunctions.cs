@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
+using Avalonia.Media;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -21,26 +22,26 @@ namespace PicView.Avalonia.Gallery
 
         public static void RecycleItem(object sender, MainViewModel vm)
         {
-            if (vm.GalleryItems.Count <= vm.ImageIterator.Index)
-            {
-                return;
-            }
-
-            var galleryItem = vm.GalleryItems[vm.ImageIterator.Index];
-            FileDeletionHelper.DeleteFileWithErrorMsg(galleryItem.FileLocation, recycle: true);
-
-            vm.GalleryItems.Remove(galleryItem); // TODO: rewrite file system watcher to delete gallery items
+            // if (vm.GalleryItems.Count <= vm.ImageIterator.Index)
+            // {
+            //     return;
+            // }
+            //
+            // var galleryItem = vm.GalleryItems[vm.ImageIterator.Index];
+            // FileDeletionHelper.DeleteFileWithErrorMsg(galleryItem.FileLocation, recycle: true);
+            //
+            // vm.GalleryItems.Remove(galleryItem); // TODO: rewrite file system watcher to delete gallery items
         }
 
         public static void OpenWithItem(object sender, MainViewModel vm)
         {
-            if (vm.GalleryItems.Count <= vm.ImageIterator.Index)
-            {
-                return;
-            }
-
-            var galleryItem = vm.GalleryItems[vm.ImageIterator.Index];
-            vm.PlatformService.OpenWith(galleryItem.FileLocation);
+            // if (vm.GalleryItems.Count <= vm.ImageIterator.Index)
+            // {
+            //     return;
+            // }
+            //
+            // var galleryItem = vm.GalleryItems[vm.ImageIterator.Index];
+            // vm.PlatformService.OpenWith(galleryItem.FileLocation);
         }
 
         public static async Task ToggleGallery(MainViewModel vm)
@@ -148,6 +149,7 @@ namespace PicView.Avalonia.Gallery
             SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
             WindowHelper.SetSize(vm);
             vm.GetBottomGallery = TranslationHelper.GetTranslation("HideBottomGallery");
+            vm.GalleryStretch = Stretch.UniformToFill;
         }
 
         private static void OpenFullGallery(MainViewModel vm)
@@ -158,6 +160,7 @@ namespace PicView.Avalonia.Gallery
             IsBottomGalleryOpen = false;
             IsFullGalleryOpen = true;
             vm.IsGalleryOpen = true;
+            vm.GalleryStretch = Stretch.Uniform;
         }
 
         private static void CloseGallery(MainViewModel vm)
