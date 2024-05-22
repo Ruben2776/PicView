@@ -25,4 +25,19 @@ namespace PicView.Avalonia.Helpers;
             await desktop.MainWindow.Clipboard.SetDataObjectAsync(dataObject);
             // Doesn't work, TODO figure out how to add a file to the clipboard
         }
+
+        public static async Task CopyImageToClipboard(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static async Task CopyBase64ToClipboard(string path)
+        {
+            throw new NotImplementedException();
+        }   
+
+        public static async Task CutFile(string path)
+        {
+            throw new NotImplementedException();
+        }
     }

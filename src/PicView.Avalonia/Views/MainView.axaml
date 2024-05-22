@@ -359,7 +359,11 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="{CompiledBinding Copy}">
+            <MenuItem
+                Command="{CompiledBinding CopyFileCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
+                Header="{CompiledBinding Copy}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CopyGeometry}"
@@ -368,7 +372,11 @@
                         Stretch="Fill"
                         Width="12" />
                 </MenuItem.Icon>
-                <MenuItem Command="{CompiledBinding CopyFilePathCommand}" Header="{Binding FileCopyPath}">
+                <MenuItem
+                    Command="{CompiledBinding CopyFilePathCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{Binding FileCopyPath}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"

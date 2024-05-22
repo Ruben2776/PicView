@@ -102,13 +102,13 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? OpenLastFileCommand { get; }
         public ICommand? PasteCommand { get; }
         public ReactiveCommand<string, Unit>? CopyFileCommand { get; }
-        public ICommand? CopyFilePathCommand { get; }
-        public ICommand? FilePropertiesCommand { get; }
-        public ICommand? CopyImageCommand { get; }
-        public ICommand? CutCommand { get; }
+        public ReactiveCommand<string, Unit>? CopyFilePathCommand { get; }
+        public ReactiveCommand<string, Unit>? FilePropertiesCommand { get; }
+        public ReactiveCommand<string, Unit>? CopyImageCommand { get; }
+        public ReactiveCommand<string, Unit>? CutCommand { get; }
         public ICommand? ReloadCommand { get; }
         public ReactiveCommand<string, Unit>? PrintCommand { get; }
-        public ICommand? DeleteFileCommand { get; }
+        public ReactiveCommand<string, Unit>? DeleteFileCommand { get; }
         public ICommand? RecycleFileCommand { get; }
         public ICommand? CloseMenuCommand { get; }
         public ICommand? ToggleFileMenuCommand { get; }
@@ -1457,6 +1457,98 @@ namespace PicView.Avalonia.ViewModels
             }
             await ClipboardHelper.CopyFileToClipboard(path);
         }
+        
+        private async Task CopyFilePathTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await ClipboardHelper.CopyTextToClipboard(path);
+        }
+        
+        private async Task CopyImageTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await ClipboardHelper.CopyImageToClipboard(path);
+        }
+        
+        private async Task CopyBase64Task(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await ClipboardHelper.CopyBase64ToClipboard(path);
+        }
+        
+        private async Task CutFileTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await ClipboardHelper.CutFile(path);
+        }
+        
+        private async Task DeleteFileTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                FileDeletionHelper.DeleteFileWithErrorMsg(path, recycle: true);
+            });
+        }
+        
+        private async Task DuplicateFileTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                FileHelper.DuplicateAndReturnFileName(path);
+            });
+        }
+        
+        private async Task ShowFilePropertiesTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                PlatformService.ShowFileProperties(path);
+            });
+        }
 
         private async Task PrintTask(string path)
         {
@@ -1642,13 +1734,13 @@ namespace PicView.Avalonia.ViewModels
 
             CopyFileCommand = ReactiveCommand.CreateFromTask<string>(CopyFileTask);
 
-            CopyFilePathCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CopyFilePath);
+            CopyFilePathCommand = ReactiveCommand.CreateFromTask<string>(CopyFilePathTask);
             
-            FilePropertiesCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ShowFileProperties);
+            FilePropertiesCommand = ReactiveCommand.CreateFromTask<string>(ShowFilePropertiesTask);
 
-            CopyImageCommand = ReactiveCommand.Create(FunctionsHelper.CopyImage);
+            CopyImageCommand = ReactiveCommand.CreateFromTask<string>(CopyImageTask);
 
-            CutCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CutFile);
+            CutCommand = ReactiveCommand.CreateFromTask<string>(CutFileTask);
 
             PasteCommand = ReactiveCommand.Create(FunctionsHelper.Paste);
 
@@ -1663,7 +1755,7 @@ namespace PicView.Avalonia.ViewModels
 
             PrintCommand = ReactiveCommand.CreateFromTask<string>(PrintTask);    
 
-            DeleteFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.DeleteFile);
+            DeleteFileCommand = ReactiveCommand.CreateFromTask<string>(DeleteFileTask);
 
             RecycleFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RecycleFile);
 

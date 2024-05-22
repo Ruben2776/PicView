@@ -80,6 +80,7 @@ public static class GalleryLoad
                 index = (viewModel.ImageIterator.Index - horizontalItems) % viewModel.ImageIterator.Pics.Count;
             });
 
+            index = index < 0 ? 0 : index;
             var maxDegreeOfParallelism = Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : 2;
             ParallelOptions options = new() { MaxDegreeOfParallelism = maxDegreeOfParallelism };
             await AsyncLoop(positive:true, index, viewModel.ImageIterator.Pics.Count, options, cancellationToken);
