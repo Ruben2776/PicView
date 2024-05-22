@@ -8,8 +8,8 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Avalonia;
 using PicView.Avalonia.Keybindings;
-using static PicView.Core.Gallery.GalleryThumbInfo;
 
 namespace PicView.Avalonia.Views;
 
@@ -18,8 +18,11 @@ public partial class GalleryView : UserControl
     public GalleryView()
     {
         InitializeComponent();
-        AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
-        AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
+        Loaded += (_, _) =>
+        {
+            AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
+            AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
+        };
     }
 
     private async Task PreviewKeyDownEvent(object? sender, KeyEventArgs e)
@@ -53,30 +56,28 @@ public partial class GalleryView : UserControl
             return;
         }
 
+        const int speed = 34;
+
         if (e.Delta.Y > 0)
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                scrollViewer.LineLeft();
-                scrollViewer.LineLeft();
+                scrollViewer.Offset -= new Vector(speed, 0);
             }
             else
             {
-                scrollViewer.LineRight();
-                scrollViewer.LineRight();
+                scrollViewer.Offset -= new Vector(-speed, 0);
             }
         }
         else
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                scrollViewer.LineRight();
-                scrollViewer.LineRight();
+                scrollViewer.Offset -= new Vector(-speed, 0);
             }
             else
             {
-                scrollViewer.LineLeft();
-                scrollViewer.LineLeft();
+                scrollViewer.Offset -= new Vector(speed, 0);
             }
         }
     }

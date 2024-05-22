@@ -51,6 +51,13 @@ public static class GalleryLoad
                 galleryListBox?.Items.Clear();
             });
         }
+        else if (!string.IsNullOrEmpty(_currentDirectory) && currentDirectory != _currentDirectory)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                galleryListBox?.Items.Clear();
+            });
+        }
         // ReSharper disable once MethodHasAsyncOverload
         _cancellationTokenSource?.Cancel();
         _cancellationTokenSource = new CancellationTokenSource();
@@ -62,9 +69,15 @@ public static class GalleryLoad
         try
         {
             await Loop(0, viewModel.ImageIterator.Pics.Count, cancellationToken);
+            
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                galleryListBox.ScrollIntoView(viewModel.SelectedGalleryItemIndex);
+                if (galleryListBox.Items[0] is not GalleryItem galleryItem)
+                {
+                    return;
+                }
+                var horizontalItems = (int)Math.Floor(galleryListBox.Bounds.Width / galleryItem.ImageBorder.MinWidth);
+                index = (viewModel.ImageIterator.Index - horizontalItems) % viewModel.ImageIterator.Pics.Count;
             });
 
             var maxDegreeOfParallelism = Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : 2;
@@ -116,15 +129,15 @@ public static class GalleryLoad
                             DataContext = viewModel,
                         };
                         galleryListBox.Items.Add(galleryItem);
-                    }, DispatcherPriority.Background, ct);
-                    if (i == viewModel.ImageIterator.Index)
-                    {
-                        viewModel.SelectedGalleryItemIndex = i;
-                        await Dispatcher.UIThread.InvokeAsync(() =>
+                        if (i != viewModel.ImageIterator.Index)
                         {
-                            galleryListBox.ScrollIntoView(viewModel.SelectedGalleryItemIndex);
-                        });
-                    }
+                            return;
+                        }
+
+                        viewModel.SelectedGalleryItemIndex = i;
+                        galleryListBox.SelectedItem = galleryItem;
+                    }, DispatcherPriority.Background, ct);
+
                 }
                 catch (Exception e)
                 {
@@ -149,8 +162,6 @@ public static class GalleryLoad
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-                    var galleryListBox = mainView.GalleryView.GalleryListBox;
                     if (galleryListBox.Items[i] is not GalleryItem galleryItem)
                     {
                         return;

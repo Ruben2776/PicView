@@ -73,7 +73,10 @@
                 x:Name="GalleryListBox">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="{CompiledBinding GalleryOrientation}" />
+                        <WrapPanel
+                            HorizontalAlignment="Left"
+                            Orientation="{CompiledBinding GalleryOrientation}"
+                            VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
             </ListBox>
