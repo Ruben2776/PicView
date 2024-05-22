@@ -1,37 +1,37 @@
 <Window
-    x:Class="PicView.Avalonia.Win32.Views.ExifWindow"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons;assembly=PicView.Avalonia"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
-    Title="Loading..."
-    Width="901"
-    Height="430"
-    x:DataType="viewModels:MainViewModel"
     BorderBrush="{StaticResource MainBorderColor}"
     BorderThickness="1"
     CanResize="False"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
+    Height="430"
+    Title="Loading..."
+    Width="901"
     WindowStartupLocation="CenterOwner"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Win32.Views.ExifWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons;assembly=PicView.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
     <DockPanel PointerPressed="MoveWindow">
         <StackPanel
-            Height="28"
             Background="{StaticResource SecondaryBackgroundColor}"
             DockPanel.Dock="Top"
+            Height="28"
             Orientation="Horizontal">
 
             <Image
-                Width="20"
                 Height="25"
-                Margin="7,1,7,1">
+                Margin="7,1,7,1"
+                Width="20">
                 <Image.Source>
                     <DrawingImage>
                         <DrawingImage.Drawing>
@@ -47,93 +47,95 @@
             </Image>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding DuplicateFileCommand}">
+                Command="{Binding DuplicateFileCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding DuplicateFile}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding DuplicateFile}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding RecycleFileCommand}">
+                Command="{Binding RecycleFileCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding DeleteFile}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding DeleteFile}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding OptimizeImageCommand}">
+                Command="{Binding OptimizeImageCommand}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding OptimizeImage}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding OptimizeImage}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding OpenWithCommand}">
+                Command="{CompiledBinding OpenWithCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding OpenWith}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding OpenWith}"
+                    VerticalAlignment="Center" />
             </Button>
 
             <Button
-                Width="130"
-                Height="28"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding ShowInFolderCommand}">
+                Command="{CompiledBinding LocateOnDiskCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                Height="28"
+                Width="130">
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
-                    Text="{Binding ShowInFolder}" />
+                    HorizontalAlignment="Center"
+                    Text="{Binding ShowInFolder}"
+                    VerticalAlignment="Center" />
             </Button>
             <buttons:StarOutlineButtons
-                x:Name="StarOutlineButtons"
+                Background="{StaticResource FadedBackgroundColor}"
                 Padding="5,0,0,3"
-                Background="{StaticResource FadedBackgroundColor}" />
+                x:Name="StarOutlineButtons" />
 
             <Button
-                Width="30"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="hover"
                 Click="Minimize"
-                DockPanel.Dock="Right">
-                <Viewbox Width="12" Height="12">
+                DockPanel.Dock="Right"
+                Width="30">
+                <Viewbox Height="12" Width="12">
                     <Path
                         Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z"
                         Fill="{StaticResource MainIconColor}"
@@ -142,29 +144,29 @@
             </Button>
 
             <Button
-                Width="30"
                 Background="{StaticResource MainButtonBackgroundColor}"
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Click="Close"
-                DockPanel.Dock="Right">
+                DockPanel.Dock="Right"
+                Width="30">
                 <Path
-                    Width="10"
-                    Height="10"
                     Data="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z"
                     Fill="{StaticResource MainIconColor}"
-                    Stretch="Fill" />
+                    Height="10"
+                    Stretch="Fill"
+                    Width="10" />
             </Button>
         </StackPanel>
         <Rectangle
-            Width="899"
-            Height="1"
             DockPanel.Dock="Top"
-            Fill="{StaticResource MainBorderColor}" />
+            Fill="{StaticResource MainBorderColor}"
+            Height="1"
+            Width="899" />
         <views:ExifView
-            x:Name="ExifView"
             Background="{StaticResource NoisyTexture}"
-            PointerPressed="MoveWindow" />
+            PointerPressed="MoveWindow"
+            x:Name="ExifView" />
     </DockPanel>
 </Window>

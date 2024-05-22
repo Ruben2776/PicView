@@ -39,7 +39,10 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding PrintCommand}" Header="{CompiledBinding Print}">
+            <MenuItem
+                Command="{CompiledBinding PrintCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                Header="{CompiledBinding Print}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PrintGeometry}"
@@ -49,7 +52,10 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding OpenWithCommand}" Header="{CompiledBinding OpenWith}">
+            <MenuItem
+                Command="{CompiledBinding OpenWithCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                Header="{CompiledBinding OpenWith}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource OpenWithGeometry}"
@@ -59,7 +65,10 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding ShowInFolderCommand}" Header="{CompiledBinding ShowInFolder}">
+            <MenuItem
+                Command="{CompiledBinding LocateOnDiskCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                Header="{CompiledBinding ShowInFolder}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource ShowInFolderGeometry}"
@@ -119,6 +128,7 @@
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=LastAccessTime}"
                     ToggleType="Radio" />
+
                 <MenuItem
                     Command="{CompiledBinding SortFilesRandomlyCommand}"
                     GroupName="SortType"
@@ -246,7 +256,10 @@
                 </MenuItem>
             </MenuItem>
             <Separator />
-            <MenuItem Command="{CompiledBinding SetAsWallpaperCommand}" Header="{CompiledBinding SetAsWallpaper}">
+            <MenuItem
+                Command="{CompiledBinding SetAsWallpaperCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                Header="{CompiledBinding SetAsWallpaper}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
@@ -256,7 +269,10 @@
                         Width="13" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="{CompiledBinding SetAsLockScreenImage}">
+            <MenuItem
+                Command="{CompiledBinding SetAsLockScreenCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                Header="{CompiledBinding SetAsLockScreenImage}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
@@ -400,7 +416,11 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding CopyFileCommand}" Header="{Binding CopyFile}">
+            <MenuItem
+                Command="{CompiledBinding CopyFileCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
+                Header="{Binding CopyFile}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CopyGeometry}"

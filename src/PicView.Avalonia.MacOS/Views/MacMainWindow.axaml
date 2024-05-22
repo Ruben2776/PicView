@@ -28,10 +28,18 @@
             <NativeMenuItem Header="{CompiledBinding File}">
                 <NativeMenu>
                     <NativeMenuItem Command="{CompiledBinding OpenFileCommand}" Header="{CompiledBinding Open}" />
-                    <NativeMenuItem Command="{CompiledBinding OpenWithCommand}" Header="{CompiledBinding OpenWith}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding OpenWithCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
+                        Header="{CompiledBinding OpenWith}" />
                     <NativeMenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save}" />
-                    <NativeMenuItem Command="{CompiledBinding PrintCommand}" Header="{CompiledBinding Print}" />
-                    <NativeMenuItem Command="{CompiledBinding ShowInFolderCommand}" Header="{CompiledBinding ShowInFolder}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding PrintCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
+                        Header="{CompiledBinding Print}" />
+                    <NativeMenuItem Command="{CompiledBinding LocateOnDiskCommand}" Header="{CompiledBinding ShowInFolder}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Command="{CompiledBinding DeleteFileCommand}" Header="{CompiledBinding DeleteFile}" />
                     <NativeMenuItemSeparator />
@@ -42,7 +50,11 @@
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Command="{CompiledBinding PasteCommand}" Header="{CompiledBinding FilePaste}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Command="{CompiledBinding CopyFileCommand}" Header="{CompiledBinding CopyFile}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding CopyFileCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
+                        Header="{CompiledBinding CopyFile}" />
                     <NativeMenuItem Command="{CompiledBinding CopyImageCommand}" Header="{CompiledBinding CopyImage}" />
                     <NativeMenuItem Command="{CompiledBinding CopyFilePathCommand}" Header="{CompiledBinding FileCopyPath}" />
                     <NativeMenuItem Command="{CompiledBinding DuplicateFileCommand}" Header="{CompiledBinding DuplicateFile}" />
@@ -57,8 +69,16 @@
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Command="{CompiledBinding CropCommand}" Header="{CompiledBinding Crop}" />
                     <NativeMenuItemSeparator />
-                    <NativeMenuItem Command="{CompiledBinding SetAsWallpaperCommand}" Header="{CompiledBinding SetAsWallpaper}" />
-                    <NativeMenuItem Command="{CompiledBinding SetAsLockScreenCommand}" Header="{CompiledBinding SetAsLockScreenImage}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding SetAsWallpaperCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
+                        Header="{CompiledBinding SetAsWallpaper}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding SetAsLockScreenCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
+                        Header="{CompiledBinding SetAsLockScreenImage}" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Command="{CompiledBinding ChangeBackgroundCommand}" Header="{CompiledBinding ChangeBackground}" />
                     <NativeMenuItemSeparator />

@@ -2,11 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
-using PicView.Avalonia.Gallery;
-using PicView.Avalonia.Navigation;
-using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia;
 using PicView.Avalonia.Keybindings;
@@ -80,66 +76,5 @@ public partial class GalleryView : UserControl
                 scrollViewer.Offset -= new Vector(speed, 0);
             }
         }
-    }
-
-    private async void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            return;
-        }
-
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        if (!NavigationHelper.CanNavigate(vm))
-        {
-            return;
-        }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            await GalleryFunctions.ToggleGallery(vm);
-        }
-
-#if DEBUG
-        Debug.Assert(sender != null, nameof(sender) + " != null");
-#endif
-        var border = (Border)sender;
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (border is null) { return; }
-#if DEBUG
-        Debug.Assert(border != null, nameof(border) + " != null");
-        Debug.Assert(border.DataContext != null, "border.DataContext != null");
-#endif
-        var galleryModel = border.DataContext as GalleryViewModel;
-        var galleryItemIndex = vm.ImageIterator.Pics.IndexOf(galleryModel.FileLocation);
-
-        await vm.LoadPicAtIndex(galleryItemIndex).ConfigureAwait(false);
-    }
-
-    private void RecycleItem(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-        GalleryFunctions.RecycleItem(sender, vm);
-    }
-
-    private void OpenWithItem(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-        GalleryFunctions.OpenWithItem(sender, vm);
-    }
-
-    private void GalleryListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        
     }
 }

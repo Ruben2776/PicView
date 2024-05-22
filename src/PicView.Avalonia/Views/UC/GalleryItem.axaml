@@ -42,7 +42,10 @@
         </ToolTip.Tip>
         <Border.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="{CompiledBinding Print}">
+                <MenuItem
+                    Command="{CompiledBinding PrintCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding Print}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PrintGeometry}"
@@ -52,7 +55,11 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{CompiledBinding OpenWith}" x:Name="OpenWith">
+                <MenuItem
+                    Command="{CompiledBinding OpenWithCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding OpenWith}"
+                    x:Name="OpenWith">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource OpenWithGeometry}"
@@ -62,7 +69,10 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{CompiledBinding ShowInFolder}">
+                <MenuItem
+                    Command="{CompiledBinding LocateOnDiskCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding ShowInFolder}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ShowInFolderGeometry}"
@@ -73,7 +83,10 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="{CompiledBinding SetAsWallpaper}">
+                <MenuItem
+                    Command="{CompiledBinding SetAsWallpaperCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding SetAsWallpaper}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -83,7 +96,10 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{CompiledBinding SetAsLockScreenImage}">
+                <MenuItem
+                    Command="{CompiledBinding SetAsLockScreenCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding SetAsLockScreenImage}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -94,7 +110,10 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="{CompiledBinding CopyFile}">
+                <MenuItem
+                    Command="{CompiledBinding CopyFileCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding CopyFile}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"

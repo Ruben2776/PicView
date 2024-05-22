@@ -76,7 +76,8 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding OpenWithCommand}"
+                Command="{CompiledBinding OpenWithCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
                 Height="28"
                 Width="130">
                 <TextBlock
@@ -91,7 +92,8 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding ShowInFolderCommand}"
+                Command="{CompiledBinding LocateOnDiskCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName}"
                 Height="28"
                 Width="130">
                 <TextBlock

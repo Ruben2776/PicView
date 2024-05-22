@@ -54,7 +54,9 @@
                         BorderThickness="0,0,1,0"
                         Canvas.Left="45"
                         Classes="hover"
-                        Command="{Binding PrintCommand}"
+                        Command="{CompiledBinding PrintCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
                         Height="45"
                         ToolTip.Tip="{Binding Print}"
                         Width="45">
@@ -108,7 +110,9 @@
                         BorderThickness="0,0,1,0"
                         Canvas.Left="180"
                         Classes="hover"
-                        Command="{Binding CopyFileCommand}"
+                        Command="{CompiledBinding CopyFileCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
                         Height="45"
                         ToolTip.Tip="{Binding CopyFile}"
                         Width="45">
@@ -182,8 +186,10 @@
                         Canvas.Left="7"
                         Canvas.Top="99"
                         Classes="ButtonBorder altHover"
-                        Command="{Binding OpenWithCommand}"
-                        ToolTip.Tip="{Binding OpenWith}">
+                        Command="{CompiledBinding OpenWithCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
+                        ToolTip.Tip="{CompiledBinding OpenWith}">
                         <StackPanel Orientation="Horizontal">
                             <Path
                                 Data="M0 0l20 10L0 20V0zm0 8v4l10-2L0 8z"
@@ -205,7 +211,9 @@
                         Canvas.Left="160"
                         Canvas.Top="53"
                         Classes="ButtonBorder altHover"
-                        Command="{Binding ShowInFolderCommand}"
+                        Command="{CompiledBinding LocateOnDiskCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
                         ToolTip.Tip="{Binding ShowInFolder}">
                         <StackPanel Orientation="Horizontal">
                             <Path

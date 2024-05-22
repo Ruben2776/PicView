@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
@@ -18,7 +17,6 @@ using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reactive;
 using System.Windows.Input;
@@ -103,13 +101,13 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? SaveFileCommand { get; }
         public ICommand? OpenLastFileCommand { get; }
         public ICommand? PasteCommand { get; }
-        public ICommand? CopyFileCommand { get; }
+        public ReactiveCommand<string, Unit>? CopyFileCommand { get; }
         public ICommand? CopyFilePathCommand { get; }
         public ICommand? FilePropertiesCommand { get; }
         public ICommand? CopyImageCommand { get; }
         public ICommand? CutCommand { get; }
         public ICommand? ReloadCommand { get; }
-        public ICommand? PrintCommand { get; }
+        public ReactiveCommand<string, Unit>? PrintCommand { get; }
         public ICommand? DeleteFileCommand { get; }
         public ICommand? RecycleFileCommand { get; }
         public ICommand? CloseMenuCommand { get; }
@@ -117,12 +115,11 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? ToggleImageMenuCommand { get; }
         public ICommand? ToggleSettingsMenuCommand { get; }
         public ICommand? ToggleToolsMenuCommand { get; }
-        public ICommand? ShowInFolderCommand { get; }
-        public ICommand? OpenWithCommand { get; }
+        public ReactiveCommand<string, Unit>? LocateOnDiskCommand { get; }
+        public ReactiveCommand<string, Unit>? OpenWithCommand { get; }
         public ICommand? RenameCommand { get; }
         public ICommand? NewWindowCommand { get; }
         public ICommand? DuplicateFileCommand { get; }
-
         public ICommand? ToggleLoopingCommand { get; }
         public ICommand? RotateLeftCommand { get; }
         public ICommand? RotateRightCommand { get; }
@@ -130,13 +127,9 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? StretchCommand { get; }
         public ICommand? CropCommand { get; }
         public ICommand? ChangeAutoFitCommand { get; }
-
         public ICommand? ChangeTopMostCommand { get; }
-
         public ICommand? ChangeCtrlZoomCommand { get; }
-
         public ICommand? ToggleUICommand { get; }
-        
         public ICommand? ChangeBackgroundCommand { get; }
         public ICommand? ToggleBottomNavBarCommand { get; }
         public ICommand? ShowExifWindowCommand { get; }
@@ -162,7 +155,6 @@ namespace PicView.Avalonia.ViewModels
         public ICommand? SortFilesByExtensionCommand { get; }
         public ICommand? SortFilesByCreationTimeCommand { get; }
         public ICommand? SortFilesByLastAccessTimeCommand { get; }
-        public ICommand? SortFilesByLastWriteTimeCommand { get; }
         public ICommand? SortFilesRandomlyCommand { get; }
         public ICommand? SortFilesAscendingCommand { get; }
         public ICommand? SortFilesDescendingCommand { get; }
@@ -179,9 +171,9 @@ namespace PicView.Avalonia.ViewModels
 
         public ICommand? SlideshowCommand { get; }
         
-        public ICommand? SetAsWallpaperCommand { get; }
+        public ReactiveCommand<string, Unit>? SetAsWallpaperCommand { get; }
         
-        public ICommand? SetAsLockScreenCommand { get; }
+        public ReactiveCommand<string, Unit>? SetAsLockScreenCommand { get; }
 
         #endregion Commands
 
@@ -1452,6 +1444,99 @@ namespace PicView.Avalonia.ViewModels
                 ImageIterator.IsFileBeingRenamed = false;
             }
         }
+        
+        private async Task CopyFileTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await ClipboardHelper.CopyFileToClipboard(path);
+        }
+
+        private async Task PrintTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                PlatformService?.Print(path);
+            });
+        }
+        
+        private async Task OpenWithTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                PlatformService?.OpenWith(path);
+            });
+        }
+        
+        private async Task LocateOnDiskTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                PlatformService?.LocateOnDisk(path);
+            });
+        }
+        
+        private async Task SetAsWallpaperTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                PlatformService?.SetAsWallpaper(path, 4);
+            });
+        }
+        
+        private async Task SetAsLockScreenTask(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            if (PlatformService is null)
+            {
+                return;
+            }
+            await Task.Run(() =>
+            {
+                PlatformService?.SetAsLockScreen(path);
+            });
+        }
 
         #endregion Methods
 
@@ -1499,10 +1584,7 @@ namespace PicView.Avalonia.ViewModels
 
             SortFilesByCreationTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByCreationTime);
 
-            SortFilesByLastAccessTimeCommand =
-                ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastAccessTime);
-
-            SortFilesByLastWriteTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastWriteTime);
+            SortFilesByLastAccessTimeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesByLastAccessTime);
 
             SortFilesBySizeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SortFilesBySize);
 
@@ -1558,7 +1640,7 @@ namespace PicView.Avalonia.ViewModels
 
             SaveFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Save);
 
-            CopyFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CopyFile);
+            CopyFileCommand = ReactiveCommand.CreateFromTask<string>(CopyFileTask);
 
             CopyFilePathCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CopyFilePath);
             
@@ -1570,7 +1652,7 @@ namespace PicView.Avalonia.ViewModels
 
             PasteCommand = ReactiveCommand.Create(FunctionsHelper.Paste);
 
-            OpenWithCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenWith);
+            OpenWithCommand = ReactiveCommand.CreateFromTask<string>(OpenWithTask);
 
             RenameCommand = ReactiveCommand.Create(FunctionsHelper.Rename);
 
@@ -1579,16 +1661,16 @@ namespace PicView.Avalonia.ViewModels
 
             DuplicateFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.DuplicateFile);
 
-            PrintCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Print);
+            PrintCommand = ReactiveCommand.CreateFromTask<string>(PrintTask);    
 
             DeleteFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.DeleteFile);
 
             RecycleFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RecycleFile);
 
-            ShowInFolderCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenInExplorer);
+            LocateOnDiskCommand = ReactiveCommand.CreateFromTask<string>(LocateOnDiskTask);
             
-            SetAsWallpaperCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetAsWallpaper);
-            SetAsLockScreenCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SetAsLockScreen);
+            SetAsWallpaperCommand = ReactiveCommand.CreateFromTask<string>(SetAsWallpaperTask);
+            SetAsLockScreenCommand = ReactiveCommand.CreateFromTask<string>(SetAsLockScreenTask);
 
             #endregion File commands
 
