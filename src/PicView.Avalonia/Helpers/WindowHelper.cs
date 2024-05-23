@@ -152,6 +152,59 @@ public static class WindowHelper
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
+    public static async Task AutoFitAndStretch(MainViewModel vm)
+    {
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            vm.SizeToContent = SizeToContent.Manual;
+            vm.CanResize = true;
+            SettingsHelper.Settings.WindowProperties.AutoFit = false;
+            SettingsHelper.Settings.ImageScaling.StretchImage = false;
+            vm.IsStretched = false;
+            vm.IsAutoFit = false;
+            
+        }
+        else
+        {
+            vm.SizeToContent = SizeToContent.WidthAndHeight;
+            vm.CanResize = false;
+            SettingsHelper.Settings.WindowProperties.AutoFit = true;
+            SettingsHelper.Settings.ImageScaling.StretchImage = true;
+            vm.IsAutoFit = true;
+            vm.IsStretched = true;
+        }
+        SetSize(vm);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    public static async Task NormalWindow(MainViewModel vm)
+    {
+        vm.SizeToContent = SizeToContent.Manual;
+        vm.CanResize = true;
+        SettingsHelper.Settings.WindowProperties.AutoFit = false;
+        SetSize(vm);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+    
+    public static async Task NormalWindowStretch(MainViewModel vm)
+    {
+        vm.SizeToContent = SizeToContent.Manual;
+        vm.CanResize = true;
+        SettingsHelper.Settings.WindowProperties.AutoFit = false;
+        SettingsHelper.Settings.ImageScaling.StretchImage = true;
+        vm.IsStretched = true;
+        SetSize(vm);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+    
+    public static async Task Stretch(MainViewModel vm)
+    {
+        SettingsHelper.Settings.ImageScaling.StretchImage = true;
+        vm.IsStretched = true;
+        SetSize(vm);
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
     public static async Task ToggleFullscreen(MainViewModel vm)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)

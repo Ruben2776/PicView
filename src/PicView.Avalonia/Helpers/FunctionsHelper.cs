@@ -548,28 +548,28 @@ public static class FunctionsHelper
 
     #region Image Scaling and Window Behavior
     
-    public static Task Stretch()
+    public static async Task Stretch()
     {
-        return Task.CompletedTask;
+        await WindowHelper.Stretch(Vm);
     }
-    public static Task AutoFitWindow()
+    public static async Task AutoFitWindow()
     {
-        return Task.CompletedTask;
-    }
-
-    public static Task AutoFitWindowAndStretch()
-    {
-        return Task.CompletedTask;
+        await WindowHelper.ToggleAutoFit(Vm);
     }
 
-    public static Task NormalWindow()
+    public static async Task AutoFitWindowAndStretch()
     {
-        return Task.CompletedTask;
+        await WindowHelper.AutoFitAndStretch(Vm);
     }
 
-    public static Task NormalWindowAndStretch()
+    public static async Task NormalWindow()
     {
-        return Task.CompletedTask;
+        await WindowHelper.NormalWindow(Vm);
+    }
+
+    public static async Task NormalWindowAndStretch()
+    {
+        await WindowHelper.NormalWindowStretch(Vm);
     }
 
     public static async Task Fullscreen()
