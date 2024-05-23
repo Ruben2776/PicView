@@ -6,6 +6,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -347,6 +348,8 @@ public static class WindowHelper
         vm.ImageWidth = size.Width;
         vm.ImageHeight = size.Height;
         vm.ImageMargin = new Thickness(0, 0, 0, size.Margin);
+        
+        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ? size.Width : double.NaN;
     }
 
     #endregion SetSize

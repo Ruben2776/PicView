@@ -81,6 +81,13 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _galleryItemSize, value);
         }
 
+        private double _galleryWidth;
+        public double GalleryWidth
+        {
+            get => _galleryWidth;
+            set => this.RaiseAndSetIfChanged(ref _galleryWidth, value);
+        }
+
         #endregion Gallery
 
         #region Commands

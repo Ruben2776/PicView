@@ -467,6 +467,7 @@
         <views:GalleryView
             IsVisible="{CompiledBinding IsGalleryOpen}"
             VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}"
+            Width="{CompiledBinding GalleryWidth}"
             x:Name="GalleryView" />
     </Panel>
 </UserControl>
