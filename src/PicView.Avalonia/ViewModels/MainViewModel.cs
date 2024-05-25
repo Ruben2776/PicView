@@ -1405,6 +1405,7 @@ namespace PicView.Avalonia.ViewModels
             try
             {
                 ImageIterator = new ImageIterator(fileInfo, this);
+                CurrentView = ImageViewer;
                 await ImageIterator.LoadPicFromFile(fileInfo, this).ConfigureAwait(false);
             }
             catch (Exception)

@@ -103,8 +103,8 @@ public static class ImageHelper
                     {
                         var bmp = new Bitmap(stream);
                         imageModel.Image = bmp;
-                        imageModel.PixelWidth = bmp.PixelSize.Width;
-                        imageModel.PixelHeight = bmp.PixelSize.Height;
+                        imageModel.PixelWidth = bmp?.PixelSize.Width ?? 0;
+                        imageModel.PixelHeight = bmp?.PixelSize.Height ?? 0;
                         imageModel.ImageType = ImageType.Bitmap;
                     }
 
@@ -112,8 +112,8 @@ public static class ImageHelper
                     {
                         var thumb = await GetThumb(fileInfo, height).ConfigureAwait(false);
                         imageModel.Image = thumb;
-                        imageModel.PixelWidth = thumb.PixelSize.Width;
-                        imageModel.PixelHeight = thumb.PixelSize.Height;
+                        imageModel.PixelWidth = thumb?.PixelSize.Width ?? 0;
+                        imageModel.PixelHeight = thumb?.PixelSize.Height ?? 0;
                         imageModel.ImageType = ImageType.Bitmap;
                     }
             }
