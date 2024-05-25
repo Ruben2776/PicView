@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -12,12 +13,10 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.Localization;
 using ReactiveUI;
 
 namespace PicView.Avalonia.Views;
@@ -42,106 +41,19 @@ public partial class GalleryView : UserControl
             AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
             
             this.WhenAnyValue(x => x.GalleryMode)
-                .Subscribe(async galleryMode =>
+                .Select(galleryMode =>
                 {
-                    switch (galleryMode)
+                    return galleryMode switch
                     {
-                        case GalleryMode.FullToBottom:
-                            await FullToBottomAnimation();
-                            break;
-                        case GalleryMode.FullToClosed:
-                            await FullToClosedAnimation();
-                            break;
-                        case GalleryMode.BottomToFull:
-                            await BottomToFullAnimation();
-                            break;
-                        case GalleryMode.BottomToClosed:
-                            await BottomToClosedAnimation();
-                            break;
-                        case GalleryMode.ClosedToFull:
-                            await ClosedToFullAnimation();
-                            break;
-                        case GalleryMode.ClosedToBottom:
-                            await ClosedToBottomAnimation();
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(galleryMode), galleryMode, null);
-                    }
-                });
-        };
-    }
-    
-    private static Animation HeightAnimation(double from, double to, double speed)
-    {
-        return new Animation
-        {
-            Duration = TimeSpan.FromSeconds(speed),
-            Easing = new SplineEasing(),
-            FillMode = FillMode.Forward,
-            Children =
-            {
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = from
-                        }
-                    },
-                    Cue = new Cue(0d)
-                },
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = to
-                        }
-                    },
-                    Cue = new Cue(1d)
-                },
-            }
-        };
-    }
-    
-    private static Animation OpacityAnimation(double from, double to, double speed)
-    {
-        return new Animation
-        {
-            Duration = TimeSpan.FromSeconds(speed),
-            Easing = new LinearEasing(),
-            FillMode = FillMode.Forward,
-            Children =
-            {
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = OpacityProperty,
-                            Value = from
-                        }
-                    },
-                    Cue = new Cue(0d)
-                },
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = OpacityProperty,
-                            Value = to
-                        }
-                    },
-                    Cue = new Cue(1d)
-                },
-            }
+                        GalleryMode.FullToBottom => FullToBottomAnimation(),
+                        GalleryMode.FullToClosed => FullToClosedAnimation(),
+                        GalleryMode.BottomToFull => BottomToFullAnimation(),
+                        GalleryMode.BottomToClosed => BottomToClosedAnimation(),
+                        GalleryMode.ClosedToFull => ClosedToFullAnimation(),
+                        GalleryMode.ClosedToBottom => ClosedToBottomAnimation(),
+                        _ => throw new ArgumentOutOfRangeException(nameof(galleryMode), galleryMode, null)
+                    };
+                }).Subscribe();
         };
     }
 
@@ -164,18 +76,20 @@ public partial class GalleryView : UserControl
 
         vm.GalleryOrientation = Orientation.Vertical;
         vm.GalleryStretch = Stretch.UniformToFill;
-        vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.IsGalleryCloseIconVisible = true;
         
-        var from = 0d;
-        var to = 1d;
-        var speed = 0.5;
-        var opacityAnimation = OpacityAnimation(from, to, speed);
+        const double from = 0d;
+        const double to = 1d;
+        const double speed = 0.5;
+        var opacityAnimation = AnimationsHelper.OpacityAnimation(from, to, speed);
         await opacityAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Opacity = to;
+            Height = double.NaN;
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
+        vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
     }
 
     private async Task FullToClosedAnimation()
@@ -184,11 +98,18 @@ public partial class GalleryView : UserControl
         {
             return;
         }
-        
-        var from = 1d;
-        var to = 0d;
-        var speed = 0.3;
-        var opacityAnimation = OpacityAnimation(from, to, speed);
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Height = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
+        });
+        const double from = 1d;
+        const double to = 0d;
+        const double speed = 0.3;
+        var opacityAnimation = AnimationsHelper.OpacityAnimation(from, to, speed);
         await opacityAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -214,19 +135,20 @@ public partial class GalleryView : UserControl
         
         vm.GalleryOrientation = Orientation.Horizontal;
         vm.GalleryStretch = Stretch.UniformToFill;
-        vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.IsGalleryCloseIconVisible = false;
-
-        var from = 0;
+        vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
+        
+        const int from = 0;
         var to = vm.GalleryItemSize + 22;
-        var speed = 0.3;
-        var heightAnimation = HeightAnimation(from, to, speed);
+        const double speed = 0.3;
+        var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
 
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Height = to;
-            IsVisible = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+            IsVisible = true;
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
     }
 
@@ -243,13 +165,12 @@ public partial class GalleryView : UserControl
         
         vm.GalleryOrientation = Orientation.Horizontal;
         vm.GalleryStretch = Stretch.UniformToFill;
-        vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.IsGalleryCloseIconVisible = false;
         
         var from = vm.GalleryItemSize + 22;
-        var to = 0;
-        var speed = 0.5;
-        var heightAnimation = HeightAnimation(from, to, speed);
+        const int to = 0;
+        const double speed = 0.5;
+        var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
 
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -270,22 +191,22 @@ public partial class GalleryView : UserControl
         {
             return;
         }
-        vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.GalleryOrientation = Orientation.Vertical;
         vm.IsGalleryCloseIconVisible = true;
         
         
         var from = vm.GalleryItemSize + 22;
         var to = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
-        var speed = 0.5;
-        var heightAnimation = HeightAnimation(from, to, speed);
+        const double speed = 0.5;
+        var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Height = to;
+            Height = double.NaN;
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
-        
         vm.GalleryStretch = Stretch.Uniform;
+        vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
     }
 
     private async Task FullToBottomAnimation()
@@ -294,266 +215,30 @@ public partial class GalleryView : UserControl
         {
             return;
         }
-        
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Height = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
+        });
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.IsGalleryCloseIconVisible = false;
         
         var from = Bounds.Height;
         var to = vm.GalleryItemSize + 22;
-        var speed = 0.7;
-        var heightAnimation = HeightAnimation(from, to, speed);
+        const double speed = 0.7;
+        var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Height = to;
+            Height = double.NaN;
             vm.GalleryOrientation = Orientation.Horizontal;
             vm.GalleryStretch = Stretch.UniformToFill;
-        });
-
-    }
-
-    private async Task PlayToggleBottomOpenAnimation()
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            IsVisible = true;
-        });
-        vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            vm.GalleryStretch = Stretch.UniformToFill;
-        }
-        else
-        {
-            
-        }
-
-        var from = Bounds.Height;
-        var speed = 0.5;
-        vm.IsGalleryCloseIconVisible = false;
-        var to = SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? vm.GalleryItemSize + 22 : 0d;
-        var heightAnimation = new Animation
-        {
-            Duration = TimeSpan.FromSeconds(speed),
-            Easing = new SplineEasing(),
-            FillMode = FillMode.Both,
-            Children =
-            {
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = from
-                        }
-                    },
-                    Cue = new Cue(0d)
-                },
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = to
-                        }
-                    },
-                    Cue = new Cue(1d)
-                },
-            }
-        };
-        await heightAnimation.RunAsync(this);
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Height = to;
-            IsVisible = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
-            WindowHelper.SetSize(vm);
-        });
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            vm.GalleryOrientation = Orientation.Horizontal;
-            vm.GalleryStretch = Stretch.UniformToFill;
-        }
-        else
-        {
-            
-        }
-    }
-
-    public async Task PlayClosingAnimation()
-    {
-        if (DataContext is not MainViewModel vm || !IsVisible)
-        {
-            return;
-        }
-
-        var speed = SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? 0.5 : 0.3;
-        var from = Bounds.Height;
-        if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            // Do opacity animation
-            var opacityAnimation = new Animation
-            {
-                Duration = TimeSpan.FromSeconds(speed),
-                Children =
-                {
-                    new KeyFrame
-                    {
-                        Setters =
-                        {
-                            new Setter
-                            {
-                                Property = OpacityProperty,
-                                Value = 1d
-                            }
-                        },
-                        Cue = new Cue(1d)
-                    },
-                    new KeyFrame
-                    {
-                        Setters =
-                        {
-                            new Setter
-                            {
-                                Property = OpacityProperty,
-                                Value = 0d
-                            }
-                        },
-                        Cue = new Cue(0d)
-                    }
-                }
-            };
-            await opacityAnimation.RunAsync(this);
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Height = 0;
-                IsVisible = false;
-            });
-            return;
-        }
-        vm.IsGalleryCloseIconVisible = false;
-
-        var heightAnimation = new Animation
-        {
-            Duration = TimeSpan.FromSeconds(speed),
-            Easing = new SplineEasing(),
-            FillMode = FillMode.Forward,
-            Children =
-            {
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = from
-                        }
-                    },
-                    Cue = new Cue(0d)
-                },
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = 0d
-                        }
-                    },
-                    Cue = new Cue(1d)
-                },
-            }
-        };
-        await heightAnimation.RunAsync(this);
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Height = vm.GalleryItemSize + 22;
-            IsVisible = true;
-            WindowHelper.SetSize(vm);
-        });
-        vm.GalleryOrientation = Orientation.Horizontal;
-        vm.GalleryStretch = Stretch.UniformToFill;
-        GalleryNavigation.CenterScrollToSelectedItem(vm);
-    }
-
-    public async Task PlayOpenAnimation()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            IsVisible = true;
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        double to;
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            to = double.NaN;
-            vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
-            vm.GalleryOrientation = Orientation.Vertical;
-            vm.IsGalleryCloseIconVisible = true;
-            vm.GalleryStretch = Stretch.Uniform;
-        }
-        else
-        {
-            to = vm.GalleryItemSize + 22;
-            vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
-            vm.GalleryOrientation = Orientation.Horizontal;
-            vm.IsGalleryCloseIconVisible = false;
-            vm.GalleryStretch = Stretch.UniformToFill;
-        }
-        
-        var heightAnimation = new Animation
-        {
-            Duration = TimeSpan.FromSeconds(0.4),
-            Easing = new SplineEasing(),
-            FillMode = FillMode.Forward,
-            Children =
-            {
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = 0d
-                        }
-                    },
-                    Cue = new Cue(0d)
-                },
-                new KeyFrame
-                {
-                    Setters =
-                    {
-                        new Setter
-                        {
-                            Property = HeightProperty,
-                            Value = to
-                        }
-                    },
-                    Cue = new Cue(1d)
-                },
-            }
-        };
-        await heightAnimation.RunAsync(this);
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Height = to;
-            WindowHelper.SetSize(vm);
-        });
     }
 
     private async Task PreviewKeyDownEvent(object? sender, KeyEventArgs e)

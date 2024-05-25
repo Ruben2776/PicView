@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Layout;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -121,6 +122,7 @@ namespace PicView.Avalonia.Gallery
         {
             IsBottomGalleryOpen = true;
             vm.GalleryMode = GalleryMode.ClosedToBottom;
+            vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         }
     }
 }

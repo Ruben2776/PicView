@@ -418,7 +418,8 @@ namespace PicView.Avalonia.ViewModels
                 return 32;
             }
         }
-        public int BottombarHeight         {
+        public int BottombarHeight         
+        {
             get
             {
                 if (IsFullscreen || !IsInterfaceShown || !IsBottomToolbarShown)

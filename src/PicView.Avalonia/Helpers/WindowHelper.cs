@@ -285,11 +285,6 @@ public static class WindowHelper
 
     public static async Task ToggleUI(MainViewModel vm)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
         if (SettingsHelper.Settings.UIProperties.ShowInterface)
         {
             vm.IsInterfaceShown = false;

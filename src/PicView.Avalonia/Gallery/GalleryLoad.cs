@@ -136,6 +136,15 @@ public static class GalleryLoad
                             DataContext = viewModel,
                             FileName = { Text = loading },
                         };
+                        var i1 = i;
+                        galleryItem.PointerPressed += async (_, _) =>
+                        {
+                            if (GalleryFunctions.IsFullGalleryOpen)
+                            {
+                                await GalleryFunctions.ToggleGallery(viewModel);
+                            }
+                            await viewModel.ImageIterator.LoadPicAtIndex(i1, viewModel);
+                        };
                         galleryListBox.Items.Add(galleryItem);
                         if (i != viewModel.ImageIterator.Index)
                         {
@@ -185,14 +194,6 @@ public static class GalleryLoad
                     galleryItem.FileDate.Text = thumbData.FileDate ?? "";
                     galleryItem.FileSize.Text = thumbData.FileSize ?? "";
                     galleryItem.FileName.Text = thumbData.FileName ?? "";
-                    galleryItem.PointerPressed += async (_, _) =>
-                    {
-                        if (GalleryFunctions.IsFullGalleryOpen)
-                        {
-                            await GalleryFunctions.ToggleGallery(viewModel);
-                        }
-                        await viewModel.ImageIterator.LoadPicAtIndex(i, viewModel);
-                    };
                 }, DispatcherPriority.Background, ct);
             });
         }
