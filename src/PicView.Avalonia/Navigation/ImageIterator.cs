@@ -9,6 +9,7 @@ using PicView.Core.Navigation;
 using System.Diagnostics;
 using PicView.Avalonia.Gallery;
 using PicView.Core.Gallery;
+using ReactiveUI;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation
@@ -25,9 +26,10 @@ namespace PicView.Avalonia.Navigation
 
         public bool IsFileBeingRenamed { get; set; }
 
-        public int Index;
-        public FileInfo FileInfo;
-        public bool Reverse;
+        public int Index{ get; set; }
+        
+        public FileInfo FileInfo{ get; private set; }
+        public bool Reverse { get; private set; }
         public PreLoader PreLoader { get; } = new();
 
         private static FileSystemWatcher? _watcher;
@@ -319,19 +321,14 @@ namespace PicView.Avalonia.Navigation
                     while (preLoadValue.IsLoading)
                     {
                         x++;
-                        await Task.Delay(20);
-                        if (Index != index)
+                        await Task.Delay(5);
+                        if (Index == index && x <= 200)
                         {
-                            await Preload();
-                            vm.CurrentView = vm.ImageViewer;
-                            return;
+                            continue;
                         }
 
-                        if (x > 200)
-                        {
-                            await GetPreload();
-                            break;
-                        }
+                        await Preload();
+                        return;
                     }
                 }
 
@@ -340,8 +337,6 @@ namespace PicView.Avalonia.Navigation
                     await GetPreload();
                 }
 
-                vm.CurrentView = vm.ImageViewer;
-
                 if (Index != index)
                 {
                     await Preload();
@@ -349,7 +344,7 @@ namespace PicView.Avalonia.Navigation
                 }
 
                 vm.SetImageModel(preLoadValue.ImageModel);
-                await vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
+                vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
                 vm.IsLoading = false;
                 WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
                 vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
@@ -361,14 +356,13 @@ namespace PicView.Avalonia.Navigation
 
                 vm.SelectedGalleryItemIndex = Index;
 
-                await AddAsync(Index, preLoadValue?.ImageModel);
+                await AddAsync(Index, preLoadValue.ImageModel);
                 await Preload();
                 return;
 
                 async Task GetPreload()
                 {
-                    await PreLoader.AddAsync(index, Pics)
-                        .ConfigureAwait(false);
+                    await PreLoader.AddAsync(index, Pics);
                     preLoadValue = PreLoader.Get(index, Pics);
                     if (Index != index)
                     {
@@ -403,41 +397,34 @@ namespace PicView.Avalonia.Navigation
         public async Task LoadPicFromFile(FileInfo fileInfo, MainViewModel vm)
         {
             vm.SetLoadingTitle();
-            try
-            {
-                ArgumentNullException.ThrowIfNull(fileInfo);
 
-                var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-                WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-                await vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
-                vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
-                await AddAsync(Index, imageModel);
-                await LoadPicAtIndex(Index, vm);
-                vm.ImageIterator.FileAdded += (_, e) => { vm.SetTitle(); };
-                vm.ImageIterator.FileRenamed += (_, e) => { vm.SetTitle(); };
-                vm.ImageIterator.FileDeleted += async (_, isSameFile) =>
-                {
-                    if (isSameFile) //change if deleting current file
-                    {
-                        if (Index < 0 || Index >= Pics.Count)
-                        {
-                            return;
-                        }
-                        await LoadPicFromString(Pics[Index], vm);
-                    }
-                    else
-                    {
-                        vm.SetTitle();
-                    }
-                };
-                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-                {
-                   _ = Task.Run(() => GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
-                }
-            }
-            catch (Exception e)
+            var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+            vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
+            vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
+            await AddAsync(Index, imageModel);
+            await LoadPicAtIndex(Index, vm);
+            vm.ImageIterator.FileAdded += (_, e) => { vm.SetTitle(); };
+            vm.ImageIterator.FileRenamed += (_, e) => { vm.SetTitle(); };
+            vm.ImageIterator.FileDeleted += async (_, isSameFile) =>
             {
-                // TODO display exception to user
+                if (isSameFile) //change if deleting current file
+                {
+                    if (Index < 0 || Index >= Pics.Count)
+                    {
+                        return;
+                    }
+
+                    await LoadPicFromString(Pics[Index], vm);
+                }
+                else
+                {
+                    vm.SetTitle();
+                }
+            };
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            {
+                _ = Task.Run(() => GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
             }
         }
 
@@ -489,7 +476,7 @@ namespace PicView.Avalonia.Navigation
             }
             vm.SetImageModel(preLoadValue.ImageModel);
 
-            await vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
+            vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
             WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
             vm.SelectedGalleryItemIndex = Index;
             vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);

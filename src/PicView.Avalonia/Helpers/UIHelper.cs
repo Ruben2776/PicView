@@ -125,6 +125,7 @@ public class UIHelper
         {
             return;
         }
+
         if (vm.ScaleX == 1)
         {
             vm.ScaleX = -1;
@@ -135,6 +136,7 @@ public class UIHelper
             vm.ScaleX = 1;
             vm.GetFlipped = vm.Flip;
         }
+
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             vm.ImageViewer.Flip(animate: true);

@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
@@ -11,12 +12,12 @@ using PicView.Core.Config;
 using PicView.Core.Navigation;
 using System.Runtime.InteropServices;
 using Avalonia.Controls.Primitives;
-using Avalonia.Media.Imaging;
 using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
 using Avalonia.Svg.Skia;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
+using ReactiveUI;
 
 namespace PicView.Avalonia.Views;
 
@@ -43,19 +44,18 @@ public partial class ImageViewer : UserControl
         Loaded += delegate
         {
             InitializeZoom();
-            if (DataContext is not MainViewModel vm)
-                return;
-            vm.ImageChanged += (s, e) =>
+            this.WhenAnyValue(x => x.MainImage.Source).Select(x => x is not null).Subscribe(x =>
             {
                 if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                 {
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        ImageScrollViewer.ScrollToHome();
-                    }, DispatcherPriority.Normal);
+                    ImageScrollViewer.ScrollToHome();
                 }
-                ResetZoom(false);
-            };
+
+                if (_isZoomed)
+                {
+                    ResetZoom(enableAnimations:false);
+                }
+            });
             LostFocus += (s, e) =>
             {
                 _captured = false;
@@ -63,15 +63,23 @@ public partial class ImageViewer : UserControl
         };
     }
 
-    public async Task SetImage(object image, ImageType imageType)
+    public void SetImage(object image, ImageType imageType)
     {
         if (imageType is ImageType.Svg)
         {
-            var svgSource = await Task.FromResult(SvgSource.Load(image as string, null));
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            var svgSource = SvgSource.Load(image as string, null);
+            if (Dispatcher.UIThread.CheckAccess())
             {
                 MainImage.Source = new SvgImage { Source = svgSource };
-            }, DispatcherPriority.Send);
+            }
+            else
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    MainImage.Source = new SvgImage { Source = svgSource };
+                }, DispatcherPriority.Send);
+            }
+
             return;
         }
         if (Dispatcher.UIThread.CheckAccess())
@@ -80,7 +88,7 @@ public partial class ImageViewer : UserControl
         }
         else
         {
-            await Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.InvokeAsync(Set);
         }
 
         return;
@@ -88,11 +96,6 @@ public partial class ImageViewer : UserControl
         void Set()
         {
             ImageHelper.SetImage(image, MainImage, imageType);
-
-            if (_isZoomed)
-            {
-                ResetZoom(enableAnimations: false);
-            }
         }
     }
 
@@ -406,7 +409,7 @@ public partial class ImageViewer : UserControl
             _scaleTransform.ScaleY = 1;
             _translateTransform.X = 0;
             _translateTransform.Y = 0;
-        }, DispatcherPriority.Normal);
+        }, DispatcherPriority.Send);
         _isZoomed = false;
     }
 

@@ -28,8 +28,6 @@ namespace PicView.Avalonia.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public event EventHandler<ImageModel>? ImageChanged;
-
         public readonly IPlatformSpecificService? PlatformService;
 
         #region Gallery
@@ -1381,7 +1379,6 @@ namespace PicView.Avalonia.ViewModels
             {
                 return;
             }
-
             await ImageIterator.LoadNextPic(navigateTo, this).ConfigureAwait(false);
         }
 
@@ -1393,13 +1390,12 @@ namespace PicView.Avalonia.ViewModels
             }
 
             await ImageIterator.LoadPicAtIndex(index, this).ConfigureAwait(false);
-            var preloadValue = ImageIterator.PreLoader.Get(index, ImageIterator.Pics);
-            ImageChanged?.Invoke(this, preloadValue.ImageModel);
         }).ConfigureAwait(false);
 
         public async Task LoadPicFromString(string path)
         {
             ImageIterator = new ImageIterator(new FileInfo(path), this);
+            CurrentView = ImageViewer;
             await ImageIterator.LoadPicFromString(path, this).ConfigureAwait(false);
         }
 
@@ -1418,6 +1414,11 @@ namespace PicView.Avalonia.ViewModels
                     await Dispatcher.UIThread.InvokeAsync(() => { CurrentView = new StartUpMenu(); });
                 }
             }
+        }
+        
+        public async Task LoadPicFromFolder(string path)
+        {
+            // TODO: Implement
         }
 
         #endregion LoadPic
