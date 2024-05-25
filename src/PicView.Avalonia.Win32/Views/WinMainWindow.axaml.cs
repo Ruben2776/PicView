@@ -19,7 +19,6 @@ public partial class WinMainWindow : Window
             {
                 return;
             }
-            var vm = (MainViewModel)DataContext;
 
             // Keep window position when resizing
             ClientSizeProperty.Changed.Subscribe(size =>

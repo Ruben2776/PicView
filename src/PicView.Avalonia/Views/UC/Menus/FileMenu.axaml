@@ -1,9 +1,10 @@
-<UserControl
+<customControls:AnimatedMenu
+    IsOpen="{CompiledBinding IsFileMenuVisible}"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.Menus.FileMenu"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:controls="using:PicView.Avalonia.CustomControls"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
@@ -11,316 +12,313 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <controls:AnimatedPopUp AnimationTime="0:0:0.1" Open="{Binding IsFileMenuVisible}">
-        <StackPanel>
+    <StackPanel>
+        <Border
+            Background="{StaticResource MenuBackgroundColor}"
+            BorderBrush="{StaticResource MainBorderColor}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Effect="{StaticResource MenuShadowButtonBorder}">
+            <Canvas Height="193" Width="315">
 
-            <Border
-                Background="{StaticResource MenuBackgroundColor}"
-                BorderBrush="{StaticResource MainBorderColor}"
-                BorderThickness="1"
-                CornerRadius="8"
-                Effect="{StaticResource MenuShadowButtonBorder}">
-                <Canvas Height="193" Width="315">
+                <Border
+                    Background="{StaticResource SecondaryBackgroundColor}"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="8,8,0,0"
+                    Height="47"
+                    Width="315" />
 
-                    <Border
-                        Background="{StaticResource SecondaryBackgroundColor}"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        BorderThickness="0,0,0,1"
-                        CornerRadius="8,8,0,0"
-                        Height="47"
-                        Width="315" />
+                <Button
+                    Background="Transparent"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Classes="hover"
+                    Command="{Binding ReloadCommand}"
+                    CornerRadius="8,0,0,0"
+                    Height="45"
+                    ToolTip.Tip="{Binding Reload}"
+                    Width="45">
+                    <Path
+                        Data="M416,352l96-111.9h-64.7c-2.3-27.9-10.5-54-23.5-77.3c-27.4-49.2-75.8-85.1-133-95.6c-0.7-0.1-1.5-0.3-2.2-0.4  c-0.5-0.1-0.9-0.2-1.4-0.2C277.1,64.9,266.6,64,256,64c-0.1,0-0.3,0-0.4,0c0,0,0,0,0,0c-90.9,0.2-167,63.6-186.7,148.6  c0,0,0,0.1,0,0.1c-0.3,1.1-0.5,2.2-0.7,3.3c-0.1,0.5-0.2,0.9-0.3,1.4c-0.1,0.7-0.3,1.4-0.4,2.1c-0.2,0.9-0.3,1.7-0.5,2.6  c-0.1,0.4-0.1,0.7-0.2,1.1c-0.2,1.2-0.4,2.4-0.6,3.6c0,0.1,0,0.1,0,0.2c-1,6.3-1.6,12.7-1.9,19.1c0,0.3,0,0.6,0,0.8  c-0.1,1.4-0.1,2.7-0.2,4.1c0,1.6-0.1,3.3-0.1,5c0,1.7,0,3.3,0.1,5c0,1.4,0.1,2.7,0.2,4.1c0,0.3,0,0.6,0,0.9c0.3,6.5,1,12.9,1.9,19.1  c0,0.1,0,0.1,0,0.2c0.2,1.2,0.4,2.4,0.6,3.6c0.1,0.4,0.1,0.7,0.2,1.1c0.2,0.9,0.3,1.8,0.5,2.6c0.1,0.7,0.3,1.4,0.4,2.1  c0.1,0.5,0.2,1,0.3,1.4c0.2,1.1,0.5,2.2,0.7,3.2c0,0,0,0.1,0,0.1c19.7,85,96.1,148.4,187.1,148.6c42.9-0.1,83.1-14.2,116.9-40.7  l7.5-5.9l-43.2-46.2l-6.2,4.6c-22.1,16.3-47.5,24.2-75,24.2c-70.6,0-128-57-128-128c0-71,57.4-128,128-128  c66.4,0,122.8,46.6,129.5,112H312L416,352z"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
+                </Button>
 
-                    <Button
-                        Background="Transparent"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        BorderThickness="0,0,1,0"
-                        Classes="hover"
-                        Command="{Binding ReloadCommand}"
-                        CornerRadius="8,0,0,0"
-                        Height="45"
-                        ToolTip.Tip="{Binding Reload}"
-                        Width="45">
+                <Button
+                    Background="Transparent"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Canvas.Left="45"
+                    Classes="hover"
+                    Command="{CompiledBinding PrintCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Height="45"
+                    ToolTip.Tip="{Binding Print}"
+                    Width="45">
+                    <Path
+                        Data="M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
+                </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Canvas.Left="90"
+                    Classes="hover"
+                    Command="{Binding RecycleFileCommand}"
+                    Height="45"
+                    ToolTip.Tip="{Binding DeleteFile}"
+                    Width="45">
+                    <Path
+                        Data="M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-42t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
+                </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Canvas.Left="135"
+                    Classes="hover"
+                    Command="{Binding SaveFileCommand}"
+                    Height="45"
+                    ToolTip.Tip="{Binding Save}"
+                    Width="45">
+                    <Path
+                        Data="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
+                </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Canvas.Left="180"
+                    Classes="hover"
+                    Command="{CompiledBinding CopyFileCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Height="45"
+                    ToolTip.Tip="{Binding CopyFile}"
+                    Width="45">
+                    <Path
+                        Data="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
+                </Button>
+
+                <Button
+                    Background="Transparent"
+                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Canvas.Left="225"
+                    Classes="hover"
+                    Command="{Binding DuplicateFileCommand}"
+                    Height="45"
+                    ToolTip.Tip="{Binding DuplicateFile}"
+                    Width="45">
+                    <Path
+                        Data="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="17"
+                        Stretch="Fill"
+                        Width="17" />
+                </Button>
+
+                <Button
+                    Background="Transparent"
+                    Canvas.Left="270"
+                    Classes="hover"
+                    Command="{Binding CloseMenuCommand}"
+                    CornerRadius="0,8,0,0"
+                    Height="45"
+                    ToolTip.Tip="{Binding Close}"
+                    Width="45">
+                    <Path
+                        Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="10"
+                        Stretch="Fill"
+                        Width="10" />
+                </Button>
+
+                <Button
+                    Canvas.Left="7"
+                    Canvas.Top="53"
+                    Classes="ButtonBorder altHover"
+                    Command="{Binding OpenFileCommand}"
+                    ToolTip.Tip="{Binding OpenFileDialog}">
+                    <StackPanel Orientation="Horizontal">
                         <Path
-                            Data="M416,352l96-111.9h-64.7c-2.3-27.9-10.5-54-23.5-77.3c-27.4-49.2-75.8-85.1-133-95.6c-0.7-0.1-1.5-0.3-2.2-0.4  c-0.5-0.1-0.9-0.2-1.4-0.2C277.1,64.9,266.6,64,256,64c-0.1,0-0.3,0-0.4,0c0,0,0,0,0,0c-90.9,0.2-167,63.6-186.7,148.6  c0,0,0,0.1,0,0.1c-0.3,1.1-0.5,2.2-0.7,3.3c-0.1,0.5-0.2,0.9-0.3,1.4c-0.1,0.7-0.3,1.4-0.4,2.1c-0.2,0.9-0.3,1.7-0.5,2.6  c-0.1,0.4-0.1,0.7-0.2,1.1c-0.2,1.2-0.4,2.4-0.6,3.6c0,0.1,0,0.1,0,0.2c-1,6.3-1.6,12.7-1.9,19.1c0,0.3,0,0.6,0,0.8  c-0.1,1.4-0.1,2.7-0.2,4.1c0,1.6-0.1,3.3-0.1,5c0,1.7,0,3.3,0.1,5c0,1.4,0.1,2.7,0.2,4.1c0,0.3,0,0.6,0,0.9c0.3,6.5,1,12.9,1.9,19.1  c0,0.1,0,0.1,0,0.2c0.2,1.2,0.4,2.4,0.6,3.6c0.1,0.4,0.1,0.7,0.2,1.1c0.2,0.9,0.3,1.8,0.5,2.6c0.1,0.7,0.3,1.4,0.4,2.1  c0.1,0.5,0.2,1,0.3,1.4c0.2,1.1,0.5,2.2,0.7,3.2c0,0,0,0.1,0,0.1c19.7,85,96.1,148.4,187.1,148.6c42.9-0.1,83.1-14.2,116.9-40.7  l7.5-5.9l-43.2-46.2l-6.2,4.6c-22.1,16.3-47.5,24.2-75,24.2c-70.6,0-128-57-128-128c0-71,57.4-128,128-128  c66.4,0,122.8,46.6,129.5,112H312L416,352z"
+                            Data="M384 480h48c11.4 0 21.9-6 27.6-15.9l112-192c5.8-9.9 5.8-22.1 .1-32.1S555.5 224 544 224H144c-11.4 0-21.9 6-27.6 15.9L48 357.1V96c0-8.8 7.2-16 16-16H181.5c4.2 0 8.3 1.7 11.3 4.7l26.5 26.5c21 21 49.5 32.8 79.2 32.8H416c8.8 0 16 7.2 16 16v32h48V160c0-35.3-28.7-64-64-64H298.5c-17 0-33.3-6.7-45.3-18.7L226.7 50.7c-12-12-28.3-18.7-45.3-18.7H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H87.7 384z"
                             Fill="{StaticResource MainIconColor}"
                             Height="17"
+                            Margin="9,0,9,0"
                             Stretch="Fill"
-                            Width="17" />
-                    </Button>
+                            VerticalAlignment="Center"
+                            Width="21.39" />
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding Open}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
 
-                    <Button
-                        Background="Transparent"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        BorderThickness="0,0,1,0"
-                        Canvas.Left="45"
-                        Classes="hover"
-                        Command="{CompiledBinding PrintCommand}"
-                        CommandParameter="{CompiledBinding FileInfo.FullName,
-                                                           FallbackValue=''}"
-                        Height="45"
-                        ToolTip.Tip="{Binding Print}"
-                        Width="45">
+                <Button
+                    Canvas.Left="7"
+                    Canvas.Top="99"
+                    Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding OpenWithCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    ToolTip.Tip="{CompiledBinding OpenWith}">
+                    <StackPanel Orientation="Horizontal">
                         <Path
-                            Data="M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z"
+                            Data="M0 0l20 10L0 20V0zm0 8v4l10-2L0 8z"
                             Fill="{StaticResource MainIconColor}"
                             Height="17"
+                            Margin="11,0,11,0"
                             Stretch="Fill"
+                            VerticalAlignment="Center"
                             Width="17" />
-                    </Button>
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding OpenWith}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
 
-                    <Button
-                        Background="Transparent"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        BorderThickness="0,0,1,0"
-                        Canvas.Left="90"
-                        Classes="hover"
-                        Command="{Binding RecycleFileCommand}"
-                        Height="45"
-                        ToolTip.Tip="{Binding DeleteFile}"
-                        Width="45">
+                <Button
+                    Canvas.Left="160"
+                    Canvas.Top="53"
+                    Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding LocateOnDiskCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    ToolTip.Tip="{Binding ShowInFolder}">
+                    <StackPanel Orientation="Horizontal">
                         <Path
-                            Data="M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-42t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z"
+                            Data="M1 5C1 3.34315 2.34315 2 4 2H8.43845C9.81505 2 11.015 2.93689 11.3489 4.27239L11.7808 6H13.5H20C21.6569 6 23 7.34315 23 9V11C23 11.5523 22.5523 12 22 12C21.4477 12 21 11.5523 21 11V9C21 8.44772 20.5523 8 20 8H13.5H11.7808H4C3.44772 8 3 8.44772 3 9V10V19C3 19.5523 3.44772 20 4 20H9C9.55228 20 10 20.4477 10 21C10 21.5523 9.55228 22 9 22H4C2.34315 22 1 20.6569 1 19V10V9V5ZM3 6.17071C3.31278 6.06015 3.64936 6 4 6H9.71922L9.40859 4.75746C9.2973 4.3123 8.89732 4 8.43845 4H4C3.44772 4 3 4.44772 3 5V6.17071ZM20.1716 18.7574C20.6951 17.967 21 17.0191 21 16C21 13.2386 18.7614 11 16 11C13.2386 11 11 13.2386 11 16C11 18.7614 13.2386 21 16 21C17.0191 21 17.967 20.6951 18.7574 20.1716L21.2929 22.7071C21.6834 23.0976 22.3166 23.0976 22.7071 22.7071C23.0976 22.3166 23.0976 21.6834 22.7071 21.2929L20.1716 18.7574ZM13 16C13 14.3431 14.3431 13 16 13C17.6569 13 19 14.3431 19 16C19 17.6569 17.6569 19 16 19C14.3431 19 13 17.6569 13 16Z"
                             Fill="{StaticResource MainIconColor}"
-                            Height="17"
+                            Height="19"
+                            Margin="11,0,9,0"
                             Stretch="Fill"
-                            Width="17" />
-                    </Button>
+                            Width="19" />
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding ShowInFolder}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
 
-                    <Button
-                        Background="Transparent"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        BorderThickness="0,0,1,0"
-                        Canvas.Left="135"
-                        Classes="hover"
-                        Command="{Binding SaveFileCommand}"
-                        Height="45"
-                        ToolTip.Tip="{Binding Save}"
-                        Width="45">
+                <Button
+                    Canvas.Left="160"
+                    Canvas.Top="99"
+                    Classes="ButtonBorder altHover"
+                    Command="{Binding RenameCommand}"
+                    ToolTip.Tip="{Binding RenameFile}">
+                    <StackPanel Orientation="Horizontal">
                         <Path
-                            Data="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"
+                            Data="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V428.7c-2.7 1.1-5.4 2-8.2 2.7l-60.1 15c-3 .7-6 1.2-9 1.4c-.9 .1-1.8 .2-2.7 .2H240c-6.1 0-11.6-3.4-14.3-8.8l-8.8-17.7c-1.7-3.4-5.1-5.5-8.8-5.5s-7.2 2.1-8.8 5.5l-8.8 17.7c-2.9 5.9-9.2 9.4-15.7 8.8s-12.1-5.1-13.9-11.3L144 381l-9.8 32.8c-6.1 20.3-24.8 34.2-46 34.2H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h8.2c7.1 0 13.3-4.6 15.3-11.4l14.9-49.5c3.4-11.3 13.8-19.1 25.6-19.1s22.2 7.8 25.6 19.1l11.6 38.6c7.4-6.2 16.8-9.7 26.8-9.7c15.9 0 30.4 9 37.5 23.2l4.4 8.8h8.9c-3.1-8.8-3.7-18.4-1.4-27.8l15-60.1c2.8-11.3 8.6-21.5 16.8-29.7L384 203.6V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM549.8 139.7c-15.6-15.6-40.9-15.6-56.6 0l-29.4 29.4 71 71 29.4-29.4c15.6-15.6 15.6-40.9 0-56.6l-14.4-14.4zM311.9 321c-4.1 4.1-7 9.2-8.4 14.9l-15 60.1c-1.4 5.5 .2 11.2 4.2 15.2s9.7 5.6 15.2 4.2l60.1-15c5.6-1.4 10.8-4.3 14.9-8.4L512.1 262.7l-71-71L311.9 321z"
                             Fill="{StaticResource MainIconColor}"
-                            Height="17"
+                            Height="19"
+                            Margin="11,0,11,0"
                             Stretch="Fill"
-                            Width="17" />
-                    </Button>
+                            VerticalAlignment="Center"
+                            Width="19" />
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding RenameFile}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
 
-                    <Button
-                        Background="Transparent"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        BorderThickness="0,0,1,0"
-                        Canvas.Left="180"
-                        Classes="hover"
-                        Command="{CompiledBinding CopyFileCommand}"
-                        CommandParameter="{CompiledBinding FileInfo.FullName,
-                                                           FallbackValue=''}"
-                        Height="45"
-                        ToolTip.Tip="{Binding CopyFile}"
-                        Width="45">
+                <Button
+                    Canvas.Left="7"
+                    Canvas.Top="144"
+                    Classes="ButtonBorder altHover"
+                    Command="{Binding PasteCommand}"
+                    ToolTip.Tip="{Binding FilePaste}">
+                    <StackPanel Orientation="Horizontal">
                         <Path
-                            Data="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"
+                            Data="{StaticResource PasteGeometry}"
                             Fill="{StaticResource MainIconColor}"
-                            Height="17"
+                            Height="19"
+                            Margin="11,0,12,0"
                             Stretch="Fill"
-                            Width="17" />
-                    </Button>
+                            VerticalAlignment="Center"
+                            Width="19" />
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding FilePaste}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
 
-                    <Button
-                        Background="Transparent"
-                        BorderBrush="{StaticResource MainBorderColor}"
-                        BorderThickness="0,0,1,0"
-                        Canvas.Left="225"
-                        Classes="hover"
-                        Command="{Binding DuplicateFileCommand}"
-                        Height="45"
-                        ToolTip.Tip="{Binding DuplicateFile}"
-                        Width="45">
-                        <Path
-                            Data="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"
-                            Fill="{StaticResource MainIconColor}"
-                            Height="17"
-                            Stretch="Fill"
-                            Width="17" />
-                    </Button>
-
-                    <Button
-                        Background="Transparent"
-                        Canvas.Left="270"
-                        Classes="hover"
-                        Command="{Binding CloseMenuCommand}"
-                        CornerRadius="0,8,0,0"
-                        Height="45"
-                        ToolTip.Tip="{Binding Close}"
-                        Width="45">
-                        <Path
-                            Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                            Fill="{StaticResource MainIconColor}"
-                            Height="10"
-                            Stretch="Fill"
-                            Width="10" />
-                    </Button>
-
-                    <Button
-                        Canvas.Left="7"
-                        Canvas.Top="53"
-                        Classes="ButtonBorder altHover"
-                        Command="{Binding OpenFileCommand}"
-                        ToolTip.Tip="{Binding OpenFileDialog}">
-                        <StackPanel Orientation="Horizontal">
-                            <Path
-                                Data="M384 480h48c11.4 0 21.9-6 27.6-15.9l112-192c5.8-9.9 5.8-22.1 .1-32.1S555.5 224 544 224H144c-11.4 0-21.9 6-27.6 15.9L48 357.1V96c0-8.8 7.2-16 16-16H181.5c4.2 0 8.3 1.7 11.3 4.7l26.5 26.5c21 21 49.5 32.8 79.2 32.8H416c8.8 0 16 7.2 16 16v32h48V160c0-35.3-28.7-64-64-64H298.5c-17 0-33.3-6.7-45.3-18.7L226.7 50.7c-12-12-28.3-18.7-45.3-18.7H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H87.7 384z"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="17"
-                                Margin="9,0,9,0"
-                                Stretch="Fill"
-                                VerticalAlignment="Center"
-                                Width="21.39" />
-                            <TextBlock
-                                Classes="txt"
-                                MaxWidth="150"
-                                Text="{Binding Open}"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button
-                        Canvas.Left="7"
-                        Canvas.Top="99"
-                        Classes="ButtonBorder altHover"
-                        Command="{CompiledBinding OpenWithCommand}"
-                        CommandParameter="{CompiledBinding FileInfo.FullName,
-                                                           FallbackValue=''}"
-                        ToolTip.Tip="{CompiledBinding OpenWith}">
-                        <StackPanel Orientation="Horizontal">
-                            <Path
-                                Data="M0 0l20 10L0 20V0zm0 8v4l10-2L0 8z"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="17"
-                                Margin="11,0,11,0"
-                                Stretch="Fill"
-                                VerticalAlignment="Center"
-                                Width="17" />
-                            <TextBlock
-                                Classes="txt"
-                                MaxWidth="150"
-                                Text="{Binding OpenWith}"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button
-                        Canvas.Left="160"
-                        Canvas.Top="53"
-                        Classes="ButtonBorder altHover"
-                        Command="{CompiledBinding LocateOnDiskCommand}"
-                        CommandParameter="{CompiledBinding FileInfo.FullName,
-                                                           FallbackValue=''}"
-                        ToolTip.Tip="{Binding ShowInFolder}">
-                        <StackPanel Orientation="Horizontal">
-                            <Path
-                                Data="M1 5C1 3.34315 2.34315 2 4 2H8.43845C9.81505 2 11.015 2.93689 11.3489 4.27239L11.7808 6H13.5H20C21.6569 6 23 7.34315 23 9V11C23 11.5523 22.5523 12 22 12C21.4477 12 21 11.5523 21 11V9C21 8.44772 20.5523 8 20 8H13.5H11.7808H4C3.44772 8 3 8.44772 3 9V10V19C3 19.5523 3.44772 20 4 20H9C9.55228 20 10 20.4477 10 21C10 21.5523 9.55228 22 9 22H4C2.34315 22 1 20.6569 1 19V10V9V5ZM3 6.17071C3.31278 6.06015 3.64936 6 4 6H9.71922L9.40859 4.75746C9.2973 4.3123 8.89732 4 8.43845 4H4C3.44772 4 3 4.44772 3 5V6.17071ZM20.1716 18.7574C20.6951 17.967 21 17.0191 21 16C21 13.2386 18.7614 11 16 11C13.2386 11 11 13.2386 11 16C11 18.7614 13.2386 21 16 21C17.0191 21 17.967 20.6951 18.7574 20.1716L21.2929 22.7071C21.6834 23.0976 22.3166 23.0976 22.7071 22.7071C23.0976 22.3166 23.0976 21.6834 22.7071 21.2929L20.1716 18.7574ZM13 16C13 14.3431 14.3431 13 16 13C17.6569 13 19 14.3431 19 16C19 17.6569 17.6569 19 16 19C14.3431 19 13 17.6569 13 16Z"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="19"
-                                Margin="11,0,9,0"
-                                Stretch="Fill"
-                                Width="19" />
-                            <TextBlock
-                                Classes="txt"
-                                MaxWidth="150"
-                                Text="{Binding ShowInFolder}"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button
-                        Canvas.Left="160"
-                        Canvas.Top="99"
-                        Classes="ButtonBorder altHover"
-                        Command="{Binding RenameCommand}"
-                        ToolTip.Tip="{Binding RenameFile}">
-                        <StackPanel Orientation="Horizontal">
-                            <Path
-                                Data="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V428.7c-2.7 1.1-5.4 2-8.2 2.7l-60.1 15c-3 .7-6 1.2-9 1.4c-.9 .1-1.8 .2-2.7 .2H240c-6.1 0-11.6-3.4-14.3-8.8l-8.8-17.7c-1.7-3.4-5.1-5.5-8.8-5.5s-7.2 2.1-8.8 5.5l-8.8 17.7c-2.9 5.9-9.2 9.4-15.7 8.8s-12.1-5.1-13.9-11.3L144 381l-9.8 32.8c-6.1 20.3-24.8 34.2-46 34.2H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h8.2c7.1 0 13.3-4.6 15.3-11.4l14.9-49.5c3.4-11.3 13.8-19.1 25.6-19.1s22.2 7.8 25.6 19.1l11.6 38.6c7.4-6.2 16.8-9.7 26.8-9.7c15.9 0 30.4 9 37.5 23.2l4.4 8.8h8.9c-3.1-8.8-3.7-18.4-1.4-27.8l15-60.1c2.8-11.3 8.6-21.5 16.8-29.7L384 203.6V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM549.8 139.7c-15.6-15.6-40.9-15.6-56.6 0l-29.4 29.4 71 71 29.4-29.4c15.6-15.6 15.6-40.9 0-56.6l-14.4-14.4zM311.9 321c-4.1 4.1-7 9.2-8.4 14.9l-15 60.1c-1.4 5.5 .2 11.2 4.2 15.2s9.7 5.6 15.2 4.2l60.1-15c5.6-1.4 10.8-4.3 14.9-8.4L512.1 262.7l-71-71L311.9 321z"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="19"
-                                Margin="11,0,11,0"
-                                Stretch="Fill"
-                                VerticalAlignment="Center"
-                                Width="19" />
-                            <TextBlock
-                                Classes="txt"
-                                MaxWidth="150"
-                                Text="{Binding RenameFile}"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button
-                        Canvas.Left="7"
-                        Canvas.Top="144"
-                        Classes="ButtonBorder altHover"
-                        Command="{Binding PasteCommand}"
-                        ToolTip.Tip="{Binding FilePaste}">
-                        <StackPanel Orientation="Horizontal">
-                            <Path
-                                Data="{StaticResource PasteGeometry}"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="19"
-                                Margin="11,0,12,0"
-                                Stretch="Fill"
-                                VerticalAlignment="Center"
-                                Width="19" />
-                            <TextBlock
-                                Classes="txt"
-                                MaxWidth="150"
-                                Text="{Binding FilePaste}"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button
-                        Canvas.Left="160"
-                        Canvas.Top="144"
-                        Classes="ButtonBorder altHover"
-                        Command="{Binding NewWindowCommand}"
-                        ToolTip.Tip="{Binding NewWindow}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image
-                                Height="20"
-                                Margin="9,0,13,0"
-                                Width="20">
-                                <DrawingImage>
+                <Button
+                    Canvas.Left="160"
+                    Canvas.Top="144"
+                    Classes="ButtonBorder altHover"
+                    Command="{Binding NewWindowCommand}"
+                    ToolTip.Tip="{Binding NewWindow}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Height="20"
+                            Margin="9,0,13,0"
+                            Width="20">
+                            <DrawingImage>
+                                <DrawingGroup>
                                     <DrawingGroup>
-                                        <DrawingGroup>
-                                            <DrawingGroup.Transform>
-                                                <MatrixTransform Matrix="0.9994004,0,0,0.9994004,0.09684372,0" />
-                                            </DrawingGroup.Transform>
-                                            <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F0 M50.34 34.25L55.73 34.25Q55.8517 34.2505 55.9728 34.2628Q56.0938 34.2752 56.2131 34.2993Q56.3324 34.3234 56.4488 34.359Q56.5652 34.3946 56.6775 34.4414Q56.7899 34.4882 56.8971 34.5458Q57.0043 34.6033 57.1055 34.671Q57.2066 34.7387 57.3006 34.816Q57.3947 34.8932 57.4807 34.9793Q57.5668 35.0653 57.644 35.1594Q57.7213 35.2534 57.789 35.3545Q57.8567 35.4557 57.9142 35.5629Q57.9718 35.6702 58.0186 35.7825Q58.0654 35.8948 58.101 36.0112Q58.1366 36.1276 58.1607 36.2469Q58.1848 36.3662 58.1972 36.4872Q58.2095 36.6083 58.21 36.73L58.21 44.73L66.21 44.73Q66.3314 44.7314 66.4522 44.7446Q66.5729 44.7578 66.6918 44.7825Q66.8107 44.8073 66.9266 44.8434Q67.0426 44.8795 67.1545 44.9266Q67.2664 44.9738 67.3732 45.0315Q67.4801 45.0892 67.5808 45.157Q67.6816 45.2248 67.7754 45.3019Q67.8692 45.3791 67.955 45.465Q68.0409 45.5509 68.1181 45.6446Q68.1952 45.7384 68.263 45.8391Q68.3308 45.9399 68.3885 46.0468Q68.4462 46.1536 68.4934 46.2655Q68.5405 46.3774 68.5766 46.4934Q68.6127 46.6093 68.6375 46.7282Q68.6622 46.8471 68.6754 46.9678Q68.6886 47.0886 68.69 47.21L68.69 52.61Q68.6881 52.7313 68.6745 52.8518Q68.661 52.9724 68.6359 53.0911Q68.6108 53.2098 68.5745 53.3255Q68.5381 53.4413 68.4908 53.553Q68.4435 53.6647 68.3857 53.7713Q68.3279 53.878 68.2601 53.9786Q68.1923 54.0792 68.1151 54.1728Q68.038 54.2664 67.9522 54.3522Q67.8664 54.438 67.7728 54.5151Q67.6792 54.5923 67.5786 54.6601Q67.478 54.7279 67.3713 54.7857Q67.2647 54.8435 67.153 54.8908Q67.0413 54.9381 66.9255 54.9745Q66.8098 55.0108 66.6911 55.0359Q66.5724 55.061 66.4518 55.0745Q66.3313 55.0881 66.21 55.09L58.21 55.09L58.21 63.09Q58.2086 63.2114 58.1954 63.3322Q58.1822 63.4529 58.1575 63.5718Q58.1327 63.6907 58.0966 63.8066Q58.0605 63.9226 58.0134 64.0345Q57.9662 64.1464 57.9085 64.2532Q57.8508 64.3601 57.783 64.4608Q57.7152 64.5616 57.6381 64.6554Q57.5609 64.7491 57.475 64.835Q57.3891 64.9209 57.2954 64.9981Q57.2016 65.0753 57.1008 65.143Q57.0001 65.2108 56.8932 65.2685Q56.7864 65.3262 56.6745 65.3734Q56.5626 65.4205 56.4466 65.4566Q56.3307 65.4927 56.2118 65.5175Q56.0929 65.5422 55.9722 65.5554Q55.8514 65.5686 55.73 65.57L50.34 65.57Q50.2183 65.569 50.0972 65.5563Q49.9761 65.5436 49.8568 65.5192Q49.7375 65.4948 49.6212 65.4589Q49.5048 65.4231 49.3925 65.3762Q49.2801 65.3293 49.1728 65.2717Q49.0656 65.2141 48.9644 65.1464Q48.8632 65.0787 48.769 65.0016Q48.6748 64.9244 48.5886 64.8385Q48.5023 64.7526 48.4248 64.6587Q48.3472 64.5648 48.2791 64.4639Q48.211 64.363 48.153 64.2559Q48.095 64.1489 48.0476 64.0367Q48.0003 63.9246 47.964 63.8084Q47.9277 63.6922 47.9028 63.573Q47.8779 63.4538 47.8647 63.3328Q47.8515 63.2117 47.85 63.09L47.85 55.09L39.85 55.09Q39.7284 55.089 39.6075 55.0763Q39.4866 55.0635 39.3675 55.0391Q39.2485 55.0147 39.1323 54.9788Q39.0161 54.9429 38.904 54.896Q38.7919 54.849 38.6848 54.7914Q38.5778 54.7337 38.4769 54.666Q38.3759 54.5982 38.282 54.521Q38.1881 54.4438 38.1022 54.3578Q38.0162 54.2719 37.939 54.178Q37.8618 54.0841 37.794 53.9831Q37.7263 53.8822 37.6687 53.7752Q37.611 53.6681 37.5641 53.556Q37.5171 53.4439 37.4812 53.3277Q37.4453 53.2115 37.4209 53.0925Q37.3965 52.9734 37.3837 52.8525Q37.371 52.7316 37.37 52.61L37.37 47.21Q37.37 47.0882 37.3819 46.9669Q37.3939 46.8457 37.4177 46.7262Q37.4414 46.6067 37.4768 46.4901Q37.5122 46.3735 37.5588 46.2609Q37.6054 46.1484 37.6628 46.0409Q37.7203 45.9335 37.788 45.8322Q37.8556 45.7309 37.9329 45.6367Q38.0102 45.5425 38.0964 45.4564Q38.1825 45.3702 38.2767 45.2929Q38.3709 45.2156 38.4722 45.1479Q38.5735 45.0803 38.6809 45.0228Q38.7884 44.9654 38.9009 44.9188Q39.0135 44.8722 39.1301 44.8368Q39.2467 44.8014 39.3662 44.7776Q39.4857 44.7539 39.6069 44.7419Q39.7282 44.73 39.85 44.73L47.85 44.73L47.85 36.73Q47.8505 36.608 47.8629 36.4866Q47.8753 36.3652 47.8995 36.2457Q47.9238 36.1261 47.9596 36.0094Q47.9954 35.8928 48.0424 35.7802Q48.0894 35.6676 48.1472 35.5602Q48.205 35.4527 48.2731 35.3514Q48.3411 35.2502 48.4188 35.156Q48.4964 35.0619 48.5828 34.9758Q48.6693 34.8897 48.7637 34.8124Q48.8582 34.7352 48.9597 34.6676Q49.0613 34.5999 49.169 34.5425Q49.2766 34.4852 49.3894 34.4386Q49.5022 34.392 49.619 34.3567Q49.7358 34.3213 49.8554 34.2976Q49.9751 34.2739 50.0965 34.2619Q50.218 34.25 50.34 34.25ZM7.67 0L98.35 0Q98.5378 0.000976332 98.7254 0.0111227Q98.913 0.0212692 99.0998 0.0405615Q99.2867 0.0598537 99.4724 0.0882459Q99.658 0.116638 99.8421 0.154062Q100.026 0.191487 100.208 0.237854Q100.39 0.284221 100.57 0.33942Q100.749 0.39462 100.926 0.45852Q101.103 0.52242 101.276 0.594868Q101.449 0.667316 101.619 0.74814Q101.788 0.828964 101.954 0.91797Q102.119 1.00698 102.28 1.10395Q102.441 1.20093 102.597 1.30564Q102.753 1.41036 102.904 1.52256Q103.054 1.63477 103.199 1.7542Q103.344 1.87362 103.483 1.99999Q103.622 2.12635 103.755 2.25935Q103.887 2.39234 104.013 2.53166Q104.139 2.67098 104.258 2.81628Q104.378 2.96158 104.489 3.11252Q104.601 3.26346 104.705 3.41968Q104.81 3.5759 104.906 3.73703Q105.003 3.89816 105.091 4.06381Q105.18 4.22946 105.26 4.39923Q105.341 4.56901 105.413 4.74251Q105.485 4.916 105.548 5.09281Q105.612 5.26962 105.666 5.44931Q105.721 5.629 105.767 5.81115Q105.813 5.9933 105.85 6.17748Q105.887 6.36165 105.915 6.54741Q105.943 6.73317 105.961 6.92007Q105.98 7.10697 105.99 7.29456Q106 7.48216 106 7.67L106 75.67Q105.999 75.8581 105.989 76.0459Q105.979 76.2337 105.96 76.4209Q105.941 76.608 105.913 76.7939Q105.885 76.9799 105.848 77.1643Q105.81 77.3486 105.764 77.531Q105.718 77.7133 105.663 77.8931Q105.608 78.073 105.544 78.25Q105.48 78.4269 105.408 78.6005Q105.336 78.7742 105.255 78.9441Q105.174 79.1139 105.086 79.2797Q104.997 79.4454 104.9 79.6067Q104.803 79.7679 104.698 79.9242Q104.594 80.0805 104.481 80.2314Q104.369 80.3824 104.25 80.5278Q104.13 80.6731 104.004 80.8124Q103.878 80.9518 103.745 81.0848Q103.612 81.2178 103.472 81.3441Q103.333 81.4705 103.188 81.5899Q103.042 81.7092 102.891 81.8214Q102.74 81.9336 102.584 82.0382Q102.428 82.1429 102.267 82.2397Q102.105 82.3366 101.94 82.4255Q101.774 82.5144 101.604 82.5951Q101.434 82.6759 101.261 82.7482Q101.087 82.8205 100.91 82.8842Q100.733 82.948 100.553 83.003Q100.373 83.0581 100.191 83.1043Q100.009 83.1504 99.8243 83.1877Q99.6399 83.2249 99.4539 83.2531Q99.268 83.2813 99.0809 83.3004Q98.8937 83.3194 98.7059 83.3293Q98.5181 83.3393 98.33 83.34L7.67 83.34Q7.48216 83.3395 7.29456 83.3299Q7.10697 83.3202 6.92007 83.3014Q6.73317 83.2826 6.54741 83.2547Q6.36165 83.2268 6.17748 83.1898Q5.99331 83.1529 5.81116 83.107Q5.629 83.0611 5.44931 83.0064Q5.26962 82.9516 5.09281 82.8882Q4.91601 82.8248 4.74251 82.7528Q4.56901 82.6808 4.39923 82.6004Q4.22946 82.52 4.06381 82.4314Q3.89816 82.3429 3.73703 82.2463Q3.57591 82.1498 3.41969 82.0454Q3.26347 81.9411 3.11252 81.8293Q2.96158 81.7175 2.81628 81.5985Q2.67098 81.4794 2.53166 81.3534Q2.39235 81.2274 2.25935 81.0948Q2.12635 80.9621 1.99999 80.8231Q1.87362 80.6841 1.7542 80.5392Q1.63477 80.3942 1.52257 80.2435Q1.41036 80.0929 1.30565 79.9369Q1.20093 79.781 1.10396 79.6201Q1.00698 79.4592 0.917972 79.2938Q0.828966 79.1284 0.748142 78.9588Q0.667319 78.7893 0.59487 78.616Q0.522422 78.4426 0.458522 78.266Q0.394622 78.0893 0.339422 77.9098Q0.284222 77.7303 0.237855 77.5482Q0.191488 77.3662 0.154063 77.1821Q0.116639 76.998 0.0882468 76.8124Q0.0598545 76.6267 0.040562 76.4398Q0.0212696 76.253 0.011123 76.0654Q0.000976488 75.8778 0 75.69L0 7.69Q-6.53237e-07 7.50154 0.00923103 7.3133Q0.0184627 7.12505 0.0369046 6.93749Q0.0553464 6.74993 0.0829542 6.5635Q0.110562 6.37706 0.147269 6.19221Q0.183977 6.00735 0.229695 5.82451Q0.275414 5.64167 0.330035 5.4613Q0.384655 5.28092 0.448046 5.10343Q0.511437 4.92595 0.583447 4.75178Q0.655456 4.57761 0.735911 4.40718Q0.816366 4.23675 0.905073 4.07046Q0.99378 3.90418 1.09053 3.74244Q1.18727 3.5807 1.29183 3.42389Q1.39638 3.26708 1.50849 3.11559Q1.6206 2.96409 1.73999 2.81827Q1.85939 2.67245 1.98578 2.53265Q2.11218 2.39285 2.24527 2.25941Q2.37837 2.12597 2.51783 1.99921Q2.6573 1.87245 2.80282 1.75267Q2.94833 1.6329 3.09953 1.5204Q3.25074 1.40789 3.40727 1.30293Q3.5638 1.19797 3.72529 1.1008Q3.88678 1.00364 4.05283 0.914496Q4.21888 0.825356 4.38911 0.744458Q4.55933 0.663559 4.73331 0.591097Q4.90728 0.518634 5.0846 0.454781Q5.26193 0.390928 5.44216 0.335838Q5.6224 0.280748 5.80511 0.234553Q5.98783 0.188358 6.17259 0.151169Q6.35735 0.113981 6.54372 0.0858876Q6.73008 0.0577944 6.91759 0.0388641Q7.1051 0.0199339 7.29332 0.010212Q7.48153 0.000490148 7.67 0ZM99.05 23.92L7.31 23.92L7.31 74Q7.30857 74.209 7.34858 74.4142Q7.38858 74.6194 7.46844 74.8126Q7.5483 75.0058 7.66484 75.1794Q7.78139 75.353 7.93 75.5Q8.07892 75.6482 8.25392 75.7644Q8.42892 75.8806 8.62325 75.9604Q8.81758 76.0402 9.02375 76.0805Q9.22993 76.1208 9.44 76.12L96.89 76.12Q97.1002 76.1216 97.3066 76.0817Q97.5129 76.0418 97.7074 75.9619Q97.9018 75.8821 98.0767 75.7655Q98.2516 75.6488 98.4 75.5Q98.5459 75.3517 98.6597 75.1776Q98.7735 75.0035 98.8508 74.8103Q98.9281 74.6172 98.9657 74.4126Q99.0034 74.208 99 74L99 23.92L99.05 23.92ZM91 8.62Q91.1862 8.62 91.3715 8.63825Q91.5568 8.6565 91.7394 8.69282Q91.922 8.72915 92.1002 8.7832Q92.2783 8.83724 92.4504 8.9085Q92.6224 8.97975 92.7866 9.06752Q92.9508 9.15529 93.1056 9.25873Q93.2604 9.36217 93.4044 9.48029Q93.5483 9.59841 93.6799 9.73006Q93.8116 9.86172 93.9297 10.0056Q94.0478 10.1496 94.1513 10.3044Q94.2547 10.4592 94.3425 10.6234Q94.4302 10.7876 94.5015 10.9596Q94.5727 11.1316 94.6268 11.3098Q94.6808 11.488 94.7172 11.6706Q94.7535 11.8532 94.7717 12.0385Q94.79 12.2238 94.79 12.41Q94.79 12.5962 94.7717 12.7815Q94.7535 12.9668 94.7172 13.1494Q94.6808 13.332 94.6268 13.5102Q94.5727 13.6884 94.5015 13.8604Q94.4302 14.0324 94.3425 14.1966Q94.2547 14.3608 94.1513 14.5156Q94.0478 14.6704 93.9297 14.8143Q93.8116 14.9583 93.6799 15.0899Q93.5483 15.2216 93.4043 15.3397Q93.2604 15.4578 93.1056 15.5613Q92.9508 15.6647 92.7866 15.7525Q92.6224 15.8403 92.4504 15.9115Q92.2783 15.9828 92.1002 16.0368Q91.922 16.0909 91.7394 16.1272Q91.5568 16.1635 91.3715 16.1818Q91.1862 16.2 91 16.2Q90.8138 16.2 90.6285 16.1818Q90.4432 16.1635 90.2606 16.1272Q90.078 16.0909 89.8998 16.0368Q89.7216 15.9828 89.5496 15.9115Q89.3776 15.8403 89.2134 15.7525Q89.0492 15.6647 88.8944 15.5613Q88.7396 15.4578 88.5956 15.3397Q88.4517 15.2216 88.3201 15.0899Q88.1884 14.9583 88.0703 14.8143Q87.9522 14.6704 87.8487 14.5156Q87.7453 14.3608 87.6575 14.1966Q87.5697 14.0324 87.4985 13.8604Q87.4272 13.6884 87.3732 13.5102Q87.3191 13.332 87.2828 13.1494Q87.2465 12.9668 87.2282 12.7815Q87.21 12.5962 87.21 12.41Q87.21 12.2238 87.2283 12.0385Q87.2465 11.8532 87.2828 11.6706Q87.3192 11.488 87.3732 11.3098Q87.4272 11.1316 87.4985 10.9596Q87.5698 10.7876 87.6575 10.6234Q87.7453 10.4592 87.8487 10.3044Q87.9522 10.1496 88.0703 10.0056Q88.1884 9.86172 88.3201 9.73006Q88.4517 9.59841 88.5956 9.48029Q88.7396 9.36217 88.8944 9.25873Q89.0492 9.15529 89.2134 9.06752Q89.3776 8.97975 89.5496 8.9085Q89.7217 8.83724 89.8998 8.7832Q90.078 8.72915 90.2606 8.69282Q90.4432 8.6565 90.6285 8.63825Q90.8138 8.62 91 8.62ZM65.32 8.62Q65.5062 8.62 65.6915 8.63825Q65.8768 8.6565 66.0594 8.69282Q66.242 8.72915 66.4202 8.7832Q66.5984 8.83724 66.7704 8.9085Q66.9424 8.97975 67.1066 9.06752Q67.2708 9.15529 67.4256 9.25873Q67.5804 9.36217 67.7244 9.48029Q67.8683 9.59841 67.9999 9.73006Q68.1316 9.86172 68.2497 10.0056Q68.3678 10.1496 68.4713 10.3044Q68.5747 10.4592 68.6625 10.6234Q68.7502 10.7876 68.8215 10.9596Q68.8927 11.1316 68.9468 11.3098Q69.0008 11.488 69.0372 11.6706Q69.0735 11.8532 69.0918 12.0385Q69.11 12.2238 69.11 12.41Q69.11 12.5962 69.0918 12.7815Q69.0735 12.9668 69.0372 13.1494Q69.0008 13.332 68.9468 13.5102Q68.8928 13.6884 68.8215 13.8604Q68.7502 14.0324 68.6625 14.1966Q68.5747 14.3608 68.4713 14.5156Q68.3678 14.6704 68.2497 14.8143Q68.1316 14.9583 67.9999 15.0899Q67.8683 15.2216 67.7244 15.3397Q67.5804 15.4578 67.4256 15.5613Q67.2708 15.6647 67.1066 15.7525Q66.9424 15.8403 66.7704 15.9115Q66.5984 15.9828 66.4202 16.0368Q66.242 16.0909 66.0594 16.1272Q65.8768 16.1635 65.6915 16.1818Q65.5062 16.2 65.32 16.2Q65.1338 16.2 64.9485 16.1818Q64.7632 16.1635 64.5806 16.1272Q64.398 16.0909 64.2198 16.0368Q64.0416 15.9828 63.8696 15.9115Q63.6976 15.8403 63.5334 15.7525Q63.3692 15.6647 63.2144 15.5613Q63.0596 15.4578 62.9156 15.3397Q62.7717 15.2216 62.6401 15.0899Q62.5084 14.9583 62.3903 14.8143Q62.2722 14.6704 62.1687 14.5156Q62.0653 14.3608 61.9775 14.1966Q61.8897 14.0324 61.8185 13.8604Q61.7472 13.6884 61.6932 13.5102Q61.6391 13.332 61.6028 13.1494Q61.5665 12.9668 61.5483 12.7815Q61.53 12.5962 61.53 12.41Q61.53 12.2238 61.5483 12.0385Q61.5665 11.8532 61.6028 11.6706Q61.6391 11.488 61.6932 11.3098Q61.7472 11.1316 61.8185 10.9596Q61.8898 10.7876 61.9775 10.6234Q62.0653 10.4592 62.1687 10.3044Q62.2722 10.1496 62.3903 10.0056Q62.5084 9.86172 62.6401 9.73006Q62.7717 9.59841 62.9156 9.48029Q63.0596 9.36217 63.2144 9.25873Q63.3692 9.15529 63.5334 9.06752Q63.6976 8.97975 63.8696 8.9085Q64.0416 8.83724 64.2198 8.7832Q64.398 8.72915 64.5806 8.69282Q64.7632 8.6565 64.9485 8.63825Q65.1338 8.62 65.32 8.62ZM78.16 8.62Q78.3462 8.62 78.5315 8.63825Q78.7168 8.6565 78.8994 8.69282Q79.082 8.72915 79.2602 8.7832Q79.4383 8.83724 79.6104 8.9085Q79.7824 8.97975 79.9466 9.06752Q80.1108 9.15529 80.2656 9.25873Q80.4204 9.36217 80.5644 9.48029Q80.7083 9.59841 80.8399 9.73006Q80.9716 9.86172 81.0897 10.0056Q81.2078 10.1496 81.3113 10.3044Q81.4147 10.4592 81.5025 10.6234Q81.5903 10.7876 81.6615 10.9596Q81.7327 11.1316 81.7868 11.3098Q81.8409 11.488 81.8772 11.6706Q81.9135 11.8532 81.9317 12.0385Q81.95 12.2238 81.95 12.41Q81.95 12.5962 81.9317 12.7815Q81.9135 12.9668 81.8772 13.1494Q81.8409 13.332 81.7868 13.5102Q81.7327 13.6884 81.6615 13.8604Q81.5903 14.0324 81.5025 14.1966Q81.4147 14.3608 81.3113 14.5156Q81.2078 14.6704 81.0897 14.8143Q80.9716 14.9583 80.8399 15.0899Q80.7083 15.2216 80.5644 15.3397Q80.4204 15.4578 80.2656 15.5613Q80.1108 15.6647 79.9466 15.7525Q79.7824 15.8403 79.6104 15.9115Q79.4383 15.9828 79.2602 16.0368Q79.082 16.0909 78.8994 16.1272Q78.7168 16.1635 78.5315 16.1818Q78.3462 16.2 78.16 16.2Q77.9738 16.2 77.7885 16.1818Q77.6032 16.1635 77.4206 16.1272Q77.238 16.0909 77.0598 16.0368Q76.8816 15.9828 76.7096 15.9115Q76.5376 15.8403 76.3734 15.7525Q76.2092 15.6647 76.0544 15.5613Q75.8996 15.4578 75.7556 15.3397Q75.6117 15.2216 75.4801 15.0899Q75.3484 14.9583 75.2303 14.8143Q75.1122 14.6704 75.0087 14.5156Q74.9053 14.3608 74.8175 14.1966Q74.7297 14.0324 74.6585 13.8604Q74.5872 13.6884 74.5332 13.5102Q74.4791 13.332 74.4428 13.1494Q74.4065 12.9668 74.3883 12.7815Q74.37 12.5962 74.37 12.41Q74.37 12.2225 74.3885 12.036Q74.407 11.8495 74.4438 11.6657Q74.4806 11.4819 74.5353 11.3026Q74.5901 11.1233 74.6623 10.9503Q74.7345 10.7773 74.8234 10.6123Q74.9122 10.4473 75.017 10.2918Q75.1218 10.1364 75.2413 9.99203Q75.3609 9.84768 75.4942 9.71583Q75.6274 9.58398 75.773 9.46592Q75.9186 9.34786 76.0751 9.24475Q76.2317 9.14163 76.3976 9.05446Q76.5636 8.9673 76.7373 8.89694Q76.9111 8.82657 77.0909 8.7737Q77.2708 8.72082 77.4549 8.68595Q77.6391 8.65108 77.8258 8.63455Q78.0126 8.61802 78.2 8.62L78.16 8.62ZM115.16 16.69L115.52 40.61L115.52 90.69Q115.52 90.7948 115.511 90.8991Q115.501 91.0034 115.481 91.1062Q115.461 91.2091 115.431 91.3094Q115.4 91.4098 115.361 91.5067Q115.321 91.6036 115.271 91.6961Q115.222 91.7886 115.164 91.8757Q115.106 91.9629 115.04 92.044Q114.973 92.125 114.899 92.1991Q114.825 92.2732 114.744 92.3396Q114.663 92.406 114.576 92.4641Q114.489 92.5222 114.396 92.5715Q114.304 92.6207 114.207 92.6606Q114.11 92.7004 114.009 92.7305Q113.909 92.7607 113.806 92.7807Q113.703 92.8008 113.599 92.8107Q113.495 92.8205 113.39 92.82L26 92.82Q25.8955 92.82 25.7916 92.8097Q25.6876 92.7995 25.5852 92.779Q25.4827 92.7586 25.3828 92.7282Q25.2829 92.6978 25.1864 92.6577Q25.0899 92.6176 24.9979 92.5682Q24.9058 92.5188 24.8191 92.4606Q24.7323 92.4024 24.6517 92.336Q24.5711 92.2696 24.4974 92.1955Q24.4237 92.1215 24.3576 92.0406Q24.2916 91.9596 24.2338 91.8726Q24.176 91.7856 24.1271 91.6933Q24.0781 91.601 24.0385 91.5044Q23.9989 91.4077 23.9689 91.3076Q23.939 91.2075 23.919 91.105Q23.8991 91.0025 23.8893 90.8985Q23.8795 90.7945 23.88 90.69L16.88 90.69L16.88 92.37Q16.8805 92.5582 16.8902 92.7462Q16.8999 92.9342 16.9187 93.1215Q16.9376 93.3088 16.9656 93.495Q16.9936 93.6811 17.0306 93.8657Q17.0677 94.0502 17.1137 94.2328Q17.1597 94.4153 17.2146 94.5954Q17.2695 94.7754 17.3331 94.9526Q17.3967 95.1298 17.469 95.3036Q17.5412 95.4774 17.6218 95.6476Q17.7024 95.8177 17.7912 95.9836Q17.8801 96.1496 17.9769 96.311Q18.0737 96.4725 18.1783 96.629Q18.2829 96.7855 18.3951 96.9367Q18.5072 97.0879 18.6266 97.2334Q18.746 97.379 18.8723 97.5185Q18.9987 97.658 19.1317 97.7912Q19.2647 97.9244 19.4041 98.0509Q19.5435 98.1775 19.6889 98.2971Q19.8342 98.4166 19.9853 98.529Q20.1364 98.6413 20.2927 98.7461Q20.4491 98.8509 20.6104 98.948Q20.7717 99.045 20.9375 99.134Q21.1034 99.2231 21.2734 99.3039Q21.4434 99.3848 21.6172 99.4572Q21.7909 99.5296 21.968 99.5935Q22.1451 99.6573 22.3251 99.7125Q22.5051 99.7676 22.6875 99.8139Q22.87 99.8601 23.0545 99.8974Q23.239 99.9347 23.4251 99.963Q23.6112 99.9912 23.7985 100.01Q23.9858 100.029 24.1738 100.039Q24.3618 100.049 24.55 100.05L115.23 100.05Q115.418 100.049 115.606 100.039Q115.794 100.029 115.981 100.01Q116.169 99.9912 116.355 99.963Q116.541 99.9347 116.726 99.8974Q116.91 99.8601 117.092 99.8139Q117.275 99.7676 117.455 99.7125Q117.635 99.6574 117.812 99.5935Q117.989 99.5296 118.163 99.4572Q118.337 99.3848 118.507 99.3039Q118.677 99.2231 118.842 99.1341Q119.008 99.045 119.17 98.948Q119.331 98.8509 119.487 98.7461Q119.644 98.6413 119.795 98.529Q119.946 98.4166 120.091 98.2971Q120.237 98.1775 120.376 98.051Q120.515 97.9244 120.648 97.7912Q120.781 97.658 120.908 97.5185Q121.034 97.379 121.153 97.2334Q121.273 97.0879 121.385 96.9367Q121.497 96.7855 121.602 96.629Q121.706 96.4725 121.803 96.311Q121.9 96.1496 121.989 95.9836Q122.078 95.8177 122.158 95.6476Q122.239 95.4775 122.311 95.3036Q122.383 95.1298 122.447 94.9526Q122.51 94.7754 122.565 94.5954Q122.62 94.4153 122.666 94.2328Q122.712 94.0502 122.749 93.8657Q122.786 93.6811 122.814 93.495Q122.842 93.3088 122.861 93.1215Q122.88 92.9342 122.89 92.7462Q122.9 92.5582 122.9 92.37L122.9 24.37Q122.9 24.1818 122.89 23.9938Q122.88 23.8058 122.861 23.6185Q122.842 23.4312 122.814 23.245Q122.786 23.0589 122.749 22.8743Q122.712 22.6897 122.666 22.5072Q122.62 22.3247 122.565 22.1446Q122.51 21.9646 122.447 21.7874Q122.383 21.6102 122.311 21.4364Q122.239 21.2625 122.158 21.0924Q122.078 20.9223 121.989 20.7564Q121.9 20.5904 121.803 20.429Q121.706 20.2675 121.602 20.111Q121.497 19.9545 121.385 19.8033Q121.273 19.6521 121.153 19.5066Q121.034 19.361 120.908 19.2215Q120.781 19.082 120.648 18.9488Q120.515 18.8156 120.376 18.689Q120.237 18.5625 120.091 18.4429Q119.946 18.3234 119.795 18.211Q119.644 18.0987 119.487 17.9939Q119.331 17.8891 119.17 17.792Q119.008 17.695 118.842 17.6059Q118.677 17.5169 118.507 17.4361Q118.337 17.3552 118.163 17.2828Q117.989 17.2103 117.812 17.1465Q117.635 17.0826 117.455 17.0275Q117.275 16.9724 117.092 16.9261Q116.91 16.8799 116.726 16.8426Q116.541 16.8053 116.355 16.777Q116.169 16.7488 115.981 16.7297Q115.794 16.7106 115.606 16.7007Q115.418 16.6907 115.23 16.69L115.16 16.69Z" />
-                                        </DrawingGroup>
+                                        <DrawingGroup.Transform>
+                                            <MatrixTransform Matrix="0.9994004,0,0,0.9994004,0.09684372,0" />
+                                        </DrawingGroup.Transform>
+                                        <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F0 M50.34 34.25L55.73 34.25Q55.8517 34.2505 55.9728 34.2628Q56.0938 34.2752 56.2131 34.2993Q56.3324 34.3234 56.4488 34.359Q56.5652 34.3946 56.6775 34.4414Q56.7899 34.4882 56.8971 34.5458Q57.0043 34.6033 57.1055 34.671Q57.2066 34.7387 57.3006 34.816Q57.3947 34.8932 57.4807 34.9793Q57.5668 35.0653 57.644 35.1594Q57.7213 35.2534 57.789 35.3545Q57.8567 35.4557 57.9142 35.5629Q57.9718 35.6702 58.0186 35.7825Q58.0654 35.8948 58.101 36.0112Q58.1366 36.1276 58.1607 36.2469Q58.1848 36.3662 58.1972 36.4872Q58.2095 36.6083 58.21 36.73L58.21 44.73L66.21 44.73Q66.3314 44.7314 66.4522 44.7446Q66.5729 44.7578 66.6918 44.7825Q66.8107 44.8073 66.9266 44.8434Q67.0426 44.8795 67.1545 44.9266Q67.2664 44.9738 67.3732 45.0315Q67.4801 45.0892 67.5808 45.157Q67.6816 45.2248 67.7754 45.3019Q67.8692 45.3791 67.955 45.465Q68.0409 45.5509 68.1181 45.6446Q68.1952 45.7384 68.263 45.8391Q68.3308 45.9399 68.3885 46.0468Q68.4462 46.1536 68.4934 46.2655Q68.5405 46.3774 68.5766 46.4934Q68.6127 46.6093 68.6375 46.7282Q68.6622 46.8471 68.6754 46.9678Q68.6886 47.0886 68.69 47.21L68.69 52.61Q68.6881 52.7313 68.6745 52.8518Q68.661 52.9724 68.6359 53.0911Q68.6108 53.2098 68.5745 53.3255Q68.5381 53.4413 68.4908 53.553Q68.4435 53.6647 68.3857 53.7713Q68.3279 53.878 68.2601 53.9786Q68.1923 54.0792 68.1151 54.1728Q68.038 54.2664 67.9522 54.3522Q67.8664 54.438 67.7728 54.5151Q67.6792 54.5923 67.5786 54.6601Q67.478 54.7279 67.3713 54.7857Q67.2647 54.8435 67.153 54.8908Q67.0413 54.9381 66.9255 54.9745Q66.8098 55.0108 66.6911 55.0359Q66.5724 55.061 66.4518 55.0745Q66.3313 55.0881 66.21 55.09L58.21 55.09L58.21 63.09Q58.2086 63.2114 58.1954 63.3322Q58.1822 63.4529 58.1575 63.5718Q58.1327 63.6907 58.0966 63.8066Q58.0605 63.9226 58.0134 64.0345Q57.9662 64.1464 57.9085 64.2532Q57.8508 64.3601 57.783 64.4608Q57.7152 64.5616 57.6381 64.6554Q57.5609 64.7491 57.475 64.835Q57.3891 64.9209 57.2954 64.9981Q57.2016 65.0753 57.1008 65.143Q57.0001 65.2108 56.8932 65.2685Q56.7864 65.3262 56.6745 65.3734Q56.5626 65.4205 56.4466 65.4566Q56.3307 65.4927 56.2118 65.5175Q56.0929 65.5422 55.9722 65.5554Q55.8514 65.5686 55.73 65.57L50.34 65.57Q50.2183 65.569 50.0972 65.5563Q49.9761 65.5436 49.8568 65.5192Q49.7375 65.4948 49.6212 65.4589Q49.5048 65.4231 49.3925 65.3762Q49.2801 65.3293 49.1728 65.2717Q49.0656 65.2141 48.9644 65.1464Q48.8632 65.0787 48.769 65.0016Q48.6748 64.9244 48.5886 64.8385Q48.5023 64.7526 48.4248 64.6587Q48.3472 64.5648 48.2791 64.4639Q48.211 64.363 48.153 64.2559Q48.095 64.1489 48.0476 64.0367Q48.0003 63.9246 47.964 63.8084Q47.9277 63.6922 47.9028 63.573Q47.8779 63.4538 47.8647 63.3328Q47.8515 63.2117 47.85 63.09L47.85 55.09L39.85 55.09Q39.7284 55.089 39.6075 55.0763Q39.4866 55.0635 39.3675 55.0391Q39.2485 55.0147 39.1323 54.9788Q39.0161 54.9429 38.904 54.896Q38.7919 54.849 38.6848 54.7914Q38.5778 54.7337 38.4769 54.666Q38.3759 54.5982 38.282 54.521Q38.1881 54.4438 38.1022 54.3578Q38.0162 54.2719 37.939 54.178Q37.8618 54.0841 37.794 53.9831Q37.7263 53.8822 37.6687 53.7752Q37.611 53.6681 37.5641 53.556Q37.5171 53.4439 37.4812 53.3277Q37.4453 53.2115 37.4209 53.0925Q37.3965 52.9734 37.3837 52.8525Q37.371 52.7316 37.37 52.61L37.37 47.21Q37.37 47.0882 37.3819 46.9669Q37.3939 46.8457 37.4177 46.7262Q37.4414 46.6067 37.4768 46.4901Q37.5122 46.3735 37.5588 46.2609Q37.6054 46.1484 37.6628 46.0409Q37.7203 45.9335 37.788 45.8322Q37.8556 45.7309 37.9329 45.6367Q38.0102 45.5425 38.0964 45.4564Q38.1825 45.3702 38.2767 45.2929Q38.3709 45.2156 38.4722 45.1479Q38.5735 45.0803 38.6809 45.0228Q38.7884 44.9654 38.9009 44.9188Q39.0135 44.8722 39.1301 44.8368Q39.2467 44.8014 39.3662 44.7776Q39.4857 44.7539 39.6069 44.7419Q39.7282 44.73 39.85 44.73L47.85 44.73L47.85 36.73Q47.8505 36.608 47.8629 36.4866Q47.8753 36.3652 47.8995 36.2457Q47.9238 36.1261 47.9596 36.0094Q47.9954 35.8928 48.0424 35.7802Q48.0894 35.6676 48.1472 35.5602Q48.205 35.4527 48.2731 35.3514Q48.3411 35.2502 48.4188 35.156Q48.4964 35.0619 48.5828 34.9758Q48.6693 34.8897 48.7637 34.8124Q48.8582 34.7352 48.9597 34.6676Q49.0613 34.5999 49.169 34.5425Q49.2766 34.4852 49.3894 34.4386Q49.5022 34.392 49.619 34.3567Q49.7358 34.3213 49.8554 34.2976Q49.9751 34.2739 50.0965 34.2619Q50.218 34.25 50.34 34.25ZM7.67 0L98.35 0Q98.5378 0.000976332 98.7254 0.0111227Q98.913 0.0212692 99.0998 0.0405615Q99.2867 0.0598537 99.4724 0.0882459Q99.658 0.116638 99.8421 0.154062Q100.026 0.191487 100.208 0.237854Q100.39 0.284221 100.57 0.33942Q100.749 0.39462 100.926 0.45852Q101.103 0.52242 101.276 0.594868Q101.449 0.667316 101.619 0.74814Q101.788 0.828964 101.954 0.91797Q102.119 1.00698 102.28 1.10395Q102.441 1.20093 102.597 1.30564Q102.753 1.41036 102.904 1.52256Q103.054 1.63477 103.199 1.7542Q103.344 1.87362 103.483 1.99999Q103.622 2.12635 103.755 2.25935Q103.887 2.39234 104.013 2.53166Q104.139 2.67098 104.258 2.81628Q104.378 2.96158 104.489 3.11252Q104.601 3.26346 104.705 3.41968Q104.81 3.5759 104.906 3.73703Q105.003 3.89816 105.091 4.06381Q105.18 4.22946 105.26 4.39923Q105.341 4.56901 105.413 4.74251Q105.485 4.916 105.548 5.09281Q105.612 5.26962 105.666 5.44931Q105.721 5.629 105.767 5.81115Q105.813 5.9933 105.85 6.17748Q105.887 6.36165 105.915 6.54741Q105.943 6.73317 105.961 6.92007Q105.98 7.10697 105.99 7.29456Q106 7.48216 106 7.67L106 75.67Q105.999 75.8581 105.989 76.0459Q105.979 76.2337 105.96 76.4209Q105.941 76.608 105.913 76.7939Q105.885 76.9799 105.848 77.1643Q105.81 77.3486 105.764 77.531Q105.718 77.7133 105.663 77.8931Q105.608 78.073 105.544 78.25Q105.48 78.4269 105.408 78.6005Q105.336 78.7742 105.255 78.9441Q105.174 79.1139 105.086 79.2797Q104.997 79.4454 104.9 79.6067Q104.803 79.7679 104.698 79.9242Q104.594 80.0805 104.481 80.2314Q104.369 80.3824 104.25 80.5278Q104.13 80.6731 104.004 80.8124Q103.878 80.9518 103.745 81.0848Q103.612 81.2178 103.472 81.3441Q103.333 81.4705 103.188 81.5899Q103.042 81.7092 102.891 81.8214Q102.74 81.9336 102.584 82.0382Q102.428 82.1429 102.267 82.2397Q102.105 82.3366 101.94 82.4255Q101.774 82.5144 101.604 82.5951Q101.434 82.6759 101.261 82.7482Q101.087 82.8205 100.91 82.8842Q100.733 82.948 100.553 83.003Q100.373 83.0581 100.191 83.1043Q100.009 83.1504 99.8243 83.1877Q99.6399 83.2249 99.4539 83.2531Q99.268 83.2813 99.0809 83.3004Q98.8937 83.3194 98.7059 83.3293Q98.5181 83.3393 98.33 83.34L7.67 83.34Q7.48216 83.3395 7.29456 83.3299Q7.10697 83.3202 6.92007 83.3014Q6.73317 83.2826 6.54741 83.2547Q6.36165 83.2268 6.17748 83.1898Q5.99331 83.1529 5.81116 83.107Q5.629 83.0611 5.44931 83.0064Q5.26962 82.9516 5.09281 82.8882Q4.91601 82.8248 4.74251 82.7528Q4.56901 82.6808 4.39923 82.6004Q4.22946 82.52 4.06381 82.4314Q3.89816 82.3429 3.73703 82.2463Q3.57591 82.1498 3.41969 82.0454Q3.26347 81.9411 3.11252 81.8293Q2.96158 81.7175 2.81628 81.5985Q2.67098 81.4794 2.53166 81.3534Q2.39235 81.2274 2.25935 81.0948Q2.12635 80.9621 1.99999 80.8231Q1.87362 80.6841 1.7542 80.5392Q1.63477 80.3942 1.52257 80.2435Q1.41036 80.0929 1.30565 79.9369Q1.20093 79.781 1.10396 79.6201Q1.00698 79.4592 0.917972 79.2938Q0.828966 79.1284 0.748142 78.9588Q0.667319 78.7893 0.59487 78.616Q0.522422 78.4426 0.458522 78.266Q0.394622 78.0893 0.339422 77.9098Q0.284222 77.7303 0.237855 77.5482Q0.191488 77.3662 0.154063 77.1821Q0.116639 76.998 0.0882468 76.8124Q0.0598545 76.6267 0.040562 76.4398Q0.0212696 76.253 0.011123 76.0654Q0.000976488 75.8778 0 75.69L0 7.69Q-6.53237e-07 7.50154 0.00923103 7.3133Q0.0184627 7.12505 0.0369046 6.93749Q0.0553464 6.74993 0.0829542 6.5635Q0.110562 6.37706 0.147269 6.19221Q0.183977 6.00735 0.229695 5.82451Q0.275414 5.64167 0.330035 5.4613Q0.384655 5.28092 0.448046 5.10343Q0.511437 4.92595 0.583447 4.75178Q0.655456 4.57761 0.735911 4.40718Q0.816366 4.23675 0.905073 4.07046Q0.99378 3.90418 1.09053 3.74244Q1.18727 3.5807 1.29183 3.42389Q1.39638 3.26708 1.50849 3.11559Q1.6206 2.96409 1.73999 2.81827Q1.85939 2.67245 1.98578 2.53265Q2.11218 2.39285 2.24527 2.25941Q2.37837 2.12597 2.51783 1.99921Q2.6573 1.87245 2.80282 1.75267Q2.94833 1.6329 3.09953 1.5204Q3.25074 1.40789 3.40727 1.30293Q3.5638 1.19797 3.72529 1.1008Q3.88678 1.00364 4.05283 0.914496Q4.21888 0.825356 4.38911 0.744458Q4.55933 0.663559 4.73331 0.591097Q4.90728 0.518634 5.0846 0.454781Q5.26193 0.390928 5.44216 0.335838Q5.6224 0.280748 5.80511 0.234553Q5.98783 0.188358 6.17259 0.151169Q6.35735 0.113981 6.54372 0.0858876Q6.73008 0.0577944 6.91759 0.0388641Q7.1051 0.0199339 7.29332 0.010212Q7.48153 0.000490148 7.67 0ZM99.05 23.92L7.31 23.92L7.31 74Q7.30857 74.209 7.34858 74.4142Q7.38858 74.6194 7.46844 74.8126Q7.5483 75.0058 7.66484 75.1794Q7.78139 75.353 7.93 75.5Q8.07892 75.6482 8.25392 75.7644Q8.42892 75.8806 8.62325 75.9604Q8.81758 76.0402 9.02375 76.0805Q9.22993 76.1208 9.44 76.12L96.89 76.12Q97.1002 76.1216 97.3066 76.0817Q97.5129 76.0418 97.7074 75.9619Q97.9018 75.8821 98.0767 75.7655Q98.2516 75.6488 98.4 75.5Q98.5459 75.3517 98.6597 75.1776Q98.7735 75.0035 98.8508 74.8103Q98.9281 74.6172 98.9657 74.4126Q99.0034 74.208 99 74L99 23.92L99.05 23.92ZM91 8.62Q91.1862 8.62 91.3715 8.63825Q91.5568 8.6565 91.7394 8.69282Q91.922 8.72915 92.1002 8.7832Q92.2783 8.83724 92.4504 8.9085Q92.6224 8.97975 92.7866 9.06752Q92.9508 9.15529 93.1056 9.25873Q93.2604 9.36217 93.4044 9.48029Q93.5483 9.59841 93.6799 9.73006Q93.8116 9.86172 93.9297 10.0056Q94.0478 10.1496 94.1513 10.3044Q94.2547 10.4592 94.3425 10.6234Q94.4302 10.7876 94.5015 10.9596Q94.5727 11.1316 94.6268 11.3098Q94.6808 11.488 94.7172 11.6706Q94.7535 11.8532 94.7717 12.0385Q94.79 12.2238 94.79 12.41Q94.79 12.5962 94.7717 12.7815Q94.7535 12.9668 94.7172 13.1494Q94.6808 13.332 94.6268 13.5102Q94.5727 13.6884 94.5015 13.8604Q94.4302 14.0324 94.3425 14.1966Q94.2547 14.3608 94.1513 14.5156Q94.0478 14.6704 93.9297 14.8143Q93.8116 14.9583 93.6799 15.0899Q93.5483 15.2216 93.4043 15.3397Q93.2604 15.4578 93.1056 15.5613Q92.9508 15.6647 92.7866 15.7525Q92.6224 15.8403 92.4504 15.9115Q92.2783 15.9828 92.1002 16.0368Q91.922 16.0909 91.7394 16.1272Q91.5568 16.1635 91.3715 16.1818Q91.1862 16.2 91 16.2Q90.8138 16.2 90.6285 16.1818Q90.4432 16.1635 90.2606 16.1272Q90.078 16.0909 89.8998 16.0368Q89.7216 15.9828 89.5496 15.9115Q89.3776 15.8403 89.2134 15.7525Q89.0492 15.6647 88.8944 15.5613Q88.7396 15.4578 88.5956 15.3397Q88.4517 15.2216 88.3201 15.0899Q88.1884 14.9583 88.0703 14.8143Q87.9522 14.6704 87.8487 14.5156Q87.7453 14.3608 87.6575 14.1966Q87.5697 14.0324 87.4985 13.8604Q87.4272 13.6884 87.3732 13.5102Q87.3191 13.332 87.2828 13.1494Q87.2465 12.9668 87.2282 12.7815Q87.21 12.5962 87.21 12.41Q87.21 12.2238 87.2283 12.0385Q87.2465 11.8532 87.2828 11.6706Q87.3192 11.488 87.3732 11.3098Q87.4272 11.1316 87.4985 10.9596Q87.5698 10.7876 87.6575 10.6234Q87.7453 10.4592 87.8487 10.3044Q87.9522 10.1496 88.0703 10.0056Q88.1884 9.86172 88.3201 9.73006Q88.4517 9.59841 88.5956 9.48029Q88.7396 9.36217 88.8944 9.25873Q89.0492 9.15529 89.2134 9.06752Q89.3776 8.97975 89.5496 8.9085Q89.7217 8.83724 89.8998 8.7832Q90.078 8.72915 90.2606 8.69282Q90.4432 8.6565 90.6285 8.63825Q90.8138 8.62 91 8.62ZM65.32 8.62Q65.5062 8.62 65.6915 8.63825Q65.8768 8.6565 66.0594 8.69282Q66.242 8.72915 66.4202 8.7832Q66.5984 8.83724 66.7704 8.9085Q66.9424 8.97975 67.1066 9.06752Q67.2708 9.15529 67.4256 9.25873Q67.5804 9.36217 67.7244 9.48029Q67.8683 9.59841 67.9999 9.73006Q68.1316 9.86172 68.2497 10.0056Q68.3678 10.1496 68.4713 10.3044Q68.5747 10.4592 68.6625 10.6234Q68.7502 10.7876 68.8215 10.9596Q68.8927 11.1316 68.9468 11.3098Q69.0008 11.488 69.0372 11.6706Q69.0735 11.8532 69.0918 12.0385Q69.11 12.2238 69.11 12.41Q69.11 12.5962 69.0918 12.7815Q69.0735 12.9668 69.0372 13.1494Q69.0008 13.332 68.9468 13.5102Q68.8928 13.6884 68.8215 13.8604Q68.7502 14.0324 68.6625 14.1966Q68.5747 14.3608 68.4713 14.5156Q68.3678 14.6704 68.2497 14.8143Q68.1316 14.9583 67.9999 15.0899Q67.8683 15.2216 67.7244 15.3397Q67.5804 15.4578 67.4256 15.5613Q67.2708 15.6647 67.1066 15.7525Q66.9424 15.8403 66.7704 15.9115Q66.5984 15.9828 66.4202 16.0368Q66.242 16.0909 66.0594 16.1272Q65.8768 16.1635 65.6915 16.1818Q65.5062 16.2 65.32 16.2Q65.1338 16.2 64.9485 16.1818Q64.7632 16.1635 64.5806 16.1272Q64.398 16.0909 64.2198 16.0368Q64.0416 15.9828 63.8696 15.9115Q63.6976 15.8403 63.5334 15.7525Q63.3692 15.6647 63.2144 15.5613Q63.0596 15.4578 62.9156 15.3397Q62.7717 15.2216 62.6401 15.0899Q62.5084 14.9583 62.3903 14.8143Q62.2722 14.6704 62.1687 14.5156Q62.0653 14.3608 61.9775 14.1966Q61.8897 14.0324 61.8185 13.8604Q61.7472 13.6884 61.6932 13.5102Q61.6391 13.332 61.6028 13.1494Q61.5665 12.9668 61.5483 12.7815Q61.53 12.5962 61.53 12.41Q61.53 12.2238 61.5483 12.0385Q61.5665 11.8532 61.6028 11.6706Q61.6391 11.488 61.6932 11.3098Q61.7472 11.1316 61.8185 10.9596Q61.8898 10.7876 61.9775 10.6234Q62.0653 10.4592 62.1687 10.3044Q62.2722 10.1496 62.3903 10.0056Q62.5084 9.86172 62.6401 9.73006Q62.7717 9.59841 62.9156 9.48029Q63.0596 9.36217 63.2144 9.25873Q63.3692 9.15529 63.5334 9.06752Q63.6976 8.97975 63.8696 8.9085Q64.0416 8.83724 64.2198 8.7832Q64.398 8.72915 64.5806 8.69282Q64.7632 8.6565 64.9485 8.63825Q65.1338 8.62 65.32 8.62ZM78.16 8.62Q78.3462 8.62 78.5315 8.63825Q78.7168 8.6565 78.8994 8.69282Q79.082 8.72915 79.2602 8.7832Q79.4383 8.83724 79.6104 8.9085Q79.7824 8.97975 79.9466 9.06752Q80.1108 9.15529 80.2656 9.25873Q80.4204 9.36217 80.5644 9.48029Q80.7083 9.59841 80.8399 9.73006Q80.9716 9.86172 81.0897 10.0056Q81.2078 10.1496 81.3113 10.3044Q81.4147 10.4592 81.5025 10.6234Q81.5903 10.7876 81.6615 10.9596Q81.7327 11.1316 81.7868 11.3098Q81.8409 11.488 81.8772 11.6706Q81.9135 11.8532 81.9317 12.0385Q81.95 12.2238 81.95 12.41Q81.95 12.5962 81.9317 12.7815Q81.9135 12.9668 81.8772 13.1494Q81.8409 13.332 81.7868 13.5102Q81.7327 13.6884 81.6615 13.8604Q81.5903 14.0324 81.5025 14.1966Q81.4147 14.3608 81.3113 14.5156Q81.2078 14.6704 81.0897 14.8143Q80.9716 14.9583 80.8399 15.0899Q80.7083 15.2216 80.5644 15.3397Q80.4204 15.4578 80.2656 15.5613Q80.1108 15.6647 79.9466 15.7525Q79.7824 15.8403 79.6104 15.9115Q79.4383 15.9828 79.2602 16.0368Q79.082 16.0909 78.8994 16.1272Q78.7168 16.1635 78.5315 16.1818Q78.3462 16.2 78.16 16.2Q77.9738 16.2 77.7885 16.1818Q77.6032 16.1635 77.4206 16.1272Q77.238 16.0909 77.0598 16.0368Q76.8816 15.9828 76.7096 15.9115Q76.5376 15.8403 76.3734 15.7525Q76.2092 15.6647 76.0544 15.5613Q75.8996 15.4578 75.7556 15.3397Q75.6117 15.2216 75.4801 15.0899Q75.3484 14.9583 75.2303 14.8143Q75.1122 14.6704 75.0087 14.5156Q74.9053 14.3608 74.8175 14.1966Q74.7297 14.0324 74.6585 13.8604Q74.5872 13.6884 74.5332 13.5102Q74.4791 13.332 74.4428 13.1494Q74.4065 12.9668 74.3883 12.7815Q74.37 12.5962 74.37 12.41Q74.37 12.2225 74.3885 12.036Q74.407 11.8495 74.4438 11.6657Q74.4806 11.4819 74.5353 11.3026Q74.5901 11.1233 74.6623 10.9503Q74.7345 10.7773 74.8234 10.6123Q74.9122 10.4473 75.017 10.2918Q75.1218 10.1364 75.2413 9.99203Q75.3609 9.84768 75.4942 9.71583Q75.6274 9.58398 75.773 9.46592Q75.9186 9.34786 76.0751 9.24475Q76.2317 9.14163 76.3976 9.05446Q76.5636 8.9673 76.7373 8.89694Q76.9111 8.82657 77.0909 8.7737Q77.2708 8.72082 77.4549 8.68595Q77.6391 8.65108 77.8258 8.63455Q78.0126 8.61802 78.2 8.62L78.16 8.62ZM115.16 16.69L115.52 40.61L115.52 90.69Q115.52 90.7948 115.511 90.8991Q115.501 91.0034 115.481 91.1062Q115.461 91.2091 115.431 91.3094Q115.4 91.4098 115.361 91.5067Q115.321 91.6036 115.271 91.6961Q115.222 91.7886 115.164 91.8757Q115.106 91.9629 115.04 92.044Q114.973 92.125 114.899 92.1991Q114.825 92.2732 114.744 92.3396Q114.663 92.406 114.576 92.4641Q114.489 92.5222 114.396 92.5715Q114.304 92.6207 114.207 92.6606Q114.11 92.7004 114.009 92.7305Q113.909 92.7607 113.806 92.7807Q113.703 92.8008 113.599 92.8107Q113.495 92.8205 113.39 92.82L26 92.82Q25.8955 92.82 25.7916 92.8097Q25.6876 92.7995 25.5852 92.779Q25.4827 92.7586 25.3828 92.7282Q25.2829 92.6978 25.1864 92.6577Q25.0899 92.6176 24.9979 92.5682Q24.9058 92.5188 24.8191 92.4606Q24.7323 92.4024 24.6517 92.336Q24.5711 92.2696 24.4974 92.1955Q24.4237 92.1215 24.3576 92.0406Q24.2916 91.9596 24.2338 91.8726Q24.176 91.7856 24.1271 91.6933Q24.0781 91.601 24.0385 91.5044Q23.9989 91.4077 23.9689 91.3076Q23.939 91.2075 23.919 91.105Q23.8991 91.0025 23.8893 90.8985Q23.8795 90.7945 23.88 90.69L16.88 90.69L16.88 92.37Q16.8805 92.5582 16.8902 92.7462Q16.8999 92.9342 16.9187 93.1215Q16.9376 93.3088 16.9656 93.495Q16.9936 93.6811 17.0306 93.8657Q17.0677 94.0502 17.1137 94.2328Q17.1597 94.4153 17.2146 94.5954Q17.2695 94.7754 17.3331 94.9526Q17.3967 95.1298 17.469 95.3036Q17.5412 95.4774 17.6218 95.6476Q17.7024 95.8177 17.7912 95.9836Q17.8801 96.1496 17.9769 96.311Q18.0737 96.4725 18.1783 96.629Q18.2829 96.7855 18.3951 96.9367Q18.5072 97.0879 18.6266 97.2334Q18.746 97.379 18.8723 97.5185Q18.9987 97.658 19.1317 97.7912Q19.2647 97.9244 19.4041 98.0509Q19.5435 98.1775 19.6889 98.2971Q19.8342 98.4166 19.9853 98.529Q20.1364 98.6413 20.2927 98.7461Q20.4491 98.8509 20.6104 98.948Q20.7717 99.045 20.9375 99.134Q21.1034 99.2231 21.2734 99.3039Q21.4434 99.3848 21.6172 99.4572Q21.7909 99.5296 21.968 99.5935Q22.1451 99.6573 22.3251 99.7125Q22.5051 99.7676 22.6875 99.8139Q22.87 99.8601 23.0545 99.8974Q23.239 99.9347 23.4251 99.963Q23.6112 99.9912 23.7985 100.01Q23.9858 100.029 24.1738 100.039Q24.3618 100.049 24.55 100.05L115.23 100.05Q115.418 100.049 115.606 100.039Q115.794 100.029 115.981 100.01Q116.169 99.9912 116.355 99.963Q116.541 99.9347 116.726 99.8974Q116.91 99.8601 117.092 99.8139Q117.275 99.7676 117.455 99.7125Q117.635 99.6574 117.812 99.5935Q117.989 99.5296 118.163 99.4572Q118.337 99.3848 118.507 99.3039Q118.677 99.2231 118.842 99.1341Q119.008 99.045 119.17 98.948Q119.331 98.8509 119.487 98.7461Q119.644 98.6413 119.795 98.529Q119.946 98.4166 120.091 98.2971Q120.237 98.1775 120.376 98.051Q120.515 97.9244 120.648 97.7912Q120.781 97.658 120.908 97.5185Q121.034 97.379 121.153 97.2334Q121.273 97.0879 121.385 96.9367Q121.497 96.7855 121.602 96.629Q121.706 96.4725 121.803 96.311Q121.9 96.1496 121.989 95.9836Q122.078 95.8177 122.158 95.6476Q122.239 95.4775 122.311 95.3036Q122.383 95.1298 122.447 94.9526Q122.51 94.7754 122.565 94.5954Q122.62 94.4153 122.666 94.2328Q122.712 94.0502 122.749 93.8657Q122.786 93.6811 122.814 93.495Q122.842 93.3088 122.861 93.1215Q122.88 92.9342 122.89 92.7462Q122.9 92.5582 122.9 92.37L122.9 24.37Q122.9 24.1818 122.89 23.9938Q122.88 23.8058 122.861 23.6185Q122.842 23.4312 122.814 23.245Q122.786 23.0589 122.749 22.8743Q122.712 22.6897 122.666 22.5072Q122.62 22.3247 122.565 22.1446Q122.51 21.9646 122.447 21.7874Q122.383 21.6102 122.311 21.4364Q122.239 21.2625 122.158 21.0924Q122.078 20.9223 121.989 20.7564Q121.9 20.5904 121.803 20.429Q121.706 20.2675 121.602 20.111Q121.497 19.9545 121.385 19.8033Q121.273 19.6521 121.153 19.5066Q121.034 19.361 120.908 19.2215Q120.781 19.082 120.648 18.9488Q120.515 18.8156 120.376 18.689Q120.237 18.5625 120.091 18.4429Q119.946 18.3234 119.795 18.211Q119.644 18.0987 119.487 17.9939Q119.331 17.8891 119.17 17.792Q119.008 17.695 118.842 17.6059Q118.677 17.5169 118.507 17.4361Q118.337 17.3552 118.163 17.2828Q117.989 17.2103 117.812 17.1465Q117.635 17.0826 117.455 17.0275Q117.275 16.9724 117.092 16.9261Q116.91 16.8799 116.726 16.8426Q116.541 16.8053 116.355 16.777Q116.169 16.7488 115.981 16.7297Q115.794 16.7106 115.606 16.7007Q115.418 16.6907 115.23 16.69L115.16 16.69Z" />
                                     </DrawingGroup>
-                                </DrawingImage>
-                            </Image>
-                            <TextBlock
-                                Classes="txt"
-                                MaxWidth="150"
-                                Text="{Binding NewWindow}"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                </Canvas>
-            </Border>
-            <Rectangle
-                Fill="{StaticResource MenuBackgroundColor}"
-                Height="4"
-                HorizontalAlignment="Left"
-                Margin="55,-2,0,0"
-                Width="26"
-                ZIndex="1" />
-            <Polygon
-                Fill="{StaticResource MenuBackgroundColor}"
-                Margin="54,-3.5,0,0"
-                Points="0,0 15,30, 30,0"
-                Stroke="{StaticResource MainBorderColor}"
-                StrokeThickness="1" />
-        </StackPanel>
-    </controls:AnimatedPopUp>
-</UserControl>
+                                </DrawingGroup>
+                            </DrawingImage>
+                        </Image>
+                        <TextBlock
+                            Classes="txt"
+                            MaxWidth="150"
+                            Text="{Binding NewWindow}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </Canvas>
+        </Border>
+        <Rectangle
+            Fill="{StaticResource MenuBackgroundColor}"
+            Height="4"
+            HorizontalAlignment="Left"
+            Margin="55,-2,0,0"
+            Width="26"
+            ZIndex="1" />
+        <Polygon
+            Fill="{StaticResource MenuBackgroundColor}"
+            Margin="54,-3.5,0,0"
+            Points="0,0 15,30, 30,0"
+            Stroke="{StaticResource MainBorderColor}"
+            StrokeThickness="1" />
+    </StackPanel>
+</customControls:AnimatedMenu>

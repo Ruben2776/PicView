@@ -1,8 +1,8 @@
-using Avalonia.Controls;
+using PicView.Avalonia.CustomControls;
 
 namespace PicView.Avalonia.Views.UC.Menus;
 
-public partial class SettingsMenu : UserControl
+public partial class SettingsMenu : AnimatedMenu
 {
     public SettingsMenu()
     {

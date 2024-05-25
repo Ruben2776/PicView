@@ -2,6 +2,7 @@
 using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Styling;
 
 namespace PicView.Avalonia.Helpers;
@@ -72,6 +73,44 @@ public static class AnimationsHelper
                         new Setter
                         {
                             Property = Visual.OpacityProperty,
+                            Value = to
+                        }
+                    },
+                    Cue = new Cue(1d)
+                },
+            }
+        };
+    }
+    
+    public static Animation FlipAnimation(object from, object to, double speed)
+    {
+        var scale = ScaleTransform.ScaleXProperty;
+        return new Animation
+        {
+            Duration = TimeSpan.FromSeconds(speed),
+            Easing = new LinearEasing(),
+            FillMode = FillMode.Forward,
+            Children =
+            {
+                new KeyFrame
+                {
+                    Setters =
+                    {
+                        new Setter
+                        {
+                            Property = scale,
+                            Value = from
+                        }
+                    },
+                    Cue = new Cue(0d)
+                },
+                new KeyFrame
+                {
+                    Setters =
+                    {
+                        new Setter
+                        {
+                            Property = scale,
                             Value = to
                         }
                     },
