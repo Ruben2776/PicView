@@ -465,7 +465,9 @@
     <Panel x:Name="MainGrid">
         <ContentControl Content="{CompiledBinding CurrentView}" Margin="{CompiledBinding ImageMargin}" />
         <views:GalleryView
-            IsVisible="{CompiledBinding IsGalleryOpen}"
+            GalleryMode="{CompiledBinding GalleryMode}"
+            Height="0"
+            IsVisible="False"
             VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}"
             Width="{CompiledBinding GalleryWidth}"
             x:Name="GalleryView" />

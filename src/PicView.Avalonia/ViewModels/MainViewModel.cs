@@ -21,6 +21,7 @@ using System.Globalization;
 using System.Reactive;
 using System.Windows.Input;
 using Avalonia.Media;
+using PicView.Avalonia.Gallery;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -253,6 +254,14 @@ namespace PicView.Avalonia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isGalleryOpen, value);
         }
 
+        private GalleryMode _galleryMode;
+
+        public GalleryMode GalleryMode
+        {
+            get => _galleryMode;
+            set => this.RaiseAndSetIfChanged(ref _galleryMode, value);
+        }
+
         private bool _isShowingTaskbarProgress = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
 
         public bool IsShowingTaskbarProgress
@@ -398,8 +407,27 @@ namespace PicView.Avalonia.ViewModels
 
         #endregion Booleans
 
-        public int TitlebarHeight  { get {return 32;} }
-        public int BottombarHeight { get {return 26;} }
+        public int TitlebarHeight
+        {
+            get
+            {
+                if (IsFullscreen || !IsInterfaceShown || !IsTopToolbarShown)
+                {
+                    return 0;
+                }
+                return 32;
+            }
+        }
+        public int BottombarHeight         {
+            get
+            {
+                if (IsFullscreen || !IsInterfaceShown || !IsBottomToolbarShown)
+                {
+                    return 0;
+                }
+                return 26;
+            }
+        }
 
         private int _scaleX = 1;
 

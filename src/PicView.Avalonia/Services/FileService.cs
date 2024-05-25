@@ -50,7 +50,6 @@ public class FileService
         Patterns = SupportedFiles.ConvertFilesToGlobFormat(),
         AppleUniformTypeIdentifiers = new[] { "public.image" },
         MimeTypes = new[] { "image/*" },
-        
     };
 
     private static FilePickerFileType ArchiveFileType { get; } = new(TranslationHelper.GetTranslation("SupportedFiles"))

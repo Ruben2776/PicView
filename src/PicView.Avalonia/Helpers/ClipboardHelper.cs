@@ -38,6 +38,14 @@ namespace PicView.Avalonia.Helpers;
 
         public static async Task CutFile(string path)
         {
-            throw new NotImplementedException();
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            var clipboard = desktop.MainWindow.Clipboard;
+            var dataObject = new DataObject();
+            dataObject.Set(DataFormats.Files, new[] { path });
+            await clipboard.ClearAsync();
+            await clipboard.SetDataObjectAsync(dataObject);
         }
     }

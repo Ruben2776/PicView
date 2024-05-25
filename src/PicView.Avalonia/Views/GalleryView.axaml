@@ -11,75 +11,74 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Border BorderBrush="{StaticResource TertiaryBorderColor}" BorderThickness="0,1,0,0">
-        <Panel Background="{StaticResource BackgroundAlpha}">
-            <Panel.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Adjust size">
-                        <MenuItem.Icon>
-                            <Path
-                                Data="{StaticResource ImageGeometry}"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="12"
-                                Stretch="Fill"
-                                Width="12" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem Command="{CompiledBinding ToggleGalleryCommand}" Header="{CompiledBinding Close}">
-                        <MenuItem.Icon>
-                            <Path
-                                Data="{StaticResource CloseGeometry}"
-                                Fill="{StaticResource MainIconColor}"
-                                Height="12"
-                                Stretch="Fill"
-                                Width="12" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </ContextMenu>
-            </Panel.ContextMenu>
+    <Panel Background="{StaticResource BackgroundAlpha}">
+        <Panel.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Adjust size">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource ImageGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Command="{CompiledBinding ToggleGalleryCommand}" Header="{CompiledBinding Close}">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource CloseGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </ContextMenu>
+        </Panel.ContextMenu>
 
-            <Button
-                BorderThickness="1,0,0,0"
-                Classes="ButtonBorder altHover"
-                Command="{CompiledBinding ToggleGalleryCommand}"
-                CornerRadius="0,0,0,45"
-                DockPanel.Dock="Right"
-                Height="60"
-                HorizontalAlignment="Right"
-                IsVisible="{CompiledBinding IsGalleryCloseIconVisible}"
-                VerticalAlignment="Top"
-                Width="50"
-                ZIndex="99">
-                <Path
-                    Data="{StaticResource CloseGeometry}"
-                    Fill="{StaticResource MainIconColor}"
-                    Height="23"
-                    Margin="7,0,0,11"
-                    Stretch="Fill"
-                    Width="23" />
-            </Button>
+        <Button
+            BorderThickness="1,0,0,0"
+            Classes="ButtonBorder altHover"
+            Command="{CompiledBinding ToggleGalleryCommand}"
+            CornerRadius="0,0,0,45"
+            DockPanel.Dock="Right"
+            Height="60"
+            HorizontalAlignment="Right"
+            IsVisible="{CompiledBinding IsGalleryCloseIconVisible}"
+            VerticalAlignment="Top"
+            Width="50"
+            ZIndex="99">
+            <Path
+                Data="{StaticResource CloseGeometry}"
+                Fill="{StaticResource MainIconColor}"
+                Height="23"
+                Margin="7,0,0,11"
+                Stretch="Fill"
+                Width="23" />
+        </Button>
 
-            <ListBox
-                AutoScrollToSelectedItem="True"
-                Background="Transparent"
-                BorderThickness="0"
-                Focusable="False"
-                Padding="0"
-                PointerWheelChanged="GalleryListBox_OnPointerWheelChanged"
-                ScrollViewer.IsScrollInertiaEnabled="True"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                SelectedIndex="{CompiledBinding SelectedGalleryItemIndex}"
-                x:Name="GalleryListBox">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel
-                            HorizontalAlignment="Left"
-                            Orientation="{CompiledBinding GalleryOrientation}"
-                            VerticalAlignment="Bottom" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
-        </Panel>
-    </Border>
+        <ListBox
+            AutoScrollToSelectedItem="True"
+            Background="Transparent"
+            BorderBrush="{StaticResource TertiaryBorderColor}"
+            BorderThickness="0,1,0,0"
+            Focusable="False"
+            Padding="0"
+            PointerWheelChanged="GalleryListBox_OnPointerWheelChanged"
+            ScrollViewer.IsScrollInertiaEnabled="True"
+            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+            SelectedIndex="{CompiledBinding SelectedGalleryItemIndex}"
+            x:Name="GalleryListBox">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel
+                        HorizontalAlignment="Left"
+                        Orientation="{CompiledBinding GalleryOrientation}"
+                        VerticalAlignment="Bottom" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Panel>
 </UserControl>

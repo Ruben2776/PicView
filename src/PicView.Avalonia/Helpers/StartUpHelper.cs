@@ -41,7 +41,6 @@ public static class StartUpHelper
         _ = Task.Run(vm.UpdateLanguage);
 
         vm.SetLoadingTitle();
-        vm.IsLoading = true;
 
         vm.GetFlipped = vm.Flip;
 
@@ -92,10 +91,7 @@ public static class StartUpHelper
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
             GalleryFunctions.OpenBottomGallery(vm);
-            WindowHelper.SetSize(vm);
         }
-
-        vm.IsLoading = false;
 
         Task.Run(() => KeybindingsHelper.LoadKeybindings(vm));
 

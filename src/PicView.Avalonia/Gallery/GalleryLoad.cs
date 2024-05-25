@@ -10,6 +10,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Gallery;
 
@@ -42,7 +43,7 @@ public static class GalleryLoad
 
         if (IsLoading)
         {
-            if (string.IsNullOrEmpty(_currentDirectory) || currentDirectory == _currentDirectory)
+            if (!string.IsNullOrEmpty(_currentDirectory) && currentDirectory == _currentDirectory)
             {
                 return;
             }
@@ -57,6 +58,10 @@ public static class GalleryLoad
             {
                 galleryListBox?.Items.Clear();
             });
+        }
+        else if (galleryListBox.Items.Count > 0)
+        {
+            return;
         }
         // ReSharper disable once MethodHasAsyncOverload
         _cancellationTokenSource?.Cancel();
@@ -109,6 +114,7 @@ public static class GalleryLoad
 
         async Task Loop(int startIndex, int endIndex, CancellationToken ct)
         {
+            var loading = TranslationHelper.GetTranslation("Loading");
             for (var i = startIndex; i < endIndex; i++)
             {
                 if (currentDirectory != _currentDirectory || ct.IsCancellationRequested)
@@ -128,6 +134,7 @@ public static class GalleryLoad
                         var galleryItem = new GalleryItem
                         {
                             DataContext = viewModel,
+                            FileName = { Text = loading },
                         };
                         galleryListBox.Items.Add(galleryItem);
                         if (i != viewModel.ImageIterator.Index)
