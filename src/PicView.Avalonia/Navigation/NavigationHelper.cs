@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -9,7 +8,6 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Navigation;
@@ -114,6 +112,34 @@ public static class NavigationHelper
             var p = button.PointToScreen(new Point(50, 10));
             vm.PlatformService?.SetCursorPos(p.X, p.Y);
         });
+    }
+    
+    public static async Task LoadPicFromString(string source, MainViewModel vm)
+    {
+        if (string.IsNullOrWhiteSpace(source) || vm is null)
+        {
+            return;
+        }
+        
+        vm.CurrentView = vm.ImageViewer;
+
+        if (vm.ImageIterator is not null)
+        {
+            await vm.ImageIterator.LoadPicFromString(source, vm).ConfigureAwait(false);
+        }
+        else
+        {
+            var fileInfo = new FileInfo(source);
+            if (!fileInfo.Exists)
+            {
+                // TODO load from URL or base64 if not a file
+                return;
+            }
+            
+            vm.ImageIterator = new ImageIterator(fileInfo, vm);
+            await vm.ImageIterator.LoadPicFromFile(fileInfo, vm).ConfigureAwait(false);
+        }
+        
     }
 
     public static async Task LoadingPreview(int index, MainViewModel vm)

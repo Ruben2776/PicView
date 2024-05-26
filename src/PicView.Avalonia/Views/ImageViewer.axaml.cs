@@ -125,7 +125,7 @@ public partial class ImageViewer : UserControl
         var storageItems = data as IStorageItem[] ?? data.ToArray();
         var firstFile = storageItems.FirstOrDefault();
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
-        await vm.LoadPicFromString(path).ConfigureAwait(false);
+        await NavigationHelper.LoadPicFromString(path, vm).ConfigureAwait(false);
         foreach (var file in storageItems.Skip(1))
         {
             // TODO Open each file in a new window if the setting to open in the same window is false
@@ -217,7 +217,7 @@ public partial class ImageViewer : UserControl
                 navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Next : NavigateTo.Previous;
             }
 
-            await mainViewModel.LoadNextPic(navigateTo).ConfigureAwait(false);
+            await mainViewModel.ImageIterator.LoadNextPic(navigateTo, mainViewModel).ConfigureAwait(false);
         }
     }
 

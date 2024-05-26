@@ -1371,59 +1371,6 @@ namespace PicView.Avalonia.ViewModels
 
         #endregion Set model and title
 
-        #region LoadPic
-
-        public async Task LoadNextPic(NavigateTo navigateTo)
-        {
-            if (ImageIterator is null)
-            {
-                return;
-            }
-            await ImageIterator.LoadNextPic(navigateTo, this).ConfigureAwait(false);
-        }
-
-        public async Task LoadPicAtIndex(int index) => await Task.Run(async () =>
-        {
-            if (ImageIterator is null)
-            {
-                return;
-            }
-
-            await ImageIterator.LoadPicAtIndex(index, this).ConfigureAwait(false);
-        }).ConfigureAwait(false);
-
-        public async Task LoadPicFromString(string path)
-        {
-            ImageIterator = new ImageIterator(new FileInfo(path), this);
-            CurrentView = ImageViewer;
-            await ImageIterator.LoadPicFromString(path, this).ConfigureAwait(false);
-        }
-
-        public async Task LoadPicFromFile(FileInfo fileInfo)
-        {
-            SetLoadingTitle();
-            try
-            {
-                ImageIterator = new ImageIterator(fileInfo, this);
-                CurrentView = ImageViewer;
-                await ImageIterator.LoadPicFromFile(fileInfo, this).ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                if (ImageIterator is null)
-                {
-                    await Dispatcher.UIThread.InvokeAsync(() => { CurrentView = new StartUpMenu(); });
-                }
-            }
-        }
-        
-        public async Task LoadPicFromFolder(string path)
-        {
-            // TODO: Implement
-        }
-
-        #endregion LoadPic
-
         #region Sorting Order
 
         private FileListHelper.SortFilesBy _sortOrder;
@@ -1451,7 +1398,7 @@ namespace PicView.Avalonia.ViewModels
             if (success)
             {
                 ImageIterator?.PreLoader.Remove(ImageIterator.Index, ImageIterator.Pics);
-                await LoadPicAtIndex(ImageIterator.Index);
+                await ImageIterator?.LoadPicAtIndex(ImageIterator.Index, this);
             }
             else
             {
@@ -1474,7 +1421,7 @@ namespace PicView.Avalonia.ViewModels
             var newPath = await ConversionHelper.ConvertTask(FileInfo, index);
             if (!string.IsNullOrWhiteSpace(newPath))
             {
-                await LoadPicFromString(newPath);
+                await NavigationHelper.LoadPicFromString(newPath, this);
             }
 
             if (ImageIterator is not null)

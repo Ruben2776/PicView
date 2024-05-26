@@ -1,15 +1,12 @@
 ﻿using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Models;
-using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
 using PicView.Avalonia.Gallery;
-using PicView.Core.Gallery;
-using ReactiveUI;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation
@@ -308,7 +305,6 @@ namespace PicView.Avalonia.Navigation
                 Index = index;
 
                 var preLoadValue = PreLoader.Get(index, Pics);
-                var x = 0;
                 if (preLoadValue is not null)
                 {
                     if (preLoadValue.IsLoading)
@@ -316,18 +312,16 @@ namespace PicView.Avalonia.Navigation
                         vm.SetLoadingTitle();
                         vm.IsLoading = true;
                         await NavigationHelper.LoadingPreview(index, vm);
-                    }
-
-                    while (preLoadValue.IsLoading)
-                    {
-                        x++;
-                        await Task.Delay(5);
-                        if (Index == index && x <= 200)
+                        preLoadValue.ImageLoaded += async (_, p) =>
                         {
-                            continue;
-                        }
+                            if (p.Index != index)
+                            {
+                                return;
+                            }
 
-                        await Preload();
+                            preLoadValue = p.PreLoadValue;
+                            await Apply();
+                        };
                         return;
                     }
                 }
@@ -343,22 +337,27 @@ namespace PicView.Avalonia.Navigation
                     return;
                 }
 
-                vm.SetImageModel(preLoadValue.ImageModel);
-                vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
-                vm.IsLoading = false;
-                WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
-                vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
-                vm.GetIndex = Index + 1;
-                if (SettingsHelper.Settings.WindowProperties.KeepCentered)
-                {
-                    WindowHelper.CenterWindowOnScreen(false);
-                }
-
-                vm.SelectedGalleryItemIndex = Index;
-
-                await AddAsync(Index, preLoadValue.ImageModel);
-                await Preload();
+                await Apply();
                 return;
+
+                async Task Apply()
+                {
+                    vm.SetImageModel(preLoadValue.ImageModel);
+                    vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
+                    vm.IsLoading = false;
+                    WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
+                    vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
+                    vm.GetIndex = Index + 1;
+                    if (SettingsHelper.Settings.WindowProperties.KeepCentered)
+                    {
+                        WindowHelper.CenterWindowOnScreen(false);
+                    }
+
+                    vm.SelectedGalleryItemIndex = Index;
+
+                    await AddAsync(Index, preLoadValue.ImageModel);
+                    await Preload();
+                }
 
                 async Task GetPreload()
                 {

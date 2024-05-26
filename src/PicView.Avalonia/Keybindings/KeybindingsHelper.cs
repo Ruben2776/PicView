@@ -1,6 +1,5 @@
 ﻿using Avalonia.Input;
 using PicView.Avalonia.Helpers;
-using PicView.Avalonia.ViewModels;
 using PicView.Core.Keybindings;
 using System.Diagnostics;
 using System.Text.Json;
@@ -78,18 +77,16 @@ public static class KeybindingsHelper
 
     public static Dictionary<KeyGesture, Func<Task>>? CustomShortcuts { get; private set; }
 
-    public static async Task LoadKeybindings(MainViewModel vm)
+    public static async Task LoadKeybindings()
     {
         try
         {
             var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
             await UpdateKeybindings(keybindings).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await SetDefaultKeybindings().ConfigureAwait(false);
-            // Handle other exceptions as needed
-            //Tooltip.ShowTooltipMessage($"Error loading keybindings: {ex.Message}", true, TimeSpan.FromSeconds(5));
         }
     }
 

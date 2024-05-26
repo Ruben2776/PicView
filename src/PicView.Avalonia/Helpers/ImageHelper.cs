@@ -133,7 +133,7 @@ public static class ImageHelper
         }
     }
     
-    public static async Task<Bitmap?> GetThumb(FileInfo fileInfo, int height)
+    private static async Task<Bitmap?> GetThumb(FileInfo fileInfo, int height)
     {
         try
         {

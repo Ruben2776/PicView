@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
@@ -70,11 +71,11 @@ public static class StartUpHelper
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
-            Task.Run(() => vm.LoadPicFromString(args[1]));
+            Task.Run(() => NavigationHelper.LoadPicFromString(args[1], vm));
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
         {
-            Task.Run(() => vm.LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile));
+            Task.Run(() => NavigationHelper.LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile, vm));
         }
         else
         {
@@ -93,7 +94,7 @@ public static class StartUpHelper
             GalleryFunctions.OpenBottomGallery(vm);
         }
 
-        Task.Run(() => KeybindingsHelper.LoadKeybindings(vm));
+        Task.Run(KeybindingsHelper.LoadKeybindings);
 
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUp(e).ConfigureAwait(false);

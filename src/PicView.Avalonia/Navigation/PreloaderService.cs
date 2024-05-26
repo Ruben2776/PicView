@@ -12,11 +12,29 @@ public class PreLoader
 {
     private static bool _isRunning;
 
-    public class PreLoadValue(ImageModel? imageModel)
+    public sealed class PreLoadValue(ImageModel? imageModel)
     {
         public ImageModel? ImageModel { get; set; } = imageModel;
 
         public bool IsLoading = true;
+        
+        #region Event
+
+        public event ImageLoadedEventHandler? ImageLoaded;
+        public delegate void ImageLoadedEventHandler(object sender, ImageLoadedEventArgs e);
+
+        internal void OnImageLoaded(int index, PreLoadValue preLoadValue)
+        {
+            ImageLoaded?.Invoke(this, new ImageLoadedEventArgs(index, preLoadValue));
+        }
+
+        public class ImageLoadedEventArgs(int index, PreLoadValue preLoadValue) : EventArgs
+        {
+            public int Index { get; } = index;
+            public PreLoadValue PreLoadValue { get; } = preLoadValue;
+        }
+
+        #endregion
     }
 
     private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
@@ -78,6 +96,7 @@ public class PreLoader
                 if (ShowAddRemove)
                     Trace.WriteLine($"{imageModel?.FileInfo?.Name} added at {index}");
 #endif
+                preLoadValue.OnImageLoaded(index, preLoadValue); // Raise the event here
                 return true;
             }
         }

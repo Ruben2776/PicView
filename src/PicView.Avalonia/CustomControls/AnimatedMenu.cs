@@ -16,25 +16,26 @@ namespace PicView.Avalonia.CustomControls
             get => (bool)(GetValue(IsOpenProperty) ?? false);
             set => SetValue(IsOpenProperty, value);
         }
-
-        /// <summary>
-        /// Constructor for the AnimatedMenu class.
-        /// </summary>
+        
         protected AnimatedMenu()
         {
             // Subscribe to changes in the IsOpen property
             this.WhenAnyValue(x => x.IsOpen)
-                .Select(async x =>
+                .Select(async isOpen =>
                 {
                     // Make sure it is visible before starting the animation
-                    if (!IsVisible)
+                    if (!IsVisible && isOpen)
                     {
                         IsVisible = true;
                     }
-                    await DoAnimation(x);
+
+                    await DoAnimation(isOpen);
 
                     // Set the visibility so that it is not interactable while closed
-                    IsVisible = x;
+                    if (!isOpen)
+                    {
+                        IsVisible = false;
+                    }
                 })
                 .Subscribe();
         }
