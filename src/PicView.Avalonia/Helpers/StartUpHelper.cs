@@ -97,7 +97,7 @@ public static class StartUpHelper
         Task.Run(KeybindingsHelper.LoadKeybindings);
 
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
-        w.KeyUp += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysUp(e).ConfigureAwait(false);
+        w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);
         w.PointerPressed += async (_, e) => await MouseShortcuts.MainWindow_PointerPressed(e).ConfigureAwait(false);
     }
 }

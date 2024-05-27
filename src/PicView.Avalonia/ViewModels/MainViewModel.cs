@@ -86,6 +86,17 @@ namespace PicView.Avalonia.ViewModels
             get => _galleryWidth;
             set => this.RaiseAndSetIfChanged(ref _galleryWidth, value);
         }
+        public double GalleryHeight
+        {
+            get
+            {
+                if (!GalleryFunctions.IsBottomGalleryOpen)
+                {
+                    return 0;
+                }
+                return _galleryItemSize + 22;
+            }
+        }
 
         #endregion Gallery
 

@@ -36,6 +36,7 @@ public partial class GalleryView : UserControl
         {
             AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
+            AddHandler(KeyUpEvent, PreviewKeyUpEvent, RoutingStrategies.Tunnel);
             
             this.WhenAnyValue(x => x.GalleryMode)
                 .Select(galleryMode =>
@@ -136,7 +137,7 @@ public partial class GalleryView : UserControl
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         
         const int from = 0;
-        var to = vm.GalleryItemSize + 22;
+        var to = vm.GalleryHeight;
         const double speed = 0.3;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
 
@@ -164,7 +165,7 @@ public partial class GalleryView : UserControl
         vm.GalleryStretch = Stretch.UniformToFill;
         vm.IsGalleryCloseIconVisible = false;
         
-        var from = vm.GalleryItemSize + 22;
+        var from = vm.GalleryHeight;
         const int to = 0;
         const double speed = 0.5;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
@@ -192,7 +193,7 @@ public partial class GalleryView : UserControl
         vm.IsGalleryCloseIconVisible = true;
         
         
-        var from = vm.GalleryItemSize + 22;
+        var from = vm.GalleryHeight;
         var to = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
         const double speed = 0.5;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
@@ -224,7 +225,7 @@ public partial class GalleryView : UserControl
         vm.IsGalleryCloseIconVisible = false;
         
         var from = Bounds.Height;
-        var to = vm.GalleryItemSize + 22;
+        var to = vm.GalleryHeight;
         const double speed = 0.7;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
         await heightAnimation.RunAsync(this);
@@ -242,6 +243,13 @@ public partial class GalleryView : UserControl
     {
         // Prevent control from hijacking keys
         await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false); 
+        e.Handled = true;
+    }
+    
+    private void PreviewKeyUpEvent(object? sender, KeyEventArgs e)
+    {
+        // Prevent control from hijacking keys
+        MainKeyboardShortcuts.MainWindow_KeysUp(e); 
         e.Handled = true;
     }
 

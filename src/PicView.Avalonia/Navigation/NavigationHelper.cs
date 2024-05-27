@@ -144,6 +144,7 @@ public static class NavigationHelper
 
     public static async Task LoadingPreview(int index, MainViewModel vm)
     {
+        vm.SelectedGalleryItemIndex = index;
         using var image = new MagickImage();
         image.Ping(vm.ImageIterator.Pics[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();

@@ -116,7 +116,7 @@ public static class MainKeyboardShortcuts
         }
     }
 
-    public static async Task MainWindow_KeysUp(KeyEventArgs e)
+    public static void MainWindow_KeysUp(KeyEventArgs e)
     {
         CtrlDown = false;
         AltDown = false;
@@ -124,7 +124,5 @@ public static class MainKeyboardShortcuts
         CurrentKeys = null;
         IsKeyHeldDown = false;
         _x = 0;
-
-        await ImageIterator.TimerPicUpdate();
     }
 }

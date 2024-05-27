@@ -353,7 +353,6 @@ public static class WindowHelper
         var uiBottomSize =
             SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
                 ? vm.BottombarHeight : 0;
-        var galleryHeight = GalleryFunctions.IsBottomGalleryOpen ? vm.GalleryItemSize + vm.BottombarHeight : 0;
         if (Dispatcher.UIThread.CheckAccess())
         {
             desktopMinWidth = desktop.MainWindow.MinWidth;
@@ -381,12 +380,12 @@ public static class WindowHelper
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
             vm.IsStretched,
-            75,
+            25,
             monitor.Scaling,
             SettingsHelper.Settings.WindowProperties.Fullscreen,
             uiTopSize,
             uiBottomSize,
-            galleryHeight,
+            vm.GalleryHeight,
             vm.IsAutoFit,
             containerWidth,
             containerHeight,
