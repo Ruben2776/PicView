@@ -1,9 +1,13 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
@@ -91,5 +95,24 @@ public partial class AppearanceView : UserControl
             Trace.WriteLine($"{nameof(AppearanceView)} Add language caught exception: \n {exception}");
 #endif
         }
+    }
+
+    private void RangeBase_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm ||
+            Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            !GalleryFunctions.IsBottomGalleryOpen)
+        {
+            return;
+        }
+        WindowHelper.SetSize(vm);
+        var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+        var  gallery = mainView.GalleryView;
+        gallery.Height = vm.GalleryHeight;
+        // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day
+
+        // Maybe save this on close or some other way
+        SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;
+        _ = SettingsHelper.SaveSettingsAsync();
     }
 }

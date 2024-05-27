@@ -136,8 +136,7 @@ public partial class StartUpMenu : UserControl
 
         var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
 
-        vm.TitleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(vm.RotationAngle, width, height, desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight,
-            monitor.Bounds.Width, monitor.Bounds.Height, ImageSizeCalculationHelper.GetInterfaceSize(), SettingsHelper.Settings.WindowProperties.AutoFit, desktop.MainWindow.Width,
+        vm.TitleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(vm.RotationAngle, width, height, desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight, ImageSizeCalculationHelper.GetInterfaceSize(), SettingsHelper.Settings.WindowProperties.AutoFit, desktop.MainWindow.Width,
             SettingsHelper.Settings.Zoom.ScrollEnabled);
     }
 }

@@ -380,7 +380,7 @@ public static class WindowHelper
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
             vm.IsStretched,
-            25,
+            75,
             monitor.Scaling,
             SettingsHelper.Settings.WindowProperties.Fullscreen,
             uiTopSize,

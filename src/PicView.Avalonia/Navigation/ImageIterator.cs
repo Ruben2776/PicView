@@ -40,7 +40,7 @@ public class ImageIterator
 
         _vm = vm;
         Pics = vm.PlatformService.GetFiles(fileInfo);
-        Index = Pics.IndexOf(fileInfo.FullName);
+        Index = Directory.Exists(fileInfo.FullName) ? 0 : Pics.IndexOf(fileInfo.FullName);
 #if DEBUG
         Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
 #endif
@@ -297,7 +297,7 @@ public class ImageIterator
         }
     }
 
-            public async Task LoadPicAtIndex(int index, MainViewModel vm) => await Task.Run(async () =>
+        public async Task LoadPicAtIndex(int index, MainViewModel vm) => await Task.Run(async () =>
         {
             try
             {
@@ -369,8 +369,35 @@ public class ImageIterator
             // TODO load from URL if not a file
             throw new FileNotFoundException(path);
         }
+        if (Directory.Exists(path))
 
-        await LoadPicFromFile(new FileInfo(path), vm).ConfigureAwait(false);
+            if (path.Equals(vm.ImageIterator.FileInfo.DirectoryName))
+            {
+                await vm.ImageIterator.LoadPicAtIndex(0, vm).ConfigureAwait(false);
+            }
+            else
+            {
+                await ChangeDirectoryAndLoad().ConfigureAwait(false);
+            }
+        else
+        {
+            if (Path.GetDirectoryName(path) == Path.GetDirectoryName(Pics[Index]))
+            {
+                await LoadPicFromFile(new FileInfo(path), vm).ConfigureAwait(false);
+            }
+            else
+            {
+                await ChangeDirectoryAndLoad().ConfigureAwait(false);
+            }
+        }
+        return;
+
+        async Task ChangeDirectoryAndLoad()
+        {
+            var fileInfo = new FileInfo(path);
+            vm.ImageIterator = new ImageIterator(fileInfo, _vm);
+            await vm.ImageIterator.LoadPicFromFile(new FileInfo(vm.ImageIterator.Pics[vm.ImageIterator.Index]), vm).ConfigureAwait(false);
+        }
     }
 
     public async Task LoadPicFromFile(FileInfo fileInfo, MainViewModel vm)

@@ -523,6 +523,7 @@ public partial class ImageViewer : UserControl
         {
             ImageLayoutTransformControl.LayoutTransform = rotateTransform;
         });
+        WindowHelper.SetSize(vm);
     }
 
     public void Flip(bool animate)

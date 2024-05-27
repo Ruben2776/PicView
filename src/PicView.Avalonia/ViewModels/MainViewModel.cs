@@ -3,13 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -71,15 +69,7 @@ namespace PicView.Avalonia.ViewModels
             get => _isGalleryCloseIconVisible;
             set => this.RaiseAndSetIfChanged(ref _isGalleryCloseIconVisible, value);
         }
-
-        private double _galleryItemSize;
-
-        public double GalleryItemSize
-        {
-            get => _galleryItemSize;
-            set => this.RaiseAndSetIfChanged(ref _galleryItemSize, value);
-        }
-
+        
         private double _galleryWidth;
         public double GalleryWidth
         {
@@ -94,8 +84,31 @@ namespace PicView.Avalonia.ViewModels
                 {
                     return 0;
                 }
-                return _galleryItemSize + 22;
+                return GetBottomGalleryItemSize + 22;
             }
+        }
+        public double GetGalleryItemSize
+        {
+            get
+            {
+                return GalleryFunctions.IsFullGalleryOpen ? GetExpandedGalleryItemSize : GetBottomGalleryItemSize;
+            }
+        }
+        
+        private double _getExpandedGalleryItemSize = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+
+        public double GetExpandedGalleryItemSize
+        {
+            get => _getExpandedGalleryItemSize;
+            set => this.RaiseAndSetIfChanged(ref _getExpandedGalleryItemSize, value);
+        }
+        
+        private double _getBottomGalleryItemSize = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
+        
+        public double GetBottomGalleryItemSize
+        {
+            get => _getBottomGalleryItemSize;
+            set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemSize, value);
         }
 
         #endregion Gallery

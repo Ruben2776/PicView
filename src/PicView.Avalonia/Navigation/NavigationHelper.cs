@@ -122,24 +122,27 @@ public static class NavigationHelper
         }
         
         vm.CurrentView = vm.ImageViewer;
-
-        if (vm.ImageIterator is not null)
+        
+        var fileInfo = new FileInfo(source);
+        if (!fileInfo.Exists)
         {
-            await vm.ImageIterator.LoadPicFromString(source, vm).ConfigureAwait(false);
-        }
-        else
-        {
-            var fileInfo = new FileInfo(source);
-            if (!fileInfo.Exists)
+            if (Directory.Exists(fileInfo.FullName))
             {
-                // TODO load from URL or base64 if not a file
+                await Start();
                 return;
             }
-            
-            vm.ImageIterator = new ImageIterator(fileInfo, vm);
-            await vm.ImageIterator.LoadPicFromFile(fileInfo, vm).ConfigureAwait(false);
+            // TODO load from URL or base64 if not a file
+            return;
         }
         
+        await Start();
+        return;
+
+        async Task Start()
+        {
+            vm.ImageIterator ??= new ImageIterator(fileInfo, vm);
+            await vm.ImageIterator.LoadPicFromString(source, vm).ConfigureAwait(false);
+        }
     }
 
     public static async Task LoadingPreview(int index, MainViewModel vm)

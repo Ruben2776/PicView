@@ -83,12 +83,17 @@ public static class StartUpHelper
         }
         
         UIHelper.AddMenus(desktop);
-
-        if (vm.GalleryItemSize <= 0)
+        
+        // Set default gallery sizes if they are out of range or upgrading from an old version
+        if (vm.GetBottomGalleryItemSize is < 25 or > 110)
         {
-            GalleryFunctions.SetGalleryItemSize(vm);
+            vm.GetBottomGalleryItemSize = 47;
         }
-
+        if (vm.GetExpandedGalleryItemSize is  < 25 or 110)
+        {
+            vm.GetExpandedGalleryItemSize = 47;
+        }
+        
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
             GalleryFunctions.OpenBottomGallery(vm);

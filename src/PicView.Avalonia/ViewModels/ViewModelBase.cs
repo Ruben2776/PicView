@@ -210,9 +210,27 @@ public class ViewModelBase : ReactiveObject
         Credits = TranslationHelper.GetTranslation("Credits");
         ColorPickerTool = TranslationHelper.GetTranslation("ColorPickerTool");
         ColorPickerToolTooltip = TranslationHelper.GetTranslation("ColorPickerToolTooltip");
+        ExpandedGalleryItemSize = TranslationHelper.GetTranslation("ExpandedGalleryItemSize");
+        BottomGalleryItemSize = TranslationHelper.GetTranslation("BottomGalleryItemSize");
     }
 
     #region Strings
+    
+    private string? _bottomGalleryItemSize;
+    
+    public string? BottomGalleryItemSize
+    {
+        get => _bottomGalleryItemSize;
+        set => this.RaiseAndSetIfChanged(ref _bottomGalleryItemSize, value);
+    }
+    
+    private string? _expandedGalleryItemSize;
+    
+    public string? ExpandedGalleryItemSize
+    {
+        get => _expandedGalleryItemSize;
+        set => this.RaiseAndSetIfChanged(ref _expandedGalleryItemSize, value);
+    }
     
     private string? _colorPickerTool;
     

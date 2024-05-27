@@ -104,14 +104,13 @@ public static class ImageSizeCalculationHelper
 
         var xWidth = width * aspectRatio;
         var xHeight = height * aspectRatio;
-        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight,
-            monitorWidth, monitorHeight, interfaceSize, autoFit, containerWidth, scrollEnabled);
+        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight, interfaceSize, autoFit, containerWidth, scrollEnabled);
 
         return new ImageSize(xWidth, xHeight, titleMaxWidth, margin);
     }
 
     public static double GetTitleMaxWidth(double rotationAngle, double width, double height, double monitorMinWidth,
-        double monitorMinHeight, double monitorWidth, double monitorHeight, double interfaceSize, bool autoFit,
+        double monitorMinHeight, double interfaceSize, bool autoFit,
         double containerWidth, bool scrollEnabled)
     {
         double titleMaxWidth;

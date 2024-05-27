@@ -105,19 +105,6 @@ namespace PicView.Avalonia.Gallery
             await Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
         }
 
-        public static void SetGalleryItemSize(MainViewModel vm)
-        {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-
-            var screen = ScreenHelper.GetScreen(desktop.MainWindow);
-            var size = Math.Min(SettingsHelper.Settings.Gallery.BottomGalleryItemSize,
-                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize);
-            vm.GalleryItemSize = screen.WorkingArea.Height / size;
-        }
-
         public static void OpenBottomGallery(MainViewModel vm)
         {
             IsBottomGalleryOpen = true;

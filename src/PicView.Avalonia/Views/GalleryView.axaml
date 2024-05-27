@@ -14,7 +14,7 @@
     <Panel Background="{StaticResource BackgroundAlpha}">
         <Panel.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Adjust size">
+                <MenuItem Header="{CompiledBinding ExpandedGalleryItemSize}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"

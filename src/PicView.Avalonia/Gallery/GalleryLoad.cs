@@ -70,6 +70,7 @@ public static class GalleryLoad
         IsLoading = true;
         var cancellationToken = _cancellationTokenSource.Token;
         var index = viewModel.ImageIterator.Index;
+        var galleryItemSize = Math.Max(viewModel.GetBottomGalleryItemSize, viewModel.GetExpandedGalleryItemSize);
 
         try
         {
@@ -88,8 +89,8 @@ public static class GalleryLoad
             index = index < 0 ? 0 : index;
             var maxDegreeOfParallelism = Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : 2;
             ParallelOptions options = new() { MaxDegreeOfParallelism = maxDegreeOfParallelism };
-            await AsyncLoop(positive:true, index, viewModel.ImageIterator.Pics.Count, options, cancellationToken);
-            await AsyncLoop(positive:false, 0, index, options, cancellationToken);
+            await AsyncLoop(index, viewModel.ImageIterator.Pics.Count, options, cancellationToken);
+            await AsyncLoop(0, index, options, cancellationToken);
             
         }
         catch (OperationCanceledException)
@@ -165,7 +166,7 @@ public static class GalleryLoad
             }
         }
 
-        async Task AsyncLoop(bool positive, int startIndex, int endIndex, ParallelOptions options, CancellationToken ct)
+        async Task AsyncLoop(int startIndex, int endIndex, ParallelOptions options, CancellationToken ct)
         {
             await Parallel.ForAsync(startIndex, endIndex, options, async (i, _) =>
             {
@@ -173,7 +174,7 @@ public static class GalleryLoad
 
                 var fileInfo = new FileInfo(viewModel.ImageIterator.Pics[i]);
                 var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfo, isThumb: true,
-                    (int)viewModel.GalleryItemSize);
+                    (int)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, null, fileInfo);
 
 
