@@ -270,7 +270,7 @@ public static class WindowHelper
             return;
         }
         await Dispatcher.UIThread.InvokeAsync(() => 
-            desktop.MainWindow.WindowState = WindowState.Maximized);
+            desktop.MainWindow.WindowState = WindowState.Minimized);
     }
     
     public static async Task Close()
@@ -379,17 +379,13 @@ public static class WindowHelper
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
-            vm.IsStretched,
             75,
             monitor.Scaling,
-            SettingsHelper.Settings.WindowProperties.Fullscreen,
             uiTopSize,
             uiBottomSize,
             vm.GalleryHeight,
-            vm.IsAutoFit,
             containerWidth,
-            containerHeight,
-            vm.IsScrollingEnabled);
+            containerHeight);
 
         vm.TitleMaxWidth = size.TitleMaxWidth;
         vm.ImageWidth = size.Width;

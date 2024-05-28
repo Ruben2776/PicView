@@ -20,6 +20,7 @@ using System.Reactive;
 using System.Windows.Input;
 using Avalonia.Media;
 using PicView.Avalonia.Gallery;
+using PicView.Core.Calculations;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels
@@ -84,15 +85,28 @@ namespace PicView.Avalonia.ViewModels
                 {
                     return 0;
                 }
-                return GetBottomGalleryItemSize + 22;
+                return GetBottomGalleryItemSize + ImageSizeCalculationHelper.ScrollbarSize;
             }
         }
+        private double _getGalleryItemSize;
         public double GetGalleryItemSize
         {
             get
             {
                 return GalleryFunctions.IsFullGalleryOpen ? GetExpandedGalleryItemSize : GetBottomGalleryItemSize;
             }
+            set
+            {
+                if (GalleryFunctions.IsFullGalleryOpen)
+                {
+                    GetExpandedGalleryItemSize = value;
+                }
+                else
+                {
+                    GetBottomGalleryItemSize = value;
+                }
+                this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
+            } 
         }
         
         private double _getExpandedGalleryItemSize = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
@@ -1012,6 +1026,14 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _imageHeight;
             set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
+        }
+        
+        private double _scrollHeight;
+
+        public double ScrollHeight
+        {
+            get => _scrollHeight;
+            set => this.RaiseAndSetIfChanged(ref _scrollHeight, value);
         }
 
         private double _titleMaxWidth;

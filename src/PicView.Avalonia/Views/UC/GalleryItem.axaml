@@ -13,7 +13,7 @@
         Background="Transparent"
         BorderThickness="1"
         CornerRadius="8"
-        Height="{CompiledBinding GetBottomGalleryItemSize}"
+        Height="{CompiledBinding GetGalleryItemSize}"
         MinWidth="25"
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"

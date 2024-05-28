@@ -5,6 +5,7 @@ namespace PicView.Core.Calculations;
 
 public static class ImageSizeCalculationHelper
 {
+    public const int ScrollbarSize = 22;
     public struct ImageSize(double width, double height, double titleMaxWidth, double margin)
     {
         public double TitleMaxWidth { get; private set; } = titleMaxWidth;
@@ -27,17 +28,13 @@ public static class ImageSizeCalculationHelper
         double monitorMinHeight,
         double interfaceSize,
         double rotationAngle,
-        bool stretch,
         double padding,
         double dpiScaling,
-        bool fullscreen,
         double uiTopSize,
         double uiBottomSize,
         double galleryHeight,
-        bool autoFit,
         double containerWidth,
-        double containerHeight,
-        bool scrollEnabled)
+        double containerHeight)
     {
         if (width <= 0 || height <= 0 || rotationAngle > 360 || rotationAngle < 0)
         {
@@ -48,13 +45,16 @@ public static class ImageSizeCalculationHelper
         double maxWidth, maxHeight;
         var margin = 0d;
 
+        var fullscreen = SettingsHelper.Settings.WindowProperties.Fullscreen;
+        var stretch = SettingsHelper.Settings.ImageScaling.StretchImage;
+
         var borderSpaceHeight = fullscreen ? 0 : uiTopSize + uiBottomSize + galleryHeight;
         var borderSpaceWidth = fullscreen ? 0 : padding;
 
         var workAreaWidth = monitorWidth * dpiScaling - borderSpaceWidth;
         var workAreaHeight = monitorHeight * dpiScaling - borderSpaceHeight;
 
-        if (autoFit)
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
             maxWidth = stretch ? workAreaWidth - padding : Math.Min(workAreaWidth - padding, width);
             maxHeight = stretch ? workAreaHeight - padding : Math.Min(workAreaHeight - padding, height);
@@ -62,9 +62,18 @@ public static class ImageSizeCalculationHelper
         else
         {
             maxWidth = stretch ? containerWidth : Math.Min(containerWidth, width);
-            maxHeight = stretch
-                ? containerHeight - galleryHeight
-                : Math.Min(containerHeight - galleryHeight, height);
+
+            
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+            {
+                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage ? containerHeight : height;
+            }
+            else
+            {
+                maxHeight = stretch
+                    ? containerHeight - galleryHeight
+                    : Math.Min(containerHeight - galleryHeight, height);
+            }
         }
 
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
@@ -102,25 +111,43 @@ public static class ImageSizeCalculationHelper
                 break;
         }
 
-        var xWidth = width * aspectRatio;
-        var xHeight = height * aspectRatio;
-        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight, interfaceSize, autoFit, containerWidth, scrollEnabled);
+        double xWidth, xHeight;
+        
+        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+        {
+            xWidth = maxWidth - ScrollbarSize;
+            xHeight = maxWidth * height / width;
+
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                xWidth = maxWidth - ScrollbarSize;
+                xHeight = height * aspectRatio;
+            }
+        }
+        else
+        {
+            // Fit image by aspect ratio calculation
+            // and update values
+            xWidth = width * aspectRatio;
+            xHeight = height * aspectRatio;
+        }
+        
+        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight, interfaceSize, containerWidth);
 
         return new ImageSize(xWidth, xHeight, titleMaxWidth, margin);
     }
 
     public static double GetTitleMaxWidth(double rotationAngle, double width, double height, double monitorMinWidth,
-        double monitorMinHeight, double interfaceSize, bool autoFit,
-        double containerWidth, bool scrollEnabled)
+        double monitorMinHeight, double interfaceSize, double containerWidth)
     {
         double titleMaxWidth;
-        if (autoFit)
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
             titleMaxWidth = rotationAngle is 0 or 180
                 ? Math.Max(width, monitorMinWidth)
                 : Math.Max(height, monitorMinHeight);
 
-            if (scrollEnabled)
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
                 return titleMaxWidth;
             }

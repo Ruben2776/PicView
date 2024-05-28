@@ -134,9 +134,8 @@ public partial class StartUpMenu : UserControl
             return;
         }
 
-        var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
-
-        vm.TitleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(vm.RotationAngle, width, height, desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight, ImageSizeCalculationHelper.GetInterfaceSize(), SettingsHelper.Settings.WindowProperties.AutoFit, desktop.MainWindow.Width,
-            SettingsHelper.Settings.Zoom.ScrollEnabled);
+        vm.TitleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(vm.RotationAngle, width, height,
+            desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight, ImageSizeCalculationHelper.GetInterfaceSize(),
+            desktop.MainWindow.Width);
     }
 }

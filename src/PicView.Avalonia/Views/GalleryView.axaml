@@ -1,9 +1,10 @@
-<UserControl
+<customControls:ImageGallery
     Focusable="False"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.GalleryView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
@@ -81,4 +82,4 @@
             </ListBox.ItemsPanel>
         </ListBox>
     </Panel>
-</UserControl>
+</customControls:ImageGallery>

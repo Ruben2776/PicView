@@ -107,7 +107,7 @@ public partial class AppearanceView : UserControl
         }
         WindowHelper.SetSize(vm);
         var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-        var  gallery = mainView.GalleryView;
+        var gallery = mainView.GalleryView;
         gallery.Height = vm.GalleryHeight;
         // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day
 

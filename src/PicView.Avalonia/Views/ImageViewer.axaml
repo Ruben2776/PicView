@@ -5,6 +5,7 @@
     x:Class="PicView.Avalonia.Views.ImageViewer"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
@@ -16,7 +17,7 @@
 
     <Panel>
         <LayoutTransformControl x:Name="ImageLayoutTransformControl">
-            <ScrollViewer
+            <customControls:AutoScrollViewer
                 Focusable="False"
                 ScrollChanged="ImageScrollViewer_OnScrollChanged"
                 VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}"
@@ -33,7 +34,7 @@
                         Width="{CompiledBinding ImageWidth}"
                         x:Name="MainImage" />
                 </Border>
-            </ScrollViewer>
+            </customControls:AutoScrollViewer>
         </LayoutTransformControl>
         <uc:SpinWaiter
             HorizontalAlignment="Center"
