@@ -9,5 +9,5 @@
         BottomToFull,
         BottomToClosed,
         ClosedToFull,
-        ClosedToBottom
+        ClosedToBottom,
     }

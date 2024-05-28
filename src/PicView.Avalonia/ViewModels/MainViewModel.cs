@@ -81,10 +81,6 @@ namespace PicView.Avalonia.ViewModels
         {
             get
             {
-                if (!GalleryFunctions.IsBottomGalleryOpen)
-                {
-                    return 0;
-                }
                 return GetBottomGalleryItemSize + ImageSizeCalculationHelper.ScrollbarSize;
             }
         }
@@ -95,18 +91,7 @@ namespace PicView.Avalonia.ViewModels
             {
                 return GalleryFunctions.IsFullGalleryOpen ? GetExpandedGalleryItemSize : GetBottomGalleryItemSize;
             }
-            set
-            {
-                if (GalleryFunctions.IsFullGalleryOpen)
-                {
-                    GetExpandedGalleryItemSize = value;
-                }
-                else
-                {
-                    GetBottomGalleryItemSize = value;
-                }
-                this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
-            } 
+            set => this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
         }
         
         private double _getExpandedGalleryItemSize = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
@@ -122,98 +107,105 @@ namespace PicView.Avalonia.ViewModels
         public double GetBottomGalleryItemSize
         {
             get => _getBottomGalleryItemSize;
-            set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemSize, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _getBottomGalleryItemSize, value);
+                if (GalleryFunctions.IsBottomGalleryOpen)
+                {
+                    this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
+                }
+            } 
         }
 
         #endregion Gallery
 
         #region Commands
 
-        public ICommand? ExitCommand { get; }
-        public ICommand? MinimizeCommand { get; }
-        public ICommand? MaximizeCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ExitCommand { get; }
+        public ReactiveCommand<Unit, Unit>? MinimizeCommand { get; }
+        public ReactiveCommand<Unit, Unit>? MaximizeCommand { get; }
         
-        public ICommand? ToggleFullscreenCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleFullscreenCommand { get; }
 
-        public ICommand? NextCommand { get; }
-        public ICommand? NextButtonCommand { get; }
-        public ICommand? PreviousCommand { get; }
-        public ICommand? PreviousButtonCommand { get; }
-        public ICommand? FirstCommand { get; }
-        public ICommand? LastCommand { get; }
-        public ICommand? OpenFileCommand { get; }
-        public ICommand? SaveFileCommand { get; }
-        public ICommand? OpenLastFileCommand { get; }
-        public ICommand? PasteCommand { get; }
+        public ReactiveCommand<Unit, Unit>? NextCommand { get; }
+        public ReactiveCommand<Unit, Unit>? NextButtonCommand { get; }
+        public ReactiveCommand<Unit, Unit>? PreviousCommand { get; }
+        public ReactiveCommand<Unit, Unit>? PreviousButtonCommand { get; }
+        public ReactiveCommand<Unit, Unit>? FirstCommand { get; }
+        public ReactiveCommand<Unit, Unit>? LastCommand { get; }
+        public ReactiveCommand<Unit, Unit>? OpenFileCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SaveFileCommand { get; }
+        public ReactiveCommand<Unit, Unit>? OpenLastFileCommand { get; }
+        public ReactiveCommand<Unit, Unit>? PasteCommand { get; }
         public ReactiveCommand<string, Unit>? CopyFileCommand { get; }
         public ReactiveCommand<string, Unit>? CopyFilePathCommand { get; }
         public ReactiveCommand<string, Unit>? FilePropertiesCommand { get; }
         public ReactiveCommand<string, Unit>? CopyImageCommand { get; }
         public ReactiveCommand<string, Unit>? CutCommand { get; }
-        public ICommand? ReloadCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ReloadCommand { get; }
         public ReactiveCommand<string, Unit>? PrintCommand { get; }
         public ReactiveCommand<string, Unit>? DeleteFileCommand { get; }
-        public ICommand? RecycleFileCommand { get; }
-        public ICommand? CloseMenuCommand { get; }
-        public ICommand? ToggleFileMenuCommand { get; }
-        public ICommand? ToggleImageMenuCommand { get; }
-        public ICommand? ToggleSettingsMenuCommand { get; }
-        public ICommand? ToggleToolsMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit>? RecycleFileCommand { get; }
+        public ReactiveCommand<Unit, Unit>? CloseMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleFileMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleImageMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleSettingsMenuCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleToolsMenuCommand { get; }
         public ReactiveCommand<string, Unit>? LocateOnDiskCommand { get; }
         public ReactiveCommand<string, Unit>? OpenWithCommand { get; }
-        public ICommand? RenameCommand { get; }
-        public ICommand? NewWindowCommand { get; }
-        public ICommand? DuplicateFileCommand { get; }
-        public ICommand? ToggleLoopingCommand { get; }
-        public ICommand? RotateLeftCommand { get; }
-        public ICommand? RotateRightCommand { get; }
-        public ICommand? FlipCommand { get; }
-        public ICommand? StretchCommand { get; }
-        public ICommand? CropCommand { get; }
-        public ICommand? ChangeAutoFitCommand { get; }
-        public ICommand? ChangeTopMostCommand { get; }
-        public ICommand? ChangeCtrlZoomCommand { get; }
-        public ICommand? ToggleUICommand { get; }
-        public ICommand? ChangeBackgroundCommand { get; }
-        public ICommand? ToggleBottomNavBarCommand { get; }
-        public ICommand? ShowExifWindowCommand { get; }
-        public ICommand? ShowAboutWindowCommand { get; }
-        public ICommand? ShowSettingsWindowCommand { get; }
-        public ICommand? ShowKeybindingsWindowCommand { get; }
+        public ReactiveCommand<Unit, Unit>? RenameCommand { get; }
+        public ReactiveCommand<Unit, Unit>? NewWindowCommand { get; }
+        public ReactiveCommand<Unit, Unit>? DuplicateFileCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleLoopingCommand { get; }
+        public ReactiveCommand<Unit, Unit>? RotateLeftCommand { get; }
+        public ReactiveCommand<Unit, Unit>? RotateRightCommand { get; }
+        public ReactiveCommand<Unit, Unit>? FlipCommand { get; }
+        public ReactiveCommand<Unit, Unit>? StretchCommand { get; }
+        public ReactiveCommand<Unit, Unit>? CropCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ChangeAutoFitCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ChangeTopMostCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ChangeCtrlZoomCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleUICommand { get; }
+        public ReactiveCommand<Unit, Unit>? ChangeBackgroundCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleBottomNavBarCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ShowExifWindowCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ShowAboutWindowCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ShowSettingsWindowCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ShowKeybindingsWindowCommand { get; }
 
-        public ICommand? SetExifRating0Command { get; }
-        public ICommand? SetExifRating1Command { get; }
-        public ICommand? SetExifRating2Command { get; }
-        public ICommand? SetExifRating3Command { get; }
-        public ICommand? SetExifRating4Command { get; }
-        public ICommand? SetExifRating5Command { get; }
-        public ICommand? OpenGoogleLinkCommand { get; }
-        public ICommand? OpenBingLinkCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SetExifRating0Command { get; }
+        public ReactiveCommand<Unit, Unit>? SetExifRating1Command { get; }
+        public ReactiveCommand<Unit, Unit>? SetExifRating2Command { get; }
+        public ReactiveCommand<Unit, Unit>? SetExifRating3Command { get; }
+        public ReactiveCommand<Unit, Unit>? SetExifRating4Command { get; }
+        public ReactiveCommand<Unit, Unit>? SetExifRating5Command { get; }
+        public ReactiveCommand<Unit, Unit>? OpenGoogleLinkCommand { get; }
+        public ReactiveCommand<Unit, Unit>? OpenBingLinkCommand { get; }
 
-        public ICommand? OptimizeImageCommand { get; }
+        public ReactiveCommand<Unit, Unit>? OptimizeImageCommand { get; }
         public ReactiveCommand<int, Unit>? ResizeCommand { get; }
         public ReactiveCommand<int, Unit>? ConvertCommand { get; }
 
-        public ICommand? SortFilesByNameCommand { get; }
-        public ICommand? SortFilesBySizeCommand { get; }
-        public ICommand? SortFilesByExtensionCommand { get; }
-        public ICommand? SortFilesByCreationTimeCommand { get; }
-        public ICommand? SortFilesByLastAccessTimeCommand { get; }
-        public ICommand? SortFilesRandomlyCommand { get; }
-        public ICommand? SortFilesAscendingCommand { get; }
-        public ICommand? SortFilesDescendingCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesByNameCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesBySizeCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesByExtensionCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesByCreationTimeCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesByLastAccessTimeCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesRandomlyCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesAscendingCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SortFilesDescendingCommand { get; }
 
-        public ICommand? ToggleGalleryCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleGalleryCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleBottomGalleryCommand { get; }
+        public ReactiveCommand<Unit, Unit>? CloseGalleryCommand { get; }
 
-        public ICommand? ToggleBottomGalleryCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleScrollCommand { get; }
 
-        public ICommand? ToggleScrollCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ToggleSubdirectoriesCommand { get; }
 
-        public ICommand? ToggleSubdirectoriesCommand { get; }
+        public ReactiveCommand<Unit, Unit>? ColorPickerCommand { get; }
 
-        public ICommand? ColorPickerCommand { get; }
-
-        public ICommand? SlideshowCommand { get; }
+        public ReactiveCommand<Unit, Unit>? SlideshowCommand { get; }
         
         public ReactiveCommand<string, Unit>? SetAsWallpaperCommand { get; }
         
@@ -1673,7 +1665,7 @@ namespace PicView.Avalonia.ViewModels
             ExitCommand = ReactiveCommand.CreateFromTask(WindowHelper.Close);
             MinimizeCommand = ReactiveCommand.CreateFromTask(WindowHelper.Minimize);
             MaximizeCommand = ReactiveCommand.CreateFromTask(WindowHelper.MaximizeRestore);
-            ToggleFullscreenCommand = ReactiveCommand.Create(FunctionsHelper.Fullscreen);
+            ToggleFullscreenCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Fullscreen);
             NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
             ShowExifWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowExifWindow);
@@ -1773,11 +1765,11 @@ namespace PicView.Avalonia.ViewModels
 
             CutCommand = ReactiveCommand.CreateFromTask<string>(CutFileTask);
 
-            PasteCommand = ReactiveCommand.Create(FunctionsHelper.Paste);
+            PasteCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Paste);
 
             OpenWithCommand = ReactiveCommand.CreateFromTask<string>(OpenWithTask);
 
-            RenameCommand = ReactiveCommand.Create(FunctionsHelper.Rename);
+            RenameCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Rename);
 
             ResizeCommand = ReactiveCommand.CreateFromTask<int>(ResizeImageByPercentage);
             ConvertCommand = ReactiveCommand.CreateFromTask<int>(ConvertFileExtension);
@@ -1816,6 +1808,7 @@ namespace PicView.Avalonia.ViewModels
             ToggleGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleGallery);
 
             ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenCloseBottomGallery);
+            CloseGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CloseGallery);
 
             #endregion Gallery Commands
 

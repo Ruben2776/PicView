@@ -1,5 +1,4 @@
 <customControls:ImageGallery
-    Focusable="False"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.GalleryView"
     x:DataType="viewModels:MainViewModel"
@@ -26,7 +25,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{CompiledBinding ToggleGalleryCommand}" Header="{CompiledBinding Close}">
+                <MenuItem Command="{CompiledBinding CloseGalleryCommand}" Header="{CompiledBinding Close}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CloseGeometry}"

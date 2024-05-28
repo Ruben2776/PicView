@@ -136,11 +136,12 @@
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
             Margin="0,1,0,1"
-            Maximum="75"
-            Minimum="25"
-            TickFrequency=".1"
+            Maximum="125"
+            Minimum="36"
+            TickFrequency="1"
             TickPlacement="BottomRight"
             Value="{Binding GetExpandedGalleryItemSize}"
+            ValueChanged="FullGallery_OnValueChanged"
             Width="270" />
         <TextBlock
             Classes="txt"
@@ -161,12 +162,12 @@
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
             Margin="0,1,0,1"
-            Maximum="110"
-            Minimum="25"
-            TickFrequency=".1"
+            Maximum="125"
+            Minimum="36"
+            TickFrequency="1"
             TickPlacement="BottomRight"
             Value="{CompiledBinding GetBottomGalleryItemSize}"
-            ValueChanged="RangeBase_OnValueChanged"
+            ValueChanged="BottomGallery_OnValueChanged"
             Width="270" />
         <TextBlock
             Classes="txt"

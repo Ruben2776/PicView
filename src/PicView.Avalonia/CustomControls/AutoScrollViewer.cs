@@ -114,25 +114,25 @@ public class AutoScrollViewer : ScrollViewer
         if (IsAutoScrolling)
         {
             IsAutoScrolling = false;
+            return;
         }
-        else
+
+        var canScroll = CanScroll();
+        if (canScroll == CanScrollDirection.None)
         {
-            var canScroll = CanScroll();
-            if (canScroll == CanScrollDirection.None)
-            {
-                return;
-            }
-
-            AutoScrollOrigin = e.GetPosition(this);
-            AutoScrollPos = AutoScrollOrigin;
-            IsAutoScrolling = true;
-
-            Observable.Interval(TimeSpan.FromMilliseconds(16))
-                .TakeUntil(_autoScrollingSubject.Where(isScrolling => !isScrolling))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(_ => PerformAutoScroll())
-                .DisposeWith(_disposables);
+            return;
         }
+
+        AutoScrollOrigin = e.GetPosition(this);
+        AutoScrollPos = AutoScrollOrigin;
+        IsAutoScrolling = true;
+
+        Observable.Interval(TimeSpan.FromMilliseconds(16))
+            .TakeUntil(_autoScrollingSubject.Where(isScrolling => !isScrolling))
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(_ => PerformAutoScroll())
+            .DisposeWith(_disposables);
+        
     }
 
     private void PointerMovedHandler(object? sender, PointerEventArgs e)
@@ -147,14 +147,14 @@ public class AutoScrollViewer : ScrollViewer
     {
         var deltaX = AutoScrollPos.X - AutoScrollOrigin.X;
         var deltaY = AutoScrollPos.Y - AutoScrollOrigin.Y;
-        const double deadZone = 20d;
+        const int deadZone = 20;
 
         if (Math.Abs(deltaX) < deadZone && Math.Abs(deltaY) < deadZone)
         {
             return;
         }
 
-        var speedFactor = 0.1; // Adjust speed factor as necessary
+        var speedFactor = 0.1;
         var offsetX = Math.Sign(deltaX) * Math.Max(0, Math.Abs(deltaX) - deadZone) * speedFactor;
         var offsetY = Math.Sign(deltaY) * Math.Max(0, Math.Abs(deltaY) - deadZone) * speedFactor;
 
@@ -181,4 +181,5 @@ public class AutoScrollViewer : ScrollViewer
         base.OnDetachedFromVisualTree(e);
         _disposables.Dispose();
     }
+
 }

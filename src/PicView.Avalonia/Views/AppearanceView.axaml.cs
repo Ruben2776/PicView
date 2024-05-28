@@ -97,11 +97,10 @@ public partial class AppearanceView : UserControl
         }
     }
 
-    private void RangeBase_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+    private void BottomGallery_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
     {
         if (DataContext is not MainViewModel vm ||
-            Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-            !GalleryFunctions.IsBottomGalleryOpen)
+            Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
         }
@@ -109,10 +108,33 @@ public partial class AppearanceView : UserControl
         var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
         var gallery = mainView.GalleryView;
         gallery.Height = vm.GalleryHeight;
+        if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
+        {
+            vm.GetGalleryItemSize = e.NewValue;
+        }
         // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day
 
         // Maybe save this on close or some other way
         SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;
+        _ = SettingsHelper.SaveSettingsAsync();
+    }
+    
+    private void FullGallery_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm ||
+            Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        WindowHelper.SetSize(vm);
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            vm.GetGalleryItemSize = e.NewValue;
+        }
+        // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day
+
+        // Maybe save this on close or some other way
+        SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = e.NewValue;
         _ = SettingsHelper.SaveSettingsAsync();
     }
 }

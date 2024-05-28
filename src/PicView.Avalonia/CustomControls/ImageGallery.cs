@@ -15,7 +15,7 @@ using ReactiveUI;
 
 namespace PicView.Avalonia.CustomControls;
 
-public partial class ImageGallery : UserControl
+public class ImageGallery : UserControl
 {
     public static readonly AvaloniaProperty<GalleryMode?> GalleryModeProperty =
         AvaloniaProperty.Register<ImageGallery, GalleryMode?>(nameof(GalleryMode));
@@ -25,8 +25,10 @@ public partial class ImageGallery : UserControl
         get => (GalleryMode)(GetValue(GalleryModeProperty) ?? false);
         set => SetValue(GalleryModeProperty, value);
     }
-    
-    public ImageGallery()
+
+    private bool _isAnimating;
+
+    protected ImageGallery()
     {
         Loaded += (_, _) =>
         {
@@ -53,7 +55,7 @@ public partial class ImageGallery : UserControl
 
     private async Task ClosedToFullAnimation()
     {
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel vm || _isAnimating)
         {
             return;
         }
@@ -76,6 +78,7 @@ public partial class ImageGallery : UserControl
         const double to = 1d;
         const double speed = 0.5;
         var opacityAnimation = AnimationsHelper.OpacityAnimation(from, to, speed);
+        _isAnimating = true;
         await opacityAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -84,11 +87,12 @@ public partial class ImageGallery : UserControl
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
+        _isAnimating = false;
     }
 
     private async Task FullToClosedAnimation()
     {
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel vm || _isAnimating)
         {
             return;
         }
@@ -104,6 +108,7 @@ public partial class ImageGallery : UserControl
         const double to = 0d;
         const double speed = 0.3;
         var opacityAnimation = AnimationsHelper.OpacityAnimation(from, to, speed);
+        _isAnimating = true;
         await opacityAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -111,11 +116,12 @@ public partial class ImageGallery : UserControl
             IsVisible = false;
             Height = 0;
         });
+        _isAnimating = false;
     }
 
     private async Task ClosedToBottomAnimation()
     {
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel vm || _isAnimating)
         {
             return;
         }
@@ -136,7 +142,7 @@ public partial class ImageGallery : UserControl
         var to = vm.GalleryHeight;
         const double speed = 0.3;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
-
+        _isAnimating = true;
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -144,11 +150,12 @@ public partial class ImageGallery : UserControl
             IsVisible = true;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
+        _isAnimating = false;
     }
 
     private async Task BottomToClosedAnimation()
     {
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel vm || _isAnimating)
         {
             return;
         }
@@ -164,8 +171,8 @@ public partial class ImageGallery : UserControl
         var from = vm.GalleryHeight;
         const int to = 0;
         const double speed = 0.5;
+        _isAnimating = true;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
-
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -173,11 +180,12 @@ public partial class ImageGallery : UserControl
             IsVisible = false;
             WindowHelper.SetSize(vm);
         });
+        _isAnimating = false;
     }
 
     private async Task BottomToFullAnimation()
     {
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel vm || _isAnimating)
         {
             return;
         }
@@ -193,6 +201,7 @@ public partial class ImageGallery : UserControl
         var to = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
         const double speed = 0.5;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
+        _isAnimating = true;
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -201,11 +210,12 @@ public partial class ImageGallery : UserControl
         });
         vm.GalleryStretch = Stretch.Uniform;
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
+        _isAnimating = false;
     }
 
     private async Task FullToBottomAnimation()
     {
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel vm || _isAnimating)
         {
             return;
         }
@@ -224,6 +234,7 @@ public partial class ImageGallery : UserControl
         var to = vm.GalleryHeight;
         const double speed = 0.7;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
+        _isAnimating = true;
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -232,7 +243,7 @@ public partial class ImageGallery : UserControl
             vm.GalleryStretch = Stretch.UniformToFill;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
-        
+        _isAnimating = false;
     }
 
     private async Task PreviewKeyDownEvent(object? sender, KeyEventArgs e)

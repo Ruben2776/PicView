@@ -1,5 +1,3 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
@@ -20,7 +18,7 @@ namespace PicView.Avalonia.Gallery
             {
                 return;
             }
-
+            
             UIHelper.CloseMenus(vm);
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
@@ -32,6 +30,7 @@ namespace PicView.Avalonia.Gallery
                     vm.GalleryMode = GalleryMode.FullToBottom;
                     IsFullGalleryOpen = false;
                     vm.IsGalleryOpen = false;
+                    vm.GetGalleryItemSize = vm.GetBottomGalleryItemSize;
                 }
                 else
                 {
@@ -39,6 +38,7 @@ namespace PicView.Avalonia.Gallery
                     vm.GalleryMode = GalleryMode.BottomToFull;
                     IsFullGalleryOpen = true;
                     vm.IsGalleryOpen = true;
+                    vm.GetGalleryItemSize = vm.GetExpandedGalleryItemSize;
                 }
             }
             else
@@ -57,9 +57,9 @@ namespace PicView.Avalonia.Gallery
                     IsFullGalleryOpen = true;
                     vm.IsGalleryOpen = true;
                     vm.GalleryMode = GalleryMode.ClosedToFull;
+                    vm.GetGalleryItemSize = vm.GetExpandedGalleryItemSize;
                 }
             }
-            //vm.IsGalleryOpen = !vm.IsGalleryOpen; // Trigger change for ReactiveUI 
             _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
             await SettingsHelper.SaveSettingsAsync();
         }
@@ -68,7 +68,6 @@ namespace PicView.Avalonia.Gallery
         {
             SettingsHelper.Settings.Gallery.IsBottomGalleryShown = !SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
             await OpenCloseBottomGallery(vm);
-            await SettingsHelper.SaveSettingsAsync();
         }
 
         public static async Task OpenCloseBottomGallery(MainViewModel vm)
@@ -110,6 +109,23 @@ namespace PicView.Avalonia.Gallery
             IsBottomGalleryOpen = true;
             vm.GalleryMode = GalleryMode.ClosedToBottom;
             vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
+        }
+        
+        public static async Task CloseGallery(MainViewModel vm)
+        {
+            if (IsBottomGalleryOpen && !IsFullGalleryOpen)
+            {
+                SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
+                IsFullGalleryOpen = false;
+                vm.IsGalleryOpen = false;
+                IsBottomGalleryOpen = false;
+                vm.GalleryMode = GalleryMode.BottomToClosed;
+                vm.GetBottomGallery = TranslationHelper.GetTranslation("ShowBottomGallery");
+                await SettingsHelper.SaveSettingsAsync();
+                return;
+            }
+
+            await ToggleGallery(vm);
         }
     }
 }

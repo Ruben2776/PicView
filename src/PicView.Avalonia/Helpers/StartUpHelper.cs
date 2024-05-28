@@ -85,7 +85,7 @@ public static class StartUpHelper
         UIHelper.AddMenus(desktop);
         
         // Set default gallery sizes if they are out of range or upgrading from an old version
-        if (vm.GetBottomGalleryItemSize is < 25 or > 110)
+        if (vm.GetBottomGalleryItemSize is < 36 or > 110)
         {
             vm.GetBottomGalleryItemSize = 47;
         }
