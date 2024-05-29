@@ -55,7 +55,7 @@ public static class EXIFHelper
     }
 
     // ReSharper disable once InconsistentNaming
-    public static void SetEXIFRating(string filePath, ushort rating)
+    public static bool SetEXIFRating(string filePath, ushort rating)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException();
@@ -84,7 +84,9 @@ public static class EXIFHelper
         catch (Exception e)
         {
             // TODO: Log error
+            return false;
         }
+        return true;
     }
 
     public static IExifProfile? GetExifProfile(string path)

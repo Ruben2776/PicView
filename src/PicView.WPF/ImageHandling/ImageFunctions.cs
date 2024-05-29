@@ -38,7 +38,7 @@ internal static class ImageFunctions
 
         try
         {
-            return await EXIFHelper.SetEXIFRating(Navigation.Pics[Navigation.FolderIndex], rating);
+            return await Task.Run(() => EXIFHelper.SetEXIFRating(Navigation.Pics[Navigation.FolderIndex], rating));
         }
         catch (MagickException exception)
         {
