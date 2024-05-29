@@ -55,32 +55,35 @@ public static class EXIFHelper
     }
 
     // ReSharper disable once InconsistentNaming
-    public static async Task<bool> SetEXIFRating(string filePath, ushort rating)
+    public static void SetEXIFRating(string filePath, ushort rating)
     {
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException();
+
+        if (rating > 5)
+            throw new ArgumentOutOfRangeException(nameof(rating));
         try
         {
-            using var image = new MagickImage();
-            image.Ping(filePath);
+            using var image = new MagickImage(filePath);
             var profile = image?.GetExifProfile();
             if (profile is null)
             {
                 profile = new ExifProfile(filePath);
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 if (profile is null || image is null)
-                    return false;
+                    throw new Exception("Failed to create EXIF profile or image.");
             }
             else if (image is null)
-                return false;
+                throw new Exception("Failed to create image.");
 
             profile.SetValue(ExifTag.Rating, rating);
             image.SetProfile(profile);
 
-            await image.WriteAsync(filePath);
-            return true;
+            image.Write(filePath);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            return false;
+            // TODO: Log error
         }
     }
 

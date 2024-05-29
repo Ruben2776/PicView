@@ -925,7 +925,8 @@ public static class FunctionsHelper
         {
             return;
         }
-        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 0);
+
+        await Task.Run(() => { EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 0); });
         Vm.EXIFRating = 0;
     }
 
@@ -935,7 +936,8 @@ public static class FunctionsHelper
         {
             return;
         }
-        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 1);
+
+        await Task.Run(() => { EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 1); });
         Vm.EXIFRating = 1;
     }
 
@@ -945,7 +947,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 2);
+        await Task.Run(() => { EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 2); });
         Vm.EXIFRating = 2;
     }
 
@@ -955,7 +957,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 3);
+        await Task.Run(() => { EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 3); });
         Vm.EXIFRating = 3;
     }
 
@@ -965,7 +967,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 4);
+        await Task.Run(() => { EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 4); });
         Vm.EXIFRating = 4;
     }
 
@@ -975,7 +977,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 5);
+        await Task.Run(() => { EXIFHelper.SetEXIFRating(Vm.FileInfo.FullName, 5); });
         Vm.EXIFRating = 5;
     }
 
