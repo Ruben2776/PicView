@@ -70,7 +70,7 @@ public static class NavigationHelper
 
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            // TODO - Implement gallery navigation
+            GalleryNavigation.NavigateGallery(next ? Direction.Right : Direction.Left, vm);
             return;
         }
 
@@ -90,7 +90,7 @@ public static class NavigationHelper
 
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            // TODO - Implement gallery navigation
+            GalleryNavigation.NavigateGallery(next ? Direction.Right : Direction.Left, vm);
             return;
         }
 

@@ -216,7 +216,7 @@ public static class FunctionsHelper
 
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            // TODO - Implement gallery navigation
+            GalleryNavigation.NavigateGallery(Direction.Up, Vm);
             return;
         }
 
@@ -286,7 +286,7 @@ public static class FunctionsHelper
 
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            // TODO - Implement gallery navigation
+            GalleryNavigation.NavigateGallery(Direction.Down, Vm);
             return;
         }
 
@@ -480,9 +480,9 @@ public static class FunctionsHelper
         await GalleryFunctions.CloseGallery(Vm).ConfigureAwait(false);
     }
     
-    public static Task GalleryClick()
+    public static async Task GalleryClick()
     {
-        return Task.CompletedTask;
+        await GalleryNavigation.GalleryClick(Vm);
     }
 
     #endregion

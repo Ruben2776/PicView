@@ -9,7 +9,6 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
-using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using ReactiveUI;
 
@@ -33,8 +32,6 @@ public class ImageGallery : UserControl
         Loaded += (_, _) =>
         {
             AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
-            AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
-            AddHandler(KeyUpEvent, PreviewKeyUpEvent, RoutingStrategies.Tunnel);
             
             this.WhenAnyValue(x => x.GalleryMode)
                 .Select(galleryMode =>
@@ -244,20 +241,6 @@ public class ImageGallery : UserControl
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         _isAnimating = false;
-    }
-
-    private async Task PreviewKeyDownEvent(object? sender, KeyEventArgs e)
-    {
-        // Prevent control from hijacking keys
-        await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false); 
-        e.Handled = true;
-    }
-    
-    private void PreviewKeyUpEvent(object? sender, KeyEventArgs e)
-    {
-        // Prevent control from hijacking keys
-        MainKeyboardShortcuts.MainWindow_KeysUp(e); 
-        e.Handled = true;
     }
 
     private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
