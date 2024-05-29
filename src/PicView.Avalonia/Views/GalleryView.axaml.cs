@@ -5,6 +5,7 @@ using Avalonia.VisualTree;
 using PicView.Core.Config;
 using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Controls.Primitives;
 using PicView.Avalonia.CustomControls;
 
 namespace PicView.Avalonia.Views;
@@ -67,6 +68,14 @@ public partial class GalleryView : ImageGallery
             {
                 scrollViewer.Offset -= new Vector(speed, 0);
             }
+        }
+    }
+
+    private void Flyout_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (sender is Control ctl)
+        {
+            FlyoutBase.ShowAttachedFlyout(ctl);
         }
     }
 }

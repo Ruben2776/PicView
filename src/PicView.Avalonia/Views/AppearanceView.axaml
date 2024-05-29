@@ -7,6 +7,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
@@ -131,18 +132,7 @@
             Margin="0,3,0,10"
             MaxWidth="270"
             Text="{Binding ExpandedGalleryItemSize}" />
-        <Slider
-            Height="30"
-            HorizontalAlignment="Center"
-            IsSnapToTickEnabled="True"
-            Margin="0,1,0,1"
-            Maximum="125"
-            Minimum="36"
-            TickFrequency="1"
-            TickPlacement="BottomRight"
-            Value="{Binding GetExpandedGalleryItemSize}"
-            ValueChanged="FullGallery_OnValueChanged"
-            Width="270" />
+        <uc:FullGalleryItemSizeSlider />
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
@@ -157,18 +147,7 @@
             Margin="0,3,0,10"
             MaxWidth="270"
             Text="{CompiledBinding BottomGalleryItemSize}" />
-        <Slider
-            Height="30"
-            HorizontalAlignment="Center"
-            IsSnapToTickEnabled="True"
-            Margin="0,1,0,1"
-            Maximum="125"
-            Minimum="36"
-            TickFrequency="1"
-            TickPlacement="BottomRight"
-            Value="{CompiledBinding GetBottomGalleryItemSize}"
-            ValueChanged="BottomGallery_OnValueChanged"
-            Width="270" />
+        <uc:BottomGalleryItemSizeSlider />
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"

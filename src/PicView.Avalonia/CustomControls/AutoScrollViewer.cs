@@ -12,13 +12,30 @@ using Avalonia;
 
 namespace PicView.Avalonia.CustomControls;
 
+/// <summary>
+/// Specifies the direction in which the AutoScrollViewer can scroll.
+/// </summary>
 internal enum CanScrollDirection
 {
+    /// <summary>
+    /// Indicates no scrolling is possible.
+    /// </summary>
     None,
+
+    /// <summary>
+    /// Indicates vertical scrolling is possible.
+    /// </summary>
     Vertical,
+
+    /// <summary>
+    /// Indicates horizontal scrolling is possible.
+    /// </summary>
     Horizontal
 }
 
+/// <summary>
+/// A custom ScrollViewer that supports auto-scrolling when the middle mouse button is pressed.
+/// </summary>
 [TemplatePart("PART_AutoScrollSign", typeof(AutoScrollSign))]
 public class AutoScrollViewer : ScrollViewer
 {
@@ -28,6 +45,10 @@ public class AutoScrollViewer : ScrollViewer
     private readonly CompositeDisposable _disposables = new();
 
     private bool _isAutoScrolling;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether auto-scrolling is active.
+    /// </summary>
     public bool IsAutoScrolling
     {
         get => _isAutoScrolling;
@@ -42,10 +63,20 @@ public class AutoScrollViewer : ScrollViewer
             _autoScrollingSubject.OnNext(value);
         }
     }
-    
+
+    /// <summary>
+    /// Gets or sets the starting point of auto-scroll.
+    /// </summary>
     private static Point AutoScrollOrigin { get; set; }
+
+    /// <summary>
+    /// Gets or sets the current point of auto-scroll.
+    /// </summary>
     private static Point AutoScrollPos { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AutoScrollViewer"/> class.
+    /// </summary>
     public AutoScrollViewer()
     {
         AddHandler(
@@ -61,6 +92,10 @@ public class AutoScrollViewer : ScrollViewer
             handledEventsToo: true);
     }
 
+    /// <summary>
+    /// Applies the control template and initializes the AutoScrollSign icon.
+    /// </summary>
+    /// <param name="e">The event data.</param>
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
@@ -97,6 +132,11 @@ public class AutoScrollViewer : ScrollViewer
         ScrollChanged += (_, _) => _autoScrollingSubject.OnNext(IsAutoScrolling);
     }
 
+    /// <summary>
+    /// Handles the pointer pressed event to start auto-scrolling if the middle mouse button is pressed.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event data.</param>
     private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
     {
         if (!e.GetCurrentPoint(this).Properties.IsMiddleButtonPressed)
@@ -109,6 +149,10 @@ public class AutoScrollViewer : ScrollViewer
         StartAutoScroll(e);
     }
 
+    /// <summary>
+    /// Starts auto-scrolling based on the pointer pressed event.
+    /// </summary>
+    /// <param name="e">The pointer pressed event data.</param>
     private void StartAutoScroll(PointerPressedEventArgs e)
     {
         if (IsAutoScrolling)
@@ -132,9 +176,13 @@ public class AutoScrollViewer : ScrollViewer
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ => PerformAutoScroll())
             .DisposeWith(_disposables);
-        
     }
 
+    /// <summary>
+    /// Handles the pointer moved event to update the current auto-scroll position.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event data.</param>
     private void PointerMovedHandler(object? sender, PointerEventArgs e)
     {
         if (IsAutoScrolling)
@@ -143,6 +191,9 @@ public class AutoScrollViewer : ScrollViewer
         }
     }
 
+    /// <summary>
+    /// Performs auto-scrolling based on the current pointer position and the origin.
+    /// </summary>
     private void PerformAutoScroll()
     {
         var deltaX = AutoScrollPos.X - AutoScrollOrigin.X;
@@ -161,6 +212,10 @@ public class AutoScrollViewer : ScrollViewer
         Offset = new Vector(Offset.X + offsetX, Offset.Y + offsetY);
     }
 
+    /// <summary>
+    /// Determines whether the viewer can scroll and in which direction.
+    /// </summary>
+    /// <returns>The scroll direction.</returns>
     private CanScrollDirection CanScroll()
     {
         if (Extent.Height > Viewport.Height && VerticalScrollBarVisibility != ScrollBarVisibility.Disabled &&
@@ -176,10 +231,14 @@ public class AutoScrollViewer : ScrollViewer
         return CanScrollDirection.None;
     }
 
+    /// <summary>
+    /// Disposes of the disposables when the control is detached from the visual tree.
+    /// </summary>
+    /// <param name="e">The event data.</param>
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
         _disposables.Dispose();
     }
-
 }
+

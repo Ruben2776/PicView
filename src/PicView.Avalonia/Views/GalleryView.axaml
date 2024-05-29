@@ -6,6 +6,7 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
@@ -14,7 +15,10 @@
     <Panel Background="{StaticResource BackgroundAlpha}">
         <Panel.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="{CompiledBinding ExpandedGalleryItemSize}">
+                <MenuItem
+                    Header="{CompiledBinding ExpandedGalleryItemSize}"
+                    PointerPressed="Flyout_OnPointerPressed"
+                    StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
@@ -23,6 +27,11 @@
                             Stretch="Fill"
                             Width="12" />
                     </MenuItem.Icon>
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout>
+                            <uc:GalleryItemSizeSlider />
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
                 </MenuItem>
                 <Separator />
                 <MenuItem Command="{CompiledBinding CloseGalleryCommand}" Header="{CompiledBinding Close}">

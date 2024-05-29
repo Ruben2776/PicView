@@ -177,6 +177,10 @@ public static class GalleryLoad
                     (int)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, null, fileInfo);
 
+                while (i >= galleryListBox.Items.Count)
+                {
+                    await Task.Delay(100, _);
+                }
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {

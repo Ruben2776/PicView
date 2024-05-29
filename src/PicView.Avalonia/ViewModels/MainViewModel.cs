@@ -17,7 +17,6 @@ using PicView.Core.ProcessHandling;
 using ReactiveUI;
 using System.Globalization;
 using System.Reactive;
-using System.Windows.Input;
 using Avalonia.Media;
 using PicView.Avalonia.Gallery;
 using PicView.Core.Calculations;
@@ -91,7 +90,18 @@ namespace PicView.Avalonia.ViewModels
             {
                 return GalleryFunctions.IsFullGalleryOpen ? GetExpandedGalleryItemSize : GetBottomGalleryItemSize;
             }
-            set => this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
+                if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
+                {
+                    GetBottomGalleryItemSize = value;
+                }
+                else
+                {
+                    GetExpandedGalleryItemSize = value;
+                }
+            }
         }
         
         private double _getExpandedGalleryItemSize = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
@@ -107,14 +117,7 @@ namespace PicView.Avalonia.ViewModels
         public double GetBottomGalleryItemSize
         {
             get => _getBottomGalleryItemSize;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _getBottomGalleryItemSize, value);
-                if (GalleryFunctions.IsBottomGalleryOpen)
-                {
-                    this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
-                }
-            } 
+            set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemSize, value);
         }
 
         #endregion Gallery
