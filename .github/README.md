@@ -197,9 +197,9 @@ _* Shortcuts can be changed by opening the `About` window, and scrolling down_
 | F6                   | Open the effects window                                                                                          |
 | F7                   | Reset Zoom                                                                                                       |
 | F9                   | Open the batch resize window                                                                                     |
-| F11                  | Toggle fulscreen                                                                                                 |
-| F12                  | Toggle viewing fulscreen gallery                                                                                 |
-| Alt + Enter          | Toggle fulscreen                                                                                                 |
+| F11                  | Toggle fullscreen                                                                                                 |
+| F12                  | Toggle viewing fullscreen gallery                                                                                 |
+| Alt + Enter          | Toggle fullscreen                                                                                                 |
 | C                    | Crop Image                                                                                                       |
 | Ctrl + C             | Copy image or copy cropped image                                                                                 |
 | Ctrl + V             | Paste from clipholder, URL, File, File Path or Image                                                             |
