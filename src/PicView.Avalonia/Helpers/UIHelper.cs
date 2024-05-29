@@ -23,7 +23,7 @@ public class UIHelper
         {
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 0, 168, 0),
+            Margin = new Thickness(0, 0, 120, 0),
         };
 
         mainView.MainGrid.Children.Add(fileMenu);
@@ -41,7 +41,7 @@ public class UIHelper
         {
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(127, 0, 0, 0),
+            Margin = new Thickness(0, 0, -75, 0),
         };
 
         mainView.MainGrid.Children.Add(settingsMenu);
@@ -50,7 +50,7 @@ public class UIHelper
         {
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(120, 0, 0, 0),
+            Margin = new Thickness(80, 0, 0, 0),
         };
 
         mainView.MainGrid.Children.Add(toolsMenu);

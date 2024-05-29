@@ -438,6 +438,14 @@ namespace PicView.Avalonia.ViewModels
 
         #endregion Booleans
 
+        public double WindowMinSize
+        {
+            get
+            {
+                return 450;
+            }
+        }
+        
         public int TitlebarHeight
         {
             get
@@ -954,6 +962,8 @@ namespace PicView.Avalonia.ViewModels
         #endregion strings
 
         #region Window Properties
+        
+        public ScreenSize ScreenSize { get; set; }
 
         private string? _title = "Loading...";
 

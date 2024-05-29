@@ -347,7 +347,8 @@ public static class WindowHelper
         {
             return;
         }
-        var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
+
+        var screenSize = vm.ScreenSize;
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
         var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? vm.TitlebarHeight : 0;
         var uiBottomSize =
@@ -373,14 +374,14 @@ public static class WindowHelper
         var size = ImageSizeCalculationHelper.GetImageSize(
             width,
             height,
-            monitor.Bounds.Width,
-            monitor.Bounds.Height,
+            screenSize.Width,
+            screenSize.Height,
             desktopMinWidth,
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
             75,
-            monitor.Scaling,
+            screenSize.Scaling,
             uiTopSize,
             uiBottomSize,
             vm.GalleryHeight,

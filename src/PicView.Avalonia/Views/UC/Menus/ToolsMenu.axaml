@@ -360,12 +360,12 @@
             Fill="{StaticResource MenuBackgroundColor}"
             Height="4"
             HorizontalAlignment="Left"
-            Margin="219,-2,0,0"
+            Margin="239,-2,0,0"
             Width="27"
             ZIndex="1" />
         <Polygon
             Fill="{StaticResource MenuBackgroundColor}"
-            Margin="217,-3.5,0,0"
+            Margin="239,-3.5,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{StaticResource MainBorderColor}"
             StrokeThickness="1" />

@@ -52,37 +52,17 @@ public static class SaveImageFileHelper
 
             if (!string.IsNullOrEmpty(ext))
             {
-                switch (ext.ToLowerInvariant())
+                magickImage.Format = ext.ToLowerInvariant() switch
                 {
-                    case ".webp":
-                        magickImage.Format = MagickFormat.WebP;
-                        break;
-
-                    case ".jpeg":
-                    case ".jpg":
-                        magickImage.Format = MagickFormat.Jpeg;
-                        break;
-
-                    case ".png":
-                        magickImage.Format = MagickFormat.Png;
-                        break;
-
-                    case ".jxl":
-                        magickImage.Format = MagickFormat.Jxl;
-                        break;
-
-                    case ".avif":
-                        magickImage.Format = MagickFormat.Avif;
-                        break;
-
-                    case ".heic":
-                        magickImage.Format = MagickFormat.Heic;
-                        break;
-
-                    case ".heif":
-                        magickImage.Format = MagickFormat.Heif;
-                        break;
-                }
+                    ".webp" => MagickFormat.WebP,
+                    ".jpeg" or ".jpg" => MagickFormat.Jpeg,
+                    ".png" => MagickFormat.Png,
+                    ".jxl" => MagickFormat.Jxl,
+                    ".avif" => MagickFormat.Avif,
+                    ".heic" => MagickFormat.Heic,
+                    ".heif" => MagickFormat.Heif,
+                    _ => magickImage.Format
+                };
             }
 
             if (destination is not null)
@@ -173,37 +153,17 @@ public static class SaveImageFileHelper
                 if (ext is not null)
                 {
                     Path.ChangeExtension(fileInfo.Extension, ext);
-                    switch (Path.GetExtension(ext).ToLowerInvariant())
+                    magick.Format = Path.GetExtension(ext).ToLowerInvariant() switch
                     {
-                        case ".jpeg":
-                        case ".jpg":
-                            magick.Format = MagickFormat.Jpeg;
-                            break;
-
-                        case ".png":
-                            magick.Format = MagickFormat.Png;
-                            break;
-
-                        case ".jxl":
-                            magick.Format = MagickFormat.Jxl;
-                            break;
-
-                        case ".gif":
-                            magick.Format = MagickFormat.Gif;
-                            break;
-
-                        case ".webp":
-                            magick.Format = MagickFormat.WebP;
-                            break;
-
-                        case ".heic":
-                            magick.Format = MagickFormat.Heic;
-                            break;
-
-                        case ".heif":
-                            magick.Format = MagickFormat.Heif;
-                            break;
-                    }
+                        ".jpeg" or ".jpg" => MagickFormat.Jpeg,
+                        ".png" => MagickFormat.Png,
+                        ".jxl" => MagickFormat.Jxl,
+                        ".gif" => MagickFormat.Gif,
+                        ".webp" => MagickFormat.WebP,
+                        ".heic" => MagickFormat.Heic,
+                        ".heif" => MagickFormat.Heif,
+                        _ => magick.Format
+                    };
                 }
 
                 await magick.WriteAsync(fileInfo).ConfigureAwait(false);

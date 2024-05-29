@@ -16,6 +16,8 @@ public static class StartUpHelper
 {
     public static void Start(MainViewModel vm, bool settingsExists, IClassicDesktopStyleApplicationLifetime desktop, Window w)
     {
+        vm.ScreenSize = ScreenHelper.GetScreenSize(w);
+        
         if (!settingsExists)
         {
             WindowHelper.CenterWindowOnScreen();
