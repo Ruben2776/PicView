@@ -11,13 +11,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
         Background="Transparent"
-        BorderThickness="1"
+        BorderThickness="3"
         CornerRadius="8"
-        Height="{CompiledBinding GetGalleryItemSize}"
+        Height="{CompiledBinding GetGalleryItemHeight}"
         MinWidth="25"
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0"
+        Width="{CompiledBinding GetGalleryItemWidth}"
         x:DataType="viewModels:MainViewModel"
         x:Name="ImageBorder">
         <Image Stretch="{CompiledBinding GalleryStretch}" x:Name="GalleryImage" />

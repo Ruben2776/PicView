@@ -54,6 +54,8 @@ public class Gallery
     public bool ShowBottomGalleryInHiddenUI { get; set; } = false;
     public double BottomGalleryItemSize { get; set; } = 37;
     public double ExpandedGalleryItemSize { get; set; } = 23;
+    public string FullGalleryStretchMode { get; set; } = "Uniform";
+    public string BottomGalleryStretchMode { get; set; } = "Uniform";
 }
 
 public class ImageScaling

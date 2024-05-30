@@ -37,7 +37,7 @@ public static class GalleryNavigation
         {
             var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
             var mainGrid = mainView.GetControl<Panel>("MainGrid");
-            var galleryView = mainGrid.GetControl<GalleryView>("GalleryView");
+            var galleryView = mainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
             galleryView.GalleryListBox.ScrollIntoView(vm.SelectedGalleryItemIndex);
             
         }
@@ -125,11 +125,11 @@ public static class GalleryNavigation
         CenterScrollToSelectedItem(vm); // Ensure the selected item is in view
     }
 
-    private static GalleryView GetGallery(IClassicDesktopStyleApplicationLifetime desktop)
+    private static GalleryAnimationControlView GetGallery(IClassicDesktopStyleApplicationLifetime desktop)
     {
         var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
         var mainGrid = mainView.GetControl<Panel>("MainGrid");
-        var galleryView = mainGrid.GetControl<GalleryView>("GalleryView");
+        var galleryView = mainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
 
         return galleryView;
     }
@@ -153,12 +153,10 @@ public static class GalleryNavigation
             return;
         }
         await GalleryFunctions.ToggleGallery(vm);
-        if (vm.SelectedGalleryItemIndex == vm.ImageIterator.Index) 
+        if (vm.SelectedGalleryItemIndex != vm.ImageIterator.Index) 
         {
-           return;
+            await vm.ImageIterator.LoadPicAtIndex(vm.SelectedGalleryItemIndex, vm);
         }
-
-        await vm.ImageIterator.LoadPicAtIndex(vm.SelectedGalleryItemIndex, vm);
     }
 }
 

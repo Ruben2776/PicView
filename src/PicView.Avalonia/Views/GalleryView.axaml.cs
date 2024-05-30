@@ -1,19 +1,15 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.VisualTree;
-using PicView.Core.Config;
-using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Controls.Primitives;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Keybindings;
 
 namespace PicView.Avalonia.Views;
 
-public partial class GalleryView : ImageGallery
+public partial class GalleryAnimationControlView : GalleryAnimationControl
 {
-    public GalleryView()
+    public GalleryAnimationControlView()
     {
         InitializeComponent();
         Loaded += (_, _) =>
@@ -47,45 +43,6 @@ public partial class GalleryView : ImageGallery
         // Prevent control from hijacking keys
         MainKeyboardShortcuts.MainWindow_KeysUp(e); 
         e.Handled = true;
-    }
-
-    private void GalleryListBox_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            // macOS already has horizontal scrolling for touchpad
-            return;
-        }
-        var scrollViewer = GalleryListBox.FindDescendantOfType<ScrollViewer>();
-        if (scrollViewer is null)
-        {
-            return;
-        }
-
-        const int speed = 34;
-
-        if (e.Delta.Y > 0)
-        {
-            if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
-            {
-                scrollViewer.Offset -= new Vector(speed, 0);
-            }
-            else
-            {
-                scrollViewer.Offset -= new Vector(-speed, 0);
-            }
-        }
-        else
-        {
-            if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
-            {
-                scrollViewer.Offset -= new Vector(-speed, 0);
-            }
-            else
-            {
-                scrollViewer.Offset -= new Vector(speed, 0);
-            }
-        }
     }
 
     private void Flyout_OnPointerPressed(object? sender, PointerPressedEventArgs e)

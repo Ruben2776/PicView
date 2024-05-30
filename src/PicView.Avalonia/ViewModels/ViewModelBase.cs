@@ -212,9 +212,18 @@ public class ViewModelBase : ReactiveObject
         ColorPickerToolTooltip = TranslationHelper.GetTranslation("ColorPickerToolTooltip");
         ExpandedGalleryItemSize = TranslationHelper.GetTranslation("ExpandedGalleryItemSize");
         BottomGalleryItemSize = TranslationHelper.GetTranslation("BottomGalleryItemSize");
+        Square = TranslationHelper.GetTranslation("Square");
     }
 
     #region Strings
+    
+    private string? _square;
+    
+    public string? Square
+    {
+        get => _square;
+        set => this.RaiseAndSetIfChanged(ref _square, value);
+    }
     
     private string? _bottomGalleryItemSize;
     

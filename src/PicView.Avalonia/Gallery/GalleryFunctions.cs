@@ -29,7 +29,7 @@ public static class GalleryFunctions
                 vm.GalleryMode = GalleryMode.FullToBottom;
                 IsFullGalleryOpen = false;
                 vm.IsGalleryOpen = false;
-                vm.GetGalleryItemSize = vm.GetBottomGalleryItemSize;
+                vm.GetGalleryItemHeight = vm.GetBottomGalleryItemHeight;
             }
             else
             {
@@ -37,7 +37,7 @@ public static class GalleryFunctions
                 vm.GalleryMode = GalleryMode.BottomToFull;
                 IsFullGalleryOpen = true;
                 vm.IsGalleryOpen = true;
-                vm.GetGalleryItemSize = vm.GetExpandedGalleryItemSize;
+                vm.GetGalleryItemHeight = vm.GetExpandedGalleryItemHeight;
             }
         }
         else
@@ -56,7 +56,7 @@ public static class GalleryFunctions
                 IsFullGalleryOpen = true;
                 vm.IsGalleryOpen = true;
                 vm.GalleryMode = GalleryMode.ClosedToFull;
-                vm.GetGalleryItemSize = vm.GetExpandedGalleryItemSize;
+                vm.GetGalleryItemHeight = vm.GetExpandedGalleryItemHeight;
             }
         }
         _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));

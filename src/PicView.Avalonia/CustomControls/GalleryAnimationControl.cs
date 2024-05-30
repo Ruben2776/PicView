@@ -14,10 +14,10 @@ using ReactiveUI;
 
 namespace PicView.Avalonia.CustomControls;
 
-public class ImageGallery : UserControl
+public class GalleryAnimationControl : UserControl
 {
     public static readonly AvaloniaProperty<GalleryMode?> GalleryModeProperty =
-        AvaloniaProperty.Register<ImageGallery, GalleryMode?>(nameof(GalleryMode));
+        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode?>(nameof(GalleryMode));
 
     public GalleryMode GalleryMode
     {
@@ -27,7 +27,7 @@ public class ImageGallery : UserControl
 
     private bool _isAnimating;
 
-    protected ImageGallery()
+    protected GalleryAnimationControl()
     {
         Loaded += (_, _) =>
         {
@@ -68,7 +68,7 @@ public class ImageGallery : UserControl
         });
 
         vm.GalleryOrientation = Orientation.Vertical;
-        vm.GalleryStretch = Stretch.UniformToFill;
+        vm.GalleryStretch = vm.GalleryFullItemStretch;
         vm.IsGalleryCloseIconVisible = true;
         
         const double from = 0d;
@@ -131,7 +131,7 @@ public class ImageGallery : UserControl
         });
         
         vm.GalleryOrientation = Orientation.Horizontal;
-        vm.GalleryStretch = Stretch.UniformToFill;
+        vm.GalleryStretch = vm.GalleryBottomItemStretch;
         vm.IsGalleryCloseIconVisible = false;
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         
@@ -162,7 +162,6 @@ public class ImageGallery : UserControl
         });
         
         vm.GalleryOrientation = Orientation.Horizontal;
-        vm.GalleryStretch = Stretch.UniformToFill;
         vm.IsGalleryCloseIconVisible = false;
         
         var from = vm.GalleryHeight;
@@ -205,7 +204,7 @@ public class ImageGallery : UserControl
             Height = double.NaN;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
-        vm.GalleryStretch = Stretch.Uniform;
+        vm.GalleryStretch = vm.GalleryFullItemStretch;
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         _isAnimating = false;
     }
@@ -237,9 +236,11 @@ public class ImageGallery : UserControl
         {
             Height = double.NaN;
             vm.GalleryOrientation = Orientation.Horizontal;
-            vm.GalleryStretch = Stretch.UniformToFill;
+            vm.GalleryStretch = vm.GalleryBottomItemStretch;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
+        
+        
         _isAnimating = false;
     }
 

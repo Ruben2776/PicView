@@ -465,7 +465,7 @@
     </UserControl.ContextMenu>
     <Panel x:Name="MainGrid">
         <ContentControl Content="{CompiledBinding CurrentView}" Margin="{CompiledBinding ImageMargin}" />
-        <views:GalleryView
+        <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="0"
             IsVisible="False"

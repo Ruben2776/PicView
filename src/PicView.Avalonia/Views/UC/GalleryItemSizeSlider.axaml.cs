@@ -28,12 +28,12 @@ public partial class GalleryItemSizeSlider : UserControl
         {
             // Change the sizes of the bottom gallery items
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (vm.GetBottomGalleryItemSize == e.NewValue)
+            if (vm.GetBottomGalleryItemHeight == e.NewValue)
             {
                 return;
             }
             SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;
-            vm.GetGalleryItemSize = e.NewValue;
+            vm.GetGalleryItemHeight = e.NewValue;
             WindowHelper.SetSize(vm);
             var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
             var gallery = mainView.GalleryView;
@@ -42,15 +42,15 @@ public partial class GalleryItemSizeSlider : UserControl
         else
         {
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (vm.GetExpandedGalleryItemSize == e.NewValue)
+            if (vm.GetExpandedGalleryItemHeight == e.NewValue)
             {
                 return;
             }
-            vm.GetExpandedGalleryItemSize = e.NewValue;
+            vm.GetExpandedGalleryItemHeight = e.NewValue;
             if (GalleryFunctions.IsFullGalleryOpen)
             {
                 WindowHelper.SetSize(vm);
-                vm.GetGalleryItemSize = e.NewValue;
+                vm.GetGalleryItemHeight = e.NewValue;
             }
             SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = e.NewValue;
         }

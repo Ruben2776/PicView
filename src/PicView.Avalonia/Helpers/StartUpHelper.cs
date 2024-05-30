@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
+using Avalonia.Media;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
@@ -87,14 +88,22 @@ public static class StartUpHelper
         UIHelper.AddMenus(desktop);
         
         // Set default gallery sizes if they are out of range or upgrading from an old version
-        if (vm.GetBottomGalleryItemSize is < 36 or > 110)
+        if (vm.GetBottomGalleryItemHeight is < 36 or > 110)
         {
-            vm.GetBottomGalleryItemSize = 47;
+            vm.GetBottomGalleryItemHeight = 47;
         }
-        if (vm.GetExpandedGalleryItemSize is  < 25 or 110)
+        if (vm.GetExpandedGalleryItemHeight is  < 25 or 110)
         {
-            vm.GetExpandedGalleryItemSize = 47;
+            vm.GetExpandedGalleryItemHeight = 47;
         }
+
+        vm.GalleryBottomItemStretch =
+            Enum.TryParse<Stretch>(SettingsHelper.Settings.Gallery.FullGalleryStretchMode, out var stretchMode) ?
+                stretchMode : Stretch.Uniform;
+
+        vm.GalleryFullItemStretch =
+            Enum.TryParse(SettingsHelper.Settings.Gallery.BottomGalleryStretchMode, out stretchMode) ?
+                stretchMode : Stretch.Uniform;
         
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {

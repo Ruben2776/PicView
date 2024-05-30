@@ -21,14 +21,14 @@ public partial class FullGalleryItemSizeSlider : UserControl
         }
 
         // ReSharper disable once CompareOfFloatsByEqualityOperator
-        if (vm.GetExpandedGalleryItemSize == e.NewValue)
+        if (vm.GetExpandedGalleryItemHeight == e.NewValue)
         {
             return;
         }
         WindowHelper.SetSize(vm);
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            vm.GetGalleryItemSize = vm.GetExpandedGalleryItemSize;
+            vm.GetGalleryItemHeight = vm.GetExpandedGalleryItemHeight;
         }
         // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day
 

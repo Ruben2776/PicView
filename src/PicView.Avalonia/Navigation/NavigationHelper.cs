@@ -5,6 +5,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
@@ -122,7 +123,7 @@ public static class NavigationHelper
         }
         
         vm.CurrentView = vm.ImageViewer;
-        
+        UIHelper.CloseMenus(vm);
         var fileInfo = new FileInfo(source);
         if (!fileInfo.Exists)
         {

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -141,6 +142,46 @@ public class UIHelper
         {
             vm.ImageViewer.Flip(animate: true);
         });
+    }
+    
+    public static async Task ChangeBottomGalleryItemStretch(MainViewModel vm, Stretch stretch)
+    {
+        vm.GetGalleryItemWidth = double.NaN;
+        vm.GalleryBottomItemStretch = stretch;
+        vm.GalleryStretch = stretch;
+        WindowHelper.SetSize(vm);
+        SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = stretch.ToString();
+        await SettingsHelper.SaveSettingsAsync();
+    }
+    
+    public static async Task ChangeFullGalleryItemStretch(MainViewModel vm, Stretch stretch)
+    {
+        vm.GetGalleryItemWidth = double.NaN;
+        vm.GalleryFullItemStretch = stretch;
+        vm.GalleryStretch = stretch;
+        WindowHelper.SetSize(vm);
+        SettingsHelper.Settings.Gallery.FullGalleryStretchMode = stretch.ToString();
+        await SettingsHelper.SaveSettingsAsync();
+    }
+    
+    public static async Task ChangeBottomGalleryStretchSquare(MainViewModel vm)
+    {
+        vm.GetGalleryItemWidth = vm.GetGalleryItemHeight;
+        vm.GalleryBottomItemStretch = Stretch.UniformToFill;
+        vm.GalleryStretch = Stretch.UniformToFill;
+        WindowHelper.SetSize(vm);
+        SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "Square";
+        await SettingsHelper.SaveSettingsAsync();
+    }
+
+    public static async Task ChangeFullGalleryStretchSquare(MainViewModel vm)
+    {
+        vm.GetGalleryItemWidth = vm.GetGalleryItemHeight;
+        vm.GalleryFullItemStretch = Stretch.UniformToFill;
+        vm.GalleryStretch = Stretch.UniformToFill;
+        WindowHelper.SetSize(vm);
+        SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "Square";
+        await SettingsHelper.SaveSettingsAsync();
     }
     
     #endregion

@@ -23,14 +23,14 @@ public partial class BottomGalleryItemSizeSlider : UserControl
             return;
         }
         // ReSharper disable once CompareOfFloatsByEqualityOperator
-        if (vm.GetBottomGalleryItemSize == e.NewValue)
+        if (vm.GetBottomGalleryItemHeight == e.NewValue)
         {
             return;
         }
         SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;
         if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
         {
-            vm.GetGalleryItemSize = e.NewValue;
+            vm.GetGalleryItemHeight = e.NewValue;
             WindowHelper.SetSize(vm);
             var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
             var gallery = mainView.GalleryView;

@@ -70,7 +70,7 @@ public static class GalleryLoad
         IsLoading = true;
         var cancellationToken = _cancellationTokenSource.Token;
         var index = viewModel.ImageIterator.Index;
-        var galleryItemSize = Math.Max(viewModel.GetBottomGalleryItemSize, viewModel.GetExpandedGalleryItemSize);
+        var galleryItemSize = Math.Max(viewModel.GetBottomGalleryItemHeight, viewModel.GetExpandedGalleryItemHeight);
 
         try
         {

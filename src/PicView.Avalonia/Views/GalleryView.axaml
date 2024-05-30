@@ -1,6 +1,6 @@
-<customControls:ImageGallery
+<customControls:GalleryAnimationControl
     mc:Ignorable="d"
-    x:Class="PicView.Avalonia.Views.GalleryView"
+    x:Class="PicView.Avalonia.Views.GalleryAnimationControlView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
@@ -15,6 +15,28 @@
     <Panel Background="{StaticResource BackgroundAlpha}">
         <Panel.ContextMenu>
             <ContextMenu>
+                <MenuItem Header="{CompiledBinding Stretch}">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource ImageGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
+                    </MenuItem.Icon>
+                    <MenuItem
+                        Command="{CompiledBinding GalleryItemStretchCommand}"
+                        CommandParameter="Uniform"
+                        Header="Uniform" />
+                    <MenuItem
+                        Command="{CompiledBinding GalleryItemStretchCommand}"
+                        CommandParameter="UniformToFill"
+                        Header="UniformToFill" />
+                    <MenuItem
+                        Command="{CompiledBinding GalleryItemStretchCommand}"
+                        CommandParameter="Square"
+                        Header="{CompiledBinding Square}" />
+                </MenuItem>
                 <MenuItem
                     Header="{CompiledBinding ExpandedGalleryItemSize}"
                     PointerPressed="Flyout_OnPointerPressed"
@@ -68,14 +90,13 @@
                 Width="23" />
         </Button>
 
-        <ListBox
+        <customControls:GalleryListBox
             AutoScrollToSelectedItem="True"
             Background="Transparent"
             BorderBrush="{StaticResource TertiaryBorderColor}"
             BorderThickness="0,1,0,0"
             Focusable="False"
             Padding="0"
-            PointerWheelChanged="GalleryListBox_OnPointerWheelChanged"
             ScrollViewer.IsScrollInertiaEnabled="True"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             SelectedIndex="{CompiledBinding SelectedGalleryItemIndex}"
@@ -88,6 +109,6 @@
                         VerticalAlignment="Bottom" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-        </ListBox>
+        </customControls:GalleryListBox>
     </Panel>
-</customControls:ImageGallery>
+</customControls:GalleryAnimationControl>

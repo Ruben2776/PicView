@@ -138,7 +138,7 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Foreground="{StaticResource MainTextColorFaded}"
             Margin="0,0,0,15"
-            Text="{Binding GetExpandedGalleryItemSize}" />
+            Text="{Binding GetExpandedGalleryItemHeight}" />
 
         <TextBlock
             Classes="txt"
@@ -153,7 +153,7 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Foreground="{StaticResource MainTextColorFaded}"
             Margin="0,0,0,15"
-            Text="{CompiledBinding GetBottomGalleryItemSize}" />
+            Text="{CompiledBinding GetBottomGalleryItemHeight}" />
 
         <Button
             Classes="BorderStyle altHover mainBtn"

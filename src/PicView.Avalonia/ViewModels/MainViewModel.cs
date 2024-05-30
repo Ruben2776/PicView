@@ -34,8 +34,36 @@ namespace PicView.Avalonia.ViewModels
 
         public Stretch GalleryStretch
         {
-            get => _galleryStretch; 
-            set => this.RaiseAndSetIfChanged(ref _galleryStretch, value);
+            get
+            {
+                return GalleryFunctions.IsFullGalleryOpen ? GalleryFullItemStretch : GalleryBottomItemStretch;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _galleryStretch, value);
+                if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
+                {
+                    GalleryBottomItemStretch = value;
+                }
+                else
+                {
+                    GalleryFullItemStretch = value;
+                }
+            }
+        }
+        
+        private Stretch _galleryBottomItemStretch;
+        public Stretch GalleryBottomItemStretch
+        {
+            get => _galleryBottomItemStretch;
+            set => this.RaiseAndSetIfChanged(ref _galleryBottomItemStretch, value);
+        }
+        
+        private Stretch _galleryFullItemStretch;
+        public Stretch GalleryFullItemStretch
+        {
+            get => _galleryFullItemStretch;
+            set => this.RaiseAndSetIfChanged(ref _galleryFullItemStretch, value);
         }
         
         private int _selectedGalleryItemIndex;
@@ -80,44 +108,53 @@ namespace PicView.Avalonia.ViewModels
         {
             get
             {
-                return GetBottomGalleryItemSize + ImageSizeCalculationHelper.ScrollbarSize;
+                return GetBottomGalleryItemHeight + ImageSizeCalculationHelper.ScrollbarSize;
             }
         }
-        private double _getGalleryItemSize;
-        public double GetGalleryItemSize
+
+        private double _gatGalleryItemWidth = double.NaN;
+
+        public double GetGalleryItemWidth
+        {
+            get => _gatGalleryItemWidth;
+            set => this.RaiseAndSetIfChanged(ref _gatGalleryItemWidth, value);
+        }
+        
+        private double _getGalleryItemHeight;
+        public double GetGalleryItemHeight
         {
             get
             {
-                return GalleryFunctions.IsFullGalleryOpen ? GetExpandedGalleryItemSize : GetBottomGalleryItemSize;
+                return GalleryFunctions.IsFullGalleryOpen ? GetExpandedGalleryItemHeight : GetBottomGalleryItemHeight;
             }
             set
             {
-                this.RaiseAndSetIfChanged(ref _getGalleryItemSize, value);
+                this.RaiseAndSetIfChanged(ref _getGalleryItemHeight, value);
                 if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
                 {
-                    GetBottomGalleryItemSize = value;
+                    GetBottomGalleryItemHeight = value;
                 }
                 else
                 {
-                    GetExpandedGalleryItemSize = value;
+                    GetExpandedGalleryItemHeight = value;
                 }
             }
         }
         
-        private double _getExpandedGalleryItemSize = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+        private double _getExpandedGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
 
-        public double GetExpandedGalleryItemSize
+        public double GetExpandedGalleryItemHeight
         {
-            get => _getExpandedGalleryItemSize;
-            set => this.RaiseAndSetIfChanged(ref _getExpandedGalleryItemSize, value);
+            get => _getExpandedGalleryItemHeight;
+            set => this.RaiseAndSetIfChanged(ref _getExpandedGalleryItemHeight, value);
         }
         
-        private double _getBottomGalleryItemSize = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
+        private double _getBottomGalleryItemHeight = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
         
-        public double GetBottomGalleryItemSize
+        public double GetBottomGalleryItemHeight
         {
-            get => _getBottomGalleryItemSize;
-            set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemSize, value);
+            get => _getBottomGalleryItemHeight;
+            set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemHeight, value);
         }
 
         #endregion Gallery
@@ -213,6 +250,8 @@ namespace PicView.Avalonia.ViewModels
         public ReactiveCommand<string, Unit>? SetAsWallpaperCommand { get; }
         
         public ReactiveCommand<string, Unit>? SetAsLockScreenCommand { get; }
+        
+        public ReactiveCommand<string, Unit>? GalleryItemStretchCommand { get; }
 
         #endregion Commands
 
@@ -1666,6 +1705,34 @@ namespace PicView.Avalonia.ViewModels
             });
         }
 
+        private async Task GalleryItemStretchTask(string value)
+        {
+            if (value.Equals("Square", StringComparison.OrdinalIgnoreCase))
+            {
+                if (GalleryFunctions.IsFullGalleryOpen && !GalleryFunctions.IsBottomGalleryOpen)
+                {
+                    await UIHelper.ChangeFullGalleryStretchSquare(this);
+                }
+                else
+                {
+                    await UIHelper.ChangeBottomGalleryStretchSquare(this);
+                }
+                return;
+            }
+
+            if (Enum.TryParse<Stretch>(value, out var stretch))
+            {
+                if (GalleryFunctions.IsFullGalleryOpen && !GalleryFunctions.IsBottomGalleryOpen)
+                {
+                    await UIHelper.ChangeFullGalleryItemStretch(this, stretch);
+                }
+                else
+                {
+                    await UIHelper.ChangeBottomGalleryItemStretch(this, stretch);
+                }
+            }
+        }
+
         #endregion Methods
 
         public MainViewModel(IPlatformSpecificService? platformSpecificService)
@@ -1822,6 +1889,8 @@ namespace PicView.Avalonia.ViewModels
 
             ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenCloseBottomGallery);
             CloseGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CloseGallery);
+            
+            GalleryItemStretchCommand = ReactiveCommand.CreateFromTask<string>(GalleryItemStretchTask);
 
             #endregion Gallery Commands
 

@@ -18,7 +18,17 @@ public partial class AppearanceView : UserControl
         InitializeComponent();
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            TaskBarToggleButton.IsVisible = false;
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                TaskBarToggleButton.IsVisible = false;
+            }
+            else
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    TaskBarToggleButton.IsVisible = false;
+                });
+            }
         }
         Loaded += AppearanceView_Loaded;
     }

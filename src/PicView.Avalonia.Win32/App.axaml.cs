@@ -10,7 +10,9 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using System.Runtime;
+using System.Windows.Threading;
 using PicView.Core.ProcessHandling;
+using Dispatcher = Avalonia.Threading.Dispatcher;
 using SortHelper = PicView.Avalonia.Helpers.SortHelper;
 
 namespace PicView.Avalonia.Win32;
@@ -90,94 +92,152 @@ public class App : Application, IPlatformSpecificService
 
     public void ShowAboutWindow()
     {
-        if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            return;
-        }
-        if (_aboutWindow is null)
-        {
-            _aboutWindow = new AboutWindow
-            {
-                DataContext = _vm,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            };
-            _aboutWindow.Show(desktop.MainWindow);
-            _aboutWindow.Closing += (s, e) => _aboutWindow = null;
+            Set();
         }
         else
         {
-            _aboutWindow.Activate();
+            Dispatcher.UIThread.InvokeAsync(Set);
         }
-        _= FunctionsHelper.CloseMenus();
+        return;
+
+        void Set()
+        {
+            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+
+            if (_aboutWindow is null)
+            {
+                _aboutWindow = new AboutWindow
+                {
+                    DataContext = _vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _aboutWindow.Show(desktop.MainWindow);
+                _aboutWindow.Closing += (s, e) => _aboutWindow = null;
+            }
+            else
+            {
+                _aboutWindow.Activate();
+            }
+
+            _ = FunctionsHelper.CloseMenus();
+        }
     }
 
     public void ShowExifWindow()
     {
-        if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            return;
-        }
-        if (_exifWindow is null)
-        {
-            _exifWindow = new ExifWindow
-            {
-                DataContext = _vm,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            };
-            _exifWindow.Show(desktop.MainWindow);
-            _exifWindow.Closing += (s, e) => _exifWindow = null;
+            Set();
         }
         else
         {
-            _exifWindow.Activate();
+            Dispatcher.UIThread.InvokeAsync(Set);
         }
-        _= FunctionsHelper.CloseMenus();
+        return;
+
+        void Set()
+        {
+            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+
+            if (_exifWindow is null)
+            {
+                _exifWindow = new ExifWindow
+                {
+                    DataContext = _vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _exifWindow.Show(desktop.MainWindow);
+                _exifWindow.Closing += (s, e) => _exifWindow = null;
+            }
+            else
+            {
+                _exifWindow.Activate();
+            }
+
+            _ = FunctionsHelper.CloseMenus();
+        }
     }
 
     public void ShowKeybindingsWindow()
     {
-        if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            return;
-        }
-        if (_keybindingsWindow is null)
-        {
-            _keybindingsWindow = new KeybindingsWindow
-            {
-                DataContext = _vm,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            };
-            _keybindingsWindow.Show(desktop.MainWindow);
-            _keybindingsWindow.Closing += (s, e) => _keybindingsWindow = null;
+            Set();
         }
         else
         {
-            _keybindingsWindow.Activate();
+            Dispatcher.UIThread.InvokeAsync(Set);
         }
-        _= FunctionsHelper.CloseMenus();
+        return;
+
+        void Set()
+        {
+            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+
+            if (_keybindingsWindow is null)
+            {
+                _keybindingsWindow = new KeybindingsWindow
+                {
+                    DataContext = _vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _keybindingsWindow.Show(desktop.MainWindow);
+                _keybindingsWindow.Closing += (s, e) => _keybindingsWindow = null;
+            }
+            else
+            {
+                _keybindingsWindow.Activate();
+            }
+
+            _ = FunctionsHelper.CloseMenus();
+        }
     }
 
     public void ShowSettingsWindow()
     {
-        if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            return;
-        }
-        if (_settingsWindow is null)
-        {
-            _settingsWindow = new SettingsWindow
-            {
-                DataContext = _vm,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            };
-            _settingsWindow.Show(desktop.MainWindow);
-            _settingsWindow.Closing += (s, e) => _settingsWindow = null;
+            Set();
         }
         else
         {
-            _settingsWindow.Activate();
+            Dispatcher.UIThread.InvokeAsync(Set);
         }
-        _= FunctionsHelper.CloseMenus();
+        return;
+        void Set()
+        {
+            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            if (_settingsWindow is null)
+            {
+                _settingsWindow = new SettingsWindow
+                {
+                    DataContext = _vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _settingsWindow.Show(desktop.MainWindow);
+                _settingsWindow.Closing += (s, e) => _settingsWindow = null;
+            }
+            else
+            {
+                _settingsWindow.Activate();
+            }
+            _= FunctionsHelper.CloseMenus();
+            
+        }
     }
     
     public void ShowEffectsWindow()
