@@ -262,7 +262,21 @@ internal static class ImageDragAndDrop
 
     private static void RemoveDragOverlay()
     {
-        ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(_dropOverlay);
-        _dropOverlay = null;
+        if (ConfigureWindows.GetMainWindow.Dispatcher.CheckAccess())
+        {
+            set();
+        }
+        else
+        {
+            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(set);
+        }
+
+        return;
+        void set()
+        {
+            ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(_dropOverlay);
+            _dropOverlay = null;
+        }
+
     }
 }
