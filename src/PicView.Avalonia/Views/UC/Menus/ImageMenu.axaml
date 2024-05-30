@@ -263,42 +263,18 @@
                     Canvas.Left="160"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
-                    Command="{Binding OptimizeImageCommand}"
-                    ToolTip.Tip="{Binding OptimizeImage}">
+                    IsEnabled="False"
+                    ToolTip.Tip="View image side by side">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Height="20"
                             Margin="9,0,8,0"
-                            Width="20">
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M448,256C448,150 362,64 256,64 150,64 64,150 64,256 64,362 150,448 256,448 362,448 448,362 448,256z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource MainIconColor}"
-                                                    LineJoin="Miter"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M360,94.59L360,296 M443.13,212.87L296,360 M417.41,360L216,360 M299.13,443.13L155.13,299.13 M152,416L152,216 M68.87,299.13L212.87,155.13 M94.59,152L288,152 M212.87,68.87L360,216">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource MainIconColor}"
-                                                    LineJoin="Round"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image>
+                            Source="{StaticResource DisplayImage}"
+                            Width="20" />
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{Binding OptimizeImage}" />
+                            Text="Side by side" />
                     </StackPanel>
                 </Button>
 

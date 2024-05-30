@@ -1709,7 +1709,7 @@ namespace PicView.Avalonia.ViewModels
         {
             if (value.Equals("Square", StringComparison.OrdinalIgnoreCase))
             {
-                if (GalleryFunctions.IsFullGalleryOpen && !GalleryFunctions.IsBottomGalleryOpen)
+                if (GalleryFunctions.IsFullGalleryOpen)
                 {
                     await UIHelper.ChangeFullGalleryStretchSquare(this);
                 }
@@ -1722,7 +1722,7 @@ namespace PicView.Avalonia.ViewModels
 
             if (Enum.TryParse<Stretch>(value, out var stretch))
             {
-                if (GalleryFunctions.IsFullGalleryOpen && !GalleryFunctions.IsBottomGalleryOpen)
+                if (GalleryFunctions.IsFullGalleryOpen)
                 {
                     await UIHelper.ChangeFullGalleryItemStretch(this, stretch);
                 }

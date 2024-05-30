@@ -27,15 +27,19 @@
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Uniform"
-                        Header="Uniform" />
+                        Header="Uniform"
+                        IsChecked="True"
+                        ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="UniformToFill"
-                        Header="UniformToFill" />
+                        Header="UniformToFill"
+                        ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Square"
-                        Header="{CompiledBinding Square}" />
+                        Header="{CompiledBinding Square}"
+                        ToggleType="Radio" />
                 </MenuItem>
                 <MenuItem
                     Header="{CompiledBinding ExpandedGalleryItemSize}"
