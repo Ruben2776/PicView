@@ -45,25 +45,26 @@
                 TileMode="FlipXY"
                 x:Key="NoisyTexture" />
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/DarkTheme/Icons.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/ToggleButton.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/AutoScrollViewer.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Border.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/RadioButton.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ComboBox.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ComboBoxItem.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/TabItem.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/TextBox.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/TextBlock.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/PathIcon.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/FlyoutPresenter.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ListBox.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/Scrollbar.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/AutoScrollViewer.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/Slider.axaml" />
-                <ResourceInclude Source="/DarkTheme/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ListBoxItem.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Menu.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/PathIcon.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/RadioButton.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/Scrollbar.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/Slider.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/TabItem.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/TextBlock.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/TextBox.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/ToggleButton.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Window.axaml" />
+                <ResourceInclude Source="/DarkTheme/Icons.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <DropShadowEffect
                 BlurRadius="5"

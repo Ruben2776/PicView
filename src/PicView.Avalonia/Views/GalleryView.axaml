@@ -3,7 +3,6 @@
     x:Class="PicView.Avalonia.Views.GalleryAnimationControlView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,9 +13,6 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
     <Panel Background="{StaticResource BackgroundAlpha}">
-        <Panel.Resources>
-            <converters:StretchToBooleanConverter x:Key="StretchToBooleanConverter" />
-        </Panel.Resources>
 
         <Panel.ContextMenu>
             <ContextMenu>
@@ -80,7 +76,14 @@
                     </MenuItem.Icon>
                     <FlyoutBase.AttachedFlyout>
                         <Flyout>
-                            <uc:GalleryItemSizeSlider />
+                            <Border
+                                Background="{StaticResource MainButtonBackgroundColor}"
+                                BorderBrush="{StaticResource MainBorderColor}"
+                                BorderThickness="2"
+                                CornerRadius="4"
+                                Padding="10,3">
+                                <uc:GalleryItemSizeSlider />
+                            </Border>
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
                 </MenuItem>

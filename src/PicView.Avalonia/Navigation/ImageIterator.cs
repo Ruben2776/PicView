@@ -309,8 +309,13 @@ public class ImageIterator
                     if (preLoadValue.IsLoading)
                     {
                         vm.SetLoadingTitle();
-                        vm.IsLoading = true;
                         await NavigationHelper.LoadingPreview(index, vm);
+                        if (Index != index)
+                        {
+                            await Preload();
+                            return;
+                        }
+                        vm.IsLoading = true;
                         while (preLoadValue.IsLoading)
                         {
                             await Task.Delay(10);
@@ -492,9 +497,9 @@ public class ImageIterator
     
     private async Task UpdateSourceTask(MainViewModel vm, PreLoader.PreLoadValue preLoadValue)
     {
+        vm.IsLoading = false;
         vm.SetImageModel(preLoadValue.ImageModel);
         vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
-        vm.IsLoading = false;
         WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
         vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
         vm.GetIndex = Index + 1;
