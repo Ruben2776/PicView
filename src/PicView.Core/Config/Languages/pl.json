@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "Interpretacja fotometryczna",
   "LensModel": "Model obiektywu",
   "LensMaker": "Producent obiektywu",
+  "Uniform": "Jednolity",
+  "UniformToFill": "JednolityDoWypełnienia",
+  "FillSquare": "WypełnijKwadrat"
 }

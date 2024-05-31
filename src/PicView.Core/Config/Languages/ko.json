@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "광도 해석",
   "LensModel": "렌즈 모델",
   "LensMaker": "렌즈 제조사",
+  "Uniform": "균일하게",
+  "UniformToFill": "균일하게채우기 위해",
+  "FillSquare": "채우기정사각형"
 }

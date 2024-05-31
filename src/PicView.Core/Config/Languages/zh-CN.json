@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "光度学解释",
   "LensModel": "镜头型号",
   "LensMaker": "镜头制造商",
+  "Uniform": "均匀",
+  "UniformToFill": "均匀填充",
+  "FillSquare": "填充正方形"
 }

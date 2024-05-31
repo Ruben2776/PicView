@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "Photometric interpretation",
   "LensModel": "Lens model",
   "LensMaker": "Lens maker",
+  "Uniform": "Uniform",
+  "UniformToFill": "Uniform to fill",
+  "FillSquare": "Fill square"
 }

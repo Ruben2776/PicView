@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "Fotometrisk fortolkning",
   "LensModel": "Linse model",
   "LensMaker": "Linse producent",
+  "Uniform": "Ensartet",
+  "UniformToFill": "Ensartet Til Fyld",
+  "FillSquare": "Fyld kvadrat"
 }

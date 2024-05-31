@@ -375,5 +375,8 @@
   "WhiteFluorescent": "Fluorescent blanc",
   "PhotometricInterpretation": "Interprétation photométrique",
   "LensModel": "Modèle de l'objectif",
-  "LensMaker": "Fabricant de l'objectif"
+  "LensMaker": "Fabricant de l'objectif",
+  "Uniform": "Uniforme",
+  "UniformToFill": "UniformePourRemplir",
+  "FillSquare": "RemplirCarré"
 }

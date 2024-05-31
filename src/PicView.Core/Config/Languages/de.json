@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "Photometrische Interpretation",
   "LensModel": "Objektivmodell",
   "LensMaker": "Objektivhersteller",
+  "Uniform": "Gleichmäßig",
+  "UniformToFill": "Gleichmäßig Zum Füllen",
+  "FillSquare": "Quadrat Füllen"
 }

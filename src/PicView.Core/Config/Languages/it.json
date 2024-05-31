@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "Interpretazione fotometrica",
   "LensModel": "Modello di lente",
   "LensMaker": "Produttore della lente",
+  "Uniform": "Uniforme",
+  "UniformToFill": "UniformePerRiempire",
+  "FillSquare": "RiempireQuadrato"
 }

@@ -376,4 +376,7 @@
   "PhotometricInterpretation": "Interpretare fotometrică",
   "LensModel": "Model obiectiv",
   "LensMaker": "Producător obiectiv",
+  "Uniform": "Uniform",
+  "UniformToFill": "UniformPentruUmplere",
+  "FillSquare": "UmplePătrat"
 }
