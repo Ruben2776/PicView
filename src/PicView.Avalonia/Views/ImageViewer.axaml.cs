@@ -31,6 +31,7 @@ public partial class ImageViewer : UserControl
 
     private bool _captured;
     private bool _isZoomed;
+    private double _zoomPercentage = 100; 
 
     public ImageViewer()
     {
@@ -379,7 +380,16 @@ public partial class ImageViewer : UserControl
             _translateTransform.X = newTranslateValueX;
             _translateTransform.Y = newTranslateValueY;
         }, DispatcherPriority.Normal);
+        _zoomPercentage = zoomValue * 100;
         _isZoomed = zoomValue != 0;
+        if (_isZoomed)
+        {
+            if (DataContext is not MainViewModel vm)
+            {
+                return;
+            }
+            vm.ToolTipUIText = $"{Math.Floor(_zoomPercentage)}%";
+        }
     }
 
     public void ResetZoom(bool enableAnimations)
@@ -410,6 +420,7 @@ public partial class ImageViewer : UserControl
             _translateTransform.X = 0;
             _translateTransform.Y = 0;
         }, DispatcherPriority.Send);
+        _zoomPercentage = 100;
         _isZoomed = false;
     }
 
@@ -440,13 +451,16 @@ public partial class ImageViewer : UserControl
         }
 
         var position = _start - e.GetPosition(ImageZoomBorder);
-        var newXproperty = _origin.X - (position.X + 1);
-        var newYproperty = _origin.Y - (position.Y + 1);
+        var speedFactor = _zoomPercentage / 100; // For example, at 200% zoom, speedFactor will be 2
+        var speed = 5 * speedFactor;
+        
+        var newXproperty = _origin.X - (position.X + speed);
+        var newYproperty = _origin.Y - (position.Y + speed);
 
         var actualScrollWidth = ImageScrollViewer.Bounds.Width;
-        var actualBorderWidth = ImageZoomBorder.Bounds.Width;
+        var actualBorderWidth = MainImage.Bounds.Width;
         var actualScrollHeight = ImageScrollViewer.Bounds.Height;
-        var actualBorderHeight = ImageZoomBorder.Bounds.Height;
+        var actualBorderHeight = MainImage.Bounds.Height;
 
         var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
         var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
@@ -473,7 +487,7 @@ public partial class ImageViewer : UserControl
             newYproperty = 0;
         }
 
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             _translateTransform.X = newXproperty;
             _translateTransform.Y = newYproperty;

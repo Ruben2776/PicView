@@ -88,6 +88,9 @@
                         Height="13"
                         Stretch="Fill"
                         Width="13" />
+                    <Button.RenderTransform>
+                        <ScaleTransform ScaleX="{Binding ScaleX}" />
+                    </Button.RenderTransform>
                 </Button>
 
                 <Button

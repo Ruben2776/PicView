@@ -543,6 +543,7 @@ namespace PicView.Avalonia.ViewModels
 
         private int _scaleX = 1;
 
+        // Used to flip the flip button
         public int ScaleX
         {
             get => _scaleX;
@@ -616,6 +617,14 @@ namespace PicView.Avalonia.ViewModels
         }
 
         #region strings
+        
+        private string? _ToolTipUIText;
+        
+        public string? ToolTipUIText
+        {
+            get => _ToolTipUIText;
+            set => this.RaiseAndSetIfChanged(ref _ToolTipUIText, value);
+        }
 
         private string? _getFlipped;
 

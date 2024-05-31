@@ -30,7 +30,7 @@
                     <Image
                         Height="{CompiledBinding ImageHeight}"
                         RenderOptions.BitmapInterpolationMode="HighQuality"
-                        Stretch="Uniform"
+                        Stretch="Fill"
                         Width="{CompiledBinding ImageWidth}"
                         x:Name="MainImage" />
                 </Border>

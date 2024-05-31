@@ -100,6 +100,19 @@ public class UIHelper
 
     #endregion Menus
 
+    public static void AddMToolTipMessage(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        var mainView = desktop.MainWindow.FindControl<MainView>("MainView");
+        var toolTipMessage = new Views.UC.ToolTipMessage
+        {
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Opacity = 0
+        };
+
+        mainView.MainGrid.Children.Add(toolTipMessage);
+    }
+
     #region Settings
     
     public static void ToggleScroll(MainViewModel vm)

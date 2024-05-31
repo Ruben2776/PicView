@@ -3,25 +3,24 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
-        Margin="0,0,0,95"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Bottom"
-        Panel.ZIndex="99"
         Background="{StaticResource BackgroundColorBrushFade}"
         BorderBrush="{StaticResource BorderBrush}"
         BorderThickness="1"
-        CornerRadius="6">
+        CornerRadius="6"
+        HorizontalAlignment="Center"
+        Margin="0,0,0,95"
+        VerticalAlignment="Bottom">
         <TextBlock
-            x:Name="ToolTipUIText"
-            MaxWidth="438"
-            Padding="12"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
             FontFamily="/PicView;component/Resources/fonts/#Roboto Medium"
             FontSize="16"
             FontStyle="Italic"
             FontWeight="Bold"
             Foreground="{StaticResource MainColorBrush}"
-            TextWrapping="WrapWithOverflow" />
+            HorizontalAlignment="Center"
+            MaxWidth="438"
+            Padding="12"
+            TextWrapping="WrapWithOverflow"
+            VerticalAlignment="Center"
+            x:Name="ToolTipUIText" />
     </Border>
 </UserControl>

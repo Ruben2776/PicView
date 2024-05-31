@@ -85,8 +85,6 @@ public static class StartUpHelper
             vm.CurrentView = new StartUpMenu();
         }
         
-        UIHelper.AddMenus(desktop);
-        
         // Set default gallery sizes if they are out of range or upgrading from an old version
         if (vm.GetBottomGalleryItemHeight is < 36 or > 110)
         {
@@ -101,6 +99,9 @@ public static class StartUpHelper
         {
             GalleryFunctions.OpenBottomGallery(vm);
         }
+        
+        UIHelper.AddMenus(desktop);
+        UIHelper.AddMToolTipMessage(desktop);
 
         Task.Run(KeybindingsHelper.LoadKeybindings);
 
