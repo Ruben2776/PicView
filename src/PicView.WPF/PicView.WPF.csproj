@@ -182,8 +182,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.8.6" />
-    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.8.0" />
-    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.2.4" />
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.9.0" />
+    <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="7.2.5" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\UserControls\Buttons\LinkButton.xaml.cs">
