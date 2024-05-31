@@ -5,10 +5,8 @@ using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Models;
 
-public class ImageModel : IDisposable
+public class ImageModel
 {
-    private bool _disposedValue;
-
     public object? Image { get; set; }
     public FileInfo? FileInfo { get; set; }
     public int PixelWidth { get; set; }
@@ -35,40 +33,5 @@ public class ImageModel : IDisposable
                 _ => 0
             };
         }
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposedValue)
-        {
-            return;
-        }
-
-        if (disposing)
-        {
-            if (Image is Bitmap bmp)
-            {
-                bmp.Dispose();
-            }
-            FileInfo = null;
-        }
-
-        // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-        // TODO: set large fields to null
-        _disposedValue = true;
-    }
-
-    // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    ~ImageModel()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: false);
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

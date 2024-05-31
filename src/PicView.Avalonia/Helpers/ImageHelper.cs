@@ -6,6 +6,7 @@ using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
+using SkiaSharp;
 
 namespace PicView.Avalonia.Helpers;
 
@@ -101,10 +102,10 @@ public static class ImageHelper
 
                     void Add(Stream stream)
                     {
-                        var bmp = new Bitmap(stream);
-                        imageModel.Image = bmp;
-                        imageModel.PixelWidth = bmp?.PixelSize.Width ?? 0;
-                        imageModel.PixelHeight = bmp?.PixelSize.Height ?? 0;
+                        var writeableBitmap = WriteableBitmap.Decode(stream);
+                        imageModel.Image = writeableBitmap;
+                        imageModel.PixelWidth = writeableBitmap?.PixelSize.Width ?? 0;
+                        imageModel.PixelHeight = writeableBitmap?.PixelSize.Height ?? 0;
                         imageModel.ImageType = ImageType.Bitmap;
                     }
 
@@ -179,7 +180,7 @@ public static class ImageHelper
             await using var memoryStream = new MemoryStream();
             await magick.WriteAsync(memoryStream);
             memoryStream.Position = 0;
-            return new Bitmap(memoryStream);
+            return WriteableBitmap.Decode(memoryStream);
         }
     }
     

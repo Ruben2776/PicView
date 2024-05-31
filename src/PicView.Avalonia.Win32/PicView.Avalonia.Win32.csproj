@@ -13,6 +13,7 @@
     <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
     <OptimizationPreference>Speed</OptimizationPreference>
     <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
     <PlatformTarget>x64</PlatformTarget>
     <ImplicitUsings>enable</ImplicitUsings>
     <Product>PicView</Product>

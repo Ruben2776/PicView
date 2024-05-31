@@ -3,6 +3,7 @@ using PicView.Avalonia.Models;
 using PicView.Core.ImageDecoding;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using Avalonia.Media.Imaging;
 using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.Navigation;
@@ -193,8 +194,13 @@ public class PreLoader
 
         try
         {
-            _preLoadList[key].ImageModel?.Dispose();
-            _ = _preLoadList[key];
+            var item = _preLoadList[key];
+            if (item.ImageModel.Image is Bitmap img)
+            {
+                img.Dispose();
+            }
+            item.ImageModel.Image = null;
+            item.ImageModel.FileInfo = null;
             var remove = _preLoadList.TryRemove(key, out _);
 #if DEBUG
             if (remove && ShowAddRemove)

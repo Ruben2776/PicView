@@ -81,11 +81,9 @@ public class GalleryAnimationControl : UserControl
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Opacity = to;
-            Height = double.NaN;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
-        
         
         _isAnimating = false;
     }
@@ -205,7 +203,7 @@ public class GalleryAnimationControl : UserControl
         await heightAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Height = double.NaN;
+            Height = to;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         UIHelper.SetStretchMode(vm);

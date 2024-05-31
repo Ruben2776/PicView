@@ -34,17 +34,18 @@ public partial class ToolTipMessage : UserControl
 
         _isRunning = true;
 
-        // Start opacity animation from 0 to 1
-        var fadeInAnimation = AnimationsHelper.OpacityAnimation(from: 0, to: 1, 1.5);
-        await fadeInAnimation.RunAsync(this);
+        // ReSharper disable once CompareOfFloatsByEqualityOperator
+        if (Opacity != 1)
+        {
+            var fadeInAnimation = AnimationsHelper.OpacityAnimation(from: 0, to: 1, 1.5);
+            await fadeInAnimation.RunAsync(this);
+        }
 
         // Wait for the duration before fading out
         await Task.Delay(TimeSpan.FromSeconds(1.5));
-
-        // Start opacity animation from 1 to 0
+        _isRunning = false;
+        
         var fadeOutAnimation = AnimationsHelper.OpacityAnimation(from: 1, to: 0, 1.5);
         await fadeOutAnimation.RunAsync(this);
-
-        _isRunning = false;
     }
 }
