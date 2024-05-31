@@ -100,31 +100,31 @@ internal static class QuickLoad
         if (FolderIndex > 0)
         {
             Taskbar.Progress((double)FolderIndex / Pics.Count);
-            await PreLoadAsync(FolderIndex, Pics.Count, true);
+        }
+        await PreLoadAsync(FolderIndex, Pics.Count, true);
 
-            if (shouldLoadBottomGallery)
+        if (shouldLoadBottomGallery)
+        {
+            try
             {
-                try
+                await GalleryLoad.LoadAsync().ConfigureAwait(false);
+                // Update gallery selections
+                await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
                 {
-                    await GalleryLoad.LoadAsync().ConfigureAwait(false);
-                    // Update gallery selections
-                    await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
-                    {
-                        // Select current item
-                        GalleryNavigation.SetSelected(FolderIndex, true);
-                        GalleryNavigation.SelectedGalleryItem = FolderIndex;
-                        GalleryNavigation.ScrollToGalleryCenter();
-                    });
-                }
-                catch (Exception exception)
-                {
+                    // Select current item
+                    GalleryNavigation.SetSelected(FolderIndex, true);
+                    GalleryNavigation.SelectedGalleryItem = FolderIndex;
+                    GalleryNavigation.ScrollToGalleryCenter();
+                });
+            }
+            catch (Exception exception)
+            {
 #if DEBUG
-                    Trace.WriteLine($"{nameof(QuickLoadAsync)} exception:\n{exception.Message}");
+                Trace.WriteLine($"{nameof(QuickLoadAsync)} exception:\n{exception.Message}");
 #endif
-                    if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
-                    {
-                        Environment.Exit(0);
-                    }
+                if (ConfigureWindows.GetMainWindow.Visibility == Visibility.Hidden)
+                {
+                    Environment.Exit(0);
                 }
             }
         }
