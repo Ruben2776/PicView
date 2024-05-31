@@ -244,6 +244,9 @@ public class UIHelper
                 case Stretch.None:
                     vm.IsNoneChecked = true;
                     break;
+                default:
+                    vm.IsUniformChecked = true;
+                    break;
             }
         }
     }

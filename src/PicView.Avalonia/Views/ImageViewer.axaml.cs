@@ -431,7 +431,7 @@ public partial class ImageViewer : UserControl
             return;
         }
 
-        if (enableAnimations || _translateTransform.X < -0)
+        if (enableAnimations)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -451,8 +451,12 @@ public partial class ImageViewer : UserControl
         }
 
         var position = _start - e.GetPosition(ImageZoomBorder);
-        var speedFactor = _zoomPercentage / 100; // For example, at 200% zoom, speedFactor will be 2
+        var speedFactor = _zoomPercentage / 100;
         var speed = 5 * speedFactor;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            speed = 1;
+        }
         
         var newXproperty = _origin.X - (position.X + speed);
         var newYproperty = _origin.Y - (position.Y + speed);
@@ -606,10 +610,10 @@ public partial class ImageViewer : UserControl
 
     private void ImageZoomBorder_OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        Pan(e, true);
+        Pan(e, false);
     }
 
-    private void Pressed(PointerPressedEventArgs e)
+    private void Pressed(PointerEventArgs e)
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {

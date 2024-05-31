@@ -15,8 +15,8 @@ public partial class ToolTipMessage : UserControl
 
         // Subscribe to the ToolTipMessageText.Text changes
         this.WhenAnyValue(x => x.ToolTipMessageText.Text)
-            .Where(text => !string.IsNullOrEmpty(text))
             .Throttle(TimeSpan.FromMilliseconds(100)) // Avoid rapid consecutive changes
+            .Where(text => !string.IsNullOrEmpty(text))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Select(async _ =>
             {

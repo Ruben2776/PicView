@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
 using ReactiveUI;
 
 namespace PicView.Avalonia.CustomControls;
@@ -59,6 +60,7 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
+        await vm.GalleryItemStretchTask(SettingsHelper.Settings.Gallery.FullGalleryStretchMode);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             IsVisible = true;
@@ -123,7 +125,7 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
-
+        await vm.GalleryItemStretchTask(SettingsHelper.Settings.Gallery.BottomGalleryStretchMode);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             IsVisible = true;

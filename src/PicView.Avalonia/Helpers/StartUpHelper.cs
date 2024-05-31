@@ -94,6 +94,19 @@ public static class StartUpHelper
         {
             vm.GetExpandedGalleryItemHeight = 47;
         }
+
+        if (!settingsExists)
+        {
+            if (string.IsNullOrWhiteSpace(SettingsHelper.Settings.Gallery.BottomGalleryStretchMode))
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "UniformToFill";
+            }
+
+            if (string.IsNullOrWhiteSpace(SettingsHelper.Settings.Gallery.FullGalleryStretchMode))
+            {
+                SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "UniformToFill";
+            }
+        }
         
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {

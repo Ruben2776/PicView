@@ -81,9 +81,19 @@ public static class WindowHelper
 
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            var width = window.Bounds.Width == 0 ? window.Width : window.Bounds.Width;
+            var getWidth = window?.Bounds.Width == 0 ? window?.Width : window?.Bounds.Width ?? 0;
+            if (!getWidth.HasValue)
+            {
+                return;
+            }
+            var width = getWidth.Value;
             width = double.IsNaN(width) ? window.MinWidth : width;
-            var height = window.Bounds.Height == 0 ? window.Height : window.Bounds.Height;
+            var getHeight = window?.Bounds.Height == 0 ? window?.Height : window?.Bounds.Height;
+            if (!getHeight.HasValue)
+            {
+                return;
+            }
+            var height = getHeight.Value;
             height = double.IsNaN(height) ? window.MinHeight : height;
             var verticalPos = Math.Max(screen.WorkingArea.Y, screen.WorkingArea.Y + (screen.WorkingArea.Height * screen.Scaling - height) / 2);
             if (horizontal)
@@ -370,6 +380,11 @@ public static class WindowHelper
                 containerWidth = desktop.MainWindow.Width;
                 containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
             }, DispatcherPriority.Normal).Wait();
+        }
+
+        if (double.IsNaN(containerWidth) || double.IsNaN(containerHeight) || double.IsNaN(width) || double.IsNaN(height))
+        {
+            return;
         }
         var size = ImageSizeCalculationHelper.GetImageSize(
             width,

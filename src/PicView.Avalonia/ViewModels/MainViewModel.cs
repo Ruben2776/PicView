@@ -1747,7 +1747,7 @@ namespace PicView.Avalonia.ViewModels
             });
         }
 
-        private async Task GalleryItemStretchTask(string value)
+        public async Task GalleryItemStretchTask(string value)
         {
             if (value.Equals("Square", StringComparison.OrdinalIgnoreCase))
             {
