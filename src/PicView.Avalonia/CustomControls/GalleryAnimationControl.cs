@@ -5,7 +5,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
-using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
@@ -68,7 +67,7 @@ public class GalleryAnimationControl : UserControl
         });
 
         vm.GalleryOrientation = Orientation.Vertical;
-        vm.GalleryStretch = vm.GalleryFullItemStretch;
+        UIHelper.SetStretchMode(vm);
         vm.IsGalleryCloseIconVisible = true;
         
         const double from = 0d;
@@ -84,6 +83,8 @@ public class GalleryAnimationControl : UserControl
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
+        
+        
         _isAnimating = false;
     }
 
@@ -131,7 +132,7 @@ public class GalleryAnimationControl : UserControl
         });
         
         vm.GalleryOrientation = Orientation.Horizontal;
-        vm.GalleryStretch = vm.GalleryBottomItemStretch;
+        UIHelper.SetStretchMode(vm);
         vm.IsGalleryCloseIconVisible = false;
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         
@@ -147,6 +148,7 @@ public class GalleryAnimationControl : UserControl
             IsVisible = true;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
+        
         _isAnimating = false;
     }
 
@@ -204,8 +206,9 @@ public class GalleryAnimationControl : UserControl
             Height = double.NaN;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
-        vm.GalleryStretch = vm.GalleryFullItemStretch;
+        UIHelper.SetStretchMode(vm);
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
+        
         _isAnimating = false;
     }
 
@@ -236,7 +239,10 @@ public class GalleryAnimationControl : UserControl
         {
             Height = double.NaN;
             vm.GalleryOrientation = Orientation.Horizontal;
-            vm.GalleryStretch = vm.GalleryBottomItemStretch;
+        });
+        UIHelper.SetStretchMode(vm);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         

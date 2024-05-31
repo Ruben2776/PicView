@@ -213,9 +213,44 @@ public class ViewModelBase : ReactiveObject
         ExpandedGalleryItemSize = TranslationHelper.GetTranslation("ExpandedGalleryItemSize");
         BottomGalleryItemSize = TranslationHelper.GetTranslation("BottomGalleryItemSize");
         Square = TranslationHelper.GetTranslation("Square");
+        Uniform = TranslationHelper.GetTranslation("Uniform");
+        UniformToFill = TranslationHelper.GetTranslation("UniformToFill");
+        FillSquare = TranslationHelper.GetTranslation("FillSquare");
+        Fill = TranslationHelper.GetTranslation("Fill");
     }
 
     #region Strings
+    
+    private string? _uniform;
+    
+    public string? Uniform
+    {
+        get => _uniform;
+        set => this.RaiseAndSetIfChanged(ref _uniform, value);
+    }
+    
+    private string? _uniformToFill;
+    public string? UniformToFill
+    {
+        get => _uniformToFill;
+        set => this.RaiseAndSetIfChanged(ref _uniformToFill, value);
+    }
+    
+    private string? _fill;
+    
+    public string? Fill
+    {
+        get => _fill;
+        set => this.RaiseAndSetIfChanged(ref _fill, value);
+    }
+    
+    private string? _fillSquare;
+    
+    public string? FillSquare
+    {
+        get => _fillSquare;
+        set => this.RaiseAndSetIfChanged(ref _fillSquare, value);
+    }
     
     private string? _square;
     

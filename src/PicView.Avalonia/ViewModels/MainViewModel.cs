@@ -34,22 +34,8 @@ namespace PicView.Avalonia.ViewModels
 
         public Stretch GalleryStretch
         {
-            get
-            {
-                return GalleryFunctions.IsFullGalleryOpen ? GalleryFullItemStretch : GalleryBottomItemStretch;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _galleryStretch, value);
-                if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
-                {
-                    GalleryBottomItemStretch = value;
-                }
-                else
-                {
-                    GalleryFullItemStretch = value;
-                }
-            }
+            get => _galleryStretch;
+            set => this.RaiseAndSetIfChanged(ref _galleryStretch, value);
         }
         
         private Stretch _galleryBottomItemStretch;
@@ -156,6 +142,53 @@ namespace PicView.Avalonia.ViewModels
             get => _getBottomGalleryItemHeight;
             set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemHeight, value);
         }
+
+        #region Gallery Stretch IsChecked
+
+        private bool _isUniformChecked;
+        public bool IsUniformChecked
+        {
+            get => _isUniformChecked;
+            set => this.RaiseAndSetIfChanged(ref _isUniformChecked, value);
+        }
+
+        private bool _isUniformToFillChecked;
+        public bool IsUniformToFillChecked
+        {
+            get => _isUniformToFillChecked;
+            set => this.RaiseAndSetIfChanged(ref _isUniformToFillChecked, value);
+        }
+
+        private bool _isFillChecked;
+        public bool IsFillChecked
+        {
+            get => _isFillChecked;
+            set => this.RaiseAndSetIfChanged(ref _isFillChecked, value);
+        }
+
+        private bool _isNoneChecked;
+        public bool IsNoneChecked
+        {
+            get => _isNoneChecked;
+            set => this.RaiseAndSetIfChanged(ref _isNoneChecked, value);
+        }
+
+        private bool _isSquareChecked;
+        public bool IsSquareChecked
+        {
+            get => _isSquareChecked;
+            set => this.RaiseAndSetIfChanged(ref _isSquareChecked, value);
+        }
+
+        private bool _isFillSquareChecked;
+        public bool IsFillSquareChecked
+        {
+            get => _isFillSquareChecked;
+            set => this.RaiseAndSetIfChanged(ref _isFillSquareChecked, value);
+        }
+        
+
+        #endregion
 
         #endregion Gallery
 
@@ -1716,6 +1749,19 @@ namespace PicView.Avalonia.ViewModels
                 else
                 {
                     await UIHelper.ChangeBottomGalleryStretchSquare(this);
+                }
+                return;
+            }
+            
+            if (value.Equals("FillSquare", StringComparison.OrdinalIgnoreCase))
+            {
+                if (GalleryFunctions.IsFullGalleryOpen)
+                {
+                    await UIHelper.ChangeFullGalleryStretchSquareFill(this);
+                }
+                else
+                {
+                    await UIHelper.ChangeBottomGalleryStretchSquareFill(this);
                 }
                 return;
             }

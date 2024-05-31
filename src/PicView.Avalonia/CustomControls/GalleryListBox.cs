@@ -2,7 +2,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.VisualTree;
+using PicView.Avalonia.Keybindings;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.CustomControls;
@@ -13,17 +15,33 @@ public class GalleryListBox : ListBox
     public GalleryListBox()
     {
         SelectionMode = SelectionMode.Single;
+        AddHandler(PointerPressedEvent, PreviewPointerPressedEvent, RoutingStrategies.Tunnel);
+        AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
+        AddHandler(KeyUpEvent, PreviewKeyUpEvent, RoutingStrategies.Tunnel);
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
+    private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
     {
-        // Disable control from hijacking keys
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
+        // Disable right click selection
         e.Handled = true;
     }
     
-    protected override void OnKeyUp(KeyEventArgs e)
+    private async Task PreviewKeyDownEvent(object? sender, KeyEventArgs e)
     {
-        // Disable control from hijacking keys
+        // Prevent control from hijacking keys
+        await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false); 
+        e.Handled = true;
+    }
+    
+    private void PreviewKeyUpEvent(object? sender, KeyEventArgs e)
+    {
+        // Prevent control from hijacking keys
+        MainKeyboardShortcuts.MainWindow_KeysUp(e); 
         e.Handled = true;
     }
     

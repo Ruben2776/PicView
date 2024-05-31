@@ -96,14 +96,6 @@ public static class StartUpHelper
         {
             vm.GetExpandedGalleryItemHeight = 47;
         }
-
-        vm.GalleryBottomItemStretch =
-            Enum.TryParse<Stretch>(SettingsHelper.Settings.Gallery.FullGalleryStretchMode, out var stretchMode) ?
-                stretchMode : Stretch.Uniform;
-
-        vm.GalleryFullItemStretch =
-            Enum.TryParse(SettingsHelper.Settings.Gallery.BottomGalleryStretchMode, out stretchMode) ?
-                stretchMode : Stretch.Uniform;
         
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {

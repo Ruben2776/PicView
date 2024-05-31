@@ -3,6 +3,7 @@
     x:Class="PicView.Avalonia.Views.GalleryAnimationControlView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,6 +14,10 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
     <Panel Background="{StaticResource BackgroundAlpha}">
+        <Panel.Resources>
+            <converters:StretchToBooleanConverter x:Key="StretchToBooleanConverter" />
+        </Panel.Resources>
+
         <Panel.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="{CompiledBinding Stretch}">
@@ -27,18 +32,38 @@
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Uniform"
-                        Header="Uniform"
-                        IsChecked="True"
+                        Header="{CompiledBinding Uniform}"
+                        IsChecked="{CompiledBinding IsUniformChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="UniformToFill"
-                        Header="UniformToFill"
+                        Header="{CompiledBinding UniformToFill}"
+                        IsChecked="{CompiledBinding IsUniformToFillChecked}"
+                        ToggleType="Radio" />
+                    <MenuItem
+                        Command="{CompiledBinding GalleryItemStretchCommand}"
+                        CommandParameter="Fill"
+                        Header="{CompiledBinding Fill}"
+                        IsChecked="{CompiledBinding IsFillChecked}"
+                        ToggleType="Radio" />
+                    <MenuItem
+                        Command="{CompiledBinding GalleryItemStretchCommand}"
+                        CommandParameter="None"
+                        Header="{CompiledBinding None}"
+                        IsChecked="{CompiledBinding IsNoneChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Square"
                         Header="{CompiledBinding Square}"
+                        IsChecked="{CompiledBinding IsSquareChecked}"
+                        ToggleType="Radio" />
+                    <MenuItem
+                        Command="{CompiledBinding GalleryItemStretchCommand}"
+                        CommandParameter="FillSquare"
+                        Header="{CompiledBinding FillSquare}"
+                        IsChecked="{CompiledBinding IsFillSquareChecked}"
                         ToggleType="Radio" />
                 </MenuItem>
                 <MenuItem

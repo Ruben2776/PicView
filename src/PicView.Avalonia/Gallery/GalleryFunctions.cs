@@ -26,17 +26,17 @@ public static class GalleryFunctions
             if (IsFullGalleryOpen)
             {
                 // Switch to bottom gallery
-                vm.GalleryMode = GalleryMode.FullToBottom;
                 IsFullGalleryOpen = false;
                 vm.IsGalleryOpen = false;
+                vm.GalleryMode = GalleryMode.FullToBottom;
                 vm.GetGalleryItemHeight = vm.GetBottomGalleryItemHeight;
             }
             else
             {
                 // Switch to full gallery
-                vm.GalleryMode = GalleryMode.BottomToFull;
                 IsFullGalleryOpen = true;
                 vm.IsGalleryOpen = true;
+                vm.GalleryMode = GalleryMode.BottomToFull;
                 vm.GetGalleryItemHeight = vm.GetExpandedGalleryItemHeight;
             }
         }
