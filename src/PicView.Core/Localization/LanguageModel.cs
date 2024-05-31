@@ -379,4 +379,7 @@ internal class LanguageModel
     public string? PhotometricInterpretation { get; set; }
     public string? ExifVersion { get; set; }
     public string? LensMaker { get; set; }
+    public string? Uniform { get; set; }
+    public string? UniformToFill { get; set; }
+    public string? FillSquare { get; set; }
 }
