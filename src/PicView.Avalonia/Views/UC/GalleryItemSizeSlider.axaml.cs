@@ -52,10 +52,10 @@ public partial class GalleryItemSizeSlider : UserControl
             }
             SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;
             vm.GetGalleryItemHeight = e.NewValue;
-            WindowHelper.SetSize(vm);
             var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
             var gallery = mainView.GalleryView;
             gallery.Height = vm.GalleryHeight;
+            WindowHelper.SetSize(vm);
         }
         else
         {

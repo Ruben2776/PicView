@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System.Runtime.InteropServices;
+using Avalonia.Controls;
 using Avalonia.Input;
 
 namespace PicView.Avalonia.CustomControls;
@@ -8,6 +9,11 @@ public class CustomSlider : Slider
 
     public CustomSlider()
     {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            // macOS scrolls unintentionally
+            return;
+        }
         PointerWheelChanged += CustomSlider_PointerWheelChanged;
     }
 

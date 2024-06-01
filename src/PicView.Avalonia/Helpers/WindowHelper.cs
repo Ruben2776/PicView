@@ -2,8 +2,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
@@ -16,6 +18,25 @@ namespace PicView.Avalonia.Helpers;
 public static class WindowHelper
 {
     #region Window Dragging and size changing
+    
+    public static void WindowDragAndDoubleClickBehavior(Window window, PointerPressedEventArgs e)
+    {
+        if (e.ClickCount == 2 && e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
+        {
+            if (MainKeyboardShortcuts.ShiftDown)
+            {
+                window.WindowState = WindowState.FullScreen;
+                return;
+            }
+            var windowState = window.WindowState;
+            window.WindowState = windowState == WindowState.Maximized ?
+                WindowState.Normal : WindowState.Maximized;
+            
+            return;
+        }
+
+        window?.BeginMoveDrag(e);
+    }
 
     public static void InitializeWindowSizeAndPosition(Window window)
     {

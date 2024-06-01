@@ -32,10 +32,10 @@ public partial class BottomGalleryItemSizeSlider : UserControl
         if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
         {
             vm.GetGalleryItemHeight = e.NewValue;
-            WindowHelper.SetSize(vm);
             var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
             var gallery = mainView.GalleryView;
             gallery.Height = vm.GalleryHeight;
+            WindowHelper.SetSize(vm);
         }
         
         // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day

@@ -56,14 +56,6 @@ public partial class BottomBar : UserControl
         if (VisualRoot is null) { return; }
 
         var hostWindow = (Window)VisualRoot;
-        hostWindow?.BeginMoveDrag(e);
-    }
-
-    private void MoveWindow(object? sender, PointerPressedEventArgs e)
-    {
-        if (VisualRoot is null) { return; }
-
-        var hostWindow = (Window)VisualRoot;
-        hostWindow?.BeginMoveDrag(e);
+        WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
     }
 }
