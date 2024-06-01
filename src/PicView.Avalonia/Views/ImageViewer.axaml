@@ -1,5 +1,4 @@
 <UserControl
-    DragDrop.AllowDrop="True"
     PointerPressed="InputElement_OnPointerPressed"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.ImageViewer"
@@ -8,7 +7,6 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
@@ -36,9 +34,5 @@
                 </Border>
             </customControls:AutoScrollViewer>
         </LayoutTransformControl>
-        <uc:SpinWaiter
-            HorizontalAlignment="Center"
-            IsVisible="{CompiledBinding IsLoading}"
-            VerticalAlignment="Center" />
     </Panel>
 </UserControl>

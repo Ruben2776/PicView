@@ -37,9 +37,6 @@ public partial class ImageViewer : UserControl
     {
         InitializeComponent();
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
-        // TODO add visual feedback for drag and drop
-        //AddHandler(DragDrop.DragOverEvent, DragOver);
-        AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
 
         Loaded += delegate
@@ -110,29 +107,7 @@ public partial class ImageViewer : UserControl
         e.Handled = true;
         await Main_OnPointerWheelChanged(e);
     }
-
-    private async Task Drop(object? sender, DragEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-            return;
-
-        var data = e.Data.GetFiles();
-        if (data == null)
-        {
-            // TODO Handle URL and folder drops
-            return;
-        }
-
-        var storageItems = data as IStorageItem[] ?? data.ToArray();
-        var firstFile = storageItems.FirstOrDefault();
-        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
-        await NavigationHelper.LoadPicFromString(path, vm).ConfigureAwait(false);
-        foreach (var file in storageItems.Skip(1))
-        {
-            // TODO Open each file in a new window if the setting to open in the same window is false
-        }
-    }
-
+    
     private async Task Main_OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         if (DataContext is not MainViewModel mainViewModel)

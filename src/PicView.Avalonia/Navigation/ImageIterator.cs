@@ -6,6 +6,8 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
+using Avalonia.Media.Imaging;
+using ImageMagick;
 using PicView.Avalonia.Gallery;
 using Timer = System.Timers.Timer;
 
@@ -309,22 +311,25 @@ public class ImageIterator
                     if (preLoadValue.IsLoading)
                     {
                         vm.SetLoadingTitle();
+                        vm.IsLoading = true;
                         await NavigationHelper.LoadingPreview(index, vm);
                         if (Index != index)
                         {
+                            vm.IsLoading = false;
                             await Preload();
                             return;
                         }
-                        vm.IsLoading = true;
-                        while (preLoadValue.IsLoading)
+                        
+                        preLoadValue.ImageLoaded += async (_, p) =>
                         {
-                            await Task.Delay(10);
-                            if (Index != index)
+                            if (p.Index != index)
                             {
                                 return;
                             }
-                        }
-                        await UpdateSourceTask(vm, preLoadValue);
+
+                            preLoadValue = p.PreLoadValue;
+                            await UpdateSourceTask(vm, preLoadValue);
+                        };
                         return;
                     }
                 }
@@ -408,7 +413,15 @@ public class ImageIterator
     public async Task LoadPicFromFile(FileInfo fileInfo, MainViewModel vm)
     {
         vm.SetLoadingTitle();
-
+        using var image = new MagickImage();
+        image.Ping(fileInfo);
+        var thumb = image.GetExifProfile()?.CreateThumbnail();
+        if (thumb is not null)
+        {
+            var byteArray = await Task.FromResult(thumb.ToByteArray());
+            var stream = new MemoryStream(byteArray);
+            vm.ImageViewer.SetImage(WriteableBitmap.Decode(stream), ImageType.Bitmap);
+        }
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
         vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
@@ -470,15 +483,17 @@ public class ImageIterator
                 vm.SetLoadingTitle();
                 vm.IsLoading = true;
                 await NavigationHelper.LoadingPreview(index, vm);
-                while (preLoadValue.IsLoading)
+                preLoadValue.ImageLoaded += async (_, p) =>
                 {
-                    await Task.Delay(10);
-                    if (Index != index)
+                    if (p.Index != index)
                     {
                         return;
                     }
-                }
-                await UpdateSourceTask(vm, preLoadValue);
+
+                    preLoadValue = p.PreLoadValue;
+                    await UpdateSourceTask(vm, preLoadValue);
+                };
+                return;
             }
         }
         else

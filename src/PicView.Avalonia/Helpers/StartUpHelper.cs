@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
-using Avalonia.Media;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
@@ -21,6 +20,10 @@ public static class StartUpHelper
         
         if (!settingsExists)
         {
+            // Fixes incorrect window
+            w.Height = w.MinHeight;
+            w.Width = w.MinWidth;
+            
             WindowHelper.CenterWindowOnScreen();
             vm.CanResize = true;
             vm.IsAutoFit = false;
@@ -42,9 +45,9 @@ public static class StartUpHelper
             }
         }
         w.Show();
-        _ = Task.Run(vm.UpdateLanguage);
-
         vm.SetLoadingTitle();
+        vm.IsLoading = true;
+        _ = Task.Run(vm.UpdateLanguage);
 
         vm.GetFlipped = vm.Flip;
 
@@ -83,16 +86,26 @@ public static class StartUpHelper
         else
         {
             vm.CurrentView = new StartUpMenu();
+            vm.IsLoading = false;
+        }
+
+        const int defaultBottomGalleryHeight = 53;
+        const int defaultFullGalleryHeight = 73;
+
+        if (!settingsExists)
+        {
+            vm.GetBottomGalleryItemHeight = defaultBottomGalleryHeight;
+            vm.GetExpandedGalleryItemHeight = defaultFullGalleryHeight;
         }
         
         // Set default gallery sizes if they are out of range or upgrading from an old version
         if (vm.GetBottomGalleryItemHeight is < 36 or > 110)
         {
-            vm.GetBottomGalleryItemHeight = 47;
+            vm.GetBottomGalleryItemHeight = defaultBottomGalleryHeight;
         }
-        if (vm.GetExpandedGalleryItemHeight is  < 25 or 110)
+        if (vm.GetExpandedGalleryItemHeight is < 25 or 110)
         {
-            vm.GetExpandedGalleryItemHeight = 47;
+            vm.GetExpandedGalleryItemHeight = defaultFullGalleryHeight;
         }
 
         if (!settingsExists)
