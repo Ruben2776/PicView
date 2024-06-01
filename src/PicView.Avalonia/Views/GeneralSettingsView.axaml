@@ -5,6 +5,7 @@
     x:Class="PicView.Avalonia.Views.GeneralSettingsView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
@@ -169,7 +170,7 @@
             Margin="0,6,0,10"
             MaxWidth="270"
             Text="{Binding AdjustTimingForSlideshow}" />
-        <Slider
+        <customControls:CustomSlider
             Height="30"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
@@ -196,7 +197,7 @@
             Margin="0,3,0,10"
             MaxWidth="270"
             Text="{Binding AdjustTimingForZoom}" />
-        <Slider
+        <customControls:CustomSlider
             Height="30"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
@@ -221,7 +222,7 @@
             Margin="0,3,0,10"
             MaxWidth="270"
             Text="{Binding AdjustNavSpeed}" />
-        <Slider
+        <customControls:CustomSlider
             Height="30"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"

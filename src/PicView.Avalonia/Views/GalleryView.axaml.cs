@@ -14,9 +14,12 @@ public partial class GalleryAnimationControlView : GalleryAnimationControl
 
     private void Flyout_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is Control ctl)
+        if (sender is not Control ctl)
         {
-            FlyoutBase.ShowAttachedFlyout(ctl);
+            return;
         }
+
+        FlyoutBase.ShowAttachedFlyout(ctl);
+        GalleryItemSizeSlider.SetMaxAndMin();
     }
 }

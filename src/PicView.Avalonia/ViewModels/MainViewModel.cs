@@ -111,7 +111,7 @@ namespace PicView.Avalonia.ViewModels
         {
             get
             {
-                return GalleryFunctions.IsFullGalleryOpen ? GetExpandedGalleryItemHeight : GetBottomGalleryItemHeight;
+                return GalleryFunctions.IsFullGalleryOpen ? GetFullGalleryItemHeight : GetBottomGalleryItemHeight;
             }
             set
             {
@@ -122,17 +122,17 @@ namespace PicView.Avalonia.ViewModels
                 }
                 else
                 {
-                    GetExpandedGalleryItemHeight = value;
+                    GetFullGalleryItemHeight = value;
                 }
             }
         }
         
-        private double _getExpandedGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+        private double _getFullGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
 
-        public double GetExpandedGalleryItemHeight
+        public double GetFullGalleryItemHeight
         {
-            get => _getExpandedGalleryItemHeight;
-            set => this.RaiseAndSetIfChanged(ref _getExpandedGalleryItemHeight, value);
+            get => _getFullGalleryItemHeight;
+            set => this.RaiseAndSetIfChanged(ref _getFullGalleryItemHeight, value);
         }
         
         private double _getBottomGalleryItemHeight = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
@@ -141,6 +141,25 @@ namespace PicView.Avalonia.ViewModels
         {
             get => _getBottomGalleryItemHeight;
             set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemHeight, value);
+        }
+        
+        public double MaxFullGalleryItemHeight
+        {
+            get => 175;
+        }
+        
+        public double MinFullGalleryItemHeight
+        {
+            get => 40;
+        }
+        public double MaxBottomGalleryItemHeight
+        {
+            get => 125;
+        }
+        
+        public double MinBottomGalleryItemHeight
+        {
+            get => 25;
         }
 
         #region Gallery Stretch IsChecked

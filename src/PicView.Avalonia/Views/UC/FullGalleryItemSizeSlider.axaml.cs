@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
@@ -21,14 +22,14 @@ public partial class FullGalleryItemSizeSlider : UserControl
         }
 
         // ReSharper disable once CompareOfFloatsByEqualityOperator
-        if (vm.GetExpandedGalleryItemHeight == e.NewValue)
+        if (vm.GetFullGalleryItemHeight == e.NewValue)
         {
             return;
         }
         WindowHelper.SetSize(vm);
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            vm.GetGalleryItemHeight = vm.GetExpandedGalleryItemHeight;
+            vm.GetGalleryItemHeight = vm.GetFullGalleryItemHeight;
         }
         // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day
 

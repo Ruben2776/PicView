@@ -15,6 +15,24 @@ public partial class GalleryItemSizeSlider : UserControl
     {
         InitializeComponent();
     }
+    
+    public void SetMaxAndMin()
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            CustomSlider.Maximum = vm.MaxFullGalleryItemHeight;
+            CustomSlider.MinWidth = vm.MinFullGalleryItemHeight;
+        }
+        else
+        {
+            CustomSlider.Maximum = vm.MaxBottomGalleryItemHeight;
+            CustomSlider.Minimum = vm.MinBottomGalleryItemHeight;
+        }
+    }
 
     private void RangeBase_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
     {
@@ -42,11 +60,11 @@ public partial class GalleryItemSizeSlider : UserControl
         else
         {
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (vm.GetExpandedGalleryItemHeight == e.NewValue)
+            if (vm.GetFullGalleryItemHeight == e.NewValue)
             {
                 return;
             }
-            vm.GetExpandedGalleryItemHeight = e.NewValue;
+            vm.GetFullGalleryItemHeight = e.NewValue;
             if (GalleryFunctions.IsFullGalleryOpen)
             {
                 WindowHelper.SetSize(vm);

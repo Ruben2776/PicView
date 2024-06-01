@@ -82,7 +82,7 @@
                                 BorderThickness="2"
                                 CornerRadius="4"
                                 Padding="10,3">
-                                <uc:GalleryItemSizeSlider />
+                                <uc:GalleryItemSizeSlider x:Name="GalleryItemSizeSlider" />
                             </Border>
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>

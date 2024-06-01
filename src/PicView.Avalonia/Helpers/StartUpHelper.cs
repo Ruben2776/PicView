@@ -89,23 +89,25 @@ public static class StartUpHelper
             vm.IsLoading = false;
         }
 
+        
         const int defaultBottomGalleryHeight = 53;
         const int defaultFullGalleryHeight = 73;
 
         if (!settingsExists)
         {
             vm.GetBottomGalleryItemHeight = defaultBottomGalleryHeight;
-            vm.GetExpandedGalleryItemHeight = defaultFullGalleryHeight;
+            vm.GetFullGalleryItemHeight = defaultFullGalleryHeight;
         }
-        
         // Set default gallery sizes if they are out of range or upgrading from an old version
-        if (vm.GetBottomGalleryItemHeight is < 36 or > 110)
+        if (vm.GetBottomGalleryItemHeight < vm.MinBottomGalleryItemHeight ||
+            vm.GetBottomGalleryItemHeight > vm.MaxBottomGalleryItemHeight)
         {
             vm.GetBottomGalleryItemHeight = defaultBottomGalleryHeight;
         }
-        if (vm.GetExpandedGalleryItemHeight is < 25 or 110)
+        if (vm.GetFullGalleryItemHeight  < vm.MaxFullGalleryItemHeight ||
+            vm.GetFullGalleryItemHeight > vm.MaxFullGalleryItemHeight)
         {
-            vm.GetExpandedGalleryItemHeight = defaultFullGalleryHeight;
+            vm.GetFullGalleryItemHeight = defaultFullGalleryHeight;
         }
 
         if (!settingsExists)

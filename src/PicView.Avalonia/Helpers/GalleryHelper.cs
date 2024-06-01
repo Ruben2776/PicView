@@ -39,7 +39,7 @@ public static class GalleryHelper
                 vm.GalleryMode = GalleryMode.BottomToFull;
                 IsFullGalleryOpen = true;
                 vm.IsGalleryOpen = true;
-                vm.GetGalleryItemHeight = vm.GetExpandedGalleryItemHeight;
+                vm.GetGalleryItemHeight = vm.GetFullGalleryItemHeight;
             }
         }
         else
@@ -58,7 +58,7 @@ public static class GalleryHelper
                 IsFullGalleryOpen = true;
                 vm.IsGalleryOpen = true;
                 vm.GalleryMode = GalleryMode.ClosedToFull;
-                vm.GetGalleryItemHeight = vm.GetExpandedGalleryItemHeight;
+                vm.GetGalleryItemHeight = vm.GetFullGalleryItemHeight;
             }
         }
         _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
