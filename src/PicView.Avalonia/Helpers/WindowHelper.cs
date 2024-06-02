@@ -33,7 +33,7 @@ public static class WindowHelper
             return;
         }
 
-        window?.BeginMoveDrag(e);
+        window.BeginMoveDrag(e);
     }
 
     public static void InitializeWindowSizeAndPosition(Window window)
@@ -244,26 +244,40 @@ public static class WindowHelper
         if (SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
             vm.IsFullscreen = false;
-            desktop.MainWindow.WindowState = WindowState.Normal;
+            await Dispatcher.UIThread.InvokeAsync(() => 
+                desktop.MainWindow.WindowState = WindowState.Normal);
             SettingsHelper.Settings.WindowProperties.Fullscreen = false;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                SetSize(vm);
+                vm.IsTopToolbarShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+                vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
+                vm.IsBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+            }
+            
         }
         else
         {
+            SaveSize(desktop.MainWindow);
             vm.IsFullscreen = true;
-            desktop.MainWindow.WindowState = WindowState.Maximized;
+            await Dispatcher.UIThread.InvokeAsync(() => 
+                desktop.MainWindow.WindowState = WindowState.FullScreen);
             SettingsHelper.Settings.WindowProperties.Fullscreen = true;
-        }
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            // TODO: Add Fullscreen mode for Windows (and maybe for Linux?)
-            // macOS fullscreen version already works nicely
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                // TODO go to macOS fullscreen mode when auto fit is on
+                vm.IsTopToolbarShown = false; // Hide interface in fullscreen. Remember to turn back when exiting fullscreen
+                vm.IsBottomToolbarShown = false;
+                vm.IsBottomGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+                // TODO: Add Fullscreen mode for Windows (and maybe for Linux?)
+                // macOS fullscreen version already works nicely
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                if (SettingsHelper.Settings.WindowProperties.AutoFit)
+                {
+                    // TODO go to macOS fullscreen mode when auto fit is on
+                }
             }
         }
 
@@ -276,19 +290,24 @@ public static class WindowHelper
         {
             return;
         }
-
-        if (SettingsHelper.Settings.WindowProperties.Maximized)
+        
+        if (desktop.MainWindow.WindowState is WindowState.Maximized or WindowState.FullScreen)
         {
             await Dispatcher.UIThread.InvokeAsync(() => 
                 desktop.MainWindow.WindowState = WindowState.Normal);
             SettingsHelper.Settings.WindowProperties.Maximized = false;
+            SetSize(desktop.MainWindow.DataContext as MainViewModel);
+            InitializeWindowSizeAndPosition(desktop.MainWindow);
         }
         else
         {
+            SaveSize(desktop.MainWindow);
             await Dispatcher.UIThread.InvokeAsync(() => 
-                desktop.MainWindow.WindowState = WindowState.Maximized);
+                desktop.MainWindow.WindowState = WindowState.FullScreen);
             SettingsHelper.Settings.WindowProperties.Maximized = true;
+            SetSize(desktop.MainWindow.DataContext as MainViewModel);
         }
+        
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -335,7 +354,6 @@ public static class WindowHelper
         SetSize(vm);
         await FunctionsHelper.CloseMenus();
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
-        
     }
 
     public static async Task ToggleBottomToolbar(MainViewModel vm)
@@ -429,6 +447,35 @@ public static class WindowHelper
         
         vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ? size.Width : double.NaN;
     }
+    
+    public static void SaveSize(Window window)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+        void Set()
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
+            var top = window.Position.Y + (monitor.WorkingArea.Height - monitor.Bounds.Height);
+            var left = window.Position.X + (monitor.WorkingArea.Width - monitor.Bounds.Width);
+            SettingsHelper.Settings.WindowProperties.Top = top;
+            SettingsHelper.Settings.WindowProperties.Left = left;
+            SettingsHelper.Settings.WindowProperties.Width = window.Width;
+            SettingsHelper.Settings.WindowProperties.Height = window.Height;
+        }
+
+    }
 
     #endregion SetSize
 
@@ -442,18 +489,7 @@ public static class WindowHelper
         {
             await Dispatcher.UIThread.InvokeAsync(window.Hide);
         }
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            Environment.Exit(0);
-            return;
-        }
-        var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
-        var top = window.Position.Y + (monitor.WorkingArea.Height - monitor.Bounds.Height);
-        var left = window.Position.X + (monitor.WorkingArea.Width - monitor.Bounds.Width);
-        SettingsHelper.Settings.WindowProperties.Top = top;
-        SettingsHelper.Settings.WindowProperties.Left = left;
-        SettingsHelper.Settings.WindowProperties.Width = window.Width;
-        SettingsHelper.Settings.WindowProperties.Height = window.Height;
+        SaveSize(window);
 
         await SettingsHelper.SaveSettingsAsync();
         await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
