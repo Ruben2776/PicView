@@ -5,6 +5,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
@@ -29,6 +30,8 @@ public static class FunctionsHelper
             // Navigation values
             "Next" => Next,
             "Prev" => Prev,
+            "NextFolder" => NextFolder,
+            "PrevFolder" => PrevFolder,
             "Up" => Up,
             "Down" => Down,
             "Last" => Last,
@@ -181,6 +184,11 @@ public static class FunctionsHelper
     {
         await NavigationHelper.Iterate(next: true, Vm);
     }
+    
+    public static async Task NextFolder()
+    {
+        await NavigationHelper.GoToNextFolder(true, Vm);
+    }
 
     public static async Task NextButton()
     {
@@ -194,7 +202,17 @@ public static class FunctionsHelper
 
     public static async Task Prev()
     {
+        if (MainKeyboardShortcuts.CtrlDown)
+        {
+            await NavigationHelper.GoToNextFolder(next: false, Vm);
+            return;
+        }
         await NavigationHelper.Iterate(next: false, Vm);
+    }
+    
+    public static async Task PrevFolder()
+    {
+        await NavigationHelper.GoToNextFolder(false, Vm);
     }
 
     public static async Task PrevButton()

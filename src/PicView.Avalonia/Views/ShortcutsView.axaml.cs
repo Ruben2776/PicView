@@ -14,20 +14,6 @@ public partial class ShortcutsView : UserControl
     {
         InitializeComponent();
         DefaultButton.Click += async delegate { await SetDefault(); };
-        NextBox.KeyUp += delegate
-        {
-            LastImageBox.Text = LastImageBox.GetFunctionKey();
-            LastImageAltBox.Text = LastImageAltBox.GetFunctionKey();
-            NextFolderBox.Text = NextFolderBox.GetFunctionKey();
-            NextFolderAltBox.Text = NextFolderAltBox.GetFunctionKey();
-        };
-        PrevBox.KeyUp += delegate
-        {
-            FirstImageBox.Text = FirstImageBox.GetFunctionKey();
-            FirstImageAltBox.Text = FirstImageAltBox.GetFunctionKey();
-            PrevFolderBox.Text = PrevFolderBox.GetFunctionKey();
-            PrevFolderAltBox.Text = PrevFolderAltBox.GetFunctionKey();
-        };
         FullscreenBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("DoubleClick")}";
         FullscreenBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("DoubleClick")}";
         DragWindowBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("MouseDrag")}";

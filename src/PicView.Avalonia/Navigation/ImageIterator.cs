@@ -37,9 +37,7 @@ public class ImageIterator
     public ImageIterator(FileInfo fileInfo, MainViewModel vm)
     {
         ArgumentNullException.ThrowIfNull(fileInfo);
-
-        FileInfo = fileInfo;
-
+        
         _vm = vm;
         Pics = vm.PlatformService.GetFiles(fileInfo);
         Index = Directory.Exists(fileInfo.FullName) ? 0 : Pics.IndexOf(fileInfo.FullName);
@@ -49,8 +47,9 @@ public class ImageIterator
         InitiateWatcher(fileInfo);
     }
 
-    private void InitiateWatcher(FileInfo fileInfo)
+    public void InitiateWatcher(FileInfo fileInfo)
     {
+        FileInfo = fileInfo;
         _watcher = new FileSystemWatcher();
 #if DEBUG
         Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
@@ -299,78 +298,67 @@ public class ImageIterator
         }
     }
 
-        public async Task LoadPicAtIndex(int index, MainViewModel vm) => await Task.Run(async () =>
+    public async Task LoadPicAtIndex(int index, MainViewModel vm) => await Task.Run(async () =>
+    {
+        try
         {
-            try
+            Index = index;
+
+            var preLoadValue = PreLoader.Get(index, Pics);
+            if (preLoadValue is not null)
             {
-                Index = index;
-
-                var preLoadValue = PreLoader.Get(index, Pics);
-                if (preLoadValue is not null)
+                if (preLoadValue.IsLoading)
                 {
-                    if (preLoadValue.IsLoading)
-                    {
-                        vm.SetLoadingTitle();
-                        vm.IsLoading = true;
-                        await NavigationHelper.LoadingPreview(index, vm);
-                        if (Index != index)
-                        {
-                            vm.IsLoading = false;
-                            await Preload();
-                            return;
-                        }
-                        
-                        preLoadValue.ImageLoaded += async (_, p) =>
-                        {
-                            if (p.Index != index)
-                            {
-                                return;
-                            }
-
-                            preLoadValue = p.PreLoadValue;
-                            await UpdateSourceTask(vm, preLoadValue);
-                        };
-                        return;
-                    }
-                }
-
-                if (preLoadValue is null)
-                {
-                    await GetPreload();
-                }
-
-                if (Index != index)
-                {
-                    await Preload();
-                    return;
-                }
-
-                await UpdateSourceTask(vm, preLoadValue);
-                return;
-                
-
-                async Task GetPreload()
-                {
-                    await PreLoader.AddAsync(index, Pics);
-                    preLoadValue = PreLoader.Get(index, Pics);
+                    vm.SetLoadingTitle();
+                    await Task.Delay(250);
                     if (Index != index)
                     {
-                        await Preload();
                         return;
                     }
 
-                    if (preLoadValue is null)
+                    if (preLoadValue.IsLoading)
                     {
-                        throw new ArgumentNullException(nameof(LoadNextPic),
-                            nameof(preLoadValue) + " is null");
+                        vm.IsLoading = true;
+                        await NavigationHelper.LoadingPreview(index, vm);
+                    }
+
+                    var x = 0;
+                    while (preLoadValue.IsLoading)
+                    {
+                        await Task.Delay(20);
+                        x++;
+                        if (x > 10)
+                        {
+                            break;
+                        }
                     }
                 }
             }
-            catch (Exception)
+
+            if (preLoadValue is null)
             {
-                // TODO display exception to user
+                vm.IsLoading = true;
+                await NavigationHelper.LoadingPreview(index, vm);
+                await PreLoader.AddAsync(index, Pics);
+                preLoadValue = PreLoader.Get(index, Pics);
             }
-        });
+
+            if (Index != index || preLoadValue is null)
+            {
+                return;
+            }
+
+            await UpdateSourceTask(vm, preLoadValue);
+        }
+        catch (Exception e)
+        {
+            vm.ToolTipUIText = e.Message;
+        }
+        finally
+        {
+            vm.IsLoading = false;
+        }
+    });
 
     public async Task LoadPicFromString(string path, MainViewModel vm)
     {
@@ -481,19 +469,28 @@ public class ImageIterator
             if (preLoadValue.IsLoading)
             {
                 vm.SetLoadingTitle();
-                vm.IsLoading = true;
-                await NavigationHelper.LoadingPreview(index, vm);
-                preLoadValue.ImageLoaded += async (_, p) =>
+                await Task.Delay(250);
+                if (Index != index)
                 {
-                    if (p.Index != index)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    preLoadValue = p.PreLoadValue;
-                    await UpdateSourceTask(vm, preLoadValue);
-                };
-                return;
+                if (preLoadValue.IsLoading)
+                {
+                    vm.IsLoading = true;
+                    await NavigationHelper.LoadingPreview(index, vm);
+                }
+
+                var x = 0;
+                while (preLoadValue.IsLoading)
+                {
+                    await Task.Delay(200);
+                    x++;
+                    if (x > 10)
+                    {
+                        break;
+                    }
+                }
             }
         }
         else

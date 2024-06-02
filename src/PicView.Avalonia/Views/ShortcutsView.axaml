@@ -54,16 +54,14 @@
                 Classes="hover TStyle"
                 MethodName="Next"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="NextBox" />
+                Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Next"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="NextAltBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -73,18 +71,17 @@
                 Text="{CompiledBinding LastImage}"
                 Width="170" />
             <customControls:KeybindTextBox
+                Alt="False"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
-                MethodName="LastImage"
-                Width="140"
-                x:Name="LastImageBox" />
+                MethodName="Last"
+                Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
-                MethodName="LastImage"
-                Width="140"
-                x:Name="LastImageAltBox" />
+                MethodName="Last"
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -95,18 +92,17 @@
                 Width="170" />
             <customControls:KeybindTextBox
                 Alt="False"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 IsReadOnly="True"
                 MethodName="NextFolder"
-                Width="140"
-                x:Name="NextFolderBox" />
+                Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
                 MethodName="NextFolder"
-                Width="140"
-                x:Name="NextFolderAltBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
@@ -120,16 +116,14 @@
                 Classes="hover TStyle"
                 MethodName="Prev"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="PrevBox" />
+                Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
                 Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Prev"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
-                Width="140"
-                x:Name="PrevAltBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -139,18 +133,16 @@
                 Text="{CompiledBinding FirstImage}"
                 Width="170" />
             <customControls:KeybindTextBox
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
-                MethodName="FirstImage"
-                Width="140"
-                x:Name="FirstImageBox" />
+                MethodName="First"
+                Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
-                MethodName="FirstImage"
-                Width="140"
-                x:Name="FirstImageAltBox" />
+                MethodName="First"
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
@@ -160,18 +152,16 @@
                 Text="{CompiledBinding PrevFolder}"
                 Width="170" />
             <customControls:KeybindTextBox
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
                 MethodName="PrevFolder"
-                Width="140"
-                x:Name="PrevFolderBox" />
+                Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
-                IsReadOnly="True"
                 MethodName="PrevFolder"
-                Width="140"
-                x:Name="PrevFolderAltBox" />
+                Width="140" />
         </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">

@@ -4,11 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -458,6 +456,7 @@ public static class WindowHelper
         SettingsHelper.Settings.WindowProperties.Height = window.Height;
 
         await SettingsHelper.SaveSettingsAsync();
+        await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
         FileDeletionHelper.DeleteTempFiles();
         Environment.Exit(0);
     }

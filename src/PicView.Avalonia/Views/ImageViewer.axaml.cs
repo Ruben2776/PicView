@@ -1,11 +1,9 @@
-using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
@@ -17,7 +15,6 @@ using Point = Avalonia.Point;
 using Avalonia.Svg.Skia;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
-using ReactiveUI;
 
 namespace PicView.Avalonia.Views;
 
@@ -42,18 +39,6 @@ public partial class ImageViewer : UserControl
         Loaded += delegate
         {
             InitializeZoom();
-            this.WhenAnyValue(x => x.MainImage.Source).Select(x => x is not null).Subscribe(x =>
-            {
-                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-                {
-                    ImageScrollViewer.ScrollToHome();
-                }
-
-                if (_isZoomed)
-                {
-                    ResetZoom(enableAnimations:false);
-                }
-            });
             LostFocus += (s, e) =>
             {
                 _captured = false;
@@ -94,6 +79,11 @@ public partial class ImageViewer : UserControl
         void Set()
         {
             ImageHelper.SetImage(image, MainImage, imageType);
+            Reset();
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+            {
+                ImageScrollViewer.ScrollToHome();
+            }
         }
     }
 
@@ -397,6 +387,32 @@ public partial class ImageViewer : UserControl
         }, DispatcherPriority.Send);
         _zoomPercentage = 100;
         _isZoomed = false;
+    }
+
+    public void Reset()
+    {
+        if (_isZoomed)
+        {
+            ResetZoom(false);
+        }
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            ImageLayoutTransformControl.LayoutTransform = null;
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ImageLayoutTransformControl.LayoutTransform = null;
+            });
+        }
+
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        vm.RotationAngle = 0;
+        vm.ScaleX = 1;
     }
 
     public void Pan(PointerEventArgs e, bool enableAnimations)

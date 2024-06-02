@@ -9,6 +9,7 @@ using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Core.Config;
 using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Navigation;
@@ -32,15 +33,8 @@ public static class NavigationHelper
             return;
         }
 
-        if (MainKeyboardShortcuts.CtrlDown)
-        {
-            await vm.ImageIterator.LoadNextPic(next ? NavigateTo.Last : NavigateTo.First, vm).ConfigureAwait(false);
-        }
-        else
-        {
-            var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
-            await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
-        }
+        var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
+        await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
     }
 
     public static async Task NavigateFirstOrLast(bool last, MainViewModel vm)
@@ -160,5 +154,50 @@ public static class NavigationHelper
         var byteArray = await Task.FromResult(thumb.ToByteArray());
         var stream = new MemoryStream(byteArray);
         vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
+    }
+    
+    public static async Task GoToNextFolder(bool next, MainViewModel vm)
+    {
+        vm.SetLoadingTitle();
+        var fileList = await Task.Run(()  =>
+        {
+            var indexChange = next ? 1 : -1;
+            var currentFolder = Path.GetDirectoryName(vm.ImageIterator?.Pics[vm.ImageIterator.Index]);
+            var parentFolder = Path.GetDirectoryName(currentFolder);
+            var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
+            var directoryIndex = Array.IndexOf(directories, currentFolder);
+            if (SettingsHelper.Settings.UIProperties.Looping)
+                directoryIndex = (directoryIndex + indexChange + directories.Length) % directories.Length;
+            else
+            {
+                directoryIndex += indexChange;
+                if (directoryIndex < 0 || directoryIndex >= directories.Length)
+                    return null;
+            }
+
+            for (var i = directoryIndex; i < directories.Length; i++)
+            {
+                var fileInfo = new FileInfo(directories[i]);
+                var fileList = vm.PlatformService.GetFiles(fileInfo);
+                if (fileList is { Count: > 0 })
+                    return fileList;
+            }
+            return null;
+        }).ConfigureAwait(false);
+
+        if (fileList is null)
+        {
+            return;
+        }
+        var fileInfo = new FileInfo(fileList[0]);
+        vm.ImageIterator.Pics = fileList;
+        vm.ImageIterator.Index = 0;
+        vm.ImageIterator.InitiateWatcher(fileInfo);
+        vm.ImageIterator.PreLoader.Clear();
+        await vm.ImageIterator.LoadPicAtIndex(0, vm).ConfigureAwait(false);
+        if (GalleryFunctions.IsBottomGalleryOpen)
+        {
+            await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
+        }
     }
 }

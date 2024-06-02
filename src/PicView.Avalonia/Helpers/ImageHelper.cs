@@ -6,7 +6,6 @@ using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
-using SkiaSharp;
 
 namespace PicView.Avalonia.Helpers;
 
@@ -79,18 +78,20 @@ public static class ImageHelper
                         return imageModel;
                     }
                     using var magickImage = new MagickImage();
+                    await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
+                        FileShare.ReadWrite, 4096, true);
                     if (imageModel.FileInfo.Length >= 2147483648)
                     {
                         await Task.Run(() =>
                         {
                             // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
                             // ReSharper disable once MethodHasAsyncOverload
-                            magickImage.Read(fileInfo.FullName);
+                            magickImage.Read(fileStream);
                         }).ConfigureAwait(false);
                     }
                     else
                     {
-                        await magickImage.ReadAsync(fileInfo.FullName).ConfigureAwait(false);
+                        await magickImage.ReadAsync(fileStream).ConfigureAwait(false);
                     }
                     magickImage.Format = MagickFormat.Png;
                     await using var memoryStream = new MemoryStream();
@@ -111,7 +112,7 @@ public static class ImageHelper
 
                     async Task AddThumb()
                     {
-                        var thumb = await GetThumb(fileInfo, height).ConfigureAwait(false);
+                        var thumb = await GetThumb(fileInfo.FullName, height).ConfigureAwait(false);
                         imageModel.Image = thumb;
                         imageModel.PixelWidth = thumb?.PixelSize.Width ?? 0;
                         imageModel.PixelHeight = thumb?.PixelSize.Height ?? 0;
@@ -134,12 +135,12 @@ public static class ImageHelper
         }
     }
     
-    private static async Task<Bitmap?> GetThumb(FileInfo fileInfo, int height)
+    private static async Task<Bitmap?> GetThumb(string path, int height)
     {
         try
         {
             using var magick = new MagickImage();
-            magick.Ping(fileInfo.FullName);
+            magick.Ping(path);
             var profile = magick.GetExifProfile();
             if (profile == null)
             {
@@ -161,18 +162,11 @@ public static class ImageHelper
         }
         async Task<Bitmap> CreateThumb(IMagickImage magick)
         {
-            if (fileInfo.Length >= 2147483648)
-            {
-                await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
-                    FileShare.ReadWrite, 4096, true);
-                // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
-                // ReSharper disable once MethodHasAsyncOverload
-                magick.Read(fileStream);
-            }
-            else
-            {
-                await magick.ReadAsync(fileInfo.FullName);
-            }
+            await using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite, 4096, true);
+            // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+            // ReSharper disable once MethodHasAsyncOverload
+            magick.Read(fileStream);
 
             var geometry = new MagickGeometry(0, height);
             magick.Thumbnail(geometry);

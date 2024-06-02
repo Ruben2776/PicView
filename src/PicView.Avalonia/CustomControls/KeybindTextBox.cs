@@ -161,8 +161,12 @@ public class KeybindTextBox : TextBox
 
         void Remove()
         {
-            var prevKey = KeybindingsHelper.CustomShortcuts.FirstOrDefault(x => x.Value == function).Key;
-            KeybindingsHelper.CustomShortcuts.Remove(prevKey);
+            var keys = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName)
+                ?.Select(x => x.Key).ToList() ?? null;
+            if (keys is not null)
+            {
+                KeybindingsHelper.CustomShortcuts.Remove(Alt ? keys.LastOrDefault() : keys.FirstOrDefault());
+            }
         }
     }
 
@@ -177,34 +181,6 @@ public class KeybindTextBox : TextBox
         {
             switch (MethodName)
             {
-                case "LastImage":
-                    var lastKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Next")
-                        ?.Select(x => x.Key).ToList() ?? null;
-                    return lastKey is not { Count: > 0 } ?
-                        string.Empty :
-                        $"{TranslationHelper.GetTranslation("Ctrl")} + {(Alt ? lastKey.LastOrDefault().ToString() : lastKey.FirstOrDefault().ToString())}";
-
-                case "FirstImage":
-                    var firstKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Prev")
-                        ?.Select(x => x.Key).ToList() ?? null;
-                    return firstKey is not { Count: > 0 } ?
-                        string.Empty :
-                        $"{TranslationHelper.GetTranslation("Ctrl")} + {(Alt ? firstKey.LastOrDefault().ToString() : firstKey.FirstOrDefault().ToString())}";
-
-                case "NextFolder":
-                    var nextFolderKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Next")
-                        ?.Select(x => x.Key).ToList() ?? null;
-                    return nextFolderKey is not { Count: > 0 } ?
-                        string.Empty :
-                        $"{TranslationHelper.GetTranslation("Shift")} + {(Alt ? nextFolderKey.LastOrDefault().ToString() : nextFolderKey.FirstOrDefault().ToString())}";
-
-                case "PrevFolder":
-                    var prevFolderKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Prev")
-                        ?.Select(x => x.Key).ToList() ?? null;
-                    return prevFolderKey is not { Count: > 0 } ?
-                        string.Empty :
-                        $"{TranslationHelper.GetTranslation("Shift")} + {(Alt ? prevFolderKey.LastOrDefault().ToString() : prevFolderKey.FirstOrDefault().ToString())}";
-
                 case "ScrollUpInternal":
                     var rotateRightKey = KeybindingsHelper.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Up")
                         ?.Select(x => x.Key).ToList() ?? null;

@@ -1,26 +1,149 @@
 <UserControl
     Height="{CompiledBinding BottombarHeight}"
     IsVisible="{Binding IsBottomToolbarShown}"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.BottomBar"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
 
+    <UserControl.ContextMenu>
+        <ContextMenu x:Name="MainContextMenu">
+
+            <!--  Next  -->
+            <MenuItem Command="{CompiledBinding NextCommand}" Header="{CompiledBinding NextImage}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource PlayGeometry}"
+                        Height="11"
+                        Stretch="Fill"
+                        Stroke="{StaticResource MainIconColor}"
+                        StrokeThickness="1"
+                        Width="11" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <!--  Prev  -->
+            <MenuItem Command="{CompiledBinding PreviousCommand}" Header="{CompiledBinding PrevImage}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource PlayGeometry}"
+                        Height="11"
+                        Stretch="Fill"
+                        Stroke="{StaticResource MainIconColor}"
+                        StrokeThickness="1"
+                        Width="11">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="-1" />
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+
+            <!--  First Image  -->
+            <MenuItem Command="{CompiledBinding FirstCommand}" Header="{CompiledBinding FirstImage}">
+                <MenuItem.Icon>
+                    <Image Height="14" Width="14">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M400,111L400,401C400,418.44,383,429.52,369,421.16L121.09,272.79C108.97,265.54,108.97,246.46,121.09,239.21L369,90.84C383,82.48,400,93.56,400,111z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainIconColor}"
+                                                    LineJoin="Miter"
+                                                    MiterLimit="1"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,80L112,432">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainIconColor}"
+                                                    LineJoin="Miter"
+                                                    MiterLimit="1"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <!--  Last Image  -->
+            <MenuItem Command="{CompiledBinding LastCommand}" Header="{CompiledBinding LastImage}">
+                <MenuItem.Icon>
+                    <Image Height="14" Width="14">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainIconColor}"
+                                                    LineJoin="Miter"
+                                                    MiterLimit="1"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M400,80L400,432">
+                                            <GeometryDrawing.Pen>
+                                                <Pen
+                                                    Brush="{StaticResource MainIconColor}"
+                                                    LineJoin="Miter"
+                                                    MiterLimit="1"
+                                                    Thickness="32" />
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <Separator />
+
+            <!--  Next folder  -->
+            <MenuItem Command="{CompiledBinding NextFolderCommand}" Header="{CompiledBinding NextFolder}">
+                <MenuItem.Icon>
+                    <Image
+                        Height="14"
+                        Source="{StaticResource FolderImage}"
+                        Width="14" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <!--  Prev folder  -->
+            <MenuItem Command="{CompiledBinding PreviousFolderCommand}" Header="{CompiledBinding PrevFolder}">
+                <MenuItem.Icon>
+                    <Image
+                        Height="14"
+                        Source="{StaticResource FolderImage}"
+                        Width="14" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+
     <Border
         Background="{StaticResource SecondaryBackgroundColor}"
         BorderBrush="{StaticResource MainBorderColor}"
         BorderThickness="0,1,0,0"
         CornerRadius="0,0,8,8"
-        Height="26">
+        Height="{CompiledBinding BottombarHeight}">
         <Panel>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
