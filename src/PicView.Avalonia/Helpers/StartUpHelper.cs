@@ -30,6 +30,14 @@ public static class StartUpHelper
         }
         else
         {
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
+            {
+                WindowHelper.Fullscreen(vm, desktop);
+            }
+            else if (SettingsHelper.Settings.WindowProperties.Maximized)
+            {
+                WindowHelper.Maximize();
+            }
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
