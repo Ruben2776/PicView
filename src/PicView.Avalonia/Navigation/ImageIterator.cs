@@ -307,40 +307,41 @@ public class ImageIterator
             var preLoadValue = PreLoader.Get(index, Pics);
             if (preLoadValue is not null)
             {
-                if (preLoadValue.IsLoading)
+                var showThumb = true;
+                while (preLoadValue.IsLoading)
                 {
-                    vm.SetLoadingTitle();
-                    await Task.Delay(250);
+                    if (showThumb)
+                    {
+                        await NavigationHelper.LoadingPreview(index, vm);
+                        if (Index != index)
+                        {
+                            return;
+                        }
+                        vm.IsLoading = true;
+                        showThumb = false;
+                    }
+                    
+                    await Task.Delay(20);
                     if (Index != index)
                     {
                         return;
                     }
-
-                    if (preLoadValue.IsLoading)
-                    {
-                        vm.IsLoading = true;
-                        await NavigationHelper.LoadingPreview(index, vm);
-                    }
-
-                    var x = 0;
-                    while (preLoadValue.IsLoading)
-                    {
-                        await Task.Delay(20);
-                        x++;
-                        if (x > 10)
-                        {
-                            break;
-                        }
-                    }
                 }
             }
-
-            if (preLoadValue is null)
+            else
             {
-                vm.IsLoading = true;
                 await NavigationHelper.LoadingPreview(index, vm);
-                await PreLoader.AddAsync(index, Pics);
-                preLoadValue = PreLoader.Get(index, Pics);
+                vm.IsLoading = true;
+                var added = await PreLoader.AddAsync(index, Pics);
+                if (Index != index)
+                {
+                    // Skip loading if user went to next value
+                    return;
+                }
+                if (added)
+                {
+                    preLoadValue = PreLoader.Get(index, Pics);
+                }
             }
 
             if (Index != index || preLoadValue is null)
