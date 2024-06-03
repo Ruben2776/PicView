@@ -187,6 +187,7 @@ public static class NavigationHelper
 
         if (fileList is null)
         {
+            vm.SetTitle();
             return;
         }
         var fileInfo = new FileInfo(fileList[0]);
