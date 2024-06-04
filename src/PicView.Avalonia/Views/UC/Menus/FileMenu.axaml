@@ -73,7 +73,9 @@
                     BorderThickness="0,0,1,0"
                     Canvas.Left="90"
                     Classes="hover"
-                    Command="{Binding RecycleFileCommand}"
+                    Command="{CompiledBinding RecycleFileCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
                     Height="45"
                     ToolTip.Tip="{Binding DeleteFile}"
                     Width="45">

@@ -702,7 +702,7 @@ public static class FunctionsHelper
         }
         await Task.Run(() =>
         {
-            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo.FullName, false);
+            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo.FullName, true);
         });
     }
 

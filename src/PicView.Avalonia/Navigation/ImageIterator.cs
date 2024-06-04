@@ -6,9 +6,16 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Views;
+using PicView.Avalonia.Views.UC;
+using PicView.Core.Gallery;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -121,7 +128,7 @@ public class ImageIterator
         return next;
     }
 
-    private void OnFileRenamed(RenamedEventArgs e)
+    private async Task OnFileRenamed(RenamedEventArgs e)
     {
         if (IsFileBeingRenamed)
         {
@@ -159,12 +166,32 @@ public class ImageIterator
             return;
         }
 
-        PreLoader.Remove(index, Pics);
+        await PreLoader.RefreshFileInfo(index, Pics);
 
         _running = false;
         //FileHistoryNavigation.Rename(e.OldFullPath, e.FullPath);
-        //await UpdateGalleryAsync(index, oldIndex, fileInfo, e.OldFullPath, e.FullPath, sameFile).ConfigureAwait(false);
         //await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var mainView = await Dispatcher.UIThread.InvokeAsync(() => desktop.MainWindow.GetControl<MainView>("MainView"));
+
+        var galleryListBox = mainView.GalleryView.GalleryListBox;
+        if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
+        {
+            if (galleryListBox.Items[index] is GalleryItem item)
+            {
+                var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    item.FileName.Text = galleryThumbInfo.FileName;
+                    item.FileSize.Text = galleryThumbInfo.FileSize;
+                    item.FileDate.Text = galleryThumbInfo.FileDate;
+                    item.FileSize.Text = galleryThumbInfo.FileSize;
+                });
+            }
+        }
         FileRenamed?.Invoke(this, e);
     }
 
@@ -186,7 +213,8 @@ public class ImageIterator
 
         if (_running) { return; }
         _running = true;
-        var sameFile = Index == Pics.IndexOf(e.FullPath);
+        var index = Pics.IndexOf(e.FullPath);
+        var sameFile = Index == index;
         if (!Pics.Remove(e.FullPath))
         {
             return;
@@ -198,6 +226,18 @@ public class ImageIterator
         _running = false;
 
         //FileHistoryNavigation.Remove(e.FullPath);
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var mainView = Dispatcher.UIThread.Invoke(() => desktop.MainWindow.GetControl<MainView>("MainView"));
+
+        var galleryListBox = mainView.GalleryView.GalleryListBox;
+        if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
+        {
+            galleryListBox.Items.RemoveAt(index);
+        }
+
         FileDeleted?.Invoke(this, sameFile);
     }
 
@@ -255,29 +295,42 @@ public class ImageIterator
         
         FileAdded?.Invoke(this, e);
         
-        /*if (_vm.GalleryItems.Count > 0 && _vm.ImageIterator.Index < _vm.GalleryItems.Count)
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var galleryViewModel = new GalleryViewModel(_vm.GalleryItemSize);
-            galleryViewModel.ImageSource = await ThumbnailHelper.GetThumb(fileInfo, (int)galleryViewModel.GalleryItemSize);
-            var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(0, null, fileInfo);
-            galleryViewModel.FileLocation = galleryThumbInfo.FileLocation;
-            galleryViewModel.FileDate = galleryThumbInfo.FileDate;
-            galleryViewModel.FileSize = galleryThumbInfo.FileSize;
-            galleryViewModel.FileName = galleryThumbInfo.FileName;
-            if (_vm.GalleryItems.Contains(galleryViewModel))
+            return;
+        }
+        var mainView =
+            await Dispatcher.UIThread.InvokeAsync(() => desktop.MainWindow.GetControl<MainView>("MainView"));
+
+        var galleryListBox = mainView.GalleryView.GalleryListBox;
+        if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
+        {
+            var galleryItem = galleryListBox.Items[index] as GalleryItem;
+            if (galleryItem == null) { return; }
+            var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)_vm.GetGalleryItemHeight);
+            ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
+            var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
+            galleryItem.FileLocation.Text = galleryThumbInfo.FileLocation;
+            galleryItem.FileDate.Text = galleryThumbInfo.FileDate;
+            galleryItem.FileSize.Text = galleryThumbInfo.FileSize;
+            galleryItem.FileName.Text = galleryThumbInfo.FileName;
+            if (galleryListBox.Items.Contains(galleryItem))
             {
                 return;
             }
 
             try
             {
-                _vm.GalleryItems.Insert(_vm.ImageIterator.Pics.IndexOf(fileInfo.FullName), galleryViewModel);
+                galleryListBox.Items.Add(galleryItem);
+                await SortingHelper.SortGalleryItems(Pics, _vm);
             }
             catch (Exception exception)
             {
+#if DEBUG
                 Console.WriteLine(exception);
+#endif
             }
-        }*/
+        }
     }
 
     public async Task LoadNextPic(NavigateTo navigateTo, MainViewModel vm)

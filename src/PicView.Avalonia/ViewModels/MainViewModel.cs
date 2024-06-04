@@ -239,7 +239,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? ReloadCommand { get; }
     public ReactiveCommand<string, Unit>? PrintCommand { get; }
     public ReactiveCommand<string, Unit>? DeleteFileCommand { get; }
-    public ReactiveCommand<Unit, Unit>? RecycleFileCommand { get; }
+    public ReactiveCommand<string, Unit>? RecycleFileCommand { get; }
     public ReactiveCommand<Unit, Unit>? CloseMenuCommand { get; }
     public ReactiveCommand<Unit, Unit>? ToggleFileMenuCommand { get; }
     public ReactiveCommand<Unit, Unit>? ToggleImageMenuCommand { get; }
@@ -1656,6 +1656,18 @@ public class MainViewModel : ViewModelBase
         }
         await Task.Run(() =>
         {
+            FileDeletionHelper.DeleteFileWithErrorMsg(path, recycle: false);
+        });
+    }
+    
+    private async Task RecycleFileTask(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
             FileDeletionHelper.DeleteFileWithErrorMsg(path, recycle: true);
         });
     }
@@ -1940,7 +1952,7 @@ public class MainViewModel : ViewModelBase
 
         DeleteFileCommand = ReactiveCommand.CreateFromTask<string>(DeleteFileTask);
 
-        RecycleFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RecycleFile);
+        RecycleFileCommand = ReactiveCommand.CreateFromTask<string>(RecycleFileTask);
 
         LocateOnDiskCommand = ReactiveCommand.CreateFromTask<string>(LocateOnDiskTask);
         

@@ -161,7 +161,10 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{CompiledBinding DeleteFile}">
+                <MenuItem
+                    Command="{CompiledBinding RecycleFileCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding DeleteFile}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource RecycleGeometry}"
