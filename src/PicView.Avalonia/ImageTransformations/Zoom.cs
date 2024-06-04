@@ -22,7 +22,7 @@ public partial class ZoomBorder : Border
         if (maximum < minimum)
             throw new ArgumentException($"Parameter {nameof(maximum)} is lower than {nameof(minimum)}.");
 
-        return Min(Max(value, minimum), maximum);
+        return Math.Min(Math.Max(value, minimum), maximum);
     }
 
     /// <summary>

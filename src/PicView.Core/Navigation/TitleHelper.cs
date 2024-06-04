@@ -123,6 +123,7 @@ public static class TitleHelper
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="path"></param>
+    /// <param name="zoomValue"></param>
     /// <returns></returns>
     public static string[] TitleString(int width, int height, string path, double zoomValue)
     {

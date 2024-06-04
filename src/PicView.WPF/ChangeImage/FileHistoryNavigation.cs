@@ -1,5 +1,4 @@
 ﻿using PicView.Core.Config;
-using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using PicView.WPF.ChangeTitlebar;
 using PicView.WPF.PicGallery;
@@ -11,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using PicView.Core.Extensions;
 
 namespace PicView.WPF.ChangeImage;
 
