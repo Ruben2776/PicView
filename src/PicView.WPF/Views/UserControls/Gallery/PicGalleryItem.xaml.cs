@@ -8,10 +8,10 @@ using PicView.WPF.FileHandling;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.PicGallery;
 using PicView.Core.Config;
+using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using PicView.WPF.SystemIntegration;
 using static PicView.WPF.PicGallery.GalleryNavigation;
-using PicView.Core.FileHandling;
 using PicView.Windows.Wallpaper;
 
 namespace PicView.WPF.Views.UserControls.Gallery;

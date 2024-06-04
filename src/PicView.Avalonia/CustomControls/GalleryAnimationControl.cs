@@ -69,7 +69,10 @@ public class GalleryAnimationControl : UserControl
         });
 
         vm.GalleryOrientation = Orientation.Vertical;
-        UIHelper.SetStretchMode(vm);
+        if (!GalleryLoad.IsLoading)
+        {
+            GalleryStretchMode.SetStretchMode(vm);
+        }
         vm.IsGalleryCloseIconVisible = true;
         
         const double from = 0d;
@@ -132,7 +135,11 @@ public class GalleryAnimationControl : UserControl
         });
         
         vm.GalleryOrientation = Orientation.Horizontal;
-        UIHelper.SetStretchMode(vm);
+        if (!GalleryLoad.IsLoading)
+        {
+            GalleryStretchMode.SetStretchMode(vm);
+        }
+        
         vm.IsGalleryCloseIconVisible = false;
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         
@@ -206,7 +213,10 @@ public class GalleryAnimationControl : UserControl
             Height = to;
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
-        UIHelper.SetStretchMode(vm);
+        if (!GalleryLoad.IsLoading)
+        {
+            GalleryStretchMode.SetStretchMode(vm);
+        }
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         
         _isAnimating = false;
@@ -240,7 +250,10 @@ public class GalleryAnimationControl : UserControl
             Height = double.NaN;
             vm.GalleryOrientation = Orientation.Horizontal;
         });
-        UIHelper.SetStretchMode(vm);
+        if (!GalleryLoad.IsLoading)
+        {
+            GalleryStretchMode.SetStretchMode(vm);
+        }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             GalleryNavigation.CenterScrollToSelectedItem(vm);

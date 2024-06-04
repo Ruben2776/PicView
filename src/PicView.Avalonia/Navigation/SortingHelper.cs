@@ -1,19 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using DynamicData;
-using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
-using PicView.Core.Gallery;
 
 namespace PicView.Avalonia.Navigation;
 

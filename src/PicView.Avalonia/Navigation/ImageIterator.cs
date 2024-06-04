@@ -305,8 +305,7 @@ public class ImageIterator
         var galleryListBox = mainView.GalleryView.GalleryListBox;
         if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
         {
-            var galleryItem = galleryListBox.Items[index] as GalleryItem;
-            if (galleryItem == null) { return; }
+            if (galleryListBox.Items[index] is not GalleryItem galleryItem) { return; }
             var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)_vm.GetGalleryItemHeight);
             ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
             var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
@@ -370,7 +369,6 @@ public class ImageIterator
                         {
                             return;
                         }
-                        vm.IsLoading = true;
                         showThumb = false;
                     }
                     
@@ -384,7 +382,6 @@ public class ImageIterator
             else
             {
                 await NavigationHelper.LoadingPreview(index, vm);
-                vm.IsLoading = true;
                 var added = await PreLoader.AddAsync(index, Pics);
                 if (Index != index)
                 {
@@ -531,7 +528,6 @@ public class ImageIterator
 
                 if (preLoadValue.IsLoading)
                 {
-                    vm.IsLoading = true;
                     await NavigationHelper.LoadingPreview(index, vm);
                 }
 
@@ -557,7 +553,6 @@ public class ImageIterator
                 return;
             }
         }
-        vm.IsLoading = false;
         await UpdateSourceTask(vm, preLoadValue);
     }
     

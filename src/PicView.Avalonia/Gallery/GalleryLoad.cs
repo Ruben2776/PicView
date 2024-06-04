@@ -20,9 +20,9 @@ public static class GalleryLoad
     private static string? _currentDirectory;
     private static CancellationTokenSource? _cancellationTokenSource;
 
-    public static async Task LoadGallery(MainViewModel viewModel, string currentDirectory)
+    public static async Task LoadGallery(MainViewModel vm, string currentDirectory)
     {
-        if (viewModel.ImageIterator.Pics.Count == 0)
+        if (vm.ImageIterator.Pics.Count == 0)
         {
             return;
         }
@@ -69,12 +69,16 @@ public static class GalleryLoad
         _currentDirectory = currentDirectory;
         IsLoading = true;
         var cancellationToken = _cancellationTokenSource.Token;
-        var index = viewModel.ImageIterator.Index;
-        var galleryItemSize = Math.Max(viewModel.GetBottomGalleryItemHeight, viewModel.GetFullGalleryItemHeight);
+        var index = vm.ImageIterator.Index;
+        var galleryItemSize = Math.Max(vm.GetBottomGalleryItemHeight, vm.GetFullGalleryItemHeight);
 
         try
         {
-            await Loop(0, viewModel.ImageIterator.Pics.Count, cancellationToken);
+            if (GalleryFunctions.IsBottomGalleryOpen)
+            {
+                GalleryStretchMode.SetSquareFillStretch(vm);
+            }
+            await Loop(0, vm.ImageIterator.Pics.Count, cancellationToken);
             
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -83,15 +87,16 @@ public static class GalleryLoad
                     return;
                 }
                 var horizontalItems = (int)Math.Floor(galleryListBox.Bounds.Width / galleryItem.ImageBorder.MinWidth);
-                index = (viewModel.ImageIterator.Index - horizontalItems) % viewModel.ImageIterator.Pics.Count;
+                index = (vm.ImageIterator.Index - horizontalItems) % vm.ImageIterator.Pics.Count;
             });
 
             index = index < 0 ? 0 : index;
             var maxDegreeOfParallelism = Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : 2;
             ParallelOptions options = new() { MaxDegreeOfParallelism = maxDegreeOfParallelism };
-            await AsyncLoop(index, viewModel.ImageIterator.Pics.Count, options, cancellationToken);
+            await AsyncLoop(index, vm.ImageIterator.Pics.Count, options, cancellationToken);
             await AsyncLoop(0, index, options, cancellationToken);
-            
+            GalleryStretchMode.SetStretchMode(vm);
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
         }
         catch (OperationCanceledException)
         {
@@ -134,7 +139,7 @@ public static class GalleryLoad
                     {
                         var galleryItem = new GalleryItem
                         {
-                            DataContext = viewModel,
+                            DataContext = vm,
                             FileName = { Text = loading },
                         };
                         var i1 = i;
@@ -142,17 +147,17 @@ public static class GalleryLoad
                         {
                             if (GalleryFunctions.IsFullGalleryOpen)
                             {
-                                await GalleryFunctions.ToggleGallery(viewModel);
+                                await GalleryFunctions.ToggleGallery(vm);
                             }
-                            await viewModel.ImageIterator.LoadPicAtIndex(i1, viewModel);
+                            await vm.ImageIterator.LoadPicAtIndex(i1, vm);
                         };
                         galleryListBox.Items.Add(galleryItem);
-                        if (i != viewModel.ImageIterator.Index)
+                        if (i != vm.ImageIterator.Index)
                         {
                             return;
                         }
 
-                        viewModel.SelectedGalleryItemIndex = i;
+                        vm.SelectedGalleryItemIndex = i;
                         galleryListBox.SelectedItem = galleryItem;
                     }, DispatcherPriority.Background, ct);
 
@@ -172,7 +177,7 @@ public static class GalleryLoad
             {
                 ct.ThrowIfCancellationRequested();
 
-                var fileInfo = new FileInfo(viewModel.ImageIterator.Pics[i]);
+                var fileInfo = new FileInfo(vm.ImageIterator.Pics[i]);
                 var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfo, isThumb: true,
                     (int)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, null, fileInfo);

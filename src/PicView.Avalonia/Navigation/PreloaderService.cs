@@ -20,8 +20,8 @@ public class PreLoader
     }
 
     private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
-    private const int PositiveIterations = 5;
-    private const int NegativeIterations = 2;
+    private const int PositiveIterations = 6;
+    private const int NegativeIterations = 4;
     public const int MaxCount = PositiveIterations + NegativeIterations + 2;
 
 #if DEBUG
@@ -315,7 +315,7 @@ public class PreLoader
                         return;
                     }
                     var index = (nextStartingIndex + i) % list.Count;
-                    _ = AddAsync(index, list);
+                    await AddAsync(index, list);
                     array[i] = index;
                 }
             }
@@ -350,7 +350,7 @@ public class PreLoader
                         return;
                     }
                     var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    _ = AddAsync(index, list);
+                    await AddAsync(index, list);
                     array[i] = index;
                 }
             }

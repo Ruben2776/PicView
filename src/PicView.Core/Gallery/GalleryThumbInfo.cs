@@ -1,6 +1,7 @@
 ﻿using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using System.Globalization;
+using PicView.Core.Extensions;
 
 namespace PicView.Core.Gallery;
 

@@ -1786,11 +1786,11 @@ public class MainViewModel : ViewModelBase
         {
             if (GalleryFunctions.IsFullGalleryOpen)
             {
-                await UIHelper.ChangeFullGalleryStretchSquare(this);
+                await GalleryStretchMode.ChangeFullGalleryStretchSquare(this);
             }
             else
             {
-                await UIHelper.ChangeBottomGalleryStretchSquare(this);
+                await GalleryStretchMode.ChangeBottomGalleryStretchSquare(this);
             }
             return;
         }
@@ -1799,11 +1799,11 @@ public class MainViewModel : ViewModelBase
         {
             if (GalleryFunctions.IsFullGalleryOpen)
             {
-                await UIHelper.ChangeFullGalleryStretchSquareFill(this);
+                await GalleryStretchMode.ChangeFullGalleryStretchSquareFill(this);
             }
             else
             {
-                await UIHelper.ChangeBottomGalleryStretchSquareFill(this);
+                await GalleryStretchMode.ChangeBottomGalleryStretchSquareFill(this);
             }
             return;
         }
@@ -1812,11 +1812,11 @@ public class MainViewModel : ViewModelBase
         {
             if (GalleryFunctions.IsFullGalleryOpen)
             {
-                await UIHelper.ChangeFullGalleryItemStretch(this, stretch);
+                await GalleryStretchMode.ChangeFullGalleryItemStretch(this, stretch);
             }
             else
             {
-                await UIHelper.ChangeBottomGalleryItemStretch(this, stretch);
+                await GalleryStretchMode.ChangeBottomGalleryItemStretch(this, stretch);
             }
         }
     }
