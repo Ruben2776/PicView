@@ -41,6 +41,12 @@ Chocolatey:
 cmd $> choco install picview
 ```
 
+Scoop:
+```cmd
+cmd $> scoop bucket add extras
+cmd $> scoop install extras/picview
+```
+
 # Features and screenshots
 ![configure-ui02 - Copy (2)](https://github.com/Ruben2776/PicView/assets/4200419/2459b663-ca42-415c-8d98-b6f45da0134c)
 
