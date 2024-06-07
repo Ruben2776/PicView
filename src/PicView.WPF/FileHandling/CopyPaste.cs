@@ -223,7 +223,6 @@ internal static class CopyPaste
             }
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                // Don't show drop message any longer
                 CloseToolTipMessage();
 
                 ConfigureWindows.GetMainWindow.Activate();
@@ -257,7 +256,6 @@ internal static class CopyPaste
             
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                // Don't show drop message any longer
                 CloseToolTipMessage();
 
                 ConfigureWindows.GetMainWindow.Activate();
