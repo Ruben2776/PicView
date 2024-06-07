@@ -221,6 +221,17 @@ internal static class CopyPaste
             {
                 return;
             }
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                // Don't show drop message any longer
+                CloseToolTipMessage();
+
+                ConfigureWindows.GetMainWindow.Activate();
+                if (UC.GetStartUpUC is not null)
+                {
+                    UC.GetStartUpUC.Visibility = Visibility.Collapsed;
+                }
+            });
 
             await LoadPic.LoadPicFromStringAsync(files[0]).ConfigureAwait(false);
 
@@ -243,11 +254,30 @@ internal static class CopyPaste
             {
                 return;
             }
+            
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                // Don't show drop message any longer
+                CloseToolTipMessage();
+
+                ConfigureWindows.GetMainWindow.Activate();
+                if (UC.GetStartUpUC is not null)
+                {
+                    UC.GetStartUpUC.Visibility = Visibility.Collapsed;
+                }
+            });
+
 
             var check = ErrorHelper.CheckIfLoadableString(s);
             switch (check)
             {
-                case "": return;
+                case "":
+                    await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        ErrorHandling.Unload(ConfigureWindows.GetMainWindow.MainImage.Source is null);
+                    });
+                   
+                    return;
                 default:
                     await LoadPic.LoadPiFromFileAsync(check).ConfigureAwait(false);
                     return;
