@@ -31,6 +31,11 @@ internal static class UpdateUIValues
             SettingsHelper.Settings.Sorting.SortPreference = (int)sortFilesBy;
         }
 
+        if (ErrorHandling.CheckOutOfRange())
+        {
+            return;
+        }
+
         await GetMainWindow.Dispatcher.InvokeAsync(SetTitle.SetLoadingString);
 
         var preloadValue = PreLoader.Get(Navigation.FolderIndex);
