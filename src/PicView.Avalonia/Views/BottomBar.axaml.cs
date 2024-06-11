@@ -63,6 +63,6 @@ public partial class BottomBar : UserControl
         }
 
         var hostWindow = (Window)VisualRoot;
-        WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
+        hostWindow.BeginMoveDrag(e);
     }
 }

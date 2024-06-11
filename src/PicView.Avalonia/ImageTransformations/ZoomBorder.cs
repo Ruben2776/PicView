@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Animation;
@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Transformation;
 using Avalonia.Reactive;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.ImageTransformations;
 public partial class ZoomBorder : Border
@@ -32,29 +33,29 @@ public partial class ZoomBorder : Border
     /// <param name="panelHeight">The panel height.</param>
     /// <param name="elementWidth">The element width.</param>
     /// <param name="elementHeight">The element height.</param>
-    /// <param name="mode">The stretch mode.</param>
-    public static Matrix CalculateMatrix(double panelWidth, double panelHeight, double elementWidth, double elementHeight, StretchMode mode)
+    /// <param name="Stretch">The stretch mode.</param>
+    public static Matrix CalculateMatrix(double panelWidth, double panelHeight, double elementWidth, double elementHeight, Stretch stretch)
     {
         var zx = panelWidth / elementWidth;
         var zy = panelHeight / elementHeight;
         var cx = elementWidth / 2.0;
         var cy = elementHeight / 2.0;
 
-        switch (mode)
+        switch (stretch)
         {
             default:
-            case StretchMode.None:
+            case Stretch.None:
                 return Matrix.Identity;
-            case StretchMode.Fill:
+            case Stretch.Fill:
                 return MatrixHelper.ScaleAt(zx, zy, cx, cy);
-            case StretchMode.Uniform:
+            case Stretch.Uniform:
             {
-                var zoom = Min(zx, zy);
+                var zoom = Math.Min(zx, zy);
                 return MatrixHelper.ScaleAt(zoom, zoom, cx, cy);
             }
-            case StretchMode.UniformToFill:
+            case Stretch.UniformToFill:
             {
-                var zoom = Max(zx, zy);
+                var zoom = Math.Max(zx, zy);
                 return MatrixHelper.ScaleAt(zoom, zoom, cx, cy);
             }
         }
@@ -93,7 +94,7 @@ public partial class ZoomBorder : Border
             return size;
         }
 
-        AutoFit(size.Width, size.Height, _element.Bounds.Width, _element.Bounds.Height);
+        None(size.Width, size.Height, _element.Bounds.Width, _element.Bounds.Height);
 
         return size;
     }
@@ -174,7 +175,7 @@ public partial class ZoomBorder : Border
         {
             return;
         }
-        PointerWheelChanged -= Border_PointerWheelChanged;
+        //PointerWheelChanged -= Border_PointerWheelChanged;
         PointerPressed -= Border_PointerPressed;
         PointerReleased -= Border_PointerReleased;
         PointerMoved -= Border_PointerMoved;
@@ -182,14 +183,15 @@ public partial class ZoomBorder : Border
         _element = null;
     }
 
-    private void Wheel(PointerWheelEventArgs e)
+    public double Wheel(PointerWheelEventArgs e)
     {
         if (_element == null || _captured)
         {
-            return;
+            return 0;
         }
         var point = e.GetPosition(_element);
         ZoomDeltaTo(e.Delta.Y, point.X, point.Y);
+        return ZoomX;
     }
 
     private void Pressed(PointerPressedEventArgs e)
@@ -198,21 +200,16 @@ public partial class ZoomBorder : Border
         {
             return;
         }
-        var button = PanButton;
-        var properties = e.GetCurrentPoint(this).Properties;
-        if ((!properties.IsLeftButtonPressed || button != ButtonName.Left)
-            && (!properties.IsRightButtonPressed || button != ButtonName.Right)
-            && (!properties.IsMiddleButtonPressed || button != ButtonName.Middle))
+
+        if (_element == null || _captured != false || _isPanning != false)
         {
             return;
         }
-        if (_element != null && _captured == false && _isPanning == false)
-        {
-            var point = e.GetPosition(_element);
-            BeginPanTo(point.X, point.Y);
-            _captured = true;
-            _isPanning = true;
-        }
+
+        var point = e.GetPosition(_element);
+        BeginPanTo(point.X, point.Y);
+        _captured = true;
+        _isPanning = true;
     }
 
     private void Released(PointerReleasedEventArgs e)
@@ -315,35 +312,16 @@ public partial class ZoomBorder : Border
         {
             return;
         }
-
-        Animation.Transitions? backupTransitions = null;
-
-        if (skipTransitions)
-        {
-            Animation.Animatable? anim = _element as Animation.Animatable;
-
-            if (anim != null)
-            {
-                backupTransitions = anim.Transitions;
-                anim.Transitions = null;
-            }
-        }
+        
+        // _element.Transitions ??=
+        // [
+        //     new TransformOperationsTransition { Property = RenderTransformProperty, Duration = TimeSpan.FromSeconds(.2) },
+        // ];
 
         _element.RenderTransformOrigin = new RelativePoint(new Point(0, 0), RelativeUnit.Relative);
         _transformBuilder = new TransformOperations.Builder(1);
         _transformBuilder.AppendMatrix(_matrix);
         _element.RenderTransform = _transformBuilder.Build();
-
-        if (skipTransitions && backupTransitions != null)
-        {
-            Animation.Animatable? anim = _element as Animation.Animatable;
-
-            if (anim != null)
-            {
-                anim.Transitions = backupTransitions;
-            }
-        }
-
         _element.InvalidateVisual();
     }
 
@@ -469,8 +447,8 @@ public partial class ZoomBorder : Border
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void ZoomDeltaTo(double delta, double x, double y, bool skipTransitions = false)
     {
-        double realDelta = Sign(delta) * Pow(Abs(delta), PowerFactor);
-        ZoomTo(Pow(ZoomSpeed, realDelta), x, y, skipTransitions || Abs(realDelta) <= TransitionThreshold);
+        var realDelta = Math.Sign(delta) * Math.Pow(Math.Abs(delta), PowerFactor);
+        ZoomTo(Math.Pow(ZoomSpeed, realDelta), x, y, skipTransitions || Math.Abs(realDelta) <= TransitionThreshold);
     }
 
     /// <summary>
@@ -575,7 +553,7 @@ public partial class ZoomBorder : Border
             return;
         }
 
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, StretchMode.None);
+        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.None);
         Invalidate(skipTransitions);
 
         _updating = false;
@@ -604,7 +582,7 @@ public partial class ZoomBorder : Border
             return;
         }
 
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, StretchMode.Fill);
+        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Fill);
         Invalidate(skipTransitions);
 
         _updating = false;
@@ -633,7 +611,7 @@ public partial class ZoomBorder : Border
             return;
         }
 
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, StretchMode.Uniform);
+        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Uniform);
         Invalidate(skipTransitions);
 
         _updating = false;
@@ -662,7 +640,7 @@ public partial class ZoomBorder : Border
             return;
         }
 
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, StretchMode.UniformToFill);
+        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.UniformToFill);
         Invalidate(skipTransitions);
 
         _updating = false;
@@ -682,41 +660,14 @@ public partial class ZoomBorder : Border
         {
             return;
         }
-        switch (Stretch)
-        {
-            case StretchMode.Fill:
-                Fill(panelWidth, panelHeight, elementWidth, elementHeight, skipTransitions);
-                break;
-            case StretchMode.Uniform:
-                Uniform(panelWidth, panelHeight, elementWidth, elementHeight, skipTransitions);
-                break;
-            case StretchMode.UniformToFill:
-                UniformToFill(panelWidth, panelHeight, elementWidth, elementHeight, skipTransitions);
-                break;
-            case StretchMode.None:
-                break;
-        }
-    }
 
-    /// <summary>
-    /// Set next stretch mode.
-    /// </summary>
-    public void ToggleStretchMode()
-    {
-        switch (Stretch)
+        if (SettingsHelper.Settings.ImageScaling.StretchImage)
         {
-            case StretchMode.None:
-                Stretch = StretchMode.Fill;
-                break;
-            case StretchMode.Fill:
-                Stretch = StretchMode.Uniform;
-                break;
-            case StretchMode.Uniform:
-                Stretch = StretchMode.UniformToFill;
-                break;
-            case StretchMode.UniformToFill:
-                Stretch = StretchMode.None;
-                break;
+            UniformToFill(panelWidth, panelHeight, elementWidth, elementHeight, skipTransitions);
+        }
+        else
+        {
+            Uniform(panelWidth, panelHeight, elementWidth, elementHeight, skipTransitions);
         }
     }
 
@@ -785,4 +736,4 @@ public partial class ZoomBorder : Border
         AutoFit(Bounds.Width, Bounds.Height, _element.Bounds.Width, _element.Bounds.Height, skipTransitions);
     }
 }
-*/
+

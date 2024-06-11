@@ -471,7 +471,10 @@
             IsVisible="{CompiledBinding IsLoading}"
             VerticalAlignment="Center"
             ZIndex="3" />
-        <ContentControl Content="{CompiledBinding CurrentView}" Margin="{CompiledBinding ImageMargin}" />
+        <ContentControl
+            ClipToBounds="True"
+            Content="{CompiledBinding CurrentView}"
+            Margin="{CompiledBinding ImageMargin}" />
         <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="0"

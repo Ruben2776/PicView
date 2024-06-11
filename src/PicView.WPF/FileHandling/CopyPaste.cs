@@ -245,7 +245,7 @@ internal static class CopyPaste
                 .UpdateImageAsync(TranslationHelper.GetTranslation("ClipboardImage"), Clipboard.GetImage())
                 .ConfigureAwait(false);
         }
-        else // text/string/adddress
+        else // text/string/address
         {
             var s = Clipboard.GetText(TextDataFormat.Text);
 

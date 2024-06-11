@@ -309,35 +309,6 @@ public partial class ImageViewer : UserControl
         var newTranslateValueX = Math.Abs(zoomValue - 1) > .2 ? absoluteX - point.X * zoomValue : 0;
         var newTranslateValueY = Math.Abs(zoomValue - 1) > .2 ? absoluteY - point.Y * zoomValue : 0;
         
-        var actualScrollWidth = ImageScrollViewer.Bounds.Width;
-        var actualBorderWidth = ImageZoomBorder.Bounds.Width;
-        var actualScrollHeight = ImageScrollViewer.Bounds.Height;
-        var actualBorderHeight = ImageZoomBorder.Bounds.Height;
-
-        var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
-        var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
-        var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
-        var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
-
-        if (isXOutOfBorder && newTranslateValueX < maxX || isXOutOfBorder == false && newTranslateValueX > maxX)
-        {
-            newTranslateValueX = maxX;
-        }
-
-        if (isXOutOfBorder && newTranslateValueY < maxY || isXOutOfBorder == false && newTranslateValueY > maxY)
-        {
-            newTranslateValueY = maxY;
-        }
-
-        if (isXOutOfBorder && newTranslateValueX > 0 || isXOutOfBorder == false && newTranslateValueX < 0)
-        {
-            newTranslateValueX = 0;
-        }
-
-        if (isYOutOfBorder && newTranslateValueY > 0 || isYOutOfBorder == false && newTranslateValueY < 0)
-        {
-            newTranslateValueY = 0;
-        }
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             _scaleTransform.ScaleX = zoomValue;
@@ -414,6 +385,24 @@ public partial class ImageViewer : UserControl
         vm.RotationAngle = 0;
         vm.ScaleX = 1;
     }
+    
+    /*public void PreparePanImage(object sender, PointerPressedEventArgs e)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        if (!desktop.MainWindow.IsActive || !desktop.MainWindow.IsVisible || _scaleTransform == null)
+        {
+            return;
+        }
+        
+        _start = e.GetPosition(MainImage);
+        _origin = new Point(_translateTransform.X, _translateTransform.Y);
+        _captured = true;
+    }*/
+
 
     public void Pan(PointerEventArgs e, bool enableAnimations)
     {
@@ -422,71 +411,23 @@ public partial class ImageViewer : UserControl
             return;
         }
 
-        if (enableAnimations)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _translateTransform.Transitions ??=
-                [
-                    new DoubleTransition { Property = TranslateTransform.XProperty, Duration = TimeSpan.FromSeconds(.15) },
-                    new DoubleTransition { Property = TranslateTransform.YProperty, Duration = TimeSpan.FromSeconds(.15) }
-                ];
-            });
-        }
-        else
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _translateTransform.Transitions = null;
-            });
-        }
-
-        var position = _start - e.GetPosition(ImageZoomBorder);
-        var speedFactor = _zoomPercentage / 100;
-        var speed = 5 * speedFactor;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            speed = 1;
-        }
+        var position = _start - e.GetPosition(this);
         
-        var newXproperty = _origin.X - (position.X + speed);
-        var newYproperty = _origin.Y - (position.Y + speed);
-
-        var actualScrollWidth = ImageScrollViewer.Bounds.Width;
-        var actualBorderWidth = MainImage.Bounds.Width;
-        var actualScrollHeight = ImageScrollViewer.Bounds.Height;
-        var actualBorderHeight = MainImage.Bounds.Height;
-
-        var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
-        var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
-        var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
-        var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
-
-        if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
-        {
-            newXproperty = maxX;
-        }
-
-        if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
-        {
-            newYproperty = maxY;
-        }
-
-        if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
-        {
-            newXproperty = 0;
-        }
-
-        if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
-        {
-            newYproperty = 0;
-        }
+        var newXproperty = _origin.X - position.X;
+        var newYproperty = _origin.Y - position.Y;
 
         Dispatcher.UIThread.Invoke(() =>
         {
             _translateTransform.X = newXproperty;
             _translateTransform.Y = newYproperty;
         });
+        e.Handled = true;
+        
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        vm.ToolTipUIText = $"{_translateTransform.X}, {_translateTransform.Y}";
     }
 
     #endregion Zoom

@@ -9,6 +9,7 @@ using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
+using PicView.Core.Gallery;
 using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Navigation;

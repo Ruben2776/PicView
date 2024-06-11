@@ -20,6 +20,7 @@ using System.Reactive;
 using Avalonia.Media;
 using PicView.Avalonia.Gallery;
 using PicView.Core.Calculations;
+using PicView.Core.Gallery;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels;

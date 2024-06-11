@@ -119,4 +119,41 @@ public static class AnimationsHelper
             }
         };
     }
+    
+    public static Animation ZoomAnimation(double initialZoom, double zoomValue, double oldX, double oldY, double newX, double newY, TimeSpan duration)
+    {
+        return new Animation
+        {
+            Duration = duration,
+            FillMode = FillMode.Forward,
+            Easing = new LinearEasing(),
+            Children =
+            {
+                new KeyFrame
+                {
+                    Cue = new Cue(0d),
+                    Setters =
+                    {
+                        new Setter(ScaleTransform.ScaleXProperty, initialZoom),
+                        new Setter(ScaleTransform.ScaleYProperty, initialZoom),
+                        new Setter(TranslateTransform.XProperty, oldX),
+                        new Setter(TranslateTransform.YProperty, oldY)
+                    }
+                },
+                new KeyFrame
+                {
+                    Cue = new Cue(1d),
+                    Setters =
+                    {
+                        new Setter(ScaleTransform.ScaleXProperty, zoomValue),
+                        new Setter(ScaleTransform.ScaleYProperty, zoomValue),
+                        new Setter(TranslateTransform.XProperty, newX),
+                        new Setter(TranslateTransform.YProperty, newY)
+                    }
+                }
+            }
+        };
+    }
+    
 }
+        

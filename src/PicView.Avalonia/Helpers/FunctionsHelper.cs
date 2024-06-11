@@ -12,6 +12,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
@@ -369,7 +370,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomIn);
+        //await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomIn);
     }
 
     public static async Task ZoomOut()
@@ -378,7 +379,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomOut);
+        //await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomOut);
     }
 
     public static async Task ResetZoom()
@@ -387,7 +388,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
+        //await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
     }
     
     #endregion

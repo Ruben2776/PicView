@@ -10,6 +10,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
+using PicView.Core.Gallery;
 using ReactiveUI;
 
 namespace PicView.Avalonia.CustomControls;
