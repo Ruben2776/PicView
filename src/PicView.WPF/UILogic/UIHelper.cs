@@ -1259,6 +1259,45 @@ internal static class UIHelper
     #endregion UI functions
 
     #region Extending Controls
+    
+    internal static void RemoveAllInstancesOfType<T>(DependencyObject parent) where T : UIElement
+    {
+        if (parent == null)
+            return;
+
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            // If the child is of the specified type, remove it
+            if (child is T)
+            {
+                switch (parent)
+                {
+                    case Panel panel:
+                        panel.Children.Remove(child as UIElement);
+                        break;
+                    case Decorator decorator when decorator.Child == child:
+                        decorator.Child = null;
+                        break;
+                    case ContentControl contentControl when contentControl.Content == child:
+                        contentControl.Content = null;
+                        break;
+                    case ItemsControl itemsControl:
+                        itemsControl.Items.Remove(child);
+                        break;
+                }
+
+                // Continue the loop to account for multiple instances
+                i--;
+            }
+            else
+            {
+                // Recursively call the method for the children of the current child
+                RemoveAllInstancesOfType<T>(child);
+            }
+        }
+    }
 
     /// <summary>
     /// Expands or collapses a <see cref="ScrollViewer"/> control.

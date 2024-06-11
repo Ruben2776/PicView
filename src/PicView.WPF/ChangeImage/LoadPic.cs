@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using PicView.WPF.UILogic.DragAndDrop;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ChangeTitlebar.SetTitle;
@@ -39,6 +40,7 @@ internal static class LoadPic
             SetLoadingString();
             GetSpinWaiter.Visibility = Visibility.Visible;
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
+            ImageDragAndDrop.RemoveDragOverlay();
         });
 
         await Task.Run(async () =>

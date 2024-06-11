@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Threading;
 using PicView.Core.Localization;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.ImageHandling.Thumbnails;
@@ -22,6 +21,7 @@ internal static class ImageDragAndDrop
     /// Backup of image
     /// </summary>
     private static DragDropOverlay? _dropOverlay;
+    private static bool _dragging;
 
     /// <summary>
     /// Show image or thumbnail preview on drag enter
@@ -34,6 +34,8 @@ internal static class ImageDragAndDrop
             return;
 
         UIElement? element = null;
+        _dragging = true;
+        string? getImage = null;
 
         if (e.Data.GetData(DataFormats.FileDrop, true) is not string[] files)
         {
@@ -75,30 +77,39 @@ internal static class ImageDragAndDrop
                 }
             }
 
-            var actualWidth = 0;
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                actualWidth = (int)ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
-            });
-            var thumb = await GetBitmapSourceThumbAsync(files[0], actualWidth).ConfigureAwait(false);
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                element = new DragDropOverlayPic(thumb);
-            });
+            getImage = files[0];
         }
         else return;
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(AddDragOverlay);
+        if (_dragging)
+        {
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(AddDragOverlay);
+        }
 
         // Tell that it's succeeded
         e.Effects = DragDropEffects.Copy;
         e.Handled = true;
 
+        if (getImage is not null && _dragging)
+        {
+            var actualWidth = 0;
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                actualWidth = (int)ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+            });
+            var thumb = await GetBitmapSourceThumbAsync(getImage, actualWidth).ConfigureAwait(false);
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+            {
+                element = new DragDropOverlayPic(thumb);
+            });
+        }
+
         if (element == null) return;
-        if (_dropOverlay != null)
+        if (_dropOverlay != null && _dragging)
         {
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { UpdateDragOverlay(element); });
         }
+        _dragging = false;
     }
 
     /// <summary>
@@ -108,13 +119,11 @@ internal static class ImageDragAndDrop
     /// <param name="e"></param>
     internal static void Image_DragLeave(object sender, DragEventArgs e)
     {
+        _dragging = false;
+        
         // Switch to previous image if available
-
-        if (_dropOverlay != null)
-        {
-            RemoveDragOverlay();
-        }
-        else if (ConfigureWindows.GetMainWindow.TitleText.Text ==
+        RemoveDragOverlay();
+        if (ConfigureWindows.GetMainWindow.TitleText.Text ==
                  TranslationHelper.GetTranslation("NoImage"))
         {
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
@@ -135,7 +144,7 @@ internal static class ImageDragAndDrop
             return;
         }
 
-        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(RemoveDragOverlay);
+        RemoveDragOverlay();
 
         await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
@@ -218,6 +227,7 @@ internal static class ImageDragAndDrop
         {
             Core.ProcessHandling.ProcessHelper.StartNewProcess(file);
         }
+        RemoveDragOverlay();
     }
 
     private static async Task LoadUrlAsync(MemoryStream memoryStream)
@@ -260,22 +270,41 @@ internal static class ImageDragAndDrop
         }
     }
 
-    private static void RemoveDragOverlay()
+    public static void RemoveDragOverlay()
     {
-        if (ConfigureWindows.GetMainWindow.Dispatcher.CheckAccess())
+        try
         {
-            set();
+            if (ConfigureWindows.GetMainWindow.Dispatcher.CheckAccess())
+            {
+                Set();
+            }
+            else
+            {
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(Set);
+            }
+
+            return;
+            
+            void Set()
+            {
+                ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(_dropOverlay);
+                
+                _dropOverlay = null;
+            }
         }
-        else
+        catch (Exception e)
         {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(set);
+            //
         }
 
-        return;
-        void set()
+        try
         {
-            ConfigureWindows.GetMainWindow.TopLayer.Children.Remove(_dropOverlay);
-            _dropOverlay = null;
+            UIHelper.RemoveAllInstancesOfType<DragDropOverlay?>(ConfigureWindows.GetMainWindow.TopLayer);
+            UIHelper.RemoveAllInstancesOfType<DragDropOverlayPic?>(ConfigureWindows.GetMainWindow.TopLayer);
+        }
+        catch (Exception e)
+        {
+            //
         }
 
     }

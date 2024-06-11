@@ -15,21 +15,16 @@ public partial class DragDropOverlayPic
 
     private void UpdateSource(ImageSource source)
     {
-        if (source == null)
-        {
-            return;
-        }
-
         var padding = ConfigureWindows.GetMainWindow.TitleBar.ActualHeight +
                       ConfigureWindows.GetMainWindow.LowerBar.ActualHeight;
         var boxedWidth = ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth *
             WindowSizing.MonitorInfo.DpiScaling - padding;
         var boxedHeight = ConfigureWindows.GetMainWindow.MinHeight * WindowSizing.MonitorInfo.DpiScaling;
-        var scaleWidth = boxedWidth / source.Width;
-        var scaleHeight = boxedHeight / source.Height;
+        var scaleWidth = boxedWidth / source?.Width ?? 600;
+        var scaleHeight = boxedHeight / source?.Height ?? 340;
         var scale = Math.Min(scaleHeight, scaleWidth);
         ContentHolderSource.ImageSource = source;
-        ContentHolder.Width = source.Width * scale;
-        ContentHolder.Height = source.Height * scale;
+        ContentHolder.Width = source?.Width * scale ?? 550;
+        ContentHolder.Height = source?.Height * scale ?? 300;
     }
 }
