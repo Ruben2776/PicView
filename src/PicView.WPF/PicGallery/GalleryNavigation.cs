@@ -1,10 +1,9 @@
-﻿using PicView.Core.Config;
-using PicView.WPF.Animations;
-using PicView.WPF.UILogic;
+﻿using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media;
+using PicView.WPF.ChangeImage;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
 
@@ -170,7 +169,7 @@ internal static class GalleryNavigation
     /// </summary>
     /// <param name="x">location</param>
     /// <param name="selected">selected or deselected</param>
-    internal static void SetSelected(int x, bool selected, bool navigate = false)
+    internal static void SetSelected(int x, bool selected)
     {
         if (GetPicGallery is not null && x > GetPicGallery.Container.Children.Count - 1 || x < 0)
         {
@@ -183,32 +182,13 @@ internal static class GalleryNavigation
             return;
         }
 
-        if (selected)
+        if (selected && x == FolderIndex)
         {
             nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
-            if (GalleryFunctions.IsGalleryOpen && navigate)
-            {
-                AnimationHelper.SizeAnim(nextItem, false, PicGalleryItemSizeS, PicGalleryItemSize);
-            }
-            else
-            {
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height = PicGalleryItemSize;
-            }
         }
         else
         {
             nextItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
-            if (GalleryFunctions.IsGalleryOpen && navigate)
-            {
-                AnimationHelper.SizeAnim(nextItem, true, PicGalleryItemSize, PicGalleryItemSizeS);
-            }
-            else
-            {
-                nextItem.InnerBorder.Width = nextItem.InnerBorder.Height =
-                    SettingsHelper.Settings.Gallery.IsBottomGalleryShown && !GalleryFunctions.IsGalleryOpen
-                        ? PicGalleryItemSize
-                        : PicGalleryItemSizeS;
-            }
         }
 
         while (GetPicGallery.Container.Children.Count > Pics.Count)
@@ -234,59 +214,89 @@ internal static class GalleryNavigation
     internal static void NavigateGallery(Direction direction)
     {
         var backup = SelectedGalleryItem;
+        var galleryItems = GetGalleryItems();
 
-        switch (direction)
-        {
-            case Direction.Up:
-                SelectedGalleryItem--;
-                break;
-
-            case Direction.Down:
-                SelectedGalleryItem++;
-                break;
-
-            case Direction.Left:
-                SelectedGalleryItem -= VerticalItems;
-                break;
-
-            case Direction.Right:
-                SelectedGalleryItem += VerticalItems;
-                break;
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
-        }
-
-        if (SelectedGalleryItem >= Pics.Count - 1)
-        {
-            SelectedGalleryItem = Pics.Count - 1;
-        }
-
-        if (SelectedGalleryItem < 0)
-        {
-            SelectedGalleryItem = 0;
-        }
-
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() => { SetSelected(SelectedGalleryItem, true, true); });
-
-        if (backup != SelectedGalleryItem && backup != FolderIndex)
-        {
-            ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
-            {
-                SetSelected(backup, false, true); // deselect
-            });
-        }
-
-        if (direction is Direction.Up or Direction.Down)
+        if (SelectedGalleryItem < 0 || SelectedGalleryItem >= galleryItems.Count)
         {
             return;
         }
 
+        var currentItem = galleryItems[SelectedGalleryItem];
+
+        var targetItem = direction switch
+        {
+            Direction.Up => GetClosestItemAbove(currentItem, galleryItems),
+            Direction.Down => GetClosestItemBelow(currentItem, galleryItems),
+            Direction.Left => GetClosestItemLeft(currentItem, galleryItems),
+            Direction.Right => GetClosestItemRight(currentItem, galleryItems),
+            _ => null
+        };
+
+        SelectedGalleryItem = targetItem?.Index ?? SelectedGalleryItem;
+        
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
+            if (GetPicGallery?.Container?.Children[SelectedGalleryItem] is PicGalleryItem nextItem && 
+                GetPicGallery?.Container?.Children[backup] is PicGalleryItem prevItem)
+            {
+                nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
+                prevItem.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
+            }
+
             // Keep item in center of ScrollViewer
             GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
         });
+    }
+    
+    private class GalleryItemPosition
+    {
+        public int Index { get; set; }
+        public Point Position { get; set; }
+        public Size Size { get; set; }
+    }
+    
+    private static List<GalleryItemPosition> GetGalleryItems()
+    {
+        var galleryItems = new List<GalleryItemPosition>();
+        for (var i = 0; i < GetPicGallery.Container.Children.Count; i++)
+        {
+            if (GetPicGallery.Container.Children[i] is not PicGalleryItem item)
+            {
+                continue;
+            }
+            var position = GetPicGallery.Container.Children[i].TranslatePoint(new Point(), GetPicGallery.Container);
+            galleryItems.Add(new GalleryItemPosition
+            {
+                Index = i,
+                Position = position,
+                Size = new Size(item.ActualWidth, item.ActualHeight)
+            });
+        }
+        return galleryItems;
+    }
+    
+    private static GalleryItemPosition? GetClosestItemAbove(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
+    {
+        var candidates = items.Where(item => item.Position.Y + item.Size.Height <= currentItem.Position.Y).ToList();
+        return candidates.OrderByDescending(item => item.Position.Y).ThenBy(item => Math.Abs(item.Position.X - currentItem.Position.X)).FirstOrDefault();
+    }
+
+    private static GalleryItemPosition? GetClosestItemBelow(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
+    {
+        var candidates = items.Where(item => item.Position.Y >= currentItem.Position.Y + currentItem.Size.Height).ToList();
+        return candidates.OrderBy(item => item.Position.Y).ThenBy(item => Math.Abs(item.Position.X - currentItem.Position.X)).FirstOrDefault();
+    }
+
+    private static GalleryItemPosition? GetClosestItemLeft(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
+    {
+        var candidates = items.Where(item => item.Position.X + item.Size.Width <= currentItem.Position.X).ToList();
+        return candidates.OrderByDescending(item => item.Position.X).ThenBy(item => Math.Abs(item.Position.Y - currentItem.Position.Y)).FirstOrDefault();
+    }
+
+    private static GalleryItemPosition? GetClosestItemRight(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
+    {
+        var candidates = items.Where(item => item.Position.X >= currentItem.Position.X + currentItem.Size.Width).ToList();
+        return candidates.OrderBy(item => item.Position.X).ThenBy(item => Math.Abs(item.Position.Y - currentItem.Position.Y)).FirstOrDefault();
     }
 
     #endregion Gallery Navigation

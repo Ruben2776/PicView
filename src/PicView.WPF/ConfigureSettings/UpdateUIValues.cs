@@ -40,9 +40,16 @@ internal static class UpdateUIValues
 
         var preloadValue = PreLoader.Get(Navigation.FolderIndex);
         var fileInfo = preloadValue?.FileInfo ?? new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
-        var isLoading = GalleryLoad.IsLoading;
 
         PreLoader.Clear();
+        
+        Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+        
+        Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
+        await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue?.FileInfo, preloadValue?.BitmapSource)
+            .ConfigureAwait(false);
+        await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
+        
         var sortGallery = false;
         await GetMainWindow.Dispatcher.InvokeAsync(() =>
         {
@@ -56,10 +63,7 @@ internal static class UpdateUIValues
         {
             try
             {
-                await GalleryFunctions
-                    .SortGalleryAsync(new FileInfo(Navigation.BackupPath ??
-                                                   ErrorHandling.GetReloadPath() ??
-                                                   throw new InvalidOperationException())).ConfigureAwait(false);
+                await GalleryFunctions.SortGalleryAsync();
             }
             catch (Exception e)
             {
@@ -67,27 +71,6 @@ internal static class UpdateUIValues
                 GalleryFunctions.Clear();
                 await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
-        }
-        else
-        {
-            Navigation.Pics = await Task
-                .FromResult(
-                    FileLists.FileList(new FileInfo(Navigation.BackupPath ?? ErrorHandling.GetReloadPath())))
-                .ConfigureAwait(false);
-        }
-
-        Navigation.FolderIndex = Navigation.Pics.IndexOf(fileInfo.FullName);
-        await PreLoader.AddAsync(Navigation.FolderIndex, preloadValue?.FileInfo, preloadValue?.BitmapSource)
-            .ConfigureAwait(false);
-        await LoadPic.LoadPicAtIndexAsync(Navigation.FolderIndex, fileInfo).ConfigureAwait(false);
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            await GetMainWindow.Dispatcher.InvokeAsync(GalleryNavigation.ScrollToGalleryCenter);
-        }
-
-        if (isLoading)
-        {
-            await GalleryLoad.LoadAsync().ConfigureAwait(false);
         }
     }
 

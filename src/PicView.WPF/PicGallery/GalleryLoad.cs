@@ -6,6 +6,7 @@ using PicView.WPF.Views.UserControls.Gallery;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -132,6 +133,9 @@ internal static class GalleryLoad
 
             await Task.WhenAll(positiveLoopTask, negativeLoopTask).ConfigureAwait(false);
             IsLoading = false;
+            
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(GalleryStretch.SetStretchMode, DispatcherPriority.DataBind, source.Token);
+           
         }
         catch (Exception exception)
         {
@@ -241,7 +245,7 @@ internal static class GalleryLoad
         UC.GetPicGallery.Container.Children.Add(item);
     }
 
-    internal static void UpdatePic(int i, BitmapSource? pic, string fileLocation, string fileName, string fileSize,
+    internal static void UpdatePic(int i, ImageSource? pic, string fileLocation, string fileName, string fileSize,
         string fileDate)
     {
         try

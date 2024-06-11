@@ -382,4 +382,7 @@ internal class LanguageModel
     public string? Uniform { get; set; }
     public string? UniformToFill { get; set; }
     public string? FillSquare { get; set; }
+    public string? GallerySettings { get; set; }
+    public string? GalleryThumbnailStretch { get; set; }
+    public string? BottomGalleryThumbnailStretch { get; set; }
 }

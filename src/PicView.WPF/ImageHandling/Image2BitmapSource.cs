@@ -217,7 +217,8 @@ internal static class Image2BitmapSource
 
     public class WpfImageSource(BitmapSource? bitmapSource) : GalleryThumbInfo.IImageSource
     {
-        private readonly BitmapSource _bitmapSource = bitmapSource ?? throw new ArgumentNullException(nameof(bitmapSource));
+        private readonly BitmapSource _bitmapSource = bitmapSource ?? ImageFunctions.ImageErrorMessage() ??
+            throw new ArgumentNullException(nameof(bitmapSource));
 
         public object GetPlatformImageSource()
         {

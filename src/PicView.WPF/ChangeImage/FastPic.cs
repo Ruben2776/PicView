@@ -82,6 +82,13 @@ internal static class FastPic
     {
         _timer = null;
 
+        if (_updateSource == false)
+        {
+            return;
+        }
+
+        // Update picture in case it didn't load. Won't happen normally
+        
         if (UC.GetPicGallery is not null)
         {
             await UC.GetPicGallery.Dispatcher.InvokeAsync(() =>
@@ -92,13 +99,6 @@ internal static class FastPic
                 GalleryNavigation.ScrollToGalleryCenter();
             });
         }
-
-        if (_updateSource == false)
-        {
-            return;
-        }
-
-        // Update picture in case it didn't load. Won't happen normally
 
         var preLoadValue = PreLoader.Get(FolderIndex);
         if (preLoadValue is null)

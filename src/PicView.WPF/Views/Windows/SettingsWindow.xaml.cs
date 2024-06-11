@@ -158,7 +158,7 @@ public partial class SettingsWindow
             SetExpandedGallerySlider.Value = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
             SetExpandedGalleryText.Text =
                 SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize.ToString(CultureInfo.CurrentCulture);
-            SetExpandedGallerySlider.ValueChanged += async (_, e) =>
+            SetExpandedGallerySlider.ValueChanged += (_, e) =>
             {
                 SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = (int)e.NewValue;
 
@@ -458,6 +458,94 @@ public partial class SettingsWindow
                     LimeRadio.IsChecked = true;
                     break;
             }
+            
+            GalleryStretch.DetermineStretchMode();
+
+            GalleryStretchBoxUniform.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "Uniform";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            GalleryStretchBoxUniformToFill.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "UniformToFill";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            GalleryStretchBoxFill.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "Fill";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            GalleryStretchBoxNone.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "None";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            GalleryStretchBoxSquare.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "Square";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            GalleryStretchBoxFillSquare.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "FillSquare";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            BottomGalleryStretchBoxUniform.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "Uniform";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            BottomGalleryStretchBoxUniformToFill.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "UniformToFill";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            BottomGalleryStretchBoxFill.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "Fill";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            BottomGalleryStretchBoxNone.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "None";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            BottomGalleryStretchBoxSquare.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "Square";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            BottomGalleryStretchBoxFillSquare.Selected += async (_, _) =>
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "FillSquare";
+                GalleryStretch.SetStretchMode();
+                await SettingsHelper.SaveSettingsAsync();
+            };
+            
+            
         };
     }
 
@@ -518,6 +606,15 @@ public partial class SettingsWindow
         StartUpLastFile.Content = TranslationHelper.GetTranslation("OpenLastFile");
         OpenInSameWindowTextBlock.Text = TranslationHelper.GetTranslation("OpenInSameWindow");
         DefaultButtonLabel.Content = TranslationHelper.GetTranslation("ResetButtonText");
+        BottomGalleryStretchBoxUniform.Content = BottomGalleryStretchBoxUniform.Content = GalleryStretchBoxUniform.Content = TranslationHelper.GetTranslation("Uniform");
+        BottomGalleryStretchBoxUniformToFill.Content = GalleryStretchBoxUniformToFill.Content = TranslationHelper.GetTranslation("UniformToFill");
+        BottomGalleryStretchBoxFill.Content = GalleryStretchBoxFill.Content = TranslationHelper.GetTranslation("Fill");
+        BottomGalleryStretchBoxNone.Content = GalleryStretchBoxNone.Content = TranslationHelper.GetTranslation("None");
+        BottomGalleryStretchBoxSquare.Content = GalleryStretchBoxSquare.Content = TranslationHelper.GetTranslation("Square");
+        BottomGalleryStretchBoxFillSquare.Content = GalleryStretchBoxFillSquare.Content = TranslationHelper.GetTranslation("FillSquare");
+        GallerySettingsLabel.Content = TranslationHelper.GetTranslation("GallerySettings");
+        GalleryItemStretchLabel.Content = TranslationHelper.GetTranslation("GalleryThumbnailStretch");
+        BottomGalleryItemStretchLabel.Content = TranslationHelper.GetTranslation("BottomGalleryThumbnailStretch");
     }
 
     #region EventHandlers

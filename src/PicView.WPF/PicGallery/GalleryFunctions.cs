@@ -64,21 +64,20 @@ internal static class GalleryFunctions
         }
     }
 
-    internal static async Task SortGalleryAsync(FileInfo? fileInfo = null, List<string>? list = null)
+    internal static async Task SortGalleryAsync()
     {
-        var cancelToken = new CancellationToken();
-
-        fileInfo ??= new FileInfo(Navigation.Pics[0]);
-        if (list is null)
+        var cancellationTokenSource = new CancellationTokenSource();
+        var initialDirectory = Path.GetDirectoryName(Navigation.Pics[0]);
+        while (IsLoading)
         {
-            Navigation.Pics = await Task.FromResult(FileLists.FileList(fileInfo)).ConfigureAwait(false);
+            await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            if (initialDirectory != Path.GetDirectoryName(Navigation.Pics[Navigation.FolderIndex]))
+            {
+                // Directory changed, cancel the operation
+                await cancellationTokenSource.CancelAsync();
+                return;
+            }
         }
-        else
-        {
-            Navigation.Pics = list;
-        }
-
-        IsLoading = false; // Hack to cancel loading to prevent crash if it is running. Maybe find a better solution in future
 
         var thumbs = new List<GalleryThumbInfo.GalleryThumbHolder>();
 
@@ -98,7 +97,17 @@ internal static class GalleryFunctions
                         picGalleryItem.ThumbFileName.Text, picGalleryItem.ThumbFileSize.Text,
                         picGalleryItem.ThumbFileDate.Text, bitmapSource);
                     thumbs.Add(thumb);
-                }, DispatcherPriority.Render, cancelToken);
+                }, DispatcherPriority.Render, cancellationTokenSource.Token);
+                if (initialDirectory != Path.GetDirectoryName(Navigation.Pics[0]))
+                {
+                    // Directory changed, cancel the operation
+                    await cancellationTokenSource.CancelAsync();
+                    return;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Clear();
             }
             catch (Exception)
             {
@@ -107,10 +116,36 @@ internal static class GalleryFunctions
                 return;
             }
         }
+        
+        //Clear();
 
         try
         {
             thumbs = thumbs.OrderBySequence(Navigation.Pics, x => x.FileLocation).ToList();
+            for (var i = 0; i < Navigation.Pics.Count; i++)
+            {
+                var index = i;
+                await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
+                {
+                    UpdatePic(index, (BitmapSource?)thumbs[index].ImageSource, thumbs[index].FileLocation, thumbs[index].FileName,
+                        thumbs[index].FileSize, thumbs[index].FileDate);
+                    GalleryNavigation.SetSelected(index, index == Navigation.FolderIndex);
+                }, DispatcherPriority.Background, cancellationTokenSource.Token);
+                if (initialDirectory != Path.GetDirectoryName(Navigation.Pics[0]))
+                {
+                    // Directory changed, cancel the operation
+                    await cancellationTokenSource.CancelAsync();
+                    return;
+                }
+            }
+            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(
+                GalleryNavigation.ScrollToGalleryCenter, 
+                DispatcherPriority.Render,
+                cancellationTokenSource.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            Clear();
         }
         catch (Exception ex)
         {
@@ -119,17 +154,6 @@ internal static class GalleryFunctions
 #endif
             Clear();
             await LoadAsync().ConfigureAwait(false);
-            return;
-        }
-
-        for (var i = 0; i < Navigation.Pics.Count; i++)
-        {
-            var i1 = i;
-            await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                UpdatePic(i1, (BitmapSource?)thumbs[i1].ImageSource, thumbs[i1].FileLocation, thumbs[i1].FileName,
-                    thumbs[i1].FileSize, thumbs[i1].FileDate);
-            }, DispatcherPriority.Background, cancelToken);
         }
     }
 

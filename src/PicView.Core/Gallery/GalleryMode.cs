@@ -1,4 +1,4 @@
-﻿namespace PicView.Avalonia.Gallery;
+﻿namespace PicView.Core.Gallery;
     /// <summary>
     /// Used for determining animation to play when switching between gallery modes
     /// </summary>

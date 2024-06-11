@@ -347,7 +347,7 @@ internal static class PreLoader
                         return;
                     }
                     var index = (nextStartingIndex + i) % Navigation.Pics.Count;
-                    _ = AddAsync(index);
+                    await AddAsync(index);
                     array[i] = index;
                 }
             }
@@ -382,7 +382,7 @@ internal static class PreLoader
                         return;
                     }
                     var index = (prevStartingIndex - i + Navigation.Pics.Count) % Navigation.Pics.Count;
-                    _ = AddAsync(index);
+                    await AddAsync(index);
                     array[i] = index;
                 }
             }

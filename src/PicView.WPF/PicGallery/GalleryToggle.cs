@@ -258,12 +258,7 @@ internal static class GalleryToggle
                 Duration = TimeSpan.FromSeconds(.5)
             };
             GalleryNavigation.SetSize(SettingsHelper.Settings.Gallery.BottomGalleryItemSize);
-            for (var i = 0; i < GetPicGallery.Container.Children.Count; i++)
-            {
-                var item = (PicGalleryItem)GetPicGallery.Container.Children[i];
-                item.InnerBorder.Height = item.InnerBorder.Width = GalleryNavigation.PicGalleryItemSize;
-                item.OuterBorder.Height = item.OuterBorder.Width = GalleryNavigation.PicGalleryItemSize;
-            }
+            GalleryStretch.SetStretchMode();
 
             heightAnimation.Completed += delegate
             {
@@ -324,7 +319,7 @@ internal static class GalleryToggle
         if (GalleryLoad.IsLoading == false)
         {
             var checkLoad = false;
-            await GetMainWindow.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            await GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
                 if (GetPicGallery.Container.Children.Count == Pics.Count)
                 {
@@ -335,11 +330,19 @@ internal static class GalleryToggle
             {
                 await GalleryLoad.LoadAsync().ConfigureAwait(false);
             }
+            else
+            {
+                await GetMainWindow.Dispatcher.InvokeAsync(GalleryStretch.SetStretchMode, DispatcherPriority.Render);
+            }
+        }
+        else
+        {
+            await GetMainWindow.Dispatcher.InvokeAsync(GalleryStretch.SetStretchMode, DispatcherPriority.Render);
         }
 
         try
         {
-            await GetMainWindow?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            await GetMainWindow?.Dispatcher.InvokeAsync(() =>
             {
                 GalleryNavigation.ScrollToGalleryCenter();
                 GalleryNavigation.SetSelected(FolderIndex, true);

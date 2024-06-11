@@ -4,15 +4,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Core.Gallery;
 
 namespace PicView.Avalonia.Gallery;
-public enum Direction
-{
-    Up,
-    Down,
-    Left,
-    Right
-}
+
 public static class GalleryNavigation
 {
     public static void CenterScrollToSelectedItem(MainViewModel vm)
@@ -45,7 +40,7 @@ public static class GalleryNavigation
     public static void NavigateGallery(Direction direction, MainViewModel vm)
     {
         var highlightedGalleryItem = vm.SelectedGalleryItemIndex;
-        var galleryItems = GetGalleryItems(vm);
+        var galleryItems = GetGalleryItems();
 
         if (highlightedGalleryItem < 0 || highlightedGalleryItem >= galleryItems.Count)
         {
@@ -69,7 +64,7 @@ public static class GalleryNavigation
         }
     }
 
-    private static List<GalleryItemPosition> GetGalleryItems(MainViewModel vm)
+    private static List<GalleryItemPosition> GetGalleryItems()
     {
         var galleryItems = new List<GalleryItemPosition>();
         var galleryView = GetGallery(Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);

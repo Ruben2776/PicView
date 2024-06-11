@@ -768,6 +768,12 @@
                         </ComboBox>
 
                         <Label
+                            x:Name="GallerySettingsLabel"
+                            Margin="0,15,0,5"
+                            VerticalAlignment="Center"
+                            Content="Gallery settings" />
+
+                        <Label
                             x:Name="ExpandedGalleryItemSizeLabel"
                             Margin="0,15,0,5"
                             HorizontalAlignment="Left"
@@ -844,6 +850,45 @@
                                 Text="0"
                                 TextAlignment="Center" />
                         </StackPanel>
+
+
+                        <Label
+                            x:Name="GalleryItemStretchLabel"
+                            Margin="0,15,0,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="Gallery thumbnail stretch" />
+                        <ComboBox
+                            x:Name="GalleryStretchBox"
+                            Margin="10,10,0,0"
+                            HorizontalAlignment="Left"
+                            IsTabStop="False">
+                            <ComboBoxItem x:Name="GalleryStretchBoxUniform" IsSelected="True" />
+                            <ComboBoxItem x:Name="GalleryStretchBoxUniformToFill" />
+                            <ComboBoxItem x:Name="GalleryStretchBoxFill" />
+                            <ComboBoxItem x:Name="GalleryStretchBoxNone" />
+                            <ComboBoxItem x:Name="GalleryStretchBoxSquare" />
+                            <ComboBoxItem x:Name="GalleryStretchBoxFillSquare" />
+                        </ComboBox>
+
+                        <Label
+                            x:Name="BottomGalleryItemStretchLabel"
+                            Margin="0,15,0,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="Gallery thumbnail stretch" />
+                        <ComboBox
+                            x:Name="BottomGalleryStretchBox"
+                            Margin="10,10,0,0"
+                            HorizontalAlignment="Left"
+                            IsTabStop="False">
+                            <ComboBoxItem x:Name="BottomGalleryStretchBoxUniform" IsSelected="True" />
+                            <ComboBoxItem x:Name="BottomGalleryStretchBoxUniformToFill" />
+                            <ComboBoxItem x:Name="BottomGalleryStretchBoxFill" />
+                            <ComboBoxItem x:Name="BottomGalleryStretchBoxNone" />
+                            <ComboBoxItem x:Name="BottomGalleryStretchBoxSquare" />
+                            <ComboBoxItem x:Name="BottomGalleryStretchBoxFillSquare" />
+                        </ComboBox>
 
                         <Label
                             x:Name="ThemeLabel"

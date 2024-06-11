@@ -3,6 +3,7 @@ using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Gallery;
