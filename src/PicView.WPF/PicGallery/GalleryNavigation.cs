@@ -2,6 +2,7 @@
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media;
+using PicView.WPF.ChangeImage;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
 
@@ -227,14 +228,24 @@ internal static class GalleryNavigation
             Direction.Down => GetClosestItemBelow(currentItem, galleryItems),
             Direction.Left => GetClosestItemLeft(currentItem, galleryItems),
             Direction.Right => GetClosestItemRight(currentItem, galleryItems),
-            _ => null
+            _ => new GalleryItemPosition { Index = 0, Position = new Point(), Size = new Size() }
         };
 
         SelectedGalleryItem = targetItem?.Index ?? SelectedGalleryItem;
-        
+
+        // Ensure SelectedGalleryItem wraps around correctly
+        if (SelectedGalleryItem >= Pics.Count)
+        {
+            SelectedGalleryItem = 0;
+        }
+        else if (SelectedGalleryItem < 0)
+        {
+            SelectedGalleryItem = Pics.Count - 1;
+        }
+
         ConfigureWindows.GetMainWindow.Dispatcher.Invoke(() =>
         {
-            if (GetPicGallery?.Container?.Children[SelectedGalleryItem] is PicGalleryItem nextItem && 
+            if (GetPicGallery?.Container?.Children[SelectedGalleryItem] is PicGalleryItem nextItem &&
                 GetPicGallery?.Container?.Children[backup] is PicGalleryItem prevItem)
             {
                 nextItem.InnerBorder.BorderBrush = Application.Current.Resources["ChosenColorBrush"] as SolidColorBrush;
@@ -245,7 +256,7 @@ internal static class GalleryNavigation
             GetPicGallery.Scroller.ScrollToHorizontalOffset(CenterScrollPosition);
         });
     }
-    
+
     private class GalleryItemPosition
     {
         public int Index { get; set; }
@@ -272,28 +283,68 @@ internal static class GalleryNavigation
         }
         return galleryItems;
     }
-    
+
     private static GalleryItemPosition? GetClosestItemAbove(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
     {
         var candidates = items.Where(item => item.Position.Y + item.Size.Height <= currentItem.Position.Y).ToList();
+        if (candidates.Count == 0)
+        {
+            // If no candidates found, wrap around correctly
+            return new GalleryItemPosition
+            {
+                Index = (currentItem.Index + Pics.Count - 1) % Pics.Count,
+                Position = new Point(),
+                Size = new Size()
+            };
+        }
         return candidates.OrderByDescending(item => item.Position.Y).ThenBy(item => Math.Abs(item.Position.X - currentItem.Position.X)).FirstOrDefault();
     }
 
     private static GalleryItemPosition? GetClosestItemBelow(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
     {
         var candidates = items.Where(item => item.Position.Y >= currentItem.Position.Y + currentItem.Size.Height).ToList();
+        if (candidates.Count == 0)
+        {
+            // If no candidates found, wrap around correctly
+            return new GalleryItemPosition
+            {
+                Index = (currentItem.Index + 1) % Pics.Count,
+                Position = new Point(),
+                Size = new Size()
+            };
+        }
         return candidates.OrderBy(item => item.Position.Y).ThenBy(item => Math.Abs(item.Position.X - currentItem.Position.X)).FirstOrDefault();
     }
 
     private static GalleryItemPosition? GetClosestItemLeft(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
     {
         var candidates = items.Where(item => item.Position.X + item.Size.Width <= currentItem.Position.X).ToList();
+        if (candidates.Count == 0)
+        {
+            // If no candidates found, wrap around correctly
+            return new GalleryItemPosition
+            {
+                Index = (currentItem.Index + Pics.Count - 1) % Pics.Count,
+                Position = new Point(),
+                Size = new Size()
+            };
+        }
         return candidates.OrderByDescending(item => item.Position.X).ThenBy(item => Math.Abs(item.Position.Y - currentItem.Position.Y)).FirstOrDefault();
     }
 
     private static GalleryItemPosition? GetClosestItemRight(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
     {
         var candidates = items.Where(item => item.Position.X >= currentItem.Position.X + currentItem.Size.Width).ToList();
+        if (candidates.Count == 0)
+        {
+            // If no candidates found, wrap around correctly
+            return new GalleryItemPosition
+            {
+                Index = (currentItem.Index + 1) % Pics.Count,
+                Position = new Point(),
+                Size = new Size()
+            };
+        }
         return candidates.OrderBy(item => item.Position.X).ThenBy(item => Math.Abs(item.Position.Y - currentItem.Position.Y)).FirstOrDefault();
     }
 
