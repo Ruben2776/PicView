@@ -15,7 +15,7 @@ internal static class GalleryStretch
             return;
         }
 
-        var isBottomGallery = !GalleryFunctions.IsGalleryOpen && SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+        var isBottomGallery = !GalleryFunctions.IsGalleryOpen;
         
         bool isSquare, isFillSquare;
         string stretchMode;
