@@ -408,56 +408,7 @@ public partial class SettingsWindow
                 SettingsHelper.Settings.StartUp.OpenLastFile = true;
             };
 
-            switch (SettingsHelper.Settings.Theme.ColorTheme)
-            {
-                case 1:
-                    BlueRadio.IsChecked = true;
-                    break;
-
-                case 2:
-                    PinkRadio.IsChecked = true;
-                    break;
-
-                default:
-                    OrangeRadio.IsChecked = true;
-                    break;
-
-                case 4:
-                    GreenRadio.IsChecked = true;
-                    break;
-
-                case 5:
-                    RedRadio.IsChecked = true;
-                    break;
-
-                case 6:
-                    TealRadio.IsChecked = true;
-                    break;
-
-                case 7:
-                    AquaRadio.IsChecked = true;
-                    break;
-
-                case 8:
-                    GoldenRadio.IsChecked = true;
-                    break;
-
-                case 9:
-                    PurpleRadio.IsChecked = true;
-                    break;
-
-                case 10:
-                    CyanRadio.IsChecked = true;
-                    break;
-
-                case 11:
-                    MagentaRadio.IsChecked = true;
-                    break;
-
-                case 12:
-                    LimeRadio.IsChecked = true;
-                    break;
-            }
+            SetColorChecks();
             
             GalleryStretch.DetermineStretchMode();
 
@@ -549,6 +500,349 @@ public partial class SettingsWindow
         };
     }
 
+    private void SetColorChecks()
+    {
+        switch (SettingsHelper.Settings.Theme.ColorTheme)
+        {
+            case 1:
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+
+                BlueRadio.IsChecked = true;
+                BlueComboBox.IsSelected = true;
+                break;
+
+            case 2:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                PinkRadio.IsChecked = true;
+                PinkComboBox.IsSelected = true;
+                break;
+
+            default:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                OrangeRadio.IsChecked = true;
+                OrangeComboBox.IsSelected = true;
+                break;
+
+            case 4:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                GreenRadio.IsChecked = true;
+                GreenComboBox.IsSelected = true;
+                break;
+
+            case 5:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                RedRadio.IsChecked = true;
+                RedComboBox.IsSelected = true;
+                break;
+
+            case 6:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                TealRadio.IsChecked = true;
+                TealComboBox.IsSelected = true;
+                break;
+
+            case 7:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                AquaRadio.IsChecked = true;
+                AquaComboBox.IsSelected = true;
+                break;
+
+            case 8:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                GoldenRadio.IsChecked = true;
+                GoldenComboBox.IsSelected = true;
+                break;
+
+            case 9:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                PurpleRadio.IsChecked = true;
+                PurpleComboBox.IsSelected = true;
+                break;
+
+            case 10:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                CyanRadio.IsChecked = true;
+                CyanComboBox.IsSelected = true;
+                break;
+
+            case 11:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                LimeRadio.IsChecked = false;
+                LimeComboBox.IsSelected = false;
+
+                MagentaRadio.IsChecked = true;
+                MagentaComboBox.IsSelected = true;
+                break;
+
+            case 12:
+                BlueRadio.IsChecked = false;
+                BlueComboBox.IsSelected = false;
+                PinkRadio.IsChecked = false;
+                PinkComboBox.IsSelected = false;
+                OrangeRadio.IsChecked = false;
+                OrangeComboBox.IsSelected = false;
+                GreenRadio.IsChecked = false;
+                GreenComboBox.IsSelected = false;
+                RedRadio.IsChecked = false;
+                RedComboBox.IsSelected = false;
+                TealRadio.IsChecked = false;
+                TealComboBox.IsSelected = false;
+                AquaRadio.IsChecked = false;
+                AquaComboBox.IsSelected = false;
+                GoldenRadio.IsChecked = false;
+                GoldenComboBox.IsSelected = false;
+                PurpleRadio.IsChecked = false;
+                PurpleComboBox.IsSelected = false;
+                CyanRadio.IsChecked = false;
+                CyanComboBox.IsSelected = false;
+                MagentaRadio.IsChecked = false;
+                MagentaComboBox.IsSelected = false;
+
+                LimeRadio.IsChecked = true;
+                LimeComboBox.IsSelected = true;
+                break;
+        }
+    }
+
     internal void UpdateLanguage()
     {
         Title = TitleText.Text = TranslationHelper.GetTranslation("Settings");
@@ -579,18 +873,18 @@ public partial class SettingsWindow
         ShowBottomToolbarTextBlock.Text = TranslationHelper.GetTranslation("ShowBottomToolbar");
         ShowBottomGalleryWhenUiIsHiddenTextBlock.Text = TranslationHelper.GetTranslation("ShowBottomGalleryWhenUiIsHidden");
         HighlightColorLabel.Content = TranslationHelper.GetTranslation("HighlightColor");
-        BlueRadio.Content = TranslationHelper.GetTranslation("Blue");
-        CyanRadio.Content = TranslationHelper.GetTranslation("Cyan");
-        AquaRadio.Content = TranslationHelper.GetTranslation("Aqua");
-        TealRadio.Content = TranslationHelper.GetTranslation("Teal");
-        LimeRadio.Content = TranslationHelper.GetTranslation("Lime");
-        GreenRadio.Content = TranslationHelper.GetTranslation("Green");
-        GoldenRadio.Content = TranslationHelper.GetTranslation("Golden");
-        OrangeRadio.Content = TranslationHelper.GetTranslation("Orange");
-        RedRadio.Content = TranslationHelper.GetTranslation("Red");
-        PinkRadio.Content = TranslationHelper.GetTranslation("Pink");
-        MagentaRadio.Content = TranslationHelper.GetTranslation("Magenta");
-        PurpleRadio.Content = TranslationHelper.GetTranslation("Purple");
+        BlueRadioText.Text = TranslationHelper.GetTranslation("Blue");
+        CyanRadioText.Text = TranslationHelper.GetTranslation("Cyan");
+        AquaRadioText.Text = TranslationHelper.GetTranslation("Aqua");
+        TealRadioText.Text = TranslationHelper.GetTranslation("Teal");
+        LimeRadioText.Text = TranslationHelper.GetTranslation("Lime");
+        GreenRadioText.Text = TranslationHelper.GetTranslation("Green");
+        GoldenRadioText.Text = TranslationHelper.GetTranslation("Golden");
+        OrangeRadioText.Text = TranslationHelper.GetTranslation("Orange");
+        RedRadioText.Text = TranslationHelper.GetTranslation("Red");
+        PinkRadioText.Text = TranslationHelper.GetTranslation("Pink");
+        MagentaRadioText.Text = TranslationHelper.GetTranslation("Magenta");
+        PurpleRadioText.Text = TranslationHelper.GetTranslation("Purple");
         ImageAliasingLabel.Content = TranslationHelper.GetTranslation("ImageAliasing");
         AliasingNearestNeighbor.Content = TranslationHelper.GetTranslation("NearestNeighbor");
         AliasingBoxHighQuality.Content = TranslationHelper.GetTranslation("HighQuality");
@@ -635,61 +929,73 @@ public partial class SettingsWindow
         BlueRadio.MouseEnter += BlueRadio_MouseEnter;
         BlueRadio.MouseLeave += BlueRadio_MouseLeave;
         BlueRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Blue);
+        BlueRadio.Click += (_, _) => SetColorChecks();
 
         // PinkRadio
         PinkRadio.MouseEnter += PinkRadio_MouseEnter;
         PinkRadio.MouseLeave += PinkRadio_MouseLeave;
         PinkRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Pink);
+        PinkRadio.Click += (_, _) => SetColorChecks();
 
         // OrangeRadio
         OrangeRadio.MouseEnter += OrangeRadio_MouseEnter;
         OrangeRadio.MouseLeave += OrangeRadio_MouseLeave;
         OrangeRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Orange);
+        OrangeRadio.Click += (_, _) => SetColorChecks();
 
         // GreenRadio
         GreenRadio.MouseEnter += GreenRadio_MouseEnter;
         GreenRadio.MouseLeave += GreenRadio_MouseLeave;
         GreenRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Green);
+        GreenRadio.Click += (_, _) => SetColorChecks();
 
         // RedRadio
         RedRadio.MouseEnter += RedRadio_MouseEnter;
         RedRadio.MouseLeave += RedRadio_MouseLeave;
         RedRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Red);
+        RedRadio.Click += (_, _) => SetColorChecks();   
 
         // TealRadio
         TealRadio.MouseEnter += TealRadio_MouseEnter;
         TealRadio.MouseLeave += TealRadio_MouseLeave;
         TealRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Teal);
+        TealRadio.Click += (_, _) => SetColorChecks();  
 
         // AquaRadio
         AquaRadio.MouseEnter += AquaRadio_MouseEnter;
         AquaRadio.MouseLeave += AquaRadio_MouseLeave;
         AquaRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Aqua);
+        AquaRadio.Click += (_, _) => SetColorChecks();  
 
         // GoldenRadio
         GoldenRadio.MouseEnter += GoldenRadio_MouseEnter;
         GoldenRadio.MouseLeave += GoldenRadio_MouseLeave;
         GoldenRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Golden);
+        GoldenRadio.Click += (_, _) => SetColorChecks();    
 
         // PurpleRadio
         PurpleRadio.MouseEnter += PurpleRadio_MouseEnter;
         PurpleRadio.MouseLeave += PurpleRadio_MouseLeave;
         PurpleRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Purple);
+        PurpleRadio.Click += (_, _) => SetColorChecks();    
 
         // CyanRadio
         CyanRadio.MouseEnter += CyanRadio_MouseEnter;
         CyanRadio.MouseLeave += CyanRadio_MouseLeave;
         CyanRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Cyan);
+        CyanRadio.Click += (_, _) => SetColorChecks();  
 
         // MagentaRadio
         MagentaRadio.MouseEnter += MagentaRadio_MouseEnter;
         MagentaRadio.MouseLeave += MagentaRadio_MouseLeave;
         MagentaRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Magenta);
+        MagentaRadio.Click += (_, _) => SetColorChecks();   
 
         // LimeRadio
-        LimeRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Lime);
         LimeRadio.MouseEnter += LimeRadio_MouseEnter;
         LimeRadio.MouseLeave += Lime_MouseLeave;
+        LimeRadio.Click += (_, _) => UpdateColorThemeTo(ColorOption.Lime);
+        LimeRadio.Click += (_, _) => SetColorChecks();
 
         // RestartTheme
         ThemeRestart.MouseEnter += delegate
@@ -959,10 +1265,10 @@ public partial class SettingsWindow
     private void BlueRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             BlueBrush,
             1
         );
@@ -971,10 +1277,10 @@ public partial class SettingsWindow
     private void BlueRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             BlueBrush,
             1
         );
@@ -984,10 +1290,10 @@ public partial class SettingsWindow
     private void PinkRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             PinkBrush,
             2
         );
@@ -996,10 +1302,10 @@ public partial class SettingsWindow
     private void PinkRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             PinkBrush,
             2
         );
@@ -1009,10 +1315,10 @@ public partial class SettingsWindow
     private void OrangeRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             OrangeBrush,
             3
         );
@@ -1021,10 +1327,10 @@ public partial class SettingsWindow
     private void OrangeRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             OrangeBrush,
             3
         );
@@ -1034,10 +1340,10 @@ public partial class SettingsWindow
     private void GreenRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             GreenBrush,
             4
         );
@@ -1046,10 +1352,10 @@ public partial class SettingsWindow
     private void GreenRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             GreenBrush,
             4
         );
@@ -1059,10 +1365,10 @@ public partial class SettingsWindow
     private void RedRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             RedBrush,
             5
         );
@@ -1071,10 +1377,10 @@ public partial class SettingsWindow
     private void RedRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             RedBrush,
             5
         );
@@ -1084,10 +1390,10 @@ public partial class SettingsWindow
     private void TealRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             TealBrush,
             6
         );
@@ -1096,10 +1402,10 @@ public partial class SettingsWindow
     private void TealRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             TealBrush,
             6
         );
@@ -1109,10 +1415,10 @@ public partial class SettingsWindow
     private void AquaRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             AquaBrush,
             7
         );
@@ -1121,10 +1427,10 @@ public partial class SettingsWindow
     private void AquaRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             AquaBrush,
             7
         );
@@ -1134,10 +1440,10 @@ public partial class SettingsWindow
     private void GoldenRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             GoldenBrush,
             8
         );
@@ -1146,10 +1452,10 @@ public partial class SettingsWindow
     private void GoldenRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             GoldenBrush,
             8
         );
@@ -1159,10 +1465,10 @@ public partial class SettingsWindow
     private void PurpleRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             PurpleBrush,
             9
         );
@@ -1171,10 +1477,10 @@ public partial class SettingsWindow
     private void PurpleRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             PurpleBrush,
             9
         );
@@ -1184,10 +1490,10 @@ public partial class SettingsWindow
     private void CyanRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             CyanBrush,
             10
         );
@@ -1196,10 +1502,10 @@ public partial class SettingsWindow
     private void CyanRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             CyanBrush,
             10
         );
@@ -1209,10 +1515,10 @@ public partial class SettingsWindow
     private void MagentaRadio_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             MagentaBrush,
             11
         );
@@ -1221,10 +1527,10 @@ public partial class SettingsWindow
     private void MagentaRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             MagentaBrush,
             11
         );
@@ -1234,10 +1540,10 @@ public partial class SettingsWindow
     private void Lime_MouseLeave(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseLeaveColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             LimeBrush,
             12
         );
@@ -1246,10 +1552,10 @@ public partial class SettingsWindow
     private void LimeRadio_MouseEnter(object sender, MouseEventArgs e)
     {
         AnimationHelper.MouseEnterColorEvent(
-            BackgroundBorderColor.A,
-            BackgroundBorderColor.R,
-            BackgroundBorderColor.G,
-            BackgroundBorderColor.B,
+            0,
+            0,
+            0,
+            0,
             LimeBrush,
             12
         );

@@ -159,7 +159,7 @@ internal static class StartLoading
 
         if (args.Length > 1)
         {
-            await QuickLoad.QuickLoadAsync(args[1]).ConfigureAwait(false);
+           _ = Task.Run(() => QuickLoad.QuickLoadAsync(args[1]));
         }
         else
         {
@@ -171,12 +171,12 @@ internal static class StartLoading
 
                 if (!string.IsNullOrWhiteSpace(file))
                 {
-                    await QuickLoad.QuickLoadAsync(file).ConfigureAwait(false);
+                    _ = Task.Run(() => QuickLoad.QuickLoadAsync(file));
                 }
             }
             else if (SettingsHelper.Settings.StartUp.OpenSpecificFile)
             {
-                await LoadPic.LoadPicFromStringAsync(SettingsHelper.Settings.StartUp.OpenSpecificString).ConfigureAwait(false);
+                _ = Task.Run(() => LoadPic.LoadPicFromStringAsync(SettingsHelper.Settings.StartUp.OpenSpecificString));
             }
             else
             {
@@ -186,8 +186,9 @@ internal static class StartLoading
 
         try
         {
+            ConfigColors.UpdateColor();
             await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
-            ConfigColors.UpdateColor(); // Try catch to prevent task canceled exception
+            // Try catch to prevent task canceled exception
         }
         catch (Exception e)
         {
