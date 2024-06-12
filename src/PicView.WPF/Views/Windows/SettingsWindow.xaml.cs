@@ -158,6 +158,8 @@ public partial class SettingsWindow
             SetExpandedGallerySlider.Value = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
             SetExpandedGalleryText.Text =
                 SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize.ToString(CultureInfo.CurrentCulture);
+            SetExpandedGallerySlider.Minimum = Core.Gallery.GalleryDefaults.MinFullGalleryItemHeight;
+            SetExpandedGallerySlider.Maximum = Core.Gallery.GalleryDefaults.MaxFullGalleryItemHeight;
             SetExpandedGallerySlider.ValueChanged += (_, e) =>
             {
                 SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = (int)e.NewValue;
@@ -177,6 +179,8 @@ public partial class SettingsWindow
             // SetBottomGallerySlider
             SetBottomGallerySlider.Value = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
             SetBottomGalleryText.Text = SettingsHelper.Settings.Gallery.BottomGalleryItemSize.ToString(CultureInfo.CurrentCulture);
+            SetBottomGallerySlider.Minimum = Core.Gallery.GalleryDefaults.MinBottomGalleryItemHeight;
+            SetBottomGallerySlider.Maximum = Core.Gallery.GalleryDefaults.MaxBottomGalleryItemHeight;
             SetBottomGallerySlider.ValueChanged += (_, e) =>
             {
                 SettingsHelper.Settings.Gallery.BottomGalleryItemSize = e.NewValue;

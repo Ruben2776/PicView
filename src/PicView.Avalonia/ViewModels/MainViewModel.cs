@@ -146,21 +146,21 @@ public class MainViewModel : ViewModelBase
     
     public double MaxFullGalleryItemHeight
     {
-        get => 175;
+        get => GalleryDefaults.MaxFullGalleryItemHeight;
     }
     
     public double MinFullGalleryItemHeight
     {
-        get => 40;
+        get => GalleryDefaults.MinFullGalleryItemHeight;
     }
     public double MaxBottomGalleryItemHeight
     {
-        get => 125;
+        get => GalleryDefaults.MaxBottomGalleryItemHeight;
     }
     
     public double MinBottomGalleryItemHeight
     {
-        get => 25;
+        get => GalleryDefaults.MinBottomGalleryItemHeight;
     }
 
     #region Gallery Stretch IsChecked

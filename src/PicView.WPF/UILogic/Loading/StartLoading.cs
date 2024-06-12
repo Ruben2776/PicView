@@ -186,6 +186,33 @@ internal static class StartLoading
 
         try
         {
+            if (!settingsExist)
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryItemSize = Core.Gallery.GalleryDefaults.DefaultBottomGalleryHeight;
+                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = Core.Gallery.GalleryDefaults.DefaultFullGalleryHeight;
+            }
+            // Set default gallery sizes if they are out of range or upgrading from an old version
+            if (SettingsHelper.Settings.Gallery.BottomGalleryItemSize is < Core.Gallery.GalleryDefaults.DefaultBottomGalleryHeight or > Core.Gallery.GalleryDefaults.MaxBottomGalleryItemHeight)
+            {
+                SettingsHelper.Settings.Gallery.BottomGalleryItemSize = Core.Gallery.GalleryDefaults.DefaultBottomGalleryHeight;
+            }
+            if (SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize is < Core.Gallery.GalleryDefaults.DefaultFullGalleryHeight or > Core.Gallery.GalleryDefaults.MaxFullGalleryItemHeight)
+            {
+                SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = Core.Gallery.GalleryDefaults.DefaultFullGalleryHeight;
+            }
+
+            if (!settingsExist)
+            {
+                if (string.IsNullOrWhiteSpace(SettingsHelper.Settings.Gallery.BottomGalleryStretchMode))
+                {
+                    SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "UniformToFill";
+                }
+
+                if (string.IsNullOrWhiteSpace(SettingsHelper.Settings.Gallery.FullGalleryStretchMode))
+                {
+                    SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "UniformToFill";
+                }
+            }
             ConfigColors.UpdateColor();
             await mainWindow.Dispatcher.InvokeAsync(startupWindow.Close);
             // Try catch to prevent task canceled exception

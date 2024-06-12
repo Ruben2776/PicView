@@ -1,9 +1,7 @@
 ﻿using PicView.WPF.UILogic;
-using PicView.WPF.UILogic.Sizing;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media;
-using PicView.WPF.ChangeImage;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
 
@@ -13,9 +11,9 @@ internal static class GalleryNavigation
 {
     #region int calculations
 
-    internal static void SetSize(double numberOfItems)
+    internal static void SetSize(double newSize)
     {
-        PicGalleryItemSize = WindowSizing.MonitorInfo.WorkArea.Width / numberOfItems;
+        PicGalleryItemSize = newSize;
 
         PicGalleryItemSizeS = PicGalleryItemSize - 15;
     }

@@ -295,6 +295,7 @@
 
                         <ComboBox
                             x:Name="LanguageBox"
+                            Width="151"
                             Margin="5,9,0,7"
                             HorizontalAlignment="Left"
                             IsTabStop="False" />
@@ -308,6 +309,7 @@
 
                         <ComboBox
                             x:Name="StartUpBox"
+                            Width="151"
                             Margin="5,9,0,7"
                             HorizontalAlignment="Left"
                             IsTabStop="False">
@@ -369,6 +371,7 @@
 
                         <ComboBox
                             x:Name="ScrollDirection"
+                            Width="151"
                             Margin="3,8,0,0"
                             HorizontalAlignment="Left"
                             IsTabStop="False">
@@ -382,7 +385,7 @@
                         <TextBlock
                             x:Name="AdjustTimingForSlideshowLabel"
                             Width="330"
-                            Margin="5,20,0,4"
+                            Margin="5,20,0,6"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             d:Text="Adjust slideshow speed"
@@ -399,15 +402,14 @@
 
                             <Slider
                                 x:Name="SlideshowSlider"
-                                Width="250"
-                                Height="30"
+                                Width="270"
                                 HorizontalAlignment="Center"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 Maximum="15"
                                 Minimum="1"
                                 TickFrequency=".5"
-                                TickPlacement="BottomRight"
+                                TickPlacement="None"
                                 Value="5" />
 
                             <TextBox
@@ -434,7 +436,7 @@
                         <TextBlock
                             x:Name="AdjustTimingForZoomLabel"
                             Width="330"
-                            Margin="5,10,0,4"
+                            Margin="5,10,0,6"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             d:Text="Adjust Zooming speed"
@@ -451,15 +453,14 @@
 
                             <Slider
                                 x:Name="ZoomSlider"
-                                Width="250"
-                                Height="30"
+                                Width="270"
                                 d:Value=".2"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 Maximum="1.5"
                                 Minimum=".1"
                                 TickFrequency=".1"
-                                TickPlacement="BottomRight" />
+                                TickPlacement="None" />
 
                             <TextBox
                                 x:Name="txtZoomSlide"
@@ -478,7 +479,7 @@
                         <TextBlock
                             x:Name="AdjustNavSpeedLabel"
                             Width="330"
-                            Margin="5,10,0,4"
+                            Margin="5,10,0,6"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             d:Text="Adjust speed when key is held down"
@@ -495,15 +496,14 @@
 
                             <Slider
                                 x:Name="NavSlider"
-                                Width="250"
-                                Height="30"
+                                Width="270"
                                 d:Value=".2"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 Maximum="2"
                                 Minimum=".2"
                                 TickFrequency=".1"
-                                TickPlacement="BottomRight" />
+                                TickPlacement="None" />
 
                             <TextBox
                                 x:Name="NavTxt"
@@ -641,7 +641,7 @@
                             HorizontalAlignment="Left"
                             IsTabStop="False">
                             <ComboBoxItem
-                                x:Name="BlueComboBox" 
+                                x:Name="BlueComboBox"
                                 Width="151"
                                 Style="{StaticResource SlimComboBoxItem}">
                                 <CheckBox x:Name="BlueRadio" Height="30">
@@ -953,6 +953,7 @@
 
                         <ComboBox
                             x:Name="AliasingBox"
+                            Width="151"
                             Margin="10,0,0,0"
                             HorizontalAlignment="Left"
                             IsTabStop="False">
@@ -980,15 +981,14 @@
 
                             <Slider
                                 x:Name="SetExpandedGallerySlider"
-                                Width="240"
-                                Height="30"
+                                Width="270"
                                 d:Value="32"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 Maximum="35"
                                 Minimum="10"
                                 TickFrequency="1"
-                                TickPlacement="BottomRight" />
+                                TickPlacement="None" />
 
                             <TextBox
                                 x:Name="SetExpandedGalleryText"
@@ -1019,15 +1019,14 @@
 
                             <Slider
                                 x:Name="SetBottomGallerySlider"
-                                Width="240"
-                                Height="30"
+                                Width="270"
                                 d:Value="32"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 Maximum="65"
                                 Minimum="20"
                                 TickFrequency="1"
-                                TickPlacement="BottomRight" />
+                                TickPlacement="None" />
 
                             <TextBox
                                 x:Name="SetBottomGalleryText"
@@ -1053,6 +1052,7 @@
                             Content="Gallery thumbnail stretch" />
                         <ComboBox
                             x:Name="GalleryStretchBox"
+                            Width="151"
                             Margin="10,10,0,0"
                             HorizontalAlignment="Left"
                             IsTabStop="False">
@@ -1072,6 +1072,7 @@
                             Content="Gallery thumbnail stretch" />
                         <ComboBox
                             x:Name="BottomGalleryStretchBox"
+                            Width="151"
                             Margin="10,10,0,0"
                             HorizontalAlignment="Left"
                             IsTabStop="False">
