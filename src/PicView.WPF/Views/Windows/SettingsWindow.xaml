@@ -655,6 +655,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -680,6 +681,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -705,6 +707,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -730,6 +733,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -755,6 +759,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -780,6 +785,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -805,6 +811,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -833,6 +840,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -858,6 +866,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -883,6 +892,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -908,6 +918,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
@@ -933,6 +944,7 @@
                                             FontFamily="/PicView;component/Themes/Resources/fonts/#Roboto"
                                             FontSize="13"
                                             Text=""
+                                            TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </CheckBox.Content>
                                     <CheckBox.Background>
