@@ -151,51 +151,6 @@ internal static class AnimationHelper
     #region Size Animations
 
     /// <summary>
-    /// Animates the size of a gallery item.
-    /// </summary>
-    /// <param name="item">The gallery item to animate.</param>
-    /// <param name="reduce">Indicates whether the animation is for unhovering the item.</param>
-    /// <param name="fromSize">The initial size of the item.</param>
-    /// <param name="toSize">The target size of the item.</param>
-    internal static void SizeAnim(PicGalleryItem item, bool reduce, double fromSize, double toSize)
-    {
-        if (item.InnerBorder.Width > GalleryNavigation.PicGalleryItemSizeS && !reduce)
-        {
-            // Make sure it is not run consecutively
-            return;
-        }
-
-        var animation = new DoubleAnimation
-        {
-            FillBehavior = FillBehavior.Stop,
-            AccelerationRatio = 0.4,
-            DecelerationRatio = 0.6
-        };
-
-        animation.Completed += delegate
-        {
-            item.InnerBorder.Width = toSize;
-            item.InnerBorder.Height = toSize;
-        };
-
-        if (reduce)
-        {
-            animation.From = fromSize;
-            animation.To = toSize;
-            animation.Duration = TimeSpan.FromSeconds(.3);
-        }
-        else
-        {
-            animation.From = fromSize;
-            animation.To = toSize;
-            animation.Duration = TimeSpan.FromSeconds(.25);
-        }
-
-        item.InnerBorder.BeginAnimation(FrameworkElement.WidthProperty, animation);
-        item.InnerBorder.BeginAnimation(FrameworkElement.HeightProperty, animation);
-    }
-
-    /// <summary>
     /// Animates the height of an element.
     /// </summary>
     /// <param name="element">The element to animate.</param>
