@@ -1,4 +1,4 @@
-PicView is copyright (c) 2017-2021 by Ruben Negendahl.
+PicView is copyright (c) 2017-2024 by Ruben Negendahl.
 
 Source code: https://github.com/Ruben2776/PicView
 
