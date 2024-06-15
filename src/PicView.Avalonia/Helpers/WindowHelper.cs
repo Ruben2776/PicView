@@ -429,7 +429,7 @@ public static class WindowHelper
             return;
         }
 
-        var screenSize = vm.ScreenSize;
+        var screenSize = ScreenHelper.ScreenSize;
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
         var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? vm.TitlebarHeight : 0;
         var uiBottomSize =

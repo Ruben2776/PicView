@@ -182,7 +182,7 @@ public class ImageIterator
         {
             if (galleryListBox.Items[index] is GalleryItem item)
             {
-                var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
+                var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     item.FileName.Text = galleryThumbInfo.FileName;
@@ -308,7 +308,7 @@ public class ImageIterator
             if (galleryListBox.Items[index] is not GalleryItem galleryItem) { return; }
             var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)_vm.GetGalleryItemHeight);
             ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
-            var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(index, null, fileInfo);
+            var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
             galleryItem.FileLocation.Text = galleryThumbInfo.FileLocation;
             galleryItem.FileDate.Text = galleryThumbInfo.FileDate;
             galleryItem.FileSize.Text = galleryThumbInfo.FileSize;

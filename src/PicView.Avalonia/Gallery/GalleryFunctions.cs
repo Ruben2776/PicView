@@ -85,7 +85,7 @@ public static class GalleryFunctions
             vm.IsGalleryOpen = false;
             IsBottomGalleryOpen = false;
             vm.GalleryMode = GalleryMode.BottomToClosed;
-            vm.GetBottomGallery = TranslationHelper.GetTranslation("ShowBottomGallery");
+            vm.GetBottomGallery = TranslationHelper.Translation.ShowBottomGallery;
             await SettingsHelper.SaveSettingsAsync();
             return;
         }
@@ -95,7 +95,7 @@ public static class GalleryFunctions
         vm.IsGalleryOpen = true;
         SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
         vm.GalleryMode = GalleryMode.ClosedToBottom;
-        vm.GetBottomGallery = TranslationHelper.GetTranslation("HideBottomGallery");
+        vm.GetBottomGallery = TranslationHelper.Translation.HideBottomGallery;
         await SettingsHelper.SaveSettingsAsync();
         if (!NavigationHelper.CanNavigate(vm))
         {
@@ -120,7 +120,7 @@ public static class GalleryFunctions
             vm.IsGalleryOpen = false;
             IsBottomGalleryOpen = false;
             vm.GalleryMode = GalleryMode.BottomToClosed;
-            vm.GetBottomGallery = TranslationHelper.GetTranslation("ShowBottomGallery");
+            vm.GetBottomGallery = TranslationHelper.Translation.ShowBottomGallery;
             await SettingsHelper.SaveSettingsAsync();
             return;
         }

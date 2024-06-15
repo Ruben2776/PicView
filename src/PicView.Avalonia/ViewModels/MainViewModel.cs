@@ -664,9 +664,7 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getBottomGallery, value);
     }
 
-    private string? _getLooping = SettingsHelper.Settings.UIProperties.Looping
-        ? TranslationHelper.GetTranslation("LoopingEnabled")
-        : TranslationHelper.GetTranslation("LoopingDisabled");
+    private string? _getLooping;
 
     public string? GetLooping
     {
@@ -674,9 +672,7 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getLooping, value);
     }
 
-    private string? _getScrolling = SettingsHelper.Settings.Zoom.ScrollEnabled
-        ? TranslationHelper.GetTranslation("ScrollingEnabled")
-        : TranslationHelper.GetTranslation("ScrollingDisabled");
+    private string? _getScrolling;
 
     public string? GetScrolling
     {
@@ -684,9 +680,7 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getScrolling, value);
     }
 
-    private string? _getCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
-        ? TranslationHelper.GetTranslation("CtrlToZoom")
-        : TranslationHelper.GetTranslation("ScrollToZoom");
+    private string? _getCtrlZoom;
 
     public string? GetCtrlZoom
     {
@@ -1065,8 +1059,6 @@ public class MainViewModel : ViewModelBase
     #endregion strings
 
     #region Window Properties
-    
-    public ScreenSize ScreenSize { get; set; }
 
     private string? _title = "Loading...";
 

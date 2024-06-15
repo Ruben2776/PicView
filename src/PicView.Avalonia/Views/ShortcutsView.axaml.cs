@@ -14,10 +14,10 @@ public partial class ShortcutsView : UserControl
     {
         InitializeComponent();
         DefaultButton.Click += async delegate { await SetDefault(); };
-        FullscreenBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("DoubleClick")}";
-        FullscreenBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("DoubleClick")}";
-        DragWindowBox.Text = $"{TranslationHelper.GetTranslation("Shift")} + {TranslationHelper.GetTranslation("MouseDrag")}";
-        CloseBox.Text = TranslationHelper.GetTranslation("Esc");
+        FullscreenBox.Text = $"{TranslationHelper.Translation.Shift} + {TranslationHelper.Translation.DoubleClick}";
+        FullscreenBox.Text = $"{TranslationHelper.Translation.Shift} + {TranslationHelper.Translation.DoubleClick}";
+        DragWindowBox.Text = $"{TranslationHelper.Translation.Shift} + {TranslationHelper.Translation.MouseDrag}";
+        CloseBox.Text = TranslationHelper.Translation.Esc;
     }
 
     private async Task SetDefault()

@@ -1,6 +1,5 @@
 ﻿using PicView.Core.Config;
 using System.Diagnostics;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -8,35 +7,48 @@ namespace PicView.Core.Localization;
 
 [JsonSourceGenerationOptions(AllowTrailingCommas = true)]
 [JsonSerializable(typeof(LanguageModel))]
-internal partial class LanguageSourceGenerationContext : JsonSerializerContext
-{
-}
+internal partial class LanguageSourceGenerationContext : JsonSerializerContext;
 
 /// <summary>
 /// Helper class for managing language-related tasks.
 /// </summary>
 public static class TranslationHelper
 {
-    public static string GetTranslation(string key)
-    {
-        if (Language == null)
-        {
-            return string.Empty;
-        }
+    private static readonly object TranslationLock = new object();
 
-        var propertyInfo = typeof(LanguageModel).GetProperty(key);
-        if (propertyInfo == null)
-        {
-            return string.Empty;
-        }
-
-        return propertyInfo.GetValue(Language) as string ?? string.Empty;
-    }
+    private static LanguageModel? _translation;
 
     /// <summary>
     /// Dictionary to store language key-value pairs.
     /// </summary>
-    internal static LanguageModel? Language;
+    public static LanguageModel? Translation
+    {
+        get
+        {
+            lock (TranslationLock)
+            {
+                return _translation;
+            }
+        }
+        private set
+        {
+            lock (TranslationLock)
+            {
+                _translation = value;
+            }
+        }
+    }
+
+    public static string GetTranslation(string key)
+    {
+        if (Translation == null)
+        {
+            return key;
+        }
+
+        var propertyInfo = typeof(LanguageModel).GetProperty(key);
+        return propertyInfo?.GetValue(Translation) as string ?? key;
+    }
 
     /// <summary>
     /// Determines the language based on the specified culture and loads the corresponding language file.
@@ -48,73 +60,64 @@ public static class TranslationHelper
 
         try
         {
-            if (File.Exists(jsonLanguageFile))
-            {
-                await Deserialize(jsonLanguageFile).ConfigureAwait(false);
-            }
-            else
-            {
-                var languagesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
-
-                var file = Directory.GetFiles(languagesDirectory, "*.json").FirstOrDefault();
-                if (file != null)
-                {
-                    await Deserialize(file).ConfigureAwait(false);
-                }
-                else
-                {
-                    throw new FileNotFoundException();
-                }
-            }
+            await LoadLanguageFromFileAsync(jsonLanguageFile).ConfigureAwait(false);
+            return true;
         }
-        catch (Exception exception)
+        catch (FileNotFoundException fnfEx)
         {
 #if DEBUG
-            Trace.WriteLine($"{nameof(LoadLanguage)} exception:\n{exception.Message}");
+            Trace.WriteLine($"Language file not found: {fnfEx.Message}");
 #endif
             return false;
         }
-
-        return true;
-
-        async Task Deserialize(string file)
+        catch (Exception ex)
         {
-            var jsonString = await File.ReadAllTextAsync(file).ConfigureAwait(false);
-            var language = JsonSerializer.Deserialize(
-                    jsonString, typeof(LanguageModel), LanguageSourceGenerationContext.Default)
-                as LanguageModel;
-            Language = language;
+#if DEBUG
+            Trace.WriteLine($"{nameof(LoadLanguage)} exception:\n{ex.Message}");
+#endif
+            return false;
         }
     }
 
     public static IEnumerable<string> GetLanguages()
     {
-        var languagesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
-
-        return Directory.EnumerateFiles(languagesDirectory, "*")
-            .Where(file => file?.EndsWith(".json", StringComparison.OrdinalIgnoreCase) ==
-                true);
-    }
-
-    private static string DetermineLanguageFilePath(string isoLanguageCode)
-    {
-        var languagesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
-
-        var matchingFiles = Directory.GetFiles(languagesDirectory, "*.json")
-            .Where(file => Path.GetFileNameWithoutExtension(file)?.Equals(isoLanguageCode, StringComparison.OrdinalIgnoreCase) == true)
-            .ToList();
-
-        return matchingFiles.Count > 0 ? matchingFiles.First() :
-            // If no exact match is found, default to English
-            Path.Combine(languagesDirectory, "en.json");
+        var languagesDirectory = GetLanguagesDirectory();
+        return Directory.EnumerateFiles(languagesDirectory, "*.json", SearchOption.TopDirectoryOnly);
     }
 
     public static async Task ChangeLanguage(int language)
     {
         var choice = (Languages)language;
-        SettingsHelper.Settings.UIProperties.UserLanguage = choice.ToString().Replace('_', '-');
-        await LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage).ConfigureAwait(false);
-
+        var languageCode = choice.ToString().Replace('_', '-');
+        SettingsHelper.Settings.UIProperties.UserLanguage = languageCode;
+        await LoadLanguage(languageCode).ConfigureAwait(false);
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    private static string DetermineLanguageFilePath(string isoLanguageCode)
+    {
+        var languagesDirectory = GetLanguagesDirectory();
+        var matchingFiles = Directory.GetFiles(languagesDirectory, "*.json")
+            .Where(file => Path.GetFileNameWithoutExtension(file)?.Equals(isoLanguageCode, StringComparison.OrdinalIgnoreCase) == true)
+            .ToList();
+
+        return matchingFiles.FirstOrDefault() ?? Path.Combine(languagesDirectory, "en.json");
+    }
+
+    private static async Task LoadLanguageFromFileAsync(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException($"Language file not found: {filePath}");
+        }
+
+        var jsonString = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+        var language = JsonSerializer.Deserialize(jsonString, typeof(LanguageModel), LanguageSourceGenerationContext.Default) as LanguageModel;
+        Translation = language;
+    }
+
+    private static string GetLanguagesDirectory()
+    {
+        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
     }
 }

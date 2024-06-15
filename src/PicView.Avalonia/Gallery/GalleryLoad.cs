@@ -120,7 +120,7 @@ public static class GalleryLoad
 
         async Task Loop(int startIndex, int endIndex, CancellationToken ct)
         {
-            var loading = TranslationHelper.GetTranslation("Loading");
+            var loading = TranslationHelper.Translation.Loading;
             for (var i = startIndex; i < endIndex; i++)
             {
                 if (currentDirectory != _currentDirectory || ct.IsCancellationRequested)
@@ -180,7 +180,7 @@ public static class GalleryLoad
                 var fileInfo = new FileInfo(vm.ImageIterator.Pics[i]);
                 var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfo, isThumb: true,
                     (int)galleryItemSize);
-                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(i, null, fileInfo);
+                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
 
                 while (i >= galleryListBox.Items.Count)
                 {

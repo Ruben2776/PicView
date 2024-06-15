@@ -120,14 +120,14 @@ public class UIHelper
         if (SettingsHelper.Settings.Zoom.ScrollEnabled)
         {
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
-            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
+            vm.GetScrolling = TranslationHelper.Translation.ScrollingDisabled;
             vm.IsScrollingEnabled = false;
             SettingsHelper.Settings.Zoom.ScrollEnabled = false;
         }
         else
         {
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
-            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
+            vm.GetScrolling = TranslationHelper.Translation.ScrollingEnabled;
             vm.IsScrollingEnabled = true;
             SettingsHelper.Settings.Zoom.ScrollEnabled = true;
         }

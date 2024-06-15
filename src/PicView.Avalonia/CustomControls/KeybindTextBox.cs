@@ -61,7 +61,7 @@ public class KeybindTextBox : TextBox
                 return;
             var foreground = new SolidColorBrush((Color)(color ?? Color.Parse("#d6d4d4")));
             Foreground = foreground;
-            Text = TranslationHelper.GetTranslation("PressKey");
+            Text = TranslationHelper.Translation.PressKey;
             CaretIndex = 0;
         };
         LostFocus += delegate

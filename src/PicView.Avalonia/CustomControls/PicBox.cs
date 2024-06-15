@@ -101,24 +101,7 @@ public class PicBox : Control
         {
             context.DrawImage(source, sourceRect, destRect);
         }
-        
     }
-    
-    /*private void Invalidate(bool skipTransitions = false)
-    {
-        InvalidateProperties();
-        InvalidateScrollable();
-        InvalidateElement(skipTransitions);
-        RaiseZoomChanged();
-    }
-    
-    private void InvalidateProperties()
-    {
-        SetAndRaise(ZoomXProperty, ref _zoomX, _matrix.M11);
-        SetAndRaise(ZoomYProperty, ref _zoomY, _matrix.M22);
-        SetAndRaise(OffsetXProperty, ref _offsetX, _matrix.M31);
-        SetAndRaise(OffsetYProperty, ref _offsetY, _matrix.M32);
-    }*/
     
     #endregion
     
@@ -126,5 +109,4 @@ public class PicBox : Control
     {
         return new ImageAutomationPeer(this);
     }
-
 }

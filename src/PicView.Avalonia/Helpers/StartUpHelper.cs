@@ -16,7 +16,7 @@ public static class StartUpHelper
 {
     public static void Start(MainViewModel vm, bool settingsExists, IClassicDesktopStyleApplicationLifetime desktop, Window w)
     {
-        vm.ScreenSize = ScreenHelper.GetScreenSize(w);
+        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(w);
         
         if (!settingsExists)
         {
@@ -53,28 +53,26 @@ public static class StartUpHelper
             }
         }
         w.Show();
-        vm.SetLoadingTitle();
         vm.IsLoading = true;
-        _ = Task.Run(vm.UpdateLanguage);
-
+        vm.UpdateLanguage();
         vm.GetFlipped = vm.Flip;
-
+        
         if (SettingsHelper.Settings.Zoom.ScrollEnabled)
         {
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
-            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingEnabled");
+            vm.GetScrolling = TranslationHelper.Translation.ScrollingEnabled;
             vm.IsScrollingEnabled = true;
         }
         else
         {
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
-            vm.GetScrolling = TranslationHelper.GetTranslation("ScrollingDisabled");
+            vm.GetScrolling = TranslationHelper.Translation.ScrollingDisabled;
             vm.IsScrollingEnabled = false;
         }
         
         vm.GetBottomGallery = vm.IsBottomGalleryShown ?
-            TranslationHelper.GetTranslation("HideBottomGallery") :
-            TranslationHelper.GetTranslation("ShowBottomGallery");
+            TranslationHelper.Translation.HideBottomGallery :
+            TranslationHelper.Translation.ShowBottomGallery;
 
         if (SettingsHelper.Settings.WindowProperties.TopMost)
         {
@@ -132,10 +130,20 @@ public static class StartUpHelper
             GalleryFunctions.OpenBottomGallery(vm);
         }
         
+        Task.Run(KeybindingsHelper.LoadKeybindings);
+        
+        vm.GetLooping = SettingsHelper.Settings.UIProperties.Looping
+            ? TranslationHelper.Translation.LoopingEnabled
+            : TranslationHelper.Translation.LoopingDisabled;
+        vm.GetScrolling = SettingsHelper.Settings.Zoom.ScrollEnabled
+            ? TranslationHelper.Translation.ScrollingEnabled
+            : TranslationHelper.Translation.ScrollingDisabled;
+        vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
+            ? TranslationHelper.Translation.CtrlToZoom
+            : TranslationHelper.Translation.ScrollToZoom;
+        
         UIHelper.AddMenus(desktop);
         UIHelper.AddMToolTipMessage(desktop);
-
-        Task.Run(KeybindingsHelper.LoadKeybindings);
 
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);

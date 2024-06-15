@@ -19,7 +19,7 @@ public class FileService
                 throw new NullReferenceException("Missing StorageProvider instance.");
             var options = new FilePickerOpenOptions
             {
-                Title = $"{TranslationHelper.GetTranslation("OpenFileDialog")} - PicView",
+                Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
                 AllowMultiple = false,
                 FileTypeFilter = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType }
             };
@@ -67,7 +67,7 @@ public class FileService
         
         var options = new FilePickerSaveOptions()
         {
-            Title = $"{TranslationHelper.GetTranslation("OpenFileDialog")} - PicView",
+            Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
             FileTypeChoices  = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType },
             SuggestedFileName = fileName,
             SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)

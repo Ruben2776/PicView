@@ -48,7 +48,7 @@ public class App : Application, IPlatformSpecificService
         try
         {
             settingsExists = await SettingsHelper.LoadSettingsAsync();
-            await Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
+            _ = Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
         }
         catch (TaskCanceledException)
         {
@@ -78,7 +78,7 @@ public class App : Application, IPlatformSpecificService
 
     public void OpenWith(string path)
     {
-        //
+        // TODO: Implement OpenWith on macOS
     }
 
     public void LocateOnDisk(string path)

@@ -407,8 +407,8 @@ public static class FunctionsHelper
         }
         SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
         Vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
-            ? TranslationHelper.GetTranslation("CtrlToZoom")
-            : TranslationHelper.GetTranslation("ScrollToZoom");
+            ? TranslationHelper.Translation.CtrlToZoom
+            : TranslationHelper.Translation.ScrollToZoom;
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -421,8 +421,8 @@ public static class FunctionsHelper
         var value = !SettingsHelper.Settings.UIProperties.Looping;
         SettingsHelper.Settings.UIProperties.Looping = value;
         Vm.GetLooping = value
-            ? TranslationHelper.GetTranslation("LoopingEnabled")
-            : TranslationHelper.GetTranslation("LoopingDisabled");
+            ? TranslationHelper.Translation.LoopingEnabled
+            : TranslationHelper.Translation.LoopingDisabled;
         Vm.IsLooping = value;
         await SettingsHelper.SaveSettingsAsync();
     }

@@ -16,6 +16,7 @@ public struct ScreenSize(int width, int height, int workingAreaWidth, int workin
 
 public static class ScreenHelper
 {
+    public static ScreenSize ScreenSize { get; set; }
     public static ScreenSize GetScreenSize(Control control)
     {
         var screen = GetScreen(control);
