@@ -139,26 +139,6 @@ public static class NavigationHelper
             await vm.ImageIterator.LoadPicFromString(source, vm).ConfigureAwait(false);
         }
     }
-
-    public static async Task LoadingPreview(int index, MainViewModel vm)
-    {
-        vm.SetLoadingTitle();
-        vm.SelectedGalleryItemIndex = index;
-        using var image = new MagickImage();
-        image.Ping(vm.ImageIterator.Pics[index]);
-        var thumb = image.GetExifProfile()?.CreateThumbnail();
-        if (thumb is null)
-        {
-            vm.IsLoading = true;
-            await Dispatcher.UIThread.InvokeAsync(() =>  vm.ImageViewer.MainImage.Source = null);
-            return;
-        }
-
-        var byteArray = await Task.FromResult(thumb.ToByteArray());
-        var stream = new MemoryStream(byteArray);
-        vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
-        WindowHelper.SetSize(image.Width, image.Height, 0, vm);
-    }
     
     public static async Task GoToNextFolder(bool next, MainViewModel vm)
     {

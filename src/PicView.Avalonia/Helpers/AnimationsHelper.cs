@@ -82,9 +82,8 @@ public static class AnimationsHelper
         };
     }
     
-    public static Animation FlipAnimation(object from, object to, double speed)
+    public static Animation RotationAnimation(object from, object to, double speed)
     {
-        var scale = ScaleTransform.ScaleXProperty;
         return new Animation
         {
             Duration = TimeSpan.FromSeconds(speed),
@@ -98,7 +97,17 @@ public static class AnimationsHelper
                     {
                         new Setter
                         {
-                            Property = scale,
+                            Property = RotateTransform.AngleProperty,
+                            Value = from
+                        },
+                        new Setter
+                        {
+                            Property = RotateTransform.CenterXProperty,
+                            Value = from
+                        },
+                        new Setter
+                        {
+                            Property = RotateTransform.CenterYProperty,
                             Value = from
                         }
                     },
@@ -110,8 +119,67 @@ public static class AnimationsHelper
                     {
                         new Setter
                         {
-                            Property = scale,
+                            Property = RotateTransform.AngleProperty,
                             Value = to
+                        },
+                        new Setter
+                        {
+                            Property = RotateTransform.CenterXProperty,
+                            Value = to
+                        },
+                        new Setter
+                        {
+                            Property = RotateTransform.CenterYProperty,
+                            Value = to
+                        }
+                    },
+                    Cue = new Cue(1d)
+                },
+            }
+        };
+    }
+    
+    public static Animation FlipAnimation(object from, object to, double speed)
+    {
+        var x = ScaleTransform.ScaleXProperty;
+        var y = ScaleTransform.ScaleYProperty;
+        return new Animation
+        {
+            Duration = TimeSpan.FromSeconds(speed),
+            Easing = new LinearEasing(),
+            FillMode = FillMode.Forward,
+            Children =
+            {
+                new KeyFrame
+                {
+                    Setters =
+                    {
+                        new Setter
+                        {
+                            Property = x,
+                            Value = from
+                        },
+                        new Setter
+                        {
+                            Property = y,
+                            Value = 1
+                        }
+                    },
+                    Cue = new Cue(0d)
+                },
+                new KeyFrame
+                {
+                    Setters =
+                    {
+                        new Setter
+                        {
+                            Property = x,
+                            Value = to
+                        },
+                        new Setter
+                        {
+                            Property = y,
+                            Value = 1
                         }
                     },
                     Cue = new Cue(1d)

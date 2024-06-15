@@ -241,59 +241,52 @@ public static class FunctionsHelper
 
         if (Vm.IsScrollingEnabled)
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
             {
-                if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
-                {
-                    Vm.ImageViewer.Rotate(clockWise: true, animate: true);
-                }
-                else
+               Vm.ImageViewer.Rotate(clockWise: true, animate: true);
+            }
+            else
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     Vm.ImageViewer.ImageScrollViewer.LineUp();
-                }
-            });
+                });
+            }
         }
         else
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Vm.ImageViewer.Rotate(clockWise: true, animate: true);
-            });
-        }
-    }
-
-    public static async Task RotateRight()
-    {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
             Vm.ImageViewer.Rotate(clockWise: true, animate: true);
-        });
+        }
     }
 
-    public static async Task RotateLeft()
+    public static Task RotateRight()
     {
         if (Vm is null)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            return;
+            return Task.CompletedTask;
         }
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        Vm.ImageViewer.Rotate(clockWise: true, animate: true);
+        return Task.CompletedTask;
+    }
+
+    public static Task RotateLeft()
+    {
+        if (Vm is null)
         {
-            Vm.ImageViewer.Rotate(clockWise: false, animate: true);
-        });
+            return Task.CompletedTask;
+        }
+
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            return Task.CompletedTask;
+        }
+        Vm.ImageViewer.Rotate(clockWise: false, animate: true);
+        return Task.CompletedTask;
     }
 
     public static async Task Down()

@@ -91,7 +91,7 @@ public class GalleryThumbInfo
         /// <param name="imageSource">The image source of the thumbnail.</param>
         /// <param name="fileInfo">The file information of the thumbnail.</param>
         /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
-        public static GalleryThumbHolder GetThumbData(int index, IImageSource? imageSource, FileInfo fileInfo)
+        public static GalleryThumbHolder GetThumbData(int index, IImageSource? imageSource, FileInfo? fileInfo)
         {
             const int fileNameLength = 60;
             var fileLocation = fileInfo.FullName;

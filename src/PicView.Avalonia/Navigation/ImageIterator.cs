@@ -364,7 +364,7 @@ public class ImageIterator
                 {
                     if (showThumb)
                     {
-                        await NavigationHelper.LoadingPreview(index, vm);
+                        await LoadingPreview(index, vm);
                         if (Index != index)
                         {
                             return;
@@ -381,7 +381,7 @@ public class ImageIterator
             }
             else
             {
-                await NavigationHelper.LoadingPreview(index, vm);
+                await LoadingPreview(index, vm);
                 var added = await PreLoader.AddAsync(index, Pics);
                 if (Index != index)
                 {
@@ -528,7 +528,7 @@ public class ImageIterator
 
                 if (preLoadValue.IsLoading)
                 {
-                    await NavigationHelper.LoadingPreview(index, vm);
+                    await LoadingPreview(index, vm);
                 }
 
                 var x = 0;
@@ -545,7 +545,7 @@ public class ImageIterator
         }
         else
         {
-            await NavigationHelper.LoadingPreview(index, vm);
+            await LoadingPreview(index, vm);
             await PreLoader.AddAsync(index, Pics).ConfigureAwait(false);
             preLoadValue = PreLoader.Get(index, Pics);
             if (preLoadValue is null)
@@ -573,5 +573,33 @@ public class ImageIterator
 
         await AddAsync(Index, preLoadValue.ImageModel);
         await Preload();
+    }
+    
+    public async Task LoadingPreview(int index, MainViewModel vm)
+    {
+        if (index != Index)
+        {
+            return;
+        }
+        vm.SetLoadingTitle();
+        vm.SelectedGalleryItemIndex = index;
+        using var image = new MagickImage();
+        image.Ping(vm.ImageIterator.Pics[index]);
+        var thumb = image.GetExifProfile()?.CreateThumbnail();
+        if (thumb is null && index == Index)
+        {
+            vm.IsLoading = true;
+            await Dispatcher.UIThread.InvokeAsync(() =>  vm.ImageViewer.MainImage.Source = null);
+            return;
+        }
+
+        var byteArray = await Task.FromResult(thumb.ToByteArray());
+        var stream = new MemoryStream(byteArray);
+        if (index != Index)
+        {
+            return;
+        }
+        vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
+        WindowHelper.SetSize(image.Width, image.Height, 0, vm);
     }
 }
