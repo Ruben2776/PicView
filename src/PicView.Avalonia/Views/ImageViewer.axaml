@@ -27,12 +27,9 @@
                     PointerReleased="ImageZoomBorder_OnPointerReleased"
                     VerticalAlignment="Center"
                     x:Name="ImageZoomBorder">
-                    <Image
-                        Height="{CompiledBinding ImageHeight}"
+                    <customControls:PicBox
                         RenderOptions.BitmapInterpolationMode="HighQuality"
-                        Stretch="Fill"
                         UseLayoutRounding="True"
-                        Width="{CompiledBinding ImageWidth}"
                         x:Name="MainImage" />
                 </Border>
             </customControls:AutoScrollViewer>
