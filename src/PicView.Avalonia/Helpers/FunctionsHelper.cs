@@ -48,6 +48,7 @@ public static class FunctionsHelper
             "ZoomIn" => ZoomIn,
             "ZoomOut" => ZoomOut,
             "ResetZoom" => ResetZoom,
+            "ChangeCtrlZoom" => ChangeCtrlZoom,
 
             // Toggles
             "ToggleScroll" => ToggleScroll,

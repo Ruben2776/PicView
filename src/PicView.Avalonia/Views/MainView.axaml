@@ -190,7 +190,7 @@
                     Header="{Binding Stretch}"
                     IsChecked="{Binding IsStretched}"
                     ToggleType="CheckBox" />
-                <MenuItem Command="{Binding ChangeCtrlZoomCommand}" Header="{Binding GetCtrlZoom}" />
+                <MenuItem Command="{Binding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom}" />
                 <MenuItem Command="{Binding ToggleUICommand}" Header="{Binding HideShowInterface}">
                     <MenuItem.Icon>
                         <Image Height="12" Width="12">
