@@ -1,8 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Metadata;
+using Avalonia.Threading;
+using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
+using PicView.Core.Calculations;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.CustomControls;
@@ -64,14 +69,13 @@ public class PicBox : Control
         {
             return;
         }
-
-        var is1to1 = true; // TODO: replace with settings value
-
-        if (is1to1)
-        {
-            var viewPort = new Rect(Bounds.Size);
-            var sourceSize = source.Size;
+        var viewPort = new Rect(Bounds.Size);
+        var sourceSize = source.Size;
         
+        var is1To1 = false; // TODO: replace with settings value
+
+        if (is1To1)
+        {
             var scale = 1; 
             var scaledSize = sourceSize * scale;
             var destRect = viewPort
@@ -82,8 +86,66 @@ public class PicBox : Control
 
             context.DrawImage(source, sourceRect, destRect);
         }
+        else
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
+            var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? SizeDefaults.TitlebarHeight : 0;
+            var uiBottomSize = SettingsHelper.Settings.WindowProperties.Fullscreen || !SettingsHelper.Settings.UIProperties.ShowInterface
+                || !SettingsHelper.Settings.UIProperties.ShowBottomNavBar 
+                    ? 0 : SizeDefaults.BottombarHeight + SizeDefaults.ScrollbarSize;
+            var galleryHeight = GalleryFunctions.IsBottomGalleryOpen
+                ? SettingsHelper.Settings.Gallery.BottomGalleryItemSize
+                : 0;
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                desktopMinWidth = desktop.MainWindow.MinWidth;
+                desktopMinHeight = desktop.MainWindow.MinHeight;
+                containerWidth = desktop.MainWindow.Width;
+                containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+            }
+            else
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    desktopMinWidth = desktop.MainWindow.MinWidth;
+                    desktopMinHeight = desktop.MainWindow.MinHeight;
+                    containerWidth = desktop.MainWindow.Width;
+                    containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+                }, DispatcherPriority.Normal).Wait();
+            }
+            var size = ImageSizeCalculationHelper.GetImageSize(
+                source.Size.Width,
+                source.Size.Height,
+                ScreenHelper.ScreenSize.Width,
+                ScreenHelper.ScreenSize.Height,
+                desktopMinWidth,
+                desktopMinHeight,
+                ImageSizeCalculationHelper.GetInterfaceSize(),
+                rotationAngle: 0,
+                75,
+                ScreenHelper.ScreenSize.Scaling,
+                uiTopSize,
+                uiBottomSize,
+                galleryHeight,
+                containerWidth,
+                containerHeight);
+            
+            var destRect = viewPort
+                .CenterRect(new Rect(0,0,size.Width, size.Height))
+                .Intersect(viewPort);
+            var sourceRect = new Rect(sourceSize)
+                .CenterRect(new Rect(destRect.Size / size.AspectRatio));
+
+            context.DrawImage(source, sourceRect, destRect);
+        }
         // TODO: Implement other size modes
     }
+
+    /// <inheritdoc/>
     protected override Size MeasureOverride(Size availableSize)
     {
         return Source?.Size ?? availableSize;

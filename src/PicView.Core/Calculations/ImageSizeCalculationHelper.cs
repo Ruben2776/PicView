@@ -5,20 +5,22 @@ namespace PicView.Core.Calculations;
 
 public static class ImageSizeCalculationHelper
 {
-    public const int ScrollbarSize = 22;
-    public struct ImageSize(double width, double height, double titleMaxWidth, double margin)
+    
+    public struct ImageSize(double width, double height, double titleMaxWidth, double margin, double aspectRatio)
     {
         public double TitleMaxWidth { get; private set; } = titleMaxWidth;
         public double Width { get; private set; } = width;
         public double Height { get; private set; } = height;
-
         public double Margin { get; private set; } = margin;
+        
+        public double AspectRatio { get; private set; } = aspectRatio;
     }
 
     public static double GetInterfaceSize()
     {
         return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 228;
     }
+    
 
     public static ImageSize GetImageSize(double width,
         double height,
@@ -38,7 +40,7 @@ public static class ImageSizeCalculationHelper
     {
         if (width <= 0 || height <= 0 || rotationAngle > 360 || rotationAngle < 0)
         {
-            return new ImageSize(0, 0, 0, 0);
+            return new ImageSize(0, 0, 0, 0,0);
         }
 
         double aspectRatio;
@@ -115,12 +117,12 @@ public static class ImageSizeCalculationHelper
         
         if (SettingsHelper.Settings.Zoom.ScrollEnabled)
         {
-            xWidth = maxWidth - ScrollbarSize;
+            xWidth = maxWidth - SizeDefaults.ScrollbarSize;
             xHeight = maxWidth * height / width;
 
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                xWidth = maxWidth - ScrollbarSize;
+                xWidth = maxWidth - SizeDefaults.ScrollbarSize;
                 xHeight = height * aspectRatio;
             }
         }
@@ -134,7 +136,7 @@ public static class ImageSizeCalculationHelper
         
         var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight, interfaceSize, containerWidth);
 
-        return new ImageSize(xWidth, xHeight, titleMaxWidth, margin);
+        return new ImageSize(xWidth, xHeight, titleMaxWidth, margin, aspectRatio);
     }
 
     public static double GetTitleMaxWidth(double rotationAngle, double width, double height, double monitorMinWidth,

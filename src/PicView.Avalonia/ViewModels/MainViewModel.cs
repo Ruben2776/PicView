@@ -95,7 +95,7 @@ public class MainViewModel : ViewModelBase
     {
         get
         {
-            return GetBottomGalleryItemHeight + ImageSizeCalculationHelper.ScrollbarSize;
+            return GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize;
         }
     }
 
@@ -128,7 +128,7 @@ public class MainViewModel : ViewModelBase
         }
     }
     
-    private double _getFullGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+    private double _getFullGalleryItemHeight;
 
     public double GetFullGalleryItemHeight
     {
@@ -536,7 +536,7 @@ public class MainViewModel : ViewModelBase
     {
         get
         {
-            return 450;
+            return SizeDefaults.WindowMinSize;
         }
     }
     
@@ -548,7 +548,8 @@ public class MainViewModel : ViewModelBase
             {
                 return 0;
             }
-            return 32;
+
+            return SizeDefaults.TitlebarHeight;
         }
     }
     public int BottombarHeight         
@@ -559,7 +560,7 @@ public class MainViewModel : ViewModelBase
             {
                 return 0;
             }
-            return 26;
+            return SizeDefaults.BottombarHeight;
         }
     }
 

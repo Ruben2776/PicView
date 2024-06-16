@@ -399,7 +399,7 @@ public class ImageIterator
                 return;
             }
 
-            await UpdateSourceTask(vm, preLoadValue);
+            UpdateSource(vm, preLoadValue);
         }
         catch (Exception e)
         {
@@ -553,10 +553,10 @@ public class ImageIterator
                 return;
             }
         }
-        await UpdateSourceTask(vm, preLoadValue);
+        UpdateSource(vm, preLoadValue);
     }
     
-    private async Task UpdateSourceTask(MainViewModel vm, PreLoader.PreLoadValue preLoadValue)
+    private void UpdateSource(MainViewModel vm, PreLoader.PreLoadValue preLoadValue)
     {
         vm.IsLoading = false;
         vm.SetImageModel(preLoadValue.ImageModel);
@@ -571,8 +571,8 @@ public class ImageIterator
 
         vm.SelectedGalleryItemIndex = Index;
 
-        await AddAsync(Index, preLoadValue.ImageModel);
-        await Preload();
+        _ =  AddAsync(Index, preLoadValue.ImageModel);
+        _ = Preload();
     }
     
     public async Task LoadingPreview(int index, MainViewModel vm)
