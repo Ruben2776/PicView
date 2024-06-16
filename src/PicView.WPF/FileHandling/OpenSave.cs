@@ -247,7 +247,7 @@ internal static class OpenSave
                     var fileInfo = new FileInfo(Pics[FolderIndex]);
                     var bitmapSource = await Thumbnails.GetBitmapSourceThumbAsync(Pics[FolderIndex],
                         (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
-                    var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(FolderIndex, new Image2BitmapSource.WpfImageSource(bitmapSource), fileInfo);
+                    var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
                     await GetPicGallery.Dispatcher.InvokeAsync(() =>
                     {
                         UpdatePic(FolderIndex, bitmapSource,

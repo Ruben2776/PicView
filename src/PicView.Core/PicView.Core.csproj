@@ -11,7 +11,7 @@
     <IsAotCompatible>True</IsAotCompatible>
     <IsTrimmable>True</IsTrimmable>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <PlatformTarget>ARM64</PlatformTarget>
+    <PlatformTarget>X64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q8-arm64" Version="13.9.1" />
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.9.1" />
   </ItemGroup>
 
   <ItemGroup>

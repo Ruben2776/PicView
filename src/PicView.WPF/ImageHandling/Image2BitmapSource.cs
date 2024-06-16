@@ -214,15 +214,4 @@ internal static class Image2BitmapSource
         bitmap.Freeze();
         return bitmap;
     }
-
-    public class WpfImageSource(BitmapSource? bitmapSource) : GalleryThumbInfo.IImageSource
-    {
-        private readonly BitmapSource _bitmapSource = bitmapSource ?? ImageFunctions.ImageErrorMessage() ??
-            throw new ArgumentNullException(nameof(bitmapSource));
-
-        public object GetPlatformImageSource()
-        {
-            return _bitmapSource;
-        }
-    }
 }

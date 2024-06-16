@@ -20,6 +20,20 @@ internal static class GalleryFunctions
 {
     internal static bool IsGalleryOpen { get; set; }
 
+    private struct TempGalleryItem(
+        string fileLocation,
+        string fileName,
+        string fileSize,
+        string fileDate,
+        BitmapSource source)
+    {
+        internal string FileLocation = fileLocation;
+        internal string FileName = fileName;
+        internal string FileSize = fileSize;
+        internal string FileDate = fileDate;
+        internal BitmapSource Source { get; set; } = source;
+    }
+
     internal static void ReCalculateItemSizes()
     {
         if (GetPicGallery is null)
@@ -79,7 +93,7 @@ internal static class GalleryFunctions
             }
         }
 
-        var thumbs = new List<GalleryThumbInfo.GalleryThumbHolder>();
+        var thumbs = new List<TempGalleryItem>();
 
         for (var i = 0; i < Navigation.Pics.Count; i++)
         {
@@ -92,10 +106,9 @@ internal static class GalleryFunctions
                         return;
                     }
                     var picGalleryItem = GetPicGallery.Container.Children[i] as PicGalleryItem;
-                    var bitmapSource = new Image2BitmapSource.WpfImageSource(picGalleryItem.ThumbImage?.Source as BitmapSource);
-                    var thumb = new GalleryThumbInfo.GalleryThumbHolder(picGalleryItem.ThumbFileLocation.Text,
+                    var thumb = new TempGalleryItem(picGalleryItem.ThumbFileLocation.Text,
                         picGalleryItem.ThumbFileName.Text, picGalleryItem.ThumbFileSize.Text,
-                        picGalleryItem.ThumbFileDate.Text, bitmapSource);
+                        picGalleryItem.ThumbFileDate.Text, picGalleryItem.ThumbImage.Source as BitmapSource);
                     thumbs.Add(thumb);
                 }, DispatcherPriority.Render, cancellationTokenSource.Token);
                 if (initialDirectory != Path.GetDirectoryName(Navigation.Pics[0]))
@@ -127,7 +140,7 @@ internal static class GalleryFunctions
                 var index = i;
                 await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
                 {
-                    UpdatePic(index, (BitmapSource?)thumbs[index].ImageSource, thumbs[index].FileLocation, thumbs[index].FileName,
+                    UpdatePic(index, (BitmapSource?)thumbs[index].Source, thumbs[index].FileLocation, thumbs[index].FileName,
                         thumbs[index].FileSize, thumbs[index].FileDate);
                     GalleryNavigation.SetSelected(index, index == Navigation.FolderIndex);
                 }, DispatcherPriority.Background, cancellationTokenSource.Token);
