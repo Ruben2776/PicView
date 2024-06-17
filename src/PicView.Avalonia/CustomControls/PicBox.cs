@@ -1,25 +1,30 @@
 ﻿using Avalonia;
+using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Automation.Peers;
 using Avalonia.Media;
 using Avalonia.Metadata;
-using Avalonia.Threading;
-using PicView.Avalonia.Gallery;
-using PicView.Avalonia.Helpers;
+using Avalonia.Utilities;
 using PicView.Avalonia.Navigation;
-using PicView.Core.Calculations;
-using PicView.Core.Config;
+using PicView.Avalonia.Views;
 
 namespace PicView.Avalonia.CustomControls;
 
 public class PicBox : Control
 {
+    static PicBox()
+    {
+        // Registers the SourceProperty to render when the source changes
+        AffectsRender<PicBox>(SourceProperty);
+    }
+    
     #region Properties
     /// <summary>
     /// Defines the <see cref="Source"/> property.
     /// </summary>
     public static readonly StyledProperty<IImage?> SourceProperty =
-        AvaloniaProperty.Register<Image, IImage?>(nameof(Source));
+        AvaloniaProperty.Register<PicBox, IImage?>(nameof(Source));
     
     /// <summary>
     /// Gets or sets the image that will be displayed.
@@ -32,10 +37,26 @@ public class PicBox : Control
     }
     
     /// <summary>
+    /// Defines the <see cref="SecondSource"/> property.
+    /// </summary>
+    public static readonly StyledProperty<IImage?> SecondSourceProperty =
+        AvaloniaProperty.Register<PicBox, IImage?>(nameof(SecondSource));
+    
+    /// <summary>
+    /// Gets or sets the second image that will be displayed, when side by side view is enabled
+    /// </summary>
+    [Content]
+    public IImage? SecondSource
+    {
+        get => GetValue(SecondSourceProperty);
+        set => SetValue(SecondSourceProperty, value);
+    }
+    
+    /// <summary>
     /// Defines the <see cref="ImageType"/> property.
     /// </summary>
     public static readonly AvaloniaProperty<ImageType> ImageTypeProperty =
-        AvaloniaProperty.Register<AnimatedMenu, ImageType>(nameof(ImageType));
+        AvaloniaProperty.Register<PicBox, ImageType>(nameof(ImageType));
 
     /// <summary>
     /// Gets or sets the image type.
@@ -48,12 +69,6 @@ public class PicBox : Control
     }
     
     #endregion
-    
-    static PicBox()
-    {
-        // Registers the SourceProperty to render when the source changes
-        AffectsRender<PicBox>(SourceProperty);
-    }
 
     #region Rendering
     
@@ -63,99 +78,139 @@ public class PicBox : Control
     /// <param name="context">The drawing context.</param>
     public sealed override void Render(DrawingContext context)
     {
+        base.Render(context);
+        
         var source = Source;
-
-        if (source == null || Bounds is not { Width: > 0, Height: > 0 })
+        if (source == null)
         {
             return;
         }
-        var viewPort = new Rect(Bounds.Size);
+        
         var sourceSize = source.Size;
+        var viewPort = DetermineViewPort();
         
         var is1To1 = false; // TODO: replace with settings value
-
+        var isSideBySide = false; // TODO: replace with settings value
         if (is1To1)
         {
-            var scale = 1; 
-            var scaledSize = sourceSize * scale;
-            var destRect = viewPort
-                .CenterRect(new Rect(scaledSize))
-                .Intersect(viewPort);
-            var sourceRect = new Rect(sourceSize)
-                .CenterRect(new Rect(destRect.Size / scale));
-
-            context.DrawImage(source, sourceRect, destRect);
+            RenderImage1To1(context, source, viewPort, sourceSize);
+        }
+        else if (isSideBySide)
+        {
+            RenderImageSideBySide(context, source, viewPort, sourceSize);
         }
         else
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-            double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
-            var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? SizeDefaults.TitlebarHeight : 0;
-            var uiBottomSize = SettingsHelper.Settings.WindowProperties.Fullscreen || !SettingsHelper.Settings.UIProperties.ShowInterface
-                || !SettingsHelper.Settings.UIProperties.ShowBottomNavBar 
-                    ? 0 : SizeDefaults.BottombarHeight + SizeDefaults.ScrollbarSize;
-            var galleryHeight = GalleryFunctions.IsBottomGalleryOpen
-                ? SettingsHelper.Settings.Gallery.BottomGalleryItemSize
-                : 0;
-            if (Dispatcher.UIThread.CheckAccess())
-            {
-                desktopMinWidth = desktop.MainWindow.MinWidth;
-                desktopMinHeight = desktop.MainWindow.MinHeight;
-                containerWidth = desktop.MainWindow.Width;
-                containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
-            }
-            else
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    desktopMinWidth = desktop.MainWindow.MinWidth;
-                    desktopMinHeight = desktop.MainWindow.MinHeight;
-                    containerWidth = desktop.MainWindow.Width;
-                    containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
-                }, DispatcherPriority.Normal).Wait();
-            }
-            var size = ImageSizeCalculationHelper.GetImageSize(
-                source.Size.Width,
-                source.Size.Height,
-                ScreenHelper.ScreenSize.Width,
-                ScreenHelper.ScreenSize.Height,
-                desktopMinWidth,
-                desktopMinHeight,
-                ImageSizeCalculationHelper.GetInterfaceSize(),
-                rotationAngle: 0,
-                75,
-                ScreenHelper.ScreenSize.Scaling,
-                uiTopSize,
-                uiBottomSize,
-                galleryHeight,
-                containerWidth,
-                containerHeight);
-            
-            var destRect = viewPort
-                .CenterRect(new Rect(0,0,size.Width, size.Height))
-                .Intersect(viewPort);
-            var sourceRect = new Rect(sourceSize)
-                .CenterRect(new Rect(destRect.Size / size.AspectRatio));
-
-            context.DrawImage(source, sourceRect, destRect);
+            RenderImage(context, source, viewPort, sourceSize);
         }
-        // TODO: Implement other size modes
+    }
+    
+    private Rect DetermineViewPort()
+    {
+        if (!(Bounds.Width <= 0) && !(Bounds.Height <= 0))
+        {
+            return new Rect(Bounds.Size);
+        }
+
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return new Rect();
+        }
+
+        var mainView = desktop.MainWindow?.GetControl<MainView>("MainView");
+        return mainView == null ? new Rect() : new Rect(Bounds.X, Bounds.Y, mainView.Bounds.Width, mainView.Bounds.Height);
+    }
+    
+    private void RenderImage1To1(DrawingContext context, IImage source, Rect viewPort, Size sourceSize)
+    {
+        var scale = 1.0;
+        var scaledSize = sourceSize * scale;
+        var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
+        var sourceRect = new Rect(sourceSize).CenterRect(new Rect(destRect.Size / scale));
+
+        context.DrawImage(source, sourceRect, destRect);
     }
 
-    /// <inheritdoc/>
+    private void RenderImage(DrawingContext context, IImage source, Rect viewPort, Size sourceSize)
+    {
+        var scale = CalculateScaling(viewPort.Size, sourceSize);
+        var scaledSize = sourceSize * scale;
+        var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
+        var sourceRect = new Rect(sourceSize).CenterRect(new Rect(destRect.Size / scale));
+
+        context.DrawImage(source, sourceRect, destRect);
+    }
+    
+    private void RenderImageSideBySide(DrawingContext context, IImage source, Rect viewPort, Size sourceSize)
+    {
+        // TODO Add side by side viewing mode
+    }
+    
+    private static Vector CalculateScaling(Size destinationSize, Size sourceSize)
+    {
+        var isConstrainedWidth = !double.IsPositiveInfinity(destinationSize.Width);
+        var isConstrainedHeight = !double.IsPositiveInfinity(destinationSize.Height);
+
+        // Compute scaling factors for both axes
+        var scaleX = MathUtilities.IsZero(sourceSize.Width) ? 0.0 : destinationSize.Width / sourceSize.Width;
+        var scaleY = MathUtilities.IsZero(sourceSize.Height) ? 0.0 : destinationSize.Height / sourceSize.Height;
+
+        if (!isConstrainedWidth)
+        {
+            scaleX = scaleY;
+        }
+        else if (!isConstrainedHeight)
+        {
+            scaleY = scaleX;
+        }
+
+        return new Vector(scaleX, scaleY);
+    }
+    
+    public static Size CalculateSize(Size destinationSize, Size sourceSize)
+    {
+        return sourceSize * CalculateScaling(destinationSize, sourceSize);
+    }
+
+    /// <summary>
+    /// Measures the control.
+    /// </summary>
+    /// <param name="availableSize">The available size.</param>
+    /// <returns>The desired size of the control.</returns>
     protected override Size MeasureOverride(Size availableSize)
     {
-        return Source?.Size ?? availableSize;
+        return Source != null ? CalculateSize(availableSize, Source.Size) : new Size();
     }
     
     /// <inheritdoc/>
     protected override Size ArrangeOverride(Size finalSize)
     {
-        return Source?.Size ?? finalSize;
+        UpdateLayout();
+        return base.ArrangeOverride(finalSize);
     }
     
+    protected override AutomationPeer OnCreateAutomationPeer()
+    {
+        return new ImageAutomationPeer(this);
+    }
+
+    #endregion
+    
+    #region Pan and Zoom
+    
+    // TODO: Add Pan and Zoom
+    
+    #endregion 
+    
+    #region Rotation
+    
+    // TODO: Add Rotation
+    
+    #endregion
+
+    #region Animated Pic
+
+    // TODO: Add Animation behavior
+
     #endregion
 }

@@ -80,6 +80,7 @@ public partial class ImageViewer : UserControl
         {
             //ImageHelper.SetImage(image, MainImage, imageType);
             MainImage.Source = image as IImage;
+            MainImage.ImageType = imageType;
             Reset();
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {

@@ -466,20 +466,20 @@ public static class WindowHelper
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
-            75,
+            65,
             screenSize.Scaling,
             uiTopSize,
             uiBottomSize,
             vm.GalleryHeight,
             containerWidth,
             containerHeight);
-
+        
         vm.TitleMaxWidth = size.TitleMaxWidth;
         vm.ImageWidth = size.Width;
         vm.ImageHeight = size.Height;
         vm.ImageMargin = new Thickness(0, 0, 0, size.Margin);
-        
-        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ? size.Width : double.NaN;
+
+        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ? size.Width : double.NaN;;
     }
     
     public static void SaveSize(Window window)

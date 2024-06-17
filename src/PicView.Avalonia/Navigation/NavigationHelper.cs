@@ -1,9 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;

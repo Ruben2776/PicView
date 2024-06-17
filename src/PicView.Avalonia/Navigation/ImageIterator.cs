@@ -67,7 +67,7 @@ public class ImageIterator
         _watcher.IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
         _watcher.Created += async (_, e) => await OnFileAdded(e).ConfigureAwait(false);
         _watcher.Deleted += (_, e) => OnFileDeleted(e);
-        _watcher.Renamed += (_, e) => OnFileRenamed(e);
+        _watcher.Renamed += async (_, e) => await OnFileRenamed(e);
     }
 
     public async Task Preload()
@@ -586,20 +586,34 @@ public class ImageIterator
         using var image = new MagickImage();
         image.Ping(vm.ImageIterator.Pics[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();
-        if (thumb is null && index == Index)
+        if (thumb is null)
         {
-            vm.IsLoading = true;
-            await Dispatcher.UIThread.InvokeAsync(() =>  vm.ImageViewer.MainImage.Source = null);
+            await Set();
             return;
         }
 
         var byteArray = await Task.FromResult(thumb.ToByteArray());
+        if (byteArray is null)
+        {
+            await Set();
+            return;
+        }
         var stream = new MemoryStream(byteArray);
         if (index != Index)
         {
             return;
         }
         vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
-        WindowHelper.SetSize(image.Width, image.Height, 0, vm);
+        WindowHelper.SetSize(image?.Width ?? 0, image?.Height ?? 0, 0, vm);
+        return;
+
+        async Task Set()
+        {
+            if (index == Index)
+            {
+                vm.IsLoading = true;
+                await Dispatcher.UIThread.InvokeAsync(() =>  vm.ImageViewer.MainImage.Source = null);
+            }
+        }
     }
 }

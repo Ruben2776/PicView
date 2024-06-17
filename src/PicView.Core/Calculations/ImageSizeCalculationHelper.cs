@@ -64,7 +64,6 @@ public static class ImageSizeCalculationHelper
         else
         {
             maxWidth = stretch ? containerWidth : Math.Min(containerWidth, width);
-
             
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
