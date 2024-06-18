@@ -237,6 +237,7 @@
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
                     Command="{Binding RenameCommand}"
+                    IsEnabled="False"
                     ToolTip.Tip="{Binding RenameFile}">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -260,6 +261,7 @@
                     Canvas.Top="144"
                     Classes="ButtonBorder altHover"
                     Command="{Binding PasteCommand}"
+                    IsEnabled="False"
                     ToolTip.Tip="{Binding FilePaste}">
                     <StackPanel Orientation="Horizontal">
                         <Path

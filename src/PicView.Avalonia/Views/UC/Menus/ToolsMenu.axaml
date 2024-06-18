@@ -37,6 +37,7 @@
                     Classes="noBorderHover"
                     CornerRadius="8,0,0,0"
                     Height="45"
+                    IsEnabled="False"
                     ToolTip.Tip="{Binding BatchResize}"
                     Width="179">
                     <StackPanel Orientation="Horizontal">
@@ -102,6 +103,7 @@
                     Canvas.Left="179"
                     Classes="noBorderHover"
                     Height="45"
+                    IsEnabled="False"
                     ToolTip.Tip="{Binding EffectsTooltip}"
                     Width="136">
                     <StackPanel Orientation="Horizontal">
@@ -216,6 +218,7 @@
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
+                    IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding ColorPickerToolTooltip}"
                     Width="169">
                     <StackPanel Orientation="Horizontal">

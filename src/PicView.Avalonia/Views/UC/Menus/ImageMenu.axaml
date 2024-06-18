@@ -100,6 +100,7 @@
                     Canvas.Left="135"
                     Classes="hover"
                     Height="45"
+                    IsEnabled="False"
                     ToolTip.Tip="Coming soon..."
                     Width="45">
                     <Image Height="17" Width="17">
@@ -181,6 +182,7 @@
                     Canvas.Left="7"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
+                    IsEnabled="False"
                     ToolTip.Tip="{Binding ResizeImage}">
                     <StackPanel Orientation="Horizontal">
                         <Canvas Height="54" Width="45">
@@ -225,6 +227,7 @@
                     Canvas.Left="160"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
+                    IsEnabled="False"
                     ToolTip.Tip="{Binding Crop}">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -245,6 +248,7 @@
                     Canvas.Left="7"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
+                    IsEnabled="False"
                     ToolTip.Placement="Top"
                     ToolTip.Tip="{Binding Slideshow}">
                     <StackPanel Orientation="Horizontal">
@@ -276,7 +280,8 @@
                             Width="20" />
                         <TextBlock
                             Classes="txt"
-                            MaxWidth="150"
+                            Margin="1,0,6,0"
+                            MaxWidth="175"
                             Text="Side by side" />
                     </StackPanel>
                 </Button>
