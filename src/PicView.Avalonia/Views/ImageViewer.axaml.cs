@@ -46,49 +46,6 @@ public partial class ImageViewer : UserControl
         };
     }
 
-    public void SetImage(object image, ImageType imageType)
-    {
-        if (imageType is ImageType.Svg)
-        {
-            var svgSource = SvgSource.Load(image as string, null);
-            if (Dispatcher.UIThread.CheckAccess())
-            {
-                MainImage.Source = new SvgImage { Source = svgSource };
-            }
-            else
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    MainImage.Source = new SvgImage { Source = svgSource };
-                }, DispatcherPriority.Send);
-            }
-
-            return;
-        }
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.InvokeAsync(Set);
-        }
-
-        return;
-
-        void Set()
-        {
-            //ImageHelper.SetImage(image, MainImage, imageType);
-            MainImage.Source = image as IImage;
-            MainImage.ImageType = imageType;
-            Reset();
-            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-            {
-                ImageScrollViewer.ScrollToHome();
-            }
-        }
-    }
-
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)
     {
         ZoomTo(e.GetPosition(this), e.Delta.X > 0);

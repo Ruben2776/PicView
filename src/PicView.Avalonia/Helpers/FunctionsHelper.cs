@@ -96,6 +96,7 @@ public static class FunctionsHelper
 
             // File functions
             "DeleteFile" => DeleteFile,
+            "RecycleFile" => RecycleFile,
             "Rename" => Rename,
             "ShowFileProperties" => ShowFileProperties,
 

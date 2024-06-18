@@ -29,7 +29,10 @@
                     x:Name="ImageZoomBorder">
                     <customControls:PicBox
                         Height="{CompiledBinding ImageHeight}"
+                        ImageType="{CompiledBinding ImageType}"
                         RenderOptions.BitmapInterpolationMode="HighQuality"
+                        SecondarySource="{CompiledBinding SecondaryImageSource}"
+                        Source="{CompiledBinding ImageSource}"
                         UseLayoutRounding="True"
                         Width="{CompiledBinding ImageWidth}"
                         x:Name="MainImage" />

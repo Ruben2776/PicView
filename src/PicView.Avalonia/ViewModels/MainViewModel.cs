@@ -28,8 +28,84 @@ namespace PicView.Avalonia.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     public readonly IPlatformSpecificService? PlatformService;
+    
+    #region Image
+    
+    private object? _imageSource;
+    
+    public object? ImageSource
+    {
+        get => _imageSource;
+        set => this.RaiseAndSetIfChanged(ref _imageSource, value);
+    }
+    
+    private object? _secondaryImageSource;
+    
+    public object? SecondaryImageSource
+    {
+        get => _secondaryImageSource;
+        set => this.RaiseAndSetIfChanged(ref _secondaryImageSource, value);
+    }
+    
+    private ImageType _imageType;
+    
+    public ImageType ImageType
+    {
+        get => _imageType;
+        set => this.RaiseAndSetIfChanged(ref _imageType, value);
+    }
+    
+    private double _imageWidth;
+
+    public double ImageWidth
+    {
+        get => _imageWidth;
+        set => this.RaiseAndSetIfChanged(ref _imageWidth, value);
+    }
+
+    private double _imageHeight;
+
+    public double ImageHeight
+    {
+        get => _imageHeight;
+        set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
+    }
+    
+    #endregion
 
     #region Gallery
+    
+    private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+
+    public bool IsBottomGalleryShown
+    {
+        get => _isBottomGalleryShown;
+        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
+    }
+
+    private bool _isBottomGalleryShownInHiddenUi = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+
+    public bool IsBottomGalleryShownInHiddenUI
+    {
+        get => _isBottomGalleryShownInHiddenUi;
+        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
+    }
+    
+    private bool _isGalleryOpen;
+
+    public bool IsGalleryOpen
+    {
+        get => _isGalleryOpen;
+        set => this.RaiseAndSetIfChanged(ref _isGalleryOpen, value);
+    }
+
+    private GalleryMode _galleryMode;
+
+    public GalleryMode GalleryMode
+    {
+        get => _galleryMode;
+        set => this.RaiseAndSetIfChanged(ref _galleryMode, value);
+    }
 
     private Stretch _galleryStretch;
 
@@ -347,22 +423,6 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isBottomToolbarShown, value);
     }
 
-    private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
-
-    public bool IsBottomGalleryShown
-    {
-        get => _isBottomGalleryShown;
-        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
-    }
-
-    private bool _isBottomGalleryShownInHiddenUi = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
-
-    public bool IsBottomGalleryShownInHiddenUI
-    {
-        get => _isBottomGalleryShownInHiddenUi;
-        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
-    }
-
     private bool _isShowingButtonsInHiddenUI = SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons;
 
     public bool IsShowingButtonsInHiddenUI
@@ -370,23 +430,7 @@ public class MainViewModel : ViewModelBase
         get => _isShowingButtonsInHiddenUI;
         set => this.RaiseAndSetIfChanged(ref _isShowingButtonsInHiddenUI, value);
     }
-
-    private bool _isGalleryOpen;
-
-    public bool IsGalleryOpen
-    {
-        get => _isGalleryOpen;
-        set => this.RaiseAndSetIfChanged(ref _isGalleryOpen, value);
-    }
-
-    private GalleryMode _galleryMode;
-
-    public GalleryMode GalleryMode
-    {
-        get => _galleryMode;
-        set => this.RaiseAndSetIfChanged(ref _galleryMode, value);
-    }
-
+    
     private bool _isShowingTaskbarProgress = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
 
     public bool IsShowingTaskbarProgress
@@ -1112,30 +1156,6 @@ public class MainViewModel : ViewModelBase
     #endregion Window Properties
 
     #region Size
-
-    private double _imageWidth;
-
-    public double ImageWidth
-    {
-        get => _imageWidth;
-        set => this.RaiseAndSetIfChanged(ref _imageWidth, value);
-    }
-
-    private double _imageHeight;
-
-    public double ImageHeight
-    {
-        get => _imageHeight;
-        set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
-    }
-    
-    private double _scrollHeight;
-
-    public double ScrollHeight
-    {
-        get => _scrollHeight;
-        set => this.RaiseAndSetIfChanged(ref _scrollHeight, value);
-    }
 
     private double _titleMaxWidth;
 

@@ -459,11 +459,14 @@ public class ImageIterator
         {
             var byteArray = await Task.FromResult(thumb.ToByteArray());
             var stream = new MemoryStream(byteArray);
-            vm.ImageViewer.SetImage(WriteableBitmap.Decode(stream), ImageType.Bitmap);
+            var writableBitmap = WriteableBitmap.Decode(stream);
+            vm.ImageSource = writableBitmap;
+            vm.ImageType = ImageType.Bitmap;
         }
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-        vm.ImageViewer.SetImage(imageModel.Image, imageModel.ImageType);
+        vm.ImageSource = imageModel.Image;
+        vm.ImageType = imageModel.ImageType;
         vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
         await AddAsync(Index, imageModel);
         await LoadPicAtIndex(Index, vm);
@@ -560,7 +563,8 @@ public class ImageIterator
     {
         vm.IsLoading = false;
         vm.SetImageModel(preLoadValue.ImageModel);
-        vm.ImageViewer.SetImage(preLoadValue.ImageModel.Image, preLoadValue.ImageModel.ImageType);
+        vm.ImageSource = preLoadValue.ImageModel.Image;
+        vm.ImageType = preLoadValue.ImageModel.ImageType;
         WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
         vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
         vm.GetIndex = Index + 1;
@@ -603,7 +607,9 @@ public class ImageIterator
         {
             return;
         }
-        vm.ImageViewer.SetImage(new Bitmap(stream), ImageType.Bitmap);
+
+        vm.ImageSource = new Bitmap(stream);
+        vm.ImageType = ImageType.Bitmap;
         WindowHelper.SetSize(image?.Width ?? 0, image?.Height ?? 0, 0, vm);
         return;
 

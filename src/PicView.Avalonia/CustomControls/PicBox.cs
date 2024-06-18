@@ -8,48 +8,93 @@ using Avalonia.Metadata;
 using Avalonia.Utilities;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views;
+using ReactiveUI;
+using Avalonia.Media.Imaging;
+using Avalonia.Svg.Skia;
+
 
 namespace PicView.Avalonia.CustomControls;
 
 public class PicBox : Control
 {
+    #region Constructors
     static PicBox()
     {
         // Registers the SourceProperty to render when the source changes
         AffectsRender<PicBox>(SourceProperty);
     }
+
+    public PicBox()
+    {
+        _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
+            .Subscribe(imageType =>
+            {
+                switch (imageType)
+                {
+                    case ImageType.Svg:
+                    {
+                        if (Source is not string svg)
+                        {
+                            goto default;
+                        }
+                        var svgSource = SvgSource.Load(svg, null);
+                        Source = new SvgImage { Source = svgSource };
+                        break;
+                    }
+                    case ImageType.Bitmap:
+                        Source = Source as Bitmap;
+                        break;
+                    case ImageType.AnimatedBitmap:
+                        Source = Source as Bitmap;
+                        // TODO Add animation
+                        break;
+                    case ImageType.Invalid:
+                    default:
+                        // TODO Add invalid image graphic
+                        break;
+                }
+            });
+    }
+    private readonly IDisposable _imageTypeSubscription;
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _imageTypeSubscription.Dispose();
+    }
+    
+    #endregion
     
     #region Properties
     /// <summary>
     /// Defines the <see cref="Source"/> property.
     /// </summary>
-    public static readonly StyledProperty<IImage?> SourceProperty =
-        AvaloniaProperty.Register<PicBox, IImage?>(nameof(Source));
+    public static readonly StyledProperty<object?> SourceProperty =
+        AvaloniaProperty.Register<PicBox, object?>(nameof(Source));
     
     /// <summary>
     /// Gets or sets the image that will be displayed.
     /// </summary>
     [Content]
-    public IImage? Source
+    public object? Source
     {
         get => GetValue(SourceProperty);
         set => SetValue(SourceProperty, value);
     }
     
     /// <summary>
-    /// Defines the <see cref="SecondSource"/> property.
+    /// Defines the <see cref="SecondarySource"/> property.
     /// </summary>
-    public static readonly StyledProperty<IImage?> SecondSourceProperty =
-        AvaloniaProperty.Register<PicBox, IImage?>(nameof(SecondSource));
+    public static readonly StyledProperty<object?> SecondarySourceProperty =
+        AvaloniaProperty.Register<PicBox, object?>(nameof(SecondarySource));
     
     /// <summary>
     /// Gets or sets the second image that will be displayed, when side by side view is enabled
     /// </summary>
     [Content]
-    public IImage? SecondSource
+    public object? SecondarySource
     {
-        get => GetValue(SecondSourceProperty);
-        set => SetValue(SecondSourceProperty, value);
+        get => GetValue(SecondarySourceProperty);
+        set => SetValue(SecondarySourceProperty, value);
     }
     
     /// <summary>
@@ -79,9 +124,8 @@ public class PicBox : Control
     public sealed override void Render(DrawingContext context)
     {
         base.Render(context);
-        
-        var source = Source;
-        if (source == null)
+
+        if (Source is not IImage source)
         {
             return;
         }
@@ -179,7 +223,7 @@ public class PicBox : Control
     /// <returns>The desired size of the control.</returns>
     protected override Size MeasureOverride(Size availableSize)
     {
-        return Source != null ? CalculateSize(availableSize, Source.Size) : new Size();
+        return Source is not IImage source ? new Size() : CalculateSize(availableSize, source.Size);
     }
     
     /// <inheritdoc/>
@@ -208,7 +252,7 @@ public class PicBox : Control
     
     #endregion
 
-    #region Animated Pic
+    #region Animation
 
     // TODO: Add Animation behavior
 
