@@ -474,7 +474,7 @@
         <ContentControl
             ClipToBounds="True"
             Content="{CompiledBinding CurrentView}"
-            Margin="{CompiledBinding ImageMargin}" />
+            Margin="{CompiledBinding GalleryMargin}" />
         <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="0"

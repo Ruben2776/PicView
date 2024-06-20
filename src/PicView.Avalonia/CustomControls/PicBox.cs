@@ -14,16 +14,9 @@ using Avalonia.Svg.Skia;
 
 
 namespace PicView.Avalonia.CustomControls;
-
 public class PicBox : Control
 {
     #region Constructors
-    static PicBox()
-    {
-        // Registers the SourceProperty to render when the source changes
-        AffectsRender<PicBox>(SourceProperty);
-    }
-
     public PicBox()
     {
         _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
@@ -37,7 +30,7 @@ public class PicBox : Control
                         {
                             goto default;
                         }
-                        var svgSource = SvgSource.Load(svg, null);
+                        var svgSource = SvgSource.Load(svg);
                         Source = new SvgImage { Source = svgSource };
                         break;
                     }
@@ -53,24 +46,27 @@ public class PicBox : Control
                         // TODO Add invalid image graphic
                         break;
                 }
-            });
+            }
+        );
     }
-    private readonly IDisposable _imageTypeSubscription;
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
         _imageTypeSubscription.Dispose();
     }
-    
+
     #endregion
-    
+
     #region Properties
+    
+    private readonly IDisposable? _imageTypeSubscription;
+    
     /// <summary>
     /// Defines the <see cref="Source"/> property.
     /// </summary>
     public static readonly StyledProperty<object?> SourceProperty =
         AvaloniaProperty.Register<PicBox, object?>(nameof(Source));
-    
+
     /// <summary>
     /// Gets or sets the image that will be displayed.
     /// </summary>
@@ -80,13 +76,13 @@ public class PicBox : Control
         get => GetValue(SourceProperty);
         set => SetValue(SourceProperty, value);
     }
-    
+
     /// <summary>
     /// Defines the <see cref="SecondarySource"/> property.
     /// </summary>
     public static readonly StyledProperty<object?> SecondarySourceProperty =
         AvaloniaProperty.Register<PicBox, object?>(nameof(SecondarySource));
-    
+
     /// <summary>
     /// Gets or sets the second image that will be displayed, when side by side view is enabled
     /// </summary>
@@ -96,7 +92,7 @@ public class PicBox : Control
         get => GetValue(SecondarySourceProperty);
         set => SetValue(SecondarySourceProperty, value);
     }
-    
+
     /// <summary>
     /// Defines the <see cref="ImageType"/> property.
     /// </summary>
@@ -112,11 +108,11 @@ public class PicBox : Control
         get => (ImageType)(GetValue(ImageTypeProperty) ?? false);
         set => SetValue(ImageTypeProperty, value);
     }
-    
+
     #endregion
 
     #region Rendering
-    
+
     /// <summary>
     /// Renders the control.
     /// </summary>
@@ -148,7 +144,7 @@ public class PicBox : Control
             RenderImage(context, source, viewPort, sourceSize);
         }
     }
-    
+
     private Rect DetermineViewPort()
     {
         if (!(Bounds.Width <= 0) && !(Bounds.Height <= 0))
@@ -164,7 +160,7 @@ public class PicBox : Control
         var mainView = desktop.MainWindow?.GetControl<MainView>("MainView");
         return mainView == null ? new Rect() : new Rect(Bounds.X, Bounds.Y, mainView.Bounds.Width, mainView.Bounds.Height);
     }
-    
+
     private void RenderImage1To1(DrawingContext context, IImage source, Rect viewPort, Size sourceSize)
     {
         var scale = 1.0;
@@ -184,12 +180,12 @@ public class PicBox : Control
 
         context.DrawImage(source, sourceRect, destRect);
     }
-    
+
     private void RenderImageSideBySide(DrawingContext context, IImage source, Rect viewPort, Size sourceSize)
     {
         // TODO Add side by side viewing mode
     }
-    
+
     private static Vector CalculateScaling(Size destinationSize, Size sourceSize)
     {
         var isConstrainedWidth = !double.IsPositiveInfinity(destinationSize.Width);
@@ -210,7 +206,7 @@ public class PicBox : Control
 
         return new Vector(scaleX, scaleY);
     }
-    
+
     public static Size CalculateSize(Size destinationSize, Size sourceSize)
     {
         return sourceSize * CalculateScaling(destinationSize, sourceSize);
@@ -225,31 +221,19 @@ public class PicBox : Control
     {
         return Source is not IImage source ? new Size() : CalculateSize(availableSize, source.Size);
     }
-    
+
     /// <inheritdoc/>
     protected override Size ArrangeOverride(Size finalSize)
     {
         UpdateLayout();
         return base.ArrangeOverride(finalSize);
     }
-    
+
     protected override AutomationPeer OnCreateAutomationPeer()
     {
         return new ImageAutomationPeer(this);
     }
 
-    #endregion
-    
-    #region Pan and Zoom
-    
-    // TODO: Add Pan and Zoom
-    
-    #endregion 
-    
-    #region Rotation
-    
-    // TODO: Add Rotation
-    
     #endregion
 
     #region Animation

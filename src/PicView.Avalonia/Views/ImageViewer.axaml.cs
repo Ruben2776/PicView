@@ -9,12 +9,11 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
 using System.Runtime.InteropServices;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
-using Avalonia.Svg.Skia;
 using PicView.Avalonia.Helpers;
-using PicView.Avalonia.Navigation;
 
 namespace PicView.Avalonia.Views;
 
@@ -150,7 +149,7 @@ public partial class ImageViewer : UserControl
 
     private void InitializeZoom()
     {
-        ImageZoomBorder.RenderTransform = new TransformGroup
+        ImageLayoutTransformControl.RenderTransform = new TransformGroup
         {
             Children =
             [
@@ -158,19 +157,12 @@ public partial class ImageViewer : UserControl
                 new TranslateTransform()
             ]
         };
-        _scaleTransform = (ScaleTransform)((TransformGroup)ImageZoomBorder.RenderTransform)
+        _scaleTransform = (ScaleTransform)((TransformGroup)ImageLayoutTransformControl.RenderTransform)
             .Children.First(tr => tr is ScaleTransform);
 
-        _translateTransform = (TranslateTransform)((TransformGroup)ImageZoomBorder.RenderTransform)
+        _translateTransform = (TranslateTransform)((TransformGroup)ImageLayoutTransformControl.RenderTransform)
             .Children.First(tr => tr is TranslateTransform);
-        ImageZoomBorder.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
-    }
-
-    private void Capture(PointerEventArgs e)
-    {
-        _start = e.GetPosition(ImageZoomBorder);
-        _origin = new Point(_translateTransform.X, _translateTransform.Y);
-        _captured = true;
+        ImageLayoutTransformControl.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
     }
 
     public void ZoomIn(PointerWheelEventArgs e)
@@ -345,48 +337,92 @@ public partial class ImageViewer : UserControl
         vm.ScaleX = 1;
     }
     
-    /*public void PreparePanImage(object sender, PointerPressedEventArgs e)
+    private void Capture(PointerEventArgs e)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
-        if (!desktop.MainWindow.IsActive || !desktop.MainWindow.IsVisible || _scaleTransform == null)
+        if (_captured)
         {
             return;
         }
         
-        _start = e.GetPosition(MainImage);
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+        if (mainView == null)
+        {
+            return;
+        }
+
+        var point = e.GetCurrentPoint(mainView);
+        var x = point.Position.X;
+        var y = point.Position.Y;
+        _start = new Point(x, y);
         _origin = new Point(_translateTransform.X, _translateTransform.Y);
         _captured = true;
-    }*/
-
-
-    public void Pan(PointerEventArgs e, bool enableAnimations)
+    }
+    
+    public void Pan(PointerEventArgs e)
     {
         if (!_captured || _scaleTransform == null || !_isZoomed)
         {
             return;
         }
 
-        var position = _start - e.GetPosition(this);
+        var dragMousePosition = _start - e.GetPosition(this);
         
-        var newXproperty = _origin.X - position.X;
-        var newYproperty = _origin.Y - position.Y;
+        var newXproperty = _origin.X - dragMousePosition.X;
+        var newYproperty = _origin.Y - dragMousePosition.Y;
+        
+        // Keep panning it in bounds
+        
+        // if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        // {
+        //     return;
+        // }
+        // var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+        // if (mainView == null)
+        // {
+        //     return;
+        // }
+        //
+        // var actualScrollWidth = mainView.Bounds.Width;
+        // var actualBorderWidth = ImageZoomBorder.Bounds.Width;
+        // var actualScrollHeight = mainView.Bounds.Height;
+        // var actualBorderHeight = ImageZoomBorder.Bounds.Height;
+        //
+        // var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
+        // var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
+        // var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
+        // var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
+        //
+        // if (isXOutOfBorder && newXproperty < maxX || !isXOutOfBorder && newXproperty > maxX)
+        // {
+        //     newXproperty = maxX;
+        // }
+        //
+        // if (isXOutOfBorder && newYproperty < maxY || !isYOutOfBorder && newYproperty > maxY)
+        // {
+        //     newYproperty = maxY;
+        // }
+        //
+        // if (isXOutOfBorder && newXproperty > 0 || !isXOutOfBorder && newXproperty < 0)
+        // {
+        //     newXproperty = 0;
+        // }
+        //
+        // if (isYOutOfBorder && newYproperty > 0 || !isYOutOfBorder && newYproperty < 0)
+        // {
+        //     newYproperty = 0;
+        // }
 
         Dispatcher.UIThread.Invoke(() =>
         {
+            _translateTransform.Transitions = null;
             _translateTransform.X = newXproperty;
             _translateTransform.Y = newYproperty;
         });
         e.Handled = true;
-        
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-        vm.ToolTipUIText = $"{_translateTransform.X}, {_translateTransform.Y}";
     }
 
     #endregion Zoom
@@ -433,6 +469,7 @@ public partial class ImageViewer : UserControl
             ImageLayoutTransformControl.LayoutTransform = rotateTransform;
         });
         WindowHelper.SetSize(vm);
+        MainImage.InvalidateVisual();
     }
 
     public void Flip(bool animate)
@@ -443,27 +480,39 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
+        int prevScaleX;
         vm.ScaleX = vm.ScaleX == -1 ? 1 : -1;
         if (vm.ScaleX == 1)
         {
+            prevScaleX = 1;
             vm.ScaleX = -1;
             vm.GetFlipped = vm.UnFlip;
         }
         else
         {
+            prevScaleX = -1;
             vm.ScaleX = 1;
             vm.GetFlipped = vm.Flip;
         }
-        var flipTransform = new ScaleTransform(vm.ScaleX, 1);
+        
         if (animate)
         {
-            flipTransform.Transitions ??=
-            [
-                new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.3) },
-            ];
+            var flipTransform = new ScaleTransform(prevScaleX, 1)
+            {
+                Transitions =
+                [
+                    new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.2) },
+                ]
+            };
+            MainImage.RenderTransform = flipTransform;
+            flipTransform.ScaleX = vm.ScaleX;
         }
-        //_scaleTransform.ScaleX = vm.ScaleX;
-        MainImage.RenderTransform = flipTransform;
+        else
+        {
+            var flipTransform = new ScaleTransform(vm.ScaleX, 1);
+            MainImage.RenderTransform = flipTransform;
+        }
+        MainImage.InvalidateVisual();
     }
 
     #endregion Rotation and Flip
@@ -501,7 +550,7 @@ public partial class ImageViewer : UserControl
 
     private void ImageZoomBorder_OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        Pan(e, false);
+        Pan(e);
     }
 
     private void Pressed(PointerEventArgs e)
@@ -515,11 +564,6 @@ public partial class ImageViewer : UserControl
 
     private void ImageZoomBorder_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (!_captured)
-        {
-            return;
-        }
-
         _captured = false;
     }
 

@@ -75,6 +75,14 @@ public class MainViewModel : ViewModelBase
 
     #region Gallery
     
+    private Thickness _galleryMargin;
+
+    public Thickness GalleryMargin
+    {
+        get => _galleryMargin;
+        set => this.RaiseAndSetIfChanged(ref _galleryMargin, value);
+    }
+    
     private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
 
     public bool IsBottomGalleryShown
@@ -171,7 +179,7 @@ public class MainViewModel : ViewModelBase
     {
         get
         {
-            return GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize;
+            return GetBottomGalleryItemHeight > 0 ? GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize - 7 : 0;
         }
     }
 
@@ -1164,15 +1172,7 @@ public class MainViewModel : ViewModelBase
         get => _titleMaxWidth;
         set => this.RaiseAndSetIfChanged(ref _titleMaxWidth, value);
     }
-
-    private Thickness _imageMargin;
-
-    public Thickness ImageMargin
-    {
-        get => _imageMargin;
-        set => this.RaiseAndSetIfChanged(ref _imageMargin, value);
-    }
-
+    
     #endregion Size
 
     #region Zoom

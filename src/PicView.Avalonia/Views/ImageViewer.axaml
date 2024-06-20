@@ -1,4 +1,5 @@
 <UserControl
+    Background="Transparent"
     PointerPressed="InputElement_OnPointerPressed"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.ImageViewer"

@@ -477,7 +477,7 @@ public static class WindowHelper
         vm.TitleMaxWidth = size.TitleMaxWidth;
         vm.ImageWidth = size.Width;
         vm.ImageHeight = size.Height;
-        vm.ImageMargin = new Thickness(0, 0, 0, size.Margin);
+        vm.GalleryMargin = new Thickness(0, 0, 0, size.Margin);
 
         vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ? size.Width : double.NaN;;
     }
