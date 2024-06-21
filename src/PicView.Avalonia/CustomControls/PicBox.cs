@@ -17,37 +17,16 @@ namespace PicView.Avalonia.CustomControls;
 public class PicBox : Control
 {
     #region Constructors
+    
+    static PicBox()
+    {
+        // Registers the SourceProperty to render when the source changes
+        AffectsRender<PicBox>(SourceProperty);
+    }
     public PicBox()
     {
         _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
-            .Subscribe(imageType =>
-            {
-                switch (imageType)
-                {
-                    case ImageType.Svg:
-                    {
-                        if (Source is not string svg)
-                        {
-                            goto default;
-                        }
-                        var svgSource = SvgSource.Load(svg);
-                        Source = new SvgImage { Source = svgSource };
-                        break;
-                    }
-                    case ImageType.Bitmap:
-                        Source = Source as Bitmap;
-                        break;
-                    case ImageType.AnimatedBitmap:
-                        Source = Source as Bitmap;
-                        // TODO Add animation
-                        break;
-                    case ImageType.Invalid:
-                    default:
-                        // TODO Add invalid image graphic
-                        break;
-                }
-            }
-        );
+            .Subscribe(UpdateSource);
     }
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -125,10 +104,23 @@ public class PicBox : Control
         {
             return;
         }
-        
-        var sourceSize = source.Size;
+
+        Size sourceSize;
+        try
+        {
+            sourceSize = source.Size;
+        }
+        catch (Exception e)
+        {
+            // https://github.com/AvaloniaUI/Avalonia/issues/8515
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+            // TODO: error handling
+            return;
+        }
         var viewPort = DetermineViewPort();
-        
+    
         var is1To1 = false; // TODO: replace with settings value
         var isSideBySide = false; // TODO: replace with settings value
         if (is1To1)
@@ -137,7 +129,12 @@ public class PicBox : Control
         }
         else if (isSideBySide)
         {
-            RenderImageSideBySide(context, source, viewPort, sourceSize);
+            if (SecondarySource is not IImage secondarySource)
+            {
+                // TODO: error handling
+                return;
+            }
+            RenderImageSideBySide(context, source, secondarySource, viewPort);
         }
         else
         {
@@ -181,9 +178,26 @@ public class PicBox : Control
         context.DrawImage(source, sourceRect, destRect);
     }
 
-    private void RenderImageSideBySide(DrawingContext context, IImage source, Rect viewPort, Size sourceSize)
+    private void RenderImageSideBySide(DrawingContext context, IImage source, IImage secondarySource, Rect viewPort)
     {
-        // TODO Add side by side viewing mode
+        // Stretch to height, the width is determined by the aspect ratio
+        // and calculations are done in ImageSizeCalculationHelper.GetImageSize
+        var heightScale = viewPort.Height;
+
+        // Scale dimensions to fit
+        var scaledSourceSize = source.Size * heightScale;
+        var scaledSecondarySourceSize = secondarySource.Size * heightScale;
+
+        // Calculate positions
+        var totalWidth = scaledSourceSize.Width + scaledSecondarySourceSize.Width;
+        var startX = (viewPort.Width - totalWidth) / 2;
+
+        var sourceRect = new Rect(new Point(startX, (viewPort.Height - scaledSourceSize.Height) / 2), scaledSourceSize);
+        var secondarySourceRect = new Rect(new Point(startX + scaledSourceSize.Width, (viewPort.Height - scaledSecondarySourceSize.Height) / 2), scaledSecondarySourceSize);
+
+        // Draw images
+        context.DrawImage(source, new Rect(source.Size), sourceRect);
+        context.DrawImage(secondarySource, new Rect(secondarySource.Size), secondarySourceRect);
     }
 
     private static Vector CalculateScaling(Size destinationSize, Size sourceSize)
@@ -232,6 +246,35 @@ public class PicBox : Control
     protected override AutomationPeer OnCreateAutomationPeer()
     {
         return new ImageAutomationPeer(this);
+    }
+
+    #endregion
+    
+    #region Helper Methods
+
+    private void UpdateSource(ImageType imageType)
+    {
+        switch (imageType)
+        {
+            case ImageType.Svg:
+                if (Source is string svg)
+                {
+                    var svgSource = SvgSource.Load(svg);
+                    Source = new SvgImage { Source = svgSource };
+                }
+                break;
+            case ImageType.Bitmap:
+                Source = Source as Bitmap;
+                break;
+            case ImageType.AnimatedBitmap:
+                Source = Source as Bitmap;
+                // TODO: Add animation
+                break;
+            case ImageType.Invalid:
+            default:
+                // TODO: Add invalid image graphic
+                break;
+        }
     }
 
     #endregion

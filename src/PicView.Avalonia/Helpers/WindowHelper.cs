@@ -158,11 +158,6 @@ public static class WindowHelper
 
     public static async Task ToggleAutoFit(MainViewModel vm)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
             vm.SizeToContent = SizeToContent.Manual;
@@ -178,6 +173,7 @@ public static class WindowHelper
             vm.IsAutoFit = true;
         }
         SetSize(vm);
+        vm.ImageViewer.MainImage.InvalidateVisual();
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -203,6 +199,7 @@ public static class WindowHelper
             vm.IsStretched = true;
         }
         SetSize(vm);
+        vm.ImageViewer.MainImage.InvalidateVisual();
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -212,6 +209,7 @@ public static class WindowHelper
         vm.CanResize = true;
         SettingsHelper.Settings.WindowProperties.AutoFit = false;
         SetSize(vm);
+        vm.ImageViewer.MainImage.InvalidateVisual();
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
     
@@ -223,6 +221,7 @@ public static class WindowHelper
         SettingsHelper.Settings.ImageScaling.StretchImage = true;
         vm.IsStretched = true;
         SetSize(vm);
+        vm.ImageViewer.MainImage.InvalidateVisual();
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
     
@@ -231,6 +230,7 @@ public static class WindowHelper
         SettingsHelper.Settings.ImageScaling.StretchImage = true;
         vm.IsStretched = true;
         SetSize(vm);
+        vm.ImageViewer.MainImage.InvalidateVisual();
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -431,16 +431,12 @@ public static class WindowHelper
 
         var screenSize = ScreenHelper.ScreenSize;
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
-        var uiTopSize = SettingsHelper.Settings.UIProperties.ShowInterface ? vm.TitlebarHeight : 0;
-        var uiBottomSize =
-            SettingsHelper.Settings.UIProperties.ShowInterface || SettingsHelper.Settings.UIProperties.ShowBottomNavBar
-                ? vm.BottombarHeight : 0;
         if (Dispatcher.UIThread.CheckAccess())
         {
             desktopMinWidth = desktop.MainWindow.MinWidth;
             desktopMinHeight = desktop.MainWindow.MinHeight;
             containerWidth = desktop.MainWindow.Width;
-            containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+            containerHeight = desktop.MainWindow.Height;
         }
         else
         {
@@ -449,7 +445,7 @@ public static class WindowHelper
                 desktopMinWidth = desktop.MainWindow.MinWidth;
                 desktopMinHeight = desktop.MainWindow.MinHeight;
                 containerWidth = desktop.MainWindow.Width;
-                containerHeight = desktop.MainWindow.Height - (uiTopSize + uiBottomSize);
+                containerHeight = desktop.MainWindow.Height;
             }, DispatcherPriority.Normal).Wait();
         }
 
@@ -466,10 +462,10 @@ public static class WindowHelper
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
-            65,
+            0,
             screenSize.Scaling,
-            uiTopSize,
-            uiBottomSize,
+            vm.TitlebarHeight,
+            vm.BottombarHeight,
             vm.GalleryHeight,
             containerWidth,
             containerHeight);

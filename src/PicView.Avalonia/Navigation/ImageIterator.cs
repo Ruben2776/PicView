@@ -416,7 +416,7 @@ public class ImageIterator
         if (!Path.Exists(path))
         {
             // TODO load from URL if not a file
-            throw new FileNotFoundException(path);
+            throw new FileNotFoundException(path); // TODO: Replace with reload function
         }
         if (Directory.Exists(path))
 

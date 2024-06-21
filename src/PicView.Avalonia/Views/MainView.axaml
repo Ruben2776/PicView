@@ -341,7 +341,11 @@
                 </MenuItem>
             </MenuItem>
             <Separator />
-            <MenuItem Command="{CompiledBinding RecycleFileCommand}" Header="{Binding DeleteFile}">
+            <MenuItem
+                Command="{CompiledBinding RecycleFileCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
+                Header="{Binding DeleteFile}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource RecycleGeometry}"

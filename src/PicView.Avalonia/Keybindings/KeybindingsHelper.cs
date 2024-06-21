@@ -13,6 +13,7 @@ internal partial class SourceGenerationContext : JsonSerializerContext;
 
 public static class KeybindingsHelper
 {
+    // TODO move to an interface, use this as default for Windows and make a macOS default
     private const string DefaultKeybindings = """
                                               {
                                                 "D": "Next",
@@ -76,6 +77,7 @@ public static class KeybindingsHelper
                                                 "Ctrl+V": "Paste",
                                                 "Ctrl+P": "Print",
                                                 "Alt+Z": "ToggleInterface",
+                                                "Delete": "DeleteFile"
                                               }
                                               """;
 
