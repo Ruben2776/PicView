@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
@@ -37,6 +38,7 @@ public partial class AppearanceView : UserControl
     {
         try
         {
+            GalleryStretchMode.DetermineStretchMode(DataContext as MainViewModel);
             var languages = TranslationHelper.GetLanguages().OrderBy(x => x);
             foreach (var language in languages)
             {

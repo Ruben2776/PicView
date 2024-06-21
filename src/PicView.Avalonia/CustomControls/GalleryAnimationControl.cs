@@ -72,7 +72,7 @@ public class GalleryAnimationControl : UserControl
         vm.GalleryOrientation = Orientation.Vertical;
         if (!GalleryLoad.IsLoading)
         {
-            GalleryStretchMode.SetStretchMode(vm);
+            GalleryStretchMode.DetermineStretchMode(vm);
         }
         vm.IsGalleryCloseIconVisible = true;
         
@@ -138,7 +138,7 @@ public class GalleryAnimationControl : UserControl
         vm.GalleryOrientation = Orientation.Horizontal;
         if (!GalleryLoad.IsLoading)
         {
-            GalleryStretchMode.SetStretchMode(vm);
+            GalleryStretchMode.DetermineStretchMode(vm);
         }
         
         vm.IsGalleryCloseIconVisible = false;
@@ -216,7 +216,7 @@ public class GalleryAnimationControl : UserControl
         });
         if (!GalleryLoad.IsLoading)
         {
-            GalleryStretchMode.SetStretchMode(vm);
+            GalleryStretchMode.DetermineStretchMode(vm);
         }
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         
@@ -253,7 +253,7 @@ public class GalleryAnimationControl : UserControl
         });
         if (!GalleryLoad.IsLoading)
         {
-            GalleryStretchMode.SetStretchMode(vm);
+            GalleryStretchMode.DetermineStretchMode(vm);
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {

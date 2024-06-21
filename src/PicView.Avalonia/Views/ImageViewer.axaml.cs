@@ -14,6 +14,8 @@ using Avalonia.Controls.Primitives;
 using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
 using PicView.Avalonia.Helpers;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace PicView.Avalonia.Views;
 
@@ -38,11 +40,20 @@ public partial class ImageViewer : UserControl
         Loaded += delegate
         {
             InitializeZoom();
-            LostFocus += (s, e) =>
+            LostFocus += (_, _) =>
             {
                 _captured = false;
             };
         };
+        this.WhenAnyValue(x => x.MainImage.Source).Select(x => x is not null).Subscribe(x =>
+        {
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+            {
+                ImageScrollViewer.ScrollToHome();
+            }
+
+            Reset();
+        });
     }
 
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)
@@ -149,7 +160,7 @@ public partial class ImageViewer : UserControl
 
     private void InitializeZoom()
     {
-        ImageLayoutTransformControl.RenderTransform = new TransformGroup
+        ImageZoomBorder.RenderTransform = new TransformGroup
         {
             Children =
             [
@@ -157,12 +168,12 @@ public partial class ImageViewer : UserControl
                 new TranslateTransform()
             ]
         };
-        _scaleTransform = (ScaleTransform)((TransformGroup)ImageLayoutTransformControl.RenderTransform)
+        _scaleTransform = (ScaleTransform)((TransformGroup)ImageZoomBorder.RenderTransform)
             .Children.First(tr => tr is ScaleTransform);
 
-        _translateTransform = (TranslateTransform)((TransformGroup)ImageLayoutTransformControl.RenderTransform)
+        _translateTransform = (TranslateTransform)((TransformGroup)ImageZoomBorder.RenderTransform)
             .Children.First(tr => tr is TranslateTransform);
-        ImageLayoutTransformControl.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
+        ImageZoomBorder.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
     }
 
     public void ZoomIn(PointerWheelEventArgs e)
@@ -313,18 +324,22 @@ public partial class ImageViewer : UserControl
 
     public void Reset()
     {
-        if (_isZoomed)
-        {
-            ResetZoom(false);
-        }
         if (Dispatcher.UIThread.CheckAccess())
         {
+            if (_isZoomed)
+            {
+                ResetZoom(false);
+            }
             ImageLayoutTransformControl.LayoutTransform = null;
         }
         else
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
+                if (_isZoomed)
+                {
+                    ResetZoom(false);
+                }
                 ImageLayoutTransformControl.LayoutTransform = null;
             });
         }
@@ -387,7 +402,7 @@ public partial class ImageViewer : UserControl
 
     #region Rotation and Flip
 
-    public void Rotate(bool clockWise, bool animate)
+    public void Rotate(bool clockWise)
     {
         if (DataContext is not MainViewModel vm)
             return;
@@ -411,16 +426,6 @@ public partial class ImageViewer : UserControl
         }
 
         var rotateTransform = new RotateTransform(vm.RotationAngle);
-
-        if (animate)
-        {
-            rotateTransform.Transitions ??=
-            [
-                new DoubleTransition { Property = RotateTransform.AngleProperty, Duration = TimeSpan.FromSeconds(.5) },
-                new DoubleTransition { Property = RotateTransform.CenterXProperty, Duration = TimeSpan.FromSeconds(.5) },
-                new DoubleTransition { Property = RotateTransform.CenterYProperty, Duration = TimeSpan.FromSeconds(.5) }
-            ];
-        }
 
         Dispatcher.UIThread.InvokeAsync(() =>
         {

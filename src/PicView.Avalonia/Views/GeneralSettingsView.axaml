@@ -91,6 +91,7 @@
             BorderThickness="0"
             Classes="altHover"
             IsChecked="{Binding IsOpeningInSameWindow}"
+            IsEnabled="False"
             Margin="0,0,0,3"
             Width="270">
             <TextBlock
@@ -166,7 +167,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
+            FontSize="12"
             Margin="0,6,0,10"
             MaxWidth="270"
             Text="{Binding AdjustTimingForSlideshow}" />
@@ -193,7 +194,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
+            FontSize="12"
             Margin="0,3,0,10"
             MaxWidth="270"
             Text="{Binding AdjustTimingForZoom}" />

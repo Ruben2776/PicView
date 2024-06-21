@@ -95,7 +95,7 @@ public static class GalleryLoad
             ParallelOptions options = new() { MaxDegreeOfParallelism = maxDegreeOfParallelism };
             await AsyncLoop(index, vm.ImageIterator.Pics.Count, options, cancellationToken);
             await AsyncLoop(0, index, options, cancellationToken);
-            GalleryStretchMode.SetStretchMode(vm);
+            GalleryStretchMode.DetermineStretchMode(vm);
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         }
         catch (OperationCanceledException)

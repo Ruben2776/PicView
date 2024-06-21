@@ -271,17 +271,24 @@ public static class WindowHelper
         {
             return;
         }
-        
+        var vm = desktop.MainWindow.DataContext as MainViewModel;
         if (desktop.MainWindow.WindowState is WindowState.Maximized or WindowState.FullScreen)
         {
+            vm.SizeToContent = SettingsHelper.Settings.WindowProperties.AutoFit ?
+                SizeToContent.WidthAndHeight : SizeToContent.Manual;
             await Dispatcher.UIThread.InvokeAsync(() => 
                 desktop.MainWindow.WindowState = WindowState.Normal);
             SettingsHelper.Settings.WindowProperties.Maximized = false;
-            SetSize(desktop.MainWindow.DataContext as MainViewModel);
+            SetSize(vm);
             InitializeWindowSizeAndPosition(desktop.MainWindow);
         }
         else
         {
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                Fullscreen(vm, desktop);
+                return;
+            }
             SaveSize(desktop.MainWindow);
             Maximize();
         }
@@ -316,6 +323,7 @@ public static class WindowHelper
 
     public static void Fullscreen(MainViewModel vm, IClassicDesktopStyleApplicationLifetime desktop)
     {
+        vm.SizeToContent = SizeToContent.Manual;
         vm.IsFullscreen = true;
         if (Dispatcher.UIThread.CheckAccess())
         {
@@ -456,13 +464,13 @@ public static class WindowHelper
         var size = ImageSizeCalculationHelper.GetImageSize(
             width,
             height,
-            screenSize.Width,
-            screenSize.Height,
+            screenSize.WorkingAreaWidth,
+            screenSize.WorkingAreaHeight,
             desktopMinWidth,
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
-            0,
+            10,
             screenSize.Scaling,
             vm.TitlebarHeight,
             vm.BottombarHeight,

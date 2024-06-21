@@ -257,11 +257,12 @@ public class PicBox : Control
         switch (imageType)
         {
             case ImageType.Svg:
-                if (Source is string svg)
+                if (Source is not string svg)
                 {
-                    var svgSource = SvgSource.Load(svg);
-                    Source = new SvgImage { Source = svgSource };
+                    goto default;
                 }
+                var svgSource = SvgSource.Load(svg);
+                Source = new SvgImage { Source = svgSource };
                 break;
             case ImageType.Bitmap:
                 Source = Source as Bitmap;

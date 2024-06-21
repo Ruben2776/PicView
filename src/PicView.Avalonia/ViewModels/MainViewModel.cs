@@ -123,20 +123,6 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _galleryStretch, value);
     }
     
-    private Stretch _galleryBottomItemStretch;
-    public Stretch GalleryBottomItemStretch
-    {
-        get => _galleryBottomItemStretch;
-        set => this.RaiseAndSetIfChanged(ref _galleryBottomItemStretch, value);
-    }
-    
-    private Stretch _galleryFullItemStretch;
-    public Stretch GalleryFullItemStretch
-    {
-        get => _galleryFullItemStretch;
-        set => this.RaiseAndSetIfChanged(ref _galleryFullItemStretch, value);
-    }
-    
     private int _selectedGalleryItemIndex;
 
     public int SelectedGalleryItemIndex
@@ -179,16 +165,16 @@ public class MainViewModel : ViewModelBase
     {
         get
         {
-            return GetBottomGalleryItemHeight > 0 ? GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize - 7 : 0;
+            return GetBottomGalleryItemHeight > 0 ? GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize: 0;
         }
     }
 
-    private double _gatGalleryItemWidth = double.NaN;
+    private double _getGalleryItemWidth = double.NaN;
 
     public double GetGalleryItemWidth
     {
-        get => _gatGalleryItemWidth;
-        set => this.RaiseAndSetIfChanged(ref _gatGalleryItemWidth, value);
+        get => _getGalleryItemWidth;
+        set => this.RaiseAndSetIfChanged(ref _getGalleryItemWidth, value);
     }
     
     private double _getGalleryItemHeight;
@@ -248,47 +234,131 @@ public class MainViewModel : ViewModelBase
     }
 
     #region Gallery Stretch IsChecked
-
-    private bool _isUniformChecked;
-    public bool IsUniformChecked
+    
+    private bool _isUniformBottomChecked;
+    public bool IsUniformBottomChecked
     {
-        get => _isUniformChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformChecked, value);
+        get => _isUniformBottomChecked;
+        set => this.RaiseAndSetIfChanged(ref _isUniformBottomChecked, value);
+    }
+    
+    private bool _isUniformFullChecked;
+    public bool IsUniformFullChecked
+    {
+        get => _isUniformFullChecked;
+        set => this.RaiseAndSetIfChanged(ref _isUniformFullChecked, value);
     }
 
-    private bool _isUniformToFillChecked;
-    public bool IsUniformToFillChecked
+    private bool _isUniformMenuChecked;
+    public bool IsUniformMenuChecked
     {
-        get => _isUniformToFillChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformToFillChecked, value);
+        get => _isUniformMenuChecked;
+        set => this.RaiseAndSetIfChanged(ref _isUniformMenuChecked, value);
+    }
+    
+    private bool _isUniformToFillBottomChecked;
+    public bool IsUniformToFillBottomChecked
+    {
+        get => _isUniformToFillBottomChecked;
+        set => this.RaiseAndSetIfChanged(ref _isUniformToFillBottomChecked, value);
+    }
+    
+    private bool _isUniformToFillFullChecked;
+    public bool IsUniformToFillFullChecked
+    {
+        get => _isUniformToFillFullChecked;
+        set => this.RaiseAndSetIfChanged(ref _isUniformToFillFullChecked, value);
     }
 
-    private bool _isFillChecked;
-    public bool IsFillChecked
+    private bool _isUniformToFillMenuMenuChecked;
+    public bool IsUniformToFillMenuChecked
     {
-        get => _isFillChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillChecked, value);
+        get => _isUniformToFillMenuMenuChecked;
+        set => this.RaiseAndSetIfChanged(ref _isUniformToFillMenuMenuChecked, value);
+    }
+    
+    private bool _isFillBottomChecked;
+    public bool IsFillBottomChecked
+    {
+        get => _isFillBottomChecked;
+        set => this.RaiseAndSetIfChanged(ref _isFillBottomChecked, value);
+    }
+    
+    private bool _isFillFullChecked;
+    public bool IsFillFullChecked
+    {
+        get => _isFillFullChecked;
+        set => this.RaiseAndSetIfChanged(ref _isFillFullChecked, value);
     }
 
-    private bool _isNoneChecked;
-    public bool IsNoneChecked
+    private bool _isFillMenuMenuChecked;
+    public bool IsFillMenuChecked
     {
-        get => _isNoneChecked;
-        set => this.RaiseAndSetIfChanged(ref _isNoneChecked, value);
+        get => _isFillMenuMenuChecked;
+        set => this.RaiseAndSetIfChanged(ref _isFillMenuMenuChecked, value);
+    }
+    
+    private bool _isNoneBottomChecked;
+    public bool IsNoneBottomChecked
+    {
+        get => _isNoneBottomChecked;
+        set => this.RaiseAndSetIfChanged(ref _isNoneBottomChecked, value);
+    }
+    
+    private bool _isNoneFullChecked;
+    public bool IsNoneFullChecked
+    {
+        get => _isNoneFullChecked;
+        set => this.RaiseAndSetIfChanged(ref _isNoneFullChecked, value);
     }
 
-    private bool _isSquareChecked;
-    public bool IsSquareChecked
+    private bool _isNoneMenuChecked;
+    public bool IsNoneMenuChecked
     {
-        get => _isSquareChecked;
-        set => this.RaiseAndSetIfChanged(ref _isSquareChecked, value);
+        get => _isNoneMenuChecked;
+        set => this.RaiseAndSetIfChanged(ref _isNoneMenuChecked, value);
+    }
+    
+    private bool _isSquareBottomChecked;
+    public bool IsSquareBottomChecked
+    {
+        get => _isSquareBottomChecked;
+        set => this.RaiseAndSetIfChanged(ref _isSquareBottomChecked, value);
+    }
+    
+    private bool _isSquareFullChecked;
+    public bool IsSquareFullChecked
+    {
+        get => _isSquareFullChecked;
+        set => this.RaiseAndSetIfChanged(ref _isSquareFullChecked, value);
     }
 
-    private bool _isFillSquareChecked;
-    public bool IsFillSquareChecked
+    private bool _isSquareMenuChecked;
+    public bool IsSquareMenuChecked
     {
-        get => _isFillSquareChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillSquareChecked, value);
+        get => _isSquareMenuChecked;
+        set => this.RaiseAndSetIfChanged(ref _isSquareMenuChecked, value);
+    }
+    
+    private bool _isFillSquareBottomChecked;
+    public bool IsFillSquareBottomChecked
+    {
+        get => _isFillSquareBottomChecked;
+        set => this.RaiseAndSetIfChanged(ref _isFillSquareBottomChecked, value);
+    }
+    
+    private bool _isFillSquareFullChecked;
+    public bool IsFillSquareFullChecked
+    {
+        get => _isFillSquareFullChecked;
+        set => this.RaiseAndSetIfChanged(ref _isFillSquareFullChecked, value);
+    }
+
+    private bool _isFillSquareMenuChecked;
+    public bool IsFillSquareMenuChecked
+    {
+        get => _isFillSquareMenuChecked;
+        set => this.RaiseAndSetIfChanged(ref _isFillSquareMenuChecked, value);
     }
     
 

@@ -217,9 +217,36 @@ public class ViewModelBase : ReactiveObject
         UniformToFill = TranslationHelper.Translation.UniformToFill;
         FillSquare = TranslationHelper.Translation.FillSquare;
         Fill = TranslationHelper.Translation.Fill;
+        GallerySettings = TranslationHelper.Translation.GallerySettings;
+        GalleryThumbnailStretch = TranslationHelper.Translation.GalleryThumbnailStretch;
+        BottomGalleryThumbnailStretch = TranslationHelper.Translation.BottomGalleryThumbnailStretch;
     }
 
     #region Strings
+    
+    private string? _bottomGalleryThumbnailStretch;
+    
+    public string? BottomGalleryThumbnailStretch
+    {
+        get => _bottomGalleryThumbnailStretch;
+        set => this.RaiseAndSetIfChanged(ref _bottomGalleryThumbnailStretch, value);
+    }
+    
+    private string? _galleryThumbnailStretch;
+    
+    public string? GalleryThumbnailStretch
+    {
+        get => _galleryThumbnailStretch;
+        set => this.RaiseAndSetIfChanged(ref _galleryThumbnailStretch, value);
+    }
+    
+    private string? _gallerySettings;
+    
+    public string? GallerySettings
+    {
+        get => _gallerySettings;
+        set => this.RaiseAndSetIfChanged(ref _gallerySettings, value);
+    }
     
     private string? _uniform;
     

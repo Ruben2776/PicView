@@ -13,15 +13,6 @@ public partial class GeneralSettingsView : UserControl
         InitializeComponent();
         Loaded += delegate
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-            if (DataContext == null)
-            {
-                return;
-            }
-            var wm = (MainViewModel)DataContext;
             ApplicationStartupBox.SelectionChanged += (sender, args) =>
             {
                 SettingsHelper.Settings.StartUp.OpenLastFile = ApplicationStartupBox.SelectedIndex == 1;

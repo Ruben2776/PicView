@@ -245,7 +245,7 @@ public static class FunctionsHelper
         {
             if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
             {
-               Vm.ImageViewer.Rotate(clockWise: true, animate: true);
+               Vm.ImageViewer.Rotate(clockWise: true);
             }
             else
             {
@@ -257,7 +257,7 @@ public static class FunctionsHelper
         }
         else
         {
-            Vm.ImageViewer.Rotate(clockWise: true, animate: true);
+            Vm.ImageViewer.Rotate(clockWise: true);
         }
     }
 
@@ -272,7 +272,7 @@ public static class FunctionsHelper
         {
             return Task.CompletedTask;
         }
-        Vm.ImageViewer.Rotate(clockWise: true, animate: true);
+        Vm.ImageViewer.Rotate(clockWise: true);
         return Task.CompletedTask;
     }
 
@@ -287,7 +287,7 @@ public static class FunctionsHelper
         {
             return Task.CompletedTask;
         }
-        Vm.ImageViewer.Rotate(clockWise: false, animate: true);
+        Vm.ImageViewer.Rotate(clockWise: false);
         return Task.CompletedTask;
     }
 
@@ -310,7 +310,7 @@ public static class FunctionsHelper
             {
                 if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
                 {
-                    Vm.ImageViewer.Rotate(clockWise: false, animate: true);
+                    Vm.ImageViewer.Rotate(clockWise: false);
                 }
                 else
                 {
@@ -322,7 +322,7 @@ public static class FunctionsHelper
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Vm.ImageViewer.Rotate(clockWise: false, animate: true);
+                Vm.ImageViewer.Rotate(clockWise: false);
             });
         }
     }

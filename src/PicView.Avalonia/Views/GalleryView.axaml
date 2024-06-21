@@ -29,37 +29,37 @@
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Uniform"
                         Header="{CompiledBinding Uniform}"
-                        IsChecked="{CompiledBinding IsUniformChecked}"
+                        IsChecked="{CompiledBinding IsUniformMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="UniformToFill"
                         Header="{CompiledBinding UniformToFill}"
-                        IsChecked="{CompiledBinding IsUniformToFillChecked}"
+                        IsChecked="{CompiledBinding IsUniformToFillMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Fill"
                         Header="{CompiledBinding Fill}"
-                        IsChecked="{CompiledBinding IsFillChecked}"
+                        IsChecked="{CompiledBinding IsFillMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="None"
                         Header="{CompiledBinding None}"
-                        IsChecked="{CompiledBinding IsNoneChecked}"
+                        IsChecked="{CompiledBinding IsNoneMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Square"
                         Header="{CompiledBinding Square}"
-                        IsChecked="{CompiledBinding IsSquareChecked}"
+                        IsChecked="{CompiledBinding IsSquareMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="FillSquare"
                         Header="{CompiledBinding FillSquare}"
-                        IsChecked="{CompiledBinding IsFillSquareChecked}"
+                        IsChecked="{CompiledBinding IsFillSquareMenuChecked}"
                         ToggleType="Radio" />
                 </MenuItem>
                 <MenuItem
