@@ -31,12 +31,6 @@ internal class Program
             .UseWin32()
             .With(new Win32PlatformOptions
             {
-                CompositionMode = new[]
-                    {
-                        Win32CompositionMode.WinUIComposition,
-                        Win32CompositionMode.RedirectionSurface
-                    },
-                OverlayPopups = true,
                 WinUICompositionBackdropCornerRadius = 8
             })
             .UseSkia();
