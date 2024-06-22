@@ -47,31 +47,46 @@ public static class ImageSizeCalculationHelper
         double maxWidth, maxHeight;
         var margin = 0d;
 
-        var fullscreen = SettingsHelper.Settings.WindowProperties.Fullscreen;
-        var stretch = SettingsHelper.Settings.ImageScaling.StretchImage;
-
-        var borderSpaceHeight = fullscreen ? 0 : uiTopSize + uiBottomSize + galleryHeight;
-        var borderSpaceWidth = fullscreen ? 0 : padding;
+        var borderSpaceHeight = SettingsHelper.Settings.WindowProperties.Fullscreen ?
+            0 : uiTopSize + uiBottomSize + galleryHeight;
+        var borderSpaceWidth = SettingsHelper.Settings.WindowProperties.Fullscreen ?
+            0 : padding;
 
         var workAreaWidth = monitorWidth * dpiScaling - borderSpaceWidth;
         var workAreaHeight = monitorHeight * dpiScaling - borderSpaceHeight;
+        
+        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+        {
+            workAreaWidth -= SizeDefaults.ScrollbarSize * dpiScaling;
+            containerWidth -= SizeDefaults.ScrollbarSize * dpiScaling;
+        }
 
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
-            maxWidth = stretch ? workAreaWidth - padding : Math.Min(workAreaWidth - padding, width);
-            maxHeight = stretch ? workAreaHeight - padding : Math.Min(workAreaHeight - padding, height);
-        }
-        else
-        {
-            maxWidth = stretch ? containerWidth : Math.Min(containerWidth, width);
-            
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
-                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage ? containerHeight : height;
+                maxWidth = workAreaWidth - padding;
+                maxHeight = workAreaHeight - padding;
             }
             else
             {
-                maxHeight = stretch
+                maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage ? workAreaWidth - padding : Math.Min(workAreaWidth - padding, width);
+                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage ? workAreaHeight - padding : Math.Min(workAreaHeight - padding, height);
+            }
+        }
+        else
+        {
+            maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage ? containerWidth : Math.Min(containerWidth, width);
+            
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+            {
+                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
+                    ? Math.Max(containerHeight, height)
+                    : height;
+            }
+            else
+            {
+                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
                     ? containerHeight - galleryHeight
                     : Math.Min(containerHeight - galleryHeight, height);
             }
@@ -112,26 +127,10 @@ public static class ImageSizeCalculationHelper
                 break;
         }
 
-        double xWidth, xHeight;
-        
-        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-        {
-            xWidth = maxWidth - SizeDefaults.ScrollbarSize;
-            xHeight = maxWidth * height / width;
-
-            if (SettingsHelper.Settings.WindowProperties.AutoFit)
-            {
-                xWidth = maxWidth - SizeDefaults.ScrollbarSize;
-                xHeight = height * aspectRatio;
-            }
-        }
-        else
-        {
-            // Fit image by aspect ratio calculation
-            // and update values
-            xWidth = width * aspectRatio;
-            xHeight = height * aspectRatio;
-        }
+        // Fit image by aspect ratio calculation
+        // and update values
+        var xWidth = width * aspectRatio;
+        var xHeight = height * aspectRatio;
         
         var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight, interfaceSize, containerWidth);
 

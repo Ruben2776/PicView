@@ -180,23 +180,25 @@ public class PicBox : Control
 
     private void RenderImageSideBySide(DrawingContext context, IImage source, IImage secondarySource, Rect viewPort)
     {
-        // Stretch to height, the width is determined by the aspect ratio
-        // and calculations are done in ImageSizeCalculationHelper.GetImageSize
-        var heightScale = viewPort.Height;
+        // Get the aspect ratios of the images
+        var sourceAspectRatio = source.Size.Width / source.Size.Height;
+        var secondarySourceAspectRatio = secondarySource.Size.Width / secondarySource.Size.Height;
 
-        // Scale dimensions to fit
-        var scaledSourceSize = source.Size * heightScale;
-        var scaledSecondarySourceSize = secondarySource.Size * heightScale;
+        // Calculate the width for each image
+        var halfViewportWidth = viewPort.Width / 2;
 
-        // Calculate positions
-        var totalWidth = scaledSourceSize.Width + scaledSecondarySourceSize.Width;
-        var startX = (viewPort.Width - totalWidth) / 2;
+        // Calculate heights based on the aspect ratio
+        var sourceHeight = halfViewportWidth / sourceAspectRatio;
+        var secondarySourceHeight = halfViewportWidth / secondarySourceAspectRatio;
 
-        var sourceRect = new Rect(new Point(startX, (viewPort.Height - scaledSourceSize.Height) / 2), scaledSourceSize);
-        var secondarySourceRect = new Rect(new Point(startX + scaledSourceSize.Width, (viewPort.Height - scaledSecondarySourceSize.Height) / 2), scaledSecondarySourceSize);
+        // Calculate the rectangles for each image
+        var sourceRect = new Rect(0, 0, halfViewportWidth, sourceHeight);
+        var secondarySourceRect = new Rect(halfViewportWidth, 0, halfViewportWidth, secondarySourceHeight);
 
-        // Draw images
+        // Draw the first image
         context.DrawImage(source, new Rect(source.Size), sourceRect);
+
+        // Draw the second image
         context.DrawImage(secondarySource, new Rect(secondarySource.Size), secondarySourceRect);
     }
 

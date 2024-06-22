@@ -16,6 +16,7 @@ using Point = Avalonia.Point;
 using PicView.Avalonia.Helpers;
 using ReactiveUI;
 using System.Reactive.Linq;
+using PicView.Avalonia.Keybindings;
 
 namespace PicView.Avalonia.Views;
 
@@ -77,8 +78,38 @@ public partial class ImageViewer : UserControl
             // Use touch gestures for zooming on macOS
             return;
         }
-        var ctrl = e.KeyModifiers == KeyModifiers.Control;
+        var ctrl = MainKeyboardShortcuts.CtrlDown;
+        var shift = MainKeyboardShortcuts.ShiftDown;
         var reverse = e.Delta.Y < 0;
+        
+        if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+        {
+            if (!shift)
+            {
+                if (ctrl && !SettingsHelper.Settings.Zoom.CtrlZoom)
+                {
+                    await LoadNextPic();
+                    return;
+                }
+                if (ImageScrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto)
+                {
+                    if (reverse)
+                    {
+                        ImageScrollViewer.LineDown();
+                    }
+                    else
+                    {
+                        ImageScrollViewer.LineUp();
+                    }
+                }
+                else
+                {
+                    await LoadNextPic();
+                }
+                return;
+            }
+            
+        }
 
         if (SettingsHelper.Settings.Zoom.CtrlZoom)
         {
