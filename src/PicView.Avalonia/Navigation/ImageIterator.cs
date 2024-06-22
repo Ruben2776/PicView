@@ -322,7 +322,7 @@ public class ImageIterator
             try
             {
                 galleryListBox.Items.Add(galleryItem);
-                await SortingHelper.SortGalleryItems(Pics, _vm);
+                await GalleryFunctions.SortGalleryItems(Pics, _vm);
             }
             catch (Exception exception)
             {

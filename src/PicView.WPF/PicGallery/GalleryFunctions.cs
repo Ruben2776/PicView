@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.Extensions;
 using PicView.WPF.ImageHandling;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.UC;
@@ -65,16 +66,6 @@ internal static class GalleryFunctions
             {
                 item.InnerBorder.BorderBrush = Application.Current.Resources["BorderBrush"] as SolidColorBrush;
             }
-        }
-    }
-
-    private static IEnumerable<T> OrderBySequence<T, TId>(this IEnumerable<T> source,
-        IEnumerable<TId> order, Func<T, TId> idSelector) where TId : notnull
-    {
-        var lookup = source?.ToDictionary(idSelector, t => t);
-        foreach (var id in order)
-        {
-            yield return lookup[id];
         }
     }
 
