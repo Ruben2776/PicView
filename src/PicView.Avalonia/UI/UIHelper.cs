@@ -3,16 +3,15 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
-using Avalonia.Media;
 using Avalonia.Threading;
-using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 
-namespace PicView.Avalonia.Helpers;
+namespace PicView.Avalonia.UI;
 
 public class UIHelper
 {

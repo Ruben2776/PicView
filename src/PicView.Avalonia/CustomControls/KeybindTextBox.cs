@@ -7,6 +7,7 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.UI;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.CustomControls;

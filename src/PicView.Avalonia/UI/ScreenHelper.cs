@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.LogicalTree;
 using Avalonia.Platform;
 
-namespace PicView.Avalonia.Helpers;
+namespace PicView.Avalonia.UI;
 
 public struct ScreenSize(int width, int height, int workingAreaWidth, int workingAreaHeight, double scaling)
 {

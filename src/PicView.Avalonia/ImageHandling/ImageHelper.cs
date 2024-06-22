@@ -2,12 +2,11 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
 using ImageMagick;
-using PicView.Avalonia.Models;
 using PicView.Avalonia.Navigation;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 
-namespace PicView.Avalonia.Helpers;
+namespace PicView.Avalonia.ImageHandling;
 
 public static class ImageHelper
 {

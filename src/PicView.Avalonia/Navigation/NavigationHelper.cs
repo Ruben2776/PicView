@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;

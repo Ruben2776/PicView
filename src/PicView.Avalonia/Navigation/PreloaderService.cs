@@ -1,10 +1,11 @@
 ﻿using ImageMagick;
-using PicView.Avalonia.Models;
 using PicView.Core.ImageDecoding;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Avalonia.Media.Imaging;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.ImageHandling;
 
 namespace PicView.Avalonia.Navigation;
 

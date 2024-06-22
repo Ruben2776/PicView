@@ -1,9 +1,7 @@
-﻿using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using PicView.Avalonia.Navigation;
+﻿using PicView.Avalonia.Navigation;
 using PicView.Core.ImageDecoding;
 
-namespace PicView.Avalonia.Models;
+namespace PicView.Avalonia.ImageHandling;
 
 public class ImageModel
 {

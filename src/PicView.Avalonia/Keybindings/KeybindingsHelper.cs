@@ -4,6 +4,7 @@ using PicView.Core.Keybindings;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Keybindings;
 

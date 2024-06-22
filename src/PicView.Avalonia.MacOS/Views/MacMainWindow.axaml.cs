@@ -6,6 +6,7 @@ using PicView.Core.FileHandling;
 using ReactiveUI;
 using System;
 using System.Reactive.Concurrency;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.MacOS.Views;
 

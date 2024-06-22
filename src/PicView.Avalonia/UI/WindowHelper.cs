@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -11,7 +12,7 @@ using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 
-namespace PicView.Avalonia.Helpers;
+namespace PicView.Avalonia.UI;
 
 public static class WindowHelper
 {

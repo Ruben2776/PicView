@@ -1,6 +1,7 @@
 using Avalonia.Layout;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Gallery;

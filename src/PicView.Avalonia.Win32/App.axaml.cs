@@ -11,6 +11,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using System.Runtime;
 using System.Windows.Threading;
+using PicView.Avalonia.UI;
 using PicView.Core.ProcessHandling;
 using Dispatcher = Avalonia.Threading.Dispatcher;
 using SortHelper = PicView.Avalonia.Helpers.SortHelper;

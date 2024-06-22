@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime;
 using System.Threading.Tasks;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.MacOS;
 

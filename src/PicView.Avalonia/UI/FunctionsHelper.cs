@@ -4,7 +4,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ImageMagick;
+using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
@@ -17,7 +19,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
 
-namespace PicView.Avalonia.Helpers;
+namespace PicView.Avalonia.UI;
 
 public static class FunctionsHelper
 {

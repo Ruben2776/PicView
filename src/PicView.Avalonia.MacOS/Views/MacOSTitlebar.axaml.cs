@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.MacOS.Views;
 

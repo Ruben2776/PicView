@@ -5,6 +5,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
 using System.Runtime.InteropServices;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Views;
 

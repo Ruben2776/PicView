@@ -2,6 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -10,7 +11,7 @@ using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 
-namespace PicView.Avalonia.Helpers;
+namespace PicView.Avalonia.UI;
 
 public static class StartUpHelper
 {

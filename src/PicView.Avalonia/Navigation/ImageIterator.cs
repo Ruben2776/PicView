@@ -1,6 +1,5 @@
 ﻿using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
-using PicView.Avalonia.Models;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -13,6 +12,8 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;

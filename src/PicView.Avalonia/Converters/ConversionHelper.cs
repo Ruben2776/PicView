@@ -2,7 +2,7 @@
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 
-namespace PicView.Avalonia.Helpers;
+namespace PicView.Avalonia.Converters;
 
 internal static class ConversionHelper
 {

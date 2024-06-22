@@ -17,6 +17,7 @@ using PicView.Avalonia.Helpers;
 using ReactiveUI;
 using System.Reactive.Linq;
 using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Views;
 
