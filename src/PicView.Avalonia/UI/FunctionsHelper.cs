@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ImageMagick;
@@ -263,19 +264,42 @@ public static class FunctionsHelper
         }
     }
 
-    public static Task RotateRight()
+    public static async Task RotateRight()
     {
         if (Vm is null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            return Task.CompletedTask;
+            return;
         }
-        Vm.ImageViewer.Rotate(clockWise: true);
-        return Task.CompletedTask;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Vm.ImageViewer.Rotate(clockWise: true);
+        });
+        
+        // Check if it should move the cursor
+        if (!SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            return;
+        }
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var titleBar = desktop.MainWindow.GetControl<Control>("TitleBar");
+            var button = titleBar.GetControl<Button>("RotateRightButton");
+            if (button.IsPointerOver)
+            {
+                var p = button.PointToScreen(new Point(10, 15));
+                Vm.PlatformService?.SetCursorPos(p.X, p.Y);
+            }
+        });
     }
 
     public static Task RotateLeft()

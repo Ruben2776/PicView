@@ -74,6 +74,7 @@
                 Command="{Binding RotateRightCommand}"
                 DockPanel.Dock="Left"
                 Margin="0"
+                Name="RotateRightButton"
                 ToolTip.Tip="{Binding RotateLeft}"
                 Width="30">
                 <Path

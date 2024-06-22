@@ -459,10 +459,18 @@ public partial class ImageViewer : UserControl
 
         var rotateTransform = new RotateTransform(vm.RotationAngle);
 
-        Dispatcher.UIThread.InvokeAsync(() =>
+        if (Dispatcher.UIThread.CheckAccess())
         {
             ImageLayoutTransformControl.LayoutTransform = rotateTransform;
-        });
+        }
+        else
+        {
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                ImageLayoutTransformControl.LayoutTransform = rotateTransform;
+            });
+        }
+
         WindowHelper.SetSize(vm);
         MainImage.InvalidateVisual();
     }
