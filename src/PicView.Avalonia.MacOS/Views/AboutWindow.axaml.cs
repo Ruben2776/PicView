@@ -12,7 +12,7 @@ public partial class AboutWindow : Window
         Loaded += (sender, e) =>
         {
             MinWidth = MaxWidth = Width;
-            Title = $"{TranslationHelper.GetTranslation("About")}  - PicView";
+            Title = $"{TranslationHelper.Translation.About} - PicView";
         };
     }
 

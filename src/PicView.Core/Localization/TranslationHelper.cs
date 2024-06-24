@@ -14,29 +14,10 @@ internal partial class LanguageSourceGenerationContext : JsonSerializerContext;
 /// </summary>
 public static class TranslationHelper
 {
-    private static readonly object TranslationLock = new object();
-
-    private static LanguageModel? _translation;
-
-    /// <summary>
-    /// Dictionary to store language key-value pairs.
-    /// </summary>
     public static LanguageModel? Translation
     {
-        get
-        {
-            lock (TranslationLock)
-            {
-                return _translation;
-            }
-        }
-        private set
-        {
-            lock (TranslationLock)
-            {
-                _translation = value;
-            }
-        }
+        get;
+        private set;
     }
 
     public static string GetTranslation(string key)

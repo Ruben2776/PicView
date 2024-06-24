@@ -9,7 +9,7 @@ public partial class ExifWindow : Window
     public ExifWindow()
     {
         InitializeComponent();
-        Title = TranslationHelper.GetTranslation("ImageInfo") + " - PicView";
+        Title = TranslationHelper.Translation.ImageInfo + " - PicView";
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

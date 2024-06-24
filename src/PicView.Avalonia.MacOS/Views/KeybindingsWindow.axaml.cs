@@ -12,7 +12,7 @@ public partial class KeybindingsWindow : Window
         Loaded += (sender, e) =>
         {
             MinWidth = MaxWidth = Width;
-            Title = $"{TranslationHelper.GetTranslation("ApplicationShortcuts")}  - PicView";
+            Title = $"{TranslationHelper.Translation.ApplicationShortcuts} - PicView";
         };
     }
 

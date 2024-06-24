@@ -181,7 +181,7 @@ public static class EXIFHelper
         {
             1 => "sRGB",
             2 => "Adobe RGB",
-            65535 => TranslationHelper.GetTranslation("Uncalibrated"),
+            65535 => TranslationHelper.Translation.Uncalibrated ?? "Uncalibrated",
             _ => string.Empty
         };
     }

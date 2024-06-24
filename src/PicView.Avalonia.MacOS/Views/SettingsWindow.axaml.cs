@@ -14,7 +14,7 @@ public partial class SettingsWindow : Window
         {
             MinWidth = MaxWidth = Width;
             Height = 500;
-            Title = TranslationHelper.GetTranslation("Settings") + " - PicView";
+            Title = TranslationHelper.Translation.Settings + " - PicView";
         };
     }
 

@@ -53,8 +53,8 @@ public static class TitleHelper
         }
 
         var files = filesList.Count == 1
-            ? TranslationHelper.GetTranslation("File")
-            : TranslationHelper.GetTranslation("Files");
+            ? TranslationHelper.Translation.File
+            : TranslationHelper.Translation.Files;
 
         var stringBuilder = new StringBuilder(90);
         stringBuilder.Append(fileInfo.Name)
@@ -98,9 +98,9 @@ public static class TitleHelper
 #endif
         return
         [
-            TranslationHelper.GetTranslation("UnexpectedError"),
-            TranslationHelper.GetTranslation("UnexpectedError"),
-            TranslationHelper.GetTranslation("UnexpectedError")
+            TranslationHelper.Translation.UnexpectedError ?? "UnexpectedError",
+            TranslationHelper.Translation.UnexpectedError ?? "UnexpectedError",
+            TranslationHelper.Translation.UnexpectedError ?? "UnexpectedError",
         ];
     }
 

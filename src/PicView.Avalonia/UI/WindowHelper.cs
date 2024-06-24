@@ -483,7 +483,8 @@ public static class WindowHelper
         vm.ImageHeight = size.Height;
         vm.GalleryMargin = new Thickness(0, 0, 0, size.Margin);
 
-        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ? size.Width : double.NaN;;
+        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ?
+            Math.Max(size.Width, desktopMinWidth) : double.NaN;;
     }
     
     public static void SaveSize(Window window)

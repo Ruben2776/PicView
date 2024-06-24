@@ -10,11 +10,11 @@ public partial class ImageResizeWindow : Window
     public ImageResizeWindow()
     {
         InitializeComponent();
-        Loaded += (sender, e) =>
+        Loaded += (_, _) =>
         {
             MinWidth = MaxWidth = Width;
             Height = 500;
-            Title = TranslationHelper.GetTranslation("ResizeImage") + " - PicView";
+            Title = TranslationHelper.Translation.ResizeImage + " - PicView";
         };
     }
 
