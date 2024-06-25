@@ -23,40 +23,33 @@ public static class TooltipHelper
     /// <param name="interval">The duration for which the tooltip should be visible.</param>
     public static void ShowTooltipMessage(object message, bool center, TimeSpan interval)
     {
-        ToolTipMessage? toolTip = null;
-        _isRunning = true;
         Dispatcher.UIThread.Invoke(() =>
         {
-            toolTip = GetToolTipMessage;
+            var toolTip = GetToolTipMessage;
             if (toolTip is null)
             {
                 return;
             }
+            _isRunning = true;
             toolTip.IsVisible = true;
             toolTip.ToolTipMessageText.Text = message.ToString();
-            if (center)
-            {
-                toolTip.Margin = new Thickness(0, 0, 0, 0);
-                toolTip.VerticalAlignment = VerticalAlignment.Center;
-            }
-            else
-            {
-                toolTip.Margin = new Thickness(0, 0, 0, 15);
-                toolTip.VerticalAlignment = VerticalAlignment.Bottom;
-            }
+            toolTip.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
+            toolTip.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
             toolTip.Opacity = 1;
         });
-        var timer = new DispatcherTimer
-        {
-            Interval = interval
-        };
+
+        var timer = new DispatcherTimer { Interval = interval };
         timer.Tick += (_, _) =>
         {
             if (!_isRunning)
             {
                 Dispatcher.UIThread.Invoke(() =>
                 {
-                    toolTip.Opacity = 0;
+                    var toolTip = GetToolTipMessage;
+                    if (toolTip != null)
+                    {
+                        toolTip.Opacity = 0;
+                    }
                 });
             }
             _isRunning = false;
@@ -96,21 +89,19 @@ public static class TooltipHelper
     /// </summary>
     internal static void CloseToolTipMessage()
     {
-        if (GetToolTipMessage == null)
+        var toolTip = GetToolTipMessage;
+        if (toolTip == null)
         {
             return;
         }
 
-        if (GetToolTipMessage.CheckAccess())
+        if (toolTip.CheckAccess())
         {
-            GetToolTipMessage.IsVisible = false;
+            toolTip.IsVisible = false;
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                GetToolTipMessage.IsVisible = false;
-            });
+            Dispatcher.UIThread.Invoke(() => toolTip.IsVisible = false);
         }
     }
 }
