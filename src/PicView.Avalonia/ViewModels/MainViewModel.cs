@@ -766,14 +766,6 @@ public class MainViewModel : ViewModelBase
 
     #region strings
     
-    private string? _ToolTipUIText;
-    
-    public string? ToolTipUIText
-    {
-        get => _ToolTipUIText;
-        set => this.RaiseAndSetIfChanged(ref _ToolTipUIText, value);
-    }
-
     private string? _getFlipped;
 
     public string? GetFlipped

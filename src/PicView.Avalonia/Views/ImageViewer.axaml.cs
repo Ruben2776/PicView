@@ -314,11 +314,7 @@ public partial class ImageViewer : UserControl
         _isZoomed = zoomValue != 0;
         if (_isZoomed)
         {
-            if (DataContext is not MainViewModel vm)
-            {
-                return;
-            }
-            vm.ToolTipUIText = $"{Math.Floor(_zoomPercentage)}%";
+            TooltipHelper.ShowTooltipMessage($"{Math.Floor(_zoomPercentage)}%", center: true);
         }
     }
 

@@ -404,7 +404,7 @@ public class ImageIterator
         }
         catch (Exception e)
         {
-            vm.ToolTipUIText = e.Message;
+           TooltipHelper.ShowTooltipMessage(e.Message);
         }
         finally
         {
@@ -575,6 +575,7 @@ public class ImageIterator
         }
 
         vm.SelectedGalleryItemIndex = Index;
+        TooltipHelper.CloseToolTipMessage();
 
         _ =  AddAsync(Index, preLoadValue.ImageModel);
         _ = Preload();

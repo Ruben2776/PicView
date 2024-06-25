@@ -248,7 +248,7 @@ public static class GalleryFunctions
             {
                 galleryListBox.Items.Clear();
             });
-            vm.ToolTipUIText = e.Message;
+            TooltipHelper.ShowTooltipMessage(e.Message);
 #if DEBUG
             Console.WriteLine(e);
 #endif
