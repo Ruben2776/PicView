@@ -5,12 +5,12 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
 
-namespace PicView.Avalonia.Animation;
+namespace PicView.Avalonia.Animations;
 public static class AnimationsHelper
 {
-    public static global::Avalonia.Animation.Animation HeightAnimation(double from, double to, double speed)
+    public static Animation HeightAnimation(double from, double to, double speed)
     {
-        return new global::Avalonia.Animation.Animation
+        return new Animation
         {
             Duration = TimeSpan.FromSeconds(speed),
             Easing = new SplineEasing(),
@@ -45,9 +45,9 @@ public static class AnimationsHelper
         };
     }
     
-    public static global::Avalonia.Animation.Animation OpacityAnimation(double from, double to, double speed)
+    public static Animation OpacityAnimation(double from, double to, double speed)
     {
-        return new global::Avalonia.Animation.Animation
+        return new Animation
         {
             Duration = TimeSpan.FromSeconds(speed),
             Easing = new LinearEasing(),
@@ -82,9 +82,9 @@ public static class AnimationsHelper
         };
     }
     
-    public static global::Avalonia.Animation.Animation RotationAnimation(object from, object to, double speed)
+    public static Animation RotationAnimation(object from, object to, double speed)
     {
-        return new global::Avalonia.Animation.Animation
+        return new Animation
         {
             Duration = TimeSpan.FromSeconds(speed),
             Easing = new LinearEasing(),
@@ -139,11 +139,11 @@ public static class AnimationsHelper
         };
     }
     
-    public static global::Avalonia.Animation.Animation FlipAnimation(object from, object to, double speed)
+    public static Animation FlipAnimation(object from, object to, double speed)
     {
         var x = ScaleTransform.ScaleXProperty;
         var y = ScaleTransform.ScaleYProperty;
-        return new global::Avalonia.Animation.Animation
+        return new Animation
         {
             Duration = TimeSpan.FromSeconds(speed),
             Easing = new LinearEasing(),
@@ -188,9 +188,9 @@ public static class AnimationsHelper
         };
     }
     
-    public static global::Avalonia.Animation.Animation ZoomAnimation(double initialZoom, double zoomValue, double oldX, double oldY, double newX, double newY, TimeSpan duration)
+    public static Animation ZoomAnimation(double initialZoom, double zoomValue, double oldX, double oldY, double newX, double newY, TimeSpan duration)
     {
-        return new global::Avalonia.Animation.Animation
+        return new Animation
         {
             Duration = duration,
             FillMode = FillMode.Forward,

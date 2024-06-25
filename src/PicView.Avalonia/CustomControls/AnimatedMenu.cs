@@ -1,7 +1,7 @@
 ﻿using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia;
-using PicView.Avalonia.Animation;
+using PicView.Avalonia.Animations;
 using PicView.Avalonia.Helpers;
 using ReactiveUI;
 
