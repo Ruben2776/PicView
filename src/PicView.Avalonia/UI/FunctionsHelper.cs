@@ -779,9 +779,13 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    public static Task Paste()
+    public static async Task Paste()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        await ClipboardHelper.Paste(Vm);
     }
     
     #endregion

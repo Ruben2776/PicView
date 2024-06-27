@@ -1,6 +1,11 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using Avalonia.Platform.Storage;
+using PicView.Avalonia.Navigation;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.Clipboard;
 public static class ClipboardHelper
@@ -48,4 +53,50 @@ public static class ClipboardHelper
         await clipboard.ClearAsync();
         await clipboard.SetDataObjectAsync(dataObject);
     }
+    
+    public static async Task Paste(MainViewModel vm)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var clipboard = desktop.MainWindow.Clipboard;
+        var text = await clipboard.GetTextAsync();
+        if (text is not null)
+        {   
+            await NavigationHelper.LoadPicFromString(text, vm).ConfigureAwait(false);
+            return;
+        }
+
+        var files = await clipboard.GetDataAsync(DataFormats.Files);
+        if (files is not null)
+        {
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if (files is IEnumerable<IStorageItem> items)
+            {
+                var storageItems = items.ToArray(); // Ensure we have an array for indexed access
+                if (storageItems.Length > 0)
+                {
+                    // load the first file
+                    var firstFile = storageItems[0];
+                    var firstPath = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
+                    await NavigationHelper.LoadPicFromString(firstPath, vm).ConfigureAwait(false);
+
+                    // Open consecutive files in a new process
+                    foreach (var file in storageItems.Skip(1))
+                    {
+                        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
+                        ProcessHelper.StartNewProcess(path);
+                    }
+                }
+            }
+            else if (files is IStorageItem singleFile)
+            {
+                var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? singleFile.Path.AbsolutePath : singleFile.Path.LocalPath;
+                await NavigationHelper.LoadPicFromString(path, vm).ConfigureAwait(false);
+            }
+        }
+        // TODO: Get image from clipboard
+    }
+
 }
