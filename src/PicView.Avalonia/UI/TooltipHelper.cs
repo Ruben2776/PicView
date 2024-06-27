@@ -79,8 +79,11 @@ public static class TooltipHelper
             {
                 return null;
             }
-            var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-            return mainView.MainGrid.Children.OfType<ToolTipMessage>().FirstOrDefault();
+            return Dispatcher.UIThread.Invoke(() =>
+            {
+                var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+                return mainView.MainGrid.Children.OfType<ToolTipMessage>().FirstOrDefault();
+            });
         }
     }
 
