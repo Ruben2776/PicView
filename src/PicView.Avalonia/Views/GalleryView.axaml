@@ -123,7 +123,7 @@
         </Button>
 
         <customControls:GalleryListBox
-            AutoScrollToSelectedItem="True"
+            AutoScrollToSelectedItem="False"
             Background="Transparent"
             BorderBrush="{StaticResource TertiaryBorderColor}"
             BorderThickness="0,1,0,0"

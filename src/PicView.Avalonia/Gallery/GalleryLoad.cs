@@ -5,7 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using PicView.Avalonia.Helpers;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
@@ -34,7 +34,7 @@ public static class GalleryLoad
         }
 
         MainView? mainView;
-        ListBox? galleryListBox = null;
+       GalleryListBox? galleryListBox = null;
         
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -185,7 +185,7 @@ public static class GalleryLoad
 
                 while (i >= galleryListBox.Items.Count)
                 {
-                    await Task.Delay(100, _);
+                    await Task.Delay(100, ct);
                 }
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
@@ -201,10 +201,15 @@ public static class GalleryLoad
                             thumbImageModel.ImageType);
                     }
 
-                    galleryItem.FileLocation.Text = thumbData.FileLocation ?? "";
-                    galleryItem.FileDate.Text = thumbData.FileDate ?? "";
-                    galleryItem.FileSize.Text = thumbData.FileSize ?? "";
-                    galleryItem.FileName.Text = thumbData.FileName ?? "";
+                    galleryItem.FileLocation.Text = thumbData.FileLocation;
+                    galleryItem.FileDate.Text = thumbData.FileDate;
+                    galleryItem.FileSize.Text = thumbData.FileSize;
+                    galleryItem.FileName.Text = thumbData.FileName;
+
+                    if (i == vm.ImageIterator.Index)
+                    {
+                        galleryListBox.ScrollToCenterOfItem(galleryItem);
+                    }
                 }, DispatcherPriority.Background, ct);
             });
         }

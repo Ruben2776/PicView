@@ -2,93 +2,26 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
 
 namespace PicView.Avalonia.Gallery;
 
 public static class GalleryNavigation
 {
-    public static void CenterScrollToSelectedItem(MainViewModel vm)
+    private static GalleryListBox? _galleryListBox;
+    #region Position and calculations
+    
+    private class GalleryItemPosition
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            ScrollToSelected();
-        }
-        else
-        {
-            Dispatcher.UIThread.InvokeAsync(ScrollToSelected);
-        }
-        
-        return;
-        void ScrollToSelected()
-        {
-            var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-            var mainGrid = mainView.GetControl<Panel>("MainGrid");
-            var galleryView = mainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
-            galleryView.GalleryListBox.ScrollIntoView(vm.SelectedGalleryItemIndex);
-            
-        }
+        public int Index { get; init; }
+        public Point Position { get; init; }
+        public Size Size { get; init; }
     }
     
-    public static void NavigateGallery(Direction direction, MainViewModel vm)
-    {
-        var highlightedGalleryItem = vm.SelectedGalleryItemIndex;
-        var galleryItems = GetGalleryItems();
-
-        if (highlightedGalleryItem < 0 || highlightedGalleryItem >= galleryItems.Count)
-        {
-            return;
-        }
-
-        var currentItem = galleryItems[highlightedGalleryItem];
-
-        GalleryItemPosition? targetItem = direction switch
-        {
-            Direction.Up => GetClosestItemAbove(currentItem, galleryItems),
-            Direction.Down => GetClosestItemBelow(currentItem, galleryItems),
-            Direction.Left => GetClosestItemLeft(currentItem, galleryItems),
-            Direction.Right => GetClosestItemRight(currentItem, galleryItems),
-            _ => null
-        };
-
-        if (targetItem != null)
-        {
-            SetHighlightedGalleryItem(vm, targetItem.Index);
-        }
-    }
-
-    private static List<GalleryItemPosition> GetGalleryItems()
-    {
-        var galleryItems = new List<GalleryItemPosition>();
-        var galleryView = GetGallery(Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
-        var listBox = galleryView.GalleryListBox;
-        for (int i = 0; i < listBox.Items.Count; i++)
-        {
-            if (listBox.ItemContainerGenerator.ContainerFromIndex(i) is Control container)
-            {
-                var position = container.TranslatePoint(new Point(0, 0), galleryView);
-                var size = container.Bounds.Size;
-                if (position.HasValue)
-                {
-                    galleryItems.Add(new GalleryItemPosition
-                    {
-                        Index = i,
-                        Position = position.Value,
-                        Size = size
-                    });
-                }
-            }
-        }
-        return galleryItems;
-    }
-
     private static GalleryItemPosition? GetClosestItemAbove(GalleryItemPosition currentItem, IEnumerable<GalleryItemPosition> items)
     {
         var candidates = items.Where(item => item.Position.Y + item.Size.Height <= currentItem.Position.Y).ToList();
@@ -113,6 +46,102 @@ public static class GalleryNavigation
         return candidates.OrderBy(item => item.Position.X).ThenBy(item => Math.Abs(item.Position.Y - currentItem.Position.Y)).FirstOrDefault();
     }
 
+    
+    #endregion
+
+    private static GalleryListBox? GetGalleryListBox()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return null;
+        }
+        var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+        var mainGrid = mainView.GetControl<Panel>("MainGrid");
+        var galleryView = mainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
+        return galleryView.GalleryListBox;
+    }
+    public static void CenterScrollToSelectedItem(MainViewModel vm)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            ScrollToSelected();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(ScrollToSelected);
+        }
+        
+        return;
+        void ScrollToSelected()
+        {
+            _galleryListBox ??= GetGalleryListBox();
+
+            var listbox = _galleryListBox;
+            if (listbox is null || vm.SelectedGalleryItemIndex < 0 || vm.SelectedGalleryItemIndex >= listbox.Items.Count)
+            {
+                return;
+            }
+
+            listbox.ScrollToCenterOfItem(listbox.Items[vm.SelectedGalleryItemIndex] as GalleryItem);
+        }
+    }
+    
+    public static void NavigateGallery(Direction direction, MainViewModel vm)
+    {
+        var highlightedGalleryItem = vm.SelectedGalleryItemIndex;
+        var galleryItems = GetGalleryItems();
+
+        if (highlightedGalleryItem < 0 || highlightedGalleryItem >= galleryItems.Count)
+        {
+            return;
+        }
+
+        var currentItem = galleryItems[highlightedGalleryItem];
+
+        var targetItem = direction switch
+        {
+            Direction.Up => GetClosestItemAbove(currentItem, galleryItems),
+            Direction.Down => GetClosestItemBelow(currentItem, galleryItems),
+            Direction.Left => GetClosestItemLeft(currentItem, galleryItems),
+            Direction.Right => GetClosestItemRight(currentItem, galleryItems),
+            _ => null
+        };
+
+        if (targetItem != null)
+        {
+            SetHighlightedGalleryItem(vm, targetItem.Index);
+        }
+    }
+
+    private static List<GalleryItemPosition> GetGalleryItems()
+    {
+        var galleryItems = new List<GalleryItemPosition>();
+        var galleryView = GetGallery(Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+        var listBox = galleryView.GalleryListBox;
+        for (var i = 0; i < listBox.Items.Count; i++)
+        {
+            if (listBox.ItemContainerGenerator.ContainerFromIndex(i) is not { } container)
+            {
+                continue;
+            }
+
+            var position = container.TranslatePoint(new Point(0, 0), galleryView);
+            var size = container.Bounds.Size;
+            if (position.HasValue)
+            {
+                galleryItems.Add(new GalleryItemPosition
+                {
+                    Index = i,
+                    Position = position.Value,
+                    Size = size
+                });
+            }
+        }
+        return galleryItems;
+    }
+
+
+
     public static void SetHighlightedGalleryItem(MainViewModel vm, int index)
     {
         vm.SelectedGalleryItemIndex = index;
@@ -128,12 +157,7 @@ public static class GalleryNavigation
         return galleryView;
     }
 
-    private class GalleryItemPosition
-    {
-        public int Index { get; set; }
-        public Point Position { get; set; }
-        public Size Size { get; set; }
-    }
+
 
     public static async Task GalleryClick(MainViewModel? vm)
     {

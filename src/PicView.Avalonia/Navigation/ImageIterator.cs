@@ -576,6 +576,10 @@ public class ImageIterator
 
         vm.SelectedGalleryItemIndex = Index;
         TooltipHelper.CloseToolTipMessage();
+        if (GalleryFunctions.IsBottomGalleryOpen)
+        {
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
+        }
 
         _ =  AddAsync(Index, preLoadValue.ImageModel);
         _ = Preload();

@@ -1,16 +1,22 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.VisualTree;
 using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.CustomControls;
+
+[TemplatePart("PART_ScrollViewer", typeof(AutoScrollViewer))]
 public class GalleryListBox : ListBox
 {
     protected override Type StyleKeyOverride => typeof(ListBox);
+
+    private AutoScrollViewer? _autoScrollViewer;
     
     public GalleryListBox()
     {
@@ -19,6 +25,60 @@ public class GalleryListBox : ListBox
         AddHandler(KeyDownEvent, PreviewKeyDownEvent, RoutingStrategies.Tunnel);
         AddHandler(KeyUpEvent, PreviewKeyUpEvent, RoutingStrategies.Tunnel);
     }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        _autoScrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
+    }
+
+    #region Functions
+
+    public IEnumerable<Control?> GetVisibleItems()
+    {
+        return Items.Cast<Control?>().Where(IsControlVisible);
+    }
+    
+    private bool IsControlVisible(Control? child)
+    {
+        if (child is null)
+        {
+            return false;
+        }
+        var parentBounds = new Rect(Bounds.Size);
+        var childBounds = child.Bounds.TransformToAABB(child.TransformToVisual(this)!.Value);
+
+        return parentBounds.Intersects(childBounds);
+    }
+
+    public void ScrollToCenterOfItem(GalleryItem galleryItem)
+    {
+        var visibleItems = GetVisibleItems();
+        
+        var array = visibleItems as GalleryItem[] ?? visibleItems.ToArray();
+        var visibleItemsCount = array.Length;
+        if (visibleItemsCount == 0)
+        {
+            return;
+        }
+        
+        var averageItemWidth = array.Sum(item => item.Bounds.Width);
+        averageItemWidth /= visibleItemsCount;
+        
+        var selectedScrollTo = galleryItem.TranslatePoint(new Point(), ItemsPanelRoot);
+        
+        if (!selectedScrollTo.HasValue)
+        {
+            return;
+        }
+        
+        // ReSharper disable once PossibleLossOfFraction
+        var x = selectedScrollTo.Value.X - (visibleItemsCount + 1) / 2 * averageItemWidth + averageItemWidth / 2;
+        
+        _autoScrollViewer.Offset = new Vector(x, _autoScrollViewer.Offset.Y);
+    }
+    
+    #endregion
 
     private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
     {
@@ -48,14 +108,10 @@ public class GalleryListBox : ListBox
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         e.Handled = true;
+        
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             // macOS already has horizontal scrolling for touchpad
-            return;
-        }
-        var scrollViewer = this.FindDescendantOfType<ScrollViewer>();
-        if (scrollViewer is null)
-        {
             return;
         }
 
@@ -65,22 +121,22 @@ public class GalleryListBox : ListBox
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                scrollViewer.Offset -= new Vector(speed, 0);
+                _autoScrollViewer.Offset -= new Vector(speed, 0);
             }
             else
             {
-                scrollViewer.Offset -= new Vector(-speed, 0);
+                _autoScrollViewer.Offset -= new Vector(-speed, 0);
             }
         }
         else
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                scrollViewer.Offset -= new Vector(-speed, 0);
+                _autoScrollViewer.Offset -= new Vector(-speed, 0);
             }
             else
             {
-                scrollViewer.Offset -= new Vector(speed, 0);
+                _autoScrollViewer.Offset -= new Vector(speed, 0);
             }
         }
     }
