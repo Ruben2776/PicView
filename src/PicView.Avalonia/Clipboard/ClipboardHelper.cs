@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
+using ImageMagick;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.ProcessHandling;
@@ -96,7 +97,79 @@ public static class ClipboardHelper
                 await NavigationHelper.LoadPicFromString(path, vm).ConfigureAwait(false);
             }
         }
-        // TODO: Get image from clipboard
+        var bytes = await GetDataBytes("PNG");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+
+        bytes = await GetDataBytes("image/jpeg");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("image/png");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("image/bmp");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("BMP");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("JPG");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("JPEG");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("image/tiff");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("GIF");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        bytes = await GetDataBytes("image/gif");
+        if (bytes is not null)
+        {
+            // TODO add showing as clipboard image function
+            return;
+        }
+        return;
+
+        async Task<byte[]?> GetDataBytes(string format)
+        {
+            var data = await clipboard.GetDataAsync(format);
+            if (data is byte[] dataBytes)
+            {
+                return dataBytes;
+            }
+
+            return null;
+        }
     }
 
 }
