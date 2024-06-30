@@ -11,6 +11,7 @@ using PicView.Avalonia.Views;
 using ReactiveUI;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
+using PicView.Avalonia.UI;
 
 
 namespace PicView.Avalonia.CustomControls;
@@ -102,7 +103,13 @@ public class PicBox : Control
 
         if (Source is not IImage source)
         {
-            return;
+            if (Source is string svg)
+            {
+                var svgSource = SvgSource.Load(svg);
+                source = new SvgImage { Source = svgSource };
+            }
+            else 
+                return;
         }
 
         Size sourceSize;
@@ -115,8 +122,8 @@ public class PicBox : Control
             // https://github.com/AvaloniaUI/Avalonia/issues/8515
 #if DEBUG
             Console.WriteLine(e);
+            TooltipHelper.ShowTooltipMessage(e.Message, true);
 #endif
-            // TODO: error handling
             return;
         }
         var viewPort = DetermineViewPort();
