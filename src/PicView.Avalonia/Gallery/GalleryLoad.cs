@@ -34,7 +34,7 @@ public static class GalleryLoad
         }
 
         MainView? mainView;
-       GalleryListBox? galleryListBox = null;
+        GalleryListBox? galleryListBox = null;
         
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -122,6 +122,7 @@ public static class GalleryLoad
         async Task Loop(int startIndex, int endIndex, CancellationToken ct)
         {
             var loading = TranslationHelper.Translation.Loading;
+            var priority = endIndex >= 1000 ? DispatcherPriority.Background : DispatcherPriority.Render;
             for (var i = startIndex; i < endIndex; i++)
             {
                 if (currentDirectory != _currentDirectory || ct.IsCancellationRequested)
@@ -160,8 +161,7 @@ public static class GalleryLoad
 
                         vm.SelectedGalleryItemIndex = i;
                         galleryListBox.SelectedItem = galleryItem;
-                    }, DispatcherPriority.Background, ct);
-
+                    }, priority, ct);
                 }
                 catch (Exception e)
                 {
@@ -210,7 +210,7 @@ public static class GalleryLoad
                     {
                         galleryListBox.ScrollToCenterOfItem(galleryItem);
                     }
-                }, DispatcherPriority.Background, ct);
+                }, DispatcherPriority.Render, ct);
             });
         }
     }

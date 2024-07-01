@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -436,24 +437,27 @@ public static class WindowHelper
         {
             return;
         }
-
+        
+        MainView? mainView;
         var screenSize = ScreenHelper.ScreenSize;
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
         if (Dispatcher.UIThread.CheckAccess())
         {
+            mainView = desktop.MainWindow.GetControl<MainView>("MainView");
             desktopMinWidth = desktop.MainWindow.MinWidth;
             desktopMinHeight = desktop.MainWindow.MinHeight;
-            containerWidth = desktop.MainWindow.Width;
-            containerHeight = desktop.MainWindow.Height;
+            containerWidth = mainView.Bounds.Width;
+            containerHeight = mainView.Bounds.Height;
         }
         else
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
+                mainView = desktop.MainWindow.GetControl<MainView>("MainView");
                 desktopMinWidth = desktop.MainWindow.MinWidth;
                 desktopMinHeight = desktop.MainWindow.MinHeight;
-                containerWidth = desktop.MainWindow.Width;
-                containerHeight = desktop.MainWindow.Height;
+                containerWidth = mainView.Bounds.Width;
+                containerHeight = mainView.Bounds.Height;
             }, DispatcherPriority.Normal).Wait();
         }
 
