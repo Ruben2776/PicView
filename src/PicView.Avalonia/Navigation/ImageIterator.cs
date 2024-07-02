@@ -574,12 +574,15 @@ public class ImageIterator
             WindowHelper.CenterWindowOnScreen(false);
         }
 
-        vm.SelectedGalleryItemIndex = Index;
-        TooltipHelper.CloseToolTipMessage();
-        if (GalleryFunctions.IsBottomGalleryOpen)
+        if (vm.SelectedGalleryItemIndex != Index)
         {
-            GalleryNavigation.CenterScrollToSelectedItem(vm);
+            vm.SelectedGalleryItemIndex = Index;
+            if (GalleryFunctions.IsBottomGalleryOpen)
+            {
+                GalleryNavigation.CenterScrollToSelectedItem(vm);
+            }
         }
+        TooltipHelper.CloseToolTipMessage();
 
         _ =  AddAsync(Index, preLoadValue.ImageModel);
         _ = Preload();
@@ -593,6 +596,10 @@ public class ImageIterator
         }
         vm.SetLoadingTitle();
         vm.SelectedGalleryItemIndex = index;
+        if (GalleryFunctions.IsBottomGalleryOpen)
+        {
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
+        }
         using var image = new MagickImage();
         image.Ping(vm.ImageIterator.Pics[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();

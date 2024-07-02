@@ -5,7 +5,6 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 
