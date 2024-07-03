@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.1.0-rc1" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.1.0-rc1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.0-rc2" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.1.0-rc2" />
   </ItemGroup>
 
   <ItemGroup>
