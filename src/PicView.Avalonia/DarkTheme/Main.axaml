@@ -50,6 +50,7 @@
                 <ResourceInclude Source="/DarkTheme/Controls/Button.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ComboBox.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ComboBoxItem.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/EditableTitlebar.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/FlyoutPresenter.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ListBox.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ListBoxItem.axaml" />

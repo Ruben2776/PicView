@@ -150,7 +150,7 @@
     </NativeMenu.Menu>
 
     <DockPanel LastChildFill="True">
-        <views1:MacOSTitlebar DockPanel.Dock="Top" />
+        <views1:MacOSTitlebar DockPanel.Dock="Top" x:Name="Titlebar" />
         <views:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
         <views:MainView Background="{StaticResource WindowBackgroundColor}" x:Name="MainView" />
     </DockPanel>

@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -158,13 +159,8 @@ public static class GalleryFunctions
      public static async Task SortGalleryItems(List<string> files, MainViewModel vm)
     {
         var cancellationTokenSource = new CancellationTokenSource();
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
 
-        var mainView =
-            await Dispatcher.UIThread.InvokeAsync(() => desktop.MainWindow.GetControl<MainView>("MainView"));
+        var mainView = UIHelper.GetMainView;
 
         var galleryListBox = mainView.GalleryView.GalleryListBox;
         if (galleryListBox == null) return;
@@ -233,6 +229,7 @@ public static class GalleryFunctions
                 }
             }
             vm.SelectedGalleryItemIndex = files.IndexOf(files[vm.ImageIterator.Index]);
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
         }
         catch (TaskCanceledException)
         {
@@ -255,4 +252,90 @@ public static class GalleryFunctions
 
     }
      #endregion
+
+     public static void RemoveGalleryItem(int index, MainViewModel? vm)
+     {
+         var mainView = UIHelper.GetMainView;
+
+         var galleryListBox = mainView.GalleryView.GalleryListBox;
+         if (galleryListBox == null) 
+             return;
+
+         if (galleryListBox.Items.Count <= index)
+         {
+             return;
+         }
+
+         if (galleryListBox.Items.Count < 0 || index >= galleryListBox.ItemCount)
+         {
+             return;
+         }
+
+         galleryListBox.Items.RemoveAt(index);
+         if (vm != null)
+         {
+             vm.SelectedGalleryItemIndex = vm.ImageIterator.Index;
+         }
+     }
+
+     public static async Task AddGalleryItem(int index, FileInfo fileInfo, MainViewModel? vm)
+     {
+         var mainView = UIHelper.GetMainView;
+
+         var galleryListBox = mainView.GalleryView.GalleryListBox;
+         if (galleryListBox == null) 
+             return;
+
+         if (galleryListBox.Items.Count <= index)
+         {
+             return;
+         }
+
+         if (galleryListBox.Items.Count < 0 || index >= galleryListBox.ItemCount)
+         {
+             return;
+         }
+
+         if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
+         {
+             GalleryItem? galleryItem;
+             var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)vm.GetGalleryItemHeight);
+             var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
+             try
+             {
+                 await Dispatcher.UIThread.InvokeAsync(() =>
+                 {
+                     galleryItem = new GalleryItem
+                     {
+                         FileLocation =
+                         {
+                             Text = galleryThumbInfo.FileLocation
+                         },
+                         FileDate =
+                         {
+                             Text = galleryThumbInfo.FileDate
+                         },
+                         FileSize =
+                         {
+                             Text = galleryThumbInfo.FileSize
+                         },
+                         FileName =
+                         {
+                             Text = galleryThumbInfo.FileName
+                         }
+                     };
+                     galleryListBox.Items.Insert(index, galleryItem);
+                     ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
+                     vm.SelectedGalleryItemIndex = index;
+                     GalleryNavigation.CenterScrollToSelectedItem(vm);
+                 }, DispatcherPriority.Render);
+             }
+             catch (Exception exception)
+             {
+#if DEBUG
+                 Console.WriteLine(exception);
+#endif
+             }
+         }
+     }
 }

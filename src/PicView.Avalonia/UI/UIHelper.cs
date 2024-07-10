@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -13,13 +14,28 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.UI;
 
-public class UIHelper
+public static class UIHelper
 {
+    #region GetControls
+
+    public static MainView? GetMainView { get; private set; }
+    public static Control? GetTitlebar { get; private set; }
+    public static EditableTitlebar? GetEditableTitlebar { get; private set; }
+
+    public static void SetControls(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        GetMainView = desktop.MainWindow.FindControl<MainView>("MainView");
+        GetTitlebar = desktop.MainWindow.FindControl<Control>("Titlebar");
+        GetEditableTitlebar = GetTitlebar.FindControl<EditableTitlebar>("EditableTitlebar");
+    }
+
+    #endregion
+    
     #region Menus
     
-    public static void AddMenus(IClassicDesktopStyleApplicationLifetime desktop)
+    public static void AddMenus()
     {
-        var mainView = desktop.MainWindow.FindControl<MainView>("MainView");    
+        var mainView = GetMainView;
         var fileMenu = new Views.UC.Menus.FileMenu
         {
             VerticalAlignment = VerticalAlignment.Bottom,
@@ -99,9 +115,9 @@ public class UIHelper
 
     #endregion Menus
 
-    public static void AddMToolTipMessage(IClassicDesktopStyleApplicationLifetime desktop)
+    public static void AddMToolTipMessage()
     {
-        var mainView = desktop.MainWindow.FindControl<MainView>("MainView");
+        var mainView = GetMainView;
         var toolTipMessage = new Views.UC.ToolTipMessage
         {
             VerticalAlignment = VerticalAlignment.Center,

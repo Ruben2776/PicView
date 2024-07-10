@@ -1,4 +1,5 @@
 <UserControl
+    Background="Transparent"
     DragDrop.AllowDrop="True"
     Focusable="True"
     d:DesignHeight="450"

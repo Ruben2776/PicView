@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
@@ -292,7 +293,7 @@ public static class FunctionsHelper
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            var titleBar = desktop.MainWindow.GetControl<Control>("TitleBar");
+            var titleBar = desktop.MainWindow.GetControl<Control>("Titlebar");
             var button = titleBar.GetControl<Button>("RotateRightButton");
             if (button.IsPointerOver)
             {
@@ -730,6 +731,7 @@ public static class FunctionsHelper
 
     public static Task Rename()
     {
+        UIHelper.GetEditableTitlebar.SelectFileName();
         return Task.CompletedTask;
     }
     

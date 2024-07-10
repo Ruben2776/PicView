@@ -18,7 +18,7 @@ public static class StartUpHelper
     public static void Start(MainViewModel vm, bool settingsExists, IClassicDesktopStyleApplicationLifetime desktop, Window w)
     {
         ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(w);
-        
+        UIHelper.SetControls(desktop);
         if (!settingsExists)
         {
             // Fixes incorrect window
@@ -143,8 +143,8 @@ public static class StartUpHelper
             ? TranslationHelper.Translation.CtrlToZoom
             : TranslationHelper.Translation.ScrollToZoom;
         
-        UIHelper.AddMenus(desktop);
-        UIHelper.AddMToolTipMessage(desktop);
+        UIHelper.AddMenus();
+        UIHelper.AddMToolTipMessage();
 
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);

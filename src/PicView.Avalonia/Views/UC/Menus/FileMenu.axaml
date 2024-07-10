@@ -237,7 +237,6 @@
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
                     Command="{Binding RenameCommand}"
-                    IsEnabled="False"
                     ToolTip.Tip="{Binding RenameFile}">
                     <StackPanel Orientation="Horizontal">
                         <Path

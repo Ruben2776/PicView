@@ -116,9 +116,9 @@ public class PreLoader
         if (preLoadValue is not null)
         {
             preLoadValue.ImageModel.FileInfo = null;
+            await AddAsync(index, list, preLoadValue.ImageModel).ConfigureAwait(false);
         }
-
-        await AddAsync(index, list, preLoadValue.ImageModel).ConfigureAwait(false);
+        
         return removed;
     }
 

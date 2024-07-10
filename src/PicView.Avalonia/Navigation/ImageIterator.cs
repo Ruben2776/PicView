@@ -156,7 +156,7 @@ public class ImageIterator
         if (newList.Count == 0) { return; }
 
         if (fileInfo.Exists == false) { return; }
-
+        
         Pics = newList;
 
         var index = Pics.IndexOf(e.FullPath);
@@ -167,32 +167,14 @@ public class ImageIterator
             return;
         }
 
-        await PreLoader.RefreshFileInfo(index, Pics);
+        await PreLoader.RefreshFileInfo(oldIndex, Pics);
 
         _running = false;
         //FileHistoryNavigation.Rename(e.OldFullPath, e.FullPath);
         //await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        var mainView = await Dispatcher.UIThread.InvokeAsync(() => desktop.MainWindow.GetControl<MainView>("MainView"));
-
-        var galleryListBox = mainView.GalleryView.GalleryListBox;
-        if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
-        {
-            if (galleryListBox.Items[index] is GalleryItem item)
-            {
-                var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    item.FileName.Text = galleryThumbInfo.FileName;
-                    item.FileSize.Text = galleryThumbInfo.FileSize;
-                    item.FileDate.Text = galleryThumbInfo.FileDate;
-                    item.FileSize.Text = galleryThumbInfo.FileSize;
-                });
-            }
-        }
+        GalleryFunctions.RemoveGalleryItem(oldIndex, _vm);
+        await GalleryFunctions.AddGalleryItem(index,fileInfo, _vm);
+        await GalleryFunctions.SortGalleryItems(Pics, _vm);
         FileRenamed?.Invoke(this, e);
     }
 
@@ -227,17 +209,7 @@ public class ImageIterator
         _running = false;
 
         //FileHistoryNavigation.Remove(e.FullPath);
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        var mainView = Dispatcher.UIThread.Invoke(() => desktop.MainWindow.GetControl<MainView>("MainView"));
-
-        var galleryListBox = mainView.GalleryView.GalleryListBox;
-        if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
-        {
-            galleryListBox.Items.RemoveAt(index);
-        }
+        GalleryFunctions.RemoveGalleryItem(index, _vm);
 
         FileDeleted?.Invoke(this, sameFile);
     }
@@ -293,44 +265,9 @@ public class ImageIterator
         {
             PreLoader.Clear();
         }
-        
+
         FileAdded?.Invoke(this, e);
-        
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        var mainView =
-            await Dispatcher.UIThread.InvokeAsync(() => desktop.MainWindow.GetControl<MainView>("MainView"));
-
-        var galleryListBox = mainView.GalleryView.GalleryListBox;
-        if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
-        {
-            if (galleryListBox.Items[index] is not GalleryItem galleryItem) { return; }
-            var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)_vm.GetGalleryItemHeight);
-            ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
-            var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
-            galleryItem.FileLocation.Text = galleryThumbInfo.FileLocation;
-            galleryItem.FileDate.Text = galleryThumbInfo.FileDate;
-            galleryItem.FileSize.Text = galleryThumbInfo.FileSize;
-            galleryItem.FileName.Text = galleryThumbInfo.FileName;
-            if (galleryListBox.Items.Contains(galleryItem))
-            {
-                return;
-            }
-
-            try
-            {
-                galleryListBox.Items.Add(galleryItem);
-                await GalleryFunctions.SortGalleryItems(Pics, _vm);
-            }
-            catch (Exception exception)
-            {
-#if DEBUG
-                Console.WriteLine(exception);
-#endif
-            }
-        }
+        await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
     }
 
     public async Task LoadNextPic(NavigateTo navigateTo, MainViewModel vm)

@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
-using PicView.Avalonia.Helpers;
 
 namespace PicView.Avalonia.Views;
 

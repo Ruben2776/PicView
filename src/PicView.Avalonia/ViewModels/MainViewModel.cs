@@ -19,6 +19,7 @@ using System.Reactive;
 using Avalonia.Media;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Converters;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;

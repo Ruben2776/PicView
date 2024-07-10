@@ -1,41 +1,41 @@
 <UserControl
-    x:Class="PicView.Avalonia.Views.UC.TitleTextBox"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    Background="{StaticResource SecondaryBackgroundColor}"
     MaxWidth="{Binding TitleMaxWidth}"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Views.UC.TitleTextBox"
     x:DataType="viewModels:MainViewModel"
-    Background="{StaticResource SecondaryBackgroundColor}"
-    mc:Ignorable="d">
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
 
     <Panel>
         <TextBlock
-            Height="30"
-            Padding="0,7,0,5"
-            VerticalAlignment="Center"
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
+            Height="{CompiledBinding TitlebarHeight}"
             IsTabStop="False"
-            Text="{Binding Title}"
+            Padding="0,7,0,5"
+            Text="{CompiledBinding Title}"
             TextAlignment="Center"
             TextTrimming="CharacterEllipsis"
-            ToolTip.Tip="{Binding TitleTooltip}" />
+            ToolTip.Tip="{Binding TitleTooltip}"
+            VerticalAlignment="Center" />
         <TextBox
-            Height="30"
-            VerticalAlignment="Center"
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
+            Height="{CompiledBinding TitlebarHeight}"
             IsTabStop="False"
             IsVisible="False"
-            TextAlignment="Center" />
+            TextAlignment="Center"
+            VerticalAlignment="Center" />
     </Panel>
 </UserControl>
