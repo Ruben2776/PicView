@@ -23,20 +23,30 @@ public static class TooltipHelper
     /// <param name="interval">The duration for which the tooltip should be visible.</param>
     public static void ShowTooltipMessage(object message, bool center, TimeSpan interval)
     {
-        Dispatcher.UIThread.Invoke(() =>
+        try
         {
-            var toolTip = GetToolTipMessage;
-            if (toolTip is null)
+            Dispatcher.UIThread.Invoke(() =>
             {
-                return;
-            }
-            _isRunning = true;
-            toolTip.IsVisible = true;
-            toolTip.ToolTipMessageText.Text = message.ToString();
-            toolTip.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
-            toolTip.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
-            toolTip.Opacity = 1;
-        });
+                var toolTip = GetToolTipMessage;
+                if (toolTip is null)
+                {
+                    return;
+                }
+                _isRunning = true;
+                toolTip.IsVisible = true;
+                toolTip.ToolTipMessageText.Text = message.ToString();
+                toolTip.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
+                toolTip.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+                toolTip.Opacity = 1;
+            });
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+            return;
+        }
 
         var timer = new DispatcherTimer { Interval = interval };
         timer.Tick += (_, _) =>
