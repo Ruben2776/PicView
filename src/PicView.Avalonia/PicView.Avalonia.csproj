@@ -58,7 +58,7 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0-rc2" />
     <PackageReference Include="Avalonia.Svg.Skia" Version="11.1.0-rc2" />
-    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.9.1" />
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.10.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.9.1" />
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="13.10.0" />
   </ItemGroup>
 
   <ItemGroup>
