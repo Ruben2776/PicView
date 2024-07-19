@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
@@ -12,7 +12,6 @@ namespace PicView.Avalonia.Gallery;
 
 public static class GalleryNavigation
 {
-    private static GalleryListBox? _galleryListBox;
     #region Position and calculations
     
     private class GalleryItemPosition
@@ -49,17 +48,6 @@ public static class GalleryNavigation
     
     #endregion
 
-    private static GalleryListBox? GetGalleryListBox()
-    {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return null;
-        }
-        var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-        var mainGrid = mainView.GetControl<Panel>("MainGrid");
-        var galleryView = mainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
-        return galleryView.GalleryListBox;
-    }
     public static void CenterScrollToSelectedItem(MainViewModel vm)
     {
         if (Dispatcher.UIThread.CheckAccess())
@@ -74,9 +62,8 @@ public static class GalleryNavigation
         return;
         void ScrollToSelected()
         {
-            _galleryListBox ??= GetGalleryListBox();
+            var listbox = UIHelper.GetGalleryView.GalleryListBox;
 
-            var listbox = _galleryListBox;
             if (listbox is null || vm.SelectedGalleryItemIndex < 0 || vm.SelectedGalleryItemIndex >= listbox.Items.Count)
             {
                 return;
@@ -116,7 +103,7 @@ public static class GalleryNavigation
     private static List<GalleryItemPosition> GetGalleryItems()
     {
         var galleryItems = new List<GalleryItemPosition>();
-        var galleryView = GetGallery(Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+        var galleryView = UIHelper.GetGalleryView;
         var listBox = galleryView.GalleryListBox;
         for (var i = 0; i < listBox.Items.Count; i++)
         {
@@ -147,16 +134,6 @@ public static class GalleryNavigation
         vm.SelectedGalleryItemIndex = index;
         CenterScrollToSelectedItem(vm); // Ensure the selected item is in view
     }
-
-    private static GalleryAnimationControlView GetGallery(IClassicDesktopStyleApplicationLifetime desktop)
-    {
-        var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-        var mainGrid = mainView.GetControl<Panel>("MainGrid");
-        var galleryView = mainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
-
-        return galleryView;
-    }
-
 
 
     public static async Task GalleryClick(MainViewModel? vm)

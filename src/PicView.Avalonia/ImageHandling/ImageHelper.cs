@@ -36,7 +36,7 @@ public static class ImageHelper
                         await AddThumb().ConfigureAwait(false);
                         return imageModel;
                     }
-                    var bytes = await FileHelper.GetBytesFromFile(fileInfo.FullName).ConfigureAwait(false);
+                    var bytes = await FileHelper.GetBytesFromFile(fileInfo).ConfigureAwait(false);
                     using var memoryStream = new MemoryStream(bytes);
                     Add(memoryStream);
                     return imageModel;
@@ -102,10 +102,10 @@ public static class ImageHelper
 
                     void Add(Stream stream)
                     {
-                        var writeableBitmap = WriteableBitmap.Decode(stream);
-                        imageModel.Image = writeableBitmap;
-                        imageModel.PixelWidth = writeableBitmap?.PixelSize.Width ?? 0;
-                        imageModel.PixelHeight = writeableBitmap?.PixelSize.Height ?? 0;
+                        var bitmap = new Bitmap(stream);
+                        imageModel.Image = bitmap;
+                        imageModel.PixelWidth = bitmap?.PixelSize.Width ?? 0;
+                        imageModel.PixelHeight = bitmap?.PixelSize.Height ?? 0;
                         imageModel.ImageType = ImageType.Bitmap;
                     }
 

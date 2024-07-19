@@ -5,7 +5,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
@@ -21,12 +20,14 @@ public static class UIHelper
     public static MainView? GetMainView { get; private set; }
     public static Control? GetTitlebar { get; private set; }
     public static EditableTitlebar? GetEditableTitlebar { get; private set; }
+    public static GalleryAnimationControlView? GetGalleryView { get; private set; }
 
     public static void SetControls(IClassicDesktopStyleApplicationLifetime desktop)
     {
         GetMainView = desktop.MainWindow.FindControl<MainView>("MainView");
         GetTitlebar = desktop.MainWindow.FindControl<Control>("Titlebar");
         GetEditableTitlebar = GetTitlebar.FindControl<EditableTitlebar>("EditableTitlebar");
+        GetGalleryView = GetMainView.MainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
     }
 
     #endregion
@@ -41,6 +42,7 @@ public static class UIHelper
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
             Margin = new Thickness(0, 0, 120, 0),
+            IsVisible = false
         };
 
         mainView.MainGrid.Children.Add(fileMenu);
@@ -50,6 +52,7 @@ public static class UIHelper
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
             Margin = new Thickness(0, 0, 63, 0),
+            IsVisible = false
         };
 
         mainView.MainGrid.Children.Add(imageMenu);
@@ -59,6 +62,7 @@ public static class UIHelper
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
             Margin = new Thickness(0, 0, -75, 0),
+            IsVisible = false
         };
 
         mainView.MainGrid.Children.Add(settingsMenu);
@@ -68,6 +72,7 @@ public static class UIHelper
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
             Margin = new Thickness(80, 0, 0, 0),
+            IsVisible = false
         };
 
         mainView.MainGrid.Children.Add(toolsMenu);
