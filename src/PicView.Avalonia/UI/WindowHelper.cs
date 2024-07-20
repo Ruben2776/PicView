@@ -437,13 +437,12 @@ public static class WindowHelper
         {
             return;
         }
-        
-        MainView? mainView;
+
+        var mainView = UIHelper.GetMainView;
         var screenSize = ScreenHelper.ScreenSize;
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
         if (Dispatcher.UIThread.CheckAccess())
         {
-            mainView = desktop.MainWindow.GetControl<MainView>("MainView");
             desktopMinWidth = desktop.MainWindow.MinWidth;
             desktopMinHeight = desktop.MainWindow.MinHeight;
             containerWidth = mainView.Bounds.Width;
@@ -453,7 +452,6 @@ public static class WindowHelper
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                mainView = desktop.MainWindow.GetControl<MainView>("MainView");
                 desktopMinWidth = desktop.MainWindow.MinWidth;
                 desktopMinHeight = desktop.MainWindow.MinHeight;
                 containerWidth = mainView.Bounds.Width;

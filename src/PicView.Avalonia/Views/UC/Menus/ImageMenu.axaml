@@ -87,10 +87,11 @@
                         Fill="{StaticResource MainIconColor}"
                         Height="13"
                         Stretch="Fill"
-                        Width="13" />
-                    <Button.RenderTransform>
-                        <ScaleTransform ScaleX="{Binding ScaleX}" />
-                    </Button.RenderTransform>
+                        Width="13">
+                        <Path.RenderTransform>
+                            <ScaleTransform ScaleX="{Binding ScaleX}" />
+                        </Path.RenderTransform>
+                    </Path>
                 </Button>
 
                 <Button

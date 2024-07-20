@@ -11,7 +11,11 @@ using PicView.Avalonia.Views;
 using ReactiveUI;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
+using Avalonia.Threading;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.Calculations;
+using PicView.Core.Config;
 
 
 namespace PicView.Avalonia.CustomControls;
@@ -29,6 +33,7 @@ public class PicBox : Control
         _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
             .Subscribe(UpdateSource);
     }
+
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
@@ -101,47 +106,54 @@ public class PicBox : Control
     {
         base.Render(context);
 
-        if (Source is not IImage source)
+        switch (Source)
         {
-            if (Source is string svg)
+            case IImage source:
+                RenderBasedOnSettings(context, source);
+                break;
+            case string svg:
             {
                 var svgSource = SvgSource.Load(svg);
-                source = new SvgImage { Source = svgSource };
+                var svgImage = new SvgImage { Source = svgSource };
+                RenderBasedOnSettings(context, svgImage);
+                break;
             }
-            else 
-                return;
-        }
-
-        Size sourceSize;
-        try
-        {
-            sourceSize = source.Size;
-        }
-        catch (Exception e)
-        {
-            // https://github.com/AvaloniaUI/Avalonia/issues/8515
+            default:
+                // Handle invalid source or log error
 #if DEBUG
-            Console.WriteLine(e);
-            TooltipHelper.ShowTooltipMessage(e.Message, true);
+                Console.WriteLine("Invalid source type.");
+                TooltipHelper.ShowTooltipMessage("Invalid source type.", true);
 #endif
-            return;
+                break;
         }
+    }
+
+    private void RenderBasedOnSettings(DrawingContext context, IImage source)
+    {
         var viewPort = DetermineViewPort();
+        var sourceSize = source.Size;
     
         var is1To1 = false; // TODO: replace with settings value
         var isSideBySide = false; // TODO: replace with settings value
+    
         if (is1To1)
         {
             RenderImage1To1(context, source, viewPort, sourceSize);
         }
         else if (isSideBySide)
         {
-            if (SecondarySource is not IImage secondarySource)
+            if (SecondarySource is IImage secondarySource)
             {
-                // TODO: error handling
-                return;
+                RenderImageSideBySide(context, source, secondarySource, viewPort);
             }
-            RenderImageSideBySide(context, source, secondarySource, viewPort);
+            else
+            {
+                // Handle invalid secondary source
+#if DEBUG
+                Console.WriteLine("Invalid secondary source type.");
+                TooltipHelper.ShowTooltipMessage("Invalid secondary source type.", true);
+#endif
+            }
         }
         else
         {
@@ -161,7 +173,7 @@ public class PicBox : Control
             return new Rect();
         }
 
-        var mainView = desktop.MainWindow?.GetControl<MainView>("MainView");
+        var mainView = UIHelper.GetMainView;
         return mainView == null ? new Rect() : new Rect(Bounds.X, Bounds.Y, mainView.Bounds.Width, mainView.Bounds.Height);
     }
 
@@ -208,7 +220,8 @@ public class PicBox : Control
         // Draw the second image
         context.DrawImage(secondarySource, new Rect(secondarySource.Size), secondarySourceRect);
     }
-
+    
+    
     private static Vector CalculateScaling(Size destinationSize, Size sourceSize)
     {
         var isConstrainedWidth = !double.IsPositiveInfinity(destinationSize.Width);
@@ -229,7 +242,7 @@ public class PicBox : Control
 
         return new Vector(scaleX, scaleY);
     }
-
+    
     public static Size CalculateSize(Size destinationSize, Size sourceSize)
     {
         return sourceSize * CalculateScaling(destinationSize, sourceSize);

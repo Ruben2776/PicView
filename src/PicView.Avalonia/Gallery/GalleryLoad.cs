@@ -83,6 +83,10 @@ public static class GalleryLoad
             
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
+                if (galleryListBox.Items.Count == 0)
+                {
+                    return;
+                }
                 if (galleryListBox.Items[0] is not GalleryItem galleryItem)
                 {
                     return;

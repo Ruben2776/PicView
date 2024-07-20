@@ -1,22 +1,15 @@
-﻿using PicView.Avalonia.Helpers;
-using PicView.Avalonia.Keybindings;
+﻿using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views;
-using PicView.Avalonia.Views.UC;
-using PicView.Core.Gallery;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
