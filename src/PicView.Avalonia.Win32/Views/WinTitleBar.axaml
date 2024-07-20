@@ -10,7 +10,6 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -166,7 +165,6 @@
                 IsTabStop="False"
                 MaxWidth="{CompiledBinding TitleMaxWidth}"
                 Name="EditableTitlebar"
-                Padding="0,7,0,5"
                 Text="{CompiledBinding Title}"
                 TextAlignment="Center"
                 ToolTip.Tip="{CompiledBinding TitleTooltip}"

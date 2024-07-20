@@ -1,6 +1,10 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -8,33 +12,47 @@ using PicView.Core.FileHandling;
 
 namespace PicView.Avalonia.CustomControls;
 
+[TemplatePart("PART_TextBlock", typeof(TextBlock))]
+[TemplatePart("PART_TextPresenter", typeof(TextPresenter))]
+[TemplatePart("PART_Border", typeof(Border))]
 public class EditableTitlebar : TextBox
 {
     protected override Type StyleKeyOverride => typeof(EditableTitlebar);
     
-    private bool _isRenaming;
+    public bool IsRenaming { get; private set; }
+    
+    private TextBlock? _textBlock;
+
+    private Border? _border;
 
     public EditableTitlebar()
     {
         LostFocus += OnLostFocus;
     }
 
-    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
-        if (!_isRenaming)
+        base.OnApplyTemplate(e);
+        _textBlock = e.NameScope.Find<TextBlock>("PART_TextBlock");
+        _border = e.NameScope.Find<Border>("PART_Border");
+        if (_textBlock is null)
         {
-            if (VisualRoot is null) { return; }
-            var hostWindow = (Window)VisualRoot;
-            hostWindow.BeginMoveDrag(e);
+            return;
         }
     }
 
-    protected override void OnPointerEntered(PointerEventArgs e)
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
-        base.OnPointerEntered(e);
-        if (!_isRenaming)
+        if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
         {
-            Cursor = Cursor.Default;
+            SelectFileName();
+            return;
+        }
+        if (!IsRenaming)
+        {
+            if (VisualRoot is null) { return; }
+            var hostWindow = (Window)VisualRoot;
+            WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
         }
     }
 
@@ -46,20 +64,32 @@ public class EditableTitlebar : TextBox
             return;
         }
         vm.RefreshTitle();
+        _textBlock.IsVisible = true;
+        _border.IsVisible = false;
+        Cursor = new Cursor(StandardCursorType.Arrow);
+        MainKeyboardShortcuts.IsKeysEnabled = true;
     }
 
     #region Rename
-
+    
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        MainKeyboardShortcuts.IsKeysEnabled = false;
+        base.OnKeyDown(e);
+    }
+    
     protected override void OnKeyUp(KeyEventArgs e)
     {
         base.OnKeyUp(e);
         if (e.Key is Key.Enter or Key.Return)
         {
             _ = HandleRename();
+            MainKeyboardShortcuts.IsKeysEnabled = true;
         }
         else if (e.Key == Key.Escape)
         {
             UIHelper.GetMainView.Focus();
+            MainKeyboardShortcuts.IsKeysEnabled = true;
         }
     }
 
@@ -79,7 +109,7 @@ public class EditableTitlebar : TextBox
         {
             return;
         }
-        _isRenaming = true;
+        IsRenaming = true;
         var path = vm.FileInfo.FullName;
         var newPath = Path.Combine(vm.FileInfo.DirectoryName, Text);
         var renamed = await Task.FromResult(FileHelper.RenameFile(path, newPath));
@@ -87,7 +117,7 @@ public class EditableTitlebar : TextBox
         {
             vm.SetTitle();
         }
-        _isRenaming = false;
+        IsRenaming = false;
     }
     
     public void SelectFileName()
@@ -115,14 +145,11 @@ public class EditableTitlebar : TextBox
         var end = Path.GetFileNameWithoutExtension(filename).Length;
         SelectionStart = start;
         SelectionEnd = end;
+        _textBlock.IsVisible = false;
+        _border.IsVisible = true;
+        Cursor = new Cursor(StandardCursorType.Ibeam);
         Focus();
     }
 
     #endregion
-
-    protected override void OnSizeChanged(SizeChangedEventArgs e)
-    {
-        // TODO: Add custom resize logic
-        base.OnSizeChanged(e);
-    }
 }

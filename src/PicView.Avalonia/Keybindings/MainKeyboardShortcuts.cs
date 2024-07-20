@@ -1,6 +1,7 @@
 ﻿using Avalonia.Input;
 using System.Diagnostics;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -27,12 +28,14 @@ public static class MainKeyboardShortcuts
     public static bool ShiftDown { get; private set; }
 
     public static KeyGesture? CurrentKeys { get; private set; }
+    
+    public static bool IsKeysEnabled { get; set; } = true;
 
     private static ushort _x;
 
     public static async Task MainWindow_KeysDownAsync(KeyEventArgs e)
     {
-        if (KeybindingsHelper.CustomShortcuts is null)
+        if (KeybindingsHelper.CustomShortcuts is null || !IsKeysEnabled)
         {
             return;
         }

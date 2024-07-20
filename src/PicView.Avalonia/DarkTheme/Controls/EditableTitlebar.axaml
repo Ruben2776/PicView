@@ -12,7 +12,6 @@
         <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentColor}" />
         <Setter Property="SelectionForegroundBrush" Value="{StaticResource MainTextColor}" />
-        <Setter Property="Padding" Value="4" />
         <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
         <Setter Property="Template">
             <ControlTemplate>
@@ -28,22 +27,22 @@
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
 
                         <DataValidationErrors>
-
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-                                <ContentPresenter
-                                    Content="{TemplateBinding InnerLeftContent}"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="1" />
+                            <Panel>
+                                <ContentPresenter Content="{TemplateBinding InnerLeftContent}" />
                                 <ScrollViewer
                                     AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
                                     BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}"
-                                    Grid.Column="1"
-                                    Grid.ColumnSpan="1"
                                     HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                                     IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
                                     Name="PART_ScrollViewer"
                                     VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
-                                    <Panel>
+                                    <Border
+                                        Background="Transparent"
+                                        BorderBrush="{DynamicResource AccentColor}"
+                                        BorderThickness="1.2"
+                                        CornerRadius="1"
+                                        IsVisible="False"
+                                        Name="PART_Border">
                                         <TextPresenter
                                             CaretBrush="{TemplateBinding CaretBrush}"
                                             CaretIndex="{TemplateBinding CaretIndex}"
@@ -57,33 +56,28 @@
                                             Text="{TemplateBinding Text,
                                                                    Mode=TwoWay}"
                                             TextAlignment="{TemplateBinding TextAlignment}"
-                                            TextWrapping="{TemplateBinding TextWrapping}" />
-                                    </Panel>
-                                    <ScrollViewer.Styles>
-                                        <Style Selector="ScrollContentPresenter#PART_ContentPresenter">
-                                            <Setter Property="Cursor" Value="IBeam" />
-                                        </Style>
-                                    </ScrollViewer.Styles>
+                                            TextWrapping="{TemplateBinding TextWrapping}"
+                                            VerticalAlignment="Center" />
+                                    </Border>
                                 </ScrollViewer>
-                                <ContentPresenter Content="{TemplateBinding InnerRightContent}" Grid.Column="2" />
-                            </Grid>
+                                <TextBlock
+                                    LetterSpacing="{TemplateBinding LetterSpacing}"
+                                    LineHeight="{TemplateBinding LineHeight}"
+                                    Name="PART_TextBlock"
+                                    Text="{TemplateBinding Text,
+                                                           Mode=TwoWay}"
+                                    TextAlignment="{TemplateBinding TextAlignment}"
+                                    TextTrimming="CharacterEllipsis"
+                                    VerticalAlignment="Center" />
+                            </Panel>
                         </DataValidationErrors>
                     </DockPanel>
                 </Border>
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="BorderBrush" Value="{StaticResource SecondaryBorderColor}" />
-        </Style>
-        <Style Selector="^:focus /template/ Border#border">
-            <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
-        </Style>
         <Style Selector="^:error /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
-        </Style>
-        <Style Selector="^ /template/ DockPanel">
-            <Setter Property="Cursor" Value="IBeam" />
         </Style>
         <Style Selector="^:disabled /template/ Border#border">
             <Setter Property="Background" Value="{StaticResource BackgroundAlpha}" />
