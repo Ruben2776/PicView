@@ -84,7 +84,7 @@ public static class StartUpHelper
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
-            Task.Run(() => NavigationHelper.LoadPicFromString(args[1], vm));
+            _ = QuickLoad.QuickLoadAsync(vm, args[1]);
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
         {

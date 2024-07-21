@@ -100,7 +100,6 @@ public static class FunctionsHelper
 
             // File functions
             "DeleteFile" => DeleteFile,
-            "RecycleFile" => RecycleFile,
             "Rename" => Rename,
             "ShowFileProperties" => ShowFileProperties,
 
@@ -706,18 +705,6 @@ public static class FunctionsHelper
     }
     
     public static async Task DeleteFile()
-    {
-        if (Vm is null)
-        {
-            return;
-        }
-        await Task.Run(() =>
-        {
-            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo.FullName, false);
-        });
-    }
-    
-    public static async Task RecycleFile()
     {
         if (Vm is null)
         {

@@ -346,7 +346,7 @@
                 Command="{CompiledBinding RecycleFileCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
-                Header="{Binding DeleteFile}">
+                Header="{CompiledBinding DeleteFile}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource RecycleGeometry}"

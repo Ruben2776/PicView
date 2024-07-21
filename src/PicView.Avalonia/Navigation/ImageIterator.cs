@@ -10,6 +10,7 @@ using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -40,6 +41,7 @@ public class ImageIterator
         ArgumentNullException.ThrowIfNull(fileInfo);
         
         _vm = vm;
+
         Pics = vm.PlatformService.GetFiles(fileInfo);
         Index = Directory.Exists(fileInfo.FullName) ? 0 : Pics.IndexOf(fileInfo.FullName);
 #if DEBUG
@@ -171,7 +173,7 @@ public class ImageIterator
         FileRenamed?.Invoke(this, e);
     }
 
-    private void OnFileDeleted(FileSystemEventArgs e)
+    private async Task OnFileDeleted(FileSystemEventArgs e)
     {
         if (IsFileBeingRenamed)
         {
@@ -195,14 +197,28 @@ public class ImageIterator
         {
             return;
         }
-        Index--;
+        
+        PreLoader.Remove(index, Pics);
 
-        PreLoader.Remove(Index, Pics);
+        if (sameFile)
+        {
+            Index--;
+            if (Pics.Count <= 0)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _vm.CurrentView = new StartUpMenu();
+                });
+            }
+            await LoadPicAtIndex(Index, _vm);
+        }
 
-        _running = false;
-
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            GalleryFunctions.RemoveGalleryItem(index, _vm);
+        });
         //FileHistoryNavigation.Remove(e.FullPath);
-        GalleryFunctions.RemoveGalleryItem(index, _vm);
+        _running = false;
 
         FileDeleted?.Invoke(this, sameFile);
     }

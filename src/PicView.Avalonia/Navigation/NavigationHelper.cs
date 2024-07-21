@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Helpers;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
@@ -134,8 +135,20 @@ public static class NavigationHelper
 
         async Task Start()
         {
-            vm.ImageIterator ??= new ImageIterator(fileInfo, vm);
-            await vm.ImageIterator.LoadPicFromString(source, vm).ConfigureAwait(false);
+            if (vm.ImageIterator is null)
+            {
+                var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+                vm.SetImageModel(imageModel);
+                vm.ImageSource = imageModel;
+                vm.ImageType = imageModel.ImageType;
+                WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, vm);
+                vm.ImageIterator = new ImageIterator(fileInfo, vm);
+                await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Index, vm);
+            }
+            else
+            {
+                await vm.ImageIterator.LoadPicFromString(source, vm).ConfigureAwait(false);
+            }
         }
     }
     
