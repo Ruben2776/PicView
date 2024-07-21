@@ -1,16 +1,12 @@
 using Avalonia;
-using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
-using System.Runtime.InteropServices;
-using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views.UC;
 

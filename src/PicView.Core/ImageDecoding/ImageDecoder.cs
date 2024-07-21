@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using ImageMagick.Formats;
 using System.Diagnostics;
-using PicView.Core.FileHandling;
 
 namespace PicView.Core.ImageDecoding;
 

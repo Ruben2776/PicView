@@ -1,6 +1,5 @@
 ﻿using ImageMagick;
 using PicView.Core.FileHandling;
-using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
@@ -9,7 +8,6 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using static System.Windows.Forms.DataFormats;
 using Rotation = PicView.WPF.UILogic.TransformImage.Rotation;
 
 namespace PicView.WPF.ImageHandling;

@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.Globalization;

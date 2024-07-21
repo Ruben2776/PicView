@@ -1,9 +1,6 @@
 ﻿using PicView.Core.FileHandling;
 using PicView.Core.Localization;
-using PicView.Core.Navigation;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.UILogic;
-using System.Diagnostics;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Tooltip;
 

@@ -13,7 +13,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using PicView.Core.ImageTransformations;
 using Point = Avalonia.Point;
-using PicView.Avalonia.Helpers;
 using ReactiveUI;
 using System.Reactive.Linq;
 using PicView.Avalonia.Keybindings;

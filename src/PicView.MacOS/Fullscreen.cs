@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace PicView.MacOS;
+﻿namespace PicView.MacOS;
 public static class Fullscreen
 {
 

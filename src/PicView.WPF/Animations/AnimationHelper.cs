@@ -1,6 +1,4 @@
 ﻿using PicView.Core.Config;
-using PicView.WPF.PicGallery;
-using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;

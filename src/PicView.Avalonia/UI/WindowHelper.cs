@@ -7,7 +7,6 @@ using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -22,15 +21,7 @@ public static class WindowHelper
     {
         if (e.ClickCount == 2 && e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
         {
-            if (MainKeyboardShortcuts.ShiftDown)
-            {
-                window.WindowState = WindowState.FullScreen;
-                return;
-            }
-            var windowState = window.WindowState;
-            window.WindowState = windowState == WindowState.Maximized ?
-                WindowState.Normal : WindowState.Maximized;
-            
+            _ = ToggleFullscreen(window.DataContext as MainViewModel);
             return;
         }
 
@@ -472,7 +463,7 @@ public static class WindowHelper
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
-            10,
+            0,
             screenSize.Scaling,
             vm.TitlebarHeight,
             vm.BottombarHeight,

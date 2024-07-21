@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using PicView.Core.Config;
 
 namespace PicView.Avalonia.CustomControls;
 

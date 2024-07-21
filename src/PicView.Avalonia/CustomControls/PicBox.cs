@@ -7,15 +7,10 @@ using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Utilities;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.Views;
 using ReactiveUI;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
-using Avalonia.Threading;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.ViewModels;
-using PicView.Core.Calculations;
-using PicView.Core.Config;
 
 
 namespace PicView.Avalonia.CustomControls;

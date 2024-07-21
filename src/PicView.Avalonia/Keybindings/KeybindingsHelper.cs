@@ -1,5 +1,4 @@
 ﻿using Avalonia.Input;
-using PicView.Avalonia.Helpers;
 using PicView.Core.Keybindings;
 using System.Diagnostics;
 using System.Text.Json;

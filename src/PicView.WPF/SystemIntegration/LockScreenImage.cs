@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using PicView.Core.FileHandling;
+﻿using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using PicView.WPF.ChangeTitlebar;
@@ -8,7 +7,6 @@ using PicView.WPF.ProcessHandling;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;

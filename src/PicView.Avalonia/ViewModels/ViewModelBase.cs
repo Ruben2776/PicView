@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using PicView.Core.Extensions;
+﻿using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using ReactiveUI;
 

@@ -2,14 +2,11 @@
 using System.Diagnostics;
 #endif
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;

@@ -1,9 +1,6 @@
 ﻿
 #if DEBUG
-using System.Diagnostics;
 #endif
-using Avalonia.Media.Imaging;
-using PicView.Core.Localization;
 using ReactiveUI;
 
 namespace PicView.Avalonia.ViewModels;

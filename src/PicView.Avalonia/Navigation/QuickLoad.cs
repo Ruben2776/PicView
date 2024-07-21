@@ -33,7 +33,7 @@ public static class QuickLoad
         await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);
         var preloadValue = vm.ImageIterator.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
         vm.ImageIterator.UpdateSource(preloadValue);
-        await vm.ImageIterator.Preload();
+        _ = vm.ImageIterator.Preload();
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
             await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName).ConfigureAwait(false);

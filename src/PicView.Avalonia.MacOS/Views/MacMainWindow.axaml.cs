@@ -1,11 +1,6 @@
 using Avalonia.Controls;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
-using PicView.Core.FileHandling;
-using ReactiveUI;
 using System;
-using System.Reactive.Concurrency;
 using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.MacOS.Views;
@@ -18,20 +13,10 @@ public partial class MacMainWindow : Window
 
         Loaded += delegate
         {
-            RxApp.MainThreadScheduler.Schedule(() =>
+            // Keep window position when resizing
+            ClientSizeProperty.Changed.Subscribe(size =>
             {
-                if (DataContext is null)
-                {
-                    return;
-                }
-
-                var wm = (MainViewModel)DataContext;
-
-                // Keep window position when resizing
-                ClientSizeProperty.Changed.Subscribe(size =>
-                {
-                    WindowHelper.HandleWindowResize(this, size);
-                });
+                WindowHelper.HandleWindowResize(this, size);
             });
         };
     }

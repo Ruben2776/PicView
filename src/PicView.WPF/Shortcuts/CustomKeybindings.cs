@@ -1,6 +1,5 @@
 ﻿using PicView.Core.Keybindings;
 using PicView.WPF.UILogic;
-using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
 

@@ -1,7 +1,5 @@
 ﻿using PicView.Core.Config;
-using PicView.Core.Gallery;
 using PicView.WPF.ChangeImage;
-using PicView.WPF.FileHandling;
 using PicView.WPF.UILogic;
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Diagnostics;
@@ -11,7 +9,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using PicView.Core.Extensions;
-using PicView.WPF.ImageHandling;
 using static PicView.WPF.PicGallery.GalleryLoad;
 using static PicView.WPF.UILogic.UC;
 

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
@@ -8,7 +7,6 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;

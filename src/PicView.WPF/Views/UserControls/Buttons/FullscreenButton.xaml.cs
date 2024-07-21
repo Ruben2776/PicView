@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using PicView.WPF.Animations;
+﻿using PicView.WPF.Animations;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.WPF.UILogic.Sizing;

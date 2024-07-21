@@ -22,11 +22,9 @@
                 VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}"
                 x:Name="ImageScrollViewer">
                 <Border
-                    HorizontalAlignment="Center"
                     PointerMoved="ImageZoomBorder_OnPointerMoved"
                     PointerPressed="ImageZoomBorder_OnPointerPressed"
                     PointerReleased="ImageZoomBorder_OnPointerReleased"
-                    VerticalAlignment="Center"
                     x:Name="ImageZoomBorder">
                     <customControls:PicBox
                         Height="{CompiledBinding ImageHeight}"

@@ -3,7 +3,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
-using ImageMagick;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.ProcessHandling;

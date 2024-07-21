@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;

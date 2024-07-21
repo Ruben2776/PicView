@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia;
 using PicView.Avalonia.Animations;
-using PicView.Avalonia.Helpers;
 using ReactiveUI;
 
 namespace PicView.Avalonia.CustomControls;

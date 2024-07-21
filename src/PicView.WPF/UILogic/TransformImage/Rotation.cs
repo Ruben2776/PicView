@@ -1,6 +1,5 @@
 ﻿using PicView.Core.Config;
 using PicView.WPF.ConfigureSettings;
-using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic.Sizing;
 using System.Windows;
 using System.Windows.Media;

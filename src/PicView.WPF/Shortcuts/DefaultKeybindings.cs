@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-namespace PicView.WPF.Shortcuts;
+﻿namespace PicView.WPF.Shortcuts;
 
 internal class DefaultKeybindings
 {

@@ -7,7 +7,6 @@ using PicView.WPF.SystemIntegration;
 using PicView.WPF.Views.UserControls.Buttons;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using static PicView.WPF.UILogic.ConfigureWindows;
 using static PicView.WPF.UILogic.HideInterfaceLogic;

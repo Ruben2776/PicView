@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 
 namespace PicView.Core.Config;
 

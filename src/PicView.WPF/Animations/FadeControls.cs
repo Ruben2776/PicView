@@ -3,7 +3,6 @@ using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.TransformImage;
 using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
 using static PicView.WPF.UILogic.UC;
 using Timer = System.Timers.Timer;
 

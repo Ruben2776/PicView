@@ -1,10 +1,7 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
 

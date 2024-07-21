@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using PicView.WPF.Animations;
 using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;

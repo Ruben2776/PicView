@@ -8,7 +8,6 @@ using PicView.WPF.PicGallery;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
-using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using PicView.Core.FileHandling;

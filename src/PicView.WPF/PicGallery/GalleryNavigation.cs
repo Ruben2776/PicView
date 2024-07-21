@@ -2,7 +2,6 @@
 using PicView.WPF.Views.UserControls.Gallery;
 using System.Windows;
 using System.Windows.Media;
-using PicView.WPF.ChangeImage;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.UC;
 

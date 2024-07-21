@@ -1,7 +1,5 @@
 ﻿using Avalonia.Input;
 using System.Diagnostics;
-using PicView.Avalonia.Navigation;
-using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Keybindings;
 

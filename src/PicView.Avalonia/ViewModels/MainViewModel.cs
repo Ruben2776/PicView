@@ -4,7 +4,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using ImageMagick;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Core.Config;
@@ -19,7 +18,6 @@ using System.Reactive;
 using Avalonia.Media;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Converters;
-using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
@@ -169,7 +167,11 @@ public class MainViewModel : ViewModelBase
     {
         get
         {
-            return GetBottomGalleryItemHeight > 0 ? GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize: 0;
+            if (!SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            {
+                return 0;
+            }
+            return GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize;
         }
     }
 

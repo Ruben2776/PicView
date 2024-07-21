@@ -9,11 +9,10 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using System.Runtime;
-using Avalonia.Media.Imaging;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Core.ProcessHandling;
 using Dispatcher = Avalonia.Threading.Dispatcher;
-using SortHelper = PicView.Avalonia.Helpers.SortHelper;
 
 namespace PicView.Avalonia.Win32;
 
@@ -68,7 +67,7 @@ public class App : Application, IPlatformSpecificService
     public List<string> GetFiles(FileInfo fileInfo)
     {
         var files = FileListHelper.RetrieveFiles(fileInfo);
-        return SortHelper.SortIEnumerable(files, this);
+        return SortingHelper.SortIEnumerable(files, this);
     }
 
     public int CompareStrings(string str1, string str2)

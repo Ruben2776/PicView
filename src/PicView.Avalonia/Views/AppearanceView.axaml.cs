@@ -1,15 +1,10 @@
 using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.Helpers;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
-using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Views;
 

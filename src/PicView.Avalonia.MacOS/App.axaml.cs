@@ -1,9 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using Avalonia.Threading;
-using PicView.Avalonia.Helpers;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
@@ -16,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime;
 using System.Threading.Tasks;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.MacOS;
@@ -69,7 +68,7 @@ public class App : Application, IPlatformSpecificService
     public List<string> GetFiles(FileInfo fileInfo)
     {
         var files = FileListHelper.RetrieveFiles(fileInfo);
-        return SortHelper.SortIEnumerable(files, this);
+        return SortingHelper.SortIEnumerable(files, this);
     }
 
     public int CompareStrings(string str1, string str2)
