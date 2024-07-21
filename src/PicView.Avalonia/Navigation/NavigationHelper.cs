@@ -34,7 +34,7 @@ public static class NavigationHelper
         }
 
         var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
-        await vm.ImageIterator.LoadNextPic(navigateTo, vm).ConfigureAwait(false);
+        await vm.ImageIterator.LoadNextPic(navigateTo).ConfigureAwait(false);
     }
 
     public static async Task NavigateFirstOrLast(bool last, MainViewModel vm)
@@ -53,7 +53,7 @@ public static class NavigationHelper
             return;
         }
 
-        await vm.ImageIterator.LoadNextPic(last ? NavigateTo.Last : NavigateTo.First, vm).ConfigureAwait(false);
+        await vm.ImageIterator.LoadNextPic(last ? NavigateTo.Last : NavigateTo.First).ConfigureAwait(false);
     }
 
     public static async Task Iterate(bool next, MainViewModel vm)
@@ -143,11 +143,11 @@ public static class NavigationHelper
                 vm.ImageType = imageModel.ImageType;
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, vm);
                 vm.ImageIterator = new ImageIterator(fileInfo, vm);
-                await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Index, vm);
+                await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Index);
             }
             else
             {
-                await vm.ImageIterator.LoadPicFromString(source, vm).ConfigureAwait(false);
+                await vm.ImageIterator.LoadPicFromString(source).ConfigureAwait(false);
             }
         }
     }
@@ -191,7 +191,7 @@ public static class NavigationHelper
         vm.ImageIterator.Index = 0;
         vm.ImageIterator.InitiateWatcher(fileInfo);
         vm.ImageIterator.PreLoader.Clear();
-        await vm.ImageIterator.LoadPicAtIndex(0, vm).ConfigureAwait(false);
+        await vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
         if (GalleryFunctions.IsBottomGalleryOpen)
         {
             await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);

@@ -150,7 +150,7 @@ public static class GalleryNavigation
         await GalleryFunctions.ToggleGallery(vm);
         if (vm.SelectedGalleryItemIndex != vm.ImageIterator.Index) 
         {
-            await vm.ImageIterator.LoadPicAtIndex(vm.SelectedGalleryItemIndex, vm);
+            await vm.ImageIterator.LoadPicAtIndex(vm.SelectedGalleryItemIndex);
         }
     }
 }

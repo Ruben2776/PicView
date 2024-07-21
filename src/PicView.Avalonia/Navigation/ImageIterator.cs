@@ -210,7 +210,7 @@ public class ImageIterator
                     _vm.CurrentView = new StartUpMenu();
                 });
             }
-            await LoadPicAtIndex(Index, _vm);
+            await LoadPicAtIndex(Index);
         }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -279,7 +279,7 @@ public class ImageIterator
         await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
     }
 
-    public async Task LoadNextPic(NavigateTo navigateTo, MainViewModel vm)
+    public async Task LoadNextPic(NavigateTo navigateTo)
     {
         var index = GetIteration(Index, navigateTo);
         if (index < 0)
@@ -289,15 +289,15 @@ public class ImageIterator
 
         if (!MainKeyboardShortcuts.IsKeyHeldDown)
         {
-            await LoadPicAtIndex(index, vm);
+            await LoadPicAtIndex(index);
         }
         else
         {
-            await TimerPic(index, vm);
+            await TimerPic(index);
         }
     }
 
-    public async Task LoadPicAtIndex(int index, MainViewModel vm) => await Task.Run(async () =>
+    public async Task LoadPicAtIndex(int index) => await Task.Run(async () =>
     {
         try
         {
@@ -311,7 +311,7 @@ public class ImageIterator
                 {
                     if (showThumb)
                     {
-                        await LoadingPreview(index, vm);
+                        await LoadingPreview(index);
                         if (Index != index)
                         {
                             return;
@@ -328,7 +328,7 @@ public class ImageIterator
             }
             else
             {
-                await LoadingPreview(index, vm);
+                await LoadingPreview(index);
                 var added = await PreLoader.AddAsync(index, Pics);
                 if (Index != index)
                 {
@@ -346,7 +346,7 @@ public class ImageIterator
                 return;
             }
 
-            UpdateSource(vm, preLoadValue);
+            UpdateSource(preLoadValue);
         }
         catch (Exception e)
         {
@@ -354,11 +354,11 @@ public class ImageIterator
         }
         finally
         {
-            vm.IsLoading = false;
+            _vm.IsLoading = false;
         }
     });
 
-    public async Task LoadPicFromString(string path, MainViewModel vm)
+    public async Task LoadPicFromString(string path)
     {
         if (!Path.Exists(path))
         {
@@ -367,9 +367,9 @@ public class ImageIterator
         }
         if (Directory.Exists(path))
 
-            if (path.Equals(vm.ImageIterator.FileInfo.DirectoryName))
+            if (path.Equals(_vm.ImageIterator.FileInfo.DirectoryName))
             {
-                await vm.ImageIterator.LoadPicAtIndex(0, vm).ConfigureAwait(false);
+                await _vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
             }
             else
             {
@@ -379,7 +379,7 @@ public class ImageIterator
         {
             if (Path.GetDirectoryName(path) == Path.GetDirectoryName(Pics[Index]))
             {
-                await LoadPicFromFile(new FileInfo(path), vm).ConfigureAwait(false);
+                await LoadPicFromFile(new FileInfo(path)).ConfigureAwait(false);
             }
             else
             {
@@ -391,14 +391,14 @@ public class ImageIterator
         async Task ChangeDirectoryAndLoad()
         {
             var fileInfo = new FileInfo(path);
-            vm.ImageIterator = new ImageIterator(fileInfo, _vm);
-            await vm.ImageIterator.LoadPicFromFile(new FileInfo(vm.ImageIterator.Pics[vm.ImageIterator.Index]), vm).ConfigureAwait(false);
+            _vm.ImageIterator = new ImageIterator(fileInfo, _vm);
+            await _vm.ImageIterator.LoadPicFromFile(new FileInfo(_vm.ImageIterator.Pics[_vm.ImageIterator.Index])).ConfigureAwait(false);
         }
     }
 
-    public async Task LoadPicFromFile(FileInfo fileInfo, MainViewModel vm)
+    public async Task LoadPicFromFile(FileInfo fileInfo)
     {
-        vm.SetLoadingTitle();
+        _vm.SetLoadingTitle();
         using var image = new MagickImage();
         image.Ping(fileInfo);
         var thumb = image.GetExifProfile()?.CreateThumbnail();
@@ -407,19 +407,19 @@ public class ImageIterator
             var byteArray = await Task.FromResult(thumb.ToByteArray());
             var stream = new MemoryStream(byteArray);
             var writableBitmap = WriteableBitmap.Decode(stream);
-            vm.ImageSource = writableBitmap;
-            vm.ImageType = ImageType.Bitmap;
+            _vm.ImageSource = writableBitmap;
+            _vm.ImageType = ImageType.Bitmap;
         }
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-        vm.ImageSource = imageModel.Image;
-        vm.ImageType = imageModel.ImageType;
-        vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
+        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, _vm);
+        _vm.ImageSource = imageModel.Image;
+        _vm.ImageType = imageModel.ImageType;
+        _vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
         await AddAsync(Index, imageModel);
-        await LoadPicAtIndex(Index, vm);
-        vm.ImageIterator.FileAdded += (_, e) => { vm.SetTitle(); };
-        vm.ImageIterator.FileRenamed += (_, e) => { vm.SetTitle(); };
-        vm.ImageIterator.FileDeleted += async (_, isSameFile) =>
+        await LoadPicAtIndex(Index);
+        _vm.ImageIterator.FileAdded += (_, e) => { _vm.SetTitle(); };
+        _vm.ImageIterator.FileRenamed += (_, e) => { _vm.SetTitle(); };
+        _vm.ImageIterator.FileDeleted += async (_, isSameFile) =>
         {
             if (isSameFile) //change if deleting current file
             {
@@ -428,22 +428,22 @@ public class ImageIterator
                     return;
                 }
 
-                await LoadPicFromString(Pics[Index], vm);
+                await LoadPicFromString(Pics[Index]);
             }
             else
             {
-                vm.SetTitle();
+                _vm.SetTitle();
             }
         };
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            _ = Task.Run(() => GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
+            _ = Task.Run(() => GalleryLoad.LoadGallery(_vm, fileInfo.DirectoryName));
         }
     }
 
     private static Timer? _timer;
 
-    internal async Task TimerPic(int index, MainViewModel vm)
+    internal async Task TimerPic(int index)
     {
         if (_timer is null)
         {
@@ -469,7 +469,7 @@ public class ImageIterator
         {
             if (preLoadValue.IsLoading)
             {
-                vm.SetLoadingTitle();
+                _vm.SetLoadingTitle();
                 await Task.Delay(250);
                 if (Index != index)
                 {
@@ -478,7 +478,7 @@ public class ImageIterator
 
                 if (preLoadValue.IsLoading)
                 {
-                    await LoadingPreview(index, vm);
+                    await LoadingPreview(index);
                 }
 
                 var x = 0;
@@ -495,7 +495,7 @@ public class ImageIterator
         }
         else
         {
-            await LoadingPreview(index, vm);
+            await LoadingPreview(index);
             await PreLoader.AddAsync(index, Pics).ConfigureAwait(false);
             preLoadValue = PreLoader.Get(index, Pics);
             if (preLoadValue is null)
@@ -503,29 +503,29 @@ public class ImageIterator
                 return;
             }
         }
-        UpdateSource(vm, preLoadValue);
+        UpdateSource(preLoadValue);
     }
     
-    private void UpdateSource(MainViewModel vm, PreLoader.PreLoadValue preLoadValue)
+    public void UpdateSource(PreLoader.PreLoadValue preLoadValue)
     {
-        vm.IsLoading = false;
-        vm.SetImageModel(preLoadValue.ImageModel);
-        vm.ImageSource = preLoadValue.ImageModel.Image;
-        vm.ImageType = preLoadValue.ImageModel.ImageType;
-        WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, 0, vm);
-        vm.SetTitle(preLoadValue.ImageModel, vm.ImageIterator);
-        vm.GetIndex = Index + 1;
+        _vm.IsLoading = false;
+        _vm.SetImageModel(preLoadValue.ImageModel);
+        _vm.ImageSource = preLoadValue.ImageModel.Image;
+        _vm.ImageType = preLoadValue.ImageModel.ImageType;
+        WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, preLoadValue.ImageModel.Rotation, _vm);
+        _vm.SetTitle(preLoadValue.ImageModel, _vm.ImageIterator);
+        _vm.GetIndex = Index + 1;
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
             WindowHelper.CenterWindowOnScreen(false);
         }
 
-        if (vm.SelectedGalleryItemIndex != Index)
+        if (_vm.SelectedGalleryItemIndex != Index)
         {
-            vm.SelectedGalleryItemIndex = Index;
+            _vm.SelectedGalleryItemIndex = Index;
             if (GalleryFunctions.IsBottomGalleryOpen)
             {
-                GalleryNavigation.CenterScrollToSelectedItem(vm);
+                GalleryNavigation.CenterScrollToSelectedItem(_vm);
             }
         }
         TooltipHelper.CloseToolTipMessage();
@@ -534,20 +534,20 @@ public class ImageIterator
         _ = Preload();
     }
     
-    public async Task LoadingPreview(int index, MainViewModel vm)
+    public async Task LoadingPreview(int index)
     {
         if (index != Index)
         {
             return;
         }
-        vm.SetLoadingTitle();
-        vm.SelectedGalleryItemIndex = index;
+        _vm.SetLoadingTitle();
+        _vm.SelectedGalleryItemIndex = index;
         if (GalleryFunctions.IsBottomGalleryOpen)
         {
-            GalleryNavigation.CenterScrollToSelectedItem(vm);
+            GalleryNavigation.CenterScrollToSelectedItem(_vm);
         }
         using var image = new MagickImage();
-        image.Ping(vm.ImageIterator.Pics[index]);
+        image.Ping(_vm.ImageIterator.Pics[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();
         if (thumb is null)
         {
@@ -567,17 +567,17 @@ public class ImageIterator
             return;
         }
 
-        vm.ImageSource = new Bitmap(stream);
-        vm.ImageType = ImageType.Bitmap;
-        WindowHelper.SetSize(image?.Width ?? 0, image?.Height ?? 0, 0, vm);
+        _vm.ImageSource = new Bitmap(stream);
+        _vm.ImageType = ImageType.Bitmap;
+        WindowHelper.SetSize(image?.Width ?? 0, image?.Height ?? 0, 0, _vm);
         return;
 
         async Task Set()
         {
             if (index == Index)
             {
-                vm.IsLoading = true;
-                await Dispatcher.UIThread.InvokeAsync(() =>  vm.ImageViewer.MainImage.Source = null);
+                _vm.IsLoading = true;
+                await Dispatcher.UIThread.InvokeAsync(() =>  _vm.ImageViewer.MainImage.Source = null);
             }
         }
     }

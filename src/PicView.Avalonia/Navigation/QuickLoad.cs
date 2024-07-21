@@ -1,6 +1,8 @@
-﻿using PicView.Avalonia.ImageHandling;
+﻿using PicView.Avalonia.Gallery;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
 using PicView.Core.FileHandling;
 
 namespace PicView.Avalonia.Navigation;
@@ -25,10 +27,16 @@ public static class QuickLoad
         vm.CurrentView = vm.ImageViewer;
         vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, vm);
+        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
         vm.IsLoading = false;
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
         await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);
-        await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Index, vm).ConfigureAwait(false);
+        var preloadValue = vm.ImageIterator.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
+        vm.ImageIterator.UpdateSource(preloadValue);
+        await vm.ImageIterator.Preload();
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        {
+            await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName).ConfigureAwait(false);
+        }
     }
 }

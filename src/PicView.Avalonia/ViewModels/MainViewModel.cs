@@ -1631,7 +1631,7 @@ public class MainViewModel : ViewModelBase
         if (success)
         {
             ImageIterator?.PreLoader.Remove(ImageIterator.Index, ImageIterator.Pics);
-            await ImageIterator?.LoadPicAtIndex(ImageIterator.Index, this);
+            await ImageIterator?.LoadPicAtIndex(ImageIterator.Index);
         }
         else
         {

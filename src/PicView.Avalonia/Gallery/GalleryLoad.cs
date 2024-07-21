@@ -7,6 +7,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
@@ -33,14 +34,8 @@ public static class GalleryLoad
             return;
         }
 
-        MainView? mainView;
-        GalleryListBox? galleryListBox = null;
-        
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-            galleryListBox = mainView.GalleryView.GalleryListBox;
-        });
+        var mainView = UIHelper.GetMainView;
+        var galleryListBox = mainView.GalleryView.GalleryListBox;
 
         if (IsLoading)
         {
@@ -155,7 +150,7 @@ public static class GalleryLoad
                             {
                                 await GalleryFunctions.ToggleGallery(vm);
                             }
-                            await vm.ImageIterator.LoadPicAtIndex(i1, vm);
+                            await vm.ImageIterator.LoadPicAtIndex(i1);
                         };
                         galleryListBox.Items.Add(galleryItem);
                         if (i != vm.ImageIterator.Index)
