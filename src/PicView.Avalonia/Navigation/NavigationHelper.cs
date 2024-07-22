@@ -153,7 +153,7 @@ public static class NavigationHelper
     
     public static async Task GoToNextFolder(bool next, MainViewModel vm)
     {
-        vm.SetLoadingTitle();
+        SetTitleHelper.SetLoadingTitle(vm);
         var fileList = await Task.Run(()  =>
         {
             var indexChange = next ? 1 : -1;
@@ -182,7 +182,7 @@ public static class NavigationHelper
 
         if (fileList is null)
         {
-            vm.SetTitle();
+            SetTitleHelper.SetTitle(vm);
             return;
         }
         var fileInfo = new FileInfo(fileList[0]);

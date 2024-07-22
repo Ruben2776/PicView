@@ -1538,71 +1538,7 @@ public class MainViewModel : ViewModelBase
         });
     }
 
-    public void SetTitle(ImageModel? imageModel, ImageIterator imageIterator)
-    {
-        if (imageModel is null || ImageIterator is null)
-        {
-            ReturnError();
-            return;
-        }
 
-        if (imageModel.FileInfo is null)
-        {
-            ReturnError();
-            return;
-        }
-
-        var titleString = TitleHelper.GetTitle(imageModel.PixelWidth, imageModel.PixelHeight, imageIterator.Index,
-            imageModel.FileInfo, ZoomValue, imageIterator.Pics);
-        WindowTitle = titleString[0];
-        Title = titleString[1];
-        TitleTooltip = titleString[2];
-
-        return;
-
-        void ReturnError()
-        {
-            WindowTitle =
-                Title =
-                    TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
-        }
-    }
-
-    public void SetTitle()
-    {
-        if (ImageIterator is null)
-        {
-            WindowTitle =
-                Title =
-                    TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
-            return;
-        }
-
-        var titleString = TitleHelper.GetTitle((int)ImageWidth, (int)ImageHeight, ImageIterator.Index,
-            FileInfo, ZoomValue, ImageIterator.Pics);
-        WindowTitle = titleString[0];
-        Title = titleString[1];
-        TitleTooltip = titleString[2];
-    }
-
-    public void RefreshTitle()
-    {
-        var path = FileInfo.FullName;
-        FileInfo = new FileInfo(path);
-        SetTitle();
-    }
-
-    public void ResetTitle()
-    {
-        WindowTitle = TranslationHelper.GetTranslation("NoImage") + " - PicView";
-        TitleTooltip = Title = TranslationHelper.GetTranslation("NoImage");
-    }
-
-    public void SetLoadingTitle()
-    {
-        WindowTitle = TranslationHelper.GetTranslation("Loading") + " - PicView";
-        TitleTooltip = Title = TranslationHelper.GetTranslation("Loading");
-    }
 
     #endregion Set model and title
 
@@ -1628,7 +1564,7 @@ public class MainViewModel : ViewModelBase
 
     private async Task ResizeImageByPercentage(int percentage)
     {
-        SetLoadingTitle();
+        SetTitleHelper.SetLoadingTitle(this);
         var success = await ConversionHelper.ResizeImageByPercentage(FileInfo, percentage);
         if (success)
         {
@@ -1637,7 +1573,7 @@ public class MainViewModel : ViewModelBase
         }
         else
         {
-            SetTitle();
+            SetTitleHelper.SetTitle(this);
         }
     }
 

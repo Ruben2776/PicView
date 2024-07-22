@@ -2,10 +2,12 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
 using ImageMagick;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
+using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
@@ -200,7 +202,11 @@ public static class ImageHelper
         var width = bitmap.PixelSize.Width;
         var height = bitmap.PixelSize.Height;
         var name = TranslationHelper.Translation.ClipboardImage;
-        WindowHelper.SetSize(width, height, 0, vm);
+        if (GalleryFunctions.IsBottomGalleryOpen)
+        {
+            UIHelper.GetMainView.GalleryView.GalleryMode = GalleryMode.BottomToClosed;
+        }
+        WindowHelper.SetSize(width, height, vm);
         var titleString = TitleHelper.TitleString(width, height, name, 1);
         vm.WindowTitle = titleString[0];
         vm.Title = titleString[1];

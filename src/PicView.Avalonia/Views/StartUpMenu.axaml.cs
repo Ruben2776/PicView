@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
 
@@ -96,7 +97,7 @@ public partial class StartUpMenu : UserControl
         if (DataContext is not MainViewModel vm)
             return;
 
-        vm.ResetTitle();
+        SetTitleHelper.ResetTitle(vm);
     }
 
     public void ResponsiveSize(double width, double height)

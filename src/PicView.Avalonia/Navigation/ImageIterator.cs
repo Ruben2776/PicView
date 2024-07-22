@@ -398,7 +398,7 @@ public class ImageIterator
 
     public async Task LoadPicFromFile(FileInfo fileInfo)
     {
-        _vm.SetLoadingTitle();
+        SetTitleHelper.SetLoadingTitle(_vm);
         using var image = new MagickImage();
         image.Ping(fileInfo);
         var thumb = image.GetExifProfile()?.CreateThumbnail();
@@ -417,8 +417,8 @@ public class ImageIterator
         _vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
         await AddAsync(Index, imageModel);
         await LoadPicAtIndex(Index);
-        _vm.ImageIterator.FileAdded += (_, e) => { _vm.SetTitle(); };
-        _vm.ImageIterator.FileRenamed += (_, e) => { _vm.SetTitle(); };
+        _vm.ImageIterator.FileAdded += (_, e) => { SetTitleHelper.SetTitle(_vm); };
+        _vm.ImageIterator.FileRenamed += (_, e) => { SetTitleHelper.SetTitle(_vm); };
         _vm.ImageIterator.FileDeleted += async (_, isSameFile) =>
         {
             if (isSameFile) //change if deleting current file
@@ -432,7 +432,7 @@ public class ImageIterator
             }
             else
             {
-                _vm.SetTitle();
+                SetTitleHelper.SetTitle(_vm);
             }
         };
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
@@ -469,7 +469,7 @@ public class ImageIterator
         {
             if (preLoadValue.IsLoading)
             {
-                _vm.SetLoadingTitle();
+                SetTitleHelper.SetLoadingTitle(_vm);
                 await Task.Delay(250);
                 if (Index != index)
                 {
@@ -513,7 +513,7 @@ public class ImageIterator
         _vm.ImageSource = preLoadValue.ImageModel.Image;
         _vm.ImageType = preLoadValue.ImageModel.ImageType;
         WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, preLoadValue.ImageModel.Rotation, _vm);
-        _vm.SetTitle(preLoadValue.ImageModel, _vm.ImageIterator);
+        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
         _vm.GetIndex = Index + 1;
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
@@ -540,7 +540,7 @@ public class ImageIterator
         {
             return;
         }
-        _vm.SetLoadingTitle();
+        SetTitleHelper.SetLoadingTitle(_vm);
         _vm.SelectedGalleryItemIndex = index;
         if (GalleryFunctions.IsBottomGalleryOpen)
         {

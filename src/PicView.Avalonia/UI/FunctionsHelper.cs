@@ -275,7 +275,7 @@ public static class FunctionsHelper
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Vm.ImageViewer.Rotate(clockWise: true);
+            Vm.ImageViewer.Rotate(clockWise: false);
         });
         
         // Check if it should move the cursor
@@ -311,7 +311,7 @@ public static class FunctionsHelper
         {
             return Task.CompletedTask;
         }
-        Vm.ImageViewer.Rotate(clockWise: false);
+        Vm.ImageViewer.Rotate(clockWise: true);
         return Task.CompletedTask;
     }
 
@@ -481,7 +481,7 @@ public static class FunctionsHelper
         }
 
         await Vm.ImageIterator.ReloadFileList();
-        Vm.SetTitle();
+        SetTitleHelper.SetTitle(Vm);
         await SettingsHelper.SaveSettingsAsync();
     }
     
@@ -854,7 +854,7 @@ public static class FunctionsHelper
                 Trace.WriteLine(e);
             }
         });
-        Vm.RefreshTitle();
+        SetTitleHelper.RefreshTitle(Vm);
     }
 
     public static Task Slideshow()

@@ -30,7 +30,6 @@ public partial class ImageViewer : UserControl
 
     private bool _captured;
     private bool _isZoomed;
-    private double _zoomPercentage = 100; 
 
     public ImageViewer()
     {
@@ -276,6 +275,8 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
+        if (DataContext is not MainViewModel vm)
+            return;
 
         if (enableAnimations)
         {
@@ -309,13 +310,15 @@ public partial class ImageViewer : UserControl
             _translateTransform.X = newTranslateValueX;
             _translateTransform.Y = newTranslateValueY;
         }, DispatcherPriority.Normal);
-        _zoomPercentage = zoomValue * 100;
+        vm.ZoomValue = zoomValue;
         _isZoomed = zoomValue != 0;
         if (_isZoomed)
         {
-            TooltipHelper.ShowTooltipMessage($"{Math.Floor(_zoomPercentage)}%", center: true);
+            SetTitleHelper.SetTitle(vm);
+            TooltipHelper.ShowTooltipMessage($"{Math.Floor(zoomValue * 100)}%", center: true);
         }
     }
+
 
     public void ResetZoom(bool enableAnimations)
     {
@@ -345,7 +348,13 @@ public partial class ImageViewer : UserControl
             _translateTransform.X = 0;
             _translateTransform.Y = 0;
         }, DispatcherPriority.Send);
-        _zoomPercentage = 100;
+
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        vm.ZoomValue = 1;
+        SetTitleHelper.SetTitle(vm);
         _isZoomed = false;
     }
 

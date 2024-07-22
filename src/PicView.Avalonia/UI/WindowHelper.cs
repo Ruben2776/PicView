@@ -480,6 +480,64 @@ public static class WindowHelper
             Math.Max(size.Width, desktopMinWidth) : double.NaN;;
     }
     
+    public static void SetSize(int width, int height, MainViewModel vm)
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        var mainView = UIHelper.GetMainView;
+        var screenSize = ScreenHelper.ScreenSize;
+        double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            desktopMinWidth = desktop.MainWindow.MinWidth;
+            desktopMinHeight = desktop.MainWindow.MinHeight;
+            containerWidth = mainView.Bounds.Width;
+            containerHeight = mainView.Bounds.Height;
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                desktopMinWidth = desktop.MainWindow.MinWidth;
+                desktopMinHeight = desktop.MainWindow.MinHeight;
+                containerWidth = mainView.Bounds.Width;
+                containerHeight = mainView.Bounds.Height;
+            }, DispatcherPriority.Normal).Wait();
+        }
+
+        if (double.IsNaN(containerWidth) || double.IsNaN(containerHeight) || double.IsNaN(width) || double.IsNaN(height))
+        {
+            return;
+        }
+        var size = ImageSizeCalculationHelper.GetImageSize(
+            width,
+            height,
+            screenSize.WorkingAreaWidth,
+            screenSize.WorkingAreaHeight,
+            desktopMinWidth,
+            desktopMinHeight,
+            ImageSizeCalculationHelper.GetInterfaceSize(),
+            0,
+            0,
+            screenSize.Scaling,
+            vm.TitlebarHeight,
+            vm.BottombarHeight,
+            0,
+            containerWidth,
+            containerHeight);
+        
+        vm.TitleMaxWidth = size.TitleMaxWidth;
+        vm.ImageWidth = size.Width;
+        vm.ImageHeight = size.Height;
+        vm.GalleryMargin = new Thickness(0, 0, 0, 0);
+
+        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ?
+            Math.Max(size.Width, desktopMinWidth) : double.NaN;;
+    }
+    
     public static void SaveSize(Window window)
     {
         if (Dispatcher.UIThread.CheckAccess())

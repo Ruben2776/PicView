@@ -130,6 +130,18 @@ public static class GalleryLoad
                     });
                     return;
                 }
+                
+                if (vm.ImageIterator is null)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    galleryListBox?.Items.Clear();
+                    if (GalleryFunctions.IsBottomGalleryOpen)
+                    {
+                        mainView.GalleryView.GalleryMode = GalleryMode.BottomToClosed;
+                    }
+                        
+                    return;
+                }
 
                 try
                 {
@@ -150,7 +162,7 @@ public static class GalleryLoad
                             await vm.ImageIterator.LoadPicAtIndex(i1);
                         };
                         galleryListBox.Items.Add(galleryItem);
-                        if (i != vm.ImageIterator.Index)
+                        if (i != vm.ImageIterator?.Index)
                         {
                             return;
                         }
@@ -186,6 +198,10 @@ public static class GalleryLoad
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
+                    if (i < 0 || i >= galleryListBox.Items.Count)
+                    {
+                        return;
+                    }
                     if (galleryListBox.Items[i] is not GalleryItem galleryItem)
                     {
                         return;
@@ -201,6 +217,18 @@ public static class GalleryLoad
                     galleryItem.FileDate.Text = thumbData.FileDate;
                     galleryItem.FileSize.Text = thumbData.FileSize;
                     galleryItem.FileName.Text = thumbData.FileName;
+                    
+                    if (vm.ImageIterator is null)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        galleryListBox?.Items.Clear();
+                        if (GalleryFunctions.IsBottomGalleryOpen)
+                        {
+                            mainView.GalleryView.GalleryMode = GalleryMode.BottomToClosed;
+                        }
+                        
+                        return;
+                    }
 
                     if (i == vm.ImageIterator.Index)
                     {

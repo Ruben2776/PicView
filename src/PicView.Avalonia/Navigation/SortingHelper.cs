@@ -1,5 +1,6 @@
 ﻿using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Services;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -76,7 +77,7 @@ public static class SortingHelper
         {
             vm.ImageIterator.Pics = files;
             vm.ImageIterator.Index = files.IndexOf(vm.FileInfo.FullName);
-            vm.SetTitle();
+            SetTitleHelper.SetTitle(vm);
         }
         else return;
 
@@ -95,7 +96,7 @@ public static class SortingHelper
         {
             vm.ImageIterator.Pics = files;
             vm.ImageIterator.Index = files.IndexOf(vm.FileInfo.FullName);
-            vm.SetTitle();
+            SetTitleHelper.SetTitle(vm);
         }
         else return;
 

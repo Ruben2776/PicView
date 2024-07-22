@@ -79,7 +79,7 @@ public class EditableTitlebar : TextBox
         {
             return;
         }
-        vm.RefreshTitle();
+        SetTitleHelper.RefreshTitle(vm);
         _textBlock.IsVisible = true;
         _border.IsVisible = false;
         Cursor = new Cursor(StandardCursorType.Arrow);
@@ -180,13 +180,13 @@ public class EditableTitlebar : TextBox
 
         async Task End()
         {
-            vm.SetTitle();
+            SetTitleHelper.SetTitle(vm);
             vm.IsLoading = false;
             IsRenaming = false;
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ClearSelection();
-                vm.RefreshTitle();
+                SetTitleHelper.RefreshTitle(vm);
                 _textBlock.IsVisible = true;
                 _border.IsVisible = false;
                 Cursor = new Cursor(StandardCursorType.Arrow);
