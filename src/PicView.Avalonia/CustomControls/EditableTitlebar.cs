@@ -23,7 +23,14 @@ public class EditableTitlebar : TextBox
 
     public bool IsRenaming
     {
-        get { return DataContext is MainViewModel vm && vm.ImageIterator.IsFileBeingRenamed; }
+        get
+        {
+            if (DataContext is not MainViewModel vm)
+            {
+                return false;
+            }
+            return vm.ImageIterator?.IsFileBeingRenamed ?? false;
+        }
         private set
         {
             if (DataContext is not MainViewModel vm)

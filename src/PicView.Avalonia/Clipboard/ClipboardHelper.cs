@@ -2,7 +2,9 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.ProcessHandling;
@@ -97,77 +99,80 @@ public static class ClipboardHelper
             }
             return;
         }
-        var bytes = await GetDataBytes("PNG");
-        if (bytes is not null)
+        
+        var bitmap = await GetBitmapFromBytes("PNG");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-
-        bytes = await GetDataBytes("image/jpeg");
-        if (bytes is not null)
+        
+        bitmap = await GetBitmapFromBytes("image/jpeg");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("image/png");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("image/png");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("image/bmp");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("image/bmp");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("BMP");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("BMP");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("JPG");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("JPG");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("JPEG");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("JPEG");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("image/tiff");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("image/tiff");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("GIF");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("GIF");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
-        bytes = await GetDataBytes("image/gif");
-        if (bytes is not null)
+        bitmap = await GetBitmapFromBytes("image/gif");
+        if (bitmap is not null)
         {
-            // TODO add showing as clipboard image function
+            ImageHelper.SetClipboardImage(bitmap, vm);
             return;
         }
         return;
-
-        async Task<byte[]?> GetDataBytes(string format)
+        
+        async Task<Bitmap?> GetBitmapFromBytes(string format)
         {
             var data = await clipboard.GetDataAsync(format);
             if (data is byte[] dataBytes)
             {
-                return dataBytes;
+                using var memoryStream = new MemoryStream(dataBytes);
+                var image = new Bitmap(memoryStream);
+                return image;
             }
-
+        
             return null;
         }
     }

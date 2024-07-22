@@ -3,8 +3,12 @@ using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
 using ImageMagick;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
+using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.ImageHandling;
 
@@ -186,5 +190,20 @@ public static class ImageHelper
             ImageType.AnimatedBitmap => image as Bitmap,
             _ => imageControl.Source
         };
+    }
+
+    public static void SetClipboardImage(Bitmap bitmap, MainViewModel vm)
+    {
+        vm.ImageIterator = null;
+        vm.ImageSource = bitmap;
+        vm.ImageType = ImageType.Bitmap;
+        var width = bitmap.PixelSize.Width;
+        var height = bitmap.PixelSize.Height;
+        var name = TranslationHelper.Translation.ClipboardImage;
+        WindowHelper.SetSize(width, height, 0, vm);
+        var titleString = TitleHelper.TitleString(width, height, name, 1);
+        vm.WindowTitle = titleString[0];
+        vm.Title = titleString[1];
+        vm.TitleTooltip = titleString[1];
     }
 }
