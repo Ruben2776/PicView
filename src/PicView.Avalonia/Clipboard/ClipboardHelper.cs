@@ -95,6 +95,7 @@ public static class ClipboardHelper
                 var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? singleFile.Path.AbsolutePath : singleFile.Path.LocalPath;
                 await NavigationHelper.LoadPicFromString(path, vm).ConfigureAwait(false);
             }
+            return;
         }
         var bytes = await GetDataBytes("PNG");
         if (bytes is not null)

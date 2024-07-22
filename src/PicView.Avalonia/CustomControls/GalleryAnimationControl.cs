@@ -18,17 +18,7 @@ namespace PicView.Avalonia.CustomControls;
 
 public class GalleryAnimationControl : UserControl
 {
-    public static readonly AvaloniaProperty<GalleryMode?> GalleryModeProperty =
-        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode?>(nameof(GalleryMode));
-
-    public GalleryMode GalleryMode
-    {
-        get => (GalleryMode)(GetValue(GalleryModeProperty) ?? false);
-        set => SetValue(GalleryModeProperty, value);
-    }
-
-    private bool _isAnimating;
-
+    #region Constructors
     protected GalleryAnimationControl()
     {
         Loaded += (_, _) =>
@@ -49,8 +39,33 @@ public class GalleryAnimationControl : UserControl
                         _ => throw new ArgumentOutOfRangeException(nameof(galleryMode), galleryMode, null)
                     };
                 }).Subscribe();
+            
+            if (Parent is not Control parent)
+            {
+                return;
+            }
+            parent.SizeChanged += (_, e) => ParentSizeChanged(parent, e);
         };
     }
+    
+    #endregion
+    
+    #region Properties
+
+    public static readonly AvaloniaProperty<GalleryMode?> GalleryModeProperty =
+        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode?>(nameof(GalleryMode));
+
+    public GalleryMode GalleryMode
+    {
+        get => (GalleryMode)(GetValue(GalleryModeProperty) ?? false);
+        set => SetValue(GalleryModeProperty, value);
+    }
+
+    private bool _isAnimating;
+    
+    #endregion
+
+    #region Animation Methods
 
     private async Task ClosedToFullAnimation()
     {
@@ -58,7 +73,7 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Parent is not Control parent)
         {
             return;
         }
@@ -67,7 +82,7 @@ public class GalleryAnimationControl : UserControl
         {
             IsVisible = true;
             Opacity = 0;
-            Height = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
+            Height = parent.Bounds.Height;
         });
 
         vm.GalleryOrientation = Orientation.Vertical;
@@ -99,13 +114,13 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Parent is not Control parent)
         {
             return;
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Height = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
+            Height = parent.Bounds.Height;
         });
         const double from = 1d;
         const double to = 0d;
@@ -177,7 +192,7 @@ public class GalleryAnimationControl : UserControl
         
         var from = vm.GalleryHeight;
         const int to = 0;
-        const double speed = 0.5;
+        const double speed = 0.7;
         _isAnimating = true;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
         await heightAnimation.RunAsync(this);
@@ -196,7 +211,7 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Parent is not Control parent)
         {
             return;
         }
@@ -205,7 +220,7 @@ public class GalleryAnimationControl : UserControl
         
         
         var from = vm.GalleryHeight;
-        var to = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
+        var to = parent.Bounds.Height;
         const double speed = 0.5;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
         _isAnimating = true;
@@ -230,13 +245,13 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Parent is not Control parent)
         {
             return;
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Height = desktop.MainWindow.Bounds.Height - vm.TitlebarHeight - vm.BottombarHeight;
+            Height = parent.Bounds.Height;
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.IsGalleryCloseIconVisible = false;
@@ -264,6 +279,20 @@ public class GalleryAnimationControl : UserControl
         
         _isAnimating = false;
     }
+    
+    #endregion
+
+    #region Events
+
+    private void ParentSizeChanged(Control parent, SizeChangedEventArgs e)
+    {
+        if (_isAnimating)
+        {
+            return;
+        }
+        Width = parent.Bounds.Width;
+        Height = parent.Bounds.Height;
+    }
 
     private void PreviewPointerPressedEvent(object? sender, PointerPressedEventArgs e)
     {
@@ -272,7 +301,9 @@ public class GalleryAnimationControl : UserControl
             return;
         }
 
-        // Disable right click selection
+        // Disable right click selection, to not interfere with context menu
         e.Handled = true;
     }
+    
+    #endregion
 }

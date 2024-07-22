@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Automation.Peers;
 using Avalonia.Media;
 using Avalonia.Metadata;
@@ -117,7 +116,6 @@ public class PicBox : Control
                 // Handle invalid source or log error
 #if DEBUG
                 Console.WriteLine("Invalid source type.");
-                TooltipHelper.ShowTooltipMessage("Invalid source type.", true);
 #endif
                 break;
         }
@@ -161,11 +159,6 @@ public class PicBox : Control
         if (!(Bounds.Width <= 0) && !(Bounds.Height <= 0))
         {
             return new Rect(Bounds.Size);
-        }
-
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return new Rect();
         }
 
         var mainView = UIHelper.GetMainView;
