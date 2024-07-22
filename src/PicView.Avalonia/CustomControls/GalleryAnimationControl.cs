@@ -1,7 +1,6 @@
 ﻿using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -110,11 +109,7 @@ public class GalleryAnimationControl : UserControl
 
     private async Task FullToClosedAnimation()
     {
-        if (DataContext is not MainViewModel vm || _isAnimating)
-        {
-            return;
-        }
-        if (Parent is not Control parent)
+        if (Parent is not Control parent || _isAnimating)
         {
             return;
         }
@@ -218,7 +213,6 @@ public class GalleryAnimationControl : UserControl
         vm.GalleryOrientation = Orientation.Vertical;
         vm.IsGalleryCloseIconVisible = true;
         
-        
         var from = vm.GalleryHeight;
         var to = parent.Bounds.Height;
         const double speed = 0.5;
@@ -275,7 +269,6 @@ public class GalleryAnimationControl : UserControl
         {
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
-        
         
         _isAnimating = false;
     }

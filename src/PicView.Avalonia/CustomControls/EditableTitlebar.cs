@@ -4,11 +4,13 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -18,8 +20,19 @@ namespace PicView.Avalonia.CustomControls;
 public class EditableTitlebar : TextBox
 {
     protected override Type StyleKeyOverride => typeof(EditableTitlebar);
-    
-    public bool IsRenaming { get; private set; }
+
+    public bool IsRenaming
+    {
+        get { return DataContext is MainViewModel vm && vm.ImageIterator.IsFileBeingRenamed; }
+        private set
+        {
+            if (DataContext is not MainViewModel vm)
+            {
+                return;
+            }
+            vm.ImageIterator.IsFileBeingRenamed = value;
+        }
+    }
     
     private TextBlock? _textBlock;
 
@@ -35,10 +48,6 @@ public class EditableTitlebar : TextBox
         base.OnApplyTemplate(e);
         _textBlock = e.NameScope.Find<TextBlock>("PART_TextBlock");
         _border = e.NameScope.Find<Border>("PART_Border");
-        if (_textBlock is null)
-        {
-            return;
-        }
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -109,15 +118,75 @@ public class EditableTitlebar : TextBox
         {
             return;
         }
+        vm.IsLoading = true;
         IsRenaming = true;
-        var path = vm.FileInfo.FullName;
+        var oldPath = vm.FileInfo.FullName;
         var newPath = Path.Combine(vm.FileInfo.DirectoryName, Text);
-        var renamed = await Task.FromResult(FileHelper.RenameFile(path, newPath));
-        if (renamed)
+        
+        // Check if the file is being moved to a different directory
+        if (Path.GetDirectoryName(oldPath) != Path.GetDirectoryName(newPath))
+        {
+            await Renamed().ConfigureAwait(false);
+            return;
+        }
+        
+        // Handle renaming with different extensions
+        if (Path.GetExtension(newPath) != Path.GetExtension(oldPath))
+        {
+            var saved = await SaveImageFileHelper.SaveImageAsync(stream: null, path: oldPath, destination: newPath, width:null, height: null, quality: null, ext: Path.GetExtension(newPath)).ConfigureAwait(false);
+            while (FileHelper.IsFileInUse(oldPath))
+            {
+                await Task.Delay(50); // Fixes "this action can't be completed because the file is open"
+            }
+
+            if (saved)
+            {
+                // Navigate to newly saved file
+                await vm.ImageIterator.LoadPicFromFile(new FileInfo(newPath)).ConfigureAwait(false); 
+                
+                // Delete old file
+                var deleteMsg = FileDeletionHelper.DeleteFileWithErrorMsg(oldPath, false);
+                if (!string.IsNullOrWhiteSpace(deleteMsg))
+                {
+                    // Show error message to user
+                    TooltipHelper.ShowTooltipMessage(deleteMsg);
+                    vm.IsLoading = false;
+                    return;
+                }
+            }
+            await End();
+            return;
+        }
+        var renamed = await Renamed().ConfigureAwait(false);
+        if (!renamed)
+        {
+            IsRenaming = false;
+            return;
+        }
+        await End();
+        return;
+
+        async Task<bool> Renamed()
+        {
+            return await Task.FromResult(FileHelper.RenameFile(oldPath, newPath));
+        }
+
+        async Task End()
         {
             vm.SetTitle();
+            vm.IsLoading = false;
+            IsRenaming = false;
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ClearSelection();
+                vm.RefreshTitle();
+                _textBlock.IsVisible = true;
+                _border.IsVisible = false;
+                Cursor = new Cursor(StandardCursorType.Arrow);
+                MainKeyboardShortcuts.IsKeysEnabled = true;
+                UIHelper.GetMainView.Focus();
+            });
         }
-        IsRenaming = false;
     }
     
     public void SelectFileName()

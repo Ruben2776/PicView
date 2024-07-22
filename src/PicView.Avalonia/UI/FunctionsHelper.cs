@@ -755,10 +755,16 @@ public static class FunctionsHelper
         {
             return;
         }
-        await Task.Run(() =>
+        if (!NavigationHelper.CanNavigate(Vm))
         {
-            FileHelper.DuplicateAndReturnFileName(Vm.FileInfo.FullName);
-        });
+            return;
+        }
+        var oldPath = Vm.FileInfo.FullName;
+        var newPath = FileHelper.DuplicateAndReturnFileName(oldPath);
+        if (File.Exists(newPath))
+        {
+            await Vm.ImageIterator.LoadPicFromFile(new FileInfo(newPath)).ConfigureAwait(false);
+        }
     }
 
     public static Task CutFile()
