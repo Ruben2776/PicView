@@ -7,6 +7,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.Navigation;
@@ -191,9 +192,38 @@ public static class NavigationHelper
         vm.ImageIterator.InitiateWatcher(fileInfo);
         vm.ImageIterator.PreLoader.Clear();
         await vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
-        if (GalleryFunctions.IsBottomGalleryOpen)
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
             await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
         }
+    }
+
+    public static void ShowStartUpMenu(MainViewModel vm)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Start();
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(Start);
+        }
+
+        return;
+        void Start()
+        {
+            vm.CurrentView = vm.CurrentView = new StartUpMenu();
+            UIHelper.CloseMenus(vm);
+            vm.ImageIterator = null;
+            vm.IsGalleryOpen = false;
+            vm.GalleryMode = GalleryMode.BottomToClosed;
+            GalleryFunctions.Clear(vm);
+        }
+        
     }
 }

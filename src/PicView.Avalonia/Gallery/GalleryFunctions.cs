@@ -1,6 +1,9 @@
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -117,21 +120,14 @@ public static class GalleryFunctions
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
     }
     
-    public static async Task CloseGallery(MainViewModel vm)
+    public static void CloseGallery(MainViewModel vm)
     {
-        if (IsBottomGalleryOpen && !IsFullGalleryOpen)
-        {
-            SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
-            IsFullGalleryOpen = false;
-            vm.IsGalleryOpen = false;
-            IsBottomGalleryOpen = false;
-            vm.GalleryMode = GalleryMode.BottomToClosed;
-            vm.GetBottomGallery = TranslationHelper.Translation.ShowBottomGallery;
-            await SettingsHelper.SaveSettingsAsync();
-            return;
-        }
-
-        await ToggleGallery(vm);
+        IsFullGalleryOpen = false;
+        vm.IsGalleryOpen = false;
+        IsBottomGalleryOpen = false;
+        vm.GalleryMode = GalleryMode.BottomToClosed;
+        
+        WindowHelper.SetSize(vm);
     }
     
     #endregion
@@ -332,6 +328,32 @@ public static class GalleryFunctions
                  Console.WriteLine(exception);
 #endif
              }
+         }
+     }
+
+     public static void Clear(MainViewModel? vm)
+     {
+         if (Dispatcher.UIThread.CheckAccess())
+         {
+             ClearItems();
+         }
+         else
+         {
+             Dispatcher.UIThread.Post(ClearItems);
+         }
+#if DEBUG
+         Console.WriteLine("Gallery items cleared");
+#endif
+         
+         return;
+         void ClearItems()
+         {
+             var mainView = UIHelper.GetMainView;
+
+             var galleryListBox = mainView.GalleryView.GalleryListBox;
+             if (galleryListBox == null) 
+                 return;
+             galleryListBox.Items.Clear();
          }
      }
 }

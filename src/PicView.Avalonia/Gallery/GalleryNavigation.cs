@@ -66,7 +66,16 @@ public static class GalleryNavigation
                 return;
             }
 
-            listbox.ScrollToCenterOfItem(listbox.Items[vm.SelectedGalleryItemIndex] as GalleryItem);
+            try
+            {
+                listbox.ScrollToCenterOfItem(listbox.Items[vm.SelectedGalleryItemIndex] as GalleryItem);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Console.WriteLine(e);
+#endif
+            }
         }
     }
     

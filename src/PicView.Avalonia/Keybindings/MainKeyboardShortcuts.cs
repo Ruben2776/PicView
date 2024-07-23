@@ -1,5 +1,8 @@
 ﻿using Avalonia.Input;
 using System.Diagnostics;
+using Avalonia.Controls.ApplicationLifetimes;
+using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Keybindings;
 
@@ -43,12 +46,14 @@ public static class MainKeyboardShortcuts
         ShiftDown = e.KeyModifiers == KeyModifiers.Shift;
         switch (e.Key)
         {
-            case Key.F12:
 #if DEBUG
+            case Key.F12:
+
                 // Show Avalonia DevTools in DEBUG mode
                 return;
-#else
-                break;
+            case Key.F9:
+                await FunctionsHelper.ShowStartUpMenu();
+                return;
 #endif
 
             case Key.LeftShift:

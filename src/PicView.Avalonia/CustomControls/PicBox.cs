@@ -243,7 +243,17 @@ public class PicBox : Control
     /// <returns>The desired size of the control.</returns>
     protected override Size MeasureOverride(Size availableSize)
     {
-        return Source is not IImage source ? new Size() : CalculateSize(availableSize, source.Size);
+        try
+        {
+            return Source is not IImage source ? new Size() : CalculateSize(availableSize, source.Size);
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+            return new Size();
+        }
     }
 
     /// <inheritdoc/>

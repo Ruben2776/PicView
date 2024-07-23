@@ -138,9 +138,22 @@
                     <MenuItem.Header>
                         <TextBlock>
                             <Run Text="{CompiledBinding Copy}" />
-                            <Run Text=" + base64" />
+                            <Run Text=" base64" />
                         </TextBlock>
                     </MenuItem.Header>
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource CopyGeometry}"
+                            Fill="{StaticResource MainIconColor}"
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Command="{CompiledBinding DuplicateFileCommand}"
+                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
+                    Header="{CompiledBinding DuplicateFile}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"

@@ -109,7 +109,7 @@ public class GalleryAnimationControl : UserControl
 
     private async Task FullToClosedAnimation()
     {
-        if (Parent is not Control parent || _isAnimating)
+        if (Parent is not Control parent || _isAnimating || DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -122,6 +122,7 @@ public class GalleryAnimationControl : UserControl
         const double speed = 0.3;
         var opacityAnimation = AnimationsHelper.OpacityAnimation(from, to, speed);
         _isAnimating = true;
+        vm.GalleryMargin = new Thickness(0);
         await opacityAnimation.RunAsync(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -184,7 +185,7 @@ public class GalleryAnimationControl : UserControl
         
         vm.GalleryOrientation = Orientation.Horizontal;
         vm.IsGalleryCloseIconVisible = false;
-        
+        vm.GalleryMargin = new Thickness(0);
         var from = vm.GalleryHeight;
         const int to = 0;
         const double speed = 0.7;
@@ -198,6 +199,7 @@ public class GalleryAnimationControl : UserControl
             WindowHelper.SetSize(vm);
         });
         _isAnimating = false;
+        vm.GalleryMargin = new Thickness(0);
     }
 
     private async Task BottomToFullAnimation()
@@ -283,6 +285,12 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
+
+        if (!GalleryFunctions.IsFullGalleryOpen)
+        {
+            return;
+        }
+
         Width = parent.Bounds.Width;
         Height = parent.Bounds.Height;
     }

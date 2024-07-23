@@ -513,9 +513,10 @@ public static class FunctionsHelper
         await GalleryFunctions.OpenCloseBottomGallery(Vm).ConfigureAwait(false);
     }
     
-    public static async Task CloseGallery()
+    public static Task CloseGallery()
     {
-        await GalleryFunctions.CloseGallery(Vm).ConfigureAwait(false);
+        GalleryFunctions.CloseGallery(Vm);
+        return Task.CompletedTask;
     }
     
     public static async Task GalleryClick()
@@ -526,6 +527,14 @@ public static class FunctionsHelper
     #endregion
     
     #region Windows and window functions
+
+    public static async Task ShowStartUpMenu()
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            NavigationHelper.ShowStartUpMenu(Vm);
+        });
+    }
     
     public static async Task Close()
     {
@@ -677,7 +686,7 @@ public static class FunctionsHelper
         }
         
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
-        await NavigationHelper.LoadPicFromString(path, Vm).ConfigureAwait(false);
+        _ = Task.Run(() => NavigationHelper.LoadPicFromString(path, Vm));
     }
 
     public static Task OpenWith()
@@ -1134,4 +1143,6 @@ public static class FunctionsHelper
     #endregion
     
     #endregion
+
+
 }

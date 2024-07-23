@@ -57,7 +57,11 @@
                         Header="{CompiledBinding CopyFile}" />
                     <NativeMenuItem Command="{CompiledBinding CopyImageCommand}" Header="{CompiledBinding CopyImage}" />
                     <NativeMenuItem Command="{CompiledBinding CopyFilePathCommand}" Header="{CompiledBinding FileCopyPath}" />
-                    <NativeMenuItem Command="{CompiledBinding DuplicateFileCommand}" Header="{CompiledBinding DuplicateFile}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding DuplicateFileCommand}"
+                        CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                           FallbackValue=''}"
+                        Header="{CompiledBinding DuplicateFile}" />
                     <NativeMenuItem Command="{CompiledBinding CutCommand}" Header="{CompiledBinding FileCut}" />
                 </NativeMenu>
             </NativeMenuItem>

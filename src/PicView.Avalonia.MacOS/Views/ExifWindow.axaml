@@ -31,14 +31,16 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding DuplicateFileCommand}"
+                Command="{CompiledBinding DuplicateFileCommand}"
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
                 Height="28"
                 Width="130">
                 <TextBlock
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
-                    Text="{Binding DuplicateFile}"
+                    Text="{CompiledBinding DuplicateFile}"
                     VerticalAlignment="Center" />
             </Button>
 
@@ -46,7 +48,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding RecycleFileCommand}"
+                Command="{CompiledBinding RecycleFileCommand}"
                 Height="28"
                 Width="130">
                 <TextBlock
@@ -61,14 +63,14 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding OptimizeImageCommand}"
+                Command="{CompiledBinding OptimizeImageCommand}"
                 Height="28"
                 Width="130">
                 <TextBlock
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
-                    Text="{Binding OptimizeImage}"
+                    Text="{CompiledBinding OptimizeImage}"
                     VerticalAlignment="Center" />
             </Button>
 

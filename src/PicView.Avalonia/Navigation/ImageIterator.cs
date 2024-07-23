@@ -11,6 +11,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Gallery;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -61,8 +62,8 @@ public class ImageIterator
         _watcher.EnableRaisingEvents = true;
         _watcher.Filter = "*.*";
         _watcher.IncludeSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
-        _watcher.Created += async (_, e) => await OnFileAdded(e).ConfigureAwait(false);
-        _watcher.Deleted += (_, e) => OnFileDeleted(e);
+        _watcher.Created += async (_, e) => await OnFileAdded(e);
+        _watcher.Deleted += async (_, e) => await OnFileDeleted(e);
         _watcher.Renamed += async (_, e) => await OnFileRenamed(e);
     }
 
@@ -202,21 +203,26 @@ public class ImageIterator
 
         if (sameFile)
         {
-            Index--;
             if (Pics.Count <= 0)
             {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    _vm.CurrentView = new StartUpMenu();
-                });
+                NavigationHelper.ShowStartUpMenu(_vm);
+                return;
             }
-            await LoadPicAtIndex(Index);
+            await NavigationHelper.Iterate(next:false, _vm);
         }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             GalleryFunctions.RemoveGalleryItem(index, _vm);
         });
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        {
+            if (Pics.Count == 1)
+            {
+                _vm.GalleryMode = GalleryMode.BottomToClosed;
+            }
+        }
+
         //FileHistoryNavigation.Remove(e.FullPath);
         _running = false;
 
@@ -270,13 +276,28 @@ public class ImageIterator
         {
             prevIndex = Pics.Count - 1;
         }
+
+        var cleared = false;
         if (PreLoader.Contains(index, Pics) || PreLoader.Contains(nextIndex, Pics) || PreLoader.Contains(prevIndex, Pics))
         {
             PreLoader.Clear();
+            cleared = true;
         }
 
         FileAdded?.Invoke(this, e);
         await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && Pics.Count > 1)
+        {
+            if (_vm.GalleryMode is GalleryMode.BottomToClosed or GalleryMode.FullToClosed)
+            {
+                _vm.GalleryMode = GalleryMode.ClosedToBottom;
+            }
+        }
+
+        if (cleared)
+        {
+            await Preload();
+        }
     }
 
     public async Task LoadNextPic(NavigateTo navigateTo)
@@ -299,6 +320,11 @@ public class ImageIterator
 
     public async Task LoadPicAtIndex(int index) => await Task.Run(async () =>
     {
+        if (index < 0 || index >= Pics.Count)
+        {
+            NavigationHelper.ShowStartUpMenu(_vm);
+            return;
+        }
         try
         {
             Index = index;
@@ -362,6 +388,7 @@ public class ImageIterator
     {
         if (!Path.Exists(path))
         {
+            return;
             // TODO load from URL if not a file
             throw new FileNotFoundException(path); // TODO: Replace with reload function
         }
@@ -414,12 +441,11 @@ public class ImageIterator
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, _vm);
         _vm.ImageSource = imageModel.Image;
         _vm.ImageType = imageModel.ImageType;
-        _vm.ImageIterator = new ImageIterator(imageModel.FileInfo, _vm);
         await AddAsync(Index, imageModel);
         await LoadPicAtIndex(Index);
-        _vm.ImageIterator.FileAdded += (_, e) => { SetTitleHelper.SetTitle(_vm); };
-        _vm.ImageIterator.FileRenamed += (_, e) => { SetTitleHelper.SetTitle(_vm); };
-        _vm.ImageIterator.FileDeleted += async (_, isSameFile) =>
+        FileAdded += (_, e) => { SetTitleHelper.SetTitle(_vm); };
+        FileRenamed += (_, e) => { SetTitleHelper.SetTitle(_vm); };
+        FileDeleted += async (_, isSameFile) =>
         {
             if (isSameFile) //change if deleting current file
             {
@@ -437,7 +463,15 @@ public class ImageIterator
         };
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            _ = Task.Run(() => GalleryLoad.LoadGallery(_vm, fileInfo.DirectoryName));
+            if (Pics.Count == 1)
+            {
+                _vm.GalleryMode = GalleryMode.BottomToClosed;
+            }
+            await GalleryLoad.ReloadGalleryAsync(_vm, fileInfo.DirectoryName);
+        }
+        else
+        {
+            GalleryFunctions.Clear(_vm);
         }
     }
 

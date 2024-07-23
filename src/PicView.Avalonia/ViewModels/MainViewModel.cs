@@ -15,6 +15,8 @@ using PicView.Core.ProcessHandling;
 using ReactiveUI;
 using System.Globalization;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Avalonia.Media;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Converters;
@@ -410,7 +412,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<string, Unit>? OpenWithCommand { get; }
     public ReactiveCommand<Unit, Unit>? RenameCommand { get; }
     public ReactiveCommand<Unit, Unit>? NewWindowCommand { get; }
-    public ReactiveCommand<Unit, Unit>? DuplicateFileCommand { get; }
+    public ReactiveCommand<string, Unit>? DuplicateFileCommand { get; }
     public ReactiveCommand<Unit, Unit>? ToggleLoopingCommand { get; }
     public ReactiveCommand<Unit, Unit>? RotateLeftCommand { get; }
     public ReactiveCommand<Unit, Unit>? RotateRightCommand { get; }
@@ -1696,10 +1698,18 @@ public class MainViewModel : ViewModelBase
         {
             return;
         }
-        await Task.Run(() =>
+
+        if (Path.GetFileName(path) == FileInfo.FullName)
         {
-            FileHelper.DuplicateAndReturnFileName(path);
-        });
+            await FunctionsHelper.DuplicateFile();
+        }
+        else
+        {
+            await Task.Run(() =>
+            {
+                FileHelper.DuplicateAndReturnFileName(path);
+            });
+        }
     }
     
     private async Task ShowFilePropertiesTask(string path)
@@ -1939,7 +1949,7 @@ public class MainViewModel : ViewModelBase
 
         #region File commands
 
-        OpenFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Open);
+        OpenFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Open, Observable.Return(true));
 
         OpenLastFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenLastFile);
 
@@ -1964,7 +1974,7 @@ public class MainViewModel : ViewModelBase
         ResizeCommand = ReactiveCommand.CreateFromTask<int>(ResizeImageByPercentage);
         ConvertCommand = ReactiveCommand.CreateFromTask<int>(ConvertFileExtension);
 
-        DuplicateFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.DuplicateFile);
+        DuplicateFileCommand = ReactiveCommand.CreateFromTask<string>(DuplicateFileTask);
 
         PrintCommand = ReactiveCommand.CreateFromTask<string>(PrintTask);    
 
@@ -1998,6 +2008,7 @@ public class MainViewModel : ViewModelBase
         ToggleGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleGallery);
 
         ToggleBottomGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenCloseBottomGallery);
+        
         CloseGalleryCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CloseGallery);
         
         GalleryItemStretchCommand = ReactiveCommand.CreateFromTask<string>(GalleryItemStretchTask);
