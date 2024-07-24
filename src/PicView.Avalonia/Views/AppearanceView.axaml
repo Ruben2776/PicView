@@ -161,14 +161,14 @@
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,0,0,10"
             Padding="5,7,0,7"
-            SelectedIndex="0"
-            Width="270">
-            <ComboBoxItem Content="{CompiledBinding Uniform}" IsSelected="{CompiledBinding IsUniformFullChecked}" />
-            <ComboBoxItem Content="{CompiledBinding UniformToFill}" IsSelected="{CompiledBinding IsUniformToFillFullChecked}" />
-            <ComboBoxItem Content="{CompiledBinding Fill}" IsSelected="{CompiledBinding IsFillFullChecked}" />
-            <ComboBoxItem Content="{CompiledBinding None}" IsSelected="{CompiledBinding IsNoneFullChecked}" />
-            <ComboBoxItem Content="{CompiledBinding Square}" IsSelected="{CompiledBinding IsSquareFullChecked}" />
-            <ComboBoxItem Content="{CompiledBinding FillSquare}" IsSelected="{CompiledBinding IsFillSquareFullChecked}" />
+            Width="270"
+            x:Name="FullGalleryComboBox">
+            <ComboBoxItem Content="{CompiledBinding Uniform}" x:Name="FullGalleryUniformItem" />
+            <ComboBoxItem Content="{CompiledBinding UniformToFill}" x:Name="FullGalleryUniformToFillItem" />
+            <ComboBoxItem Content="{CompiledBinding Fill}" x:Name="FullGalleryFillItem" />
+            <ComboBoxItem Content="{CompiledBinding None}" x:Name="FullGalleryNoneItem" />
+            <ComboBoxItem Content="{CompiledBinding Square}" x:Name="FullGallerySquareItem" />
+            <ComboBoxItem Content="{CompiledBinding FillSquare}" x:Name="FullGalleryFillSquareItem" />
         </ComboBox>
 
         <TextBlock
@@ -185,14 +185,14 @@
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,0,0,10"
             Padding="5,7,0,7"
-            SelectedIndex="0"
-            Width="270">
-            <ComboBoxItem Content="{CompiledBinding Uniform}" IsSelected="{CompiledBinding IsUniformBottomChecked}" />
-            <ComboBoxItem Content="{CompiledBinding UniformToFill}" IsSelected="{CompiledBinding IsUniformToFillBottomChecked}" />
-            <ComboBoxItem Content="{CompiledBinding Fill}" IsSelected="{CompiledBinding IsFillBottomChecked}" />
-            <ComboBoxItem Content="{CompiledBinding None}" IsSelected="{CompiledBinding IsNoneBottomChecked}" />
-            <ComboBoxItem Content="{CompiledBinding Square}" IsSelected="{CompiledBinding IsSquareBottomChecked}" />
-            <ComboBoxItem Content="{CompiledBinding FillSquare}" IsSelected="{CompiledBinding IsFillSquareBottomChecked}" />
+            Width="270"
+            x:Name="BottomGalleryComboBox">
+            <ComboBoxItem Content="{CompiledBinding Uniform}" x:Name="BottomGalleryUniformItem" />
+            <ComboBoxItem Content="{CompiledBinding UniformToFill}" x:Name="BottomGalleryUniformToFillItem" />
+            <ComboBoxItem Content="{CompiledBinding Fill}" x:Name="BottomGalleryFillItem" />
+            <ComboBoxItem Content="{CompiledBinding None}" x:Name="BottomGalleryNoneItem" />
+            <ComboBoxItem Content="{CompiledBinding Square}" x:Name="BottomGallerySquareItem" />
+            <ComboBoxItem Content="{CompiledBinding FillSquare}" x:Name="BottomGalleryFillSquareItem" />
         </ComboBox>
 
         <Button

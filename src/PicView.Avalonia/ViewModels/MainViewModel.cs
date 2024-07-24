@@ -16,7 +16,6 @@ using ReactiveUI;
 using System.Globalization;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using Avalonia.Media;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Converters;
@@ -369,7 +368,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isFillSquareMenuChecked, value);
     }
     
-
+    private string _selectedFullGalleryStretchMode;
+    public string SelectedFullGalleryStretchMode
+    {
+        get => _selectedFullGalleryStretchMode;
+        set => this.RaiseAndSetIfChanged(ref _selectedFullGalleryStretchMode, value);
+    }
     #endregion
 
     #endregion Gallery
