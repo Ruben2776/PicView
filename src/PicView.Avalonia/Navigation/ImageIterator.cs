@@ -285,6 +285,7 @@ public class ImageIterator
         }
 
         FileAdded?.Invoke(this, e);
+        
         await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && Pics.Count > 1)
         {
@@ -293,6 +294,7 @@ public class ImageIterator
                 _vm.GalleryMode = GalleryMode.ClosedToBottom;
             }
         }
+        _vm.SelectedGalleryItemIndex = Index; // Fixes deselection bug
 
         if (cleared)
         {
@@ -441,6 +443,11 @@ public class ImageIterator
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, _vm);
         _vm.ImageSource = imageModel.Image;
         _vm.ImageType = imageModel.ImageType;
+        var isSameFolder = Path.GetDirectoryName(fileInfo.FullName) == Path.GetDirectoryName(Pics[Index]);
+        if (isSameFolder)
+        {
+            Index = Pics.IndexOf(fileInfo.FullName);
+        }
         await AddAsync(Index, imageModel);
         await LoadPicAtIndex(Index);
         FileAdded += (_, e) => { SetTitleHelper.SetTitle(_vm); };
@@ -467,7 +474,16 @@ public class ImageIterator
             {
                 _vm.GalleryMode = GalleryMode.BottomToClosed;
             }
-            await GalleryLoad.ReloadGalleryAsync(_vm, fileInfo.DirectoryName);
+
+            if (isSameFolder)
+            {
+                // Fixes not scrolling to selected item
+                GalleryNavigation.CenterScrollToSelectedItem(_vm);
+            }
+            else
+            {
+                await GalleryLoad.ReloadGalleryAsync(_vm, fileInfo.DirectoryName);
+            }
         }
         else
         {

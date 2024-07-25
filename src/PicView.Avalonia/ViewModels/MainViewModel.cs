@@ -367,13 +367,6 @@ public class MainViewModel : ViewModelBase
         get => _isFillSquareMenuChecked;
         set => this.RaiseAndSetIfChanged(ref _isFillSquareMenuChecked, value);
     }
-    
-    private string _selectedFullGalleryStretchMode;
-    public string SelectedFullGalleryStretchMode
-    {
-        get => _selectedFullGalleryStretchMode;
-        set => this.RaiseAndSetIfChanged(ref _selectedFullGalleryStretchMode, value);
-    }
     #endregion
 
     #endregion Gallery

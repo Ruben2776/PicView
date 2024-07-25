@@ -100,11 +100,13 @@ public class GalleryAnimationControl : UserControl
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Opacity = to;
+            vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
+        });
+        _isAnimating = false;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
-        vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
-        
-        _isAnimating = false;
     }
 
     private async Task FullToClosedAnimation()
@@ -224,7 +226,6 @@ public class GalleryAnimationControl : UserControl
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Height = to;
-            GalleryNavigation.CenterScrollToSelectedItem(vm);
         });
         if (!GalleryLoad.IsLoading)
         {
@@ -233,6 +234,10 @@ public class GalleryAnimationControl : UserControl
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         
         _isAnimating = false;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            GalleryNavigation.CenterScrollToSelectedItem(vm);
+        });
     }
 
     private async Task FullToBottomAnimation()

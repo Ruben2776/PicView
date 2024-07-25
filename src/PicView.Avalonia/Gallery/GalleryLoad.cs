@@ -23,9 +23,38 @@ public static class GalleryLoad
         {
             return;
         }
-
+        
         var mainView = UIHelper.GetMainView;
         var galleryListBox = mainView.GalleryView.GalleryListBox;
+        var toReturn = false;
+
+        if (!string.IsNullOrEmpty(_currentDirectory))
+        {
+            if (_currentDirectory == currentDirectory)
+            {
+                return;
+            }
+            return;
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (galleryListBox is null)
+            {
+                toReturn = true;
+                return;
+            }
+            if (galleryListBox.Items.Count > 0)
+            {
+                // Make sure to not run consecutively
+                toReturn = true;
+            }
+        });
+        if (toReturn)
+        {
+            return;
+        }
+    
         _cancellationTokenSource = new CancellationTokenSource();
         _currentDirectory = currentDirectory;
         IsLoading = true;
@@ -110,7 +139,7 @@ public static class GalleryLoad
         catch (Exception e)
         {
 #if DEBUG
-            Trace.WriteLine($"GalleryLoad exception:\n{e.Message}");
+            Console.WriteLine($"GalleryLoad exception:\n{e.Message}");
 #endif
         }
         finally
@@ -118,6 +147,7 @@ public static class GalleryLoad
             IsLoading = false;
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = null;
+            _currentDirectory = null;
         }
 
         return;
@@ -126,6 +156,11 @@ public static class GalleryLoad
         {
             await Parallel.ForAsync(startIndex, endIndex, options, async (i, _) =>
             {
+                if (currentDirectory != _currentDirectory || _cancellationTokenSource.IsCancellationRequested || vm.ImageIterator is null)
+                {
+                    await _cancellationTokenSource.CancelAsync();
+                    return;
+                }
                 ct.ThrowIfCancellationRequested();
 
                 if (i < 0 || i >= vm.ImageIterator.Pics.Count)
@@ -136,11 +171,6 @@ public static class GalleryLoad
                 var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfo, isThumb: true,
                     (int)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
-
-                while (i >= galleryListBox.Items.Count)
-                {
-                    await Task.Delay(100, ct);
-                }
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -198,9 +228,11 @@ public static class GalleryLoad
                     var galleryListBox = mainView.GalleryView.GalleryListBox;
                     galleryListBox?.Items.Clear();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //
+#if DEBUG
+                    Console.WriteLine($"GalleryLoad exception:\n{e.Message}");
+#endif
                 }
             });
         }
@@ -223,9 +255,11 @@ public static class GalleryLoad
                 var galleryListBox = mainView.GalleryView.GalleryListBox;
                 galleryListBox?.Items.Clear();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //
+#if DEBUG
+                Console.WriteLine($"GalleryLoad exception:\n{e.Message}");
+#endif
             }
         });
 

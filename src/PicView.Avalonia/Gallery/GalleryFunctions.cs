@@ -318,8 +318,6 @@ public static class GalleryFunctions
                      };
                      galleryListBox.Items.Insert(index, galleryItem);
                      ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
-                     vm.SelectedGalleryItemIndex = index;
-                     GalleryNavigation.CenterScrollToSelectedItem(vm);
                  }, DispatcherPriority.Render);
              }
              catch (Exception exception)
