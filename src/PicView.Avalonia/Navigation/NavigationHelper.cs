@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
@@ -127,6 +128,7 @@ public static class NavigationHelper
                 return;
             }
             // TODO load from URL or base64 if not a file
+            await LoadPicFromUrlAsync(source, vm);
             return;
         }
         
@@ -197,33 +199,57 @@ public static class NavigationHelper
             await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
         }
     }
-
-    public static void ShowStartUpMenu(MainViewModel vm)
+    
+    public static async Task LoadPicFromUrlAsync(string url, MainViewModel vm)
     {
-        if (vm is null)
+        string destination;
+
+        try
         {
+            var httpDownload = HttpNavigation.GetDownloadClient(url);
+            using var client = httpDownload.Client;
+            client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => 
+            {
+                var displayProgress = HttpNavigation.GetProgressDisplay(totalFileSize, totalBytesDownloaded,
+                    progressPercentage);
+                vm.Title = displayProgress;
+                vm.TitleTooltip = displayProgress;
+                vm.WindowTitle = displayProgress;
+            };
+            await client.StartDownloadAsync();
+            destination = httpDownload.DownloadPath;
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine("LoadPicFromUrlAsync exception = \n" + e.Message);
+#endif
+            ErrorHandling.ShowStartUpMenu(vm);
+
             return;
         }
 
-        if (Dispatcher.UIThread.CheckAccess())
+        var check = ErrorHelper.CheckIfLoadableString(destination);
+        switch (check)
         {
-            Start();
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(Start);
-        }
+            default:
+                var imageModel = await ImageHelper.GetImageModelAsync(new FileInfo(check)).ConfigureAwait(false);
+                ImageHelper.SetSingleImage(imageModel.Image as Bitmap, url, vm);
+            break;
+            case "base64":
+                //await UpdateImage.UpdateImageFromBase64PicAsync(destination).ConfigureAwait(false);
+                break;
 
-        return;
-        void Start()
-        {
-            vm.CurrentView = vm.CurrentView = new StartUpMenu();
-            UIHelper.CloseMenus(vm);
-            vm.ImageIterator = null;
-            vm.IsGalleryOpen = false;
-            vm.GalleryMode = GalleryMode.BottomToClosed;
-            GalleryFunctions.Clear(vm);
+            case "zip":
+                //await LoadPic.LoadPicFromArchiveAsync(check).ConfigureAwait(false);
+                break;
+
+            case "directory":
+            case "":
+                ErrorHandling.ShowStartUpMenu(vm);
+                return;
         }
-        
+        //FileHistoryNavigation.Add(url);
     }
+    
 }

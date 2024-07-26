@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
@@ -194,17 +195,20 @@ public static class ImageHelper
         };
     }
 
-    public static void SetClipboardImage(Bitmap bitmap, MainViewModel vm)
+    public static void SetSingleImage(Bitmap bitmap, string name, MainViewModel vm)
     {
         vm.ImageIterator = null;
         vm.ImageSource = bitmap;
         vm.ImageType = ImageType.Bitmap;
         var width = bitmap.PixelSize.Width;
         var height = bitmap.PixelSize.Height;
-        var name = TranslationHelper.Translation.ClipboardImage;
+
         if (GalleryFunctions.IsBottomGalleryOpen)
         {
-            UIHelper.GetMainView.GalleryView.GalleryMode = GalleryMode.BottomToClosed;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                UIHelper.GetMainView.GalleryView.GalleryMode = GalleryMode.BottomToClosed;
+            });
         }
         WindowHelper.SetSize(width, height, vm);
         var titleString = TitleHelper.TitleString(width, height, name, 1);

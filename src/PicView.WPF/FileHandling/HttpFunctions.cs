@@ -1,6 +1,4 @@
-﻿using PicView.Core.FileHandling;
-using PicView.Core.Localization;
-using PicView.WPF.ChangeImage;
+﻿using PicView.WPF.ChangeImage;
 using PicView.WPF.ImageHandling;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
@@ -26,7 +24,21 @@ public abstract class HttpFunctions
 
         try
         {
-            destination = await DownloadDataAsync(url).ConfigureAwait(false);
+            var httpDownload = HttpNavigation.GetDownloadClient(url);
+            using var client = httpDownload.Client;
+            client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => 
+            {
+                var displayProgress = HttpNavigation.GetProgressDisplay(totalFileSize, totalBytesDownloaded,
+                    progressPercentage);
+                ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+                {
+                    ConfigureWindows.GetMainWindow.Title = displayProgress;
+                    ConfigureWindows.GetMainWindow.TitleText.Text = displayProgress;
+                    ConfigureWindows.GetMainWindow.TitleText.ToolTip = displayProgress;
+                });
+            };
+            await client.StartDownloadAsync();
+            destination = httpDownload.DownloadPath;
         }
         catch (Exception e)
         {
@@ -76,65 +88,5 @@ public abstract class HttpFunctions
         });
         FileHistoryNavigation.Add(url);
         Navigation.BackupPath = url;
-    }
-
-    /// <summary>
-    /// Downloads data from the specified URL to a temporary directory and returns the path to the downloaded file.
-    /// </summary>
-    /// <param name="url">The URL of the data to be downloaded.</param>
-    /// <param name="displayProgress">True if a progress display should be updated during the download, otherwise false.</param>
-    /// <returns>The path to the downloaded file in the temporary directory.</returns>
-    internal static async Task<string> DownloadDataAsync(string url, bool displayProgress = true)
-    {
-        // Create temp directory
-        var tempPath = Path.GetTempPath();
-        var fileName = Path.GetFileName(url);
-        var createTempPath = Core.FileHandling.ArchiveHelper.CreateTempDirectory(tempPath);
-        if (createTempPath == false)
-        {
-            return TranslationHelper.GetTranslation("UnexpectedError");
-        }
-
-        // Remove past "?" to not get file exceptions
-        var index = fileName.IndexOf("?", StringComparison.InvariantCulture);
-        if (index >= 0)
-        {
-            fileName = fileName[..index];
-        }
-
-        tempPath += fileName;
-        Core.FileHandling.ArchiveHelper.TempFilePath = string.Empty; // Reset it, since not browsing archive
-
-        using var client = new HttpHelper.HttpClientDownloadWithProgress(url, tempPath);
-        if (displayProgress) // Set up progress display
-        {
-            client.ProgressChanged += UpdateProgressDisplay;
-        }
-
-        await client.StartDownloadAsync().ConfigureAwait(false);
-
-        return tempPath;
-    }
-
-    /// <summary>
-    /// Updates the progress display during the download.
-    /// </summary>
-    /// <param name="totalFileSize">The total size of the file to be downloaded.</param>
-    /// <param name="totalBytesDownloaded">The total number of bytes downloaded so far.</param>
-    /// <param name="progressPercentage">The percentage of the download that has been completed.</param>
-    private static void UpdateProgressDisplay(long? totalFileSize, long? totalBytesDownloaded,
-        double? progressPercentage)
-    {
-        if (!totalFileSize.HasValue || !totalBytesDownloaded.HasValue || !progressPercentage.HasValue) return;
-        var percentComplete = TranslationHelper.GetTranslation("PercentComplete");
-        var displayProgress =
-            $"{(int)totalBytesDownloaded}/{(int)totalBytesDownloaded} {(int)progressPercentage} {percentComplete}";
-
-        ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
-        {
-            ConfigureWindows.GetMainWindow.Title = displayProgress;
-            ConfigureWindows.GetMainWindow.TitleText.Text = displayProgress;
-            ConfigureWindows.GetMainWindow.TitleText.ToolTip = displayProgress;
-        });
     }
 }

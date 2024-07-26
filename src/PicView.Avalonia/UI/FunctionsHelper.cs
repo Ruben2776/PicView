@@ -532,7 +532,7 @@ public static class FunctionsHelper
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            NavigationHelper.ShowStartUpMenu(Vm);
+            ErrorHandling.ShowStartUpMenu(Vm);
         });
     }
     

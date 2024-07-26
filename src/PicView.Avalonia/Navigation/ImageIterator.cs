@@ -10,7 +10,6 @@ using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
 using Timer = System.Timers.Timer;
 
@@ -205,7 +204,7 @@ public class ImageIterator
         {
             if (Pics.Count <= 0)
             {
-                NavigationHelper.ShowStartUpMenu(_vm);
+                ErrorHandling.ShowStartUpMenu(_vm);
                 return;
             }
             await NavigationHelper.Iterate(next:false, _vm);
@@ -324,7 +323,7 @@ public class ImageIterator
     {
         if (index < 0 || index >= Pics.Count)
         {
-            NavigationHelper.ShowStartUpMenu(_vm);
+            ErrorHandling.ShowStartUpMenu(_vm);
             return;
         }
         try

@@ -30,9 +30,10 @@ public static class HttpHelper
 
         private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
         {
-            var buffer = new byte[8192];
+            const int bufferSize = 8192;
+            var buffer = new byte[bufferSize];
             await using var fileStream = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write,
-                FileShare.None, 8192, true);
+                FileShare.None, bufferSize, true);
             var totalBytesRead = 0L;
             do
             {
