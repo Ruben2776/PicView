@@ -2,25 +2,18 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
-using Avalonia.Media.Imaging;
-using ImageMagick;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
-using PicView.Core.ImageDecoding;
-using PicView.Core.Localization;
-using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
-using System.Globalization;
 using System.Reactive;
 using System.Reactive.Linq;
 using Avalonia.Media;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Converters;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Core.Calculations;
 using PicView.Core.Gallery;
@@ -94,20 +87,16 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
     }
 
-    private bool _isBottomGalleryShownInHiddenUi = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+    private bool _isBottomGalleryShownInHiddenUi;
 
     public bool IsBottomGalleryShownInHiddenUI
     {
         get => _isBottomGalleryShownInHiddenUi;
-        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
-    }
-    
-    private bool _isGalleryOpen;
-
-    public bool IsGalleryOpen
-    {
-        get => _isGalleryOpen;
-        set => this.RaiseAndSetIfChanged(ref _isGalleryOpen, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
+            SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI = value;
+        } 
     }
 
     private GalleryMode _galleryMode;
@@ -1040,12 +1029,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getDigitalZoom, value);
     }
 
-    private string? _getFocalLength35mm;
+    private string? _getFocalLength35Mm;
 
-    public string? GetFocalLength35mm
+    public string? GetFocalLength35Mm
     {
-        get => _getFocalLength35mm;
-        set => this.RaiseAndSetIfChanged(ref _getFocalLength35mm, value);
+        get => _getFocalLength35Mm;
+        set => this.RaiseAndSetIfChanged(ref _getFocalLength35Mm, value);
     }
 
     private string? _getFocalLength;
@@ -1317,229 +1306,6 @@ public class MainViewModel : ViewModelBase
     #endregion Services
 
     #region Methods
-
-    #region Set model and title
-
-    public void SetImageModel(ImageModel imageModel)
-    {
-        FileInfo = imageModel?.FileInfo ?? null;
-        if (imageModel?.EXIFOrientation.HasValue ?? false)
-        {
-            switch (imageModel.EXIFOrientation.Value)
-            {
-                default:
-                    ScaleX = 1;
-                    RotationAngle = 0;
-                    GetOrientation = TranslationHelper.GetTranslation("Normal");
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Flipped:
-                    ScaleX = -1;
-                    RotationAngle = 0;
-                    GetOrientation = TranslationHelper.GetTranslation("Flipped");
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated180:
-                    RotationAngle = 180;
-                    ScaleX = 1;
-                    GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 180\u00b0";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated180Flipped:
-                    RotationAngle = 180;
-                    ScaleX = -1;
-                    GetOrientation =
-                        $"{TranslationHelper.GetTranslation("Rotated")} 180\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated270Flipped:
-                    RotationAngle = 270;
-                    ScaleX = -1;
-                    GetOrientation =
-                        $"{TranslationHelper.GetTranslation("Rotated")} 270\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated90:
-                    RotationAngle = 90;
-                    ScaleX = 1;
-                    GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 90\u00b0";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated90Flipped:
-                    RotationAngle = 90;
-                    ScaleX = -1;
-                    GetOrientation =
-                        $"{TranslationHelper.GetTranslation("Rotated")} 90\u00b0, {TranslationHelper.GetTranslation("Flipped")}";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated270:
-                    RotationAngle = 270;
-                    ScaleX = 1;
-                    GetOrientation = $"{TranslationHelper.GetTranslation("Rotated")} 270\u00b0";
-                    break;
-            }
-        }
-        else
-        {
-            ScaleX = 1;
-            RotationAngle = 0;
-            GetOrientation = string.Empty;
-        }
-
-        ZoomValue = 1;
-        PixelWidth = imageModel?.PixelWidth ?? 0;
-        PixelHeight = imageModel?.PixelHeight ?? 0;
-
-        if (FileInfo is null)
-        {
-            return;
-        }
-
-        Task.Run(() =>
-        {
-            using var magick = new MagickImage();
-            try
-            {
-                magick.Ping(FileInfo);
-                var profile = magick.GetExifProfile();
-
-                if (profile != null)
-                {
-                    DpiY = profile?.GetValue(ExifTag.YResolution)?.Value.ToDouble() ?? 0;
-                    DpiX = profile?.GetValue(ExifTag.XResolution)?.Value.ToDouble() ?? 0;
-                    var depth = profile?.GetValue(ExifTag.BitsPerSample)?.Value;
-                    if (depth is not null)
-                    {
-                        var x = depth.Aggregate(0, (current, value) => current + value);
-                        GetBitDepth = x.ToString();
-                    }
-                    else
-                    {
-                        GetBitDepth = (magick.Depth * 3).ToString();
-                    }
-                }
-
-                if (DpiX is 0 && imageModel.ImageType is ImageType.Bitmap or ImageType.AnimatedBitmap)
-                {
-                    if (imageModel.Image is Bitmap bmp)
-                    {
-                        DpiX = bmp?.Dpi.X ?? 0;
-                        DpiY = bmp?.Dpi.Y ?? 0;
-                    }
-                }
-
-                if (string.IsNullOrEmpty(GetBitDepth))
-                {
-                    GetBitDepth = (magick.Depth * 3).ToString();
-                }
-
-                if (DpiX == 0)
-                {
-                    GetPrintSizeCm = GetPrintSizeInch = GetSizeMp = GetResolution = string.Empty;
-                }
-                else
-                {
-                    var inchesWidth = PixelWidth / DpiX;
-                    var inchesHeight = PixelHeight / DpiY;
-                    GetPrintSizeInch =
-                        $"{inchesWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Inches")}";
-
-                    var cmWidth = PixelWidth / DpiX * 2.54;
-                    var cmHeight = PixelHeight / DpiY * 2.54;
-                    GetPrintSizeCm =
-                        $"{cmWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {cmHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Centimeters")}";
-                    GetSizeMp =
-                        $"{((float)PixelHeight * PixelWidth / 1000000).ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("MegaPixels")}";
-
-                    GetResolution = $"{DpiX} x {DpiY} {TranslationHelper.GetTranslation("Dpi")}";
-                }
-
-                var firstRatio = PixelWidth / TitleHelper.GCD(PixelWidth, PixelHeight);
-                var secondRatio = PixelHeight / TitleHelper.GCD(PixelWidth, PixelHeight);
-
-                if (firstRatio == secondRatio)
-                {
-                    GetAspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Square")})";
-                }
-                else if (firstRatio > secondRatio)
-                {
-                    GetAspectRatio =
-                        $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Landscape")})";
-                }
-                else
-                {
-                    GetAspectRatio = $"{firstRatio}:{secondRatio} ({TranslationHelper.GetTranslation("Portrait")})";
-                }
-
-                EXIFRating = profile?.GetValue(ExifTag.Rating)?.Value ?? 0;
-
-                var gpsValues = EXIFHelper.GetGPSValues(profile);
-
-                if (gpsValues is not null)
-                {
-                    GetLatitude = gpsValues[0];
-                    GetLongitude = gpsValues[1];
-
-                    GoogleLink = gpsValues[2];
-                    BingLink = gpsValues[3];
-                }
-                else
-                {
-                    GetLatitude = GetLongitude = GoogleLink = BingLink = string.Empty;
-                }
-
-                var altitude = profile?.GetValue(ExifTag.GPSAltitude)?.Value;
-                GetAltitude = altitude.HasValue
-                    ? $"{altitude.Value.ToDouble()} {TranslationHelper.GetTranslation("Meters")}"
-                    : string.Empty;
-                var getAuthors = profile?.GetValue(ExifTag.Artist)?.Value;
-                GetAuthors = getAuthors ?? string.Empty;
-                GetDateTaken = EXIFHelper.GetDateTaken(profile);
-                GetCopyright = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
-                GetTitle = EXIFHelper.GetTitle(profile);
-                GetSubject = profile?.GetValue(ExifTag.XPSubject)?.Value.ToString() ?? string.Empty;
-                GetSoftware = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
-                GetResolutionUnit = EXIFHelper.GetResolutionUnit(profile);
-                GetColorRepresentation = EXIFHelper.GetColorSpace(profile);
-                GetCompression = profile?.GetValue(ExifTag.Compression)?.Value.ToString() ?? string.Empty;
-                GetCompressedBitsPixel = profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ??
-                                         string.Empty;
-                GetCameraMaker = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
-                GetCameraModel = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
-                GetExposureProgram = EXIFHelper.GetExposureProgram(profile);
-                GetExposureTime = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString() ?? string.Empty;
-                GetFNumber = profile?.GetValue(ExifTag.FNumber)?.Value.ToString() ?? string.Empty;
-                GetMaxAperture = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString() ?? string.Empty;
-                GetExposureBias = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString() ?? string.Empty;
-                GetDigitalZoom = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
-                GetFocalLength35mm = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ??
-                                     string.Empty;
-                GetFocalLength = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
-                GetISOSpeed = EXIFHelper.GetISOSpeed(profile);
-                GetMeteringMode = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
-                GetContrast = EXIFHelper.GetContrast(profile);
-                GetSaturation = EXIFHelper.GetSaturation(profile);
-                GetSharpness = EXIFHelper.GetSharpness(profile);
-                GetWhiteBalance = EXIFHelper.GetWhiteBalance(profile);
-                GetFlashMode = EXIFHelper.GetFlashMode(profile);
-                GetFlashEnergy = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString() ?? string.Empty;
-                GetLightSource = EXIFHelper.GetLightSource(profile);
-                GetBrightness = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString() ?? string.Empty;
-                GetPhotometricInterpretation = EXIFHelper.GetPhotometricInterpretation(profile);
-                GetExifVersion = EXIFHelper.GetExifVersion(profile);
-                GetLensModel = profile?.GetValue(ExifTag.LensModel)?.Value ?? string.Empty;
-                GetLensMaker = profile?.GetValue(ExifTag.LensMake)?.Value ?? string.Empty;
-            }
-            catch (Exception)
-            {
-                // TODO display exception to user
-            }
-        });
-    }
-
-
-
-    #endregion Set model and title
 
     #region Sorting Order
 
@@ -1852,6 +1618,15 @@ public class MainViewModel : ViewModelBase
     {
         FunctionsHelper.Vm = this;
         PlatformService = platformSpecificService;
+
+        if (SettingsHelper.Settings.UIProperties.ShowInterface)
+        {
+            IsTopToolbarShown = true;
+            if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+            {
+                IsBottomToolbarShown = true;
+            }
+        }
 
         #region Window commands
 

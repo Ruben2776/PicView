@@ -94,9 +94,16 @@ public static class ImageSizeCalculationHelper
 
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            if (!SettingsHelper.Settings.UIProperties.ShowInterface && !SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
+            if (!SettingsHelper.Settings.UIProperties.ShowInterface)
             {
-                margin = 0;
+                if (SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
+                {
+                    margin = galleryHeight > 0 ? galleryHeight : 0;
+                }
+                else
+                {
+                    margin = 0;
+                }
             }
             else
             {

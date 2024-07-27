@@ -35,7 +35,7 @@
                     BorderBrush="{StaticResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
-                    Command="{Binding RotateLeftCommand}"
+                    Command="{CompiledBinding RotateLeftCommand}"
                     CornerRadius="8,0,0,0"
                     Height="45"
                     ToolTip.Tip="{Binding RotateLeft}"
@@ -60,7 +60,7 @@
                     BorderThickness="0,0,1,0"
                     Canvas.Left="45"
                     Classes="hover"
-                    Command="{Binding RotateRightCommand}"
+                    Command="{CompiledBinding RotateRightCommand}"
                     Height="45"
                     ToolTip.Tip="{Binding RotateRight}"
                     Width="45">
@@ -78,9 +78,9 @@
                     BorderThickness="0,0,1,0"
                     Canvas.Left="90"
                     Classes="hover"
-                    Command="{Binding FlipCommand}"
+                    Command="{CompiledBinding FlipCommand}"
                     Height="45"
-                    ToolTip.Tip="{Binding GetFlipped}"
+                    ToolTip.Tip="{CompiledBinding GetFlipped}"
                     Width="45">
                     <Path
                         Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
@@ -89,7 +89,7 @@
                         Stretch="Fill"
                         Width="13">
                         <Path.RenderTransform>
-                            <ScaleTransform ScaleX="{Binding ScaleX}" />
+                            <ScaleTransform ScaleX="{CompiledBinding ScaleX}" />
                         </Path.RenderTransform>
                     </Path>
                 </Button>
@@ -120,7 +120,7 @@
                     Canvas.Left="180"
                     Classes="noBorderHover"
                     Height="45"
-                    ToolTip.Tip="{Binding GoToImageAtSpecifiedIndex}"
+                    ToolTip.Tip="{CompiledBinding GoToImageAtSpecifiedIndex}"
                     Width="90">
                     <StackPanel Margin="5,0" Orientation="Horizontal">
                         <Image Height="17" Width="17">
@@ -155,7 +155,7 @@
                             IsTabStop="False"
                             Margin="5,0,0,0"
                             Padding="5,4,0,2"
-                            Text="{Binding GetIndex}"
+                            Text="{CompiledBinding GetIndex}"
                             VerticalAlignment="Center"
                             Width="55"
                             x:Name="GoToPicBox" />
@@ -166,10 +166,10 @@
                     Background="Transparent"
                     Canvas.Left="270"
                     Classes="hover"
-                    Command="{Binding CloseMenuCommand}"
+                    Command="{CompiledBinding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
                     Height="45"
-                    ToolTip.Tip="{Binding Close}"
+                    ToolTip.Tip="{CompiledBinding Close}"
                     Width="45">
                     <Path
                         Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
@@ -184,7 +184,7 @@
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     IsEnabled="False"
-                    ToolTip.Tip="{Binding ResizeImage}">
+                    ToolTip.Tip="{CompiledBinding ResizeImage}">
                     <StackPanel Orientation="Horizontal">
                         <Canvas Height="54" Width="45">
                             <Image
@@ -220,7 +220,7 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{Binding Resize}" />
+                            Text="{CompiledBinding Resize}" />
                     </StackPanel>
                 </Button>
 
@@ -229,7 +229,7 @@
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     IsEnabled="False"
-                    ToolTip.Tip="{Binding Crop}">
+                    ToolTip.Tip="{CompiledBinding Crop}">
                     <StackPanel Orientation="Horizontal">
                         <Path
                             Data="M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z"
@@ -241,7 +241,7 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{Binding Crop}" />
+                            Text="{CompiledBinding Crop}" />
                     </StackPanel>
                 </Button>
 
@@ -251,7 +251,7 @@
                     Classes="ButtonBorder altHover"
                     IsEnabled="False"
                     ToolTip.Placement="Top"
-                    ToolTip.Tip="{Binding Slideshow}">
+                    ToolTip.Tip="{CompiledBinding Slideshow}">
                     <StackPanel Orientation="Horizontal">
                         <Path
                             Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
@@ -263,7 +263,7 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{Binding Slideshow}" />
+                            Text="{CompiledBinding Slideshow}" />
                     </StackPanel>
                 </Button>
 
@@ -292,8 +292,8 @@
                     Canvas.Top="145"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
-                    IsChecked="{Binding IsBottomGalleryShown}"
-                    ToolTip.Tip="{Binding GetBottomGallery}"
+                    IsChecked="{CompiledBinding IsBottomGalleryShown}"
+                    ToolTip.Tip="{CompiledBinding GetBottomGallery}"
                     Width="300">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <Image

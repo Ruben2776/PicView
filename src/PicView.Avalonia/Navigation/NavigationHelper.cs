@@ -8,7 +8,6 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.Navigation;
@@ -139,20 +138,23 @@ public static class NavigationHelper
         {
             if (vm.ImageIterator is null)
             {
-                var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-                vm.SetImageModel(imageModel);
-                vm.ImageSource = imageModel;
-                vm.ImageType = imageModel.ImageType;
-                WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, vm);
-                vm.ImageIterator = new ImageIterator(fileInfo, vm);
-                await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Index);
+                await LoadPicFromDirectoryAsync(source, vm, fileInfo);
             }
             else
             {
-                await vm.ImageIterator.LoadPicFromString(source).ConfigureAwait(false);
+                if (Path.GetDirectoryName(source) == fileInfo.DirectoryName)
+                {
+                    await LoadPicFromDirectoryAsync(source, vm, fileInfo);
+                }
+                else
+                {
+                    await vm.ImageIterator.LoadPicFromString(source);
+                }
             }
         }
     }
+    
+    
     
     public static async Task GoToNextFolder(bool next, MainViewModel vm)
     {
@@ -251,5 +253,21 @@ public static class NavigationHelper
         }
         //FileHistoryNavigation.Add(url);
     }
-    
+
+    public static async Task LoadPicFromDirectoryAsync(string file, MainViewModel vm, FileInfo? fileInfo = null)
+    {
+        fileInfo ??= new FileInfo(file);
+        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        ExifHandling.SetImageModel(imageModel, vm);
+        vm.ImageSource = imageModel;
+        vm.ImageType = imageModel.ImageType;
+        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+        vm.ImageIterator = new ImageIterator(fileInfo, vm);
+        await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Index);
+        GalleryFunctions.Clear(vm);
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        {
+            await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
+        }
+    }
 }

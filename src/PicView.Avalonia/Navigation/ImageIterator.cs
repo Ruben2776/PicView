@@ -373,7 +373,7 @@ public class ImageIterator
                 return;
             }
 
-            UpdateSource(preLoadValue);
+            await UpdateSource(preLoadValue);
         }
         catch (Exception e)
         {
@@ -552,13 +552,13 @@ public class ImageIterator
                 return;
             }
         }
-        UpdateSource(preLoadValue);
+        await UpdateSource(preLoadValue);
     }
     
-    public void UpdateSource(PreLoader.PreLoadValue preLoadValue)
+    public async Task UpdateSource(PreLoader.PreLoadValue preLoadValue)
     {
         _vm.IsLoading = false;
-        _vm.SetImageModel(preLoadValue.ImageModel);
+        ExifHandling.SetImageModel(preLoadValue.ImageModel, vm: _vm);
         _vm.ImageSource = preLoadValue.ImageModel.Image;
         _vm.ImageType = preLoadValue.ImageModel.ImageType;
         WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, preLoadValue.ImageModel.Rotation, _vm);
@@ -579,8 +579,9 @@ public class ImageIterator
         }
         TooltipHelper.CloseToolTipMessage();
 
-        _ =  AddAsync(Index, preLoadValue.ImageModel);
-        _ = Preload();
+        ExifHandling.UpdateExifValues(preLoadValue.ImageModel, vm: _vm);
+        await  AddAsync(Index, preLoadValue.ImageModel);
+        await Preload();
     }
     
     public async Task LoadingPreview(int index)

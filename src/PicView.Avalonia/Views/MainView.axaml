@@ -233,7 +233,10 @@
                         </Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{Binding GetBottomGallery}">
+                <MenuItem
+                    Command="{CompiledBinding ToggleBottomGalleryCommand}"
+                    Header="{CompiledBinding GetBottomGallery}"
+                    IsChecked="{CompiledBinding IsBottomGalleryShown}">
                     <MenuItem.Icon>
                         <Image Height="12" Width="12">
                             <DrawingImage>
@@ -297,7 +300,7 @@
                         Width="12" />
                 </MenuItem.Icon>
 
-                <MenuItem Command="{CompiledBinding ShowExifWindowCommand}" Header="{Binding ImageInfo}">
+                <MenuItem Command="{CompiledBinding ShowExifWindowCommand}" Header="{CompiledBinding ImageInfo}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageInfoGeometry}"

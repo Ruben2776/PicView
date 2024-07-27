@@ -37,7 +37,6 @@ public static class GalleryFunctions
             {
                 // Switch to bottom gallery
                 IsFullGalleryOpen = false;
-                vm.IsGalleryOpen = false;
                 vm.GalleryMode = GalleryMode.FullToBottom;
                 vm.GetGalleryItemHeight = vm.GetBottomGalleryItemHeight;
             }
@@ -45,7 +44,6 @@ public static class GalleryFunctions
             {
                 // Switch to full gallery
                 IsFullGalleryOpen = true;
-                vm.IsGalleryOpen = true;
                 vm.GalleryMode = GalleryMode.BottomToFull;
                 vm.GetGalleryItemHeight = vm.GetFullGalleryItemHeight;
             }
@@ -57,14 +55,12 @@ public static class GalleryFunctions
             {
                 // close full gallery
                 IsFullGalleryOpen = false;
-                vm.IsGalleryOpen = false;
                 vm.GalleryMode = GalleryMode.FullToClosed;
             }
             else
             {
                 // open full gallery
                 IsFullGalleryOpen = true;
-                vm.IsGalleryOpen = true;
                 vm.GalleryMode = GalleryMode.ClosedToFull;
                 vm.GetGalleryItemHeight = vm.GetFullGalleryItemHeight;
             }
@@ -91,7 +87,6 @@ public static class GalleryFunctions
         {
             SettingsHelper.Settings.Gallery.IsBottomGalleryShown = false;
             IsFullGalleryOpen = false;
-            vm.IsGalleryOpen = false;
             IsBottomGalleryOpen = false;
             vm.GalleryMode = GalleryMode.BottomToClosed;
             vm.GetBottomGallery = TranslationHelper.Translation.ShowBottomGallery;
@@ -101,7 +96,6 @@ public static class GalleryFunctions
 
         IsBottomGalleryOpen = true;
         IsFullGalleryOpen = false;
-        vm.IsGalleryOpen = true;
         SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
         vm.GalleryMode = GalleryMode.ClosedToBottom;
         vm.GetBottomGallery = TranslationHelper.Translation.HideBottomGallery;
@@ -123,7 +117,6 @@ public static class GalleryFunctions
     public static void CloseGallery(MainViewModel vm)
     {
         IsFullGalleryOpen = false;
-        vm.IsGalleryOpen = false;
         IsBottomGalleryOpen = false;
         vm.GalleryMode = GalleryMode.BottomToClosed;
         

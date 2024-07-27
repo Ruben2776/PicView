@@ -14,7 +14,13 @@ public static class QuickLoad
         var fileInfo = new FileInfo(file);
         if (!fileInfo.Exists) // If not file, try to load if URL, base64 or directory
         {
+            if (Directory.Exists(fileInfo.DirectoryName))
+            {
+                await NavigationHelper.LoadPicFromDirectoryAsync(file, vm);
+                return;
+            }
             // TODO - Handle URL, base64 and directory
+            await NavigationHelper.LoadPicFromUrlAsync(file, vm);
             return;
         }
 
@@ -32,11 +38,11 @@ public static class QuickLoad
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
         await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);
         var preloadValue = vm.ImageIterator.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
-        vm.ImageIterator.UpdateSource(preloadValue);
+        await vm.ImageIterator.UpdateSource(preloadValue);
         _ = vm.ImageIterator.Preload();
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName).ConfigureAwait(false);
+            await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
         }
     }
 }

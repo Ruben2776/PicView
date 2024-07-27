@@ -360,32 +360,36 @@ public partial class ImageViewer : UserControl
 
     public void Reset()
     {
+        if (DataContext is not MainViewModel vm)
+            return;
+        
         if (Dispatcher.UIThread.CheckAccess())
+        {
+            DoReset();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(DoReset);
+        }
+        return;
+        
+        void DoReset()
         {
             if (_isZoomed)
             {
                 ResetZoom(false);
             }
             ImageLayoutTransformControl.LayoutTransform = null;
-        }
-        else
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            if (vm.ScaleX == -1)
             {
-                if (_isZoomed)
-                {
-                    ResetZoom(false);
-                }
-                ImageLayoutTransformControl.LayoutTransform = null;
-            });
+                var flipTransform = new ScaleTransform(vm.ScaleX, 1);
+                MainImage.RenderTransform = flipTransform;
+            }
+            else
+            {
+                MainImage.RenderTransform = null;
+            }
         }
-
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-        vm.RotationAngle = 0;
-        vm.ScaleX = 1;
     }
     
     private void Capture(PointerEventArgs e)
@@ -394,16 +398,8 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
-        
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
-        if (mainView == null)
-        {
-            return;
-        }
+
+        var mainView = UIHelper.GetMainView;
 
         var point = e.GetCurrentPoint(mainView);
         var x = point.Position.X;

@@ -21,7 +21,7 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <DockPanel PointerPressed="MoveWindow">
+    <DockPanel Background="Transparent" PointerPressed="MoveWindow">
         <StackPanel
             Background="{StaticResource SecondaryBackgroundColor}"
             DockPanel.Dock="Top"
