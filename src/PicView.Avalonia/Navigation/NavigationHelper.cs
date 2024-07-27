@@ -191,6 +191,7 @@ public static class NavigationHelper
             return;
         }
         var fileInfo = new FileInfo(fileList[0]);
+        vm.ImageIterator?.Dispose();
         vm.ImageIterator = new ImageIterator(fileInfo, fileList,0, vm);
         await vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
         GalleryFunctions.Clear(vm);

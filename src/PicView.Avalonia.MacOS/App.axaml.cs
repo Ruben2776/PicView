@@ -59,6 +59,11 @@ public class App : Application, IPlatformSpecificService
         w.DataContext = _vm;
         StartUpHelper.Start(_vm, settingsExists, desktop, w);
     }
+    
+    public void SetTaskbarProgress(double progress)
+    {
+        
+    }
 
     public void SetCursorPos(int x, int y)
     {

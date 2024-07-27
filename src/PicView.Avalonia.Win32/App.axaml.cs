@@ -58,6 +58,11 @@ public class App : Application, IPlatformSpecificService
     }
     
     #region Interface Implementation
+    
+    public void SetTaskbarProgress(double progress)
+    {
+        
+    }
 
     public void SetCursorPos(int x, int y)
     {

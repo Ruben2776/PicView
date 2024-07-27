@@ -124,7 +124,19 @@ public class PicBox : Control
     private void RenderBasedOnSettings(DrawingContext context, IImage source)
     {
         var viewPort = DetermineViewPort();
-        var sourceSize = source.Size;
+        Size sourceSize;
+        try
+        {
+            sourceSize = source.Size;
+        }
+        catch (Exception e)
+        {
+            // https://github.com/AvaloniaUI/Avalonia/issues/8515
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+            return;
+        }
     
         var is1To1 = false; // TODO: replace with settings value
         var isSideBySide = false; // TODO: replace with settings value
