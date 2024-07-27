@@ -2,7 +2,7 @@
 
 public enum ImageType
 {
-    Invalid, // TODO add broken image graphic
+    Invalid,
     AnimatedBitmap,
     Bitmap,
     Svg,

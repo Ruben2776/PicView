@@ -191,14 +191,12 @@ public static class NavigationHelper
             return;
         }
         var fileInfo = new FileInfo(fileList[0]);
-        vm.ImageIterator.Pics = fileList;
-        vm.ImageIterator.Index = 0;
-        vm.ImageIterator.InitiateWatcher(fileInfo);
-        vm.ImageIterator.PreLoader.Clear();
+        vm.ImageIterator = new ImageIterator(fileInfo, fileList,0, vm);
         await vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
+        GalleryFunctions.Clear(vm);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
+            await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
         }
     }
     
@@ -235,15 +233,21 @@ public static class NavigationHelper
         switch (check)
         {
             default:
-                var imageModel = await ImageHelper.GetImageModelAsync(new FileInfo(check)).ConfigureAwait(false);
+                var fileInfo = new FileInfo(check);
+                var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
                 ImageHelper.SetSingleImage(imageModel.Image as Bitmap, url, vm);
+                vm.FileInfo = fileInfo;
+                ExifHandling.SetImageModel(imageModel, vm);
+                ExifHandling.UpdateExifValues(imageModel, vm);
+                //FileHistoryNavigation.Add(url);
             break;
             case "base64":
-                //await UpdateImage.UpdateImageFromBase64PicAsync(destination).ConfigureAwait(false);
+                // TOD - base64
                 break;
 
             case "zip":
-                //await LoadPic.LoadPicFromArchiveAsync(check).ConfigureAwait(false);
+                // TOD - zip
+                //FileHistoryNavigation.Add(url);
                 break;
 
             case "directory":
@@ -251,7 +255,7 @@ public static class NavigationHelper
                 ErrorHandling.ShowStartUpMenu(vm);
                 return;
         }
-        //FileHistoryNavigation.Add(url);
+       
     }
 
     public static async Task LoadPicFromDirectoryAsync(string file, MainViewModel vm, FileInfo? fileInfo = null)
