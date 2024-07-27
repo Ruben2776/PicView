@@ -49,8 +49,22 @@ public class ImageIterator
 #endif
         InitiateWatcher(fileInfo);
     }
+    
+    public ImageIterator(FileInfo fileInfo, List<string> pics, int index, MainViewModel vm)
+    {
+        ArgumentNullException.ThrowIfNull(fileInfo);
+        
+        _vm = vm;
 
-    public void InitiateWatcher(FileInfo fileInfo)
+        Pics = pics;
+        Index = index;
+#if DEBUG
+        Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
+#endif
+        InitiateWatcher(fileInfo);
+    }
+
+    private void InitiateWatcher(FileInfo fileInfo)
     {
         FileInfo = fileInfo;
         _watcher = new FileSystemWatcher();
@@ -375,6 +389,12 @@ public class ImageIterator
 
             await UpdateSource(preLoadValue);
         }
+        catch (OperationCanceledException)
+        {
+#if DEBUG
+            Console.WriteLine($"{nameof(LoadPicAtIndex)} canceled at index {index}");
+#endif
+        }
         catch (Exception e)
         {
            TooltipHelper.ShowTooltipMessage(e.Message);
@@ -397,7 +417,8 @@ public class ImageIterator
 
             if (path.Equals(_vm.ImageIterator.FileInfo.DirectoryName))
             {
-                await _vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
+                using var cts = new CancellationTokenSource();
+                await LoadPicAtIndex(0).ConfigureAwait(false);
             }
             else
             {
@@ -580,7 +601,7 @@ public class ImageIterator
         TooltipHelper.CloseToolTipMessage();
 
         ExifHandling.UpdateExifValues(preLoadValue.ImageModel, vm: _vm);
-        await  AddAsync(Index, preLoadValue.ImageModel);
+        await AddAsync(Index, preLoadValue.ImageModel);
         await Preload();
     }
     
@@ -605,7 +626,7 @@ public class ImageIterator
             return;
         }
 
-        var byteArray = await Task.FromResult(thumb.ToByteArray());
+        var byteArray = thumb.ToByteArray();
         if (byteArray is null)
         {
             await Set();
