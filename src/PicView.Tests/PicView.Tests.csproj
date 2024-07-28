@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0-release-24352-06" />
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0-release-24373-02" />
     <PackageReference Include="xunit" Version="2.9.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
