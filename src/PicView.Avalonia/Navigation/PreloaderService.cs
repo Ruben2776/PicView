@@ -7,8 +7,9 @@ using PicView.Avalonia.ImageHandling;
 
 namespace PicView.Avalonia.Navigation;
 
-public class PreLoader
+public sealed class PreLoader : IDisposable
 {
+    private static readonly object Lock = new();
     private static bool _isRunning;
 
     public class PreLoadValue(ImageModel? imageModel)
@@ -225,11 +226,17 @@ public class PreLoader
 #endif
             return;
         }
+        
         if (_isRunning)
         {
             return;
         }
-        _isRunning = true;
+        
+        lock (Lock)
+        {
+            if (_isRunning) return;
+            _isRunning = true;
+        }
 
         int nextStartingIndex, prevStartingIndex;
         if (reverse)
@@ -278,7 +285,10 @@ public class PreLoader
         }
         finally
         {
-            _isRunning = false;
+            lock (Lock)
+            {
+                _isRunning = false;
+            }
         }
 
         RemoveLoop();
@@ -382,4 +392,43 @@ public class PreLoader
             }
         }
     }
+
+    #region IDisposable
+
+    // Flag to detect redundant calls
+    private bool _disposed = false;
+
+    // Dispose method to be called by consumers
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    // Protected method to handle cleanup
+    private void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            // Clean up managed resources
+            _preLoadList.Clear();
+        }
+
+        // Clean up unmanaged resources
+        // (none in this example, but would go here)
+
+        _disposed = true;
+    }
+
+    // Finalizer
+    ~PreLoader()
+    {
+        Dispose(false);
+    }
+
+    #endregion
+    
 }

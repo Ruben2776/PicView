@@ -30,6 +30,7 @@ public static class ErrorHandling
         {
             vm.CurrentView = vm.CurrentView = new StartUpMenu();
             UIHelper.CloseMenus(vm);
+            vm.ImageIterator?.Dispose();
             vm.ImageIterator = null;
             vm.GalleryMode = GalleryMode.BottomToClosed;
             GalleryFunctions.Clear(vm);
