@@ -19,11 +19,6 @@ public sealed class ImageIterator : IDisposable
     #region Properties
 
     private bool _disposed;
-    public event FileSystemEventHandler? FileAdded;
-
-    public event EventHandler<bool>? FileDeleted;
-
-    public event FileSystemEventHandler? FileRenamed;
 
     public List<string> Pics { get; set; }
 
@@ -78,6 +73,11 @@ public sealed class ImageIterator : IDisposable
     private void InitiateWatcher(FileInfo fileInfo)
     {
         FileInfo = fileInfo;
+        if (_watcher is not null)
+        {
+            _watcher.Dispose();
+            _watcher = null;
+        }
         _watcher = new FileSystemWatcher();
 #if DEBUG
         Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
@@ -151,7 +151,7 @@ public sealed class ImageIterator : IDisposable
             cleared = true;
         }
 
-        FileAdded?.Invoke(this, e);
+        SetTitleHelper.SetTitle(_vm);
         
         await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && Pics.Count > 1)
@@ -194,8 +194,6 @@ public sealed class ImageIterator : IDisposable
             return;
         }
         
-        PreLoader.Remove(index, Pics);
-
         if (sameFile)
         {
             if (Pics.Count <= 0)
@@ -205,6 +203,12 @@ public sealed class ImageIterator : IDisposable
             }
             await NavigationHelper.Iterate(next:false, _vm);
         }
+        else
+        {
+            SetTitleHelper.SetTitle(_vm);
+        }
+        
+        PreLoader.Remove(index, Pics);
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -221,7 +225,7 @@ public sealed class ImageIterator : IDisposable
         //FileHistoryNavigation.Remove(e.FullPath);
         _running = false;
 
-        FileDeleted?.Invoke(this, sameFile);
+        SetTitleHelper.SetTitle(_vm);
     }
     
     private async Task OnFileRenamed(RenamedEventArgs e)
@@ -242,7 +246,6 @@ public sealed class ImageIterator : IDisposable
         _running = true;
 
         var oldIndex = Pics.IndexOf(e.OldFullPath);
-        var sameFile = Index == Pics.IndexOf(e.OldFullPath);
 
         var fileInfo = new FileInfo(e.FullPath);
         if (fileInfo.Exists == false) { return; }
@@ -261,6 +264,8 @@ public sealed class ImageIterator : IDisposable
         {
             return;
         }
+        
+        SetTitleHelper.SetTitle(_vm);
 
         await PreLoader.RefreshFileInfo(oldIndex, Pics);
 
@@ -270,7 +275,6 @@ public sealed class ImageIterator : IDisposable
         GalleryFunctions.RemoveGalleryItem(oldIndex, _vm);
         await GalleryFunctions.AddGalleryItem(index,fileInfo, _vm);
         await GalleryFunctions.SortGalleryItems(Pics, _vm);
-        FileRenamed?.Invoke(this, e);
     }
 
     #endregion
@@ -279,7 +283,7 @@ public sealed class ImageIterator : IDisposable
 
     public void Clear()
     {
-        PreLoader.Clear();
+        PreLoader?.Clear();
     }
     
     public async Task Preload()
@@ -503,24 +507,6 @@ public sealed class ImageIterator : IDisposable
         }
         await AddAsync(Index, imageModel);
         await LoadPicAtIndex(Index);
-        FileAdded += (_, _) => { SetTitleHelper.SetTitle(_vm); };
-        FileRenamed += (_, _) => { SetTitleHelper.SetTitle(_vm); };
-        FileDeleted += async (_, isSameFile) =>
-        {
-            if (isSameFile) //change if deleting current file
-            {
-                if (Index < 0 || Index >= Pics.Count)
-                {
-                    return;
-                }
-
-                await LoadPicFromString(Pics[Index]);
-            }
-            else
-            {
-                SetTitleHelper.SetTitle(_vm);
-            }
-        };
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
             if (Pics.Count == 1)

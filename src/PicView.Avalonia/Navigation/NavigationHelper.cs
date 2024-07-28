@@ -158,6 +158,10 @@ public static class NavigationHelper
     
     public static async Task GoToNextFolder(bool next, MainViewModel vm)
     {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
         SetTitleHelper.SetLoadingTitle(vm);
         var fileList = await Task.Run(()  =>
         {
