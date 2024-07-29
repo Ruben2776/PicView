@@ -1357,7 +1357,7 @@ public class MainViewModel : ViewModelBase
         var newPath = await ConversionHelper.ConvertTask(FileInfo, index);
         if (!string.IsNullOrWhiteSpace(newPath))
         {
-            await NavigationHelper.LoadPicFromString(newPath, this);
+            await NavigationHelper.LoadPicFromStringAsync(newPath, this);
         }
 
         if (ImageIterator is not null)

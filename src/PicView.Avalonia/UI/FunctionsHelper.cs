@@ -660,7 +660,7 @@ public static class FunctionsHelper
             return;
         }
 
-        await NavigationHelper.LoadPicFromString(lastFile, Vm);
+        await NavigationHelper.LoadPicFromStringAsync(lastFile, Vm);
     }
     
     public static async Task Print()
@@ -686,7 +686,7 @@ public static class FunctionsHelper
         }
         
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
-        _ = Task.Run(() => NavigationHelper.LoadPicFromString(path, Vm));
+        _ = Task.Run(() => NavigationHelper.LoadPicFromStringAsync(path, Vm));
     }
 
     public static Task OpenWith()
@@ -812,7 +812,7 @@ public static class FunctionsHelper
 
         Vm.ImageIterator.PreLoader.Clear();
         Vm.CurrentView = new ImageViewer();
-        await NavigationHelper.LoadPicFromString(Vm.FileInfo.FullName, Vm);
+        await NavigationHelper.LoadPicFromStringAsync(Vm.FileInfo.FullName, Vm);
     }
 
     public static Task ResizeImage()

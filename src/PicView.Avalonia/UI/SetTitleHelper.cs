@@ -1,5 +1,8 @@
-﻿using PicView.Avalonia.ImageHandling;
+﻿using Avalonia.Threading;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 
@@ -9,9 +12,24 @@ public static class SetTitleHelper
 {
     public static void SetTitle(MainViewModel vm)
     {
-        if (vm.ImageIterator is null)
+        if (vm.ImageIterator is null || vm.FileInfo is null)
         {
-            var titleString = TitleHelper.TitleString((int)vm.ImageWidth, (int)vm.ImageHeight, TranslationHelper.Translation.ClipboardImage, vm.ZoomValue);
+            string title;
+            var s = vm.Title;
+            if (!string.IsNullOrWhiteSpace(s.GetURL()))
+            {
+                title = vm.Title.GetURL();
+            }
+            else if (s.Contains(TranslationHelper.Translation.Base64Image))
+            {
+                title = TranslationHelper.Translation.Base64Image ?? "Base64Image";
+            }
+            else
+            {
+                title = TranslationHelper.Translation.ClipboardImage ?? "ClipboardImage";
+            }
+            
+            var titleString = TitleHelper.TitleString((int)vm.ImageWidth, (int)vm.ImageHeight, title, vm.ZoomValue);
             vm.WindowTitle = titleString[0];
             vm.Title = titleString[1];
             vm.TitleTooltip = titleString[1];
@@ -27,6 +45,10 @@ public static class SetTitleHelper
 
     public static void RefreshTitle(MainViewModel vm)
     {
+        if (vm.FileInfo == null)
+        {
+            return;
+        }
         var path = vm.FileInfo.FullName;
         vm.FileInfo = new FileInfo(path);
         SetTitle(vm);

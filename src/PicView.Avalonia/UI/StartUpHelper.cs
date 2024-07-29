@@ -87,7 +87,7 @@ public static class StartUpHelper
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
         {
-            Task.Run(() => NavigationHelper.LoadPicFromString(SettingsHelper.Settings.StartUp.LastFile, vm));
+            Task.Run(() => NavigationHelper.LoadPicFromStringAsync(SettingsHelper.Settings.StartUp.LastFile, vm));
         }
         else
         {

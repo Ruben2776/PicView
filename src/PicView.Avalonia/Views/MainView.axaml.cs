@@ -32,7 +32,7 @@ public partial class MainView : UserControl
         var storageItems = data as IStorageItem[] ?? data.ToArray();
         var firstFile = storageItems.FirstOrDefault();
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
-        await NavigationHelper.LoadPicFromString(path, vm).ConfigureAwait(false);
+        await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
         foreach (var file in storageItems.Skip(1))
         {
             // TODO Open each file in a new window if the setting to open in the same window is false

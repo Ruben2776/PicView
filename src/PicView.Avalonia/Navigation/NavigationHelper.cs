@@ -3,13 +3,17 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
 using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Navigation;
@@ -109,7 +113,7 @@ public static class NavigationHelper
         });
     }
     
-    public static async Task LoadPicFromString(string source, MainViewModel vm)
+    public static async Task LoadPicFromStringAsync(string source, MainViewModel vm)
     {
         if (string.IsNullOrWhiteSpace(source) || vm is null)
         {
@@ -118,43 +122,57 @@ public static class NavigationHelper
         
         vm.CurrentView = vm.ImageViewer;
         UIHelper.CloseMenus(vm);
+        
         var fileInfo = new FileInfo(source);
-        if (!fileInfo.Exists)
+        if (fileInfo.Exists)
+        {
+            if (fileInfo.IsSupported())
+            {
+                await LoadPicFromFile(fileInfo.FullName, vm, fileInfo).ConfigureAwait(false);
+            }
+            else if (fileInfo.IsArchive())
+            {
+                //await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
+            }
+        }
+        else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
         {
             if (Directory.Exists(fileInfo.FullName))
             {
-                await Start();
-                return;
+                await LoadPicFromDirectoryAsync(fileInfo.FullName, vm).ConfigureAwait(false);
             }
-            // TODO load from URL or base64 if not a file
-            await LoadPicFromUrlAsync(source, vm);
-            return;
-        }
-        
-        await Start();
-        return;
-
-        async Task Start()
-        {
-            if (vm.ImageIterator is null)
+            if (source is not null && !string.IsNullOrWhiteSpace(source.GetURL()) ||
+                !string.IsNullOrWhiteSpace(fileInfo.LinkTarget.GetURL()))
             {
-                await LoadPicFromDirectoryAsync(source, vm, fileInfo);
-            }
-            else
-            {
-                if (Path.GetDirectoryName(source) == fileInfo.DirectoryName)
-                {
-                    await LoadPicFromDirectoryAsync(source, vm, fileInfo);
-                }
-                else
-                {
-                    await vm.ImageIterator.LoadPicFromString(source);
-                }
+                await LoadPicFromUrlAsync(source, vm);
             }
         }
     }
     
-    
+    public static async Task LoadPicFromFile(string fileName, MainViewModel vm, FileInfo? fileInfo = null)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+        fileInfo ??= new FileInfo(fileName);
+        if (!fileInfo.Exists)
+        {
+            return;
+        }
+        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        ExifHandling.SetImageModel(imageModel, vm);
+        vm.ImageSource = imageModel;
+        vm.ImageType = imageModel.ImageType;
+        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+        vm.ImageIterator = new ImageIterator(fileInfo, vm);
+        await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Pics.IndexOf(fileName));
+        GalleryFunctions.Clear(vm);
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        {
+            await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
+        }
+    }
     
     public static async Task GoToNextFolder(bool next, MainViewModel vm)
     {
@@ -260,7 +278,27 @@ public static class NavigationHelper
                 ErrorHandling.ShowStartUpMenu(vm);
                 return;
         }
-       
+    }
+    
+    public static async Task LoadPicFromBase64Async(string base64, MainViewModel vm)
+    {
+        var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
+        magickImage.Format = MagickFormat.Png;
+        await using var memoryStream = new MemoryStream();
+        await magickImage.WriteAsync(memoryStream);
+        memoryStream.Position = 0;
+        var bitmap = new Bitmap(memoryStream);
+        var imageModel = new ImageModel
+        {
+            Image = bitmap,
+            PixelWidth = bitmap?.PixelSize.Width ?? 0,
+            PixelHeight = bitmap?.PixelSize.Height ?? 0,
+            ImageType = ImageType.Bitmap
+        };
+        ImageHelper.SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
+        vm.FileInfo = null;
+        ExifHandling.SetImageModel(imageModel, vm);
+        ExifHandling.UpdateExifValues(imageModel, vm);
     }
 
     public static async Task LoadPicFromDirectoryAsync(string file, MainViewModel vm, FileInfo? fileInfo = null)
@@ -279,4 +317,6 @@ public static class NavigationHelper
             await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
         }
     }
+
+
 }

@@ -8,6 +8,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.Clipboard;
@@ -67,8 +68,27 @@ public static class ClipboardHelper
         var text = await clipboard.GetTextAsync();
         if (text is not null)
         {   
-            await NavigationHelper.LoadPicFromString(text, vm).ConfigureAwait(false);
-            return;
+            var check = ErrorHelper.CheckIfLoadableString(text);
+            switch (check)
+            {
+                case "":
+                    break;
+                default:
+                    await NavigationHelper.LoadPicFromFile(check, vm).ConfigureAwait(false);
+                    return;
+
+                case "web":
+                    await NavigationHelper.LoadPicFromUrlAsync(text, vm).ConfigureAwait(false);
+                    return;
+
+                case "base64":
+                    await NavigationHelper.LoadPicFromBase64Async(text, vm).ConfigureAwait(false);
+                    return;
+
+                case "directory":
+                    await NavigationHelper.LoadPicFromDirectoryAsync(text, vm).ConfigureAwait(false);
+                    return;
+            }
         }
 
         var files = await clipboard.GetDataAsync(DataFormats.Files);
@@ -83,7 +103,7 @@ public static class ClipboardHelper
                     // load the first file
                     var firstFile = storageItems[0];
                     var firstPath = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
-                    await NavigationHelper.LoadPicFromString(firstPath, vm).ConfigureAwait(false);
+                    await NavigationHelper.LoadPicFromStringAsync(firstPath, vm).ConfigureAwait(false);
 
                     // Open consecutive files in a new process
                     foreach (var file in storageItems.Skip(1))
@@ -96,7 +116,7 @@ public static class ClipboardHelper
             else if (files is IStorageItem singleFile)
             {
                 var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? singleFile.Path.AbsolutePath : singleFile.Path.LocalPath;
-                await NavigationHelper.LoadPicFromString(path, vm).ConfigureAwait(false);
+                await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
             }
             return;
         }

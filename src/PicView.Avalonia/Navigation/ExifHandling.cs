@@ -85,6 +85,10 @@ public static class ExifHandling
     
     public static void UpdateExifValues(ImageModel imageModel, MainViewModel vm)
     {
+        if (vm.FileInfo is null)
+        {
+            return;
+        }
         using var magick = new MagickImage();
         try
         {
