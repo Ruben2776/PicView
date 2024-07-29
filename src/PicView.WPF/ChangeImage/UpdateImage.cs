@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using PicView.Core.Localization;
 using XamlAnimatedGif;
 using static PicView.WPF.ChangeImage.ErrorHandling;
 using static PicView.WPF.ChangeImage.Navigation;
@@ -370,12 +371,6 @@ internal static class UpdateImage
 
     private static async Task UpdateImageFromBase64PicAsync(BitmapSource bitmapSource)
     {
-        // Add a string to explain to the user that it is a base64 image
-        if (Application.Current.Resources["Base64Image"] is not string b64)
-        {
-            return;
-        }
-
-        await UpdateImageAsync(b64, bitmapSource).ConfigureAwait(false);
+        await UpdateImageAsync(TranslationHelper.Translation.Base64Image, bitmapSource).ConfigureAwait(false);
     }
 }
