@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Linq;
+using System.Reflection.Metadata.Ecma335;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -34,8 +35,7 @@ public class GalleryAnimationControl : UserControl
                         GalleryMode.BottomToFull => BottomToFullAnimation(),
                         GalleryMode.BottomToClosed => BottomToClosedAnimation(),
                         GalleryMode.ClosedToFull => ClosedToFullAnimation(),
-                        GalleryMode.ClosedToBottom => ClosedToBottomAnimation(),
-                        _ => throw new ArgumentOutOfRangeException(nameof(galleryMode), galleryMode, null)
+                        GalleryMode.ClosedToBottom => ClosedToBottomAnimation()
                     };
                 }).Subscribe();
             

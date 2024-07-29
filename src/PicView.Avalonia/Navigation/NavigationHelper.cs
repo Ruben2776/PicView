@@ -170,6 +170,10 @@ public static class NavigationHelper
         GalleryFunctions.Clear(vm);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
+            if (vm.GalleryMode is GalleryMode.BottomToClosed or GalleryMode.FullToClosed or GalleryMode.Closed)
+            {
+                vm.GalleryMode = GalleryMode.ClosedToBottom;
+            }
             await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
         }
     }
@@ -282,23 +286,31 @@ public static class NavigationHelper
     
     public static async Task LoadPicFromBase64Async(string base64, MainViewModel vm)
     {
-        var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
-        magickImage.Format = MagickFormat.Png;
-        await using var memoryStream = new MemoryStream();
-        await magickImage.WriteAsync(memoryStream);
-        memoryStream.Position = 0;
-        var bitmap = new Bitmap(memoryStream);
-        var imageModel = new ImageModel
-        {
-            Image = bitmap,
-            PixelWidth = bitmap?.PixelSize.Width ?? 0,
-            PixelHeight = bitmap?.PixelSize.Height ?? 0,
-            ImageType = ImageType.Bitmap
-        };
-        ImageHelper.SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
+        vm.ImageIterator = null;
+        vm.ImageSource = null;
+        vm.IsLoading = true;
+        SetTitleHelper.SetLoadingTitle(vm);
         vm.FileInfo = null;
-        ExifHandling.SetImageModel(imageModel, vm);
-        ExifHandling.UpdateExifValues(imageModel, vm);
+        await Task.Run(async () =>
+        {
+            var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
+            magickImage.Format = MagickFormat.Png;
+            await using var memoryStream = new MemoryStream();
+            await magickImage.WriteAsync(memoryStream);
+            memoryStream.Position = 0;
+            var bitmap = new Bitmap(memoryStream);
+            var imageModel = new ImageModel
+            {
+                Image = bitmap,
+                PixelWidth = bitmap?.PixelSize.Width ?? 0,
+                PixelHeight = bitmap?.PixelSize.Height ?? 0,
+                ImageType = ImageType.Bitmap
+            };
+            ImageHelper.SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
+            ExifHandling.SetImageModel(imageModel, vm);
+            ExifHandling.UpdateExifValues(imageModel, vm);
+        });
+        vm.IsLoading = false;
     }
 
     public static async Task LoadPicFromDirectoryAsync(string file, MainViewModel vm, FileInfo? fileInfo = null)

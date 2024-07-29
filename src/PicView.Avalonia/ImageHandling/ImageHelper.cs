@@ -229,8 +229,11 @@ public static class ImageHelper
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                UIHelper.GetMainView.GalleryView.GalleryMode = GalleryMode.BottomToClosed;
+                // Trigger animation
+                vm.GalleryMode = GalleryMode.BottomToClosed;
             });
+            // Set to closed to ensure next gallery mode changing is fired
+            vm.GalleryMode = GalleryMode.Closed;
         }
         WindowHelper.SetSize(width, height, vm);
         var titleString = TitleHelper.TitleString(width, height, name, 1);
