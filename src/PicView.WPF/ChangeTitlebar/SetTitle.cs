@@ -5,6 +5,7 @@ using PicView.WPF.ChangeImage;
 using PicView.WPF.UILogic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Threading;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.TransformImage.ZoomLogic;
 
@@ -70,9 +71,29 @@ internal static class SetTitle
 
         if (fileInfo is null)
         {
-            var path = ConfigureWindows.GetMainWindow.TitleText.Text.GetURL();
-            path = string.IsNullOrWhiteSpace(path) ? TranslationHelper.GetTranslation("Image") : path;
-            titleString = TitleHelper.TitleString((int)width, (int)height, path, ZoomValue);
+            string title;
+            var s = ConfigureWindows.GetMainWindow.TitleText.Text;
+            if (!string.IsNullOrWhiteSpace(s.GetURL()))
+            {
+                if (Dispatcher.CurrentDispatcher.CheckAccess())
+                {
+                    title = s.GetURL();
+                }
+                else
+                {
+                    title = Dispatcher.CurrentDispatcher.Invoke(() => s.GetURL());
+                }
+                
+            }
+            else if (s.Contains(TranslationHelper.Translation.Base64Image))
+            {
+                title = TranslationHelper.Translation.Base64Image ?? "Base64Image";
+            }
+            else
+            {
+                title = TranslationHelper.Translation.ClipboardImage ?? "ClipboardImage";
+            }
+            titleString = TitleHelper.TitleString((int)width, (int)height, title, ZoomValue);
         }
         else
         {
