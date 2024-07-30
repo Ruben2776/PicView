@@ -210,7 +210,7 @@ public static class ImageHelper
     {
         imageControl.Source = imageType switch
         {
-            ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string, null) },
+            ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string) },
             ImageType.Bitmap => image as Bitmap,
             ImageType.AnimatedBitmap => image as Bitmap,
             _ => imageControl.Source
@@ -219,6 +219,14 @@ public static class ImageHelper
 
     public static void SetSingleImage(Bitmap bitmap, string name, MainViewModel vm)
     {
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (vm.CurrentView != vm.ImageViewer)
+            {
+                vm.CurrentView = vm.ImageViewer;
+            }
+        }, DispatcherPriority.Render);
+
         vm.ImageIterator = null;
         vm.ImageSource = bitmap;
         vm.ImageType = ImageType.Bitmap;
