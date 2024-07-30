@@ -77,7 +77,7 @@ internal static class Base64
             return;
         }
 
-        await UC.GetPicGallery.Dispatcher.InvokeAsync(() => { Clipboard.SetText(base64String); },
+        await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() => { Clipboard.SetText(base64String); },
             DispatcherPriority.Background);
 
         Tooltip.ShowTooltipMessage(TranslationHelper.GetTranslation("ConvertedToBase64"));
