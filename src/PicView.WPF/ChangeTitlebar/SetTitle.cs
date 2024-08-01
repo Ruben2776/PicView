@@ -42,7 +42,7 @@ internal static class SetTitle
         var width = preloadValue?.BitmapSource?.PixelWidth ?? ConfigureWindows.GetMainWindow.MainImage.Source?.Width ?? 0;
         var height = preloadValue?.BitmapSource?.PixelHeight ?? ConfigureWindows.GetMainWindow.MainImage.Source?.Height ?? 0;
         FileInfo? fileInfo;
-        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+
         if (ErrorHandling.CheckOutOfRange())
         {
             fileInfo = null;

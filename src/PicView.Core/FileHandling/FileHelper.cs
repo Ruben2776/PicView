@@ -118,7 +118,7 @@ public static partial class FileHelper
         if (fileNameWithoutExtension.Contains('(') && fileNameWithoutExtension.EndsWith(')'))
         {
             // Extract the number from the existing parentheses
-            var lastParenIndex = fileNameWithoutExtension.LastIndexOf("(", StringComparison.Ordinal);
+            var lastParenIndex = fileNameWithoutExtension.LastIndexOf('(');
             var numberStr = fileNameWithoutExtension.Substring(lastParenIndex + 1,
                 fileNameWithoutExtension.Length - lastParenIndex - 2);
 
