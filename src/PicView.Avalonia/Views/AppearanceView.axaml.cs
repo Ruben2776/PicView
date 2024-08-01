@@ -63,6 +63,28 @@ public partial class AppearanceView : UserControl
         {
             FullGalleryComboBox.SelectedIndex = 5;
         }
+        else
+        {
+            if (SettingsHelper.Settings.Gallery.FullGalleryStretchMode.Equals("Square", StringComparison.OrdinalIgnoreCase))
+            {
+                FullGalleryComboBox.SelectedIndex = 4;
+            }
+            else if (SettingsHelper.Settings.Gallery.FullGalleryStretchMode.Equals("FillSquare", StringComparison.OrdinalIgnoreCase))
+            {
+                FullGalleryComboBox.SelectedIndex = 5;
+            }
+            else if (Enum.TryParse<Stretch>(SettingsHelper.Settings.Gallery.FullGalleryStretchMode, out var stretchMode))
+            {
+                FullGalleryComboBox.SelectedIndex = stretchMode switch
+                {
+                    Stretch.Uniform => 0,
+                    Stretch.UniformToFill => 1,
+                    Stretch.Fill => 2,
+                    Stretch.None => 3,
+                    _ => FullGalleryComboBox.SelectedIndex
+                };
+            }
+        }
         
         if (vm.IsUniformBottomChecked)
         {
@@ -87,6 +109,28 @@ public partial class AppearanceView : UserControl
         else if (vm.IsFillSquareBottomChecked)
         {
             BottomGalleryComboBox.SelectedIndex = 5;
+        }
+        else
+        {
+            if (SettingsHelper.Settings.Gallery.BottomGalleryStretchMode.Equals("Square", StringComparison.OrdinalIgnoreCase))
+            {
+                BottomGalleryComboBox.SelectedIndex = 4;
+            }
+            else if (SettingsHelper.Settings.Gallery.BottomGalleryStretchMode.Equals("FillSquare", StringComparison.OrdinalIgnoreCase))
+            {
+                BottomGalleryComboBox.SelectedIndex = 5;
+            }
+            else if (Enum.TryParse<Stretch>(SettingsHelper.Settings.Gallery.BottomGalleryStretchMode, out var stretchMode))
+            {
+                BottomGalleryComboBox.SelectedIndex = stretchMode switch
+                {
+                    Stretch.Uniform => 0,
+                    Stretch.UniformToFill => 1,
+                    Stretch.Fill => 2,
+                    Stretch.None => 3,
+                    _ => FullGalleryComboBox.SelectedIndex
+                };
+            }
         }
         
         FullGalleryComboBox.SelectionChanged += async (_, _) => await FullGalleryComboBox_SelectionChanged();
