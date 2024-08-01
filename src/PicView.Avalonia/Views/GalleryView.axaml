@@ -28,38 +28,50 @@
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Uniform"
+                        GroupName="StretchGroup"
                         Header="{CompiledBinding Uniform}"
-                        IsChecked="{CompiledBinding IsUniformMenuChecked}"
+                        IsChecked="{CompiledBinding IsUniformMenuChecked,
+                                                    Mode=TwoWay}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="UniformToFill"
+                        GroupName="StretchGroup"
                         Header="{CompiledBinding UniformToFill}"
-                        IsChecked="{CompiledBinding IsUniformToFillMenuChecked}"
+                        IsChecked="{CompiledBinding IsUniformToFillMenuChecked,
+                                                    Mode=TwoWay}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Fill"
+                        GroupName="StretchGroup"
                         Header="{CompiledBinding Fill}"
-                        IsChecked="{CompiledBinding IsFillMenuChecked}"
+                        IsChecked="{CompiledBinding IsFillMenuChecked,
+                                                    Mode=TwoWay}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="None"
+                        GroupName="StretchGroup"
                         Header="{CompiledBinding None}"
-                        IsChecked="{CompiledBinding IsNoneMenuChecked}"
+                        IsChecked="{CompiledBinding IsNoneMenuChecked,
+                                                    Mode=TwoWay}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Square"
+                        GroupName="StretchGroup"
                         Header="{CompiledBinding Square}"
-                        IsChecked="{CompiledBinding IsSquareMenuChecked}"
+                        IsChecked="{CompiledBinding IsSquareMenuChecked,
+                                                    Mode=TwoWay}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="FillSquare"
+                        GroupName="StretchGroup"
                         Header="{CompiledBinding FillSquare}"
-                        IsChecked="{CompiledBinding IsFillSquareMenuChecked}"
+                        IsChecked="{CompiledBinding IsFillSquareMenuChecked,
+                                                    Mode=TwoWay}"
                         ToggleType="Radio" />
                 </MenuItem>
                 <MenuItem

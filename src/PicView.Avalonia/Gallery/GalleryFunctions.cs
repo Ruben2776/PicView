@@ -1,9 +1,6 @@
-using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -114,13 +111,16 @@ public static class GalleryFunctions
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
     }
     
-    public static void CloseGallery(MainViewModel vm)
+    public static async Task CloseGallery(MainViewModel vm)
     {
-        IsFullGalleryOpen = false;
-        IsBottomGalleryOpen = false;
-        vm.GalleryMode = GalleryMode.BottomToClosed;
-        
-        WindowHelper.SetSize(vm);
+        if (IsFullGalleryOpen)
+        {
+            await ToggleGallery(vm);
+        }
+        else
+        {
+            await OpenCloseBottomGallery(vm);
+        }
     }
     
     #endregion

@@ -513,10 +513,9 @@ public static class FunctionsHelper
         await GalleryFunctions.OpenCloseBottomGallery(Vm).ConfigureAwait(false);
     }
     
-    public static Task CloseGallery()
+    public static async Task CloseGallery()
     {
-        GalleryFunctions.CloseGallery(Vm);
-        return Task.CompletedTask;
+        await GalleryFunctions.CloseGallery(Vm);
     }
     
     public static async Task GalleryClick()

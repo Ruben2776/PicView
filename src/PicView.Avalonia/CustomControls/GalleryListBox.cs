@@ -5,6 +5,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 
@@ -62,6 +63,11 @@ public class GalleryListBox : ListBox
 
     public void ScrollToCenterOfItem(GalleryItem galleryItem)
     {
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            ScrollIntoView(galleryItem);
+            return;
+        }
         var visibleItems = GetVisibleItems();
         
         var array = visibleItems as GalleryItem[] ?? visibleItems.ToArray();
@@ -80,7 +86,7 @@ public class GalleryListBox : ListBox
         {
             return;
         }
-        
+
         // ReSharper disable once PossibleLossOfFraction
         var x = selectedScrollTo.Value.X - (visibleItemsCount + 1) / 2 * averageItemWidth + averageItemWidth / 2;
         

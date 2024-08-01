@@ -31,7 +31,6 @@ public static class GalleryStretchMode
         vm.IsFillSquareMenuChecked = false;
         vm.IsFillSquareBottomChecked = false;
         vm.IsFillSquareFullChecked = false;
-        
 
         if (SettingsHelper.Settings.Gallery.FullGalleryStretchMode.Equals("Square", StringComparison.OrdinalIgnoreCase))
         {
@@ -106,7 +105,7 @@ public static class GalleryStretchMode
             switch (stretchMode)
             {
                 case Stretch.Uniform:
-                    vm.IsUniformMenuChecked = true;
+                    
                     if (GalleryFunctions.IsFullGalleryOpen)
                     {
                         vm.IsUniformFullChecked = true;
@@ -114,10 +113,11 @@ public static class GalleryStretchMode
                     else
                     {
                         vm.IsUniformBottomChecked = true;
+                        vm.IsUniformMenuChecked = true;
                     }
                     break;
                 case Stretch.UniformToFill:
-                    vm.IsUniformToFillMenuChecked = true;
+                    
                     if (GalleryFunctions.IsFullGalleryOpen)
                     {
                         vm.IsUniformToFillFullChecked = true;
@@ -125,10 +125,11 @@ public static class GalleryStretchMode
                     else
                     {
                         vm.IsUniformToFillBottomChecked = true;
+                        vm.IsUniformToFillMenuChecked = true;
                     }
                     break;
                 case Stretch.Fill:
-                    vm.IsFillMenuChecked = true;
+                    
                     if (GalleryFunctions.IsFullGalleryOpen)
                     {
                         vm.IsFillFullChecked = true;
@@ -136,10 +137,11 @@ public static class GalleryStretchMode
                     else
                     {
                         vm.IsFillBottomChecked = true;
+                        vm.IsFillMenuChecked = true;
                     }
                     break;
                 case Stretch.None:
-                    vm.IsNoneMenuChecked = true;
+                    
                     if (GalleryFunctions.IsFullGalleryOpen)
                     {
                         vm.IsNoneFullChecked = true;
@@ -147,10 +149,14 @@ public static class GalleryStretchMode
                     else
                     {
                         vm.IsNoneBottomChecked = true;
+                        vm.IsNoneMenuChecked = true;
                     }
                     break;
                 default:
-                    vm.IsUniformMenuChecked = true;
+                    if (!GalleryFunctions.IsFullGalleryOpen)
+                    {
+                        vm.IsUniformMenuChecked = true;
+                    }
                     vm.IsUniformFullChecked = true;
                     vm.IsUniformBottomChecked = true;
                     break;
@@ -182,7 +188,6 @@ public static class GalleryStretchMode
         
         SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = stretch.ToString();
         await SettingsHelper.SaveSettingsAsync();
-        GalleryNavigation.CenterScrollToSelectedItem(vm);
     }
     
     public static async Task ChangeFullGalleryItemStretch(MainViewModel vm, Stretch stretch)
@@ -191,7 +196,6 @@ public static class GalleryStretchMode
         
         SettingsHelper.Settings.Gallery.FullGalleryStretchMode = stretch.ToString();
         await SettingsHelper.SaveSettingsAsync();
-        GalleryNavigation.CenterScrollToSelectedItem(vm);
     }
     
     public static async Task ChangeBottomGalleryStretchSquare(MainViewModel vm)
@@ -200,7 +204,6 @@ public static class GalleryStretchMode
         
         SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "Square";
         await SettingsHelper.SaveSettingsAsync();
-        GalleryNavigation.CenterScrollToSelectedItem(vm);
     }
     
     public static async Task ChangeBottomGalleryStretchSquareFill(MainViewModel vm)
@@ -209,7 +212,6 @@ public static class GalleryStretchMode
         
         SettingsHelper.Settings.Gallery.BottomGalleryStretchMode = "FillSquare";
         await SettingsHelper.SaveSettingsAsync();
-        GalleryNavigation.CenterScrollToSelectedItem(vm);
     }
 
     public static async Task ChangeFullGalleryStretchSquare(MainViewModel vm)
@@ -218,7 +220,6 @@ public static class GalleryStretchMode
         
         SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "Square";
         await SettingsHelper.SaveSettingsAsync();
-        GalleryNavigation.CenterScrollToSelectedItem(vm);
     }
     
     public static async Task ChangeFullGalleryStretchSquareFill(MainViewModel vm)
@@ -227,6 +228,5 @@ public static class GalleryStretchMode
         
         SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "FillSquare";
         await SettingsHelper.SaveSettingsAsync();
-        GalleryNavigation.CenterScrollToSelectedItem(vm);
     }
 }

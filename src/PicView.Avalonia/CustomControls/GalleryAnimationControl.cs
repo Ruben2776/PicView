@@ -103,6 +103,7 @@ public class GalleryAnimationControl : UserControl
             vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         });
         _isAnimating = false;
+        await Task.Delay(50); // Need to wait for the animation
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             GalleryNavigation.CenterScrollToSelectedItem(vm);
