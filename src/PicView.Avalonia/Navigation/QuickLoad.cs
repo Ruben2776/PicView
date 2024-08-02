@@ -16,7 +16,7 @@ public static class QuickLoad
         {
             if (Directory.Exists(fileInfo.DirectoryName))
             {
-                await NavigationHelper.LoadPicFromDirectoryAsync(file, vm);
+                await Load(true).ConfigureAwait(false);
                 return;
             }
             // TODO - Handle URL, base64 and directory
@@ -29,20 +29,38 @@ public static class QuickLoad
             // TODO - Handle archive
             return;
         }
-        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        vm.CurrentView = vm.ImageViewer;
-        vm.ImageSource = imageModel.Image;
-        vm.ImageType = imageModel.ImageType;
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-        vm.IsLoading = false;
-        vm.ImageIterator = new ImageIterator(fileInfo, vm);
-        await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);
-        var preloadValue = vm.ImageIterator.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
-        await vm.ImageIterator.UpdateSource(preloadValue);
-        _ = vm.ImageIterator.Preload();
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        
+        await Load(false).ConfigureAwait(false);
+        return;
+
+        async Task Load(bool isDirectory)
         {
-            await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
+            vm.CurrentView = vm.ImageViewer;
+            if (isDirectory)
+            {
+                vm.ImageIterator = new ImageIterator(fileInfo, vm);
+                await vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
+            }
+            else
+            {
+                var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+                vm.ImageSource = imageModel.Image;
+                vm.ImageType = imageModel.ImageType;
+                WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+                vm.IsLoading = false;
+                vm.ImageIterator = new ImageIterator(fileInfo, vm);
+                await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);
+                var preloadValue = vm.ImageIterator.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
+                await vm.ImageIterator.UpdateSource(preloadValue);
+                _ = vm.ImageIterator.Preload();
+            }
+
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            {
+                await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
+            }
+
         }
+
     }
 }
