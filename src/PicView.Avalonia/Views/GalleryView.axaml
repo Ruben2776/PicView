@@ -15,7 +15,7 @@
     <Panel Background="{StaticResource BackgroundAlpha}">
 
         <Panel.ContextMenu>
-            <ContextMenu>
+            <ContextMenu Opened="MenuBase_OnOpened">
                 <MenuItem Header="{CompiledBinding Stretch}">
                     <MenuItem.Icon>
                         <Path

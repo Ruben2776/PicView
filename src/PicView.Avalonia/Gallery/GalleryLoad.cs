@@ -60,17 +60,25 @@ public static class GalleryLoad
         IsLoading = true;
         var index = vm.ImageIterator.Index;
         var galleryItemSize = Math.Max(vm.GetBottomGalleryItemHeight, vm.GetFullGalleryItemHeight);
+        var loading = TranslationHelper.Translation.Loading;
+        var endIndex = vm.ImageIterator.Pics.Count;
+        // Set priority low when loading excess images to ensure app responsiveness
+        var priority = endIndex switch
+        {
+            >= 3000 => DispatcherPriority.ApplicationIdle,
+            >= 2000 => DispatcherPriority.Background,
+            >= 1000 => DispatcherPriority.Input,
+            >= 500 => DispatcherPriority.Render,
+            _ => DispatcherPriority.Normal
+        };
+
+        if (GalleryFunctions.IsBottomGalleryOpen)
+        {
+            GalleryStretchMode.SetSquareFillStretch(vm);
+        }
 
         try
         {
-            if (GalleryFunctions.IsBottomGalleryOpen)
-            {
-                GalleryStretchMode.SetSquareFillStretch(vm);
-            }
-            
-            var loading = TranslationHelper.Translation.Loading;
-            var endIndex = vm.ImageIterator.Pics.Count;
-            var priority = endIndex >= 1000 ? DispatcherPriority.Background : DispatcherPriority.Render;
             for (var i = 0; i < endIndex; i++)
             {
                 if (currentDirectory != _currentDirectory || _cancellationTokenSource.IsCancellationRequested || vm.ImageIterator is null)
