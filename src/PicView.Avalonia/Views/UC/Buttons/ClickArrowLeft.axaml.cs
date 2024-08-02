@@ -7,15 +7,33 @@ public partial class ClickArrowLeft : UserControl
     public ClickArrowLeft()
     {
         InitializeComponent();
-        PointerEntered += async (_, _) => await DoAnimation(true);
-        PointerExited += async (_, _) => await DoAnimation(false);
+        PolyButton.PointerEntered += delegate
+        {
+            Opacity = 1;
+            PolyButton.Opacity = 1;
+        };
+        PointerEntered += async delegate
+        {
+            await DoClickArrowAnimation(true, PolyButton);
+        };
+        PointerExited += async delegate
+        {
+            await DoClickArrowAnimation(false, PolyButton);
+        };
     }
-
-    private async Task DoAnimation(bool isOpen)
+    
+    private static bool _isClickArrowAnimationRunning;
+    private static async Task DoClickArrowAnimation(bool isShown, Control control)
     {
-        var from = isOpen ? 0 : 1;
-        var to = isOpen ? 1 : 0;
+        if (_isClickArrowAnimationRunning)
+        {
+            return;
+        }
+        _isClickArrowAnimationRunning = true;
+        var from = isShown ? 0 : 1;
+        var to = isShown ? 1 : 0;
         var anim = AnimationsHelper.OpacityAnimation(from, to, 0.3);
-        await anim.RunAsync(this);
+        await anim.RunAsync(control);
+        _isClickArrowAnimationRunning = false;
     }
 }

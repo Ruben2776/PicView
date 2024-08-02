@@ -21,7 +21,8 @@
         CornerRadius="0, 2, 2, 0"
         Height="60"
         HorizontalAlignment="Left"
-        Width="50">
+        Width="50"
+        x:Name="PolyButton">
         <Polygon
             Fill="{StaticResource MainIconColor}"
             Height="40"

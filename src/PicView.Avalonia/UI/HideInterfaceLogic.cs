@@ -5,6 +5,7 @@ namespace PicView.Avalonia.UI;
 
 public static class HideInterfaceLogic
 {
+    #region Toggle UI
     /// <summary>
     /// Toggle between showing the full interface and hiding it
     /// </summary>
@@ -53,4 +54,6 @@ public static class HideInterfaceLogic
         WindowHelper.SetSize(vm);
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
+    
+    #endregion
 }
