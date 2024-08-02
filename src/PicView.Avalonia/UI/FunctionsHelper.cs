@@ -193,12 +193,7 @@ public static class FunctionsHelper
     {
         await NavigationHelper.GoToNextFolder(true, Vm);
     }
-
-    public static async Task NextButton()
-    {
-        await NavigationHelper.IterateButton(next: true, Vm);
-    }
-
+    
     public static async Task Last()
     {
         await NavigationHelper.NavigateFirstOrLast(last: true, Vm);
@@ -217,11 +212,6 @@ public static class FunctionsHelper
     public static async Task PrevFolder()
     {
         await NavigationHelper.GoToNextFolder(false, Vm);
-    }
-
-    public static async Task PrevButton()
-    {
-        await NavigationHelper.IterateButton(next: false, Vm);
     }
 
     public static async Task First()
@@ -459,7 +449,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await WindowHelper.ToggleUI(Vm);
+        await HideInterfaceLogic.ToggleUI(Vm);
     }
     
     public static async Task ToggleSubdirectories()
@@ -491,7 +481,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await WindowHelper.ToggleBottomToolbar(Vm);
+        await HideInterfaceLogic.ToggleBottomToolbar(Vm);
     }
     
     #endregion
@@ -501,11 +491,6 @@ public static class FunctionsHelper
     public static async Task ToggleGallery()
     {
         await GalleryFunctions.ToggleGallery(Vm).ConfigureAwait(false);
-    }
-
-    public static async Task ToggleBottomGallery()
-    {
-        await GalleryFunctions.ToggleBottomGallery(Vm).ConfigureAwait(false);
     }
 
     public static async Task OpenCloseBottomGallery()

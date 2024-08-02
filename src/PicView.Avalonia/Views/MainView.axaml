@@ -8,6 +8,7 @@
     x:Class="PicView.Avalonia.Views.MainView"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -487,6 +488,16 @@
             ClipToBounds="True"
             Content="{CompiledBinding CurrentView}"
             Margin="{CompiledBinding GalleryMargin}" />
+        <buttons:ClickArrowRight
+            HorizontalAlignment="Right"
+            Opacity="0"
+            VerticalAlignment="Center"
+            x:Name="ClickArrowRight" />
+        <buttons:ClickArrowLeft
+            HorizontalAlignment="Left"
+            Opacity="0"
+            VerticalAlignment="Center"
+            x:Name="ClickArrowLeft" />
         <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="NaN"

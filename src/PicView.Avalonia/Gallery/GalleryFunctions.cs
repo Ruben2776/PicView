@@ -66,12 +66,6 @@ public static class GalleryFunctions
         await SettingsHelper.SaveSettingsAsync();
     }
 
-    public static async Task ToggleBottomGallery(MainViewModel vm)
-    {
-        SettingsHelper.Settings.Gallery.IsBottomGalleryShown = !SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
-        await OpenCloseBottomGallery(vm);
-    }
-
     public static async Task OpenCloseBottomGallery(MainViewModel vm)
     {
         if (vm is null)

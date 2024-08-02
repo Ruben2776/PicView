@@ -80,7 +80,7 @@ public static class NavigationHelper
         await Navigate(next, vm);
     }
 
-    public static async Task IterateButton(bool next, MainViewModel vm)
+    public static async Task IterateButton(bool next, bool arrow, MainViewModel vm)
     {
         if (vm is null)
         {
@@ -101,14 +101,26 @@ public static class NavigationHelper
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            string buttonName;
+            if (arrow)
             {
-                return;
+                buttonName = next ? "ClickArrowRight" : "ClickArrowLeft";
             }
-            var buttonName = next ? "NextButton" : "PreviousButton";
-            var bottomBar = desktop.MainWindow.GetControl<BottomBar>("BottomBar");
-            var button = bottomBar.GetControl<Button>(buttonName);
-            var p = button.PointToScreen(new Point(50, 10));
+            else
+            {
+                buttonName = next ? "NextButton" : "PreviousButton";
+            }
+            Control control;
+            if (arrow)
+            {
+                control = UIHelper.GetMainView.GetControl<UserControl>(buttonName);
+            }
+            else
+            {
+                control = UIHelper.GetBottomBar.GetControl<Button>(buttonName);
+            }
+            var point = arrow ? next ? new Point(65, 95) : new Point(15, 95) : new Point(50, 10);
+            var p = control.PointToScreen(point);
             vm.PlatformService?.SetCursorPos(p.X, p.Y);
         });
     }

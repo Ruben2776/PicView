@@ -421,7 +421,7 @@ public sealed class ImageIterator : IDisposable
                 return;
             }
 
-            await UpdateSource(preLoadValue);
+            UpdateSource(preLoadValue);
         }
         catch (OperationCanceledException)
         {
@@ -592,14 +592,14 @@ public sealed class ImageIterator : IDisposable
                 return;
             }
         }
-        await UpdateSource(preLoadValue);
+        UpdateSource(preLoadValue);
     }
     
     #endregion
 
     #region Update Source and Preview
 
-    public async Task UpdateSource(PreLoader.PreLoadValue preLoadValue)
+    public void UpdateSource(PreLoader.PreLoadValue preLoadValue)
     {
         _vm.IsLoading = false;
         ExifHandling.SetImageModel(preLoadValue.ImageModel, vm: _vm);
@@ -624,8 +624,8 @@ public sealed class ImageIterator : IDisposable
         TooltipHelper.CloseToolTipMessage();
 
         ExifHandling.UpdateExifValues(preLoadValue.ImageModel, vm: _vm);
-        await AddAsync(Index, preLoadValue.ImageModel);
-        await Preload();
+        _ = AddAsync(Index, preLoadValue.ImageModel);
+        _ = Preload();
     }
     
     public async Task LoadingPreview(int index)

@@ -370,8 +370,10 @@ public class MainViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit>? NextCommand { get; }
     public ReactiveCommand<Unit, Unit>? NextButtonCommand { get; }
+    public ReactiveCommand<Unit, Unit>? NextArrowButtonCommand { get; }
     public ReactiveCommand<Unit, Unit>? PreviousCommand { get; }
     public ReactiveCommand<Unit, Unit>? PreviousButtonCommand { get; }
+    public ReactiveCommand<Unit, Unit>? PreviousArrowButtonCommand { get; }
     public ReactiveCommand<Unit, Unit>? NextFolderCommand { get; }
     public ReactiveCommand<Unit, Unit>? PreviousFolderCommand { get; }
     public ReactiveCommand<Unit, Unit>? FirstCommand { get; }
@@ -1647,13 +1649,29 @@ public class MainViewModel : ViewModelBase
 
         NextCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Next);
 
-        NextButtonCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.NextButton);
+        NextButtonCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+           await NavigationHelper.IterateButton(next:true, arrow: false, vm: this);
+        });
+        
+        NextArrowButtonCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await NavigationHelper.IterateButton(next:true, arrow: true, vm: this);
+        });
         
         NextFolderCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.NextFolder);
 
         PreviousCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Prev);
 
-        PreviousButtonCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.PrevButton);
+        PreviousButtonCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await NavigationHelper.IterateButton(next:false, arrow: false, vm: this);
+        });
+        
+        PreviousArrowButtonCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await NavigationHelper.IterateButton(next:false, arrow: true, vm: this);
+        });
         
         PreviousFolderCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.PrevFolder);
 

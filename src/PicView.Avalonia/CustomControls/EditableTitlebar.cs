@@ -19,6 +19,7 @@ namespace PicView.Avalonia.CustomControls;
 [TemplatePart("PART_Border", typeof(Border))]
 public class EditableTitlebar : TextBox
 {
+    #region Properties
     protected override Type StyleKeyOverride => typeof(EditableTitlebar);
 
     public bool IsRenaming
@@ -44,6 +45,10 @@ public class EditableTitlebar : TextBox
     private TextBlock? _textBlock;
 
     private Border? _border;
+    
+    #endregion
+    
+    #region Constructor, overrides and behavior
 
     public EditableTitlebar()
     {
@@ -64,12 +69,14 @@ public class EditableTitlebar : TextBox
             SelectFileName();
             return;
         }
-        if (!IsRenaming)
+
+        if (IsRenaming || VisualRoot is null)
         {
-            if (VisualRoot is null) { return; }
-            var hostWindow = (Window)VisualRoot;
-            WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
+            return;
         }
+        
+        var hostWindow = (Window)VisualRoot;
+        WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
     }
 
     private void OnLostFocus(object? sender, RoutedEventArgs e)
@@ -85,6 +92,8 @@ public class EditableTitlebar : TextBox
         Cursor = new Cursor(StandardCursorType.Arrow);
         MainKeyboardShortcuts.IsKeysEnabled = true;
     }
+    
+    #endregion
 
     #region Rename
     

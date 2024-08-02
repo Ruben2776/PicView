@@ -21,6 +21,7 @@
             <Color x:Key="FadedBackgroundColor">#FF333333</Color>
             <Color x:Key="BackgroundHoverColor">#FF4B4B4B</Color>
             <Color x:Key="AltBackgroundHoverColor">#22FFFFFF</Color>
+            <Color x:Key="AltBackgroundColor">#A7222222</Color>
 
             <Color x:Key="MainButtonBackgroundColor">#FF2e2e2e</Color>
 

@@ -51,7 +51,7 @@ public static class QuickLoad
                 vm.ImageIterator = new ImageIterator(fileInfo, vm);
                 await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);
                 var preloadValue = vm.ImageIterator.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
-                await vm.ImageIterator.UpdateSource(preloadValue);
+                vm.ImageIterator.UpdateSource(preloadValue);
                 _ = vm.ImageIterator.Preload();
             }
 

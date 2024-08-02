@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
@@ -21,6 +22,8 @@ public static class UIHelper
     public static Control? GetTitlebar { get; private set; }
     public static EditableTitlebar? GetEditableTitlebar { get; private set; }
     public static GalleryAnimationControlView? GetGalleryView { get; private set; }
+    
+    public static BottomBar? GetBottomBar { get; private set;}
 
     public static void SetControls(IClassicDesktopStyleApplicationLifetime desktop)
     {
@@ -28,6 +31,7 @@ public static class UIHelper
         GetTitlebar = desktop.MainWindow.FindControl<Control>("Titlebar");
         GetEditableTitlebar = GetTitlebar.FindControl<EditableTitlebar>("EditableTitlebar");
         GetGalleryView = GetMainView.MainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
+        GetBottomBar = desktop.MainWindow.FindControl<BottomBar>("BottomBar");
     }
 
     #endregion

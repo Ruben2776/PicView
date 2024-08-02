@@ -260,7 +260,7 @@ public class GalleryAnimationControl : UserControl
         
         var from = Bounds.Height;
         var to = vm.GalleryHeight;
-        const double speed = 0.7;
+        const double speed = 0.6;
         var heightAnimation = AnimationsHelper.HeightAnimation(from, to, speed);
         _isAnimating = true;
         await heightAnimation.RunAsync(this);
