@@ -15,9 +15,10 @@ public static class SaveImageFileHelper
     /// <param name="height">The target height of the image.</param>
     /// <param name="quality">The quality level of the image.</param>
     /// <param name="ext">The file extension of the output image.</param>
+    /// <param name="rotationAngle">The angle to rotate the image, in degrees.</param>
     /// <returns>True if the image is saved successfully; otherwise, false.</returns>
-    public static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination, int? width,
-        int? height, int? quality, string? ext)
+    public static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination = null, int? width = null,
+        int? height = null, int? quality = null, string? ext = null, double? rotationAngle = null)
     {
         try
         {
@@ -50,6 +51,11 @@ public static class SaveImageFileHelper
                 magickImage.Resize(0, height.Value);
             }
 
+            if (rotationAngle is not null)
+            {
+                magickImage.Rotate(rotationAngle.Value);
+            }
+
             if (!string.IsNullOrEmpty(ext))
             {
                 magickImage.Format = ext.ToLowerInvariant() switch
@@ -70,22 +76,24 @@ public static class SaveImageFileHelper
                 await magickImage.WriteAsync(ext is not null ? Path.ChangeExtension(destination, ext) : destination)
                     .ConfigureAwait(false);
             }
-            else
+            else if (path is not null)
             {
                 await magickImage.WriteAsync(ext is not null ? Path.ChangeExtension(path, ext) : path)
                     .ConfigureAwait(false);
             }
+            else return false;
         }
         catch (Exception exception)
         {
-#if DEBUG
+    #if DEBUG
             Trace.WriteLine(exception);
-#endif
+    #endif
             return false;
         }
 
         return true;
     }
+
 
     /// <summary>
     /// Resizes an image asynchronously with optional compression and format conversion.

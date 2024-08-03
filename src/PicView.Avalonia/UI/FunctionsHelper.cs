@@ -692,7 +692,7 @@ public static class FunctionsHelper
             return;
         }
         Vm.FileService ??= new FileService();
-        await Vm.FileService.SaveFileAsync(Vm.FileInfo?.FullName);
+        await Vm.FileService.SaveFileAsync(Vm.FileInfo?.FullName, Vm);
     }
     
     public static async Task DeleteFile()

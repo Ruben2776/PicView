@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
@@ -59,7 +60,7 @@ public class FileService
         MimeTypes = new[] { "archive/*" }
     };
 
-    public async Task SaveFileAsync(string fileName)
+    public async Task SaveFileAsync(string fileName, MainViewModel vm)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
@@ -76,9 +77,7 @@ public class FileService
         IStorageFile? file;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            file  = await provider.SaveFilePickerAsync(new FilePickerSaveOptions()
-            {
-            });
+            file  = await provider.SaveFilePickerAsync(new FilePickerSaveOptions());
         }
         else
         {
@@ -88,7 +87,7 @@ public class FileService
         if (file is not null)
         {
             var path = file.Path.AbsolutePath;
-            await SaveImageFileHelper.SaveImageAsync(null, fileName, path, null, null, null, Path.GetExtension(path));
+            await SaveImageFileHelper.SaveImageAsync(null, fileName, path, null, null, null, Path.GetExtension(path), vm.RotationAngle);
         }
         else
         {
