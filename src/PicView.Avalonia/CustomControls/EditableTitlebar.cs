@@ -11,6 +11,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -42,6 +43,8 @@ public class EditableTitlebar : TextBox
         }
     }
     
+    public bool IsOpen { get; private set; }
+    
     private TextBlock? _textBlock;
 
     private Border? _border;
@@ -66,6 +69,12 @@ public class EditableTitlebar : TextBox
     {
         if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
         {
+            if (IsRenaming || IsOpen)
+            {
+                return;
+            }
+
+            IsOpen = true;
             SelectFileName();
             return;
         }
@@ -76,7 +85,12 @@ public class EditableTitlebar : TextBox
         }
         
         var hostWindow = (Window)VisualRoot;
-        WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
+        if (e.ClickCount == 2 && e.GetCurrentPoint(hostWindow).Properties.IsLeftButtonPressed && !IsOpen)
+        {
+            _ = WindowHelper.ToggleFullscreen(hostWindow.DataContext as MainViewModel);
+            return;
+        }
+        hostWindow.BeginMoveDrag(e);
     }
 
     private void OnLostFocus(object? sender, RoutedEventArgs e)
@@ -91,6 +105,7 @@ public class EditableTitlebar : TextBox
         _border.IsVisible = false;
         Cursor = new Cursor(StandardCursorType.Arrow);
         MainKeyboardShortcuts.IsKeysEnabled = true;
+        IsOpen = false;
     }
     
     #endregion
