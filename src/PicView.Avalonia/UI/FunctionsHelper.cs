@@ -662,8 +662,7 @@ public static class FunctionsHelper
             return;
         }
 
-        Vm.FileService ??= new FileService();
-        var file = await FileService.OpenFile();
+        var file = await FilePickerHelper.OpenFile();
         if (file is null)
         {
             return;
@@ -691,8 +690,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        Vm.FileService ??= new FileService();
-        await Vm.FileService.SaveFileAsync(Vm.FileInfo?.FullName, Vm);
+        await FilePickerHelper.SaveFileAsync(Vm.FileInfo?.FullName, Vm);
     }
     
     public static async Task DeleteFile()

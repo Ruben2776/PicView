@@ -1301,8 +1301,6 @@ public class MainViewModel : ViewModelBase
 
     #region Services
 
-    public FileService? FileService;
-
     public ImageIterator? ImageIterator;
 
     #endregion Services

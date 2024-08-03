@@ -9,7 +9,7 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Services;
 
-public class FileService
+public static class FilePickerHelper
 {
     public static async Task<IStorageFile?> OpenFile()
     {
@@ -60,20 +60,12 @@ public class FileService
         MimeTypes = new[] { "archive/*" }
     };
 
-    public async Task SaveFileAsync(string fileName, MainViewModel vm)
+    public static async Task SaveFileAsync(string fileName, MainViewModel vm)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
             throw new NullReferenceException("Missing StorageProvider instance.");
         
-        var options = new FilePickerSaveOptions()
-        {
-            Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
-            FileTypeChoices  = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType },
-            SuggestedFileName = fileName,
-            SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
-            
-        };
         IStorageFile? file;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
@@ -81,6 +73,14 @@ public class FileService
         }
         else
         {
+            var options = new FilePickerSaveOptions
+            {
+                Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
+                FileTypeChoices  = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType },
+                SuggestedFileName = fileName,
+                SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
+            
+            };
             file = await provider.SaveFilePickerAsync(options);
         }
 
