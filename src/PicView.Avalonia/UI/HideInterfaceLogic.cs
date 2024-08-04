@@ -1,6 +1,8 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Calculations;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.UI;
@@ -28,8 +30,10 @@ public static class HideInterfaceLogic
             if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
             {
                 vm.IsBottomToolbarShown = true;
+                vm.BottombarHeight = SizeDefaults.BottombarHeight;
             }
             SettingsHelper.Settings.UIProperties.ShowInterface = true;
+            vm.TitlebarHeight = SizeDefaults.TitlebarHeight;
         }
         
         WindowHelper.SetSize(vm);

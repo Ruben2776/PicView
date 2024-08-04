@@ -498,6 +498,10 @@
             Opacity="0"
             VerticalAlignment="Center"
             x:Name="ClickArrowLeft" />
+        <buttons:AltClose
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            x:Name="AltClose" />
         <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="NaN"

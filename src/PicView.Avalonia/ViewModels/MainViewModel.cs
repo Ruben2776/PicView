@@ -658,8 +658,10 @@ public class MainViewModel : ViewModelBase
         }
     }
     
+    private int _titlebarHeight;
     public int TitlebarHeight
     {
+        set => this.RaiseAndSetIfChanged(ref _titlebarHeight, value);
         get
         {
             if (IsFullscreen || !IsInterfaceShown || !IsTopToolbarShown)
@@ -670,8 +672,10 @@ public class MainViewModel : ViewModelBase
             return SizeDefaults.TitlebarHeight;
         }
     }
+    private int _bottombarHeight;
     public int BottombarHeight         
     {
+        set => this.RaiseAndSetIfChanged(ref _bottombarHeight, value);
         get
         {
             if (IsFullscreen || !IsInterfaceShown || !IsBottomToolbarShown)

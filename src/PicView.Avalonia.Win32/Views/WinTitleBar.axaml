@@ -1,6 +1,6 @@
 <UserControl
     Height="{CompiledBinding TitlebarHeight}"
-    IsVisible="{Binding IsTopToolbarShown}"
+    IsVisible="{CompiledBinding IsTopToolbarShown}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
