@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
@@ -22,6 +21,7 @@ public static class HideInterfaceLogic
             SettingsHelper.Settings.UIProperties.ShowInterface = false;
             vm.IsTopToolbarShown = false;
             vm.IsBottomToolbarShown = false;
+            vm.IsBottomGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
         }
         else
         {
@@ -38,7 +38,7 @@ public static class HideInterfaceLogic
         
         WindowHelper.SetSize(vm);
         await FunctionsHelper.CloseMenus();
-        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        await SettingsHelper.SaveSettingsAsync();
     }
     
     /// <summary>
@@ -51,14 +51,17 @@ public static class HideInterfaceLogic
         {
             vm.IsBottomToolbarShown = false;
             SettingsHelper.Settings.UIProperties.ShowBottomNavBar = false;
+            vm.IsBottomToolbarShownSetting = false;
         }
         else
         {
             vm.IsBottomToolbarShown = true;
             SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
+            vm.IsBottomToolbarShownSetting = true;
+            vm.BottombarHeight = SizeDefaults.BottombarHeight;
         }
         WindowHelper.SetSize(vm);
-        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        await SettingsHelper.SaveSettingsAsync();
     }
     
     #endregion
@@ -82,8 +85,12 @@ public static class HideInterfaceLogic
                 polyButton.Opacity = 0;
                 return;
             }
-            parent.Opacity = 1;
-            polyButton.Opacity = 1;
+
+            if (polyButton.IsPointerOver)
+            {
+                parent.Opacity = 1;
+                polyButton.Opacity = 1;
+            }
         };
         parent.PointerEntered += async delegate
         {

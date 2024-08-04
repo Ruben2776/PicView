@@ -79,7 +79,7 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _galleryMargin, value);
     }
     
-    private bool _isBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+    private bool _isBottomGalleryShown = SettingsHelper.Settings.UIProperties.ShowInterface && SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
 
     public bool IsBottomGalleryShown
     {
@@ -87,7 +87,7 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
     }
 
-    private bool _isBottomGalleryShownInHiddenUi;
+    private bool _isBottomGalleryShownInHiddenUi = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
 
     public bool IsBottomGalleryShownInHiddenUI
     {
@@ -497,12 +497,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isBottomToolbarShown, value);
     }
 
-    private bool _isShowingButtonsInHiddenUI = SettingsHelper.Settings.UIProperties.ShowAltInterfaceButtons;
+    private bool _isBottomToolbarShownSetting = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
 
-    public bool IsShowingButtonsInHiddenUI
+    public bool IsBottomToolbarShownSetting
     {
-        get => _isShowingButtonsInHiddenUI;
-        set => this.RaiseAndSetIfChanged(ref _isShowingButtonsInHiddenUI, value);
+        get => _isBottomToolbarShownSetting;
+        set => this.RaiseAndSetIfChanged(ref _isBottomToolbarShownSetting, value);
     }
     
     private bool _isShowingTaskbarProgress = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;

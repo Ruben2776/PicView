@@ -505,7 +505,7 @@
         <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="NaN"
-            IsVisible="False"
+            IsVisible="{CompiledBinding IsBottomGalleryShown}"
             VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}"
             Width="{CompiledBinding GalleryWidth}"
             x:Name="GalleryView" />

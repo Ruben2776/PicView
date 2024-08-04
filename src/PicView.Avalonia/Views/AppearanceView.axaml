@@ -51,7 +51,7 @@
             BorderThickness="0"
             Classes="altHover"
             Command="{CompiledBinding ToggleBottomNavBarCommand}"
-            IsChecked="{CompiledBinding IsBottomToolbarShown}"
+            IsChecked="{CompiledBinding IsBottomToolbarShownSetting}"
             Margin="0,0,0,3"
             Width="270">
             <TextBlock
@@ -76,22 +76,6 @@
                 MaxWidth="240"
                 Padding="0,1,5,0"
                 Text="{CompiledBinding ShowBottomGalleryWhenUiIsHidden}" />
-        </ToggleButton>
-
-        <ToggleButton
-            Background="Transparent"
-            BorderThickness="0"
-            Classes="altHover"
-            IsChecked="{CompiledBinding IsShowingButtonsInHiddenUI}"
-            IsEnabled="False"
-            Margin="0,0,0,3"
-            Width="270">
-            <TextBlock
-                Classes="txt"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding ShowButtonsInHiddenUI}" />
         </ToggleButton>
 
         <ToggleButton
