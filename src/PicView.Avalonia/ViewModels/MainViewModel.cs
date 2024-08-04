@@ -193,8 +193,8 @@ public class MainViewModel : ViewModelBase
             }
         }
     }
-    
-    private double _getFullGalleryItemHeight;
+
+    private double _getFullGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
 
     public double GetFullGalleryItemHeight
     {

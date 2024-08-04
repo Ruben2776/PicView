@@ -217,6 +217,10 @@ public class GalleryAnimationControl : UserControl
         }
         vm.GalleryOrientation = Orientation.Vertical;
         vm.IsGalleryCloseIconVisible = true;
+        if (!GalleryLoad.IsLoading)
+        {
+            GalleryStretchMode.DetermineStretchMode(vm);
+        }
         
         var from = vm.GalleryHeight;
         var to = parent.Bounds.Height;
@@ -228,10 +232,6 @@ public class GalleryAnimationControl : UserControl
         {
             Height = to;
         });
-        if (!GalleryLoad.IsLoading)
-        {
-            GalleryStretchMode.DetermineStretchMode(vm);
-        }
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         
         _isAnimating = false;

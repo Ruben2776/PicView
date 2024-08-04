@@ -106,7 +106,7 @@ public static class StartUpHelper
         {
             vm.GetBottomGalleryItemHeight = Core.Gallery.GalleryDefaults.DefaultBottomGalleryHeight;
         }
-        if (vm.GetFullGalleryItemHeight  < vm.MaxFullGalleryItemHeight ||
+        if (vm.GetFullGalleryItemHeight < vm.MinFullGalleryItemHeight ||
             vm.GetFullGalleryItemHeight > vm.MaxFullGalleryItemHeight)
         {
             vm.GetFullGalleryItemHeight = Core.Gallery.GalleryDefaults.DefaultFullGalleryHeight;
