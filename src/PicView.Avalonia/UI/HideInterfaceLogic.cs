@@ -21,7 +21,7 @@ public static class HideInterfaceLogic
             SettingsHelper.Settings.UIProperties.ShowInterface = false;
             vm.IsTopToolbarShown = false;
             vm.IsBottomToolbarShown = false;
-            vm.IsBottomGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
         }
         else
         {
@@ -34,6 +34,7 @@ public static class HideInterfaceLogic
             }
             SettingsHelper.Settings.UIProperties.ShowInterface = true;
             vm.TitlebarHeight = SizeDefaults.TitlebarHeight;
+            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
         }
         
         WindowHelper.SetSize(vm);
@@ -137,4 +138,23 @@ public static class HideInterfaceLogic
     }
     
     #endregion
+
+    public static async Task ToggleBottomGalleryShownInHiddenUI(MainViewModel vm)
+    {
+        SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI = !SettingsHelper.Settings.Gallery
+            .ShowBottomGalleryInHiddenUI;
+        vm.IsBottomGalleryShownInHiddenUI = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+
+        if (!SettingsHelper.Settings.UIProperties.ShowInterface && !SettingsHelper.Settings.Gallery
+                .ShowBottomGalleryInHiddenUI)
+        {
+            vm.IsGalleryShown = false;
+        }
+        else
+        {
+            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+        }
+        
+        await SettingsHelper.SaveSettingsAsync();
+    }
 }

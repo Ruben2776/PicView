@@ -237,7 +237,7 @@
                 <MenuItem
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
                     Header="{CompiledBinding GetBottomGallery}"
-                    IsChecked="{CompiledBinding IsBottomGalleryShown}">
+                    IsChecked="{CompiledBinding IsGalleryShown}">
                     <MenuItem.Icon>
                         <Image Height="12" Width="12">
                             <DrawingImage>
@@ -505,7 +505,7 @@
         <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="NaN"
-            IsVisible="{CompiledBinding IsBottomGalleryShown}"
+            IsVisible="{CompiledBinding IsGalleryShown}"
             VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}"
             Width="{CompiledBinding GalleryWidth}"
             x:Name="GalleryView" />

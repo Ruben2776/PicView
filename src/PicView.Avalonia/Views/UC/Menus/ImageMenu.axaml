@@ -292,7 +292,7 @@
                     Canvas.Top="145"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
-                    IsChecked="{CompiledBinding IsBottomGalleryShown}"
+                    IsChecked="{CompiledBinding IsGalleryShown}"
                     ToolTip.Tip="{CompiledBinding GetBottomGallery}"
                     Width="300">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">

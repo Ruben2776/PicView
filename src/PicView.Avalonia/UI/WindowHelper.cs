@@ -244,7 +244,7 @@ public static class WindowHelper
                 SetSize(vm);
                 vm.IsTopToolbarShown = SettingsHelper.Settings.UIProperties.ShowInterface;
                 vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
-                vm.IsBottomGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+                vm.IsGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
             }
             
         }
@@ -332,7 +332,7 @@ public static class WindowHelper
         {
             vm.IsTopToolbarShown = false; // Hide interface in fullscreen. Remember to turn back when exiting fullscreen
             vm.IsBottomToolbarShown = false;
-            vm.IsBottomGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
             // TODO: Add Fullscreen mode for Windows (and maybe for Linux?)
             // macOS fullscreen version already works nicely
         }

@@ -70,7 +70,7 @@ public static class StartUpHelper
             vm.IsScrollingEnabled = false;
         }
         
-        vm.GetBottomGallery = vm.IsBottomGalleryShown ?
+        vm.GetBottomGallery = vm.IsGalleryShown ?
             TranslationHelper.Translation.HideBottomGallery :
             TranslationHelper.Translation.ShowBottomGallery;
 

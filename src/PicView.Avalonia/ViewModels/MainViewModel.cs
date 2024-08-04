@@ -79,12 +79,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _galleryMargin, value);
     }
     
-    private bool _isBottomGalleryShown = SettingsHelper.Settings.UIProperties.ShowInterface && SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+    private bool _isGalleryShown = SettingsHelper.Settings.UIProperties.ShowInterface && SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
 
-    public bool IsBottomGalleryShown
+    public bool IsGalleryShown
     {
-        get => _isBottomGalleryShown;
-        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShown, value);
+        get => _isGalleryShown;
+        set => this.RaiseAndSetIfChanged(ref _isGalleryShown, value);
     }
 
     private bool _isBottomGalleryShownInHiddenUi = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
@@ -92,11 +92,7 @@ public class MainViewModel : ViewModelBase
     public bool IsBottomGalleryShownInHiddenUI
     {
         get => _isBottomGalleryShownInHiddenUi;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
-            SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI = value;
-        } 
+        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
     }
 
     private GalleryMode _galleryMode;
@@ -413,6 +409,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? ToggleUICommand { get; }
     public ReactiveCommand<Unit, Unit>? ChangeBackgroundCommand { get; }
     public ReactiveCommand<Unit, Unit>? ToggleBottomNavBarCommand { get; }
+    public ReactiveCommand<Unit, Unit>? ToggleBottomGalleryShownInHiddenUICommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowExifWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowAboutWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowSettingsWindowCommand { get; }
@@ -1812,6 +1809,11 @@ public class MainViewModel : ViewModelBase
         ToggleUICommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleInterface);
 
         ToggleBottomNavBarCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleBottomToolbar);
+        
+        ToggleBottomGalleryShownInHiddenUICommand = ReactiveCommand.CreateFromTask(async() =>
+        {
+            await HideInterfaceLogic.ToggleBottomGalleryShownInHiddenUI(this);
+        });
 
         ChangeCtrlZoomCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeCtrlZoom);
         
