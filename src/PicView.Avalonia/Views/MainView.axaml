@@ -500,6 +500,7 @@
             x:Name="ClickArrowLeft" />
         <buttons:AltClose
             HorizontalAlignment="Right"
+            Opacity="0"
             VerticalAlignment="Top"
             x:Name="AltClose" />
         <views:GalleryAnimationControlView

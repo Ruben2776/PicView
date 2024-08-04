@@ -157,6 +157,10 @@ public class MainViewModel : ViewModelBase
             {
                 return 0;
             }
+            if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI && !IsInterfaceShown)
+            {
+                return 0;
+            }
             return GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize;
         }
     }

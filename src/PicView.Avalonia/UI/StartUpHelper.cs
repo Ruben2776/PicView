@@ -94,7 +94,7 @@ public static class StartUpHelper
             }
             else
             {
-                Task.Run(() => NavigationHelper.LoadPicFromStringAsync(SettingsHelper.Settings.StartUp.LastFile, vm));
+                _ = QuickLoad.QuickLoadAsync(vm, SettingsHelper.Settings.StartUp.LastFile);
             }
         }
         else

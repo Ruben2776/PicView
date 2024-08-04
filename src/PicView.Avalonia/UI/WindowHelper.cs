@@ -21,7 +21,7 @@ public static class WindowHelper
     {
         if (e.ClickCount == 2 && e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
         {
-            _ = ToggleFullscreen(window.DataContext as MainViewModel);
+            _ = MaximizeRestore();
             return;
         }
 

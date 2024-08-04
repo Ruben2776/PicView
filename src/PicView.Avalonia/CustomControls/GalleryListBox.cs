@@ -55,10 +55,24 @@ public class GalleryListBox : ListBox
         {
             return false;
         }
-        var parentBounds = new Rect(Bounds.Size);
-        var childBounds = child.Bounds.TransformToAABB(child.TransformToVisual(this)!.Value);
-
-        return parentBounds.Intersects(childBounds);
+        try
+        {
+            var parentBounds = new Rect(Bounds.Size);
+            var visual = child.TransformToVisual(this);
+            if (visual is null)
+            {
+                return false;
+            }
+            var childBounds = child.Bounds.TransformToAABB(visual.Value);
+            return parentBounds.Intersects(childBounds);
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine($"IsControlVisible exception:\n{e.Message}");
+#endif
+            return false;
+        }
     }
 
     public void ScrollToCenterOfItem(GalleryItem galleryItem)

@@ -87,7 +87,7 @@ public class EditableTitlebar : TextBox
         var hostWindow = (Window)VisualRoot;
         if (e.ClickCount == 2 && e.GetCurrentPoint(hostWindow).Properties.IsLeftButtonPressed && !IsOpen)
         {
-            _ = WindowHelper.ToggleFullscreen(hostWindow.DataContext as MainViewModel);
+            _ = WindowHelper.MaximizeRestore();
             return;
         }
         hostWindow.BeginMoveDrag(e);

@@ -1,8 +1,12 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using PicView.Avalonia.Animations;
+using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
+using PicView.Core.Gallery;
 
 namespace PicView.Avalonia.UI;
 
@@ -15,13 +19,32 @@ public static class HideInterfaceLogic
     /// <param name="vm">The view model. </param>
     public static async Task ToggleUI(MainViewModel vm)
     {
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            return;
+        }
         if (SettingsHelper.Settings.UIProperties.ShowInterface)
         {
             vm.IsInterfaceShown = false;
             SettingsHelper.Settings.UIProperties.ShowInterface = false;
             vm.IsTopToolbarShown = false;
             vm.IsBottomToolbarShown = false;
-            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+            if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
+            {
+                vm.GalleryMode = GalleryMode.Closed;
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (UIHelper.GetGalleryView.Bounds.Height > 0)
+                    {
+                        vm.GalleryMode = GalleryMode.BottomToClosed;
+                    }
+                });
+                vm.IsGalleryShown = false;
+            }
+            else
+            {
+                vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+            }
         }
         else
         {
@@ -34,7 +57,27 @@ public static class HideInterfaceLogic
             }
             SettingsHelper.Settings.UIProperties.ShowInterface = true;
             vm.TitlebarHeight = SizeDefaults.TitlebarHeight;
-            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            {
+                if (NavigationHelper.CanNavigate(vm))
+                {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        if (UIHelper.GetGalleryView.Bounds.Height <= 0)
+                        {
+                            vm.GalleryMode = GalleryMode.Closed;
+                            GalleryFunctions.OpenBottomGallery(vm);
+                        }
+                    });
+                    _ = GalleryLoad.LoadGallery(vm, vm.FileInfo.DirectoryName);
+                }
+
+                vm.IsGalleryShown = true;
+            }
+            else
+            {
+                vm.IsGalleryShown = false;
+            }
         }
         
         WindowHelper.SetSize(vm);
@@ -145,14 +188,17 @@ public static class HideInterfaceLogic
             .ShowBottomGalleryInHiddenUI;
         vm.IsBottomGalleryShownInHiddenUI = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
 
-        if (!SettingsHelper.Settings.UIProperties.ShowInterface && !SettingsHelper.Settings.Gallery
-                .ShowBottomGalleryInHiddenUI)
+        if (!GalleryFunctions.IsFullGalleryOpen)
         {
-            vm.IsGalleryShown = false;
-        }
-        else
-        {
-            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+            if (!SettingsHelper.Settings.UIProperties.ShowInterface && !SettingsHelper.Settings.Gallery
+                    .ShowBottomGalleryInHiddenUI)
+            {
+                vm.IsGalleryShown = false;
+            }
+            else
+            {
+                vm.IsGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+            }
         }
         
         await SettingsHelper.SaveSettingsAsync();

@@ -57,6 +57,10 @@ public static class QuickLoad
 
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
+                if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI && !vm.IsInterfaceShown)
+                {
+                    return;
+                }
                 await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
             }
 

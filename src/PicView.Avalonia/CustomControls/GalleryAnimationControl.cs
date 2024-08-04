@@ -35,7 +35,8 @@ public class GalleryAnimationControl : UserControl
                         GalleryMode.BottomToFull => BottomToFullAnimation(),
                         GalleryMode.BottomToClosed => BottomToClosedAnimation(),
                         GalleryMode.ClosedToFull => ClosedToFullAnimation(),
-                        GalleryMode.ClosedToBottom => ClosedToBottomAnimation()
+                        GalleryMode.ClosedToBottom => ClosedToBottomAnimation(),
+                        GalleryMode.Closed => Task.CompletedTask
                     };
                 }).Subscribe();
             
