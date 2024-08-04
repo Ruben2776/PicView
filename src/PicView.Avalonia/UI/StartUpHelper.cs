@@ -87,7 +87,15 @@ public static class StartUpHelper
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
         {
-            Task.Run(() => NavigationHelper.LoadPicFromStringAsync(SettingsHelper.Settings.StartUp.LastFile, vm));
+            if (string.IsNullOrWhiteSpace(SettingsHelper.Settings.StartUp.LastFile))
+            {
+                vm.CurrentView = new StartUpMenu();
+                vm.IsLoading = false;
+            }
+            else
+            {
+                Task.Run(() => NavigationHelper.LoadPicFromStringAsync(SettingsHelper.Settings.StartUp.LastFile, vm));
+            }
         }
         else
         {

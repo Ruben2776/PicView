@@ -543,6 +543,11 @@ public static class WindowHelper
             SaveSize(window);
         }
 
+        if (window.DataContext is MainViewModel { FileInfo: not null } vm)
+        {
+            SettingsHelper.Settings.StartUp.LastFile = vm.FileInfo.FullName;
+        }
+
         await SettingsHelper.SaveSettingsAsync();
         await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
         FileDeletionHelper.DeleteTempFiles();
