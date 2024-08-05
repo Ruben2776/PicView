@@ -4,6 +4,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Navigation;
 
@@ -47,6 +48,10 @@ public static class QuickLoad
                 vm.ImageSource = imageModel.Image;
                 vm.ImageType = imageModel.ImageType;
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+                if (vm.RotationAngle != 0)
+                {
+                    vm.ImageViewer.Rotate(vm.RotationAngle);
+                }
                 vm.IsLoading = false;
                 vm.ImageIterator = new ImageIterator(fileInfo, vm);
                 await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);

@@ -479,7 +479,7 @@ public static class WindowHelper
             desktopMinWidth,
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
-            0,
+            vm.RotationAngle,
             0,
             screenSize.Scaling,
             vm.TitlebarHeight,

@@ -474,6 +474,15 @@ public partial class ImageViewer : UserControl
         WindowHelper.SetSize(vm);
         MainImage.InvalidateVisual();
     }
+    
+    public void Rotate(double angle)
+    {
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            var rotateTransform = new RotateTransform(angle);
+            ImageLayoutTransformControl.LayoutTransform = rotateTransform;
+        });
+    }
 
     public void Flip(bool animate)
     {

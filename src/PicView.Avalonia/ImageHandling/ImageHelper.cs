@@ -216,37 +216,4 @@ public static class ImageHelper
             _ => imageControl.Source
         };
     }
-
-    public static void SetSingleImage(Bitmap bitmap, string name, MainViewModel vm)
-    {
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            if (vm.CurrentView != vm.ImageViewer)
-            {
-                vm.CurrentView = vm.ImageViewer;
-            }
-        }, DispatcherPriority.Render);
-
-        vm.ImageIterator = null;
-        vm.ImageSource = bitmap;
-        vm.ImageType = ImageType.Bitmap;
-        var width = bitmap.PixelSize.Width;
-        var height = bitmap.PixelSize.Height;
-
-        if (GalleryFunctions.IsBottomGalleryOpen)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                // Trigger animation
-                vm.GalleryMode = GalleryMode.BottomToClosed;
-            });
-            // Set to closed to ensure next gallery mode changing is fired
-            vm.GalleryMode = GalleryMode.Closed;
-        }
-        WindowHelper.SetSize(width, height, vm);
-        var titleString = TitleHelper.TitleString(width, height, name, 1);
-        vm.WindowTitle = titleString[0];
-        vm.Title = titleString[1];
-        vm.TitleTooltip = titleString[1];
-    }
 }

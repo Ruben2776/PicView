@@ -606,6 +606,10 @@ public sealed class ImageIterator : IDisposable
         _vm.ImageSource = preLoadValue.ImageModel.Image;
         _vm.ImageType = preLoadValue.ImageModel.ImageType;
         WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, preLoadValue.ImageModel.Rotation, _vm);
+        if (_vm.RotationAngle != 0)
+        {
+            _vm.ImageViewer.Rotate(_vm.RotationAngle);
+        }
         SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
         _vm.GetIndex = Index + 1;
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)

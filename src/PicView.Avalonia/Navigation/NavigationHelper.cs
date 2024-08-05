@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -8,7 +7,6 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
@@ -274,7 +272,7 @@ public static class NavigationHelper
             default:
                 var fileInfo = new FileInfo(check);
                 var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-                ImageHelper.SetSingleImage(imageModel.Image as Bitmap, url, vm);
+                SetSingleImage(imageModel.Image as Bitmap, url, vm);
                 vm.FileInfo = fileInfo;
                 ExifHandling.SetImageModel(imageModel, vm);
                 ExifHandling.UpdateExifValues(imageModel, vm);
@@ -318,7 +316,7 @@ public static class NavigationHelper
                 PixelHeight = bitmap?.PixelSize.Height ?? 0,
                 ImageType = ImageType.Bitmap
             };
-            ImageHelper.SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
+            SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
             ExifHandling.SetImageModel(imageModel, vm);
             ExifHandling.UpdateExifValues(imageModel, vm);
         });
@@ -340,6 +338,43 @@ public static class NavigationHelper
         {
             await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
         }
+    }
+    
+    public static void SetSingleImage(Bitmap bitmap, string name, MainViewModel vm)
+    {
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (vm.CurrentView != vm.ImageViewer)
+            {
+                vm.CurrentView = vm.ImageViewer;
+            }
+        }, DispatcherPriority.Render);
+
+        vm.ImageIterator = null;
+        vm.ImageSource = bitmap;
+        vm.ImageType = ImageType.Bitmap;
+        var width = bitmap.PixelSize.Width;
+        var height = bitmap.PixelSize.Height;
+
+        if (GalleryFunctions.IsBottomGalleryOpen)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // Trigger animation
+                vm.GalleryMode = GalleryMode.BottomToClosed;
+            });
+            // Set to closed to ensure next gallery mode changing is fired
+            vm.GalleryMode = GalleryMode.Closed;
+        }
+        WindowHelper.SetSize(width, height, vm);
+        if (vm.RotationAngle != 0)
+        {
+            vm.ImageViewer.Rotate(vm.RotationAngle);
+        }
+        var titleString = TitleHelper.TitleString(width, height, name, 1);
+        vm.WindowTitle = titleString[0];
+        vm.Title = titleString[1];
+        vm.TitleTooltip = titleString[1];
     }
 
 
