@@ -10,7 +10,7 @@ public partial class ClickArrowRight : UserControl
         InitializeComponent();
         Loaded += delegate
         {
-            HideInterfaceLogic.AddClickArrowEvents(this, PolyButton, DataContext as MainViewModel);
+            HideInterfaceLogic.AddHoverButtonEvents(this, PolyButton, DataContext as MainViewModel);
         };
     }
 }

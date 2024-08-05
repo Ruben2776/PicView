@@ -503,6 +503,11 @@
             Opacity="0"
             VerticalAlignment="Top"
             x:Name="AltClose" />
+        <buttons:GalleryShortcut
+            HorizontalAlignment="Right"
+            Opacity="0"
+            VerticalAlignment="Bottom"
+            x:Name="GalleryShortcut" />
         <views:GalleryAnimationControlView
             GalleryMode="{CompiledBinding GalleryMode}"
             Height="NaN"

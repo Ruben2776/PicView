@@ -52,6 +52,12 @@ public static class StartUpHelper
                 WindowHelper.InitializeWindowSizeAndPosition(w);
             }
         }
+        
+        if (SettingsHelper.Settings.UIProperties.ShowInterface)
+        {
+            vm.IsTopToolbarShown = true;
+            vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
+        }
         w.Show();
         vm.IsLoading = true;
         vm.UpdateLanguage();

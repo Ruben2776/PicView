@@ -19,31 +19,30 @@ public static class HideInterfaceLogic
     /// <param name="vm">The view model. </param>
     public static async Task ToggleUI(MainViewModel vm)
     {
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return;
-        }
         if (SettingsHelper.Settings.UIProperties.ShowInterface)
         {
             vm.IsInterfaceShown = false;
             SettingsHelper.Settings.UIProperties.ShowInterface = false;
             vm.IsTopToolbarShown = false;
             vm.IsBottomToolbarShown = false;
-            if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
+            if (!GalleryFunctions.IsFullGalleryOpen)
             {
-                vm.GalleryMode = GalleryMode.Closed;
-                Dispatcher.UIThread.InvokeAsync(() =>
+                if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
                 {
-                    if (UIHelper.GetGalleryView.Bounds.Height > 0)
+                    vm.GalleryMode = GalleryMode.Closed;
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        vm.GalleryMode = GalleryMode.BottomToClosed;
-                    }
-                });
-                vm.IsGalleryShown = false;
-            }
-            else
-            {
-                vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+                        if (UIHelper.GetGalleryView.Bounds.Height > 0)
+                        {
+                            vm.GalleryMode = GalleryMode.BottomToClosed;
+                        }
+                    });
+                    vm.IsGalleryShown = false;
+                }
+                else
+                {
+                    vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+                }
             }
         }
         else
@@ -57,26 +56,29 @@ public static class HideInterfaceLogic
             }
             SettingsHelper.Settings.UIProperties.ShowInterface = true;
             vm.TitlebarHeight = SizeDefaults.TitlebarHeight;
-            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            if (!GalleryFunctions.IsFullGalleryOpen)
             {
-                if (NavigationHelper.CanNavigate(vm))
+                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
                 {
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    if (NavigationHelper.CanNavigate(vm))
                     {
-                        if (UIHelper.GetGalleryView.Bounds.Height <= 0)
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            vm.GalleryMode = GalleryMode.Closed;
-                            GalleryFunctions.OpenBottomGallery(vm);
-                        }
-                    });
-                    _ = GalleryLoad.LoadGallery(vm, vm.FileInfo.DirectoryName);
-                }
+                            if (UIHelper.GetGalleryView.Bounds.Height <= 0)
+                            {
+                                vm.GalleryMode = GalleryMode.Closed;
+                                GalleryFunctions.OpenBottomGallery(vm);
+                            }
+                        });
+                        _ = GalleryLoad.LoadGallery(vm, vm.FileInfo.DirectoryName);
+                    }
 
-                vm.IsGalleryShown = true;
-            }
-            else
-            {
-                vm.IsGalleryShown = false;
+                    vm.IsGalleryShown = true;
+                }
+                else
+                {
+                    vm.IsGalleryShown = false;
+                }
             }
         }
         
@@ -112,46 +114,46 @@ public static class HideInterfaceLogic
 
     #region ClickArrows
     
-    public static void AddClickArrowEvents(Control parent, Control polyButton, MainViewModel vm)
+    public static void AddHoverButtonEvents(Control parent, Control childControl, MainViewModel vm)
     {
-        polyButton.PointerEntered += delegate
+        childControl.PointerEntered += delegate
         {
             if (vm.ImageIterator is null)
             {
                 parent.Opacity = 0;
-                polyButton.Opacity = 0;
+                childControl.Opacity = 0;
                 return;
             }
 
             if (vm.ImageIterator.Pics?.Count <= 1)
             {
                 parent.Opacity = 0;
-                polyButton.Opacity = 0;
+                childControl.Opacity = 0;
                 return;
             }
 
-            if (polyButton.IsPointerOver)
+            if (childControl.IsPointerOver)
             {
                 parent.Opacity = 1;
-                polyButton.Opacity = 1;
+                childControl.Opacity = 1;
             }
         };
         parent.PointerEntered += async delegate
         {
-            await DoClickArrowAnimation(isShown:true, parent, polyButton, vm);
+            await DoClickArrowAnimation(isShown:true, parent, childControl, vm);
         };
         parent.PointerExited += async delegate
         {
-            await DoClickArrowAnimation(isShown: false, parent, polyButton, vm);
+            await DoClickArrowAnimation(isShown: false, parent, childControl, vm);
         };
         UIHelper.GetMainView.PointerExited += async delegate
         {
-            await DoClickArrowAnimation(isShown: false, parent, polyButton, vm);
+            await DoClickArrowAnimation(isShown: false, parent, childControl, vm);
         };
     }
     
     private static bool _isClickArrowAnimationRunning;
-    private static async Task DoClickArrowAnimation(bool isShown, Control parent, Control polyButton, MainViewModel vm)
+    private static async Task DoClickArrowAnimation(bool isShown, Control parent, Control childControl, MainViewModel vm)
     {
         if (_isClickArrowAnimationRunning)
         {
@@ -161,14 +163,14 @@ public static class HideInterfaceLogic
         if (vm.ImageIterator is null)
         {
             parent.Opacity = 0;
-            polyButton.Opacity = 0;
+            childControl.Opacity = 0;
             return;
         }
 
         if (vm.ImageIterator.Pics?.Count <= 1)
         {
             parent.Opacity = 0;
-            polyButton.Opacity = 0;
+            childControl.Opacity = 0;
             return;
         }
         _isClickArrowAnimationRunning = true;
@@ -176,7 +178,7 @@ public static class HideInterfaceLogic
         var to = isShown ? 1 : 0;
         var speed = isShown ? 0.3 : 0.45;
         var anim = AnimationsHelper.OpacityAnimation(from, to, speed);
-        await anim.RunAsync(polyButton);
+        await anim.RunAsync(childControl);
         _isClickArrowAnimationRunning = false;
     }
     

@@ -10,7 +10,7 @@ public partial class AltClose : UserControl
         InitializeComponent();
         Loaded += delegate
         {
-            HideInterfaceLogic.AddClickArrowEvents(this, XButton, DataContext as MainViewModel);
+            HideInterfaceLogic.AddHoverButtonEvents(this, XButton, DataContext as MainViewModel);
         };
     }
 }

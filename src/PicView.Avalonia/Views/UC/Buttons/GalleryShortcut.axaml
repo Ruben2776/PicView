@@ -1,0 +1,63 @@
+﻿<UserControl
+    Background="Transparent"
+    Height="210"
+    IsEnabled="{CompiledBinding !IsGalleryShown}"
+    IsVisible="{CompiledBinding !IsInterfaceShown}"
+    Width="210"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Views.UC.Buttons.GalleryShortcut"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button
+        Background="{StaticResource AltBackgroundColor}"
+        BorderBrush="{StaticResource MainBorderColor}"
+        BorderThickness="1,0,0,0"
+        Classes="hover"
+        Command="{CompiledBinding ToggleGalleryCommand}"
+        CornerRadius="45,0,0,0"
+        Height="47"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Width="48"
+        x:Name="InnerButton">
+        <Canvas>
+            <Canvas
+                Canvas.Left="20"
+                Canvas.Top="14"
+                Height="31"
+                Width="28">
+                <Path
+                    Canvas.Bottom="5"
+                    Canvas.Left="0.233"
+                    Canvas.Top="0"
+                    Data="F1M27.242,10.47L5.429,0.05C5.173,-0.072,4.868,0.035,4.748,0.287L0,10.223 2.587,10.223 6.073,2.922 24.983,11.956 19.071,24.335 15.741,22.744 15.741,29.289 17.786,30.267C18.042,30.39,18.346,30.28,18.467,30.027L27.484,11.149C27.605,10.897,27.497,10.593,27.242,10.47"
+                    Fill="{StaticResource MainIconColor}"
+                    Height="26.318"
+                    Stretch="Fill"
+                    Width="23.901" />
+                <Path
+                    Canvas.Left="-10"
+                    Canvas.Right="13"
+                    Canvas.Top="7.03"
+                    Data="F1M23.29,16.034L21.76,16.034C20.866,13.747 19.768,10.543 18.102,10.97 16.146,11.47 15.168,16.034 15.168,16.034 15.168,16.034 14.172,10.883 11.414,8.124 8.654,5.367 5.983,16.034 5.983,16.034L2.333,16.034 2.333,2.314 23.29,2.314z M24.688,0L0.511,0C0.228,0,0,0.229,0,0.509L0,21.429C0,21.71,0.228,21.94,0.511,21.94L24.688,21.94C24.97,21.94,25.198,21.71,25.198,21.429L25.198,0.509C25.198,0.229,24.97,0,24.688,0"
+                    Fill="{StaticResource MainIconColor}"
+                    Height="19.288"
+                    Stretch="Fill"
+                    Width="22.152" />
+                <Path
+                    Canvas.Bottom="12"
+                    Canvas.Right="14"
+                    Data="F1M1.711,3.42C2.655,3.42 3.422,2.655 3.422,1.71 3.422,0.766 2.655,0 1.711,0 0.765,0 0,0.766 0,1.71 0,2.655 0.765,3.42 1.711,3.42"
+                    Fill="{StaticResource MainIconColor}"
+                    Height="7"
+                    Width="7" />
+            </Canvas>
+        </Canvas>
+    </Button>
+</UserControl>

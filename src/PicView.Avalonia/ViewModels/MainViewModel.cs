@@ -1624,15 +1624,6 @@ public class MainViewModel : ViewModelBase
         FunctionsHelper.Vm = this;
         PlatformService = platformSpecificService;
 
-        if (SettingsHelper.Settings.UIProperties.ShowInterface)
-        {
-            IsTopToolbarShown = true;
-            if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
-            {
-                IsBottomToolbarShown = true;
-            }
-        }
-
         #region Window commands
 
         ExitCommand = ReactiveCommand.CreateFromTask(WindowHelper.Close);
