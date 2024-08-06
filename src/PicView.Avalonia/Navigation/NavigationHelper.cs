@@ -170,6 +170,18 @@ public static class NavigationHelper
         {
             return;
         }
+        if (vm.ImageIterator is not null)
+        {
+            if (fileInfo.DirectoryName == vm.ImageIterator.FileInfo.DirectoryName)
+            {
+                var index = vm.ImageIterator.Pics.IndexOf(fileName);
+                if (index != -1)
+                {
+                   await vm.ImageIterator.LoadPicAtIndex(index);
+                   return;
+                }
+            }
+        }
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         ExifHandling.SetImageModel(imageModel, vm);
         vm.ImageSource = imageModel;
