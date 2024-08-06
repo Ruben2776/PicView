@@ -1,10 +1,10 @@
-﻿using PicView.Avalonia.Gallery;
+﻿using Avalonia.Threading;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
-using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Navigation;
 
@@ -44,19 +44,47 @@ public static class QuickLoad
             }
             else
             {
+                vm.FileInfo ??= fileInfo;
                 var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
                 vm.ImageSource = imageModel.Image;
                 vm.ImageType = imageModel.ImageType;
                 WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+                vm.IsLoading = false;
+                imageModel.EXIFOrientation = ImageHelper.GetExifOrientation(vm);
+                ExifHandling.SetImageModel(imageModel, vm);
+                var changed = false; // Need to recalculate size if changed
+                if (vm.ScaleX != 1)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        vm.ImageViewer.SetScaleX();
+                    });
+                    changed = true;
+                }
                 if (vm.RotationAngle != 0)
                 {
-                    vm.ImageViewer.Rotate(vm.RotationAngle);
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        vm.ImageViewer.Rotate(vm.RotationAngle);
+                    });
+                    changed = true;
                 }
-                vm.IsLoading = false;
+                if (changed)
+                {
+                    WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+                }
+                
+                ExifHandling.UpdateExifValues(imageModel, vm);
                 vm.ImageIterator = new ImageIterator(fileInfo, vm);
-                await vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel).ConfigureAwait(false);
-                var preloadValue = vm.ImageIterator.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
-                vm.ImageIterator.UpdateSource(preloadValue);
+                
+                SetTitleHelper.SetTitle(vm, imageModel);
+                vm.GetIndex = vm.ImageIterator.Index + 1;
+                if (SettingsHelper.Settings.WindowProperties.KeepCentered)
+                {
+                    WindowHelper.CenterWindowOnScreen(false);
+                }
+                
+                _ = vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel);
                 _ = vm.ImageIterator.Preload();
             }
 

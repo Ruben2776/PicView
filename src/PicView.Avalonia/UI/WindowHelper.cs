@@ -266,8 +266,12 @@ public static class WindowHelper
         var vm = desktop.MainWindow.DataContext as MainViewModel;
         if (desktop.MainWindow.WindowState is WindowState.Maximized or WindowState.FullScreen)
         {
-            vm.SizeToContent = SettingsHelper.Settings.WindowProperties.AutoFit ?
-                SizeToContent.WidthAndHeight : SizeToContent.Manual;
+            // Restore
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                vm.SizeToContent = SizeToContent.WidthAndHeight;
+                vm.CanResize = false;
+            }
             await Dispatcher.UIThread.InvokeAsync(() => 
                 desktop.MainWindow.WindowState = WindowState.Normal);
             SettingsHelper.Settings.WindowProperties.Maximized = false;
@@ -276,12 +280,11 @@ public static class WindowHelper
         }
         else
         {
-            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            // Maximize
+            if (!SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                Fullscreen(vm, desktop);
-                return;
+                SaveSize(desktop.MainWindow);
             }
-            SaveSize(desktop.MainWindow);
             Maximize();
         }
         
@@ -306,8 +309,14 @@ public static class WindowHelper
             {
                 return;
             }
+            var vm = desktop.MainWindow.DataContext as MainViewModel;
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                vm.SizeToContent = SizeToContent.Manual;
+                vm.CanResize = true;
+            }
 
-            desktop.MainWindow.WindowState = WindowState.FullScreen;
+            desktop.MainWindow.WindowState = WindowState.Maximized;
             SetSize(desktop.MainWindow.DataContext as MainViewModel);
             SettingsHelper.Settings.WindowProperties.Maximized = true;
         }
@@ -376,7 +385,7 @@ public static class WindowHelper
             return;
         }
         var preloadValue = vm.ImageIterator?.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
-        SetSize(preloadValue?.ImageModel?.PixelWidth ?? (int)vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? (int)vm.ImageHeight, vm.RotationAngle, vm);
+        SetSize(preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight, vm.RotationAngle, vm);
     }
 
     public static void SetSize(double width, double height, double rotation, MainViewModel vm)
@@ -422,7 +431,7 @@ public static class WindowHelper
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
-            0,
+            padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 2 : 45,
             screenSize.Scaling,
             vm.TitlebarHeight,
             vm.BottombarHeight,

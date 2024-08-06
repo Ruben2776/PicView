@@ -11,7 +11,6 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
-using PicView.Core.Localization;
 
 namespace PicView.Avalonia.CustomControls;
 

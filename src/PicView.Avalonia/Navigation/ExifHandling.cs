@@ -22,6 +22,12 @@ public static class ExifHandling
                 default:
                     vm.ScaleX = 1;
                     vm.RotationAngle = 0;
+                    vm.GetOrientation =  string.Empty;
+                    break;
+                
+                case EXIFHelper.EXIFOrientation.Normal:
+                    vm.ScaleX = 1;
+                    vm.RotationAngle = 0;
                     vm.GetOrientation = TranslationHelper.Translation.Normal;
                     break;
 
@@ -125,29 +131,33 @@ public static class ExifHandling
                 vm.GetBitDepth = (magick.Depth * 3).ToString();
             }
 
-            if (vm.DpiX == 0)
+            if (vm is { PixelWidth: > 0, PixelHeight: > 0 })
             {
-                vm.GetPrintSizeCm = vm.GetPrintSizeInch = vm.GetSizeMp = vm.GetResolution = string.Empty;
+                if (vm.DpiX == 0)
+                {
+                    vm.GetPrintSizeCm = vm.GetPrintSizeInch = vm.GetSizeMp = vm.GetResolution = string.Empty;
+                }
+                else
+                {
+                    var inchesWidth = vm.PixelWidth / vm.DpiX;
+                    var inchesHeight = vm.PixelHeight / vm.DpiY;
+                    vm.GetPrintSizeInch =
+                        $"{inchesWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Inches")}";
+
+                    var cmWidth = vm.PixelWidth / vm.DpiX * 2.54;
+                    var cmHeight = vm.PixelHeight / vm.DpiY * 2.54;
+                    vm.GetPrintSizeCm =
+                        $"{cmWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {cmHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Centimeters")}";
+                    vm.GetSizeMp =
+                        $"{((float)vm.PixelHeight * vm.PixelWidth / 1000000).ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.Translation.MegaPixels}";
+
+                    vm.GetResolution = $"{vm.DpiX} x {vm.DpiY} {TranslationHelper.GetTranslation("Dpi")}";
+                }
             }
-            else
-            {
-                var inchesWidth = vm.PixelWidth / vm.DpiX;
-                var inchesHeight = vm.PixelHeight / vm.DpiY;
-                vm.GetPrintSizeInch =
-                    $"{inchesWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {inchesHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Inches")}";
 
-                var cmWidth = vm.PixelWidth / vm.DpiX * 2.54;
-                var cmHeight = vm.PixelHeight / vm.DpiY * 2.54;
-                vm.GetPrintSizeCm =
-                    $"{cmWidth.ToString("0.##", CultureInfo.CurrentCulture)} x {cmHeight.ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.GetTranslation("Centimeters")}";
-                vm.GetSizeMp =
-                    $"{((float)vm.PixelHeight * vm.PixelWidth / 1000000).ToString("0.##", CultureInfo.CurrentCulture)} {TranslationHelper.Translation.MegaPixels}";
-
-                vm.GetResolution = $"{vm.DpiX} x {vm.DpiY} {TranslationHelper.GetTranslation("Dpi")}";
-            }
-
-            var firstRatio = vm.PixelWidth / TitleHelper.GCD(vm.PixelWidth, vm.PixelHeight);
-            var secondRatio = vm.PixelHeight / TitleHelper.GCD(vm.PixelWidth, vm.PixelHeight);
+            var gcd = TitleHelper.GCD(vm.PixelWidth, vm.PixelHeight);
+            var firstRatio = vm.PixelWidth / gcd;
+            var secondRatio = vm.PixelHeight / gcd;
 
             if (firstRatio == secondRatio)
             {

@@ -61,7 +61,7 @@ public partial class ImageViewer : UserControl
         ZoomTo(e.GetPosition(this), e.Delta.X > 0);
     }
 
-    private async Task PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    public async Task PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
         e.Handled = true;
         await Main_OnPointerWheelChanged(e);
@@ -472,7 +472,7 @@ public partial class ImageViewer : UserControl
         }
 
         WindowHelper.SetSize(vm);
-        MainImage.InvalidateVisual();
+        //MainImage.InvalidateVisual();
     }
     
     public void Rotate(double angle)
@@ -525,6 +525,18 @@ public partial class ImageViewer : UserControl
             MainImage.RenderTransform = flipTransform;
         }
         MainImage.InvalidateVisual();
+    }
+    
+    public void SetScaleX()
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+        if (MainImage.Source is null)
+        {
+            return;
+        }
+        var flipTransform = new ScaleTransform(vm.ScaleX, 1);
+        MainImage.RenderTransform = flipTransform;
     }
 
     #endregion Rotation and Flip

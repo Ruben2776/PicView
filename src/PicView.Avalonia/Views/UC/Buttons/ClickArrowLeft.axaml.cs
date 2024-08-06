@@ -10,7 +10,12 @@ public partial class ClickArrowLeft : UserControl
         InitializeComponent();
         Loaded += delegate
         {
-            HideInterfaceLogic.AddHoverButtonEvents(this, PolyButton, DataContext as MainViewModel);
+            if (DataContext is not MainViewModel vm)
+            {
+                return;
+            }
+            HideInterfaceLogic.AddHoverButtonEvents(this, PolyButton, vm);
+            PointerWheelChanged += async (_, e) => await vm.ImageViewer.PreviewOnPointerWheelChanged(this, e);
         };
     }
 }

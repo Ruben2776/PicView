@@ -1,15 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
-using Avalonia.Threading;
 using ImageMagick;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
-using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.ImageHandling;
 
@@ -215,5 +210,12 @@ public static class ImageHelper
             ImageType.AnimatedBitmap => image as Bitmap,
             _ => imageControl.Source
         };
+    }
+
+    public static EXIFHelper.EXIFOrientation GetExifOrientation(MainViewModel vm)
+    {
+        var magickImage = new MagickImage();
+        magickImage.Ping(vm.FileInfo);
+        return EXIFHelper.GetImageOrientation(magickImage);
     }
 }

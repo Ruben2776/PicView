@@ -11,7 +11,12 @@ public partial class GalleryShortcut : UserControl
         InitializeComponent();
         Loaded += delegate
         {
+            if (DataContext is not MainViewModel vm)
+            {
+                return;
+            }
             HideInterfaceLogic.AddHoverButtonEvents(this, InnerButton, DataContext as MainViewModel);
+            PointerWheelChanged += async (_, e) => await vm.ImageViewer.PreviewOnPointerWheelChanged(this, e);
         };
     }
 }
