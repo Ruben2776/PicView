@@ -84,13 +84,9 @@ public static class TooltipHelper
     {
         get
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return null;
-            }
             return Dispatcher.UIThread.Invoke(() =>
             {
-                var mainView = desktop.MainWindow.GetControl<MainView>("MainView");
+                var mainView = UIHelper.GetMainView;
                 return mainView.MainGrid.Children.OfType<ToolTipMessage>().FirstOrDefault();
             });
         }
