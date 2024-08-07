@@ -1,8 +1,5 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using VerticalAlignment = Avalonia.Layout.VerticalAlignment;
 

@@ -157,7 +157,7 @@ public static class StartUpHelper
             : TranslationHelper.Translation.ScrollToZoom;
         
         UIHelper.AddMenus();
-        UIHelper.AddMToolTipMessage();
+        UIHelper.AddToolTipMessage();
 
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);

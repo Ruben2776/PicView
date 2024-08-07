@@ -14,7 +14,7 @@ public partial class AltClose : UserControl
             {
                 return;
             }            
-            HideInterfaceLogic.AddHoverButtonEvents(this, XButton, DataContext as MainViewModel);
+            HideInterfaceLogic.AddHoverButtonEvents(this, XButton, vm);
             PointerWheelChanged += async (_, e) => await vm.ImageViewer.PreviewOnPointerWheelChanged(this, e);
         };
     }

@@ -124,7 +124,8 @@ public static class UIHelper
 
     #endregion Menus
 
-    public static void AddMToolTipMessage()
+    #region Add Controls
+    public static void AddToolTipMessage()
     {
         var mainView = GetMainView;
         var toolTipMessage = new Views.UC.ToolTipMessage
@@ -136,6 +137,8 @@ public static class UIHelper
 
         mainView.MainGrid.Children.Add(toolTipMessage);
     }
+    
+    #endregion
 
     #region Settings
     
