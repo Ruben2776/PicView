@@ -312,7 +312,10 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Command="{CompiledBinding FilePropertiesCommand}" Header="{CompiledBinding FileProperties}">
+                <MenuItem
+                    Command="{CompiledBinding FilePropertiesCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName}"
+                    Header="{CompiledBinding FileProperties}">
                     <MenuItem.Icon>
                         <Path
                             Data="M80 44v424a12 12 0 0012 12h328a12 12 0 0012-12V44a12 12 0 00-12-12H92a12 12 0 00-12 12zm192 260H160v-32h112zm80-80H160v-32h192zm0-80H160v-32h192z"
@@ -323,7 +326,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{CompiledBinding ResizeImage}">
+                <MenuItem Header="{CompiledBinding ResizeImage}" IsEnabled="False">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
@@ -334,7 +337,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{CompiledBinding BatchResize}">
+                <MenuItem Header="{CompiledBinding BatchResize}" IsEnabled="False">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
@@ -429,7 +432,10 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{CompiledBinding CutCommand}" Header="{Binding FileCut}">
+                <MenuItem
+                    Command="{CompiledBinding CutCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName}"
+                    Header="{CompiledBinding FileCut}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CutGeometry}"

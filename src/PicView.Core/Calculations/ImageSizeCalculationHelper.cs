@@ -148,7 +148,10 @@ public static class ImageSizeCalculationHelper
         double monitorMinHeight, double interfaceSize, double containerWidth)
     {
         double titleMaxWidth;
-        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        var maximized = SettingsHelper.Settings.WindowProperties.Fullscreen ||
+            SettingsHelper.Settings.WindowProperties.Maximized;
+        
+        if (SettingsHelper.Settings.WindowProperties.AutoFit && !maximized)
         {
             titleMaxWidth = rotationAngle is 0 or 180
                 ? Math.Max(width, monitorMinWidth)
