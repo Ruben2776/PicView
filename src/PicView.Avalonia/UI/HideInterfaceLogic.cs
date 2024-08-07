@@ -112,7 +112,7 @@ public static class HideInterfaceLogic
     
     #endregion
 
-    #region ClickArrows
+    #region HoverButtons
     
     public static void AddHoverButtonEvents(Control parent, Control childControl, MainViewModel vm)
     {
@@ -140,22 +140,41 @@ public static class HideInterfaceLogic
         };
         parent.PointerEntered += async delegate
         {
-            await DoClickArrowAnimation(isShown:true, parent, childControl, vm);
+            await DoHoverButtonAnimation(isShown:true, parent, childControl, vm);
         };
         parent.PointerExited += async delegate
         {
-            await DoClickArrowAnimation(isShown: false, parent, childControl, vm);
+            await DoHoverButtonAnimation(isShown: false, parent, childControl, vm);
         };
         UIHelper.GetMainView.PointerExited += async delegate
         {
-            await DoClickArrowAnimation(isShown: false, parent, childControl, vm);
+            var x = 0;
+            while (_isHoverButtonAnimationRunning)
+            {
+                await Task.Delay(10);
+                x++;
+                if (x > 20)
+                {
+                    if (!childControl.IsPointerOver)
+                    {
+                        parent.Opacity = 0;
+                        childControl.Opacity = 0;
+                    }
+                    break;
+                }
+            }
+
+            if (parent.Opacity > 0)
+            {
+                await DoHoverButtonAnimation(isShown: false, parent, childControl, vm);
+            }
         };
     }
     
-    private static bool _isClickArrowAnimationRunning;
-    private static async Task DoClickArrowAnimation(bool isShown, Control parent, Control childControl, MainViewModel vm)
+    private static bool _isHoverButtonAnimationRunning;
+    private static async Task DoHoverButtonAnimation(bool isShown, Control parent, Control childControl, MainViewModel vm)
     {
-        if (_isClickArrowAnimationRunning)
+        if (_isHoverButtonAnimationRunning)
         {
             return;
         }
@@ -173,13 +192,13 @@ public static class HideInterfaceLogic
             childControl.Opacity = 0;
             return;
         }
-        _isClickArrowAnimationRunning = true;
-        var from = isShown ? 0 : 1;
-        var to = isShown ? 1 : 0;
+        _isHoverButtonAnimationRunning = true;
+        var from = isShown ? 0d : 1d;
+        var to = isShown ? 1d : 0d;
         var speed = isShown ? 0.3 : 0.45;
         var anim = AnimationsHelper.OpacityAnimation(from, to, speed);
         await anim.RunAsync(childControl);
-        _isClickArrowAnimationRunning = false;
+        _isHoverButtonAnimationRunning = false;
     }
     
     #endregion
