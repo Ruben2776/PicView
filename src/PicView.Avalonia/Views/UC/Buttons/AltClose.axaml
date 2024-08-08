@@ -22,6 +22,7 @@
         Height="60"
         HorizontalAlignment="Right"
         IsVisible="{CompiledBinding !IsInterfaceShown}"
+        ToolTip.Tip="{Binding Close, Mode=OneWay}"
         VerticalAlignment="Top"
         Width="50"
         ZIndex="99"

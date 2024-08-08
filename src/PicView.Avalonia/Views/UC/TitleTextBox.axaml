@@ -1,6 +1,7 @@
 <UserControl
     Background="{StaticResource SecondaryBackgroundColor}"
-    MaxWidth="{Binding TitleMaxWidth}"
+    MaxWidth="{CompiledBinding TitleMaxWidth,
+                               Mode=OneWay}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -20,19 +21,22 @@
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
-            Height="{CompiledBinding TitlebarHeight}"
+            Height="{CompiledBinding TitlebarHeight,
+                                     Mode=OneWay}"
             IsTabStop="False"
             Padding="0,7,0,5"
-            Text="{CompiledBinding Title}"
+            Text="{CompiledBinding Title,
+                                   Mode=OneWay}"
             TextAlignment="Center"
             TextTrimming="CharacterEllipsis"
-            ToolTip.Tip="{Binding TitleTooltip}"
+            ToolTip.Tip="{Binding TitleTooltip, Mode=OneWay}"
             VerticalAlignment="Center" />
         <TextBox
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
-            Height="{CompiledBinding TitlebarHeight}"
+            Height="{CompiledBinding TitlebarHeight,
+                                     Mode=OneWay}"
             IsTabStop="False"
             IsVisible="False"
             TextAlignment="Center"
