@@ -730,14 +730,22 @@ public static class FunctionsHelper
         await ClipboardHelper.CopyTextToClipboard(Vm?.FileInfo.FullName);
     }
 
-    public static Task CopyImage()
+    public static async Task CopyImage()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        await ClipboardHelper.CopyImageToClipboard(Vm.FileInfo.FullName);
     }
 
-    public static Task CopyBase64()
+    public static async Task CopyBase64()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        await ClipboardHelper.CopyBase64ToClipboard(Vm.FileInfo.FullName);
     }
 
     public static async Task DuplicateFile()
@@ -758,9 +766,13 @@ public static class FunctionsHelper
         }
     }
 
-    public static Task CutFile()
+    public static async Task CutFile()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        await ClipboardHelper.CutFile(Vm.FileInfo.FullName);
     }
 
     public static async Task Paste()
