@@ -156,7 +156,6 @@
     </Resource>
     <AppDesigner Include="Properties\" />
     <None Remove="ImageHandling\ImageDecoder.cs~RF67cab4e4.TMP" />
-    <None Remove="Themes\Resources\img\icon.png" />
     <None Remove="Themes\Resources\img\noise-texture-100x100 %283%29.png" />
     <None Remove="Themes\Resources\img\noisy-texture-200x200-o2-d15-c-ffffff-t1.png" />
     <Resource Include="Themes\Resources\img\icon.png" />
@@ -277,10 +276,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Themes\Resources\img\favicon.ico" />
-    <None Remove="Themes\Resources\img\icon__Q6k_icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
     <ProjectReference Include="..\PicView.Windows\PicView.Windows.csproj" />
     <ProjectReference Include="..\XamlAnimatedGif\XamlAnimatedGif.csproj" />
@@ -291,6 +286,12 @@
 	<ItemGroup>
 		<RuntimeHostConfigurationOption Include="Switch.System.Windows.Media.EnableHardwareAccelerationInRdp" Value="true" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Themes\Resources\img\icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 	
   <PropertyGroup>
     <FileVersion>2.3.1</FileVersion>
@@ -298,24 +299,26 @@
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ruben2776/PicView</RepositoryUrl>
-    <PackageLicenseExpression> GPL-3.0-only</PackageLicenseExpression>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <DelaySign>True</DelaySign>
     <LangVersion>preview</LangVersion>
     <Authors>Ruben2776</Authors>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageIcon>icon-raster.128b.png</PackageIcon>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <AssemblyVersion>2.3.1</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Fast Picture Viewer with compact UI that can be hidden. </Description>
+    <PackageReadmeFile></PackageReadmeFile>
+    <Description>Fast, free and customizable image viewer for Windows 10 and 11. </Description>
     <PackageTags>picture-viewer,desktop-app,</PackageTags>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <PlatformTarget>x64</PlatformTarget>
+    <Title>PicView</Title>
+    <Version>2.3.1</Version>
+    <PackageIcon>Themes\Resources\img\icon.png</PackageIcon>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
