@@ -102,7 +102,7 @@ public static class GalleryLoad
                         {
                             await GalleryFunctions.ToggleGallery(vm);
                         }
-                        await vm.ImageIterator.LoadPicAtIndex(i1);
+                        await vm.ImageIterator.IterateToIndex(i1);
                     };
                     galleryListBox.Items.Add(galleryItem);
                     if (i != vm.ImageIterator?.Index)

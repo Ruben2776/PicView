@@ -52,7 +52,7 @@ public static class NavigationHelper
         }
 
         var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
-        await vm.ImageIterator.LoadNextPic(navigateTo).ConfigureAwait(false);
+        await vm.ImageIterator.NextIteration(navigateTo).ConfigureAwait(false);
     }
 
     public static async Task NavigateFirstOrLast(bool last, MainViewModel vm)
@@ -71,7 +71,7 @@ public static class NavigationHelper
             return;
         }
 
-        await vm.ImageIterator.LoadNextPic(last ? NavigateTo.Last : NavigateTo.First).ConfigureAwait(false);
+        await vm.ImageIterator.NextIteration(last ? NavigateTo.Last : NavigateTo.First).ConfigureAwait(false);
         
         // Fix scroll position not scrolling to the end
         if (last)
@@ -216,7 +216,7 @@ public static class NavigationHelper
                 var index = vm.ImageIterator.Pics.IndexOf(fileName);
                 if (index != -1)
                 {
-                   await vm.ImageIterator.LoadPicAtIndex(index);
+                   await vm.ImageIterator.IterateToIndex(index);
                    return;
                 }
             }
@@ -227,7 +227,7 @@ public static class NavigationHelper
         vm.ImageType = imageModel.ImageType;
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
-        await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Pics.IndexOf(fileName));
+        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Pics.IndexOf(fileName));
         GalleryFunctions.Clear(vm);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
@@ -285,7 +285,7 @@ public static class NavigationHelper
         var fileInfo = new FileInfo(fileList[0]);
         vm.ImageIterator?.Dispose();
         vm.ImageIterator = new ImageIterator(fileInfo, fileList,0, vm);
-        await vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
+        await vm.ImageIterator.IterateToIndex(0).ConfigureAwait(false);
         GalleryFunctions.Clear(vm);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
@@ -389,7 +389,7 @@ public static class NavigationHelper
         vm.ImageType = imageModel.ImageType;
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
-        await vm.ImageIterator.LoadPicAtIndex(vm.ImageIterator.Index);
+        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Index);
         GalleryFunctions.Clear(vm);
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {

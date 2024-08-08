@@ -172,7 +172,7 @@ public class EditableTitlebar : TextBox
             if (saved)
             {
                 // Navigate to newly saved file
-                await vm.ImageIterator.LoadPicFromFile(new FileInfo(newPath)).ConfigureAwait(false); 
+                await NavigationHelper.LoadPicFromFile(newPath, vm).ConfigureAwait(false);
                 
                 // Delete old file
                 var deleteMsg = FileDeletionHelper.DeleteFileWithErrorMsg(oldPath, false);

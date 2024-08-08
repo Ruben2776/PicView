@@ -44,7 +44,7 @@ public partial class ExifView : UserControl
             if (success)
             {
                 vm.ImageIterator?.PreLoader?.Remove(vm.ImageIterator.Index, vm.ImageIterator.Pics);
-                await vm.ImageIterator?.LoadPicAtIndex(vm.ImageIterator.Index);
+                await vm.ImageIterator?.IterateToIndex(vm.ImageIterator.Index);
             }
         }
     }
@@ -78,7 +78,7 @@ public partial class ExifView : UserControl
             if (success)
             {
                 vm.ImageIterator?.PreLoader?.Remove(vm.ImageIterator.Index, vm.ImageIterator.Pics);
-                await vm.ImageIterator?.LoadPicAtIndex(vm.ImageIterator.Index);
+                await vm.ImageIterator?.IterateToIndex(vm.ImageIterator.Index);
             }
         }
     }

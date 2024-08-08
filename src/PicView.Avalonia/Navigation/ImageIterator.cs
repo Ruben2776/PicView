@@ -349,7 +349,7 @@ public sealed class ImageIterator : IDisposable
         return next;
     }
 
-    public async Task LoadNextPic(NavigateTo navigateTo)
+    public async Task NextIteration(NavigateTo navigateTo)
     {
         var index = GetIteration(Index, navigateTo);
         if (index < 0)
@@ -359,15 +359,15 @@ public sealed class ImageIterator : IDisposable
 
         if (!MainKeyboardShortcuts.IsKeyHeldDown)
         {
-            await LoadPicAtIndex(index);
+            await IterateToIndex(index);
         }
         else
         {
-            await TimerPic(index);
+            await TimerIteration(index);
         }
     }
 
-    public async Task LoadPicAtIndex(int index)
+    public async Task IterateToIndex(int index)
     {
         if (index < 0 || index >= Pics.Count)
         {
@@ -426,7 +426,7 @@ public sealed class ImageIterator : IDisposable
         catch (OperationCanceledException)
         {
 #if DEBUG
-            Console.WriteLine($"{nameof(LoadPicAtIndex)} canceled at index {index}");
+            Console.WriteLine($"{nameof(IterateToIndex)} canceled at index {index}");
 #endif
         }
         catch (Exception e)
@@ -441,98 +441,9 @@ public sealed class ImageIterator : IDisposable
         }
     }
 
-    public async Task LoadPicFromString(string path)
-    {
-        if (!Path.Exists(path))
-        {
-            return;
-            // TODO load from URL if not a file
-            throw new FileNotFoundException(path); // TODO: Replace with reload function
-        }
-        if (Directory.Exists(path))
-
-            if (path.Equals(_vm.ImageIterator.FileInfo.DirectoryName))
-            {
-                using var cts = new CancellationTokenSource();
-                await LoadPicAtIndex(0).ConfigureAwait(false);
-            }
-            else
-            {
-                await ChangeDirectoryAndLoad().ConfigureAwait(false);
-            }
-        else
-        {
-            if (Path.GetDirectoryName(path) == Path.GetDirectoryName(Pics[Index]))
-            {
-                await LoadPicFromFile(new FileInfo(path)).ConfigureAwait(false);
-            }
-            else
-            {
-                await ChangeDirectoryAndLoad().ConfigureAwait(false);
-            }
-        }
-        return;
-
-        async Task ChangeDirectoryAndLoad()
-        {
-            var fileInfo = new FileInfo(path);
-            _vm.ImageIterator?.Dispose();
-            _vm.ImageIterator = new ImageIterator(fileInfo, _vm);
-            await _vm.ImageIterator.LoadPicFromFile(new FileInfo(_vm.ImageIterator.Pics[_vm.ImageIterator.Index])).ConfigureAwait(false);
-        }
-    }
-
-    public async Task LoadPicFromFile(FileInfo fileInfo)
-    {
-        SetTitleHelper.SetLoadingTitle(_vm);
-        using var image = new MagickImage();
-        image.Ping(fileInfo);
-        var thumb = image.GetExifProfile()?.CreateThumbnail();
-        if (thumb is not null)
-        {
-            var byteArray = await Task.FromResult(thumb.ToByteArray());
-            var stream = new MemoryStream(byteArray);
-            var writableBitmap = WriteableBitmap.Decode(stream);
-            _vm.ImageSource = writableBitmap;
-            _vm.ImageType = ImageType.Bitmap;
-        }
-        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, _vm);
-        _vm.ImageSource = imageModel.Image;
-        _vm.ImageType = imageModel.ImageType;
-        var isSameFolder = Path.GetDirectoryName(fileInfo.FullName) == Path.GetDirectoryName(Pics[Index]);
-        if (isSameFolder)
-        {
-            Index = Pics.IndexOf(fileInfo.FullName);
-        }
-        await AddAsync(Index, imageModel);
-        await LoadPicAtIndex(Index);
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            if (Pics.Count == 1)
-            {
-                _vm.GalleryMode = GalleryMode.BottomToClosed;
-            }
-
-            if (isSameFolder)
-            {
-                // Fixes not scrolling to selected item
-                GalleryNavigation.CenterScrollToSelectedItem(_vm);
-            }
-            else
-            {
-                await GalleryLoad.ReloadGalleryAsync(_vm, fileInfo.DirectoryName);
-            }
-        }
-        else
-        {
-            GalleryFunctions.Clear(_vm);
-        }
-    }
-
     private static Timer? _timer;
 
-    internal async Task TimerPic(int index)
+    internal async Task TimerIteration(int index)
     {
         if (_timer is null)
         {

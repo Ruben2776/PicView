@@ -182,7 +182,7 @@ public partial class ImageViewer : UserControl
                 navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Next : NavigateTo.Previous;
             }
 
-            await mainViewModel.ImageIterator.LoadNextPic(navigateTo).ConfigureAwait(false);
+            await mainViewModel.ImageIterator.NextIteration(navigateTo).ConfigureAwait(false);
         }
     }
 

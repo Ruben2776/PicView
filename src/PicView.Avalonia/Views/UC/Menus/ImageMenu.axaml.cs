@@ -43,7 +43,7 @@ public partial class ImageMenu  : AnimatedMenu
                 return;
             }
 
-            await vm.ImageIterator.LoadPicAtIndex(number).ConfigureAwait(false);
+            await vm.ImageIterator.IterateToIndex(number).ConfigureAwait(false);
         }
     }
 }

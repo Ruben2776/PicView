@@ -40,7 +40,7 @@ public static class QuickLoad
             if (isDirectory)
             {
                 vm.ImageIterator = new ImageIterator(fileInfo, vm);
-                await vm.ImageIterator.LoadPicAtIndex(0).ConfigureAwait(false);
+                await vm.ImageIterator.IterateToIndex(0).ConfigureAwait(false);
             }
             else
             {

@@ -759,7 +759,7 @@ public static class FunctionsHelper
         var newPath = FileHelper.DuplicateAndReturnFileName(oldPath);
         if (File.Exists(newPath))
         {
-            await Vm.ImageIterator.LoadPicFromFile(new FileInfo(newPath)).ConfigureAwait(false);
+            await NavigationHelper.LoadPicFromFile(newPath, Vm);
         }
     }
 
