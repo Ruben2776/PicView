@@ -16,17 +16,31 @@ using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Navigation;
 
+/// <summary>
+/// Helper class for navigation and image loading functionalities in the application.
+/// </summary>
 public static class NavigationHelper
 {
 
     #region Navigation
     
+    /// <summary>
+    /// Determines whether navigation is possible based on the current state of the <see cref="MainViewModel"/>.
+    /// </summary>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>True if navigation is possible, otherwise false.</returns>
     public static bool CanNavigate(MainViewModel vm)
     {
         return vm?.ImageIterator?.Pics is not null &&
                vm.ImageIterator.Pics.Count > 0;
     }
-
+    
+    /// <summary>
+    /// Navigates to the next or previous image based on the <paramref name="next"/> parameter.
+    /// </summary>
+    /// <param name="next">True to navigate to the next image, false for the previous image.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task Navigate(bool next, MainViewModel vm)
     {
         if (!CanNavigate(vm))
@@ -45,6 +59,12 @@ public static class NavigationHelper
         }
     }
 
+    /// <summary>
+    /// Navigates to the first or last image in the collection.
+    /// </summary>
+    /// <param name="last">True to navigate to the last image, false to navigate to the first image.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task NavigateFirstOrLast(bool last, MainViewModel vm)
     {
         if (!CanNavigate(vm))
@@ -62,6 +82,12 @@ public static class NavigationHelper
         }
     }
 
+    /// <summary>
+    /// Iterates to the next or previous image based on the <paramref name="next"/> parameter.
+    /// </summary>
+    /// <param name="next">True to iterate to the next image, false for the previous image.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task Iterate(bool next, MainViewModel vm)
     {
         if (!CanNavigate(vm))
@@ -79,7 +105,14 @@ public static class NavigationHelper
         }
     }
 
-    public static async Task IterateButton(bool next, bool arrow, MainViewModel vm)
+    /// <summary>
+    /// Navigates and moves the cursor to the corresponding button.
+    /// </summary>
+    /// <param name="next">True to navigate to the next image, false for the previous image.</param>
+    /// <param name="arrow">True to move cursor to the arrow, false for the button.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public static async Task NavigateAndPositionCursor(bool next, bool arrow, MainViewModel vm)
     {
         if (!CanNavigate(vm))
         {
@@ -95,52 +128,14 @@ public static class NavigationHelper
             await Navigate(next, vm);
             await MoveCursorOnButtonClick(next, arrow, vm);
         }
-        
-        // Scroll a gallery page if it is open
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (next)
-                {
-                    UIHelper.GetGalleryView.GalleryListBox.PageRight();
-                }
-                else
-                {
-                    UIHelper.GetGalleryView.GalleryListBox.PageLeft();
-                }
-            });
-            return;
-        }
-
-        await Navigate(next, vm);
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            string buttonName;
-            if (arrow)
-            {
-                buttonName = next ? "ClickArrowRight" : "ClickArrowLeft";
-            }
-            else
-            {
-                buttonName = next ? "NextButton" : "PreviousButton";
-            }
-            Control control;
-            if (arrow)
-            {
-                control = UIHelper.GetMainView.GetControl<UserControl>(buttonName);
-            }
-            else
-            {
-                control = UIHelper.GetBottomBar.GetControl<Button>(buttonName);
-            }
-            var point = arrow ? next ? new Point(65, 95) : new Point(15, 95) : new Point(50, 10);
-            var p = control.PointToScreen(point);
-            vm.PlatformService?.SetCursorPos(p.X, p.Y);
-        });
     }
     
+    /// <summary>
+    /// Navigates to the next or previous folder and loads the first image in that folder.
+    /// </summary>
+    /// <param name="next">True to navigate to the next folder, false for the previous folder.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task GoToNextFolder(bool next, MainViewModel vm)
     {
         if (!CanNavigate(vm))
@@ -156,7 +151,7 @@ public static class NavigationHelper
         }
         else
         {
-            await PreviewPicAndLoadGallery(new FileInfo(fileList[0]), fileList[0], vm, fileList);
+            await PreviewPicAndLoadGallery(new FileInfo(fileList[0]), vm, fileList);
         }
     }
     
@@ -164,6 +159,12 @@ public static class NavigationHelper
     
     #region Load pictures from string, file or url
     
+    /// <summary>
+    /// Loads a picture from a given string source, which can be a file path, directory path, or URL.
+    /// </summary>
+    /// <param name="source">The string source to load the picture from.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task LoadPicFromStringAsync(string source, MainViewModel vm)
     {
         if (string.IsNullOrWhiteSpace(source) || vm is null)
@@ -174,29 +175,43 @@ public static class NavigationHelper
         vm.CurrentView = vm.ImageViewer;
         UIHelper.CloseMenus(vm);
         
-        var fileInfo = new FileInfo(source);
+        var check = ErrorHelper.CheckIfLoadableString(source);
         
-        if (fileInfo.Exists)
+        switch (check)
         {
-            if (fileInfo.IsSupported())
-            {
-                await LoadPicFromFile(fileInfo.FullName, vm, fileInfo).ConfigureAwait(false);
-            }
-            else if (fileInfo.IsArchive())
-            {
+            default:
+                await LoadPicFromFile(check, vm).ConfigureAwait(false);
+                return;
+
+            case "web":
+                await LoadPicFromUrlAsync(source, vm).ConfigureAwait(false);
+                return;
+
+            case "base64":
+                await LoadPicFromBase64Async(source, vm).ConfigureAwait(false);
+                return;
+
+            case "directory":
+                await LoadPicFromDirectoryAsync(source, vm).ConfigureAwait(false);
+                return;
+
+            case "zip":
                 await LoadPicFromArchiveAsync(source, vm).ConfigureAwait(false);
-            }
-        }
-        else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-        {
-            await LoadPicFromDirectoryAsync(fileInfo.FullName, vm).ConfigureAwait(false);
-        }
-        else if (!string.IsNullOrWhiteSpace(source.GetURL()) || !string.IsNullOrWhiteSpace(fileInfo.LinkTarget.GetURL()))
-        {
-            await LoadPicFromUrlAsync(source, vm);
+                return;
+
+            case "":
+                ErrorHandling.ShowStartUpMenu(vm);
+                return;
         }
     }
     
+    /// <summary>
+    /// Loads a picture from a given file.
+    /// </summary>
+    /// <param name="fileName">The file name of the picture to load.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <param name="fileInfo">Optional: FileInfo object for the file.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task LoadPicFromFile(string fileName, MainViewModel vm, FileInfo? fileInfo = null)
     {
         if (vm is null)
@@ -221,14 +236,21 @@ public static class NavigationHelper
             }
         }
 
-        await PreviewPicAndLoadGallery(fileInfo, fileName, vm);
+        await PreviewPicAndLoadGallery(fileInfo, vm);
     }
 
     public static async Task LoadPicFromArchiveAsync(string path, MainViewModel vm)
     {
+        // TODO: implement load from archive
         throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// Loads a picture from a given URL.
+    /// </summary>
+    /// <param name="url">The URL of the picture to load.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task LoadPicFromUrlAsync(string url, MainViewModel vm)
     {
         string destination;
@@ -259,34 +281,26 @@ public static class NavigationHelper
         }
 
         var check = ErrorHelper.CheckIfLoadableString(destination);
-        switch (check)
+        var fileInfo = new FileInfo(check);
+        if (!fileInfo.Exists)
         {
-            default:
-                var fileInfo = new FileInfo(check);
-                var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-                SetSingleImage(imageModel.Image as Bitmap, url, vm);
-                vm.FileInfo = fileInfo;
-                ExifHandling.SetImageModel(imageModel, vm);
-                ExifHandling.UpdateExifValues(imageModel, vm);
-                //FileHistoryNavigation.Add(url);
-            break;
-            case "base64":
-                // TOD - base64
-                break;
-
-            case "zip":
-                // TOD - zip
-                //await LoadPicFromArchiveAsync()
-                //FileHistoryNavigation.Add(url);
-                break;
-
-            case "directory":
-            case "":
-                ErrorHandling.ShowStartUpMenu(vm);
-                return;
+            ErrorHandling.ShowStartUpMenu(vm);
+            return;
         }
+        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        SetSingleImage(imageModel.Image as Bitmap, url, vm);
+        vm.FileInfo = fileInfo;
+        ExifHandling.SetImageModel(imageModel, vm);
+        ExifHandling.UpdateExifValues(imageModel, vm);
+        //FileHistoryNavigation.Add(url);
     }
     
+    /// <summary>
+    /// Loads a picture from a Base64-encoded string.
+    /// </summary>
+    /// <param name="base64">The Base64-encoded string representing the picture.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task LoadPicFromBase64Async(string base64, MainViewModel vm)
     {
         vm.ImageIterator = null;
@@ -316,6 +330,13 @@ public static class NavigationHelper
         vm.IsLoading = false;
     }
 
+    /// <summary>
+    /// Loads a picture from a directory.
+    /// </summary>
+    /// <param name="file">The path to the directory containing the picture.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <param name="fileInfo">Optional: FileInfo object for the directory.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task LoadPicFromDirectoryAsync(string file, MainViewModel vm, FileInfo? fileInfo = null)
     {
         fileInfo ??= new FileInfo(file);
@@ -333,6 +354,12 @@ public static class NavigationHelper
     
     #region Set image
     
+    /// <summary>
+    /// Sets the given image as the single image displayed in the view.
+    /// </summary>
+    /// <param name="bitmap">The bitmap of the image to display.</param>
+    /// <param name="name">The name of the image.</param>
+    /// <param name="vm">The main view model instance.</param>
     public static void SetSingleImage(Bitmap bitmap, string name, MainViewModel vm)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
@@ -374,6 +401,12 @@ public static class NavigationHelper
 
     #region Private helpers
     
+    /// <summary>
+    /// Gets the list of files in the next or previous folder.
+    /// </summary>
+    /// <param name="next">True to get the next folder, false for the previous folder.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation that returns a list of file paths.</returns>
     private static async Task<List<string>?> GetNextFolderFileList(bool next, MainViewModel vm)
     {
         return await Task.Run(() =>
@@ -403,20 +436,40 @@ public static class NavigationHelper
         }).ConfigureAwait(false);
     }
 
-    private static async Task PreviewPicAndLoadGallery(FileInfo fileInfo, string fileName, MainViewModel vm, List<string>? files = null)
+    /// <summary>
+    /// Previews the picture and loads the gallery with the specified files.
+    /// </summary>
+    /// <param name="fileInfo">The file info of the picture to preview.</param>
+    /// <param name="fileName">The name of the picture file.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <param name="files">Optional: List of file paths in the gallery.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    private static async Task PreviewPicAndLoadGallery(FileInfo fileInfo, MainViewModel vm, List<string>? files = null)
     {
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         ExifHandling.SetImageModel(imageModel, vm);
-        vm.ImageSource = imageModel;
+        vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-        vm.ImageIterator = files is null ?
-            new ImageIterator(fileInfo, vm) : new ImageIterator(fileInfo, files, index: 0, vm);
-        
-        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Pics.IndexOf(fileName));
+        if (files is null)
+        {
+            vm.ImageIterator = new ImageIterator(fileInfo, vm);
+            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Pics.IndexOf(fileInfo.FullName));
+        }
+        else
+        {
+            vm.ImageIterator = new ImageIterator(fileInfo, files, index: 0, vm);
+            await vm.ImageIterator.IterateToIndex(0);
+        }
         await CheckAndReloadGallery(fileInfo, vm);
     }
     
+    /// <summary>
+    /// Checks and reloads the gallery if necessary based on the provided file info.
+    /// </summary>
+    /// <param name="fileInfo">The file info to check.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task CheckAndReloadGallery(FileInfo fileInfo, MainViewModel vm)
     {
         GalleryFunctions.Clear(vm);
@@ -435,6 +488,11 @@ public static class NavigationHelper
         }
     }
     
+    /// <summary>
+    /// Scrolls the gallery to the next or previous page.
+    /// </summary>
+    /// <param name="next">True to scroll to the next page, false for the previous page.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task ScrollGallery(bool next)
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -446,6 +504,11 @@ public static class NavigationHelper
         });
     }
     
+    /// <summary>
+    /// Scrolls to the end of the gallery if the <paramref name="last"/> parameter is true.
+    /// </summary>
+    /// <param name="last">True to scroll to the end of the gallery.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task ScrollToEndIfNecessary(bool last)
     {
         if (last && SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
@@ -457,6 +520,13 @@ public static class NavigationHelper
         }
     }
     
+    /// <summary>
+    /// Moves the cursor on the navigation button.
+    /// </summary>
+    /// <param name="next">True to move the cursor to the next button, false for the previous button.</param>
+    /// <param name="arrow">True to move the cursor on the arrow, false to move the cursor on the button.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task MoveCursorOnButtonClick(bool next, bool arrow, MainViewModel vm)
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -469,6 +539,12 @@ public static class NavigationHelper
         });
     }
 
+    /// <summary>
+    /// Gets the name of the navigation button based on input parameters.
+    /// </summary>
+    /// <param name="next">True for the next button, false for the previous button.</param>
+    /// <param name="arrow">True if the navigation uses arrow keys.</param>
+    /// <returns>The name of the navigation button.</returns>
     private static string GetNavigationButtonName(bool next, bool arrow)
     {
         return arrow
@@ -476,6 +552,12 @@ public static class NavigationHelper
             : next ? "NextButton" : "PreviousButton";
     }
 
+    /// <summary>
+    /// Gets the control associated with the specified button name.
+    /// </summary>
+    /// <param name="buttonName">The name of the button.</param>
+    /// <param name="arrow">True if the control is an arrow button.</param>
+    /// <returns>The control associated with the button.</returns>
     private static Control GetButtonControl(string buttonName, bool arrow)
     {
         return arrow
@@ -483,6 +565,12 @@ public static class NavigationHelper
             : UIHelper.GetBottomBar.GetControl<Button>(buttonName);
     }
 
+    /// <summary>
+    /// Gets the point to click on the button based on the input parameters.
+    /// </summary>
+    /// <param name="next">True for the next button, false for the previous button.</param>
+    /// <param name="arrow">True if the navigation uses arrow keys.</param>
+    /// <returns>The point to click on the button.</returns>
     private static Point GetClickPoint(bool next, bool arrow)
     {
         return arrow ? next ? new Point(65, 95) : new Point(15, 95)
@@ -491,6 +579,4 @@ public static class NavigationHelper
 
 
     #endregion
-
-
 }
