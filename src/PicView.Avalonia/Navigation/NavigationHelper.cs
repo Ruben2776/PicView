@@ -18,14 +18,13 @@ namespace PicView.Avalonia.Navigation;
 
 public static class NavigationHelper
 {
+
+    #region Navigation
+    
     public static bool CanNavigate(MainViewModel vm)
     {
-        if (vm?.ImageIterator?.Pics is null)
-        {
-            return false;
-        }
-
-        return vm.ImageIterator.Pics.Count > 0 && vm.ImageIterator.Index > -1 && vm.ImageIterator.Index < vm.ImageIterator.Pics.Count;
+        return vm?.ImageIterator?.Pics is not null &&
+               vm.ImageIterator.Pics.Count > 0;
     }
 
     public static async Task Navigate(bool next, MainViewModel vm)
@@ -37,30 +36,17 @@ public static class NavigationHelper
         
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (next)
-                {
-                    UIHelper.GetGalleryView.GalleryListBox.PageRight();
-                }
-                else
-                {
-                    UIHelper.GetGalleryView.GalleryListBox.PageLeft();
-                }
-            });
-            return;
+            await ScrollGallery(next);
         }
-
-        var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
-        await vm.ImageIterator.NextIteration(navigateTo).ConfigureAwait(false);
+        else
+        {
+            var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
+            await vm.ImageIterator.NextIteration(navigateTo).ConfigureAwait(false);
+        }
     }
 
     public static async Task NavigateFirstOrLast(bool last, MainViewModel vm)
     {
-        if (vm is null)
-        {
-            return;
-        }
         if (!CanNavigate(vm))
         {
             return;
@@ -68,27 +54,17 @@ public static class NavigationHelper
         if (GalleryFunctions.IsFullGalleryOpen)
         {
             GalleryNavigation.NavigateGallery(last, vm);
-            return;
         }
-
-        await vm.ImageIterator.NextIteration(last ? NavigateTo.Last : NavigateTo.First).ConfigureAwait(false);
-        
-        // Fix scroll position not scrolling to the end
-        if (last)
+        else
         {
-            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-            {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    UIHelper.GetGalleryView.GalleryListBox.ScrollToEnd();
-                });
-            }
+            await vm.ImageIterator.NextIteration(last ? NavigateTo.Last : NavigateTo.First).ConfigureAwait(false);
+            await ScrollToEndIfNecessary(last);
         }
     }
 
     public static async Task Iterate(bool next, MainViewModel vm)
     {
-        if (vm is null)
+        if (!CanNavigate(vm))
         {
             return;
         }
@@ -96,25 +72,28 @@ public static class NavigationHelper
         if (GalleryFunctions.IsFullGalleryOpen)
         {
             GalleryNavigation.NavigateGallery(next ? Direction.Right : Direction.Left, vm);
-            return;
         }
-
-        if (!CanNavigate(vm))
+        else
         {
-            return;
+            await Navigate(next, vm);
         }
-        await Navigate(next, vm);
     }
 
     public static async Task IterateButton(bool next, bool arrow, MainViewModel vm)
     {
-        if (vm is null)
-        {
-            return;
-        }
         if (!CanNavigate(vm))
         {
             return;
+        }
+        
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            await ScrollGallery(next);
+        }
+        else
+        {
+            await Navigate(next, vm);
+            await MoveCursorOnButtonClick(next, arrow, vm);
         }
         
         // Scroll a gallery page if it is open
@@ -162,6 +141,29 @@ public static class NavigationHelper
         });
     }
     
+    public static async Task GoToNextFolder(bool next, MainViewModel vm)
+    {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+        SetTitleHelper.SetLoadingTitle(vm);
+        var fileList = await GetNextFolderFileList(next, vm).ConfigureAwait(false);
+
+        if (fileList is null)
+        {
+            SetTitleHelper.SetTitle(vm);
+        }
+        else
+        {
+            await PreviewPicAndLoadGallery(new FileInfo(fileList[0]), fileList[0], vm, fileList);
+        }
+    }
+    
+    #endregion
+    
+    #region Load pictures from string, file or url
+    
     public static async Task LoadPicFromStringAsync(string source, MainViewModel vm)
     {
         if (string.IsNullOrWhiteSpace(source) || vm is null)
@@ -173,6 +175,7 @@ public static class NavigationHelper
         UIHelper.CloseMenus(vm);
         
         var fileInfo = new FileInfo(source);
+        
         if (fileInfo.Exists)
         {
             if (fileInfo.IsSupported())
@@ -186,15 +189,11 @@ public static class NavigationHelper
         }
         else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
         {
-            if (Directory.Exists(fileInfo.FullName))
-            {
-                await LoadPicFromDirectoryAsync(fileInfo.FullName, vm).ConfigureAwait(false);
-            }
-            if (source is not null && !string.IsNullOrWhiteSpace(source.GetURL()) ||
-                !string.IsNullOrWhiteSpace(fileInfo.LinkTarget.GetURL()))
-            {
-                await LoadPicFromUrlAsync(source, vm);
-            }
+            await LoadPicFromDirectoryAsync(fileInfo.FullName, vm).ConfigureAwait(false);
+        }
+        else if (!string.IsNullOrWhiteSpace(source.GetURL()) || !string.IsNullOrWhiteSpace(fileInfo.LinkTarget.GetURL()))
+        {
+            await LoadPicFromUrlAsync(source, vm);
         }
     }
     
@@ -221,76 +220,13 @@ public static class NavigationHelper
                 }
             }
         }
-        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        ExifHandling.SetImageModel(imageModel, vm);
-        vm.ImageSource = imageModel;
-        vm.ImageType = imageModel.ImageType;
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-        vm.ImageIterator = new ImageIterator(fileInfo, vm);
-        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Pics.IndexOf(fileName));
-        GalleryFunctions.Clear(vm);
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            if (vm.GalleryMode is GalleryMode.BottomToClosed or GalleryMode.FullToClosed or GalleryMode.Closed)
-            {
-                vm.GalleryMode = GalleryMode.ClosedToBottom;
-            }
-            await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
-        }
+
+        await PreviewPicAndLoadGallery(fileInfo, fileName, vm);
     }
 
     public static async Task LoadPicFromArchiveAsync(string path, MainViewModel vm)
     {
         throw new NotImplementedException();
-    }
-    
-    public static async Task GoToNextFolder(bool next, MainViewModel vm)
-    {
-        if (!CanNavigate(vm))
-        {
-            return;
-        }
-        SetTitleHelper.SetLoadingTitle(vm);
-        var fileList = await Task.Run(()  =>
-        {
-            var indexChange = next ? 1 : -1;
-            var currentFolder = Path.GetDirectoryName(vm.ImageIterator?.Pics[vm.ImageIterator.Index]);
-            var parentFolder = Path.GetDirectoryName(currentFolder);
-            var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
-            var directoryIndex = Array.IndexOf(directories, currentFolder);
-            if (SettingsHelper.Settings.UIProperties.Looping)
-                directoryIndex = (directoryIndex + indexChange + directories.Length) % directories.Length;
-            else
-            {
-                directoryIndex += indexChange;
-                if (directoryIndex < 0 || directoryIndex >= directories.Length)
-                    return null;
-            }
-
-            for (var i = directoryIndex; i < directories.Length; i++)
-            {
-                var fileInfo = new FileInfo(directories[i]);
-                var fileList = vm.PlatformService.GetFiles(fileInfo);
-                if (fileList is { Count: > 0 })
-                    return fileList;
-            }
-            return null;
-        }).ConfigureAwait(false);
-
-        if (fileList is null)
-        {
-            SetTitleHelper.SetTitle(vm);
-            return;
-        }
-        var fileInfo = new FileInfo(fileList[0]);
-        vm.ImageIterator?.Dispose();
-        vm.ImageIterator = new ImageIterator(fileInfo, fileList,0, vm);
-        await vm.ImageIterator.IterateToIndex(0).ConfigureAwait(false);
-        GalleryFunctions.Clear(vm);
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
-        }
     }
     
     public static async Task LoadPicFromUrlAsync(string url, MainViewModel vm)
@@ -390,12 +326,12 @@ public static class NavigationHelper
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
         await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Index);
-        GalleryFunctions.Clear(vm);
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
-        }
+        await CheckAndReloadGallery(fileInfo, vm);
     }
+    
+    #endregion
+    
+    #region Set image
     
     public static void SetSingleImage(Bitmap bitmap, string name, MainViewModel vm)
     {
@@ -433,6 +369,128 @@ public static class NavigationHelper
         vm.Title = titleString[1];
         vm.TitleTooltip = titleString[1];
     }
+    
+    #endregion
+
+    #region Private helpers
+    
+    private static async Task<List<string>?> GetNextFolderFileList(bool next, MainViewModel vm)
+    {
+        return await Task.Run(() =>
+        {
+            var indexChange = next ? 1 : -1;
+            var currentFolder = Path.GetDirectoryName(vm.ImageIterator?.Pics[vm.ImageIterator.Index]);
+            var parentFolder = Path.GetDirectoryName(currentFolder);
+            var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
+            var directoryIndex = Array.IndexOf(directories, currentFolder);
+            if (SettingsHelper.Settings.UIProperties.Looping)
+                directoryIndex = (directoryIndex + indexChange + directories.Length) % directories.Length;
+            else
+            {
+                directoryIndex += indexChange;
+                if (directoryIndex < 0 || directoryIndex >= directories.Length)
+                    return null;
+            }
+
+            for (var i = directoryIndex; i < directories.Length; i++)
+            {
+                var fileInfo = new FileInfo(directories[i]);
+                var fileList = vm.PlatformService.GetFiles(fileInfo);
+                if (fileList is { Count: > 0 })
+                    return fileList;
+            }
+            return null;
+        }).ConfigureAwait(false);
+    }
+
+    private static async Task PreviewPicAndLoadGallery(FileInfo fileInfo, string fileName, MainViewModel vm, List<string>? files = null)
+    {
+        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        ExifHandling.SetImageModel(imageModel, vm);
+        vm.ImageSource = imageModel;
+        vm.ImageType = imageModel.ImageType;
+        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+        vm.ImageIterator = files is null ?
+            new ImageIterator(fileInfo, vm) : new ImageIterator(fileInfo, files, index: 0, vm);
+        
+        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Pics.IndexOf(fileName));
+        await CheckAndReloadGallery(fileInfo, vm);
+    }
+    
+    private static async Task CheckAndReloadGallery(FileInfo fileInfo, MainViewModel vm)
+    {
+        GalleryFunctions.Clear(vm);
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown || GalleryFunctions.IsFullGalleryOpen)
+        {
+            // Check if the bottom gallery should be shown
+            if (!GalleryFunctions.IsFullGalleryOpen)
+            {
+                if (vm.GalleryMode is GalleryMode.BottomToClosed or GalleryMode.FullToClosed or GalleryMode.Closed)
+                {
+                    // Trigger animation to show it
+                    vm.GalleryMode = GalleryMode.ClosedToBottom;
+                }
+            }
+            await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
+        }
+    }
+    
+    private static async Task ScrollGallery(bool next)
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (next)
+                UIHelper.GetGalleryView.GalleryListBox.PageRight();
+            else
+                UIHelper.GetGalleryView.GalleryListBox.PageLeft();
+        });
+    }
+    
+    private static async Task ScrollToEndIfNecessary(bool last)
+    {
+        if (last && SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                UIHelper.GetGalleryView.GalleryListBox.ScrollToEnd();
+            });
+        }
+    }
+    
+    private static async Task MoveCursorOnButtonClick(bool next, bool arrow, MainViewModel vm)
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var buttonName = GetNavigationButtonName(next, arrow);
+            var control = GetButtonControl(buttonName, arrow);
+            var point = GetClickPoint(next, arrow);
+            var p = control.PointToScreen(point);
+            vm.PlatformService?.SetCursorPos(p.X, p.Y);
+        });
+    }
+
+    private static string GetNavigationButtonName(bool next, bool arrow)
+    {
+        return arrow
+            ? next ? "ClickArrowRight" : "ClickArrowLeft"
+            : next ? "NextButton" : "PreviousButton";
+    }
+
+    private static Control GetButtonControl(string buttonName, bool arrow)
+    {
+        return arrow
+            ? UIHelper.GetMainView.GetControl<UserControl>(buttonName)
+            : UIHelper.GetBottomBar.GetControl<Button>(buttonName);
+    }
+
+    private static Point GetClickPoint(bool next, bool arrow)
+    {
+        return arrow ? next ? new Point(65, 95) : new Point(15, 95)
+            : new Point(50, 10);
+    }
+
+
+    #endregion
 
 
 }
