@@ -19,7 +19,7 @@ public static class GalleryLoad
 
     public static async Task LoadGallery(MainViewModel vm, string currentDirectory)
     {
-        if (vm.ImageIterator?.Pics.Count == 0 || IsLoading || vm.ImageIterator is null)
+        if (vm.ImageIterator?.ImagePaths.Count == 0 || IsLoading || vm.ImageIterator is null)
         {
             return;
         }
@@ -61,7 +61,7 @@ public static class GalleryLoad
         var index = vm.ImageIterator.Index;
         var galleryItemSize = Math.Max(vm.GetBottomGalleryItemHeight, vm.GetFullGalleryItemHeight);
         var loading = TranslationHelper.Translation.Loading;
-        var endIndex = vm.ImageIterator.Pics.Count;
+        var endIndex = vm.ImageIterator.ImagePaths.Count;
         // Set priority low when loading excess images to ensure app responsiveness
         var priority = endIndex switch
         {
@@ -126,13 +126,13 @@ public static class GalleryLoad
                     return;
                 }
                 var horizontalItems = (int)Math.Floor(galleryListBox.Bounds.Width / galleryItem.ImageBorder.MinWidth);
-                index = (vm.ImageIterator.Index - horizontalItems) % vm.ImageIterator.Pics.Count;
+                index = (vm.ImageIterator.Index - horizontalItems) % vm.ImageIterator.ImagePaths.Count;
             });
 
             index = index < 0 ? 0 : index;
             var maxDegreeOfParallelism = Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : 2;
             ParallelOptions options = new() { MaxDegreeOfParallelism = maxDegreeOfParallelism };
-            await AsyncLoop(index, vm.ImageIterator.Pics.Count, options, _cancellationTokenSource.Token);
+            await AsyncLoop(index, vm.ImageIterator.ImagePaths.Count, options, _cancellationTokenSource.Token);
             await AsyncLoop(0, index, options, _cancellationTokenSource.Token);
             GalleryStretchMode.DetermineStretchMode(vm);
             GalleryNavigation.CenterScrollToSelectedItem(vm);
@@ -171,11 +171,11 @@ public static class GalleryLoad
                 }
                 ct.ThrowIfCancellationRequested();
 
-                if (i < 0 || i >= vm.ImageIterator.Pics.Count)
+                if (i < 0 || i >= vm.ImageIterator.ImagePaths.Count)
                 {
                     return;
                 }
-                var fileInfo = new FileInfo(vm.ImageIterator.Pics[i]);
+                var fileInfo = new FileInfo(vm.ImageIterator.ImagePaths[i]);
                 var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfo, isThumb: true,
                     (int)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);

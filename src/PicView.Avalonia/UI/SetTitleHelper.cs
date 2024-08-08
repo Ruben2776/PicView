@@ -37,7 +37,7 @@ public static class SetTitleHelper
         }
 
         var getTitle = TitleHelper.GetTitle((int)vm.ImageWidth, (int)vm.ImageHeight, vm.ImageIterator.Index,
-            vm.FileInfo, vm.ZoomValue, vm.ImageIterator.Pics);
+            vm.FileInfo, vm.ZoomValue, vm.ImageIterator.ImagePaths);
         vm.WindowTitle = getTitle[0];
         vm.Title = getTitle[1];
         vm.TitleTooltip = getTitle[2];
@@ -75,7 +75,7 @@ public static class SetTitleHelper
         }
 
         var titleString = TitleHelper.GetTitle(imageModel.PixelWidth, imageModel.PixelHeight,  vm.ImageIterator.Index,
-            imageModel.FileInfo,  vm.ZoomValue,  vm.ImageIterator.Pics);
+            imageModel.FileInfo,  vm.ZoomValue,  vm.ImageIterator.ImagePaths);
         vm.WindowTitle = titleString[0];
         vm.Title = titleString[1];
         vm.TitleTooltip = titleString[2];

@@ -43,7 +43,7 @@ public partial class ExifView : UserControl
             var success = await ConversionHelper.ResizeByHeight(vm.FileInfo, height).ConfigureAwait(false);
             if (success)
             {
-                vm.ImageIterator?.PreLoader?.Remove(vm.ImageIterator.Index, vm.ImageIterator.Pics);
+                vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
                 await vm.ImageIterator?.IterateToIndex(vm.ImageIterator.Index);
             }
         }
@@ -77,7 +77,7 @@ public partial class ExifView : UserControl
             var success = await ConversionHelper.ResizeByWidth(vm.FileInfo, width).ConfigureAwait(false);
             if (success)
             {
-                vm.ImageIterator?.PreLoader?.Remove(vm.ImageIterator.Index, vm.ImageIterator.Pics);
+                vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
                 await vm.ImageIterator?.IterateToIndex(vm.ImageIterator.Index);
             }
         }

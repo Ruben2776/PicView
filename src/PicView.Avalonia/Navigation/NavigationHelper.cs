@@ -31,8 +31,8 @@ public static class NavigationHelper
     /// <returns>True if navigation is possible, otherwise false.</returns>
     public static bool CanNavigate(MainViewModel vm)
     {
-        return vm?.ImageIterator?.Pics is not null &&
-               vm.ImageIterator.Pics.Count > 0;
+        return vm?.ImageIterator?.ImagePaths is not null &&
+               vm.ImageIterator.ImagePaths.Count > 0;
     }
     
     /// <summary>
@@ -227,7 +227,7 @@ public static class NavigationHelper
         {
             if (fileInfo.DirectoryName == vm.ImageIterator.FileInfo.DirectoryName)
             {
-                var index = vm.ImageIterator.Pics.IndexOf(fileName);
+                var index = vm.ImageIterator.ImagePaths.IndexOf(fileName);
                 if (index != -1)
                 {
                    await vm.ImageIterator.IterateToIndex(index);
@@ -412,7 +412,7 @@ public static class NavigationHelper
         return await Task.Run(() =>
         {
             var indexChange = next ? 1 : -1;
-            var currentFolder = Path.GetDirectoryName(vm.ImageIterator?.Pics[vm.ImageIterator.Index]);
+            var currentFolder = Path.GetDirectoryName(vm.ImageIterator?.ImagePaths[vm.ImageIterator.Index]);
             var parentFolder = Path.GetDirectoryName(currentFolder);
             var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
             var directoryIndex = Array.IndexOf(directories, currentFolder);
@@ -454,7 +454,7 @@ public static class NavigationHelper
         if (files is null)
         {
             vm.ImageIterator = new ImageIterator(fileInfo, vm);
-            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Pics.IndexOf(fileInfo.FullName));
+            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName));
         }
         else
         {

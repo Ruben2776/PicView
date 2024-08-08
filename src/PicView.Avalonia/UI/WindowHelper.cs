@@ -384,7 +384,8 @@ public static class WindowHelper
         {
             return;
         }
-        var preloadValue = vm.ImageIterator?.PreLoader.Get(vm.ImageIterator.Index, vm.ImageIterator.Pics);
+
+        var preloadValue = vm.ImageIterator?.GetCurrentPreLoadValue();
         SetSize(preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight, vm.RotationAngle, vm);
     }
 

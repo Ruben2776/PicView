@@ -75,8 +75,7 @@ public static class SortingHelper
         var files = await Task.FromResult(platformSpecificService.GetFiles(vm.FileInfo)).ConfigureAwait(false);
         if (files is { Count: > 0 })
         {
-            vm.ImageIterator.Pics = files;
-            vm.ImageIterator.Index = files.IndexOf(vm.FileInfo.FullName);
+            vm.ImageIterator.UpdateFileListAndIndex(files, files.IndexOf(vm.FileInfo.FullName));
             SetTitleHelper.SetTitle(vm);
         }
         else return;
@@ -94,8 +93,7 @@ public static class SortingHelper
         var files = await Task.FromResult(platformSpecificService.GetFiles(vm.FileInfo)).ConfigureAwait(false);
         if (files is { Count: > 0 })
         {
-            vm.ImageIterator.Pics = files;
-            vm.ImageIterator.Index = files.IndexOf(vm.FileInfo.FullName);
+            vm.ImageIterator.UpdateFileListAndIndex(files, files.IndexOf(vm.FileInfo.FullName));
             SetTitleHelper.SetTitle(vm);
         }
         else return;

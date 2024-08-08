@@ -1338,7 +1338,7 @@ public class MainViewModel : ViewModelBase
         var success = await ConversionHelper.ResizeImageByPercentage(FileInfo, percentage);
         if (success)
         {
-            ImageIterator?.PreLoader.Remove(ImageIterator.Index, ImageIterator.Pics);
+            ImageIterator?.RemoveCurrentItemFromPreLoader();
             await ImageIterator?.IterateToIndex(ImageIterator.Index);
         }
         else
@@ -1356,7 +1356,7 @@ public class MainViewModel : ViewModelBase
 
         if (ImageIterator is not null)
         {
-            ImageIterator.IsFileBeingRenamed = true;
+            ImageIterator.IsRenamingInProgress = true;
         }
 
         var newPath = await ConversionHelper.ConvertTask(FileInfo, index);
@@ -1367,7 +1367,7 @@ public class MainViewModel : ViewModelBase
 
         if (ImageIterator is not null)
         {
-            ImageIterator.IsFileBeingRenamed = false;
+            ImageIterator.IsRenamingInProgress = false;
         }
     }
     

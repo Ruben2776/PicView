@@ -801,7 +801,7 @@ public static class FunctionsHelper
             return;
         }
 
-        Vm.ImageIterator.PreLoader.Clear();
+        Vm.ImageIterator?.Clear();
         Vm.CurrentView = new ImageViewer();
         await NavigationHelper.LoadPicFromStringAsync(Vm.FileInfo.FullName, Vm);
     }

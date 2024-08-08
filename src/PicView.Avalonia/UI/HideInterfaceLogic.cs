@@ -125,7 +125,7 @@ public static class HideInterfaceLogic
                 return;
             }
 
-            if (vm.ImageIterator.Pics?.Count <= 1)
+            if (vm.ImageIterator.ImagePaths?.Count <= 1)
             {
                 parent.Opacity = 0;
                 childControl.Opacity = 0;
@@ -186,7 +186,7 @@ public static class HideInterfaceLogic
             return;
         }
 
-        if (vm.ImageIterator.Pics?.Count <= 1)
+        if (vm.ImageIterator.ImagePaths?.Count <= 1)
         {
             parent.Opacity = 0;
             childControl.Opacity = 0;

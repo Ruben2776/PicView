@@ -29,9 +29,9 @@ public partial class ImageMenu  : AnimatedMenu
             {
                 number = 0;
             }
-            else if (number > vm.ImageIterator?.Pics?.Count)
+            else if (number > vm.ImageIterator?.ImagePaths?.Count)
             {
-                number = vm.ImageIterator?.Pics?.Count - 1 ?? 0;
+                number = vm.ImageIterator?.ImagePaths?.Count - 1 ?? 0;
             }
             else
             {

@@ -62,7 +62,7 @@ public static class GalleryFunctions
                 vm.GetGalleryItemHeight = vm.GetFullGalleryItemHeight;
             }
         }
-        _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
+        _ = Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.ImagePaths[0])));
         await SettingsHelper.SaveSettingsAsync();
     }
 
@@ -95,7 +95,7 @@ public static class GalleryFunctions
         {
             return;
         }
-        await Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.Pics[0])));
+        await Task.Run(() => GalleryLoad.LoadGallery(vm, Path.GetDirectoryName(vm.ImageIterator.ImagePaths[0])));
     }
 
     public static void OpenBottomGallery(MainViewModel vm)

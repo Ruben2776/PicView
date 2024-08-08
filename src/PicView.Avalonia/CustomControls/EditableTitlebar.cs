@@ -30,7 +30,7 @@ public class EditableTitlebar : TextBox
             {
                 return false;
             }
-            return vm.ImageIterator?.IsFileBeingRenamed ?? false;
+            return vm.ImageIterator?.IsRenamingInProgress ?? false;
         }
         private set
         {
@@ -38,7 +38,7 @@ public class EditableTitlebar : TextBox
             {
                 return;
             }
-            vm.ImageIterator.IsFileBeingRenamed = value;
+            vm.ImageIterator.IsRenamingInProgress = value;
         }
     }
     
