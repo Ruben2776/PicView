@@ -136,23 +136,38 @@ public class GalleryListBox : ListBox
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                _autoScrollViewer.Offset -= new Vector(speed, 0);
+                _autoScrollViewer.Offset -= new Vector(speed, speed);
             }
             else
             {
-                _autoScrollViewer.Offset -= new Vector(-speed, 0);
+                _autoScrollViewer.Offset -= new Vector(-speed, -speed);
             }
         }
         else
         {
             if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
             {
-                _autoScrollViewer.Offset -= new Vector(-speed, 0);
+                _autoScrollViewer.Offset -= new Vector(-speed, -speed);
             }
             else
             {
-                _autoScrollViewer.Offset -= new Vector(speed, 0);
+                _autoScrollViewer.Offset -= new Vector(speed, speed);
             }
         }
+    }
+
+    public void ScrollToEnd()
+    {
+        _autoScrollViewer.Offset = new Vector(double.PositiveInfinity, double.PositiveInfinity);
+        _autoScrollViewer.ScrollToEnd();
+    }
+
+    public void PageLeft()
+    {
+        _autoScrollViewer.PageLeft();
+    }
+    public void PageRight()
+    {
+        _autoScrollViewer.PageRight();
     }
 }

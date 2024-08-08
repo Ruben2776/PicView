@@ -126,7 +126,7 @@ public static class FunctionsHelper
         });
     }
 
-    #region Functionns
+    #region Functions
 
     #region Menus
 
@@ -180,7 +180,7 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    #endregion Menusf
+    #endregion Menus
 
     #region Navigation, zoom and rotation
 
@@ -201,11 +201,6 @@ public static class FunctionsHelper
 
     public static async Task Prev()
     {
-        if (MainKeyboardShortcuts.CtrlDown)
-        {
-            await NavigationHelper.GoToNextFolder(next: false, Vm);
-            return;
-        }
         await NavigationHelper.Iterate(next: false, Vm);
     }
     
@@ -705,10 +700,12 @@ public static class FunctionsHelper
         });
     }
 
-    public static Task Rename()
+    public static async Task Rename()
     {
-        UIHelper.GetEditableTitlebar.SelectFileName();
-        return Task.CompletedTask;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            UIHelper.GetEditableTitlebar.SelectFileName();
+        });
     }
     
     public static async Task ShowFileProperties()

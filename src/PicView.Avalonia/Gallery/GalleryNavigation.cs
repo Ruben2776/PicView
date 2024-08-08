@@ -105,6 +105,26 @@ public static class GalleryNavigation
             SetHighlightedGalleryItem(vm, targetItem.Index);
         }
     }
+    
+    public static void NavigateGallery(bool last, MainViewModel vm)
+    {
+        var highlightedGalleryItem = vm.SelectedGalleryItemIndex;
+        var galleryItems = GetGalleryItems();
+        
+        if (highlightedGalleryItem < 0 || highlightedGalleryItem >= galleryItems.Count)
+        {
+            return;
+        }
+        
+        if (last)
+        {
+            SetHighlightedGalleryItem(vm, galleryItems.Count - 1);
+        }
+        else
+        {
+            SetHighlightedGalleryItem(vm, 0);
+        }
+    }
 
     private static List<GalleryItemPosition> GetGalleryItems()
     {

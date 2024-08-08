@@ -34,6 +34,22 @@ public static class NavigationHelper
         {
             return;
         }
+        
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (next)
+                {
+                    UIHelper.GetGalleryView.GalleryListBox.PageRight();
+                }
+                else
+                {
+                    UIHelper.GetGalleryView.GalleryListBox.PageLeft();
+                }
+            });
+            return;
+        }
 
         var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
         await vm.ImageIterator.LoadNextPic(navigateTo).ConfigureAwait(false);
@@ -51,11 +67,23 @@ public static class NavigationHelper
         }
         if (GalleryFunctions.IsFullGalleryOpen)
         {
-            // TODO - Go to first or page image in gallery
+            GalleryNavigation.NavigateGallery(last, vm);
             return;
         }
 
         await vm.ImageIterator.LoadNextPic(last ? NavigateTo.Last : NavigateTo.First).ConfigureAwait(false);
+        
+        // Fix scroll position not scrolling to the end
+        if (last)
+        {
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    UIHelper.GetGalleryView.GalleryListBox.ScrollToEnd();
+                });
+            }
+        }
     }
 
     public static async Task Iterate(bool next, MainViewModel vm)
@@ -84,17 +112,28 @@ public static class NavigationHelper
         {
             return;
         }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            GalleryNavigation.NavigateGallery(next ? Direction.Right : Direction.Left, vm);
-            return;
-        }
-
         if (!CanNavigate(vm))
         {
             return;
         }
+        
+        // Scroll a gallery page if it is open
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (next)
+                {
+                    UIHelper.GetGalleryView.GalleryListBox.PageRight();
+                }
+                else
+                {
+                    UIHelper.GetGalleryView.GalleryListBox.PageLeft();
+                }
+            });
+            return;
+        }
+
         await Navigate(next, vm);
 
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -142,7 +181,7 @@ public static class NavigationHelper
             }
             else if (fileInfo.IsArchive())
             {
-                //await LoadPicFromArchiveAsync(path).ConfigureAwait(false);
+                await LoadPicFromArchiveAsync(source, vm).ConfigureAwait(false);
             }
         }
         else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
@@ -198,6 +237,11 @@ public static class NavigationHelper
             }
             await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
         }
+    }
+
+    public static async Task LoadPicFromArchiveAsync(string path, MainViewModel vm)
+    {
+        throw new NotImplementedException();
     }
     
     public static async Task GoToNextFolder(bool next, MainViewModel vm)
@@ -296,6 +340,7 @@ public static class NavigationHelper
 
             case "zip":
                 // TOD - zip
+                //await LoadPicFromArchiveAsync()
                 //FileHistoryNavigation.Add(url);
                 break;
 
