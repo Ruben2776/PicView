@@ -19,7 +19,7 @@
             <customControls:AutoScrollViewer
                 Focusable="False"
                 ScrollChanged="ImageScrollViewer_OnScrollChanged"
-                VerticalScrollBarVisibility="{Binding ToggleScrollBarVisibility}"
+                VerticalScrollBarVisibility="{CompiledBinding ToggleScrollBarVisibility}"
                 x:Name="ImageScrollViewer">
                 <Border
                     PointerMoved="ImageZoomBorder_OnPointerMoved"
@@ -27,13 +27,18 @@
                     PointerReleased="ImageZoomBorder_OnPointerReleased"
                     x:Name="ImageZoomBorder">
                     <customControls:PicBox
-                        Height="{CompiledBinding ImageHeight}"
-                        ImageType="{CompiledBinding ImageType}"
+                        Height="{CompiledBinding ImageHeight,
+                                                 Mode=OneWay}"
+                        ImageType="{CompiledBinding ImageType,
+                                                    Mode=OneWay}"
                         RenderOptions.BitmapInterpolationMode="HighQuality"
-                        SecondarySource="{CompiledBinding SecondaryImageSource}"
-                        Source="{CompiledBinding ImageSource}"
+                        SecondarySource="{CompiledBinding SecondaryImageSource,
+                                                          Mode=OneWay}"
+                        Source="{CompiledBinding ImageSource,
+                                                 Mode=OneWay}"
                         UseLayoutRounding="True"
-                        Width="{CompiledBinding ImageWidth}"
+                        Width="{CompiledBinding ImageWidth,
+                                                Mode=OneWay}"
                         x:Name="MainImage" />
                 </Border>
             </customControls:AutoScrollViewer>

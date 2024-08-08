@@ -16,7 +16,7 @@
 
         <Panel.ContextMenu>
             <ContextMenu Opened="MenuBase_OnOpened">
-                <MenuItem Header="{CompiledBinding Stretch}">
+                <MenuItem Header="{CompiledBinding Stretch, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
@@ -28,42 +28,49 @@
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Uniform"
-                        Header="{CompiledBinding Uniform}"
+                        Header="{CompiledBinding Uniform,
+                                                 Mode=OneWay}"
                         IsChecked="{CompiledBinding IsUniformMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="UniformToFill"
-                        Header="{CompiledBinding UniformToFill}"
+                        Header="{CompiledBinding UniformToFill,
+                                                 Mode=OneWay}"
                         IsChecked="{CompiledBinding IsUniformToFillMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Fill"
-                        Header="{CompiledBinding Fill}"
+                        Header="{CompiledBinding Fill,
+                                                 Mode=OneWay}"
                         IsChecked="{CompiledBinding IsFillMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="None"
-                        Header="{CompiledBinding None}"
+                        Header="{CompiledBinding None,
+                                                 Mode=OneWay}"
                         IsChecked="{CompiledBinding IsNoneMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="Square"
-                        Header="{CompiledBinding Square}"
+                        Header="{CompiledBinding Square,
+                                                 Mode=OneWay}"
                         IsChecked="{CompiledBinding IsSquareMenuChecked}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{CompiledBinding GalleryItemStretchCommand}"
                         CommandParameter="FillSquare"
-                        Header="{CompiledBinding FillSquare}"
+                        Header="{CompiledBinding FillSquare,
+                                                 Mode=OneWay}"
                         IsChecked="{CompiledBinding IsFillSquareMenuChecked}"
                         ToggleType="Radio" />
                 </MenuItem>
                 <MenuItem
-                    Header="{CompiledBinding ExpandedGalleryItemSize}"
+                    Header="{CompiledBinding ExpandedGalleryItemSize,
+                                             Mode=OneWay}"
                     PointerPressed="Flyout_OnPointerPressed"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
@@ -88,7 +95,7 @@
                     </FlyoutBase.AttachedFlyout>
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{CompiledBinding CloseGalleryCommand}" Header="{CompiledBinding Close}">
+                <MenuItem Command="{CompiledBinding CloseGalleryCommand}" Header="{CompiledBinding Close, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CloseGeometry}"
@@ -138,7 +145,8 @@
                 <ItemsPanelTemplate>
                     <WrapPanel
                         HorizontalAlignment="Left"
-                        Orientation="{CompiledBinding GalleryOrientation}"
+                        Orientation="{CompiledBinding GalleryOrientation,
+                                                      Mode=OneWay}"
                         VerticalAlignment="Bottom" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>

@@ -13,15 +13,17 @@
         Background="Transparent"
         BorderThickness="3"
         CornerRadius="8"
-        Height="{CompiledBinding GetGalleryItemHeight}"
+        Height="{CompiledBinding GetGalleryItemHeight,
+                                 Mode=OneWay}"
         MinWidth="25"
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0"
-        Width="{CompiledBinding GetGalleryItemWidth}"
+        Width="{CompiledBinding GetGalleryItemWidth,
+                                Mode=OneWay}"
         x:DataType="viewModels:MainViewModel"
         x:Name="ImageBorder">
-        <Image Stretch="{CompiledBinding GalleryStretch}" x:Name="GalleryImage" />
+        <Image Stretch="{CompiledBinding GalleryStretch, Mode=OneWay}" x:Name="GalleryImage" />
         <ToolTip.Tip>
             <StackPanel>
                 <TextBlock
@@ -45,8 +47,10 @@
             <ContextMenu>
                 <MenuItem
                     Command="{CompiledBinding PrintCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding Print}">
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding Print,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PrintGeometry}"
@@ -58,8 +62,10 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding OpenWithCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding OpenWith}"
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding OpenWith,
+                                             Mode=OneWay}"
                     x:Name="OpenWith">
                     <MenuItem.Icon>
                         <Path
@@ -72,8 +78,10 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding LocateOnDiskCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding ShowInFolder}">
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding ShowInFolder,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ShowInFolderGeometry}"
@@ -86,8 +94,10 @@
                 <Separator />
                 <MenuItem
                     Command="{CompiledBinding SetAsWallpaperCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding SetAsWallpaper}">
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding SetAsWallpaper,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -99,8 +109,10 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding SetAsLockScreenCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding SetAsLockScreenImage}">
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding SetAsLockScreenImage,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -113,8 +125,10 @@
                 <Separator />
                 <MenuItem
                     Command="{CompiledBinding CopyFileCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding CopyFile}">
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding CopyFile,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
@@ -124,7 +138,7 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{CompiledBinding CopyImage}">
+                <MenuItem Header="{CompiledBinding CopyImage, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
@@ -137,7 +151,7 @@
                 <MenuItem>
                     <MenuItem.Header>
                         <TextBlock>
-                            <Run Text="{CompiledBinding Copy}" />
+                            <Run Text="{CompiledBinding Copy, Mode=OneWay}" />
                             <Run Text=" base64" />
                         </TextBlock>
                     </MenuItem.Header>
@@ -152,8 +166,10 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding DuplicateFileCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding DuplicateFile}">
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding DuplicateFile,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
@@ -164,7 +180,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="{CompiledBinding FileCut}">
+                <MenuItem Header="{CompiledBinding FileCut, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CutGeometry}"
@@ -176,8 +192,10 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding RecycleFileCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=FileLocation}"
-                    Header="{CompiledBinding DeleteFile}">
+                    CommandParameter="{CompiledBinding Path=Text,
+                                                       ElementName=FileLocation}"
+                    Header="{CompiledBinding DeleteFile,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource RecycleGeometry}"

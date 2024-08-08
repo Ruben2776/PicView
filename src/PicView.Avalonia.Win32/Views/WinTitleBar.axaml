@@ -1,6 +1,8 @@
 <UserControl
-    Height="{CompiledBinding TitlebarHeight}"
-    IsVisible="{CompiledBinding IsTopToolbarShown}"
+    Height="{CompiledBinding TitlebarHeight,
+                             Mode=OneWay}"
+    IsVisible="{CompiledBinding IsTopToolbarShown,
+                                Mode=OneWay}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -71,11 +73,12 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                Command="{Binding RotateRightCommand}"
+                Command="{CompiledBinding RotateRightCommand}"
                 DockPanel.Dock="Left"
                 Margin="0"
                 Name="RotateRightButton"
-                ToolTip.Tip="{Binding RotateLeft}"
+                ToolTip.Tip="{CompiledBinding RotateLeft,
+                                              Mode=OneWay}"
                 Width="30">
                 <Path
                     Data="M142.9 142.9c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5c0 0 0 0 0 0H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1C73.2 122 55.6 150.7 44.8 181.4c-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5c7.7-21.8 20.2-42.3 37.8-59.8zM16 312v7.6 .7V440c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l41.6-41.6c87.6 86.5 228.7 86.2 315.8-1c24.4-24.4 42.1-53.1 52.9-83.7c5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8c-62.2 62.2-162.7 62.5-225.3 1L185 329c6.9-6.9 8.9-17.2 5.2-26.2s-12.5-14.8-22.2-14.8H48.4h-.7H40c-13.3 0-24 10.7-24 24z"
@@ -90,10 +93,11 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                Command="{Binding FlipCommand}"
+                Command="{CompiledBinding FlipCommand}"
                 DockPanel.Dock="Left"
                 Margin="0"
-                ToolTip.Tip="{Binding GetFlipped}"
+                ToolTip.Tip="{CompiledBinding GetFlipped,
+                                              Mode=OneWay}"
                 Width="30">
                 <Path
                     Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
@@ -102,7 +106,7 @@
                     Stretch="Fill"
                     Width="13" />
                 <Button.RenderTransform>
-                    <ScaleTransform ScaleX="{Binding ScaleX}" />
+                    <ScaleTransform ScaleX="{CompiledBinding ScaleX}" />
                 </Button.RenderTransform>
             </Button>
 
@@ -111,7 +115,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                Command="{Binding ExitCommand}"
+                Command="{CompiledBinding ExitCommand}"
                 CornerRadius="0,8,0,0"
                 DockPanel.Dock="Right"
                 Width="35">
@@ -128,7 +132,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                Command="{Binding MaximizeCommand}"
+                Command="{CompiledBinding MaximizeCommand}"
                 DockPanel.Dock="Right"
                 Name="RestoreButton"
                 Width="35">
@@ -145,7 +149,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="hover"
-                Command="{Binding MinimizeCommand}"
+                Command="{CompiledBinding MinimizeCommand}"
                 DockPanel.Dock="Right"
                 Width="35">
                 <Viewbox Height="12" Width="12">
@@ -161,13 +165,17 @@
                 FontSize="13"
                 FontWeight="Medium"
                 Foreground="{StaticResource MainTextColor}"
-                Height="{CompiledBinding TitlebarHeight}"
+                Height="{CompiledBinding TitlebarHeight,
+                                         Mode=OneWay}"
                 IsTabStop="False"
-                MaxWidth="{CompiledBinding TitleMaxWidth}"
+                MaxWidth="{CompiledBinding TitleMaxWidth,
+                                           Mode=OneWay}"
                 Name="EditableTitlebar"
-                Text="{CompiledBinding Title}"
+                Text="{CompiledBinding Title,
+                                       Mode=OneWay}"
                 TextAlignment="Center"
-                ToolTip.Tip="{CompiledBinding TitleTooltip}"
+                ToolTip.Tip="{CompiledBinding TitleTooltip,
+                                              Mode=OneWay}"
                 VerticalAlignment="Center" />
         </DockPanel>
     </Border>

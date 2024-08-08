@@ -1,12 +1,13 @@
 <Window
-    CanResize="{Binding CanResize}"
+    CanResize="{CompiledBinding CanResize}"
     CornerRadius="8"
     Icon="/icon.ico"
     MinHeight="{CompiledBinding WindowMinSize}"
     MinWidth="{CompiledBinding WindowMinSize}"
     SizeChanged="Control_OnSizeChanged"
-    SizeToContent="{Binding SizeToContent}"
-    Title="{Binding WindowTitle}"
+    SizeToContent="{CompiledBinding SizeToContent}"
+    Title="{CompiledBinding WindowTitle,
+                            Mode=OneWay}"
     TransparencyLevelHint="AcrylicBlur"
     d:DesignHeight="450"
     d:DesignWidth="800"

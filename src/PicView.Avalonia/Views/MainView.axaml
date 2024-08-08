@@ -24,7 +24,7 @@
     </UserControl.Resources>
     <UserControl.ContextMenu>
         <ContextMenu>
-            <MenuItem Command="{CompiledBinding OpenFileCommand}" Header="{CompiledBinding Open}">
+            <MenuItem Command="{CompiledBinding OpenFileCommand}" Header="{CompiledBinding Open, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource AltFolderGeometry}"
@@ -34,7 +34,7 @@
                         Width="15" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save}">
+            <MenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"
@@ -46,8 +46,10 @@
             </MenuItem>
             <MenuItem
                 Command="{CompiledBinding PrintCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName}"
-                Header="{CompiledBinding Print}">
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
+                Header="{CompiledBinding Print,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PrintGeometry}"
@@ -59,8 +61,10 @@
             </MenuItem>
             <MenuItem
                 Command="{CompiledBinding OpenWithCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName}"
-                Header="{CompiledBinding OpenWith}">
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
+                Header="{CompiledBinding OpenWith,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource OpenWithGeometry}"
@@ -72,8 +76,10 @@
             </MenuItem>
             <MenuItem
                 Command="{CompiledBinding LocateOnDiskCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName}"
-                Header="{CompiledBinding ShowInFolder}">
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
+                Header="{CompiledBinding ShowInFolder,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource ShowInFolderGeometry}"
@@ -84,7 +90,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Header="{CompiledBinding SortFilesBy}">
+            <MenuItem Header="{CompiledBinding SortFilesBy, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="M666 481q-60 92-137 273-22-45-37-72.5t-40.5-63.5-51-56.5-63-35-81.5-14.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q250 0 410 225zm1126 799q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192q-32 0-85 .5t-81 1-73-1-71-5-64-10.5-63-18.5-58-28.5-59-40-55-53.5-56-69.5q59-93 136-273 22 45 37 72.5t40.5 63.5 51 56.5 63 35 81.5 14.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23zm0-896q0 14-9 23l-320 320q-9 9-23 9-13 0-22.5-9.5t-9.5-22.5v-192h-256q-48 0-87 15t-69 45-51 61.5-45 77.5q-32 62-78 171-29 66-49.5 111t-54 105-64 100-74 83-90 68.5-106.5 42-128 16.5h-224q-14 0-23-9t-9-23v-192q0-14 9-23t23-9h224q48 0 87-15t69-45 51-61.5 45-77.5q32-62 78-171 29-66 49.5-111t54-105 64-100 74-83 90-68.5 106.5-42 128-16.5h256v-192q0-14 9-23t23-9q12 0 24 10l319 319q9 9 9 23z"
@@ -96,7 +102,8 @@
                 <MenuItem
                     Command="{CompiledBinding SortFilesByNameCommand}"
                     GroupName="SortType"
-                    Header="{CompiledBinding FileName}"
+                    Header="{CompiledBinding FileName,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding SortOrder,
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=Name}"
@@ -104,7 +111,8 @@
                 <MenuItem
                     Command="{CompiledBinding SortFilesBySizeCommand}"
                     GroupName="SortType"
-                    Header="{CompiledBinding FileSize}"
+                    Header="{CompiledBinding FileSize,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding SortOrder,
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=FileSize}"
@@ -112,7 +120,8 @@
                 <MenuItem
                     Command="{CompiledBinding SortFilesByExtensionCommand}"
                     GroupName="SortType"
-                    Header="{CompiledBinding FileExtension}"
+                    Header="{CompiledBinding FileExtension,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding SortOrder,
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=FileExtension}"
@@ -120,7 +129,8 @@
                 <MenuItem
                     Command="{CompiledBinding SortFilesByCreationTimeCommand}"
                     GroupName="SortType"
-                    Header="{CompiledBinding Created}"
+                    Header="{CompiledBinding Created,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding SortOrder,
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=Created}"
@@ -128,7 +138,8 @@
                 <MenuItem
                     Command="{CompiledBinding SortFilesByLastAccessTimeCommand}"
                     GroupName="SortType"
-                    Header="{CompiledBinding LastAccessTime}"
+                    Header="{CompiledBinding LastAccessTime,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding SortOrder,
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=LastAccessTime}"
@@ -137,7 +148,8 @@
                 <MenuItem
                     Command="{CompiledBinding SortFilesRandomlyCommand}"
                     GroupName="SortType"
-                    Header="{CompiledBinding Random}"
+                    Header="{CompiledBinding Random,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding SortOrder,
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=Random}"
@@ -146,16 +158,18 @@
                 <MenuItem
                     Command="{CompiledBinding SortFilesAscendingCommand}"
                     GroupName="SortDirection"
-                    Header="{CompiledBinding Ascending}"
+                    Header="{CompiledBinding Ascending,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding IsAscending}"
                     ToggleType="Radio" />
                 <MenuItem
                     Command="{CompiledBinding SortFilesDescendingCommand}"
                     GroupName="SortDirection"
-                    Header="{CompiledBinding Descending}"
+                    Header="{CompiledBinding Descending,
+                                             Mode=OneWay}"
                     ToggleType="Radio" />
             </MenuItem>
-            <MenuItem Header="{Binding RecentFiles}">
+            <MenuItem Header="{Binding RecentFiles, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="M504 255.531c.253 136.64-111.18 248.372-247.82 248.468-59.015.042-113.223-20.53-155.822-54.911-11.077-8.94-11.905-25.541-1.839-35.607l11.267-11.267c8.609-8.609 22.353-9.551 31.891-1.984C173.062 425.135 212.781 440 256 440c101.705 0 184-82.311 184-184 0-101.705-82.311-184-184-184-48.814 0-93.149 18.969-126.068 49.932l50.754 50.754c10.08 10.08 2.941 27.314-11.313 27.314H24c-8.837 0-16-7.163-16-16V38.627c0-14.254 17.234-21.393 27.314-11.314l49.372 49.372C129.209 34.136 189.552 8 256 8c136.81 0 247.747 110.78 248 247.531zm-180.912 78.784l9.823-12.63c8.138-10.463 6.253-25.542-4.21-33.679L288 256.349V152c0-13.255-10.745-24-24-24h-16c-13.255 0-24 10.745-24 24v135.651l65.409 50.874c10.463 8.137 25.541 6.253 33.679-4.21z"
@@ -165,7 +179,7 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="{Binding Settings}">
+            <MenuItem Header="{CompiledBinding Settings, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource WrenchGeometry}"
@@ -175,25 +189,29 @@
                         Width="12" />
                 </MenuItem.Icon>
                 <MenuItem
-                    Header="{Binding GetLooping}"
+                    Header="{CompiledBinding GetLooping,
+                                             Mode=OneWay}"
                     IsChecked="{Binding IsLooping}"
                     ToggleType="CheckBox" />
                 <MenuItem
-                    Header="{Binding GetScrolling}"
-                    IsChecked="{Binding IsScrollingEnabled}"
+                    Header="{CompiledBinding GetScrolling,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding IsScrollingEnabled}"
                     ToggleType="CheckBox" />
                 <MenuItem
-                    Command="{Binding ChangeTopMostCommand}"
-                    Header="{Binding StayTopMost}"
-                    IsChecked="{Binding IsTopMost}"
+                    Command="{CompiledBinding ChangeTopMostCommand,
+                                              Mode=OneWay}"
+                    Header="{CompiledBinding StayTopMost}"
+                    IsChecked="{CompiledBinding IsTopMost}"
                     ToggleType="CheckBox" />
                 <MenuItem
                     Command="{CompiledBinding StretchCommand}"
-                    Header="{Binding Stretch}"
-                    IsChecked="{Binding IsStretched}"
+                    Header="{CompiledBinding Stretch,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding IsStretched}"
                     ToggleType="CheckBox" />
-                <MenuItem Command="{Binding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom}" />
-                <MenuItem Command="{Binding ToggleUICommand}" Header="{Binding HideShowInterface}">
+                <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom, Mode=OneWay}" />
+                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{Binding HideShowInterface, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image Height="12" Width="12">
                             <DrawingImage>
@@ -236,7 +254,8 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
-                    Header="{CompiledBinding GetBottomGallery}"
+                    Header="{CompiledBinding GetBottomGallery,
+                                             Mode=OneWay}"
                     IsChecked="{CompiledBinding IsGalleryShown}">
                     <MenuItem.Icon>
                         <Image Height="12" Width="12">
@@ -252,7 +271,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding ShowSettingsWindowCommand}" Header="{Binding ShowAllSettingsWindow}">
+                <MenuItem Command="{CompiledBinding ShowSettingsWindowCommand}" Header="{CompiledBinding ShowAllSettingsWindow, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="M262.29 192.31a64 64 0 1057.4 57.4 64.13 64.13 0 00-57.4-57.4zM416.39 256a154.34 154.34 0 01-1.53 20.79l45.21 35.46a10.81 10.81 0 012.45 13.75l-42.77 74a10.81 10.81 0 01-13.14 4.59l-44.9-18.08a16.11 16.11 0 00-15.17 1.75A164.48 164.48 0 01325 400.8a15.94 15.94 0 00-8.82 12.14l-6.73 47.89a11.08 11.08 0 01-10.68 9.17h-85.54a11.11 11.11 0 01-10.69-8.87l-6.72-47.82a16.07 16.07 0 00-9-12.22 155.3 155.3 0 01-21.46-12.57 16 16 0 00-15.11-1.71l-44.89 18.07a10.81 10.81 0 01-13.14-4.58l-42.77-74a10.8 10.8 0 012.45-13.75l38.21-30a16.05 16.05 0 006-14.08c-.36-4.17-.58-8.33-.58-12.5s.21-8.27.58-12.35a16 16 0 00-6.07-13.94l-38.19-30A10.81 10.81 0 0149.48 186l42.77-74a10.81 10.81 0 0113.14-4.59l44.9 18.08a16.11 16.11 0 0015.17-1.75A164.48 164.48 0 01187 111.2a15.94 15.94 0 008.82-12.14l6.73-47.89A11.08 11.08 0 01213.23 42h85.54a11.11 11.11 0 0110.69 8.87l6.72 47.82a16.07 16.07 0 009 12.22 155.3 155.3 0 0121.46 12.57 16 16 0 0015.11 1.71l44.89-18.07a10.81 10.81 0 0113.14 4.58l42.77 74a10.8 10.8 0 01-2.45 13.75l-38.21 30a16.05 16.05 0 00-6.05 14.08c.33 4.14.55 8.3.55 12.47z"
@@ -266,8 +285,10 @@
             <Separator />
             <MenuItem
                 Command="{CompiledBinding SetAsWallpaperCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName}"
-                Header="{CompiledBinding SetAsWallpaper}">
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
+                Header="{CompiledBinding SetAsWallpaper,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
@@ -280,7 +301,8 @@
             <MenuItem
                 Command="{CompiledBinding SetAsLockScreenCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName}"
-                Header="{CompiledBinding SetAsLockScreenImage}">
+                Header="{CompiledBinding SetAsLockScreenImage,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
@@ -291,7 +313,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Header="{CompiledBinding ImageTxt}">
+            <MenuItem Header="{CompiledBinding ImageTxt, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource ImageGeometry}"
@@ -301,7 +323,7 @@
                         Width="12" />
                 </MenuItem.Icon>
 
-                <MenuItem Command="{CompiledBinding ShowExifWindowCommand}" Header="{CompiledBinding ImageInfo}">
+                <MenuItem Command="{CompiledBinding ShowExifWindowCommand}" Header="{CompiledBinding ImageInfo, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageInfoGeometry}"
@@ -314,8 +336,10 @@
 
                 <MenuItem
                     Command="{CompiledBinding FilePropertiesCommand}"
-                    CommandParameter="{CompiledBinding FileInfo.FullName}"
-                    Header="{CompiledBinding FileProperties}">
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{CompiledBinding FileProperties,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="M80 44v424a12 12 0 0012 12h328a12 12 0 0012-12V44a12 12 0 00-12-12H92a12 12 0 00-12 12zm192 260H160v-32h112zm80-80H160v-32h192zm0-80H160v-32h192z"
@@ -326,7 +350,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{CompiledBinding ResizeImage}" IsEnabled="False">
+                <MenuItem Header="{CompiledBinding ResizeImage, Mode=OneWay}" IsEnabled="False">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
@@ -337,7 +361,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{CompiledBinding BatchResize}" IsEnabled="False">
+                <MenuItem Header="{CompiledBinding BatchResize, Mode=OneWay}" IsEnabled="False">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
@@ -353,7 +377,8 @@
                 Command="{CompiledBinding RecycleFileCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
-                Header="{CompiledBinding DeleteFile}">
+                Header="{CompiledBinding DeleteFile,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource RecycleGeometry}"
@@ -364,7 +389,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Command="{CompiledBinding PasteCommand}" Header="{Binding FilePaste}">
+            <MenuItem Command="{CompiledBinding PasteCommand}" Header="{CompiledBinding FilePaste, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PasteGeometry}"
@@ -378,7 +403,8 @@
                 Command="{CompiledBinding CopyFileCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
-                Header="{CompiledBinding Copy}">
+                Header="{CompiledBinding Copy,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CopyGeometry}"
@@ -391,7 +417,7 @@
                     Command="{CompiledBinding CopyFilePathCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
-                    Header="{Binding FileCopyPath}">
+                    Header="{Binding FileCopyPath, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
@@ -404,7 +430,7 @@
                 <MenuItem>
                     <MenuItem.Header>
                         <TextBlock>
-                            <Run Text="{CompiledBinding Copy}" />
+                            <Run Text="{CompiledBinding Copy, Mode=OneWay}" />
                             <Run Text=" base64" />
                         </TextBlock>
                     </MenuItem.Header>
@@ -422,7 +448,8 @@
                     Command="{CompiledBinding DuplicateFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
-                    Header="{CompiledBinding DuplicateFile}">
+                    Header="{CompiledBinding DuplicateFile,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"
@@ -434,8 +461,10 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding CutCommand}"
-                    CommandParameter="{CompiledBinding FileInfo.FullName}"
-                    Header="{CompiledBinding FileCut}">
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{CompiledBinding FileCut,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CutGeometry}"
@@ -450,7 +479,8 @@
                 Command="{CompiledBinding CopyFileCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
-                Header="{Binding CopyFile}">
+                Header="{CompiledBinding CopyFile,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CopyGeometry}"
@@ -460,7 +490,7 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding CopyImageCommand}" Header="{Binding CopyImage}">
+            <MenuItem Command="{CompiledBinding CopyImageCommand}" Header="{CompiledBinding CopyImage, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"
@@ -472,7 +502,7 @@
             </MenuItem>
 
             <Separator />
-            <MenuItem Command="{CompiledBinding ExitCommand}" Header="{Binding Close}">
+            <MenuItem Command="{CompiledBinding ExitCommand}" Header="{CompiledBinding Close, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CloseGeometry}"
@@ -487,12 +517,14 @@
     <Panel x:Name="MainGrid">
         <uc:SpinWaiter
             HorizontalAlignment="Center"
-            IsVisible="{CompiledBinding IsLoading}"
+            IsVisible="{CompiledBinding IsLoading,
+                                        Mode=OneWay}"
             VerticalAlignment="Center"
             ZIndex="3" />
         <ContentControl
             ClipToBounds="True"
-            Content="{CompiledBinding CurrentView}"
+            Content="{CompiledBinding CurrentView,
+                                      Mode=OneWay}"
             Margin="{CompiledBinding GalleryMargin}" />
         <buttons:ClickArrowRight
             HorizontalAlignment="Right"
@@ -515,11 +547,15 @@
             VerticalAlignment="Bottom"
             x:Name="GalleryShortcut" />
         <views:GalleryAnimationControlView
-            GalleryMode="{CompiledBinding GalleryMode}"
+            GalleryMode="{CompiledBinding GalleryMode,
+                                          Mode=OneWay}"
             Height="NaN"
-            IsVisible="{CompiledBinding IsGalleryShown}"
-            VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}"
-            Width="{CompiledBinding GalleryWidth}"
+            IsVisible="{CompiledBinding IsGalleryShown,
+                                        Mode=OneWay}"
+            VerticalAlignment="{CompiledBinding GalleryVerticalAlignment,
+                                                Mode=OneWay}"
+            Width="{CompiledBinding GalleryWidth,
+                                    Mode=OneWay}"
             x:Name="GalleryView" />
     </Panel>
 </UserControl>

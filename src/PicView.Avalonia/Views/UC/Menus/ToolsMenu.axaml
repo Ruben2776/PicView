@@ -38,7 +38,8 @@
                     CornerRadius="8,0,0,0"
                     Height="45"
                     IsEnabled="False"
-                    ToolTip.Tip="{Binding BatchResize}"
+                    ToolTip.Tip="{CompiledBinding BatchResize,
+                                                  Mode=OneWay}"
                     Width="179">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -91,7 +92,8 @@
                             FontSize="14"
                             Margin="10,0,7,0"
                             MaxWidth="130"
-                            Text="{CompiledBinding BatchResize}"
+                            Text="{CompiledBinding BatchResize,
+                                                   Mode=OneWay}"
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
@@ -104,7 +106,8 @@
                     Classes="noBorderHover"
                     Height="45"
                     IsEnabled="False"
-                    ToolTip.Tip="{Binding EffectsTooltip}"
+                    ToolTip.Tip="{CompiledBinding EffectsTooltip,
+                                                  Mode=OneWay}"
                     Width="136">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -124,7 +127,8 @@
                             FontSize="14"
                             Margin="10,0,6,0"
                             MaxWidth="130"
-                            Text="{CompiledBinding Effects}"
+                            Text="{CompiledBinding Effects,
+                                                   Mode=OneWay}"
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
@@ -134,10 +138,11 @@
                     Canvas.Left="315"
                     Canvas.Top="-1"
                     Classes="hover"
-                    Command="{Binding CloseMenuCommand}"
+                    Command="{CompiledBinding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
                     Height="45"
-                    ToolTip.Tip="{Binding Close}"
+                    ToolTip.Tip="{CompiledBinding Close,
+                                                  Mode=OneWay}"
                     Width="45">
                     <Path
                         Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
@@ -165,7 +170,8 @@
                         <TextBlock
                             Classes="txt"
                             Margin="10,0,6,0"
-                            Text="{CompiledBinding ImageInfo}"
+                            Text="{CompiledBinding ImageInfo,
+                                                   Mode=OneWay}"
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
@@ -176,6 +182,8 @@
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding OptimizeImageCommand}"
                     Height="45"
+                    ToolTip.Tip="{CompiledBinding OptimizeImage,
+                                                  Mode=OneWay}"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -210,7 +218,8 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{CompiledBinding OptimizeImage}" />
+                            Text="{CompiledBinding OptimizeImage,
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -219,7 +228,8 @@
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     IsEnabled="False"
-                    ToolTip.Tip="{CompiledBinding ColorPickerToolTooltip}"
+                    ToolTip.Tip="{CompiledBinding ColorPickerToolTooltip,
+                                                  Mode=OneWay}"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -232,7 +242,8 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{CompiledBinding ColorPickerTool}" />
+                            Text="{CompiledBinding ColorPickerTool,
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -315,7 +326,8 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{CompiledBinding ChangeBackground}" />
+                            Text="{CompiledBinding ChangeBackground,
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -324,7 +336,8 @@
                     Canvas.Top="150"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ShowKeybindingsWindowCommand}"
-                    ToolTip.Tip="{CompiledBinding ApplicationShortcuts}"
+                    ToolTip.Tip="{CompiledBinding ApplicationShortcuts,
+                                                  Mode=OneWay}"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -335,7 +348,8 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{Binding ApplicationShortcuts}" />
+                            Text="{CompiledBinding ApplicationShortcuts,
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -343,7 +357,7 @@
                     Canvas.Left="182"
                     Canvas.Top="150"
                     Classes="ButtonBorder altHover"
-                    Command="{Binding ToggleUICommand}"
+                    Command="{CompiledBinding ToggleUICommand}"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -354,7 +368,8 @@
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"
-                            Text="{CompiledBinding HideShowInterface}" />
+                            Text="{CompiledBinding HideShowInterface,
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </Button>
             </Canvas>

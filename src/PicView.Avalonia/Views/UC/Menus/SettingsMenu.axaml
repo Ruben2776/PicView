@@ -38,7 +38,8 @@
                     Command="{Binding ShowSettingsWindowCommand}"
                     CornerRadius="8,0,0,0"
                     Height="45"
-                    ToolTip.Tip="{Binding ShowAllSettingsWindow}"
+                    ToolTip.Tip="{CompiledBinding ShowAllSettingsWindow,
+                                                  Mode=OneWay}"
                     Width="179">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -53,7 +54,8 @@
                             FontSize="14"
                             Margin="10,0,6,0"
                             MaxWidth="150"
-                            Text="{Binding Settings}"
+                            Text="{CompiledBinding Settings,
+                                                   Mode=OneWay}"
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
@@ -66,7 +68,8 @@
                     Classes="noBorderHover"
                     Command="{CompiledBinding ShowAboutWindowCommand}"
                     Height="45"
-                    ToolTip.Tip="{Binding InfoWinow}"
+                    ToolTip.Tip="{CompiledBinding InfoWinow,
+                                                  Mode=OneWay}"
                     Width="135">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -111,7 +114,8 @@
                             FontSize="14"
                             Margin="10,0,6,0"
                             MaxWidth="150"
-                            Text="{Binding About}"
+                            Text="{CompiledBinding About,
+                                                   Mode=OneWay}"
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
@@ -124,7 +128,8 @@
                     Command="{Binding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
                     Height="46"
-                    ToolTip.Tip="{Binding Close}"
+                    ToolTip.Tip="{CompiledBinding Close,
+                                                  Mode=OneWay}"
                     Width="45">
                     <Path
                         Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
@@ -140,13 +145,15 @@
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleScrollCommand}"
                     Height="45"
-                    IsChecked="{Binding IsScrollingEnabled}"
-                    ToolTip.Tip="{Binding ToggleScroll}"
+                    IsChecked="{CompiledBinding IsScrollingEnabled}"
+                    ToolTip.Tip="{CompiledBinding ToggleScroll,
+                                                  Mode=OneWay}"
                     Width="169">
                     <TextBlock
                         Classes="txt"
                         MaxWidth="150"
-                        Text="{Binding GetScrolling}" />
+                        Text="{CompiledBinding GetScrolling,
+                                               Mode=OneWay}" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -154,13 +161,15 @@
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     Height="45"
-                    IsChecked="{Binding IsStretched}"
-                    ToolTip.Tip="{Binding Stretch}"
+                    IsChecked="{CompiledBinding IsStretched}"
+                    ToolTip.Tip="{CompiledBinding Stretch,
+                                                  Mode=OneWay}"
                     Width="169">
                     <TextBlock
                         Classes="txt"
                         MaxWidth="150"
-                        Text="{Binding Stretch}" />
+                        Text="{CompiledBinding Stretch,
+                                               Mode=OneWay}" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -168,27 +177,31 @@
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleLoopingCommand}"
-                    IsChecked="{Binding IsLooping}"
-                    ToolTip.Tip="{Binding ToggleLooping}"
+                    IsChecked="{CompiledBinding IsLooping}"
+                    ToolTip.Tip="{CompiledBinding ToggleLooping,
+                                                  Mode=OneWay}"
                     Width="169">
                     <TextBlock
                         Classes="txt"
                         MaxWidth="150"
-                        Text="{Binding GetLooping}" />
+                        Text="{CompiledBinding GetLooping,
+                                               Mode=OneWay}" />
                 </ToggleButton>
 
                 <ToggleButton
                     Canvas.Left="182"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
-                    Command="{Binding ChangeAutoFitCommand}"
-                    IsChecked="{Binding IsAutoFit}"
-                    ToolTip.Tip="{Binding AutoFitWindow}"
+                    Command="{CompiledBinding ChangeAutoFitCommand}"
+                    IsChecked="{CompiledBinding IsAutoFit}"
+                    ToolTip.Tip="{CompiledBinding AutoFitWindow,
+                                                  Mode=OneWay}"
                     Width="169">
                     <TextBlock
                         Classes="txt"
                         MaxWidth="150"
-                        Text="{Binding AutoFitWindow}" />
+                        Text="{CompiledBinding AutoFitWindow,
+                                               Mode=OneWay}" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -197,13 +210,15 @@
                     Classes="ButtonBorder altHover"
                     Command="{Binding ChangeTopMostCommand}"
                     Height="45"
-                    IsChecked="{Binding IsTopMost}"
-                    ToolTip.Tip="{Binding StayTopMost}"
+                    IsChecked="{CompiledBinding IsTopMost}"
+                    ToolTip.Tip="{CompiledBinding StayTopMost,
+                                                  Mode=OneWay}"
                     Width="169">
                     <TextBlock
                         Classes="txt"
                         MaxWidth="150"
-                        Text="{Binding StayTopMost}" />
+                        Text="{CompiledBinding StayTopMost,
+                                               Mode=OneWay}" />
                 </ToggleButton>
 
                 <ToggleButton
@@ -213,12 +228,14 @@
                     Command="{CompiledBinding ToggleSubdirectoriesCommand}"
                     Height="45"
                     IsChecked="{CompiledBinding IsIncludingSubdirectories}"
-                    ToolTip.Tip="{CompiledBinding SearchSubdirectory}"
+                    ToolTip.Tip="{CompiledBinding SearchSubdirectory,
+                                                  Mode=OneWay}"
                     Width="169">
                     <TextBlock
                         Classes="txt"
                         MaxWidth="150"
-                        Text="{Binding SearchSubdirectory}" />
+                        Text="{CompiledBinding SearchSubdirectory,
+                                               Mode=OneWay}" />
                 </ToggleButton>
             </Canvas>
         </Border>
