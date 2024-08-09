@@ -27,7 +27,7 @@ public static class ErrorHelper
             return Path.GetExtension(s).IsArchive() ? "zip" : s;
 
         if (Directory.Exists(s))
-            return s;
+            return "directory";
 
         if (!string.IsNullOrWhiteSpace(s.GetURL()))
             return "web";
