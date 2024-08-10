@@ -11,6 +11,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -257,7 +258,6 @@ public sealed class ImageIterator : IDisposable
 
         _isRunning = false;
         //FileHistoryNavigation.Rename(e.OldFullPath, e.FullPath);
-        //await ImageInfo.UpdateValuesAsync(fileInfo).ConfigureAwait(false);
         GalleryFunctions.RemoveGalleryItem(oldIndex, _vm);
         await GalleryFunctions.AddGalleryItem(index,fileInfo, _vm);
         await GalleryFunctions.SortGalleryItems(ImagePaths, _vm);
@@ -386,29 +386,33 @@ public sealed class ImageIterator : IDisposable
             var preLoadValue = PreLoader.Get(index, ImagePaths);
             if (preLoadValue is not null)
             {
-                var showThumb = true;
-                while (preLoadValue.IsLoading)
+                if (preLoadValue.IsLoading)
                 {
-                    if (showThumb)
+                    LoadingPreview(index);
+                    preLoadValue.ImageLoaded += async (_, e) =>
                     {
-                        await LoadingPreview(index);
+                        await Task.Delay(20);
                         if (Index != index)
                         {
+                            // Fix loading bug
+                            if (_vm.Title == TranslationHelper.Translation.Loading)
+                            { 
+                                var nextIndex = IsReversed ? Math.Min(index,Index) : Math.Max(index,Index); 
+                                await IterateToIndex(nextIndex);
+                                return;
+                            }
                             return;
                         }
-                        showThumb = false;
-                    }
-                    
-                    await Task.Delay(20);
-                    if (Index != index)
-                    {
-                        return;
-                    }
+                        UpdateSource(e.PreLoadValue);
+                        await AddAsync(Index, preLoadValue.ImageModel);
+                        await Preload();
+                    };
+                    return;
                 }
             }
             else
             {
-                await LoadingPreview(index);
+                LoadingPreview(index);
                 var added = await PreLoader.AddAsync(index, ImagePaths);
                 if (Index != index)
                 {
@@ -427,6 +431,8 @@ public sealed class ImageIterator : IDisposable
             }
 
             UpdateSource(preLoadValue);
+            await AddAsync(Index, preLoadValue.ImageModel);
+            await Preload();
         }
         catch (OperationCanceledException)
         {
@@ -438,6 +444,7 @@ public sealed class ImageIterator : IDisposable
         {
 #if DEBUG
             TooltipHelper.ShowTooltipMessage(e.Message);
+            Console.WriteLine(e.Message);
 #endif
         }
         finally
@@ -467,48 +474,7 @@ public sealed class ImageIterator : IDisposable
             return;
         }
         _timer?.Start();
-        Index = index;
-        var preLoadValue = PreLoader.Get(index, ImagePaths);
-
-        if (preLoadValue != null)
-        {
-            if (preLoadValue.IsLoading)
-            {
-                SetTitleHelper.SetLoadingTitle(_vm);
-                await Task.Delay(250);
-                if (Index != index)
-                {
-                    return;
-                }
-
-                if (preLoadValue.IsLoading)
-                {
-                    await LoadingPreview(index);
-                }
-
-                var x = 0;
-                while (preLoadValue.IsLoading)
-                {
-                    await Task.Delay(200);
-                    x++;
-                    if (x > 10)
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            await LoadingPreview(index);
-            await PreLoader.AddAsync(index, ImagePaths).ConfigureAwait(false);
-            preLoadValue = PreLoader.Get(index, ImagePaths);
-            if (preLoadValue is null)
-            {
-                return;
-            }
-        }
-        UpdateSource(preLoadValue);
+        await IterateToIndex(index);
     }
     
     public void UpdateFileListAndIndex(List<string> fileList, int index)
@@ -521,7 +487,7 @@ public sealed class ImageIterator : IDisposable
 
     #region Update Source and Preview
 
-    public void UpdateSource(PreLoader.PreLoadValue preLoadValue)
+    private void UpdateSource(PreLoader.PreLoadValue preLoadValue)
     {
         _vm.IsLoading = false;
         ExifHandling.SetImageModel(preLoadValue.ImageModel, vm: _vm);
@@ -550,11 +516,9 @@ public sealed class ImageIterator : IDisposable
         TooltipHelper.CloseToolTipMessage();
 
         ExifHandling.UpdateExifValues(preLoadValue.ImageModel, vm: _vm);
-        _ = AddAsync(Index, preLoadValue.ImageModel);
-        _ = Preload();
     }
     
-    public async Task LoadingPreview(int index)
+    public void LoadingPreview(int index)
     {
         if (index != Index)
         {
@@ -571,14 +535,22 @@ public sealed class ImageIterator : IDisposable
         var thumb = image.GetExifProfile()?.CreateThumbnail();
         if (thumb is null)
         {
-            await Set();
+            if (index == Index)
+            {
+                _vm.IsLoading = true;
+                _vm.ImageSource = null;
+            }
             return;
         }
 
         var byteArray = thumb.ToByteArray();
         if (byteArray is null)
         {
-            await Set();
+            if (index == Index)
+            {
+                _vm.IsLoading = true;
+                _vm.ImageSource = null;
+            }
             return;
         }
         var stream = new MemoryStream(byteArray);
@@ -590,16 +562,6 @@ public sealed class ImageIterator : IDisposable
         _vm.ImageSource = new Bitmap(stream);
         _vm.ImageType = ImageType.Bitmap;
         WindowHelper.SetSize(image?.Width ?? 0, image?.Height ?? 0, 0, _vm);
-        return;
-
-        async Task Set()
-        {
-            if (index == Index)
-            {
-                _vm.IsLoading = true;
-                await Dispatcher.UIThread.InvokeAsync(() =>  _vm.ImageViewer.MainImage.Source = null);
-            }
-        }
     }
 
     #endregion
