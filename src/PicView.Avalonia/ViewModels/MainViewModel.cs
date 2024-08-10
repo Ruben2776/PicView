@@ -741,13 +741,11 @@ public class MainViewModel : ViewModelBase
 
     public double GetNavSpeed
     {
-        get => _getNavSpeed;
-        set
+        get => Math.Round(_getNavSpeed, 2);
+        set 
         {
-            var roundedValue = Math.Round(value, 2);
-            this.RaiseAndSetIfChanged(ref _getNavSpeed, roundedValue);
-            SettingsHelper.Settings.UIProperties.NavSpeed = roundedValue;
-            _ = SettingsHelper.SaveSettingsAsync();
+            this.RaiseAndSetIfChanged(ref _getNavSpeed, value);
+            SettingsHelper.Settings.UIProperties.NavSpeed = value;
         }
     }
 

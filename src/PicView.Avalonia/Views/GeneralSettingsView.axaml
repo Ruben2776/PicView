@@ -264,11 +264,12 @@
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
             Margin="0,1,0,1"
-            Maximum="1.5"
-            Minimum=".1"
-            TickFrequency=".1"
+            Maximum="2.5"
+            Minimum="0.05"
+            TickFrequency="0.05"
             TickPlacement="BottomRight"
-            Value="{CompiledBinding GetNavSpeed}"
+            Value="{CompiledBinding GetNavSpeed,
+                                    Mode=TwoWay}"
             Width="270" />
         <TextBlock
             Classes="txt"

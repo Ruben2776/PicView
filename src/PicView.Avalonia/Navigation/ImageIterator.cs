@@ -459,7 +459,7 @@ public sealed class ImageIterator : IDisposable
     {
         if (_timer is null)
         {
-            _timer = new Timer(TimeSpan.FromSeconds(SettingsHelper.Settings.UIProperties.NavSpeed))
+            _timer = new Timer
             {
                 AutoReset = false,
                 Enabled = true
@@ -473,6 +473,8 @@ public sealed class ImageIterator : IDisposable
             }
             return;
         }
+
+        _timer.Interval = TimeSpan.FromSeconds(SettingsHelper.Settings.UIProperties.NavSpeed).TotalMilliseconds;
         _timer?.Start();
         await IterateToIndex(index);
     }
