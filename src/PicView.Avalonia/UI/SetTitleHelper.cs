@@ -56,8 +56,9 @@ public static class SetTitleHelper
     
     public static void SetLoadingTitle(MainViewModel vm)
     {
-        vm. WindowTitle = TranslationHelper.GetTranslation("Loading") + " - PicView";
-        vm.TitleTooltip = vm.Title = TranslationHelper.GetTranslation("Loading");
+        vm.WindowTitle = $"{TranslationHelper.Translation.Loading} - PicView";
+        vm.Title = TranslationHelper.Translation.Loading;
+        vm.TitleTooltip = vm.Title;
     }
     
     public static void SetTitle(MainViewModel vm, ImageModel? imageModel)

@@ -43,18 +43,26 @@ public class App : Application, IPlatformSpecificService
         bool settingsExists;
         try
         {
-            settingsExists = await SettingsHelper.LoadSettingsAsync();
-            await Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
+            settingsExists = await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
+            await TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage);
         }
         catch (TaskCanceledException)
         {
             return;
         }
 
-        var w = desktop.MainWindow = new WinMainWindow();
+        Window? window = null;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            window = new WinMainWindow();
+            desktop.MainWindow = window;
+        });
         _vm = new MainViewModel(this);
-        w.DataContext = _vm;
-        StartUpHelper.Start(_vm, settingsExists, desktop, w);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            window.DataContext = _vm;
+            StartUpHelper.Start(_vm, settingsExists, desktop, window);
+        });
     }
     
     #region Interface Implementation

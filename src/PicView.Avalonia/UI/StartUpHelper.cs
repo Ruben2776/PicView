@@ -16,8 +16,6 @@ public static class StartUpHelper
 {
     public static void Start(MainViewModel vm, bool settingsExists, IClassicDesktopStyleApplicationLifetime desktop, Window w)
     {
-        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(w);
-        UIHelper.SetControls(desktop);
         if (!settingsExists)
         {
             // Fixes incorrect window
@@ -59,6 +57,8 @@ public static class StartUpHelper
             vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
         }
         w.Show();
+        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(w);
+        UIHelper.SetControls(desktop);
         vm.IsLoading = true;
         vm.UpdateLanguage();
         vm.GetFlipped = vm.Flip;
@@ -89,7 +89,7 @@ public static class StartUpHelper
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
-            _ = QuickLoad.QuickLoadAsync(vm, args[1]);
+            Task.Run(() => QuickLoad.QuickLoadAsync(vm, args[1]));
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
         {
@@ -100,7 +100,7 @@ public static class StartUpHelper
             }
             else
             {
-                _ = QuickLoad.QuickLoadAsync(vm, SettingsHelper.Settings.StartUp.LastFile);
+                Task.Run(() => QuickLoad.QuickLoadAsync(vm, SettingsHelper.Settings.StartUp.LastFile));
             }
         }
         else
