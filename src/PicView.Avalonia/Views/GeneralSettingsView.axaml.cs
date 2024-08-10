@@ -15,20 +15,20 @@ public partial class GeneralSettingsView : UserControl
         InitializeComponent();
         Loaded += delegate
         {
-            ApplicationStartupBox.SelectionChanged += (sender, args) =>
+            ApplicationStartupBox.SelectionChanged += async delegate
             {
                 SettingsHelper.Settings.StartUp.OpenLastFile = ApplicationStartupBox.SelectedIndex == 1;
-                _ = SettingsHelper.SaveSettingsAsync();
+                await SettingsHelper.SaveSettingsAsync();
             };
-            MouseWheelBox.SelectionChanged += (sender, args) =>
+            MouseWheelBox.SelectionChanged += async delegate
             {
                 SettingsHelper.Settings.Zoom.CtrlZoom = MouseWheelBox.SelectedIndex == 0;
-                _ = SettingsHelper.SaveSettingsAsync();
+                await SettingsHelper.SaveSettingsAsync();
             };
-            ScrollDirectionBox.SelectionChanged += (sender, args) =>
+            ScrollDirectionBox.SelectionChanged += async delegate
             {
                 SettingsHelper.Settings.Zoom.HorizontalReverseScroll = ScrollDirectionBox.SelectedIndex == 0;
-                _ = SettingsHelper.SaveSettingsAsync();
+                await SettingsHelper.SaveSettingsAsync();
             };
             MouseWheelBox.SelectedIndex = SettingsHelper.Settings.Zoom.CtrlZoom ? 0 : 1;
             ScrollDirectionBox.SelectedIndex = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? 0 : 1;

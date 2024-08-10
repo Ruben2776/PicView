@@ -183,9 +183,10 @@
 
         <Button
             Classes="BorderStyle altHover mainBtn"
+            Command="{CompiledBinding ResetSettingsCommand}"
             HorizontalAlignment="Center"
             Margin="0,20,0,10">
-            <TextBlock Classes="txt" Text="{CompiledBinding ResetButtonText}" />
+            <TextBlock Classes="txt" Text="{CompiledBinding ResetButtonText, Mode=OneWay}" />
         </Button>
     </StackPanel>
 </UserControl>

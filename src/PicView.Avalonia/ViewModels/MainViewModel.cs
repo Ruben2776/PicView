@@ -458,6 +458,8 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<string, Unit>? SetAsLockScreenCommand { get; }
     
     public ReactiveCommand<string, Unit>? GalleryItemStretchCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit>? ResetSettingsCommand { get; }
 
     #endregion Commands
 
@@ -1827,6 +1829,8 @@ public class MainViewModel : ViewModelBase
         ToggleSubdirectoriesCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleSubdirectories);
 
         ToggleLoopingCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleLooping);
+        
+        ResetSettingsCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ResetSettings);
 
         #endregion Settings commands
     }

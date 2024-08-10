@@ -1132,6 +1132,29 @@ public static class FunctionsHelper
     }
 
     #endregion
+
+    #region Other settings
+
+    public static async Task ResetSettings()
+    {
+        SettingsHelper.DeleteSettingFiles();
+        SettingsHelper.SetDefaults();
+        await SettingsHelper.SaveSettingsAsync();
+        string args;
+        if (!NavigationHelper.CanNavigate(Vm))
+        {
+            var argsList = Environment.GetCommandLineArgs();
+            args = argsList.Length > 1 ? argsList[1] : string.Empty;
+        }
+        else
+        {
+            args = Vm.FileInfo.FullName;
+        }
+        ProcessHelper.RestartApp(args);
+        await Close();
+    }
+
+    #endregion
     
     #endregion
 

@@ -23,7 +23,8 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Margin="0,5,0,10"
-            Text="{CompiledBinding Language}" />
+            Text="{CompiledBinding Language,
+                                   Mode=OneWay}" />
 
         <ComboBox
             Background="{StaticResource SecondaryBackgroundColor}"
@@ -41,13 +42,14 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Margin="0,3,0,10"
-            Text="{Binding MiscSettings}" />
+            Text="{CompiledBinding MiscSettings,
+                                   Mode=OneWay}" />
 
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            IsChecked="{Binding IsIncludingSubdirectories}"
+            IsChecked="{CompiledBinding IsIncludingSubdirectories}"
             Margin="0,0,0,3"
             Width="270">
             <TextBlock
@@ -55,15 +57,16 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{Binding SearchSubdirectory}" />
+                Text="{CompiledBinding SearchSubdirectory,
+                                       Mode=OneWay}" />
         </ToggleButton>
 
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            Command="{Binding ChangeTopMostCommand}"
-            IsChecked="{Binding IsTopMost}"
+            Command="{CompiledBinding ChangeTopMostCommand}"
+            IsChecked="{CompiledBinding IsTopMost}"
             Margin="0,0,0,3"
             Width="270">
             <TextBlock
@@ -71,14 +74,15 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{Binding StayTopMost}" />
+                Text="{CompiledBinding StayTopMost,
+                                       Mode=OneWay}" />
         </ToggleButton>
 
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            IsChecked="{Binding IsStayingCentered}"
+            IsChecked="{CompiledBinding IsStayingCentered}"
             Margin="0,0,0,3"
             Width="270">
             <TextBlock
@@ -86,14 +90,16 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{Binding StayCentered}" />
+                Text="{CompiledBinding StayCentered,
+                                       Mode=OneWay}" />
         </ToggleButton>
 
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            IsChecked="{Binding IsFileSavingDialogShown}"
+            IsChecked="{CompiledBinding IsFileSavingDialogShown,
+                                        Mode=OneWay}"
             Margin="0,0,0,3"
             Width="270">
             <TextBlock
@@ -101,14 +107,15 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{Binding ShowFileSavingDialog}" />
+                Text="{CompiledBinding ShowFileSavingDialog,
+                                       Mode=OneWay}" />
         </ToggleButton>
 
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            IsChecked="{Binding IsOpeningInSameWindow}"
+            IsChecked="{CompiledBinding IsOpeningInSameWindow}"
             IsEnabled="False"
             Margin="0,0,0,3"
             Width="270">
@@ -117,7 +124,8 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{Binding OpenInSameWindow}" />
+                Text="{CompiledBinding OpenInSameWindow,
+                                       Mode=OneWay}" />
         </ToggleButton>
 
         <TextBlock
@@ -135,8 +143,8 @@
             Padding="5,7,0,7"
             Width="270"
             x:Name="MouseWheelBox">
-            <ComboBoxItem Content="{Binding CtrlToZoom}" IsSelected="{Binding IsCtrlToZoomEnabled}" />
-            <ComboBoxItem Content="{Binding ScrollToZoom}" />
+            <ComboBoxItem Content="{CompiledBinding CtrlToZoom, Mode=OneWay}" IsSelected="{CompiledBinding IsCtrlToZoomEnabled}" />
+            <ComboBoxItem Content="{CompiledBinding ScrollToZoom, Mode=OneWay}" />
         </ComboBox>
 
         <TextBlock
@@ -145,7 +153,8 @@
             FontSize="14"
             Margin="0,3,0,10"
             MaxWidth="270"
-            Text="{Binding ScrollDirection}" />
+            Text="{CompiledBinding ScrollDirection,
+                                   Mode=OneWay}" />
         <ComboBox
             Background="{StaticResource SecondaryBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
@@ -156,10 +165,12 @@
             Width="270"
             x:Name="ScrollDirectionBox">
             <ComboBoxItem
-                Content="{Binding Reverse}"
-                IsSelected="{Binding IsNavigatingInReverse}"
+                Content="{CompiledBinding Reverse,
+                                          Mode=OneWay}"
+                IsSelected="{CompiledBinding IsNavigatingInReverse,
+                                             Mode=OneWay}"
                 x:Name="ReverseDirectionBoxItem" />
-            <ComboBoxItem Content="{Binding Forward}" x:Name="ForwardDirectionBoxItem" />
+            <ComboBoxItem Content="{CompiledBinding Forward, Mode=OneWay}" x:Name="ForwardDirectionBoxItem" />
         </ComboBox>
 
         <TextBlock
@@ -168,7 +179,8 @@
             FontSize="14"
             Margin="0,3,0,10"
             MaxWidth="270"
-            Text="{Binding ApplicationStartup}" />
+            Text="{CompiledBinding ApplicationStartup,
+                                   Mode=OneWay}" />
         <ComboBox
             Background="{StaticResource SecondaryBackgroundColor}"
             BorderBrush="{StaticResource MainBorderColor}"
@@ -178,8 +190,8 @@
             Padding="5,7,0,7"
             Width="270"
             x:Name="ApplicationStartupBox">
-            <ComboBoxItem Content="{Binding None}" />
-            <ComboBoxItem Content="{Binding OpenLastFile}" IsSelected="{Binding IsOpeningLastFileOnStartup}" />
+            <ComboBoxItem Content="{CompiledBinding None, Mode=OneWay}" />
+            <ComboBoxItem Content="{CompiledBinding OpenLastFile, Mode=OneWay}" IsSelected="{CompiledBinding IsOpeningLastFileOnStartup}" />
         </ComboBox>
 
         <TextBlock
@@ -188,7 +200,8 @@
             FontSize="12"
             Margin="0,6,0,10"
             MaxWidth="270"
-            Text="{Binding AdjustTimingForSlideshow}" />
+            Text="{CompiledBinding AdjustTimingForSlideshow,
+                                   Mode=OneWay}" />
         <customControls:CustomSlider
             Height="30"
             HorizontalAlignment="Center"
@@ -198,15 +211,16 @@
             Minimum="1"
             TickFrequency="1"
             TickPlacement="BottomRight"
-            Value="{Binding GetSlideshowSpeed}"
+            Value="{CompiledBinding GetSlideshowSpeed,
+                                    Mode=OneWay}"
             Width="270" />
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Foreground="{StaticResource MainTextColorFaded}"
             Margin="0,0,0,15">
-            <Run Text="{Binding GetSlideshowSpeed}" />
-            <Run Text="{Binding SecAbbreviation}" />
+            <Run Text="{CompiledBinding GetSlideshowSpeed, Mode=OneWay}" />
+            <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
         </TextBlock>
 
         <TextBlock
@@ -215,7 +229,8 @@
             FontSize="12"
             Margin="0,3,0,10"
             MaxWidth="270"
-            Text="{Binding AdjustTimingForZoom}" />
+            Text="{CompiledBinding AdjustTimingForZoom,
+                                   Mode=OneWay}" />
         <customControls:CustomSlider
             Height="30"
             HorizontalAlignment="Center"
@@ -225,14 +240,16 @@
             Minimum=".1"
             TickFrequency=".1"
             TickPlacement="BottomRight"
-            Value="{Binding GetZoomSpeed}"
+            Value="{CompiledBinding GetZoomSpeed,
+                                    Mode=OneWay}"
             Width="270" />
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Foreground="{StaticResource MainTextColorFaded}"
             Margin="0,0,0,15"
-            Text="{Binding GetZoomSpeed}" />
+            Text="{CompiledBinding GetZoomSpeed,
+                                   Mode=OneWay}" />
 
         <TextBlock
             Classes="txt"
@@ -240,7 +257,8 @@
             FontSize="14"
             Margin="0,3,0,10"
             MaxWidth="270"
-            Text="{Binding AdjustNavSpeed}" />
+            Text="{CompiledBinding AdjustNavSpeed,
+                                   Mode=OneWay}" />
         <customControls:CustomSlider
             Height="30"
             HorizontalAlignment="Center"
@@ -250,22 +268,23 @@
             Minimum=".1"
             TickFrequency=".1"
             TickPlacement="BottomRight"
-            Value="{Binding GetNavSpeed}"
+            Value="{CompiledBinding GetNavSpeed}"
             Width="270" />
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Foreground="{StaticResource MainTextColorFaded}"
             Margin="0,0,0,15">
-            <Run Text="{Binding GetNavSpeed}" />
-            <Run Text="{Binding SecAbbreviation}" />
+            <Run Text="{CompiledBinding GetNavSpeed, Mode=OneWay}" />
+            <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
         </TextBlock>
 
         <Button
             Classes="BorderStyle altHover mainBtn"
+            Command="{CompiledBinding ResetSettingsCommand}"
             HorizontalAlignment="Center"
             Margin="0,0,0,10">
-            <TextBlock Classes="txt" Text="{Binding ResetButtonText}" />
+            <TextBlock Classes="txt" Text="{CompiledBinding ResetButtonText, Mode=OneWay}" />
         </Button>
     </StackPanel>
 </UserControl>
