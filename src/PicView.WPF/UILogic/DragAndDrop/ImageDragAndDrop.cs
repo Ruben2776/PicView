@@ -124,7 +124,7 @@ internal static class ImageDragAndDrop
         // Switch to previous image if available
         RemoveDragOverlay();
         if (ConfigureWindows.GetMainWindow.TitleText.Text ==
-                 TranslationHelper.GetTranslation("NoImage"))
+                 TranslationHelper.Translation.NoImage)
         {
             ConfigureWindows.GetMainWindow.MainImage.Source = null;
         }

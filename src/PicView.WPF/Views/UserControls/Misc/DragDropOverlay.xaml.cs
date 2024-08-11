@@ -8,12 +8,12 @@ public partial class DragDropOverlay
     public DragDropOverlay()
     {
         InitializeComponent();
-        TextMsg.Text = TranslationHelper.GetTranslation("DragOverString");
+        TextMsg.Text = TranslationHelper.Translation.DropToLoad;
     }
 
     public void UpdateContent(UIElement element)
     {
-        TextMsg.Text = TranslationHelper.GetTranslation("DragOverString");
+        TextMsg.Text = TranslationHelper.Translation.DropToLoad;
         if (element is null)
         {
             return;

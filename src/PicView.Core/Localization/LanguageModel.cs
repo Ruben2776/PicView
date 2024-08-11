@@ -247,7 +247,7 @@ public class LanguageModel
     public string? UnexpectedError { get; set; }
     public string? NoImages { get; set; }
     public string? UnableToRender { get; set; }
-    public string? DragOverstring { get; set; }
+    public string? DropToLoad { get; set; }
     public string? SetAs { get; set; }
     public string? SetAsWallpaper { get; set; }
     public string? SetAsLockScreenImage { get; set; }
@@ -366,7 +366,7 @@ public class LanguageModel
     public string? Brightness { get; set; }
     public string? LightSource { get; set; }
     public string? Unknown { get; set; }
-    public string? Other { get; set; }
+    public string? OtherTxt { get; set; }
     public string? Daylight { get; set; }
     public string? Fluorescent { get; set; }
     public string? FineWeather { get; set; }
