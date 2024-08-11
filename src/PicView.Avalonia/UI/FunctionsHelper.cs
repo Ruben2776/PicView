@@ -742,7 +742,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await ClipboardHelper.CopyBase64ToClipboard(Vm.FileInfo.FullName);
+        await ClipboardHelper.CopyBase64ToClipboard(Vm.FileInfo.FullName, vm: Vm);
     }
 
     public static async Task DuplicateFile()

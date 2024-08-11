@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
+using Avalonia.Svg.Skia;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
@@ -28,31 +29,54 @@ public static class ClipboardHelper
 
     public static async Task CopyImageToClipboard(string path)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        var dataObject = new DataObject();
-        dataObject.Set(DataFormats.Files, new[] { path });
-        await desktop.MainWindow.Clipboard.SetDataObjectAsync(dataObject);
+        // TODO: Implement CopyImageToClipboard
     }
 
-    public static async Task CopyBase64ToClipboard(string path)
-    {
-        throw new NotImplementedException();
-    }   
-
-    public static async Task CutFile(string path)
+    public static async Task CopyBase64ToClipboard(string path, MainViewModel vm)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
         }
         var clipboard = desktop.MainWindow.Clipboard;
-        var dataObject = new DataObject();
-        dataObject.Set(DataFormats.Files, new[] { path });
-        await clipboard.ClearAsync();
-        await clipboard.SetDataObjectAsync(dataObject);
+        var base64 = string.Empty;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            switch (vm.ImageType)
+            {
+                case ImageType.AnimatedBitmap:
+                    throw new ArgumentOutOfRangeException();
+                case ImageType.Bitmap:
+                    if (vm.ImageSource is not Bitmap bitmap)
+                    {
+                        throw new ArgumentOutOfRangeException();
+                    }
+                    var stream = new MemoryStream();
+                    bitmap.Save(stream, quality: 100);
+                    base64 = Convert.ToBase64String(stream.ToArray());
+                    break;
+                case ImageType.Svg:
+                    throw new ArgumentOutOfRangeException();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        else
+        {
+            base64 = Convert.ToBase64String(await File.ReadAllBytesAsync(path));
+        }
+
+        if (string.IsNullOrEmpty(base64))
+        {
+            return;
+        }
+
+        await clipboard.SetTextAsync(base64);
+    }   
+
+    public static async Task CutFile(string path)
+    {
+        // TODO: Implement CutFile
     }
     
     public static async Task Paste(MainViewModel vm)

@@ -309,22 +309,40 @@ public static class NavigationHelper
         vm.FileInfo = null;
         await Task.Run(async () =>
         {
-            var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
-            magickImage.Format = MagickFormat.Png;
-            await using var memoryStream = new MemoryStream();
-            await magickImage.WriteAsync(memoryStream);
-            memoryStream.Position = 0;
-            var bitmap = new Bitmap(memoryStream);
-            var imageModel = new ImageModel
+            // TODO: Handle base64 if it's SVG image
+            try
             {
-                Image = bitmap,
-                PixelWidth = bitmap?.PixelSize.Width ?? 0,
-                PixelHeight = bitmap?.PixelSize.Height ?? 0,
-                ImageType = ImageType.Bitmap
-            };
-            SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
-            ExifHandling.SetImageModel(imageModel, vm);
-            ExifHandling.UpdateExifValues(imageModel, vm);
+                var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
+                magickImage.Format = MagickFormat.Png;
+                await using var memoryStream = new MemoryStream();
+                await magickImage.WriteAsync(memoryStream);
+                memoryStream.Position = 0;
+                var bitmap = new Bitmap(memoryStream);
+                var imageModel = new ImageModel
+                {
+                    Image = bitmap,
+                    PixelWidth = bitmap?.PixelSize.Width ?? 0,
+                    PixelHeight = bitmap?.PixelSize.Height ?? 0,
+                    ImageType = ImageType.Bitmap
+                };
+                SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
+                ExifHandling.SetImageModel(imageModel, vm);
+                ExifHandling.UpdateExifValues(imageModel, vm);
+            }
+            catch (Exception e)
+            {
+                #if DEBUG
+                Console.WriteLine("LoadPicFromBase64Async exception = \n" + e.Message);
+                #endif
+                if (vm.FileInfo is not null && vm.FileInfo.Exists)
+                {
+                    await LoadPicFromFile(vm.FileInfo.FullName, vm, vm.FileInfo);
+                }
+                else
+                {
+                    ErrorHandling.ShowStartUpMenu(vm);
+                }
+            }
         });
         vm.IsLoading = false;
     }
