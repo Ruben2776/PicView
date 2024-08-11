@@ -1381,7 +1381,7 @@ public class MainViewModel : ViewModelBase
         {
             return;
         }
-        await ClipboardHelper.CopyFileToClipboard(path);
+        await ClipboardHelper.CopyFileToClipboard(path, this);
     }
     
     private async Task CopyFilePathTask(string path)

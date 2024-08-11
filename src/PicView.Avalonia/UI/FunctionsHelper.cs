@@ -719,7 +719,7 @@ public static class FunctionsHelper
 
     public static async Task CopyFile()
     {
-        await ClipboardHelper.CopyFileToClipboard(Vm?.FileInfo.FullName);
+        await ClipboardHelper.CopyFileToClipboard(Vm?.FileInfo.FullName, Vm);
     }
 
     public static async Task CopyFilePath()

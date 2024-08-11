@@ -279,6 +279,11 @@ public class App : Application, IPlatformSpecificService
     {
         Windows.Lockscreen.LockscreenHelper.SetLockScreenImage(path);
     }
+
+    public void CopyFile(string path)
+    {
+        Windows.FileHandling.ClipboardHelper.CopyFileToClipboard(path);
+    }
     
     #endregion
 }

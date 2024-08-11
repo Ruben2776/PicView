@@ -271,4 +271,9 @@ public void ShowAboutWindow()
     {
         // TODO: Implement SetAsLockScreen
     }
+    
+    public void CopyFile(string path)
+    {
+        // TODO: Implement CopyFile
+    }
 }

@@ -21,16 +21,9 @@ public static class ClipboardHelper
         await desktop.MainWindow.Clipboard.SetTextAsync(text);
     }
 
-    public static async Task CopyFileToClipboard(string? file)
+    public static async Task CopyFileToClipboard(string? file, MainViewModel vm)
     {            
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        var dataObject = new DataObject();
-        dataObject.Set(DataFormats.Files, new[] { file });
-        await desktop.MainWindow.Clipboard.SetDataObjectAsync(dataObject);
-        // Doesn't work, TODO figure out how to add a file to the clipboard
+        vm.PlatformService.CopyFile(file);
     }
 
     public static async Task CopyImageToClipboard(string path)

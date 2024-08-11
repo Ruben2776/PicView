@@ -32,4 +32,6 @@ public interface IPlatformSpecificService
     void SetAsWallpaper(string path, int wallpaperStyle);
     
     void SetAsLockScreen(string path);
+    
+    void CopyFile(string path);
 }
