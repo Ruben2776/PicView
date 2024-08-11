@@ -1,5 +1,5 @@
 ﻿using PicView.Avalonia.Gallery;
-using PicView.Avalonia.Services;
+using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;

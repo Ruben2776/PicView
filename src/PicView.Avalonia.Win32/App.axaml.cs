@@ -2,13 +2,13 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Views;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using System.Runtime;
+using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Core.ProcessHandling;

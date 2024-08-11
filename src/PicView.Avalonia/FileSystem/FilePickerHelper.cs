@@ -9,7 +9,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 
-namespace PicView.Avalonia.Services;
+namespace PicView.Avalonia.FileSystem;
 
 public static class FilePickerHelper
 {
@@ -114,7 +114,7 @@ public static class FilePickerHelper
                     bitmap.Save(stream, quality);
                     await stream.DisposeAsync();
                     var ext = Path.GetExtension(path);
-                    if (ext is not ".jpg" or ".jpeg" or ".png" or ".bmp" || vm.RotationAngle != 0)
+                    if (ext != ".jpg" || ext != ".jpeg" || ext != ".png" || ext != ".bmp" || vm.RotationAngle != 0)
                     {
                         await SaveImageFileHelper.SaveImageAsync(
                             null,

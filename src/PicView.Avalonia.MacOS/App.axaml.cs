@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.MacOS.Views;
-using PicView.Avalonia.Services;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -14,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime;
 using System.Threading.Tasks;
+using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 

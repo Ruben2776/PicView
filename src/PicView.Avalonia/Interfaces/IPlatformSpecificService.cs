@@ -1,4 +1,4 @@
-﻿namespace PicView.Avalonia.Services;
+﻿namespace PicView.Avalonia.Interfaces;
 
 public interface IPlatformSpecificService
 {
