@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Views;
@@ -15,6 +16,20 @@ public partial class MainView : UserControl
         // TODO add visual feedback for drag and drop
         //AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
+        GotFocus += delegate
+        {
+            if (UIHelper.GetEditableTitlebar.IsOpen)
+            {
+                UIHelper.GetEditableTitlebar.CloseTitlebar();
+            }
+        };
+        PointerPressed += delegate
+        {
+            if (UIHelper.GetEditableTitlebar.IsOpen)
+            {
+                UIHelper.GetEditableTitlebar.CloseTitlebar();
+            }
+        };
     }
     
     private async Task Drop(object? sender, DragEventArgs e)

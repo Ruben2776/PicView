@@ -94,6 +94,11 @@ public class EditableTitlebar : TextBox
 
     private void OnLostFocus(object? sender, RoutedEventArgs e)
     {
+        CloseTitlebar();
+    }
+    
+    public void CloseTitlebar()
+    {
         ClearSelection();
         if (DataContext is not MainViewModel vm)
         {
