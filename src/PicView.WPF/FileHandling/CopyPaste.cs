@@ -180,8 +180,16 @@ internal static class CopyPaste
         {
             ConfigureWindows.GetMainWindow.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() =>
             {
-                var bmp = ImageFunctions.BitmapSourceToBitmap(source);
-                ClipboardHelper.SetClipboardImage(bmp, bmp, null);
+                if (ImageFunctions.HasTransparentBackground(source))
+                {
+                    var bmp = ImageFunctions.BitmapSourceToBitmap(source);
+                    ClipboardHelper.SetClipboardImage(bmp, bmp, null);
+                }
+                else
+                {
+                    Clipboard.SetImage(source);
+                }
+
                 ShowTooltipMessage(TranslationHelper.GetTranslation("CopiedImage"));
             }));
         }

@@ -35,7 +35,13 @@ public static class ClipboardHelper
 
     public static async Task CopyImageToClipboard(string path)
     {
-        throw new NotImplementedException();
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var dataObject = new DataObject();
+        dataObject.Set(DataFormats.Files, new[] { path });
+        await desktop.MainWindow.Clipboard.SetDataObjectAsync(dataObject);
     }
 
     public static async Task CopyBase64ToClipboard(string path)

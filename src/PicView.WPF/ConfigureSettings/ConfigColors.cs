@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PicView.WPF.ImageHandling;
 
 namespace PicView.WPF.ConfigureSettings;
 
@@ -172,7 +173,7 @@ internal static class ConfigColors
         if (mainWindow.MainImageBorder is null || mainWindow.MainImage.Source is null) return;
 
         // Check if the main image has a transparent background
-        if (HasTransparentBackground(mainWindow.MainImage.Source as BitmapSource) is false) return;
+        if (ImageFunctions.HasTransparentBackground(mainWindow.MainImage.Source as BitmapSource) is false) return;
 
         // Increment the BgColorChoice setting
         SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 5;
@@ -181,37 +182,7 @@ internal static class ConfigColors
         mainWindow.MainImageBorder.Background = BackgroundColorBrush;
 
         // Save the changes to the settings
-        SettingsHelper.SaveSettingsAsync();
-    }
-
-    /// <summary>
-    /// Checks whether a given bitmap has any transparent pixels.
-    /// </summary>
-    /// <param name="bitmap">The bitmap to check.</param>
-    /// <returns>True if the bitmap has any transparent pixels, false otherwise.</returns>
-    private static bool HasTransparentBackground(BitmapSource bitmap)
-    {
-        // Convert the bitmap to the Bgra32 pixel format if necessary
-        if (bitmap.Format != PixelFormats.Bgra32)
-        {
-            bitmap = new FormatConvertedBitmap(bitmap, PixelFormats.Bgra32, null, 0);
-        }
-
-        // Copy the bitmap pixels into a byte array
-        var pixels = new byte[bitmap.PixelWidth * bitmap.PixelHeight * 4];
-        bitmap.CopyPixels(pixels, bitmap.PixelWidth * 4, 0);
-
-        // Check each pixel for transparency
-        for (var i = 3; i < pixels.Length; i += 4)
-        {
-            if (pixels[i] < 255)
-            {
-                return true;
-            }
-        }
-
-        // If no transparent pixels were found, return false
-        return false;
+        _ = SettingsHelper.SaveSettingsAsync();
     }
 
     /// <summary>
