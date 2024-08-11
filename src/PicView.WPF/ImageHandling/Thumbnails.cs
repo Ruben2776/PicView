@@ -16,7 +16,7 @@ internal static class Thumbnails
     {
         internal double? OriginalWidth = width;
         internal double? OriginalHeight = height;
-        internal BitmapSource? BitmapSource = bitmapSource;
+        internal readonly BitmapSource? BitmapSource = bitmapSource;
     }
 
     /// <summary>
@@ -135,7 +135,6 @@ internal static class Thumbnails
             image?.Thumbnail(new MagickGeometry(size, size));
             var bmp = image?.ToBitmapSource();
             bmp?.Freeze();
-            image?.Dispose();
             return bmp ?? ImageFunctions.ImageErrorMessage();
         }
         catch (Exception e)
