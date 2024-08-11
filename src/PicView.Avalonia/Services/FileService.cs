@@ -1,7 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -60,7 +62,7 @@ public static class FilePickerHelper
         MimeTypes = new[] { "archive/*" }
     };
 
-    public static async Task SaveFileAsync(string fileName, MainViewModel vm)
+    public static async Task SaveFileAsync(string? fileName, MainViewModel vm)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
@@ -77,21 +79,60 @@ public static class FilePickerHelper
             {
                 Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
                 FileTypeChoices  = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType },
-                SuggestedFileName = fileName,
+                SuggestedFileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetRandomFileName() : fileName,
                 SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
             
             };
             file = await provider.SaveFilePickerAsync(options);
         }
 
-        if (file is not null)
+        var path = file.Path.AbsolutePath;
+        if (!string.IsNullOrWhiteSpace(fileName))
         {
-            var path = file.Path.AbsolutePath;
-            await SaveImageFileHelper.SaveImageAsync(null, fileName, path, null, null, null, Path.GetExtension(path), vm.RotationAngle);
+            await SaveImageFileHelper.SaveImageAsync(null,
+                fileName,
+                path,
+                null,
+                null,
+                null,
+                Path.GetExtension(path),
+                vm.RotationAngle);
         }
         else
         {
-            // TODO save images that are not files
+            switch (vm.ImageType)
+            {
+                case ImageType.AnimatedBitmap:
+                    throw new ArgumentOutOfRangeException();
+                case ImageType.Bitmap:
+                    if (vm.ImageSource is not Bitmap bitmap)
+                    {
+                        throw new ArgumentOutOfRangeException();
+                    }
+                    var stream = new FileStream(path, FileMode.Create);
+                    var quality = 100;
+                    bitmap.Save(stream, quality);
+                    await stream.DisposeAsync();
+                    var ext = Path.GetExtension(path);
+                    if (ext is not ".jpg" or ".jpeg" or ".png" or ".bmp" || vm.RotationAngle != 0)
+                    {
+                        await SaveImageFileHelper.SaveImageAsync(
+                            null,
+                            path,
+                            destination:path,
+                            width: null,
+                            height: null,
+                            quality,
+                            ext,
+                            vm.RotationAngle);
+                    }
+                    
+                    break;
+                case ImageType.Svg:
+                    throw new ArgumentOutOfRangeException();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

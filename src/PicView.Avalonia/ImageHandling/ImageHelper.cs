@@ -142,7 +142,7 @@ public static class ImageHelper
 
     private static async Task AddThumbAsync(FileInfo fileInfo, ImageModel imageModel, int height)
     {
-        var thumb = await GetThumbAsync(fileInfo.FullName, height).ConfigureAwait(false);
+        var thumb = await GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
         imageModel.Image = thumb;
         imageModel.PixelWidth = thumb?.PixelSize.Width ?? 0;
         imageModel.PixelHeight = thumb?.PixelSize.Height ?? 0;
@@ -158,7 +158,7 @@ public static class ImageHelper
         imageModel.ImageType = ImageType.Bitmap;
     }
 
-    private static async Task<Bitmap?> GetThumbAsync(string path, int height)
+    private static async Task<Bitmap?> GetThumbAsync(string path, int height, FileInfo? fileInfo = null)
     {
         try
         {
@@ -167,12 +167,12 @@ public static class ImageHelper
             var profile = magick.GetExifProfile();
             if (profile == null)
             {
-                return await CreateThumbAsync(magick, path, height).ConfigureAwait(false);
+                return await CreateThumbAsync(magick, path, height, fileInfo).ConfigureAwait(false);
             }
             var thumbnail = profile.CreateThumbnail();
             if (thumbnail == null)
             {
-                return await CreateThumbAsync(magick, path, height).ConfigureAwait(false);
+                return await CreateThumbAsync(magick, path, height, fileInfo).ConfigureAwait(false);
             }
 
             var byteArray = thumbnail.ToByteArray();
@@ -185,11 +185,21 @@ public static class ImageHelper
         }
     }
 
-    private static async Task<Bitmap> CreateThumbAsync(IMagickImage magick, string path, int height)
+    private static async Task<Bitmap> CreateThumbAsync(IMagickImage magick, string path, int height, FileInfo? fileInfo = null)
     {
+        fileInfo ??= new FileInfo(path);
         await using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read,
             FileShare.ReadWrite, 4096, true);
-        magick.Read(fileStream);
+        if (fileInfo.Length >= 2147483648)
+        {
+            // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+            // ReSharper disable once MethodHasAsyncOverload
+            magick.Read(fileStream);
+        }
+        else
+        {
+            await magick.ReadAsync(fileStream).ConfigureAwait(false);
+        }
 
         var geometry = new MagickGeometry(0, height);
         magick.Thumbnail(geometry);
