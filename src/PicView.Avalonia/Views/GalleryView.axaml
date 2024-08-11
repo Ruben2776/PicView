@@ -12,7 +12,12 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Panel Background="{StaticResource BackgroundAlpha}">
+    <Panel>
+
+        <customControls:BlurMask
+            BlurEnabled="False"
+            BlurRadius="7"
+            x:Name="BlurMask" />
 
         <Panel.ContextMenu>
             <ContextMenu Opened="MenuBase_OnOpened">
@@ -131,7 +136,7 @@
 
         <customControls:GalleryListBox
             AutoScrollToSelectedItem="False"
-            Background="Transparent"
+            Background="{StaticResource BackgroundAlpha}"
             BorderBrush="{StaticResource TertiaryBorderColor}"
             BorderThickness="0,1,0,0"
             Focusable="False"

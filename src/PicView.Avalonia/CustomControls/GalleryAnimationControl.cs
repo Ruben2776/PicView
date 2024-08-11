@@ -82,6 +82,7 @@ public class GalleryAnimationControl : UserControl
             IsVisible = true;
             Opacity = 0;
             Height = parent.Bounds.Height;
+            UIHelper.GetGalleryView.BlurMask.BlurEnabled = true;
         });
 
         vm.GalleryOrientation = Orientation.Vertical;
@@ -119,6 +120,7 @@ public class GalleryAnimationControl : UserControl
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Height = parent.Bounds.Height;
+            UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
         });
         const double from = 1d;
         const double to = 0d;
@@ -148,6 +150,7 @@ public class GalleryAnimationControl : UserControl
             IsVisible = true;
             Opacity = 1;
             WindowHelper.SetSize(vm);
+            UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
         });
         
         vm.GalleryOrientation = Orientation.Horizontal;
@@ -184,6 +187,7 @@ public class GalleryAnimationControl : UserControl
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             WindowHelper.SetSize(vm);
+            UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
         });
         
         vm.GalleryOrientation = Orientation.Horizontal;
@@ -231,6 +235,7 @@ public class GalleryAnimationControl : UserControl
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Height = to;
+            UIHelper.GetGalleryView.BlurMask.BlurEnabled = true;
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         
@@ -254,6 +259,7 @@ public class GalleryAnimationControl : UserControl
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             Height = parent.Bounds.Height;
+            UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.IsGalleryCloseIconVisible = false;
