@@ -11,6 +11,13 @@ public partial class ExifWindow : Window
     {
         InitializeComponent();
         Title = TranslationHelper.GetTranslation("ImageInfo") + " - PicView";
+        KeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Escape)
+            {
+                Close();
+            }
+        };
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

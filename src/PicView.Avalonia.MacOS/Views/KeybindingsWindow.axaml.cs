@@ -14,6 +14,13 @@ public partial class KeybindingsWindow : Window
             MinWidth = MaxWidth = Width;
             Title = $"{TranslationHelper.Translation.ApplicationShortcuts} - PicView";
         };
+        KeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Escape)
+            {
+                Close();
+            }
+        };
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

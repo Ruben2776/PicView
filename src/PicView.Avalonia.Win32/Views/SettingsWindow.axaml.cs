@@ -10,11 +10,18 @@ public partial class SettingsWindow : Window
     public SettingsWindow()
     {
         InitializeComponent();
-        Loaded += (sender, e) =>
+        Loaded += delegate
         {
             MinWidth = MaxWidth = Width;
             Height = 500;
             Title = TranslationHelper.GetTranslation("Settings") + " - PicView";
+        };
+        KeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Escape)
+            {
+                Close();
+            }
         };
     }
 

@@ -10,10 +10,17 @@ public partial class KeybindingsWindow : Window
     public KeybindingsWindow()
     {
         InitializeComponent();
-        Loaded += (sender, e) =>
+        Loaded += delegate
         {
             MinWidth = MaxWidth = Width;
-            Title = $"{TranslationHelper.GetTranslation("ApplicationShortcuts")}  - PicView";
+            Title = $"{TranslationHelper.Translation.ApplicationShortcuts}  - PicView";
+        };
+        KeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Escape)
+            {
+                Close();
+            }
         };
     }
 

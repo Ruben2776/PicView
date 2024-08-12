@@ -10,10 +10,17 @@ public partial class AboutWindow : Window
     public AboutWindow()
     {
         InitializeComponent();
-        Loaded += (sender, e) =>
+        Loaded += delegate
         {
             MinWidth = MaxWidth = Width;
-            Title = $"{TranslationHelper.GetTranslation("About")}  - PicView";
+            Title = $"{TranslationHelper.Translation.About}  - PicView";
+        };
+        KeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Escape)
+            {
+                Close();
+            }
         };
     }
 

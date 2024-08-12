@@ -15,6 +15,13 @@ public partial class ImageResizeWindow : Window
             Height = 500;
             Title = TranslationHelper.Translation.ResizeImage + " - PicView";
         };
+        KeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Escape)
+            {
+                Close();
+            }
+        };
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)
