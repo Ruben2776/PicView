@@ -152,7 +152,7 @@
                         HorizontalAlignment="Left"
                         Orientation="{CompiledBinding GalleryOrientation,
                                                       Mode=OneWay}"
-                        VerticalAlignment="Bottom" />
+                        VerticalAlignment="Center" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.Styles>

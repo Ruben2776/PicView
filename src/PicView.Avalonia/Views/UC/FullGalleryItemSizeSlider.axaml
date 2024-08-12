@@ -19,7 +19,8 @@
         Minimum="{CompiledBinding MinFullGalleryItemHeight}"
         TickFrequency="1"
         TickPlacement="BottomRight"
-        Value="{CompiledBinding GetFullGalleryItemHeight}"
+        Value="{CompiledBinding GetFullGalleryItemHeight,
+                                Mode=TwoWay}"
         ValueChanged="FullGallery_OnValueChanged"
         Width="270" />
 </UserControl>

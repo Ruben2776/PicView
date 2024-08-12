@@ -14,6 +14,7 @@ public partial class GalleryItemSizeSlider : UserControl
     public GalleryItemSizeSlider()
     {
         InitializeComponent();
+        
     }
     
     public void SetMaxAndMin()
@@ -25,7 +26,7 @@ public partial class GalleryItemSizeSlider : UserControl
         if (GalleryFunctions.IsFullGalleryOpen)
         {
             CustomSlider.Maximum = vm.MaxFullGalleryItemHeight;
-            CustomSlider.MinWidth = vm.MinFullGalleryItemHeight;
+            CustomSlider.Minimum = vm.MinFullGalleryItemHeight;
         }
         else
         {
@@ -42,7 +43,11 @@ public partial class GalleryItemSizeSlider : UserControl
             return;
         }
 
-        if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            
+        }
+        else if (GalleryFunctions.IsBottomGalleryOpen)
         {
             // Change the sizes of the bottom gallery items
             // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -60,7 +65,7 @@ public partial class GalleryItemSizeSlider : UserControl
         else
         {
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (vm.GetFullGalleryItemHeight == e.NewValue)
+            if (vm.GetGalleryItemHeight == e.NewValue)
             {
                 return;
             }
