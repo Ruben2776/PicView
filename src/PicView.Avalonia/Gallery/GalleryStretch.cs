@@ -47,7 +47,7 @@ public static class GalleryStretchMode
             if (GalleryFunctions.IsFullGalleryOpen)
             {
                 vm.IsFillSquareMenuChecked = true;
-                SetSquareStretch(vm);
+                SetSquareFillStretch(vm);
             }
         }
         else if (Enum.TryParse<Stretch>(SettingsHelper.Settings.Gallery.FullGalleryStretchMode, out var stretchMode))
@@ -85,7 +85,7 @@ public static class GalleryStretchMode
             if (!GalleryFunctions.IsFullGalleryOpen)
             {
                 vm.IsFillSquareMenuChecked = true;
-                SetSquareStretch(vm);
+                SetSquareFillStretch(vm);
             }
         }
         else if (Enum.TryParse<Stretch>(SettingsHelper.Settings.Gallery.BottomGalleryStretchMode, out var stretchMode))
