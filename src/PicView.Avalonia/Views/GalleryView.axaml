@@ -16,7 +16,7 @@
 
         <customControls:BlurMask
             BlurEnabled="False"
-            BlurRadius="7"
+            BlurRadius="9"
             x:Name="BlurMask" />
 
         <Panel.ContextMenu>
@@ -155,6 +155,11 @@
                         VerticalAlignment="Bottom" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Margin" Value="{CompiledBinding GalleryItemMargin}" />
+                </Style>
+            </ListBox.Styles>
         </customControls:GalleryListBox>
     </Panel>
 </customControls:GalleryAnimationControl>

@@ -83,6 +83,7 @@ public class GalleryAnimationControl : UserControl
             Opacity = 0;
             Height = parent.Bounds.Height;
             UIHelper.GetGalleryView.BlurMask.BlurEnabled = true;
+            vm.GalleryItemMargin = new Thickness(25);
         });
 
         vm.GalleryOrientation = Orientation.Vertical;
@@ -151,6 +152,7 @@ public class GalleryAnimationControl : UserControl
             Opacity = 1;
             WindowHelper.SetSize(vm);
             UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
+            vm.GalleryItemMargin = new Thickness(2,0);
         });
         
         vm.GalleryOrientation = Orientation.Horizontal;
@@ -192,7 +194,7 @@ public class GalleryAnimationControl : UserControl
         
         vm.GalleryOrientation = Orientation.Horizontal;
         vm.IsGalleryCloseIconVisible = false;
-        vm.GalleryMargin = new Thickness(0);
+        vm.GalleryMargin = new Thickness(2,0);
         var from = vm.GalleryHeight;
         const int to = 0;
         const double speed = 0.7;
@@ -206,7 +208,6 @@ public class GalleryAnimationControl : UserControl
             WindowHelper.SetSize(vm);
         });
         _isAnimating = false;
-        vm.GalleryMargin = new Thickness(0);
     }
 
     private async Task BottomToFullAnimation()
@@ -236,6 +237,7 @@ public class GalleryAnimationControl : UserControl
         {
             Height = to;
             UIHelper.GetGalleryView.BlurMask.BlurEnabled = true;
+            vm.GalleryItemMargin = new Thickness(25);
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Stretch;
         
@@ -260,6 +262,7 @@ public class GalleryAnimationControl : UserControl
         {
             Height = parent.Bounds.Height;
             UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
+            vm.GalleryItemMargin = new Thickness(2,0);
         });
         vm.GalleryVerticalAlignment = VerticalAlignment.Bottom;
         vm.IsGalleryCloseIconVisible = false;

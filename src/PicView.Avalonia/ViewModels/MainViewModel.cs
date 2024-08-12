@@ -228,6 +228,14 @@ public class MainViewModel : ViewModelBase
     {
         get => GalleryDefaults.MinBottomGalleryItemHeight;
     }
+    
+    private Thickness _galleryItemMargin;
+    
+    public Thickness GalleryItemMargin
+    {
+        get => _galleryItemMargin;
+        set => this.RaiseAndSetIfChanged(ref _galleryItemMargin, value);
+    }
 
     #region Gallery Stretch IsChecked
     
