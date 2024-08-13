@@ -303,6 +303,14 @@ public static class GalleryFunctions
                              Text = galleryThumbInfo.FileName
                          }
                      };
+                     galleryItem.PointerPressed += async (_, _) =>
+                     {
+                         if (IsFullGalleryOpen)
+                         {
+                             await ToggleGallery(vm);
+                         }
+                         await vm.ImageIterator.IterateToIndex(index);
+                     };
                      galleryListBox.Items.Insert(index, galleryItem);
                      ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
                  }, DispatcherPriority.Render);
